@@ -1,0 +1,64 @@
+/*
+ * CopyrightProperties.h
+ *
+ *  Created on: Jul 9, 2014
+ *      Author: wzw7yn
+ */
+
+#ifndef COPYRIGHTPROPERTIES_H_
+#define COPYRIGHTPROPERTIES_H_
+#include <string>
+#include <vector>
+#include "CSVRow.h"
+
+namespace simplearchive {
+
+class CopyrightPropertiesItem : public CSVRowItem {
+	std::string m_sequenceId;
+	std::string m_copyright;
+	std::string m_usageRights;
+	std::string m_copyrightURL;
+public:
+	CopyrightPropertiesItem(int id);
+	virtual ~CopyrightPropertiesItem() {};
+	const std::string& getCopyright() const;
+	void setCopyright(const std::string& copyright);
+	const std::string& getCopyrightUrl() const;
+	void setCopyrightUrl(const std::string& copyrightUrl);
+	const std::string& getSequenceId() const;
+	void setSequenceId(const std::string& sequenceId);
+	const std::string& getUsageRights() const;
+	void setUsageRights(const std::string& usageRights);
+
+	virtual const char *toString();
+	virtual bool fromString(int pos, std::string &str);
+
+};
+
+class MetadataObject;
+class CopyrightProperties : public CSVRow {
+public:
+	CopyrightProperties();
+	virtual ~CopyrightProperties();
+
+	/// Adds the information of the GPS properties from a MetadataObject.
+	void add(MetadataObject &metadataObject);
+
+	/// Adds a GPSPropertiesItem object.
+	void add(CopyrightPropertiesItem &item);
+
+	/// reads a csv GPSProperties file
+	bool read(const char *datafile);
+
+	/// writes a csv GPSProperties file
+	bool write(const char *path);
+
+	//bool write(const char *path, const char *filename, CSVString& u) {
+	//	return CSVRow::write(path, filename, u);
+	//}
+
+	virtual bool add(const char *row);
+};
+
+} /* namespace simplearchive */
+#endif /* COPYRIGHTPROPERTIES_H_ */
