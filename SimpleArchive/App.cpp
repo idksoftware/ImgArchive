@@ -19,6 +19,9 @@
 #include "argvparser.h"
 #include "HookCmd.h"
 #include "MakeMedia.h"
+#include "MirrorManager.h"
+#include "ViewManager.h"
+#include "Database.h"
 
 #ifdef _WIN32
 #pragma comment(lib, "ws2_32.lib")
@@ -32,7 +35,7 @@ using namespace std;
 #include "AppOptions.h"
 #define VERSION	"1.00"
 #define BUILD	"040115.1749"
-
+#define DB "c:/temp/test3.db"
 /*
 java version "1.7.0_51"
 Java(TM) SE Runtime Environment (build 1.7.0_51-b13)
@@ -62,10 +65,14 @@ bool App::initalise(int argc, char **argv) {
 
 bool App::Run()
 {
-	
+
+	if (MirrorManager::initalise("/home/wzw7yn/test", "/home/wzw7yn/mirror.conf") == false) {
+		return false;
+	}
+
 	CAppConfig &config = CAppConfig::get();
-	
-	if (config.getCommandMode() == CAppConfig::CM_Version) {
+	AppOptions &appOptions = AppOptions::get();
+	if (appOptions.getCommandMode() == AppOptions::CM_Version) {
 		printf("\n\nSia version \"%s\" (build %s)\n", VERSION, BUILD);
 		return true;
 	}
@@ -147,21 +154,50 @@ bool App::Run()
 	if (m_ArchiveBuilder.Init() == false) {
 		return false;
 	}
+
+	Database &db = Database::getInstance();
+
+	if (db.open(DB, "", "") == false) {
+		printf("database open returned %s", db.getError());
+	}
+
+
 	logger.log(CLogger::INFO, "+++ Initalisation complete +++");
 	// C:\output\2014\2014-6-3
-	switch (config.getCommandMode()) {
-	case CAppConfig::CM_Import:
+	switch (appOptions.getCommandMode()) {
+	case AppOptions::CM_Import:
 		m_ArchiveBuilder.Import(config.getSourcePath());
 		break;
-	case CAppConfig::CM_Export:
+	case AppOptions::CM_Export:
 		break;
-	case CAppConfig::CM_Checkout:
+	case AppOptions::CM_Checkout:
 		break;
-	case CAppConfig::CM_Checkin:
+	case AppOptions::CM_Checkin:
 		break;
-	case CAppConfig::CM_Uncheckin:
+	case AppOptions::CM_View:
+	{
+		ViewManager viewManager;
+		std::string name = appOptions.getName();
+		if (name.compare("Master") == 0) {
+			viewManager.initaliseMaster(config.getArchivePath(), config.getMasterViewPath());
+			if (viewManager.processMaster() == false) {
+				return false;
+			}
+		}
+		else {
+
+			if (viewManager.initalise(config.getArchivePath(), config.getConfigPath()) == false) {
+				return false;
+			}
+			if (viewManager.process() == false) {
+				return false;
+			}
+		}
 		break;
-	case CAppConfig::CM_Archive:
+	}
+	case AppOptions::CM_Uncheckin:
+		break;
+	case AppOptions::CM_Archive:
 		printf("Archive");
 		if (config.isToDateSet() || config.isFromDateSet()) {
 			//MakeMedia makeMedia(config.getArchivePath().c_str(), config.setBackupDestinationPath(), config.getBackupMediaSize(), CDate startDate, CDate endDate);
@@ -176,7 +212,7 @@ bool App::Run()
 			}
 		}
 		break;
-	case CAppConfig::CM_Unknown:
+	case AppOptions::CM_Unknown:
 		break;
 	}
 	
