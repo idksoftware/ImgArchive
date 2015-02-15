@@ -1,0 +1,109 @@
+/*
+ * ExifDate.h
+ *
+ *  Created on: Jun 16, 2014
+ *      Author: wzw7yn
+ */
+
+#ifndef EXIFDATE_H_
+#define EXIFDATE_H_
+#include <time.h>
+#include <string>
+#include "ExifDateTime.h"
+
+namespace simplearchive {
+
+class ExifDate {
+	int m_day;
+	int m_month;
+	int m_year;
+	bool m_isOk;
+	time_t m_timenum;
+public:
+	ExifDate();
+	ExifDate(time_t time);
+	ExifDate(const char *datestr);
+	ExifDate(int y, int m, int d);
+	ExifDate(const ExifDate &exifDate) {
+		m_day = exifDate.m_day;
+		m_month = exifDate.m_month;
+		m_year = exifDate.m_year;
+		m_isOk = exifDate.m_isOk;
+		time(&m_timenum);
+		struct tm *timeinfo = gmtime(&m_timenum);
+		timeinfo->tm_year = m_year - 1900;
+		timeinfo->tm_mon = m_month - 1;
+		timeinfo->tm_mday = m_day;
+		m_timenum = mktime(timeinfo);
+		m_isOk = true;
+	}
+	ExifDate(const ExifDateTime &exifDate) {
+		m_day = exifDate.getDay();
+		m_month = exifDate.getMonth();
+		m_year = exifDate.getYear();
+		m_isOk = exifDate.isOk();
+		
+		time(&m_timenum);
+		struct tm *timeinfo = gmtime(&m_timenum);
+		timeinfo->tm_year = m_year - 1900;
+		timeinfo->tm_mon = m_month - 1;
+		timeinfo->tm_mday = m_day;
+		m_timenum = mktime(timeinfo);
+		
+	}
+	ExifDate& operator=(ExifDate& d);
+	ExifDate& operator=(ExifDateTime& d);
+
+	ExifDate &operator=(const ExifDate &exifDate) {
+		m_day = exifDate.m_day;
+		m_month = exifDate.m_month;
+		m_year = exifDate.m_year;
+		m_isOk = exifDate.m_isOk;
+		time(&m_timenum);
+		struct tm *timeinfo = gmtime(&m_timenum);
+		timeinfo->tm_year = m_year - 1900;
+		timeinfo->tm_mon = m_month - 1;
+		timeinfo->tm_mday = m_day;
+		m_timenum = mktime(timeinfo);
+		m_isOk = true;
+		return *this;
+	}
+
+	bool operator==(const ExifDate &exifDate) {
+		if (m_day != exifDate.m_day) return false;
+		if (m_month != exifDate.m_month) return false;
+		if (m_year != exifDate.m_year) return false;
+		return true;
+	}
+
+	
+	virtual ~ExifDate();
+
+	std::string toString();
+	std::string toFileString();
+	void now();
+
+	int getDay() const {
+		return m_day;
+	}
+
+	int getMonth() const {
+		return m_month;
+	}
+
+	int getYear() const {
+		return m_year;
+	}
+
+	bool isOk() const {
+		return m_isOk;
+	}
+
+	time_t getTime() const {
+		return m_timenum;
+	}
+
+};
+
+} /* namespace simplearchive */
+#endif /* EXIFDATE_H_ */
