@@ -22,6 +22,7 @@
 #include "MirrorManager.h"
 #include "ViewManager.h"
 #include "Database.h"
+#include "SummaryFile.h"
 
 #ifdef _WIN32
 #pragma comment(lib, "ws2_32.lib")
@@ -66,9 +67,7 @@ bool App::initalise(int argc, char **argv) {
 bool App::Run()
 {
 
-	if (MirrorManager::initalise("/home/wzw7yn/test", "/home/wzw7yn/mirror.conf") == false) {
-		return false;
-	}
+	
 
 	CAppConfig &config = CAppConfig::get();
 	AppOptions &appOptions = AppOptions::get();
@@ -82,11 +81,14 @@ bool App::Run()
 	//ChangeLog::setLogPath(config.getHistoryPath());
 
 	CLogger &logger = CLogger::getLogger();
-
+	SummaryFile::setPath(config.getHistoryPath());
+	SummaryFile &summaryFile = SummaryFile::getSummaryFile();
+	
 	/* Logging started */
 
 	CIDKDate date;
 	date.Now();
+	summaryFile.log(SummaryFile::SF_BRIEF, SummaryFile::SF_COMMENT, "Summary start %s", date.Print().c_str());
 	logger.log(CLogger::INFO, "=== Application starting at %s ===", date.Print().c_str());
 	logger.log(CLogger::INFO, "Home path is \"%s\"", config.getHomePath());
 
@@ -154,13 +156,17 @@ bool App::Run()
 	if (m_ArchiveBuilder.Init() == false) {
 		return false;
 	}
-
+	if (MirrorManager::initalise(config.getArchivePath(), config.getConfigPath()) == false) {
+		return false;
+	}
+	if (ViewManager::initalise(config.getArchivePath(), config.getConfigPath()) == false) {
+		return false;
+	}
 	Database &db = Database::getInstance();
 
 	if (db.open(DB, "", "") == false) {
 		printf("database open returned %s", db.getError());
 	}
-
 
 	logger.log(CLogger::INFO, "+++ Initalisation complete +++");
 	// C:\output\2014\2014-6-3
@@ -176,23 +182,42 @@ bool App::Run()
 		break;
 	case AppOptions::CM_View:
 	{
-		ViewManager viewManager;
+		
 		std::string name = appOptions.getName();
+		/*
 		if (name.compare("Master") == 0) {
 			viewManager.initaliseMaster(config.getArchivePath(), config.getMasterViewPath());
-			if (viewManager.processMaster() == false) {
-				return false;
-			}
+			//if (viewManager.processMaster() == false) {
+			//	return false;
+			//}
 		}
 		else {
-
-			if (viewManager.initalise(config.getArchivePath(), config.getConfigPath()) == false) {
-				return false;
-			}
+		*/
+			ViewManager viewManager;
 			if (viewManager.process() == false) {
 				return false;
 			}
+		//}
+		break;
+	}
+	case AppOptions::CM_Mirror:
+	{
+
+		std::string name = appOptions.getName();
+		/*
+		if (name.compare("Master") == 0) {
+		viewManager.initaliseMaster(config.getArchivePath(), config.getMasterViewPath());
+		//if (viewManager.processMaster() == false) {
+		//	return false;
+		//}
 		}
+		else {
+		*/
+		MirrorManager mirrorManager;
+		if (mirrorManager.mirror() == false) {
+			return false;
+		}
+		//}
 		break;
 	}
 	case AppOptions::CM_Uncheckin:
@@ -220,6 +245,7 @@ bool App::Run()
 	//m_ArchiveBuilder.checkin("/2014/2014-6-3/GB-wp6.jpg", "Some changes");
 	date.Now();
 	logger.log(CLogger::INFO, "+++ Application completed successfully at %s +++", date.Print().c_str());
+	summaryFile.log(SummaryFile::SF_BRIEF, SummaryFile::SF_COMMENT, "Summary start");
 	return true;
 }
 

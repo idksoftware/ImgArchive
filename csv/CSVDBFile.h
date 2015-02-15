@@ -24,6 +24,8 @@ namespace simplearchive {
 class ImageInfo {
 	int m_idx;
 	std::string m_imagePath;
+	std::string m_shortImagePath;
+	std::string m_name;
 	unsigned long m_crc;
 	std::string m_md5;
 	std::string m_uuid;
@@ -32,13 +34,15 @@ class ImageInfo {
 	ExifDate m_dateArchived;
 
 public:
-	ImageInfo(int idx, const char *imagePath, unsigned long size, unsigned long crc,
+	ImageInfo(int idx, const char *imagePath, const char *name, unsigned long size, unsigned long crc,
 			const char *md5, const char *uuid, int version, ExifDate &date);
 	~ImageInfo();
 	unsigned long getCrc() const;
 	const ExifDate& getDate() const;
 	int getIdx() const;
 	const std::string& getImagePath() const;
+	const std::string& getShortImagePath() const;
+	const std::string& getName() const;
 	const std::string& getMd5() const;
 	unsigned long getSize() const;
 	const std::string& getUuid() const;
@@ -52,7 +56,7 @@ class CSVDBFile {
 public:
 	CSVDBFile(const char *path);
 	virtual ~CSVDBFile();
-	bool insert(int idx, const char *imagePath, unsigned long size, unsigned long crc,
+	bool insert(int idx, const char *imagePath, const char *name, unsigned long size, unsigned long crc,
 						const char *md5, const char *uuid, int version, ExifDate &date);
 	const char* findPath(unsigned int idx);
 	unsigned long findSize(unsigned int idx);
@@ -60,6 +64,7 @@ public:
 	int getNextIndex(int current);
 	int getMaxIndex();
 	std::auto_ptr<ImageInfo> getItemAt(int idx);
+	static std::string getYear(const char *path);
 };
 
 } /* namespace simplearchive */

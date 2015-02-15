@@ -16,11 +16,15 @@
 
 namespace simplearchive {
 
-ImageInfo::ImageInfo(int idx, const char *imagePath, unsigned long size, unsigned long crc,
+ImageInfo::ImageInfo(int idx, const char *imagePath, const char *name, unsigned long size, unsigned long crc,
 						const char *md5, const char *uuid, int version, ExifDate &date)
 {
 	m_idx = idx;
-	m_imagePath = imagePath;
+	m_shortImagePath = imagePath;
+	m_imagePath = CSVDBFile::getYear(imagePath);
+	m_imagePath += '/';
+	m_imagePath += imagePath;
+	m_name = name;
 	m_crc = crc;
 	m_size = size;
 	m_md5 = md5;
@@ -31,6 +35,11 @@ ImageInfo::ImageInfo(int idx, const char *imagePath, unsigned long size, unsigne
 
 ImageInfo::~ImageInfo() {
 	//printf("ImageInfo deleted\n");
+}
+
+std::string CSVDBFile::getYear(const char *path) {
+	std::string fpath = path;
+	return fpath.substr(0, 4);
 }
 
 CSVDBFile::CSVDBFile(const char *path) {
@@ -44,6 +53,7 @@ CSVDBFile::~CSVDBFile() {
 class IdxFileItem {
 	int m_idx;
 	std::string m_imagePath;
+	std::string m_name;
 	unsigned long m_crc;
 	std::string m_md5;
 	std::string m_uuid;
@@ -60,28 +70,31 @@ public:
 		int delim5 = data.find_first_of(":", delim4+1);
 		int delim6 = data.find_first_of(":", delim5+1);
 		int delim7 = data.find_first_of(":", delim6+1);
+		int delim8 = data.find_first_of(":", delim7+1);
 		std::string idxStr = data.substr(0,delim1);
 
 		//m_idx = strtol(idxStr.c_str(), NULL, 16);
 		m_idx = strtol(idxStr.c_str(), 0, 10);
 		m_imagePath = data.substr(delim1+1, delim2-(delim1+1));
-		std::string tmp = data.substr(delim2+1, delim3-(delim2+1));
+		m_name = data.substr(delim2+1, delim3-(delim2+1));
+		std::string tmp = data.substr(delim3+1, delim4-(delim3+1));
 		m_size = strtol(tmp.c_str(), 0, 10);
-		tmp = data.substr(delim3+1, delim4-(delim3+1));
+		tmp = data.substr(delim4+1, delim5-(delim4+1));
 		m_crc = strtol(tmp.c_str(), 0, 10);
-		m_md5 = data.substr(delim4+1, delim5-(delim4+1));
-		m_uuid = data.substr(delim5+1, delim6-(delim5+1));
-		tmp = data.substr(delim6+1, delim7-(delim6+1));
+		m_md5 = data.substr(delim5+1, delim6-(delim5+1));
+		m_uuid = data.substr(delim6+1, delim7-(delim6+1));
+		tmp = data.substr(delim7+1, delim8-(delim7+1));
 		m_version = strtol(tmp.c_str(), 0, 10);
-		tmp = data.substr(delim7+1, data.length());
+		tmp = data.substr(delim8+1, data.length());
 		ExifDate date(tmp.c_str());
 		m_dateArchived = date;
 
 	}
-	IdxFileItem(int idx, const char *imagePath, unsigned long size, unsigned long crc,
+	IdxFileItem(int idx, const char *imagePath, const char *name, unsigned long size, unsigned long crc,
 					const char *md5, const char *uuid, int version, ExifDate &date) {
 		m_idx = idx;
 		m_imagePath = imagePath;
+		m_name = name;
 		m_crc = crc;
 		m_size = size;
 		m_md5 = md5;
@@ -91,12 +104,9 @@ public:
 	}
 
 	std::auto_ptr<ImageInfo> getImageInfo() {
-		// ImageInfo(int idx, const char *imagePath, unsigned long size, unsigned long crc,
-		// const char *md5, const char *uuid, int version, CDate &date);
-		//
 
-		std::auto_ptr<ImageInfo> imageInfo(new ImageInfo(m_idx, m_imagePath.c_str(), m_size,
-										m_crc, m_md5.c_str(), m_uuid.c_str(), m_version, m_dateArchived));
+		std::auto_ptr<ImageInfo> imageInfo (new ImageInfo(m_idx, m_imagePath.c_str(),m_name.c_str(), m_crc,
+										m_size, m_md5.c_str(), m_uuid.c_str(), m_version, m_dateArchived));
 		return imageInfo;
 	}
 
@@ -115,9 +125,14 @@ public:
 	void setImagePath(const char *imagePath) {
 		m_imagePath = imagePath;
 	}
-	//std::string toString() {
-	//	std::string row(nameStr + ':' + m_imagePath);
-	//}
+
+	const std::string& getName() const {
+		return m_name;
+	}
+
+	void setName(const std::string& name) {
+		m_name = name;
+	}
 
 	unsigned long getSize() const {
 		return m_size;
@@ -146,12 +161,14 @@ public:
 	ExifDate& getDateArchived() {
 		return m_dateArchived;
 	}
+
+
 };
 
 class IdxFile {
 	bool compare(std::string c1, std::string c2);
 	void sorted();
-	bool insert(int idx, const char *imagePath, unsigned long size,
+	bool insert(int idx, const char *imagePath, const char *name, unsigned long size,
 			unsigned long crc, const char *md5, const char *uuid, int version, ExifDate &date);
 	IdxFileItem *list[256];
 	int m_last;
@@ -165,14 +182,14 @@ public:
 	virtual ~IdxFile() {};
 	bool read(const char *datafile);
 	bool write(const char *datafile);
-	bool update(int idx, const char *imagePath, unsigned long size, unsigned long crc,
+	bool update(int idx, const char *imagePath, const char *name, unsigned long size, unsigned long crc,
 			const char *md5, const char *uuid, int version, ExifDate &date);
 	IdxFileItem *find(int idx);
 	int findLast();
 
 };
 
-bool CSVDBFile::insert(int idx, const char *imagePath, unsigned long size, unsigned long crc,
+bool CSVDBFile::insert(int idx, const char *imagePath, const char *name, unsigned long size, unsigned long crc,
 		const char *md5, const char *uuid, int version, ExifDate &date) {
 
 	char tmppath[10];
@@ -204,7 +221,14 @@ bool CSVDBFile::insert(int idx, const char *imagePath, unsigned long size, unsig
 		}
 
 	}
-	if (idxFile.update(idx, imagePath, size, crc, md5, uuid, version, date) == false) {
+
+	std::string imagepath = imagePath;
+	int pos = imagepath.find_first_of('/');
+	if (pos == std::string::npos) {
+		return false;
+	}
+	imagepath = imagepath.substr(5, imagepath.length() - 5);
+	if (idxFile.update(idx, imagepath.c_str(), name, size, crc, md5, uuid, version, date) == false) {
 		return false;
 	}
 	if (idxFile.write(path.c_str()) == false) {
@@ -358,7 +382,7 @@ std::auto_ptr<ImageInfo> CSVDBFile::getItemAt(int idx) {
 }
 
 unsigned long CSVDBFile::findSize(unsigned int idx) {
-	char tmppath[5];
+	char tmppath[10];
 
 	m_data[0] = (unsigned int)idx & 0xFF;
 	m_data[1] = (unsigned int)(idx >> 8) & 0xFFF;
@@ -397,7 +421,7 @@ unsigned long CSVDBFile::findSize(unsigned int idx) {
 }
 
 const char* CSVDBFile::findPath(unsigned int idx) {
-	char tmppath[5];
+	char tmppath[10];
 
 	m_data[0] = (unsigned int)idx & 0xFF;
 	m_data[1] = (unsigned int)(idx >> 8) & 0xFFF;
@@ -436,14 +460,14 @@ const char* CSVDBFile::findPath(unsigned int idx) {
 }
 
 bool IdxFile::read(const char *datafile) {
-	char text[256];
+	char text[2 * 1012];
 	m_last = -1;
 	std::ifstream file(datafile);
 	if (file.is_open() == false) {
 		return false;
 	}
 
-	while (file.getline(text, 255)) {
+	while (file.getline(text, 2 * 1012)) {
 		IdxFileItem *item = new IdxFileItem(text);
 		int fullidx = item->getIdx();
 		int fileidx = (unsigned int)fullidx & 0xFF;
@@ -474,7 +498,7 @@ bool IdxFile::write(const char *datafile) {
 		ExifDate &date = item->getDateArchived();
 		std::string dateStr = date.toString();
 		std::stringstream str;
-		str << item->getIdx() << ':' << item->getImagePath() << ':'
+		str << item->getIdx() << ':' << item->getImagePath() << ':' << item->getName() << ':'
 				<< item->getSize() << ':' << item->getCrc() << ':'
 				<< item->getMd5() << ':' << item->getUuid() << ':'
 				<< item->getVersion() << ':' << dateStr.c_str() << '\n';
@@ -486,21 +510,21 @@ bool IdxFile::write(const char *datafile) {
 	file.close();
 	return true;
 }
-bool IdxFile::update(int idx, const char *imagePath, unsigned long size, unsigned long crc,
+bool IdxFile::update(int idx, const char *imagePath, const char *name, unsigned long size, unsigned long crc,
 		const char *md5, const char *uuid, int version, ExifDate &date) {
 	IdxFileItem *idxItem = 0;
 	if ((idxItem = find(idx)) != 0) {
 		idxItem->setImagePath(imagePath);
 	}
-	insert(idx, imagePath, size, crc, md5, uuid, version, date);
+	insert(idx, imagePath, name, size, crc, md5, uuid, version, date);
 	return true;
 }
 
 
-bool IdxFile::insert(int idx, const char *imagePath, unsigned long size, unsigned long crc,
+bool IdxFile::insert(int idx, const char *imagePath, const char *name, unsigned long size, unsigned long crc,
 		const char *md5, const char *uuid, int version, ExifDate &date) {
 
-	IdxFileItem *item = new IdxFileItem(idx, imagePath, size, crc, md5, uuid, version, date);
+	IdxFileItem *item = new IdxFileItem(idx, imagePath, name, size, crc, md5, uuid, version, date);
 	int fullidx = item->getIdx();
 	int posIdx = (unsigned int)fullidx & 0xFF;
 	if (posIdx < 0 || posIdx > 255) {
@@ -546,10 +570,16 @@ int ImageInfo::getIdx() const {
 	return m_idx;
 }
 
+const std::string& ImageInfo::getShortImagePath() const {
+	return m_shortImagePath;
+}
+
 const std::string& ImageInfo::getImagePath() const {
 	return m_imagePath;
 }
-
+const std::string& ImageInfo::getName() const {
+	return m_name;
+}
 const std::string& ImageInfo::getMd5() const {
 	return m_md5;
 }
