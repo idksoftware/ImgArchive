@@ -2,8 +2,8 @@
 #include "ConfigReader.h"
 #include "ExifDateTime.h"
 
-#define HOOK_SCRIPTS_PATH       "HookScripsPath"
-#define CONFIG_PATH				"ConfigPath"
+#define HOOK_SCRIPTS_PATH       "HookScripsPath" /*< Path to hook scripts */
+#define CONFIG_PATH		"ConfigPath"	 /*< Main configuration path */ 
 #define TOOLS_PATH           	"ToolsPath"
 #define TEMP_PATH           	"TempPath"
 #define SOURCE_PATH         	"SourcePath"
