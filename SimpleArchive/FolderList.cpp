@@ -262,15 +262,17 @@ bool FolderList::addDayFolder(const char *folderName) {
 
 bool FolderList::incFolders(const char *folderName) {
 	std::string path = m_archivePath;
-	path += "/.sia/chdsk";
+	path += "/.sia/catalog";
 	if (SAUtils::DirExists(path.c_str()) == false) {
-		throw std::exception();
+		if (SAUtils::mkDir(path.c_str()) == false) {
+			throw std::exception();
+		}
     }
 	std::string fpath = path;
 	fpath += "/fdata.csv";
 
     if (SAUtils::FileExists(path.c_str()) == false) {
-    	throw std::exception();
+		throw std::exception();
     }
     FileDataContainer fileDataContainer;
     fileDataContainer.read(fpath.c_str());
@@ -283,11 +285,15 @@ bool FolderList::incFiles(const char *folderName) {
 	std::string path = m_archivePath;
 	path += "/.sia";
 	if (SAUtils::DirExists(path.c_str()) == false) {
-		throw std::exception();
+		if (SAUtils::mkDir(path.c_str()) == false) {
+			throw std::exception();
+		}
 	}
-	path += "/chdsk";
+	path += "/catalog";
 	if (SAUtils::DirExists(path.c_str()) == false) {
-		throw std::exception();
+		if (SAUtils::mkDir(path.c_str()) == false) {
+			throw std::exception();
+		}
     }
 	std::string fpath = path;
 	fpath += "/fdata.csv";
@@ -306,7 +312,7 @@ bool FolderList::incFiles(const char *folderName) {
 
 bool FolderList::makeXML() {
 	std::string path = m_archivePath;
-	path += "/.sia/chdsk";
+	path += "/.sia/catalog";
 	if (SAUtils::DirExists(path.c_str()) == false) {
 		if (SAUtils::mkDir(path.c_str()) == false) {
 			throw std::exception();
@@ -423,7 +429,7 @@ bool FolderList::makeList() {
 	filexml.close();
 	return true;
 	/*
-	std::string path = targetdir + std::string("/.sia/chdsk");
+	std::string path = targetdir + std::string("/.sia/catalog");
 	if (SAUtils::DirExists(path.c_str()) == false) {
 		if (SAUtils::mkDir(path.c_str()) == false) {
 			throw std::exception();

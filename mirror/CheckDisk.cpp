@@ -15,6 +15,8 @@
 #include <cstdlib>
 #include <sstream>
 #include <time.h>
+#include "CIDKCrc.h"
+#include "md5.h"
 
 namespace simplearchive {
 /*
@@ -601,8 +603,7 @@ bool CheckDisk::makeXML(const char *targetdir) {
 }
 
 bool CheckDisk::update(const char *targetdir, const char *targetfile) {
-
-/*
+	/*
 	std::string targetStr = targetdir;
 	std::string yearStr = targetStr.substr(0,4);
 	std::string path = m_archivePath + '/' + yearStr + '/';
@@ -626,7 +627,7 @@ bool CheckDisk::update(const char *targetdir, const char *targetfile) {
 	if (makeXML(path.c_str()) == false) {
 		return false;
 	}
-*/
+	*/
 	return true;
 }
 

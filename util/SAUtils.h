@@ -12,6 +12,13 @@
 #include <string>
 #include <vector>
 
+#ifdef WIN32
+
+#define unlink _unlink
+
+#endif
+
+
 class SAUtils {
 public:
 	SAUtils();
