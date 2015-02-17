@@ -34,9 +34,16 @@ bool ImageLock::lock(const char *filename) {
 	if (SAUtils::FileExists(filelockname.c_str()) == true) {
 		return false; // already locked
 	}
-
+#ifdef WIN32
+	errno_t err;
+	FILE *source;
+	fopen_s(&source, filelockname.c_str(), "w");
+	if (err != 0) {
+		return false;
+	}
+#else
 	FILE *source = fopen(filelockname.c_str(), "w");
-
+#endif
 	fclose(source);
 	return true;
 }
@@ -47,7 +54,11 @@ bool ImageLock::unlock(const char *filename) {
 	if (SAUtils::FileExists(filelockname.c_str()) == false) {
 			return false; // already locked
 	}
+#ifdef WIN32
+	_unlink(filelockname.c_str());
+#else
 	unlink(filelockname.c_str());
+#endif
 	return true;
 }
 
