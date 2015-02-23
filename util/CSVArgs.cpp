@@ -9,9 +9,8 @@
 
 namespace simplearchive {
 
-CSVArgs::CSVArgs() {
-	// TODO Auto-generated constructor stub
-
+CSVArgs::CSVArgs(char delim) {
+	m_delim = delim;
 }
 
 CSVArgs::~CSVArgs() {
@@ -28,7 +27,7 @@ bool CSVArgs::process(const char *dataString) {
 	unsigned int commaCounter = 0;
 	for (unsigned int i = 0; i < data.size(); i++) {
 		char c = data[i];
-		if (c == ',') {
+		if (c == m_delim) {
 			push_back("");
 			commaCounter++;
 		} else {

@@ -13,9 +13,9 @@
 namespace simplearchive {
 
 class CSVArgs : public std::vector<std::string> {
-
+	char m_delim;
 public:
-	CSVArgs();
+	CSVArgs(char delim);
 	virtual ~CSVArgs();
 	bool process(const char *dataString);
 };

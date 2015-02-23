@@ -13,6 +13,7 @@
 #include <streambuf>
 #include "SAUtils.h"
 #include "CSVDBFile.h"
+#include "CSVArgs.h"
 
 namespace simplearchive {
 
@@ -62,31 +63,21 @@ class IdxFileItem {
 	ExifDate m_dateArchived;
 public:
 	IdxFileItem(const char *text) {
-		std::string data = text;
-		int delim1 = data.find_first_of(':');
-		int delim2 = data.find_first_of(":", delim1+1);
-		int delim3 = data.find_first_of(":", delim2+1);
-		int delim4 = data.find_first_of(":", delim3+1);
-		int delim5 = data.find_first_of(":", delim4+1);
-		int delim6 = data.find_first_of(":", delim5+1);
-		int delim7 = data.find_first_of(":", delim6+1);
-		int delim8 = data.find_first_of(":", delim7+1);
-		std::string idxStr = data.substr(0,delim1);
+		CSVArgs csvArgs(':');
+		csvArgs.process(text);
+		std::string idxStr = csvArgs.at(0);
 
 		//m_idx = strtol(idxStr.c_str(), NULL, 16);
-		m_idx = strtol(idxStr.c_str(), 0, 10);
-		m_imagePath = data.substr(delim1+1, delim2-(delim1+1));
-		m_name = data.substr(delim2+1, delim3-(delim2+1));
-		std::string tmp = data.substr(delim3+1, delim4-(delim3+1));
-		m_size = strtol(tmp.c_str(), 0, 10);
-		tmp = data.substr(delim4+1, delim5-(delim4+1));
-		m_crc = strtol(tmp.c_str(), 0, 10);
-		m_md5 = data.substr(delim5+1, delim6-(delim5+1));
-		m_uuid = data.substr(delim6+1, delim7-(delim6+1));
-		tmp = data.substr(delim7+1, delim8-(delim7+1));
-		m_version = strtol(tmp.c_str(), 0, 10);
-		tmp = data.substr(delim8+1, data.length());
-		ExifDate date(tmp.c_str());
+		m_idx = strtol(csvArgs.at(1).c_str(), 0, 10);
+		m_imagePath = csvArgs.at(2);
+		m_name = csvArgs.at(3);
+		m_size = strtol(csvArgs.at(4).c_str(), 0, 10);
+		m_crc = strtol(csvArgs.at(5).c_str(), 0, 10);
+		m_md5 = csvArgs.at(6);
+		m_uuid = csvArgs.at(7);
+		m_version = strtol(csvArgs.at(8).c_str(), 0, 10);
+		std::string dateStr = csvArgs.at(9);
+		ExifDate date(csvArgs.at(9).c_str());
 		m_dateArchived = date;
 
 	}
@@ -496,7 +487,7 @@ bool IdxFile::write(const char *datafile) {
 
 		//file << std::hex  << item->getIdx() << ':' << item->getImagePath() + '\n';
 		ExifDate &date = item->getDateArchived();
-		std::string dateStr = date.toString();
+		std::string dateStr = date.toFileString();
 		std::stringstream str;
 		str << item->getIdx() << ':' << item->getImagePath() << ':' << item->getName() << ':'
 				<< item->getSize() << ':' << item->getCrc() << ':'

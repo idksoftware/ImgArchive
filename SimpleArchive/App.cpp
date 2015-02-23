@@ -23,6 +23,7 @@
 #include "ViewManager.h"
 #include "Database.h"
 #include "SummaryFile.h"
+#include "IntegrityManager.h"
 
 #ifdef _WIN32
 #pragma comment(lib, "ws2_32.lib")
@@ -215,6 +216,17 @@ bool App::Run()
 		*/
 		MirrorManager mirrorManager;
 		if (mirrorManager.mirror() == false) {
+			return false;
+		}
+		//}
+		break;
+	}
+	case AppOptions::CM_Validate:
+	{
+		
+		IntegrityManager &integrityManager = IntegrityManager::get(config.getArchivePath());
+		
+		if (integrityManager.makeList() == false) {
 			return false;
 		}
 		//}

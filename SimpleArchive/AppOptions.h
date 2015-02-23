@@ -23,6 +23,7 @@ public:
 		CM_Mirror,
 		CM_Uncheckin,
 		CM_Archive,
+		CM_Validate,
 		CM_Unknown
 	} CommandMode;
 private:

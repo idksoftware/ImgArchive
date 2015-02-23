@@ -12,6 +12,7 @@
 #include <sstream>
 #include <cstdlib>
 #include "FolderList.h"
+
 #include "SAUtils.h"
 
 namespace simplearchive {
@@ -262,7 +263,7 @@ bool FolderList::addDayFolder(const char *folderName) {
 
 bool FolderList::incFolders(const char *folderName) {
 	std::string path = m_archivePath;
-	path += "/.sia/catalog";
+	path += "/.sia/chdsk";
 	if (SAUtils::DirExists(path.c_str()) == false) {
 		if (SAUtils::mkDir(path.c_str()) == false) {
 			throw std::exception();
@@ -289,7 +290,7 @@ bool FolderList::incFiles(const char *folderName) {
 			throw std::exception();
 		}
 	}
-	path += "/catalog";
+	path += "/chdsk";
 	if (SAUtils::DirExists(path.c_str()) == false) {
 		if (SAUtils::mkDir(path.c_str()) == false) {
 			throw std::exception();
@@ -312,7 +313,7 @@ bool FolderList::incFiles(const char *folderName) {
 
 bool FolderList::makeXML() {
 	std::string path = m_archivePath;
-	path += "/.sia/catalog";
+	path += "/.sia/chdsk";
 	if (SAUtils::DirExists(path.c_str()) == false) {
 		if (SAUtils::mkDir(path.c_str()) == false) {
 			throw std::exception();
@@ -334,7 +335,7 @@ bool FolderList::makeXML() {
 	fileDataContainer.read(fpathcsv.c_str());
 
 	filexml <<	"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-					<<	"<Catalog ordering=\"date\" >\n";
+					<<	"<CheckDisk ordering=\"date\" >\n";
 	std::string currYear;
 	bool first = true;
 	for (std::vector<FolderFile>::iterator i = fileDataContainer.begin(); i != fileDataContainer.end(); i++) {
@@ -351,7 +352,7 @@ bool FolderList::makeXML() {
 			filexml <<	"\t<YearFolder Name=\"" << data.getYear() << "\" >\n";
 
 		}
-		std::string filepath = currYear + "/" + data.getFolderName() + "/.sia/catalog/fdata.xml";
+		std::string filepath = currYear + "/" + data.getFolderName() + "/.sia/chdsk/fdata.xml";
 		//printf("folder: %s \n", name->c_str());
 		filexml <<	"\t\t<DayFolder Name=\"" << data.getFolderName() << "\" "
 				"Files=\"" << data.getNFiles() << "\""
@@ -363,14 +364,14 @@ bool FolderList::makeXML() {
 
 	}
 	filexml <<	"\t</YearFolder>\n";
-	filexml <<	"</Catalog>\n";
+	filexml <<	"</CheckDisk>\n";
 	filexml.close();
 
 	return true;
 }
 
 bool FolderList::makeList() {
-	std::string path = m_archivePath + std::string("/.sia/catalog");
+	std::string path = m_archivePath + std::string("/.sia/chdsk");
 	if (SAUtils::DirExists(path.c_str()) == false) {
 		if (SAUtils::mkDir(path.c_str()) == false) {
 			throw std::exception();
@@ -408,7 +409,7 @@ bool FolderList::makeList() {
 
 		for (std::vector<std::string *>::iterator i = dayList->begin(); i != dayList->end(); i++) {
 			std::string *name = *i;
-			std::string filepath = *year + "/" + *name + "/.sia/catalog/fdata.xml";
+			std::string filepath = *year + "/" + *name + "/.sia/chdsk/fdata.xml";
 
 			char c = (*name)[0];
 			if (c == '.' ) {
@@ -429,7 +430,7 @@ bool FolderList::makeList() {
 	filexml.close();
 	return true;
 	/*
-	std::string path = targetdir + std::string("/.sia/catalog");
+	std::string path = targetdir + std::string("/.sia/chdsk");
 	if (SAUtils::DirExists(path.c_str()) == false) {
 		if (SAUtils::mkDir(path.c_str()) == false) {
 			throw std::exception();

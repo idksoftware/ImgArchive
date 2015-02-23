@@ -17,6 +17,7 @@
 #include <time.h>
 #include "CIDKCrc.h"
 #include "md5.h"
+#include "CLogger.h"
 
 namespace simplearchive {
 /*
@@ -39,12 +40,12 @@ public:
 	} Status;
 private:
 	std::string m_name;
-	int m_crc;
+	unsigned int m_crc;
 	std::string m_md5;
 	Status m_status;
 	time_t m_created;
 	time_t m_modified;
-	int m_size;
+	unsigned int m_size;
 public:
 	CkdskData(){
 		m_size = -1;
@@ -65,25 +66,57 @@ public:
 		int delim5 = data.find_first_of(":", delim4+1);
 
 		std::string sizeStr = data.substr(0,delim1);
-		m_size = strtol(sizeStr.c_str(),NULL,16);
+		m_size = (unsigned int)strtol(sizeStr.c_str(),NULL,10);
 
 		std::string crcStr = data.substr(delim1+1, delim2-(delim1+1));
-		m_crc = strtol(crcStr.c_str(),NULL,16);
+		m_crc = std::strtoul(crcStr.c_str(), NULL, 10);
 
 		m_md5 = data.substr(delim2+1, delim3-(delim2+1));
 
 		std::string m_createdStr = data.substr(delim3+1, delim4-(delim3+1));
-		m_created = strtol(crcStr.c_str(),NULL,16);
+		m_created = strtol(crcStr.c_str(),NULL,10);
 
 		std::string m_modifiedStr = data.substr(delim4+1, delim5-(delim4+1));
-		m_modified = strtol(m_modifiedStr.c_str(),NULL,16);
+		m_modified = strtol(m_modifiedStr.c_str(),NULL,10);
 
 		m_name = data.substr(delim5+1, data.length());
 	}
 
+	CkdskData(const char *filepath, const char *name) {
+		unsigned long size = 0;
+		CLogger &logger = CLogger::getLogger();
+		if (SAUtils::fileSize(filepath, &size) == false) {
+			// Log error
+		}
+		unsigned int crc;
+		unsigned int created;
+		unsigned int modified;
+		std::string md5Str;
 
+		logger.log(CLogger::INFO, "Image: %s", filepath);
+		std::string buf = SAUtils::getFileContents(filepath);
+		MD5 md5(buf);
+		md5Str = md5.hexdigest();
+		logger.log(CLogger::INFO, "MD5 of image: %s is %s", filepath, md5Str.c_str());
+
+		CIDKCrc Crc;
+		logger.log(CLogger::INFO, "Size of image: %s is %d", filepath, size);
+		crc = Crc.crc((unsigned char *)buf.c_str(), size);
+		logger.log(CLogger::INFO, "CRC from image: %s is %x", filepath, crc);
+
+		created = SAUtils::createTime(filepath);
+		//logger.log(CLogger::INFO, "Create time of image: %s", created.toLogString().c_str());
+		modified = SAUtils::modTime(filepath);
+		// test old
+
+		init(name, size, crc, md5Str.c_str(), created, modified);
+	}
 
 	CkdskData(const char *name, int size, int crc, const char *md5, time_t created, time_t modified) {
+		init(name, size, crc, md5, created, modified);
+	}
+
+	void init(const char *name, int size, int crc, const char *md5, time_t created, time_t modified) {
 		m_name = name;
 		m_size = size;
 		m_crc = crc;
@@ -126,7 +159,7 @@ public:
 	}
 
 
-	bool match(const char *name, int crc, const char *md5) {
+	bool match(const char *name, unsigned int crc, const char *md5) {
 		bool n = false;
 		bool c = false;
 		bool m = false;
@@ -167,11 +200,11 @@ public:
 
 	bool add(const char *name, int crc, const char *md5);
 
-	int getCrc() const {
+	unsigned int getCrc() const {
 		return m_crc;
 	}
 
-	void setCrc(int crc) {
+	void setCrc(unsigned int crc) {
 		this->m_crc = crc;
 	}
 
@@ -373,8 +406,8 @@ public:
 
 	bool read(const char *datafile);
 	bool write(const char *datafile);
-	bool add(const char *name);
-	int find(int crc, const char *md5, const char *datafile);
+	bool add(const char *filepath, const char *name);
+	int find(unsigned int crc, const char *md5, const char *datafile);
 	CkdskData *findFile(const char *filename);
 };
 
@@ -412,16 +445,37 @@ bool CkdskDiffFile::write(const char *datafile) {
 	return true;
 }
 
-bool CkdskDiffFile::add(const char *name) {
+bool CkdskDiffFile::add(const char *filepath, const char *name) {
 	CkdskData *ckdskData = 0;
 	if ((ckdskData = findFile(name)) == 0) {
-		// new
-		// test old
-		long int size = 12346;
+		CLogger &logger = CLogger::getLogger();
+		long int size;
 		long int crc;
 		time_t created;
 		time_t modified;
-		const char *md5 = "4f794af4633152a8798c1cf654f67";
+		const char *md5;
+		CIDKCrc Crc;
+		/*
+		m_path = path;
+		//m_name = splitName(m_path);
+		logger.log(CLogger::INFO, "Image: %s", m_path.c_str());
+		std::string buf = SAUtils::getFileContents(path.c_str());
+		MD5 md5(buf);
+		m_md5 = md5.hexdigest();
+		logger.log(CLogger::INFO, "MD5 of image: %s is %s", path.c_str(), m_md5.c_str());
+		CIDKUuid uuid;
+		m_uuid = uuid.GetUuid();
+		logger.log(CLogger::INFO, "UUID of image: %s is %s", path.c_str(), m_uuid.c_str());
+		m_size = buf.length();
+		logger.log(CLogger::INFO, "Size of image: %s is %d", path.c_str(), m_size);
+		m_crc = Crc.crc((unsigned char *)buf.c_str(), m_size);
+		logger.log(CLogger::INFO, "CRC from image: %s is %x", path.c_str(), m_crc);
+
+		m_createTime = SAUtils::createTime(path.c_str());
+		logger.log(CLogger::INFO, "Create time of image: %s", m_createTime.toLogString().c_str());
+		m_modTime = SAUtils::modTime(path.c_str());
+		// test old
+		*/
 		time((time_t *)&crc);
 		time(&created);
 		time(&modified);
@@ -443,7 +497,7 @@ CkdskData *CkdskDiffFile::findFile(const char *filename) {
 	return 0;
 }
 
-int CkdskDiffFile::find(int crc, const char *md5, const char *datafile) {
+int CkdskDiffFile::find(unsigned int crc, const char *md5, const char *datafile) {
 	std::map<std::string, CkdskData>::iterator it;
 
 	if ((it = m_data->find(datafile)) == m_data->end()) {
@@ -451,8 +505,6 @@ int CkdskDiffFile::find(int crc, const char *md5, const char *datafile) {
 	}
 	CkdskData value = it->second;
 	if (value.match(datafile, crc, md5) == true) {
-		// temp for testing
-		value.setStatus(CkdskData::Unchanged);
 		return true;
 	}
 	return false;
@@ -468,13 +520,20 @@ CheckDisk::~CheckDisk() {}
 
 bool CheckDisk::makeCheckData(const char *targetdir) {
 
-	std::string path = targetdir + std::string("/.chdsk");
+	std::string path = targetdir + std::string("/.sia");
+	if (SAUtils::DirExists(path.c_str()) == false) {
+		if (SAUtils::mkDir(path.c_str()) == false) {
+			throw std::exception();
+		}
+	}
+	path += std::string("/chkdsk");
 	if (SAUtils::DirExists(path.c_str()) == false) {
 		if (SAUtils::mkDir(path.c_str()) == false) {
 			throw std::exception();
 		}
 	}
 	return makeCheckData(targetdir, path.c_str());
+	
 }
 
 
@@ -524,6 +583,7 @@ bool CheckDisk::makeCheckData(const char *targetdir, const char *savefolder) {
 	dir.close();
 
 	for (std::vector<std::string *>::iterator i = filelist->begin(); i != filelist->end(); i++) {
+		
 		std::string *name = *i;
 		std::string filepath = targetdirStr + "/" + *name;
 		char c = (*name)[0];
@@ -531,29 +591,21 @@ bool CheckDisk::makeCheckData(const char *targetdir, const char *savefolder) {
 			continue;
 		}
 		if (SAUtils::IsFile(filepath.c_str()) == true) {
-			//printf("%s\n", name->c_str());
-			unsigned long size = 0;
-			if (SAUtils::fileSize(filepath.c_str(), &size) == false) {
-				// Log error
-			}
-			time_t crc;
-			time_t created;
-			time_t modified;
-			const char *md5 = "4f794af4633152a8798c1cf654f67";
-			time((time_t *)&crc);
-			time(&created);
-			time(&modified);
+			
+			
 			std::string f_name = *name;
-			CkdskData dskData( f_name.c_str(), size, crc, md5, created, modified);
+			CkdskData dskData(filepath.c_str(), f_name.c_str());
 			std::string line = dskData.toString();
 
 			filedat << line.c_str() << '\n';
 
 			filexml <<	"<File>\n"
 					<< writeTag("Name", name->c_str(), 1)
-					<< writeTag("Size", size, 1)
-					<< writeTag("CRC", crc, 1)
-					<< writeTag("Md5", md5, 1);
+					<< writeTag("Size", dskData.getSize(), 1)
+					<< writeTag("CRC", dskData.getCrc(), 1)
+					<< writeTag("Md5", dskData.getMd5().c_str(), 1)
+					<< writeTag("Modified", dskData.getModified(), 1);
+					
 			filexml <<	"</File>\n";
 
 
@@ -563,6 +615,10 @@ bool CheckDisk::makeCheckData(const char *targetdir, const char *savefolder) {
 	filexml <<	"</FileList>\n";
 	filexml.close();
 
+	// test only 
+	if (check(targetdir, savefolder) == false) {
+		return false;
+	}
 	return true;
 }
 
@@ -653,18 +709,28 @@ bool CheckDisk::check(const char *targetdir, const char *savedir) {
 	ckdskDiffFile.read(fpath.c_str());
 
 	bool errors = false;
-	int tmpcrc = 23;
+	
 
 	// Iterate round the files in the target folder
+	CLogger &logger = CLogger::getLogger();
 	std::string targetdirStr = targetdir;
 	for (std::vector<std::string *>::iterator i = filelist->begin(); i != filelist->end(); i++) {
 		std::string *name = *i;
 		std::string filepath = targetdirStr + "/" + *name;
 		if (SAUtils::IsFile(filepath.c_str()) == true) {
-			const char *md5 = "9c794af4633152a8798c1cf654f67";
-			if (ckdskDiffFile.find(tmpcrc++, md5, name->c_str()) == false) {
+			unsigned long size;
+			if (SAUtils::fileSize(filepath.c_str(), &size) == false) {
+				// Log error
+			}
+			CIDKCrc Crc;	
+			logger.log(CLogger::INFO, "Image: %s", filepath.c_str());
+			std::string buf = SAUtils::getFileContents(filepath.c_str());
+			MD5 md5(buf);
+			std::string md5Str = md5.hexdigest();
+			unsigned int crc = Crc.crc((unsigned char *)buf.c_str(), size);
+			if (ckdskDiffFile.find(crc, md5Str.c_str(), name->c_str()) == false) {
 				errors = true;
-				ckdskDiffFile.add(name->c_str());
+				ckdskDiffFile.add(filepath.c_str(), name->c_str());
 			}
 		}
 	}
@@ -689,7 +755,7 @@ std::string CheckDisk::writeTag(const char *tag, const std::string& value, int t
 	return xml.str();
 }
 
-std::string CheckDisk::writeTag(const char *tag, const int value, int tab) {
+std::string CheckDisk::writeTag(const char *tag, const unsigned int value, int tab) {
 	std::ostringstream xml;
 	for (int i = 0; i < tab; i++) {
 		xml << '\t';

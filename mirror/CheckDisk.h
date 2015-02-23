@@ -22,7 +22,7 @@ class CheckDisk {
         /// Helper function to print a tag into a XML file.  
 	std::string writeTag(const char *tag, const std::string& value, int tab);
         /// Helper function to print a tag into a XML file.
-	std::string writeTag(const char *tag, const int value, int tab);
+	std::string writeTag(const char *tag, const unsigned int value, int tab);
         /// The root archive path
 	//std::string m_archivePath;
         /// Make an XML file manifest in the target directory 

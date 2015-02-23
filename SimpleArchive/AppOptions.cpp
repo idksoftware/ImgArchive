@@ -117,6 +117,9 @@ bool AppOptions::initalise(int argc, char **argv) {
 	argvParser.defineOption("v", "View commands", ArgvParser::NoOptionAttribute);
 	argvParser.defineOptionAlternative("v", "view");
 
+	argvParser.defineOption("validate", "Validate commands", ArgvParser::NoOptionAttribute);
+	//argvParser.defineOptionAlternative("z", "");
+
 	argvParser.defineOption("m", "Mirror commands", ArgvParser::NoOptionAttribute);
 	argvParser.defineOptionAlternative("m", "mirror");
 
@@ -239,6 +242,17 @@ bool AppOptions::initalise(int argc, char **argv) {
 		}
 		
 		cmdFound = true;
+	}
+
+	else if (argvParser.foundOption("validate") == true) {
+		setCommandMode(AppOptions::CM_Validate);
+		cmdFound = true;
+		if (argvParser.foundOption("archive-path") == true) {
+
+			std::string opt = argvParser.optionValue("archive-path");
+			printf(opt.c_str()); printf("\n");
+			config.setArchivePath(opt.c_str());
+		}
 	}
 	else if (argvParser.foundOption("mirror") == true) {
 		setCommandMode(AppOptions::CM_Mirror);

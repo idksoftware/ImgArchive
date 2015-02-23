@@ -49,7 +49,8 @@ public:
 	static std::string to_string(int i);
 	static void sprintf(std::string &s, const std::string fmt, ...);
 	static bool makePath(const char *from, const char *to);
-	static bool SAUtils::makeLink(const char *file, const char *link);
+	static bool makeLink(const char *file, const char *link);
+	static std::string getFileContents(const char *filename);
 };
 
 

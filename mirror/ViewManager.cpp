@@ -13,6 +13,7 @@
 #include "CSVDBFile.h"
 #include "CLogger.h"
 #include <fstream>
+#include "CSVArgs.h"
 
 namespace simplearchive {
 
@@ -107,28 +108,6 @@ public:
 		m_archivePath = root;
 		m_error = false;
 		m_name = name;
-
-		std::string data = dataString;
-		int delim1 = std::string::npos;		// Mode (Direct/Indirect).
-		int delim2 = std::string::npos;	//
-		int delim3 = std::string::npos;
-		int delim4 = std::string::npos;
-		int delim5 = std::string::npos;
-		int delim6 = std::string::npos;
-		int delim7 = std::string::npos;
-
-		delim1 = data.find_first_of(",");			// Mode (Direct/Indirect).
-		delim2 = data.find_first_of(",", delim1+1);	//
-		delim3 = data.find_first_of(",", delim2+1);
-		delim4 = data.find_first_of(",", delim3+1);
-		if (delim4 != ((int)std::string::npos)) {
-			delim5 = data.find_first_of(",", delim4+1);
-		} else if (delim5 != std::string::npos) {
-			delim6 = data.find_first_of(",", delim5+1);
-		} else if (delim6 != std::string::npos) {
-			delim7 = data.find_first_of(",", delim6+1);
-		}
-
 		bool complete = false;
 
 		m_eMode = VM_SnapShot;
@@ -139,41 +118,26 @@ public:
 		std::string set = "all";
 		std::string access;
 
-		std::string mode = data.substr(0,delim1);			// pos 1
-		m_path = data.substr(delim1+1, (delim2-delim1)-1);	// pos 2
-		type = data.substr(delim2+1, (delim3-delim2)-1);	// pos 3
+		CSVArgs csvArgs(',');
+		csvArgs.process(dataString);
 
-		if (delim4 == std::string::npos) {
-			access = data.substr(delim3+1, data.length());													// pos 5
-			complete = true;
-		} else {
-			access = data.substr(delim3+1, (delim4-delim3)-1);							// pos 6 and end
+		std::string mode = csvArgs.at(0);
+		m_path = csvArgs.at(1);
+		type = csvArgs.at(2);
+		int size = csvArgs.size();
+		if (csvArgs.size() >= 4) {
+			access = csvArgs.at(3);
 		}
-		if (complete != true) {
-			if (delim5 == std::string::npos) {
-				set = data.substr(delim4+1, data.length());
-				complete = true;				// pos 5
-			} else {
-				set = data.substr(delim4+1, (delim5-delim4)-1);							// pos 6 and end
-			}
+		if (csvArgs.size() >= 5) {
+			set = csvArgs.at(4);
 		}
-		if (complete != true) {													// pos 7
-			if (delim6 == std::string::npos) {
-				m_opt1 = data.substr(delim5+1, data.length());
-				complete = true;												// pos 4
-			} else {
-				m_opt1 = data.substr(delim5+1, (delim6-delim5)-1);				// pos 4 and end
-			}
+		if (csvArgs.size() >= 6) {
+			m_opt1 = csvArgs.at(5);
 		}
-		if (complete != true) {
-			if (delim7 != std::string::npos) {
-				m_opt2 = data.substr(delim7+1, data.length());												// pos 5
-			} else if (complete != true) {
-				m_opt2 = data.substr(delim6+1, (delim7-delim6)-1);
-				m_opt3 = data.substr(delim6+1, data.length());								// pos 5 and end
-			}
+		if (csvArgs.size() >= 7) {
+			m_opt1 = csvArgs.at(6);
 		}
-
+	
 		if (mode.compare("dynamic") == 0) {
 			m_eMode = VM_Dynamic;
 		} else if (mode.compare("snapshot") == 0) {
@@ -200,14 +164,6 @@ public:
 			m_eType = VT_Unknown;
 			m_error = true;
 		}
-		/*
-		 MS_Unknown,
-		MS_IncludeSet,
-		MS_ExcludeSet,
-		MS_InclusiveSearch,
-		MS_ExclusiveSearch,
-		MS_ALL
-		 */
 
 		if (set.compare("include") == 0) {
 			m_eViewSet = VS_IncludeSet;
