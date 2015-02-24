@@ -8,6 +8,7 @@
 #ifndef CVERSION_H_
 #define CVERSION_H_
 #include <string>
+
 namespace simplearchive {
 
 #define VERSION_EXT	".ver"
@@ -47,8 +48,11 @@ class CVersion {
 	/// Verson index from string
 	int versionIndex(const char *name);
 
-public:
+	/// Set to version
 
+public:
+	bool setToVersion(const char *name,int idx);
+	bool setToVersion(int idx);
 	/// Constructor
 	CVersion(const char *name);
 

@@ -258,4 +258,63 @@ int CVersion::fileLastVersion(const char *name) {
 	return m_version;
 }
 
+bool CVersion::setToVersion(int idx) {
+	return setToVersion(m_imagePath.c_str(), idx);
+}
+
+bool CVersion::setToVersion(const char *name, int idx) {
+
+
+	if (splitpath(name) == false) {
+		return false;
+	}
+
+	m_nameonly = nameOnly(m_imagefilename.c_str());
+	std::string datapath = m_imagePath + "/.data";
+	m_versionFolder = datapath;
+	m_versionFolder += '/';
+	m_versionFolder += m_imagefilename;
+	m_versionFolder += VERSION_EXT;
+	if (SAUtils::DirExists(m_versionFolder.c_str()) == true) {
+		std::vector<std::string *> *filelist = SAUtils::getFiles(m_versionFolder.c_str());
+		for (std::vector<std::string *>::iterator i = filelist->begin(); i != filelist->end(); i++) {
+			std::string *filenameItem = *i;
+
+			const char *tmp = filenameItem->c_str();
+			std::string cname(nameOnly(tmp));
+			const char *s = cname.c_str();
+
+			if (m_nameonly.compare(cname.c_str()) == 0) {
+				int ix = versionIndex(tmp);
+				if (idx == ix) {
+					printf("File: \"%s\"\n", filenameItem->c_str());
+					m_version = ix;
+					m_versionName = tmp;
+				}
+			}
+
+		//int slashpos = name->find_last_of("/");
+		//filename = name->substr(slashpos+1, name->length() - slashpos);
+		//path = name->substr(0, slashpos);
+		//printf("File \"%s\"\n", filename);
+
+		}
+		m_versionPath = m_versionFolder + "/" + m_versionName;
+	} else {
+		m_version = 0;
+		m_versionPath = name;
+		std::string namestr(m_versionPath);
+		int slashpos = namestr.find_last_of("/");
+		if (slashpos != -1) {
+			m_versionName = namestr.substr(slashpos+1, namestr.length() - slashpos);
+			//m_imagePath = namestr.substr(0, slashpos);
+		} else {
+			return -1;
+		}
+	}
+
+	printf("Index: %d\n", m_version);
+	return true;
+}
+
 } /* namespace simplearchive */
