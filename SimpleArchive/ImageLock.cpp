@@ -7,6 +7,7 @@
 
 #include "ImageLock.h"
 #include "SAUtils.h"
+#include <fstream>
 #include <stdio.h>
 
 namespace simplearchive {
@@ -34,17 +35,10 @@ bool ImageLock::lock(const char *filename) {
 	if (SAUtils::FileExists(filelockname.c_str()) == true) {
 		return false; // already locked
 	}
-#ifdef WIN32
-	errno_t err;
-	FILE *source;
-	fopen_s(&source, filelockname.c_str(), "w");
-	if (err != 0) {
-		return false;
-	}
-#else
-	FILE *source = fopen(filelockname.c_str(), "w");
-#endif
-	fclose(source);
+
+	std::ofstream file(filelockname.c_str());
+	file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+	file.close();
 	return true;
 }
 

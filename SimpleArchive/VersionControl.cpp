@@ -164,10 +164,11 @@ bool VersionControl::getImageVersion(const char *imagePath,const char *targetPat
 	CVersion version(fullPath.c_str());
 	version.setVersion(idx);
 	version.setToVersion(idx);
+	return true;
 }
 
 bool VersionControl::uncheckout(const char *imagePath,const char *targetPath, int idx, const char *comment) {
-
+	return true;
 }
 
 

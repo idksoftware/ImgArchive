@@ -19,6 +19,21 @@
 #endif
 
 
+class SIAAppException : public std::exception {
+	std::string message;
+public:
+	explicit SIAAppException(const char *msg) : message(msg){
+
+	}
+	explicit SIAAppException(std::string msg) : message(msg) {}
+	virtual ~SIAAppException() throw() {}
+	virtual const char *what() const throw();
+
+};
+
+
+
+
 class SAUtils {
 public:
 	SAUtils();

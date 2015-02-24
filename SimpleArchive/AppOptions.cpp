@@ -118,7 +118,8 @@ bool AppOptions::initalise(int argc, char **argv) {
 	argvParser.defineOptionAlternative("v", "view");
 
 	argvParser.defineOption("validate", "Validate commands", ArgvParser::NoOptionAttribute);
-	//argvParser.defineOptionAlternative("z", "");
+	
+	argvParser.defineOption("image-address", "image address", ArgvParser::NoOptionAttribute);
 
 	argvParser.defineOption("m", "Mirror commands", ArgvParser::NoOptionAttribute);
 	argvParser.defineOptionAlternative("m", "mirror");
@@ -169,15 +170,12 @@ bool AppOptions::initalise(int argc, char **argv) {
 	bool cmdFound = false;
 	if (argvParser.foundOption("add") == true) {
 		
-		if (argvParser.foundOption("source-path") == true) {
-			
+		if (argvParser.foundOption("source-path") == true) {			
 			std::string opt = argvParser.optionValue("source-path");
 			printf(opt.c_str()); printf("\n");
-			config.setSourcePath(opt.c_str());
-			
+			config.setSourcePath(opt.c_str());			
 		}
-		if (argvParser.foundOption("archive-path") == true) {
-			
+		if (argvParser.foundOption("archive-path") == true) {			
 			std::string opt = argvParser.optionValue("archive-path");
 			printf(opt.c_str()); printf("\n");
 			config.setArchivePath(opt.c_str());
@@ -188,15 +186,30 @@ bool AppOptions::initalise(int argc, char **argv) {
 		cmdFound = true;
 	}
 	else if (argvParser.foundOption("checkout") == true) {
+		if (argvParser.foundOption("image-address") == true) {
+			std::string opt = argvParser.optionValue("image-address");
+			printf(opt.c_str()); printf("\n");
+			config.setSourcePath(opt.c_str());
+		}
+		if (argvParser.foundOption("dist-path") == true) {
+			std::string opt = argvParser.optionValue("dist-path");
+			printf(opt.c_str()); printf("\n");
+			config.setSourcePath(opt.c_str());
+		}
 		setCommandMode(AppOptions::CM_Checkout);
 		cmdFound = true;
 	}
 	else if (argvParser.foundOption("checkin") == true) {
+		if (argvParser.foundOption("source-path") == true) {
+			std::string opt = argvParser.optionValue("source-path");
+			printf(opt.c_str()); printf("\n");
+			config.setSourcePath(opt.c_str());
+		}
 		setCommandMode(AppOptions::CM_Checkin);
 		cmdFound = true;
 	}
 	else if (argvParser.foundOption("uncheckout") == true) {
-		setCommandMode(AppOptions::CM_Checkout);
+		setCommandMode(AppOptions::CM_UnCheckout);
 		cmdFound = true;
 	}
 	else if (argvParser.foundOption("export") == true) {

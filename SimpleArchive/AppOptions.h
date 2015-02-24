@@ -18,6 +18,7 @@ public:
 		CM_Export,
 		CM_Checkout,
 		CM_Checkin,
+		CM_UnCheckout,
 		CM_Version,
 		CM_View,
 		CM_Mirror,

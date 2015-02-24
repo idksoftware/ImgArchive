@@ -33,6 +33,14 @@
 
 using namespace std;
 
+const char *SIAAppException::what() const throw() {
+	std::stringstream s;
+	s << message << " line:" << __LINE__ << " file:" << __FILE__;
+	std::string tmp = s.str();
+	return tmp.c_str();
+}
+
+
 SAUtils::SAUtils() {
 	// TODO Auto-generated constructor stub
 
