@@ -64,6 +64,7 @@ const char *TableField::getDataTypeString() {
 	case Null:
 		return "null";
 	}
+	return "text";
 }
 
 

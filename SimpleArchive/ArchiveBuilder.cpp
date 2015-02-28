@@ -31,6 +31,7 @@
 #include "CSVDatabase.h"
 #include "HookCmd.h"
 #include "ViewManager.h"
+#include "VersionControl.h"
 
 #include <stdio.h>
 #include <sstream>
@@ -469,20 +470,48 @@ void ArchiveBuilder::copyExif(MetadataObject* metadataObject, ExifObject *exifOb
 
 bool ArchiveBuilder::checkout(const char *filepath, const char *comment) {
 
-	ArchiveRepository &archiveRepository = ArchiveRepository::get();
-	archiveRepository.setPathToArchive(m_RootOutputDir);
-	//archiveRepository.setPathToSourceRoot(m_InputDir);
-	archiveRepository.checkout(filepath, comment);
-	return true;
+	try {
+		VersionControl &versionControl = VersionControl::get();
+		versionControl.setPathToArchive(m_RootOutputDir);
+		//versionControl.setPathToSourceRoot(m_InputDir);
+		return versionControl.checkout(filepath, comment);
+	}
+	catch (SIAAppException &e) {
+		printf("Error: %s\n", e.what());
+		return false;
+	}
 }
 
 bool ArchiveBuilder::checkin(const char *filepath, const char *comment) {
 
-	ArchiveRepository &archiveRepository = ArchiveRepository::get();
-	archiveRepository.setPathToArchive(m_RootOutputDir);
-	//archiveRepository.setPathToSourceRoot(m_InputDir);
-	archiveRepository.checkin(filepath, comment);
+	VersionControl &versionControl = VersionControl::get();
+	versionControl.setPathToArchive(m_RootOutputDir);
+	//versionControl.setPathToSourceRoot(m_InputDir);
+	versionControl.checkin(filepath, comment);
 	return true;
 }
+
+bool ArchiveBuilder::uncheckout(const char *filepath, const char *comment) {
+
+	VersionControl &versionControl = VersionControl::get();
+	versionControl.setPathToArchive(m_RootOutputDir);
+	//versionControl.setPathToSourceRoot(m_InputDir);
+	versionControl.uncheckout(filepath, comment);
+	return true;
+}
+
+/*
+int ArchiveBuilder::revisions(const char *filepath) {
+	VersionControl &versionControl = VersionControl::get();
+	versionControl.setPathToArchive(m_RootOutputDir);
+	return versionControl.getNumberOfVersions(filepath);
+}
+
+bool ArchiveBuilder::getImageVersion(const char *imagePath, const char *targetPath, int idx) {
+	VersionControl &versionControl = VersionControl::get();
+	versionControl.setPathToArchive(m_RootOutputDir);
+	return versionControl.getImageVersion(imagePath, targetPath, idx);
+}
+*/
 
 } /* namespace simplearchive */

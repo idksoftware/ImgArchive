@@ -6,6 +6,7 @@
  */
 
 #include <stdio.h>
+#include <iostream>
 #include "App.h"
 #include "SAUtils.h"
 #include "CDate.h"
@@ -24,6 +25,7 @@
 #include "Database.h"
 #include "SummaryFile.h"
 #include "IntegrityManager.h"
+#include "SIALib.h"
 
 #ifdef _WIN32
 #pragma comment(lib, "ws2_32.lib")
@@ -56,6 +58,8 @@ App::App() {
 }
 
 bool App::initalise(int argc, char **argv) {
+	SIALib sibLib;
+	sibLib.checkin();
 	AppOptions &appOptions = AppOptions::get();	
 	if (appOptions.initalise(argc, argv) == false) {
 		
@@ -72,10 +76,7 @@ bool App::Run()
 
 	CAppConfig &config = CAppConfig::get();
 	AppOptions &appOptions = AppOptions::get();
-	if (appOptions.getCommandMode() == AppOptions::CM_Version) {
-		printf("\n\nSia version \"%s\" (build %s)\n", VERSION, BUILD);
-		return true;
-	}
+	
 	//CLogger::setLevel(CLogger::INFO);
 	CLogger::setLevel(CLogger::FINE);
 	CLogger::setLogPath(config.getLogPath());
@@ -178,8 +179,19 @@ bool App::Run()
 	case AppOptions::CM_Export:
 		break;
 	case AppOptions::CM_Checkout:
+		if (m_ArchiveBuilder.checkout(appOptions.getImageAddress(), appOptions.getComment()) == false) {
+			return false;
+		}
 		break;
 	case AppOptions::CM_Checkin:
+		if (m_ArchiveBuilder.checkin(appOptions.getImageAddress(), appOptions.getComment()) == false) {
+			return false;
+		}
+		break;
+	case AppOptions::CM_UnCheckout:
+		if (m_ArchiveBuilder.uncheckout(appOptions.getImageAddress(), appOptions.getComment()) == false) {
+			return false;
+		}
 		break;
 	case AppOptions::CM_View:
 	{
@@ -249,6 +261,9 @@ bool App::Run()
 			}
 		}
 		break;
+	case AppOptions::CM_Version:
+		printf("\n\nSia version \"%s\" (build %s)\n", VERSION, BUILD);
+		return true;
 	case AppOptions::CM_Unknown:
 		break;
 	}

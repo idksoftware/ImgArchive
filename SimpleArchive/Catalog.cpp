@@ -360,11 +360,11 @@ bool Catalog::makeList() {
 	if (filexml.is_open() == false) {
 		return false;
 	}
-	long int timeValue = 0;
+	time_t timeValue = 0;
 	time(&timeValue);
 	filexml <<	"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 					<<	"<FolderList>\n";
-	std::vector<std::string *> *filelist = SAUtils::GetFiles(m_archivePath.c_str());
+	std::vector<std::string *> *filelist = SAUtils::getFiles(m_archivePath.c_str());
 	for (std::vector<std::string *>::iterator i = filelist->begin(); i != filelist->end(); i++) {
 		std::string *year = *i;
 		std::string filepath = m_archivePath + "/" + *year;
@@ -377,7 +377,7 @@ bool Catalog::makeList() {
 		filexml <<	"\t<YearFolder Name=\"" << *year << "\" >\n";
 
 		std::string yearfolder = m_archivePath + '/' + *year;
-		std::vector<std::string *> *dayList = SAUtils::GetFiles(yearfolder.c_str());
+		std::vector<std::string *> *dayList = SAUtils::getFiles(yearfolder.c_str());
 
 		for (std::vector<std::string *>::iterator i = dayList->begin(); i != dayList->end(); i++) {
 			std::string *name = *i;
@@ -426,14 +426,14 @@ bool Catalog::makeFolder(std::string &targetFolder, std::string &filepath) {
 	if (filexml.is_open() == false) {
 		return false;
 	}
-	long int timeValue = 0;
+	time_t timeValue = 0;
 	time(&timeValue);
 	std::string filefolder = m_archivePath + '/' + targetFolder;
 	filexml <<	"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 					<<	"<FolderList Name=\"" <<  filepath << "\">\n";
 
 
-	std::vector<std::string *> *dayList = SAUtils::GetFiles(filefolder.c_str());
+	std::vector<std::string *> *dayList = SAUtils::getFiles(filefolder.c_str());
 
 	for (std::vector<std::string *>::iterator i = dayList->begin(); i != dayList->end(); i++) {
 		std::string *name = *i;

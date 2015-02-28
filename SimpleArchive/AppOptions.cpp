@@ -18,6 +18,8 @@ namespace simplearchive {
 AppOptions *AppOptions::m_this = 0;
 std::string AppOptions::m_name;
 AppOptions::CommandMode AppOptions::m_commandMode = AppOptions::CM_Unknown;
+std::string AppOptions::m_comment;
+std::string AppOptions::m_imageAddress;
 
 AppOptions::AppOptions() {
 }
@@ -95,6 +97,8 @@ bool AppOptions::initalise(int argc, char **argv) {
 	//parser.defineOption("a", "Adds new images to the archive.", ArgvParser::OptionRequiresValue);
 	//parser.defineOptionAlternative("a", "add");
 
+	
+
 	// Subcommands
 	argvParser.defineOption("a", "add new images to the archive.", ArgvParser::NoOptionAttribute);
 	argvParser.defineOptionAlternative("a", "add");
@@ -111,8 +115,7 @@ bool AppOptions::initalise(int argc, char **argv) {
 	argvParser.defineOption("x", "Export images from archive.", ArgvParser::NoOptionAttribute);
 	argvParser.defineOptionAlternative("x", "export");
 
-	argvParser.defineOption("V", "prints the version information", ArgvParser::NoOptionAttribute);
-	argvParser.defineOptionAlternative("V", "version");
+	argvParser.defineOption("about", "prints the version information", ArgvParser::NoOptionAttribute);
 
 	argvParser.defineOption("v", "View commands", ArgvParser::NoOptionAttribute);
 	argvParser.defineOptionAlternative("v", "view");
@@ -140,7 +143,9 @@ bool AppOptions::initalise(int argc, char **argv) {
 	argvParser.defineOptionAlternative("d", "dist-path");
 
 	argvParser.defineOption("S", "size of media", ArgvParser::OptionRequiresValue);
-	argvParser.defineOptionAlternative("S", "size");
+	argvParser.defineOptionAlternative("S", "media-size");
+
+	argvParser.defineOption("media-path", "Goes through the motions of running the subcommand but makes no\nactual changes ether disk or repository.", ArgvParser::OptionRequiresValue);
 
 	argvParser.defineOption("F", "from date", ArgvParser::OptionRequiresValue);
 	argvParser.defineOptionAlternative("F", "from-date");
@@ -154,21 +159,22 @@ bool AppOptions::initalise(int argc, char **argv) {
 	argvParser.defineOption("l", "Temporarily changes the logging level for the scope of this command session.", ArgvParser::OptionRequiresValue);
 	argvParser.defineOptionAlternative("r", "logging-level");
 
-	argvParser.defineOption("N", "Goes through the motions of running the subcommand but makes no\nactual changes ether disk or repository.", ArgvParser::OptionRequiresValue);
-	argvParser.defineOptionAlternative("n", "dry-run");
+	argvParser.defineOption("C", "Comment to be included in command", ArgvParser::OptionRequiresValue);
+	argvParser.defineOptionAlternative("C", "comment");
 
 	
+	
 
-	argvParser.defineOption("m", "Goes through the motions of running the subcommand but makes no\nactual changes ether disk or repository.", ArgvParser::OptionRequiresValue);
-	argvParser.defineOptionAlternative("m", "media-path");
-
-	argvParser.defineOption("S", "Goes through the motions of running the subcommand but makes no\nactual changes ether disk or repository.", ArgvParser::OptionRequiresValue);
-	argvParser.defineOptionAlternative("S", "media-size");
+	
+	
 	ArgvParser::ParserResults res = argvParser.parse(argc, argv);
-
 	//testHelpOptionDetection();
 	bool cmdFound = false;
-	if (argvParser.foundOption("add") == true) {
+	if (argvParser.foundOption("about") == true) {
+		setCommandMode(AppOptions::CM_Version);
+		cmdFound = true;
+	}
+	else if (argvParser.foundOption("add") == true) {
 		
 		if (argvParser.foundOption("source-path") == true) {			
 			std::string opt = argvParser.optionValue("source-path");
@@ -187,28 +193,57 @@ bool AppOptions::initalise(int argc, char **argv) {
 	}
 	else if (argvParser.foundOption("checkout") == true) {
 		if (argvParser.foundOption("image-address") == true) {
-			std::string opt = argvParser.optionValue("image-address");
-			printf(opt.c_str()); printf("\n");
-			config.setSourcePath(opt.c_str());
+			m_imageAddress = argvParser.optionValue("image-address");
+			printf(m_imageAddress.c_str()); printf("\n");
 		}
-		if (argvParser.foundOption("dist-path") == true) {
-			std::string opt = argvParser.optionValue("dist-path");
-			printf(opt.c_str()); printf("\n");
-			config.setSourcePath(opt.c_str());
+		if (argvParser.foundOption("comment") == true) {
+			m_comment = argvParser.optionValue("comment");
+			printf(m_comment.c_str()); printf("\n");
 		}
+		if (argvParser.foundOption("archive-path") == true) {
+			std::string opt = argvParser.optionValue("archive-path");
+			printf(opt.c_str()); printf("\n");
+			config.setArchivePath(opt.c_str());
+		}
+
 		setCommandMode(AppOptions::CM_Checkout);
 		cmdFound = true;
 	}
 	else if (argvParser.foundOption("checkin") == true) {
-		if (argvParser.foundOption("source-path") == true) {
-			std::string opt = argvParser.optionValue("source-path");
-			printf(opt.c_str()); printf("\n");
-			config.setSourcePath(opt.c_str());
+		
+		if (argvParser.foundOption("image-address") == true) {
+			m_imageAddress = argvParser.optionValue("image-address");
+			printf(m_imageAddress.c_str()); printf("\n");
 		}
+		if (argvParser.foundOption("comment") == true) {
+			m_comment = argvParser.optionValue("comment");
+			printf(m_comment.c_str()); printf("\n");
+		}
+		if (argvParser.foundOption("archive-path") == true) {
+			std::string opt = argvParser.optionValue("archive-path");
+			printf(opt.c_str()); printf("\n");
+			config.setArchivePath(opt.c_str());
+		}
+
+
 		setCommandMode(AppOptions::CM_Checkin);
 		cmdFound = true;
 	}
 	else if (argvParser.foundOption("uncheckout") == true) {
+		if (argvParser.foundOption("image-address") == true) {
+			m_imageAddress = argvParser.optionValue("image-address");
+			printf(m_imageAddress.c_str()); printf("\n");
+		}
+		if (argvParser.foundOption("comment") == true) {
+			m_comment = argvParser.optionValue("comment");
+			printf(m_comment.c_str()); printf("\n");
+		}
+		if (argvParser.foundOption("archive-path") == true) {
+			std::string opt = argvParser.optionValue("archive-path");
+			printf(opt.c_str()); printf("\n");
+			config.setArchivePath(opt.c_str());
+		}
+		
 		setCommandMode(AppOptions::CM_UnCheckout);
 		cmdFound = true;
 	}
@@ -446,6 +481,13 @@ const char *AppOptions::getName() {
 
 void AppOptions::setName(const char *name) {
 	m_name = name;
+}
+
+const char *AppOptions::getComment() {
+	return m_comment.c_str();
+}
+const char *AppOptions::getImageAddress() {
+	return m_imageAddress.c_str();
 }
 
 } /* namespace simplearchive */

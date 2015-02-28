@@ -60,6 +60,8 @@ public:
 	/// @brief Checkin
 	/// @param fileath - distination folder were the images to be checked out reside.
 	bool checkin(const char *filepath, const char *comment);
+	bool ArchiveBuilder::uncheckout(const char *filepath, const char *comment);
+	bool uncheckout(const char *filepath);
 	/// Distructor
 	virtual ~ArchiveBuilder();
 	/// @brief The 

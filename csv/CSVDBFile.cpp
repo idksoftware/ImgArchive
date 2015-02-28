@@ -68,16 +68,16 @@ public:
 		std::string idxStr = csvArgs.at(0);
 
 		//m_idx = strtol(idxStr.c_str(), NULL, 16);
-		m_idx = strtol(csvArgs.at(1).c_str(), 0, 10);
-		m_imagePath = csvArgs.at(2);
-		m_name = csvArgs.at(3);
-		m_size = strtol(csvArgs.at(4).c_str(), 0, 10);
-		m_crc = strtol(csvArgs.at(5).c_str(), 0, 10);
-		m_md5 = csvArgs.at(6);
-		m_uuid = csvArgs.at(7);
-		m_version = strtol(csvArgs.at(8).c_str(), 0, 10);
-		std::string dateStr = csvArgs.at(9);
-		ExifDate date(csvArgs.at(9).c_str());
+		m_idx = strtol(csvArgs.at(0).c_str(), 0, 10);
+		m_imagePath = csvArgs.at(1);
+		m_name = csvArgs.at(2);
+		m_size = strtol(csvArgs.at(3).c_str(), 0, 10);
+		m_crc = strtol(csvArgs.at(4).c_str(), 0, 10);
+		m_md5 = csvArgs.at(5);
+		m_uuid = csvArgs.at(6);
+		m_version = strtol(csvArgs.at(7).c_str(), 0, 10);
+		std::string dateStr = csvArgs.at(8);
+		ExifDate date(csvArgs.at(8).c_str());
 		m_dateArchived = date;
 
 	}

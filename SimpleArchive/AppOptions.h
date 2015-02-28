@@ -31,6 +31,8 @@ private:
 	static AppOptions *m_this;
 	static CommandMode m_commandMode;
 	static std::string m_name;
+	static std::string m_comment;
+	static std::string m_imageAddress;
 	bool m_error;
 	void setCommandMode(const AppOptions::CommandMode mode);
 	bool setCommandMode(const char *modeString);
@@ -45,6 +47,9 @@ public:
 	bool initalise(int argc, char **argv);
 	AppOptions::CommandMode getCommandMode();
 	const char *getName();
+	const char *getCommand();
+	const char *getComment();
+	const char *getImageAddress();
 	
 };
 

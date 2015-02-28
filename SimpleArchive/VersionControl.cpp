@@ -104,6 +104,10 @@ bool VersionControl::checkin(const char *filepath, const char *comment) {
 		printf("The image has not changed\"%s\"", filepath);
 		//return true;
 	}
+	const char *newNamePath = version.newVersion();
+	// turn into log message
+	//printf("New Version %s", newNamePath);
+	// use the above for a log message
 	int idx = version.getVersion();
 	setHistory(hstpath.c_str(), filepath, comment, HistoryEvent::CHECKIN, idx);
 
@@ -168,7 +172,10 @@ bool VersionControl::getImageVersion(const char *imagePath,const char *targetPat
 }
 
 bool VersionControl::uncheckout(const char *imagePath,const char *targetPath, int idx, const char *comment) {
+	
+	// use the above for a log message
 	return true;
+
 }
 
 
