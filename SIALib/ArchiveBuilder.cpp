@@ -335,7 +335,6 @@ bool ArchiveBuilder::CreateImage(CImageId &imageId, ImagePath &imagePath, CSVDBF
 	metadataObject.setSequenceId(seqNumber);
 	unsigned long n = imageId.getSize();
 	unsigned long crc = imageId.getCrc();
-
 	ExifDate date;
 	date.now();
 	if (csvDBFile.insert(seqNumber, imagePath.getRelativePath().c_str(), imagePath.getImageName().c_str(), n, crc, imageId.getMd5().c_str(),
