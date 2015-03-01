@@ -44,11 +44,12 @@ bool AppOptions::initalise(int argc, char **argv) {
 		homePath = SAUtils::GetEnvironment("ProgramData");
 		//C:\ProgramData\IDK Software\ImageArchive1.0
 		homePath += "/IDK Software/ImageArchive1.0";
-		if (SAUtils::DirExists(homePath.c_str()) == false) {
-			printf("SIA Unable to start?\nEnvironment SA_HOME not set and configuration not in default location.");
-			m_error = true;
-			return false;
-		}
+		
+	}
+	if (SAUtils::DirExists(homePath.c_str()) == false) {
+		printf("SIA Unable to start?\nEnvironment SA_HOME not set and configuration not in default location.");
+		m_error = true;
+		return false;
 	}
 	std::string configfile = homePath + "/conf/" + "config.conf";
 	if (SAUtils::FileExists(configfile.c_str()) == false) {

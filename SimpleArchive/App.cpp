@@ -58,8 +58,7 @@ App::App() {
 }
 
 bool App::initalise(int argc, char **argv) {
-	SIALib sibLib;
-	sibLib.checkin();
+	
 	AppOptions &appOptions = AppOptions::get();	
 	if (appOptions.initalise(argc, argv) == false) {
 		
@@ -72,11 +71,13 @@ bool App::initalise(int argc, char **argv) {
 bool App::Run()
 {
 
-	
+	SIALib siaLib;
+	siaLib.initalise();
 
-	CAppConfig &config = CAppConfig::get();
-	AppOptions &appOptions = AppOptions::get();
 	
+	AppOptions &appOptions = AppOptions::get();
+	CAppConfig &config = CAppConfig::get();
+	/*
 	//CLogger::setLevel(CLogger::INFO);
 	CLogger::setLevel(CLogger::FINE);
 	CLogger::setLogPath(config.getLogPath());
@@ -86,7 +87,7 @@ bool App::Run()
 	SummaryFile::setPath(config.getHistoryPath());
 	SummaryFile &summaryFile = SummaryFile::getSummaryFile();
 	
-	/* Logging started */
+	// Logging started
 
 	CIDKDate date;
 	date.Now();
@@ -172,65 +173,41 @@ bool App::Run()
 
 	logger.log(CLogger::INFO, "+++ Initalisation complete +++");
 	// C:\output\2014\2014-6-3
+	*/
 	switch (appOptions.getCommandMode()) {
 	case AppOptions::CM_Import:
-		m_ArchiveBuilder.Import(config.getSourcePath());
+		siaLib.Import();
 		break;
 	case AppOptions::CM_Export:
 		break;
 	case AppOptions::CM_Checkout:
-		if (m_ArchiveBuilder.checkout(appOptions.getImageAddress(), appOptions.getComment()) == false) {
+		if (siaLib.checkout(appOptions.getImageAddress(), appOptions.getComment()) == false) {
 			return false;
 		}
 		break;
 	case AppOptions::CM_Checkin:
-		if (m_ArchiveBuilder.checkin(appOptions.getImageAddress(), appOptions.getComment()) == false) {
+		if (siaLib.checkin(appOptions.getImageAddress(), appOptions.getComment()) == false) {
 			return false;
 		}
 		break;
 	case AppOptions::CM_UnCheckout:
-		if (m_ArchiveBuilder.uncheckout(appOptions.getImageAddress(), appOptions.getComment()) == false) {
+		if (siaLib.uncheckout(appOptions.getImageAddress(), appOptions.getComment()) == false) {
 			return false;
 		}
 		break;
 	case AppOptions::CM_View:
 	{
-		
-		std::string name = appOptions.getName();
-		/*
-		if (name.compare("Master") == 0) {
-			viewManager.initaliseMaster(config.getArchivePath(), config.getMasterViewPath());
-			//if (viewManager.processMaster() == false) {
-			//	return false;
-			//}
+		if (siaLib.view(appOptions.getName()) == false) {
+			return false;
 		}
-		else {
-		*/
-			ViewManager viewManager;
-			if (viewManager.process() == false) {
-				return false;
-			}
-		//}
 		break;
 	}
 	case AppOptions::CM_Mirror:
 	{
 
-		std::string name = appOptions.getName();
-		/*
-		if (name.compare("Master") == 0) {
-		viewManager.initaliseMaster(config.getArchivePath(), config.getMasterViewPath());
-		//if (viewManager.processMaster() == false) {
-		//	return false;
-		//}
-		}
-		else {
-		*/
-		MirrorManager mirrorManager;
-		if (mirrorManager.mirror() == false) {
+		if (siaLib.mirror(appOptions.getName()) == false) {
 			return false;
 		}
-		//}
 		break;
 	}
 	case AppOptions::CM_Validate:
@@ -247,18 +224,8 @@ bool App::Run()
 	case AppOptions::CM_Uncheckin:
 		break;
 	case AppOptions::CM_Archive:
-		printf("Archive");
-		if (config.isToDateSet() || config.isFromDateSet()) {
-			//MakeMedia makeMedia(config.getArchivePath().c_str(), config.setBackupDestinationPath(), config.getBackupMediaSize(), CDate startDate, CDate endDate);
-		}
-		else {
-			MakeMedia makeMedia;
-			if (makeMedia.initalise(config.getArchivePath(), config.getBackupDestinationPath(), config.getBackupMediaSize()) == false) {
-				return false;
-			}
-			if (makeMedia.process() == false) {
-				return false;
-			}
+		if (siaLib.archive() == false) {
+			return false;
 		}
 		break;
 	case AppOptions::CM_Version:
@@ -270,16 +237,13 @@ bool App::Run()
 	
 	//m_ArchiveBuilder.checkout("/2014/2014-6-3/_DSC0001.jpg", "Some changes");
 	//m_ArchiveBuilder.checkin("/2014/2014-6-3/GB-wp6.jpg", "Some changes");
-	date.Now();
-	logger.log(CLogger::INFO, "+++ Application completed successfully at %s +++", date.Print().c_str());
-	summaryFile.log(SummaryFile::SF_BRIEF, SummaryFile::SF_COMMENT, "Summary start");
+	siaLib.complete();
+	
 	return true;
 }
 
 App::~App() {
 	CLogger::Close();
-}
-
 }
 
 bool ok()
@@ -293,6 +257,10 @@ bool failed()
 	cout << "Failed" << endl;
 	return(false);
 }
+
+
+
+} // simplearchive
 
 
 /**
