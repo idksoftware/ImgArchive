@@ -402,3 +402,15 @@ std::string SAUtils::getFileContents(const char *filename)
 	}
 	throw(errno);
 }
+
+std::string SAUtils::getYear(const char *path) {
+	std::string fpath = path;
+	return fpath.substr(0, 4);
+}
+
+std::string SAUtils::getFullRelativePath(const char *path) {
+	std::string spath = getYear(path);
+	spath += '/';
+	spath += path;
+	return spath;
+}
