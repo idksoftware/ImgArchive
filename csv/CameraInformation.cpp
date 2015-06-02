@@ -1,9 +1,36 @@
-/*
- * CameraInformation.cpp
- *
- *  Created on: Jul 9, 2014
- *      Author: wzw7yn
- */
+/* **************************************************
+**
+**    III                DDD  KKK
+**    III                DDD  KKK
+**                       DDD  KKK
+**    III   DDDDDDDDDDD  DDD  KKK            KKK
+**    III  DDD           DDD  KKK            KKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK   KKKKKKKKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK            KKK
+**    III   DDDDDDDDDDDDDDDD  KKK            KKK
+**
+**
+**     SSS         FF
+**    S           F   T
+**     SSS   OO   FF  TTT W   W  AAA  R RR   EEE
+**        S O  O  F   T   W W W  AAAA RR  R EEEEE
+**    S   S O  O  F   T   W W W A   A R     E
+**     SSS   OO  FFF   TT  W W   AAAA R      EEE
+**
+**    Copyright: (c) 2015 IDK Software Ltd
+**
+****************************************************
+**
+**	Filename	: CRegString.cpp
+**	Author		: I.Ferguson
+**	Version		: 1.000
+**	Date		: 26-05-2015
+**
+** #$$@@$$# */
 
 #include "MetadataObject.h"
 #include "CameraInformation.h"
@@ -139,11 +166,80 @@ bool CameraInformation::add(const char *row) {
 /// reads a csv side car file
 bool CameraInformation::read(const char *datafile) {
 	std::string path(datafile);
-	path += "/CameraInformation.csv";
-	if (CSVRow::read(path.c_str()) == false) {
+		path += "/CameraInformation.csv";
+		if (CSVRow::read(path.c_str()) == false) {
+			return false;
+		}
+		return true;
+}
+
+unsigned int CameraInformation::findImage(const char *text, int col) {
+	unsigned int count = 0;
+	for (std::vector<CSVRowItem *>::iterator i = this->begin(); i != this->end(); i++, count++) {
+		CameraInformationItem *item = (CameraInformationItem *)*i;
+		std::string field;
+		switch (col) {
+		case 0: field = item->getMaker(); break;
+		case 1: field = item->getModel(); break;
+		case 2: field = item->getExifVersion(); break;
+		case 3: field = item->getCaptureDate(); break;
+		case 4: field = item->getExposureProgram(); break;
+		case 5: field = item->getIsoSpeedRating(); break;
+		case 6: field = item->getExposureBias(); break;
+		case 7: field = item->getAperture(); break;
+		case 8: field = item->getMeteringMode(); break;
+		case 9: field = item->getLightSource(); break;
+		case 10: field = item->getFlash(); break;
+		case 11: field = item->getFocalLength(); break;
+		case 12: field = item->getSensingMethod(); break;
+		case 13: field = item->getDigitalZoom(); break;
+		return std::string::npos;
+		}
+		if (field.compare(text) == 0) {
+			return count;
+		}
+	}
+	return std::string::npos;
+}
+bool CameraInformation::load(unsigned int row, MetadataObject &mo) {
+	if (this->size() < row ) {
 		return false;
 	}
-	return true;
+	CameraInformationItem *item = (CameraInformationItem *)at(row);
+	mo.setMaker(item->getMaker());
+	mo.setModel(item->getModel());
+	mo.setExifVersion(item->getExifVersion());
+	mo.setCaptureDate(item->getCaptureDate());
+	mo.setExposureProgram(item->getExposureProgram());
+	mo.setIsoSpeedRating(item->getIsoSpeedRating());
+	mo.setExposureBias(item->getExposureBias());
+	mo.setAperture(item->getAperture());
+	mo.setMeteringMode(item->getMeteringMode());
+	mo.setLightSource(item->getLightSource());
+	mo.setFlash(item->getFlash());
+	mo.setFocalLength(item->getFocalLength());
+	mo.setSensingMethod(item->getSensingMethod());
+	mo.setDigitalZoom(item->getDigitalZoom());
+}
+bool CameraInformation::save(unsigned int row, MetadataObject &mo) {
+	if (this->size() < row ) {
+		return false;
+	}
+	CameraInformationItem *item = (CameraInformationItem *)at(row);
+	item->setMaker(mo.getMaker());
+	item->setModel(mo.getModel());
+	item->setExifVersion(mo.getExifVersion());
+	item->setCaptureDate(mo.getCaptureDate());
+	item->setExposureProgram(mo.getExposureProgram());
+	item->setIsoSpeedRating(mo.getIsoSpeedRating());
+	item->setExposureBias(mo.getExposureBias());
+	item->setAperture(mo.getAperture());
+	item->setMeteringMode(mo.getMeteringMode());
+	item->setLightSource(mo.getLightSource());
+	item->setFlash(mo.getFlash());
+	item->setFocalLength(mo.getFocalLength());
+	item->setSensingMethod(mo.getSensingMethod());
+	item->setDigitalZoom(mo.getDigitalZoom());
 }
 
 const std::string& CameraInformationItem::getAperture() const {

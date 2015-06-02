@@ -1,9 +1,36 @@
-/*
- * MediaProperties.cpp
- *
- *  Created on: Jul 9, 2014
- *      Author: wzw7yn
- */
+/* **************************************************
+**
+**    III                DDD  KKK
+**    III                DDD  KKK
+**                       DDD  KKK
+**    III   DDDDDDDDDDD  DDD  KKK            KKK
+**    III  DDD           DDD  KKK            KKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK   KKKKKKKKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK            KKK
+**    III   DDDDDDDDDDDDDDDD  KKK            KKK
+**
+**
+**     SSS         FF
+**    S           F   T
+**     SSS   OO   FF  TTT W   W  AAA  R RR   EEE
+**        S O  O  F   T   W W W  AAAA RR  R EEEEE
+**    S   S O  O  F   T   W W W A   A R     E
+**     SSS   OO  FFF   TT  W W   AAAA R      EEE
+**
+**    Copyright: (c) 2015 IDK Software Ltd
+**
+****************************************************
+**
+**	Filename	: CRegString.cpp
+**	Author		: I.Ferguson
+**	Version		: 1.000
+**	Date		: 26-05-2015
+**
+** #$$@@$$# */
 
 #include "MetadataObject.h"
 #include "MediaProperties.h"
@@ -126,6 +153,66 @@ bool MediaProperties::add(const char *row) {
 	item->fromString(pos+1, tmp);
 	push_back(item);
 	return true;
+}
+
+unsigned int MediaProperties::findImage(const char *text, int col) {
+	unsigned int count = 0;
+	for (std::vector<CSVRowItem *>::iterator i = this->begin(); i != this->end(); i++, count++) {
+		MediaPropertiesItem *item = (MediaPropertiesItem *)*i;
+		std::string field;
+		switch (col) {
+		case 0: field = item->getWidth(); break;
+		case 1: field = item->getHeight(); break;
+		case 2: field = item->getResolution(); break;
+		case 3: field = item->getDepth(); break;
+		case 4: field = item->getViewRotation(); break;
+		case 5: field = item->getSampleColor(); break;
+		case 6: field = item->getPage(); break;
+		case 7: field = item->getColorSpace(); break;
+		case 8: field = item->getCompression(); break;
+		case 9: field = item->getPrinaryEncoding(); break;
+        return std::string::npos;
+		}
+		if (field.compare(text) == 0) {
+			return count;
+		}
+	}
+	return std::string::npos;
+}
+bool MediaProperties::load(unsigned int row, MetadataObject &mo) {
+	if (this->size() < row ) {
+		return false;
+	}
+	MediaPropertiesItem *item = (MediaPropertiesItem *)at(row);
+	mo.setWidth(item->getWidth());
+    mo.setHeight(item->getHeight());
+    mo.setResolution(item->getResolution());
+    mo.setDepth(item->getDepth());
+    mo.setViewRotation(item->getViewRotation());
+    mo.setSampleColor(item->getSampleColor());
+    mo.setPage(item->getPage());
+    mo.setColorSpace(item->getColorSpace());
+    mo.setCompression(item->getCompression());
+    mo.setPrimaryEncoding(item->getPrinaryEncoding());
+
+    return true;
+}
+bool MediaProperties::save(unsigned int row, MetadataObject &mo) {
+	if (this->size() < row ) {
+		return false;
+	}
+	MediaPropertiesItem *item = (MediaPropertiesItem *)at(row);
+	item->setWidth(mo.getWidth());
+	item->setHeight(mo.getHeight());
+	item->setResolution(mo.getResolution());
+	item->setDepth(mo.getDepth());
+	item->setViewRotation(mo.getViewRotation());
+	item->setSampleColor(mo.getSampleColor());
+	item->setPage(mo.getPage());
+	item->setColorSpace(mo.getColorSpace());
+	item->setCompression(mo.getCompression());
+	item->setPrinaryEncoding(mo.getPrinaryEncoding());
+    return true;
 }
 
 const std::string& MediaPropertiesItem::getColorSpace() const {

@@ -1,10 +1,38 @@
-/*
- * AssetProperties.cpp
- *
- *  Created on: Jul 9, 2014
- *      Author: wzw7yn
- */
+/* **************************************************
+**
+**    III                DDD  KKK
+**    III                DDD  KKK
+**                       DDD  KKK
+**    III   DDDDDDDDDDD  DDD  KKK            KKK
+**    III  DDD           DDD  KKK            KKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK   KKKKKKKKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK            KKK
+**    III   DDDDDDDDDDDDDDDD  KKK            KKK
+**
+**
+**     SSS         FF
+**    S           F   T
+**     SSS   OO   FF  TTT W   W  AAA  R RR   EEE
+**        S O  O  F   T   W W W  AAAA RR  R EEEEE
+**    S   S O  O  F   T   W W W A   A R     E
+**     SSS   OO  FFF   TT  W W   AAAA R      EEE
+**
+**    Copyright: (c) 2015 IDK Software Ltd
+**
+****************************************************
+**
+**	Filename	: CRegString.cpp
+**	Author		: I.Ferguson
+**	Version		: 1.000
+**	Date		: 26-05-2015
+**
+** #$$@@$$# */
 
+#include <iostream>
 #include "AssetProperties.h"
 #include "MetadataObject.h"
 #include <stdio.h>
@@ -129,6 +157,85 @@ bool AssetProperties::write(const char *path) {
 	return true;
 }
 
+unsigned int AssetProperties::findImage(const char *text, int col) {
+	unsigned int count = 0;
+	for (std::vector<CSVRowItem *>::iterator i = this->begin(); i != this->end(); i++, count++) {
+		AssetPropertiesItem *item = (AssetPropertiesItem *)*i;
+		std::string field;
+		switch (col) {
+		case 0: field = item->getSequenceId(); break;
+		case 1: field = item->getFilename(); break;
+		case 2: field = item->getFilepath(); break;
+		case 3: field = item->getOrginalName(); break;
+		case 4: field = item->getUniqueId(); break;
+		case 5: field = item->getLabel(); break;
+		case 6: field = item->getRating(); break;
+		case 7: field = item->getMediaType(); break;
+		case 8: field = item->getMd5(); break;
+		case 9: field = item->getCrc(); break;
+		case 10: field = item->getFileSize(); break;
+		case 11: field = item->getDateCreate(); break;
+		case 12: field = item->getDateModified(); break;
+		case 13: field = item->getDateAdded(); break;
+		case 14: field = item->getDescription(); break;
+		return std::string::npos;
+		}
+		std::cout << field << '\n';
+		if (field.compare(text) == 0) {
+			return count;
+		}
+
+	}
+	return std::string::npos;
+}
+
+bool AssetProperties::load(unsigned int row, MetadataObject &mo) {
+
+	if (this->size() < row ) {
+		return false;
+	}
+	AssetPropertiesItem *item = (AssetPropertiesItem *)at(row);
+	mo.setSequenceId(item->getSequenceId());
+	mo.setFilename(item->getFilename());
+	mo.setFilepath(item->getFilepath());
+	mo.setOrginalName(item->getOrginalName());
+	mo.setUniqueId(item->getUniqueId());
+	mo.setLabel(item->getLabel());
+	mo.setRating(item->getRating());
+	mo.setMediaType(item->getMediaType());
+	mo.setMd5(item->getMd5());
+	mo.setCrc(item->getCrc());
+	mo.setFileSize(item->getFileSize());
+	mo.setDateCreate(item->getDateCreate());
+	mo.setDateModified(item->getDateModified());
+	mo.setDateAdded(item->getDateAdded());
+    mo.setDescription(item->getDescription());
+}
+
+bool AssetProperties::save(unsigned int row, MetadataObject &mo) {
+
+	if (this->size() < row ) {
+		return false;
+	}
+	AssetPropertiesItem *item = (AssetPropertiesItem *)at(row);
+	item->setSequenceId(mo.getSequenceId());
+	item->setFilename(mo.getFilename());
+	item->setFilepath(mo.getFilepath());
+	item->setOrginalName(mo.getOrginalName());
+	item->setUniqueId(mo.getUniqueId());
+	item->setLabel(mo.getLabel());
+	item->setRating(mo.getRating());
+	item->setMediaType(mo.getMediaType());
+	item->setMd5(mo.getMd5());
+	item->setCrc(mo.getCrc());
+	item->setFileSize(mo.getFileSize());
+	item->setDateCreate(mo.getDateCreate());
+	item->setDateModified(mo.getDateModified());
+	item->setDateAdded(mo.getDateAdded());
+    item->setDescription(mo.getDescription());
+}
+
+
 bool AssetProperties::add(const char *row) {
 	std::string tmp = row;
 	int pos = 0;
@@ -242,6 +349,14 @@ const std::string& AssetPropertiesItem::getRating() const {
 
 void AssetPropertiesItem::setRating(const std::string& rating) {
 	m_rating = rating;
+}
+
+const std::string& AssetPropertiesItem::getSequenceId() const {
+	return m_sequenceId;
+}
+
+void AssetPropertiesItem::setSequenceId(const std::string& sequenceId) {
+	m_sequenceId = sequenceId;
 }
 
 const std::string& AssetPropertiesItem::getUniqueId() const {

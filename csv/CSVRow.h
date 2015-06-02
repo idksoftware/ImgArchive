@@ -1,9 +1,36 @@
-/*
- * CSVRow.h
- *
- *  Created on: Jul 11, 2014
- *      Author: wzw7yn
- */
+/* **************************************************
+**
+**    III                DDD  KKK
+**    III                DDD  KKK
+**                       DDD  KKK
+**    III   DDDDDDDDDDD  DDD  KKK            KKK
+**    III  DDD           DDD  KKK            KKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK   KKKKKKKKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK            KKK
+**    III   DDDDDDDDDDDDDDDD  KKK            KKK
+**
+**
+**     SSS         FF
+**    S           F   T
+**     SSS   OO   FF  TTT W   W  AAA  R RR   EEE
+**        S O  O  F   T   W W W  AAAA RR  R EEEEE
+**    S   S O  O  F   T   W W W A   A R     E
+**     SSS   OO  FFF   TT  W W   AAAA R      EEE
+**
+**    Copyright: (c) 2015 IDK Software Ltd
+**
+****************************************************
+**
+**	Filename	: CRegString.cpp
+**	Author		: I.Ferguson
+**	Version		: 1.000
+**	Date		: 26-05-2015
+**
+** #$$@@$$# */
 
 #ifndef CSVROW_H_
 #define CSVROW_H_
@@ -14,6 +41,7 @@ namespace simplearchive {
 
 #define DELIM ','
 
+class MetadataObject;
 class CSVRowItem {
 	int m_id;
 	CSVRowItem() { m_id = -1; };
@@ -27,7 +55,8 @@ public:
 
 	virtual const char *toString() = 0;
 	virtual bool fromString(int pos, std::string &str) = 0;
-
+	virtual unsigned int findImage(const char *text, int col) { return std::string::npos; };
+	virtual bool load(unsigned int row, MetadataObject &mo) { return false; };
 
 	int getId() const {
 		return m_id;

@@ -1,9 +1,37 @@
-/*
- * GPSProperties.cpp
- *
- *  Created on: Jul 9, 2014
- *      Author: wzw7yn
- */
+/* **************************************************
+**
+**    III                DDD  KKK
+**    III                DDD  KKK
+**                       DDD  KKK
+**    III   DDDDDDDDDDD  DDD  KKK            KKK
+**    III  DDD           DDD  KKK            KKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK   KKKKKKKKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK            KKK
+**    III   DDDDDDDDDDDDDDDD  KKK            KKK
+**
+**
+**     SSS         FF
+**    S           F   T
+**     SSS   OO   FF  TTT W   W  AAA  R RR   EEE
+**        S O  O  F   T   W W W  AAAA RR  R EEEEE
+**    S   S O  O  F   T   W W W A   A R     E
+**     SSS   OO  FFF   TT  W W   AAAA R      EEE
+**
+**    Copyright: (c) 2015 IDK Software Ltd
+**
+****************************************************
+**
+**	Filename	: CRegString.cpp
+**	Author		: I.Ferguson
+**	Version		: 1.000
+**	Date		: 26-05-2015
+**
+** #$$@@$$# */
+
 #include <stdio.h>
 #include <fstream>
 #include "CSVRow.h"
@@ -47,6 +75,15 @@ void GPSProperties::add(MetadataObject &metadataObject) {
 }
 
 /// reads a csv side car file
+bool GPSProperties::write(const char *path) {
+	std::string filename("GPSProperties.csv");
+	GPSPropertiesString cov;
+	CSVRow::write(path, filename.c_str(), cov);
+//	printf("%s", filename.c_str());
+	return true;
+}
+
+// reads a csv side car file
 bool GPSProperties::read(const char *datafile) {
 	std::string path(datafile);
 	path += "/GPSProperties.csv";
@@ -56,13 +93,42 @@ bool GPSProperties::read(const char *datafile) {
 	return true;
 }
 
-/// reads a csv side car file
-bool GPSProperties::write(const char *path) {
-	std::string filename("GPSProperties.csv");
-	GPSPropertiesString cov;
-	CSVRow::write(path, filename.c_str(), cov);
-	//printf("%s", filename.c_str());
-	return true;
+unsigned int GPSProperties::findImage(const char *text, int col) {
+	unsigned int count = 0;
+	for (std::vector<CSVRowItem *>::iterator i = this->begin(); i != this->end(); i++, count++) {
+		GPSPropertiesItem *item = (GPSPropertiesItem *)*i;
+		std::string field;
+		switch (col) {
+	    case 0: field = item->getLatitude(); break;
+	    case 1: field = item->getLongitude(); break;
+	    case 2: field = item->getGpsTimeStamp(); break;
+        return std::string::npos;
+		}
+		if (field.compare(text) == 0) {
+			return count;
+		}
+	}
+	return std::string::npos;
+}
+bool GPSProperties::load(unsigned int row, MetadataObject &mo) {
+	if (this->size() < row ) {
+		return false;
+	}
+	GPSPropertiesItem *item = (GPSPropertiesItem *)at(row);
+	mo.setLatitude(item->getLatitude());
+	mo.setLongitude(item->getLongitude());
+	mo.setGpsTimeStamp(item->getGpsTimeStamp());
+    return true;
+}
+bool GPSProperties::save(unsigned int row, MetadataObject &mo) {
+	if (this->size() < row ) {
+		return false;
+	}
+	GPSPropertiesItem *item = (GPSPropertiesItem *)at(row);
+	item->setLatitude(mo.getLatitude());
+	item->setLongitude(mo.getLongitude());
+	item->setGpsTimeStamp(mo.getGpsTimeStamp());
+    return true;
 }
 
 bool GPSProperties::add(const char *row) {

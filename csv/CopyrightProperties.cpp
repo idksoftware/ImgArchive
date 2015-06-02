@@ -1,9 +1,36 @@
-/*
- * CopyrightProperties.cpp
- *
- *  Created on: Jul 9, 2014
- *      Author: wzw7yn
- */
+/* **************************************************
+**
+**    III                DDD  KKK
+**    III                DDD  KKK
+**                       DDD  KKK
+**    III   DDDDDDDDDDD  DDD  KKK            KKK
+**    III  DDD           DDD  KKK            KKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK   KKKKKKKKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK            KKK
+**    III   DDDDDDDDDDDDDDDD  KKK            KKK
+**
+**
+**     SSS         FF
+**    S           F   T
+**     SSS   OO   FF  TTT W   W  AAA  R RR   EEE
+**        S O  O  F   T   W W W  AAAA RR  R EEEEE
+**    S   S O  O  F   T   W W W A   A R     E
+**     SSS   OO  FFF   TT  W W   AAAA R      EEE
+**
+**    Copyright: (c) 2015 IDK Software Ltd
+**
+****************************************************
+**
+**	Filename	: CRegString.cpp
+**	Author		: I.Ferguson
+**	Version		: 1.000
+**	Date		: 26-05-2015
+**
+** #$$@@$$# */
 
 #include <cstdlib>
 #include "MetadataObject.h"
@@ -46,6 +73,15 @@ void CopyrightProperties::add(MetadataObject &metadataObject) {
 }
 
 /// reads a csv side car file
+bool CopyrightProperties::write(const char *path) {
+	std::string filename("CopyrightProperties.csv");
+	CopyrightPropertiesString cov;
+	CSVRow::write(path, filename.c_str(), cov);
+
+	return true;
+}
+
+// reads a csv side car file
 bool CopyrightProperties::read(const char *datafile) {
 	std::string path(datafile);
 	path += "/CopyrightProperties.csv";
@@ -55,11 +91,42 @@ bool CopyrightProperties::read(const char *datafile) {
 	return true;
 }
 
-/// reads a csv side car file
-bool CopyrightProperties::write(const char *path) {
-	std::string filename("CopyrightProperties.csv");
-	CopyrightPropertiesString cov;
-	CSVRow::write(path, filename.c_str(), cov);
+unsigned int CopyrightProperties::findImage(const char *text, int col) {
+	unsigned int count = 0;
+	for (std::vector<CSVRowItem *>::iterator i = this->begin(); i != this->end(); i++, count++) {
+		CopyrightPropertiesItem *item = (CopyrightPropertiesItem *)*i;
+		std::string field;
+		switch (col) {
+        	case 0: field = item->getCopyright(); break;
+        	case 1: field = item->getUsageRights(); break;
+        	case 2: field = item->getCopyrightUrl(); break;
+        	return std::string::npos;
+		}
+		if (field.compare(text) == 0) {
+			return count;
+		}
+	}
+	return std::string::npos;
+}
+bool CopyrightProperties::load(unsigned int row, MetadataObject &mo) {
+	if (this->size() < row ) {
+		return false;
+	}
+	CopyrightPropertiesItem *item = (CopyrightPropertiesItem *)at(row);
+    mo.setCopyright(item->getCopyright());
+	mo.setUsageRights(item->getUsageRights());
+	mo.setCopyrightUrl(item->getCopyrightUrl());
+
+
+}
+bool CopyrightProperties::save(unsigned int row, MetadataObject &mo) {
+	if (this->size() < row ) {
+		return false;
+	}
+	CopyrightPropertiesItem *item = (CopyrightPropertiesItem *)at(row);
+    item->setCopyright(mo.getCopyright());
+	item->setUsageRights(mo.getUsageRights());
+	item->setCopyrightUrl(mo.getCopyrightUrl());
 
 	return true;
 }

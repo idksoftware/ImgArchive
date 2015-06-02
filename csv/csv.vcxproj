@@ -144,6 +144,7 @@
     <ClCompile Include="CopyrightProperties.cpp" />
     <ClCompile Include="CSVDatabase.cpp" />
     <ClCompile Include="CSVDBFile.cpp" />
+    <ClCompile Include="CSVDBVisitor.cpp" />
     <ClCompile Include="CSVRow.cpp" />
     <ClCompile Include="GPSProperties.cpp" />
     <ClCompile Include="MediaProperties.cpp" />
@@ -154,6 +155,7 @@
     <ClInclude Include="CopyrightProperties.h" />
     <ClInclude Include="CSVDatabase.h" />
     <ClInclude Include="CSVDBFile.h" />
+    <ClInclude Include="CSVDBVisitor.h" />
     <ClInclude Include="CSVRow.h" />
     <ClInclude Include="GPSProperties.h" />
     <ClInclude Include="MediaProperties.h" />
