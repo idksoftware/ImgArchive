@@ -1,9 +1,37 @@
-/*
- * ViewManager.cpp
- *
- *  Created on: Jan 23, 2015
- *      Author: wzw7yn
- */
+/* **************************************************
+**
+**    III                DDD  KKK
+**    III                DDD  KKK
+**                       DDD  KKK
+**    III   DDDDDDDDDDD  DDD  KKK            KKK
+**    III  DDD           DDD  KKK            KKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK   KKKKKKKKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK            KKK
+**    III   DDDDDDDDDDDDDDDD  KKK            KKK
+**
+**
+**     SSS         FF
+**    S           F   T
+**     SSS   OO   FF  TTT W   W  AAA  R RR   EEE
+**        S O  O  F   T   W W W  AAAA RR  R EEEEE
+**    S   S O  O  F   T   W W W A   A R     E
+**     SSS   OO  FFF   TT  W W   AAAA R      EEE
+**
+**    Copyright: (c) 2015 IDK Software Ltd
+**
+****************************************************
+**
+**	Filename	: CRegString.cpp
+**	Author		: I.Ferguson
+**	Version		: 1.000
+**	Date		: 26-05-2015
+**
+** #$$@@$$# */
+
 #include <stdio.h>
 #include <string>
 #include "SAUtils.h"
@@ -14,6 +42,7 @@
 #include "CLogger.h"
 #include <fstream>
 #include "CSVArgs.h"
+#include "AppPaths.h"
 
 namespace simplearchive {
 
@@ -358,7 +387,7 @@ bool ViewItem::process() {
 
 bool ViewItem::add(int id) {
 	std::string indexPath = m_archivePath;
-	indexPath += "/.sia/imageid";
+	indexPath += IMAGEID_FOLDER;
 	CSVDBFile csvDBFile(indexPath.c_str());
 	std::auto_ptr<ImageInfo> ii = csvDBFile.getItemAt(id);
 	switch (getSet()) {
@@ -399,13 +428,19 @@ bool ViewItem::add(int id) {
 bool ViewItem::add(std::auto_ptr<ImageInfo> imageInfo) {
 
 	std::string relpath = imageInfo->getImagePath();
+	// source
 	std::string fullrelpath = relpath;
-	fullrelpath += '/';
+	
+	fullrelpath += "/data/";
 	fullrelpath += imageInfo->getName();
 	std::string sourceFile = m_archivePath;
 	sourceFile += '/';
 	sourceFile += fullrelpath;
 	printf("name %s\n", sourceFile.c_str());
+	// destination
+	fullrelpath = relpath;
+	fullrelpath += '/';
+	fullrelpath += imageInfo->getName();
 	std::string distFile = getPath();
 	distFile += '/';
 	distFile += fullrelpath;
@@ -501,7 +536,7 @@ bool ViewItem::processSearch(const char *setFile, bool include) {
 bool ViewItem::processAll() {
 
 	std::string indexPath = m_archivePath;
-	indexPath += "/.sia/imageid";
+	indexPath += IMAGEID_FOLDER;
 	CSVDBFile csvDBFile(indexPath.c_str());
 	int max = csvDBFile.getMaxIndex();
 	printf("max: %d\n", max);
@@ -654,5 +689,122 @@ bool ViewManager::processMaster() {
 	}
 }
 */
+bool ViewManager::remove(const char *name) {
+	Config config;
+	ConfigReader configReader;
+	configReader.read(m_confpath.c_str(), config);
 
+	ConfigWriter configWriter;
+	if (configWriter.remove(name, config) == false) {
+		return false;
+	}
+	configWriter.write(m_confpath.c_str(), config);
+	return true;
+}
+
+std::string ViewManager::makeOptionString(const char *locationPath, bool mode, bool type, bool access, EViewSet viewSet, bool metadata, const char *setpath) {
+	std::string line;
+	std::string valueStr;
+	std::string typeStr;
+	std::string accessStr;
+	std::string viewSetStr;
+	std::string metadataStr;
+
+
+
+	if (mode) {
+		valueStr = "dynamic";
+	}
+	else {
+		valueStr = "snapshot";
+	}
+
+	line = valueStr;
+	line += ',';
+	line += locationPath;
+	line += ',';
+
+	if (type) {
+		valueStr = "link";
+	}
+	else {
+		valueStr = "copy";
+	}
+
+	line += valueStr;
+	line += ',';
+
+	if (access) {
+		valueStr = "readwrite";
+	}
+	else {
+		valueStr = "readonly";
+	}
+
+	line += valueStr;
+	line += ',';
+
+	switch (viewSet) {
+	case ViewManager::VS_IncludeSet:
+		valueStr = "include";
+		break;
+	case ViewManager::VS_ExcludeSet:
+		valueStr = "exclude";
+		break;
+	case ViewManager::VS_InclusiveSearch:
+		valueStr = "inclusive_search";
+		break;
+	case ViewManager::VS_ExclusiveSearch:
+		valueStr = "exclusive_search";
+		break;
+	case ViewManager::VS_ALL:
+		valueStr = "all";
+		break;
+	case ViewManager::VS_Unknown:
+		valueStr = "unknown";
+		break;
+	}
+
+	line += valueStr;
+	line += ',';
+	line += setpath;
+	line += ',';
+
+	if (metadata) {
+		valueStr = "metadata";
+	}
+	else {
+		valueStr = "nometadata";
+	}
+
+	line += valueStr;
+	return line;
+}
+
+bool ViewManager::edit(const char *name, const char *locationPath, bool mode, bool type, bool access, EViewSet viewSet, bool metadata, const char *setpath) {
+
+	std::string line = makeOptionString(locationPath, mode, type, access, viewSet, metadata, setpath);
+	//std::cout << line << '\n';
+	Config config;
+	ConfigReader configReader;
+	configReader.read(m_confpath.c_str(), config);
+	ConfigWriter configWriter;
+	configWriter.edit(name, line.c_str(), config);
+	configWriter.write(m_confpath.c_str(), config);
+
+	return true;
+}
+
+bool ViewManager::create(const char *name, const char *locationPath, bool mode, bool type, bool access, EViewSet viewSet, bool metadata, const char *setpath) {
+
+	std::string line = makeOptionString(locationPath, mode, type, access, viewSet, metadata, setpath);
+	//std::cout << line << '\n';
+	Config config;
+	ConfigReader configReader;
+	configReader.read(m_confpath.c_str(), config);
+	ConfigWriter configWriter;
+	configWriter.add(name, line.c_str(), config);
+	configWriter.write(m_confpath.c_str(), config);
+	return true;
+}
 } /* namespace simplearchive */

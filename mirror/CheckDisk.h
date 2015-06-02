@@ -1,9 +1,36 @@
-/*
- * CheckDisk.h
- *
- *  Created on: May 19, 2014
- *      Author: wzw7yn
- */
+/* **************************************************
+**
+**    III                DDD  KKK
+**    III                DDD  KKK
+**                       DDD  KKK
+**    III   DDDDDDDDDDD  DDD  KKK            KKK
+**    III  DDD           DDD  KKK            KKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK   KKKKKKKKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK            KKK
+**    III   DDDDDDDDDDDDDDDD  KKK            KKK
+**
+**
+**     SSS         FF
+**    S           F   T
+**     SSS   OO   FF  TTT W   W  AAA  R RR   EEE
+**        S O  O  F   T   W W W  AAAA RR  R EEEEE
+**    S   S O  O  F   T   W W W A   A R     E
+**     SSS   OO  FFF   TT  W W   AAAA R      EEE
+**
+**    Copyright: (c) 2015 IDK Software Ltd
+**
+****************************************************
+**
+**	Filename	: CRegString.cpp
+**	Author		: I.Ferguson
+**	Version		: 1.000
+**	Date		: 26-05-2015
+**
+** #$$@@$$# */
 
 #ifndef CHECKDISK_H_
 #define CHECKDISK_H_
@@ -24,13 +51,14 @@ class CheckDisk {
         /// Helper function to print a tag into a XML file.
 	std::string writeTag(const char *tag, const unsigned int value, int tab);
         /// The root archive path
-	//std::string m_archivePath;
+	static std::string m_archivePath;
         /// Make an XML file manifest in the target directory 
 	bool makeXML(const char *targetdir);
 public:
         /// Constructor
         /// @param archivePath  The root archive folder  
 	//CheckDisk(const char *archivePath);
+	static void setArchivePath(const char *archivePath);
 	CheckDisk() {};
         /// Destructor
 	virtual ~CheckDisk();
