@@ -1,9 +1,37 @@
-/*
- * AppOptions.cpp
- *
- *  Created on: Oct 27, 2014
- *      Author: wzw7yn
- */
+/* **************************************************
+**
+**    III                DDD  KKK
+**    III                DDD  KKK
+**                       DDD  KKK
+**    III   DDDDDDDDDDD  DDD  KKK            KKK
+**    III  DDD           DDD  KKK            KKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK   KKKKKKKKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK            KKK
+**    III   DDDDDDDDDDDDDDDD  KKK            KKK
+**
+**
+**     SSS         FF
+**    S           F   T
+**     SSS   OO   FF  TTT W   W  AAA  R RR   EEE
+**        S O  O  F   T   W W W  AAAA RR  R EEEEE
+**    S   S O  O  F   T   W W W A   A R     E
+**     SSS   OO  FFF   TT  W W   AAAA R      EEE
+**
+**    Copyright: (c) 2015 IDK Software Ltd
+**
+****************************************************
+**
+**	Filename	: CRegString.cpp
+**	Author		: I.Ferguson
+**	Version		: 1.000
+**	Date		: 26-05-2015
+**
+** #$$@@$$# */
+
 #include "ConfigReader.h"
 #include "AppOptions.h"
 #include "AppConfig.h"
@@ -38,7 +66,7 @@ bool AppOptions::initalise(int argc, char **argv) {
 	const std::string key = "SA_HOME";
 	std::string temp = SAUtils::GetEnvironment(key);
 	std::string homePath = temp;
-	printf("%s", homePath.c_str());
+//	printf("%s", homePath.c_str());
 	int i = homePath.length();
 	if (homePath.empty() == true || homePath.length() == 0) {
 		homePath = SAUtils::GetEnvironment("ProgramData");
@@ -51,7 +79,7 @@ bool AppOptions::initalise(int argc, char **argv) {
 		m_error = true;
 		return false;
 	}
-	std::string configfile = homePath + "/conf/" + "config.conf";
+	std::string configfile = homePath + "/conf/" + "config.dat";
 	if (SAUtils::FileExists(configfile.c_str()) == false) {
 		m_error = true;
 		return false;
@@ -59,7 +87,7 @@ bool AppOptions::initalise(int argc, char **argv) {
 	ConfigReader configReader;
 	configReader.setNoLogging();
 	configReader.read(configfile.c_str(), config);
-	config.printAll();
+	// test only config.printAll();
 		/*
 		if (config.value("SourcePath", temp) == true) {
 			m_sourcePath = temp;
@@ -89,7 +117,9 @@ bool AppOptions::initalise(int argc, char **argv) {
 
 	//define error codes
 	argvParser.addErrorCode(0, "Success");
-	argvParser.addErrorCode(1, "Error");
+	argvParser.addErrorCode(1, "Warnings");
+	argvParser.addErrorCode(2, "Errors");
+	argvParser.addErrorCode(3, "Fatal");
 	argvParser.setIntroductoryDescription("The Image archive provides an organised place to store images. This archive is"
 		"designed to be simple in design and to use. It consists of archiving core that provides the basic archiving"
 		" functions but in addition, takes input and provides output from optional external components to provide a"
@@ -101,35 +131,42 @@ bool AppOptions::initalise(int argc, char **argv) {
 	
 
 	// Subcommands
-	argvParser.defineOption("a", "add new images to the archive.", ArgvParser::NoOptionAttribute);
+	argvParser.defineOption("a", "add new images to the archive.", ArgvParser::MasterOption);
 	argvParser.defineOptionAlternative("a", "add");
 
-	argvParser.defineOption("o", "Checkout images from archive.", ArgvParser::NoOptionAttribute);
+	argvParser.defineOption("o", "Checkout images from archive.", ArgvParser::MasterOption);
 	argvParser.defineOptionAlternative("o", "checkout");
 
-	argvParser.defineOption("i", "Checkin images to archive.", ArgvParser::NoOptionAttribute);
+	argvParser.defineOption("i", "Checkin images to archive.", ArgvParser::MasterOption);
 	argvParser.defineOptionAlternative("i", "checkin");
 
-	argvParser.defineOption("u", "Un-checkout images to archive.", ArgvParser::NoOptionAttribute);
+	argvParser.defineOption("u", "Un-checkout images to archive.", ArgvParser::MasterOption);
 	argvParser.defineOptionAlternative("u", "uncheckout");
 
-	argvParser.defineOption("x", "Export images from archive.", ArgvParser::NoOptionAttribute);
+	argvParser.defineOption("x", "Export images from archive.", ArgvParser::MasterOption);
 	argvParser.defineOptionAlternative("x", "export");
 
-	argvParser.defineOption("about", "prints the version information", ArgvParser::NoOptionAttribute);
+	argvParser.defineOption("about", "prints the version information", ArgvParser::MasterOption);
 
 	argvParser.defineOption("v", "View commands", ArgvParser::NoOptionAttribute);
 	argvParser.defineOptionAlternative("v", "view");
 
-	argvParser.defineOption("validate", "Validate commands", ArgvParser::NoOptionAttribute);
-	
 	argvParser.defineOption("image-address", "image address", ArgvParser::NoOptionAttribute);
 
+
+	/*
+	argvParser.defineOption("I", "Create Archive Commands", ArgvParser::NoOptionAttribute);
+	argvParser.defineOptionAlternative("I", "init");
+
+	argvParser.defineOption("validate", "Validate commands", ArgvParser::NoOptionAttribute);
+
+	
 	argvParser.defineOption("m", "Mirror commands", ArgvParser::NoOptionAttribute);
 	argvParser.defineOptionAlternative("m", "mirror");
 
 	argvParser.defineOption("b", "Goes through the motions of running the subcommand but makes no\nactual changes ether disk or repository.", ArgvParser::NoOptionAttribute);
 	argvParser.defineOptionAlternative("b", "backup");
+	*/
 	// Options
 	argvParser.defineOption("n", "name of the view.", ArgvParser::OptionRequiresValue);
 	argvParser.defineOptionAlternative("n", "name");
@@ -171,8 +208,13 @@ bool AppOptions::initalise(int argc, char **argv) {
 	ArgvParser::ParserResults res = argvParser.parse(argc, argv);
 	//testHelpOptionDetection();
 	bool cmdFound = false;
+
 	if (argvParser.foundOption("about") == true) {
 		setCommandMode(AppOptions::CM_Version);
+		cmdFound = true;
+	}
+	else if (argvParser.foundOption("init") == true) {
+		setCommandMode(AppOptions::CM_InitArchive);
 		cmdFound = true;
 	}
 	else if (argvParser.foundOption("add") == true) {
