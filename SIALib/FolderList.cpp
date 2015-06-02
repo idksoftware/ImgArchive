@@ -1,9 +1,37 @@
-/*
- * FolderList.cpp
- *
- *  Created on: Oct 3, 2014
- *      Author: wzw7yn
- */
+/* **************************************************
+**
+**    III                DDD  KKK
+**    III                DDD  KKK
+**                       DDD  KKK
+**    III   DDDDDDDDDDD  DDD  KKK            KKK
+**    III  DDD           DDD  KKK            KKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK   KKKKKKKKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK            KKK
+**    III   DDDDDDDDDDDDDDDD  KKK            KKK
+**
+**
+**     SSS         FF
+**    S           F   T
+**     SSS   OO   FF  TTT W   W  AAA  R RR   EEE
+**        S O  O  F   T   W W W  AAAA RR  R EEEEE
+**    S   S O  O  F   T   W W W A   A R     E
+**     SSS   OO  FFF   TT  W W   AAAA R      EEE
+**
+**    Copyright: (c) 2015 IDK Software Ltd
+**
+****************************************************
+**
+**	Filename	: CRegString.cpp
+**	Author		: I.Ferguson
+**	Version		: 1.000
+**	Date		: 26-05-2015
+**
+** #$$@@$$# */
+
 #include <string>
 #include <vector>
 #include <stdio.h>
@@ -238,16 +266,18 @@ FolderList::~FolderList() {
 }
 
 bool FolderList::addDayFolder(const char *folderName) {
-	std::string path = m_archivePath + std::string("/.sia");
+	
+	std::string path = m_archivePath + std::string("/root");
 	if (SAUtils::DirExists(path.c_str()) == false) {
 		if (SAUtils::mkDir(path.c_str()) == false) {
 			throw std::exception();
 		}
-		if (SAUtils::setHidden(path.c_str()) == false) {
-			throw std::exception();
-		}
+		//if (SAUtils::setHidden(path.c_str()) == false) {
+		//	throw std::exception();
+		//}
 	}
-	path = m_archivePath + std::string("/.sia/chdsk");
+	
+	path += std::string("/chdsk");
 	if (SAUtils::DirExists(path.c_str()) == false) {
 		if (SAUtils::mkDir(path.c_str()) == false) {
 			throw std::exception();
@@ -263,7 +293,7 @@ bool FolderList::addDayFolder(const char *folderName) {
 
 bool FolderList::incFolders(const char *folderName) {
 	std::string path = m_archivePath;
-	path += "/.sia/chdsk";
+	path += "/chdsk";
 	if (SAUtils::DirExists(path.c_str()) == false) {
 		if (SAUtils::mkDir(path.c_str()) == false) {
 			throw std::exception();
@@ -284,7 +314,8 @@ bool FolderList::incFolders(const char *folderName) {
 
 bool FolderList::incFiles(const char *folderName) {
 	std::string path = m_archivePath;
-	path += "/.sia";
+	
+	path += "/root";
 	if (SAUtils::DirExists(path.c_str()) == false) {
 		if (SAUtils::mkDir(path.c_str()) == false) {
 			throw std::exception();
@@ -296,6 +327,7 @@ bool FolderList::incFiles(const char *folderName) {
 			throw std::exception();
 		}
     }
+	
 	std::string fpath = path;
 	fpath += "/fdata.csv";
 	//if (SAUtils::FileExists(fpath.c_str()) == false) {
@@ -313,7 +345,13 @@ bool FolderList::incFiles(const char *folderName) {
 
 bool FolderList::makeXML() {
 	std::string path = m_archivePath;
-	path += "/.sia/chdsk";
+	path += "/root";
+	if (SAUtils::DirExists(path.c_str()) == false) {
+		if (SAUtils::mkDir(path.c_str()) == false) {
+			throw std::exception();
+		}
+	}
+	path += "/chdsk";
 	if (SAUtils::DirExists(path.c_str()) == false) {
 		if (SAUtils::mkDir(path.c_str()) == false) {
 			throw std::exception();
@@ -371,7 +409,14 @@ bool FolderList::makeXML() {
 }
 
 bool FolderList::makeList() {
-	std::string path = m_archivePath + std::string("/.sia/chdsk");
+	std::string path = m_archivePath;
+	path += "/root";
+	if (SAUtils::DirExists(path.c_str()) == false) {
+		if (SAUtils::mkDir(path.c_str()) == false) {
+			throw std::exception();
+		}
+	}
+	path += std::string("/chdsk");
 	if (SAUtils::DirExists(path.c_str()) == false) {
 		if (SAUtils::mkDir(path.c_str()) == false) {
 			throw std::exception();
@@ -429,36 +474,6 @@ bool FolderList::makeList() {
 	filexml <<	"</FolderList>\n";
 	filexml.close();
 	return true;
-	/*
-	std::string path = targetdir + std::string("/.sia/chdsk");
-	if (SAUtils::DirExists(path.c_str()) == false) {
-		if (SAUtils::mkDir(path.c_str()) == false) {
-			throw std::exception();
-		}
-	}
-	// do files
-	std::string fpath = path + std::string("/fdata.csv");
-	std::ofstream filedat(fpath.c_str());
-	if (filedat.is_open() == false) {
-		return false;
-	}
-	fpath = path + std::string("/fdata.xml");
-	std::ofstream filexml(fpath.c_str());
-	if (filexml.is_open() == false) {
-		return false;
-	}
-	filexml <<	"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-					<<	"<FileList>\n";
-	int tmpcrc = 23;
-	std::string targetdirStr = targetdir;
-	for (std::vector<std::string *>::iterator i = filelist->begin(); i != filelist->end(); i++) {
-		std::string *name = *i;
-		std::string filepath = targetdirStr + "/" + *name;
-		char c = (*name)[0];
-		if (c == '.' ) {
-			continue;
-		}
-	}
-	*/
+	
 }
 } /* namespace simplearchive */

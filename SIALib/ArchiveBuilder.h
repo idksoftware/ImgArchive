@@ -1,9 +1,36 @@
-/*
- * ArchiveBuilder.h
- *
- *  Created on: May 7, 2014
- *      Author: wzw7yn
- */
+/* **************************************************
+**
+**    III                DDD  KKK
+**    III                DDD  KKK
+**                       DDD  KKK
+**    III   DDDDDDDDDDD  DDD  KKK            KKK
+**    III  DDD           DDD  KKK            KKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK   KKKKKKKKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK            KKK
+**    III   DDDDDDDDDDDDDDDD  KKK            KKK
+**
+**
+**     SSS         FF
+**    S           F   T
+**     SSS   OO   FF  TTT W   W  AAA  R RR   EEE
+**        S O  O  F   T   W W W  AAAA RR  R EEEEE
+**    S   S O  O  F   T   W W W A   A R     E
+**     SSS   OO  FFF   TT  W W   AAAA R      EEE
+**
+**    Copyright: (c) 2015 IDK Software Ltd
+**
+****************************************************
+**
+**	Filename	: CRegString.cpp
+**	Author		: I.Ferguson
+**	Version		: 1.000
+**	Date		: 26-05-2015
+**
+** #$$@@$$# */
 
 #ifndef ARCHIVEBUILDER_H_
 #define ARCHIVEBUILDER_H_
@@ -33,9 +60,9 @@ class ViewManager;
 class ArchiveBuilder {
 	bool m_Error;
 	
-	std::string m_RootOutputDir;
+	std::string m_shadowPath;
 	std::string m_indexPath;
-	std::string m_userRootdir;
+	std::string m_archivePath;
 	std::string m_metatemplatePath;
 	ImageIndex *m_imageIndex;
 	ArchiveDate *m_archiveDate;
@@ -44,7 +71,7 @@ class ArchiveBuilder {
 	void copyExif(MetadataObject* metadataObject, ExifObject *exifObject);
 	bool CreateMetadataXMLFile(ImagePath &imagePath, CSVDBFile &csvDBFile, MetadataObject &metadataObject);
 	bool CreateImage(CImageId &imageId, ImagePath &imagePath, CSVDBFile &csvDBFile, MetadataObject &metadataObject);
-	bool processHistory(const char *filepath, const char *comment, const HistoryEvent &he, int ver);
+	bool processHistory(ImagePath &imagePath, const char *filepath, const char *comment, const HistoryEvent &he, int ver);
 public:
 	ArchiveBuilder();
 	/// @brief This initalises the archive builder

@@ -1,9 +1,37 @@
-/*
- * FolderList.cpp
- *
- *  Created on: Oct 3, 2014
- *      Author: wzw7yn
- */
+/* **************************************************
+**
+**    III                DDD  KKK
+**    III                DDD  KKK
+**                       DDD  KKK
+**    III   DDDDDDDDDDD  DDD  KKK            KKK
+**    III  DDD           DDD  KKK            KKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK   KKKKKKKKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK            KKK
+**    III   DDDDDDDDDDDDDDDD  KKK            KKK
+**
+**
+**     SSS         FF
+**    S           F   T
+**     SSS   OO   FF  TTT W   W  AAA  R RR   EEE
+**        S O  O  F   T   W W W  AAAA RR  R EEEEE
+**    S   S O  O  F   T   W W W A   A R     E
+**     SSS   OO  FFF   TT  W W   AAAA R      EEE
+**
+**    Copyright: (c) 2015 IDK Software Ltd
+**
+****************************************************
+**
+**	Filename	: CRegString.cpp
+**	Author		: I.Ferguson
+**	Version		: 1.000
+**	Date		: 26-05-2015
+**
+** #$$@@$$# */
+
 #include <string>
 #include <vector>
 #include <stdio.h>
@@ -13,6 +41,7 @@
 #include <cstdlib>
 #include "Catalog.h"
 #include "SAUtils.h"
+#include "CSVArgs.h"
 
 namespace simplearchive {
 
@@ -28,8 +57,19 @@ public:
 		m_nFolders = 0;
 		m_time = 0;
 	};
-	CatalogFolder(std::string data) {
+	CatalogFolder(std::string &data) {
+		CSVArgs csvArgs(':');
+		csvArgs.process(data.c_str());
+		m_folderName = csvArgs.at(0);
+		std::string nFolderStr = csvArgs.at(1);
+		m_nFolders = strtol(nFolderStr.c_str(),NULL,10);
+		std::string nFilesStr = csvArgs.at(2);
+		m_nFiles = strtol(nFilesStr.c_str(),NULL,10);
+		std::string timeStr = csvArgs.at(3);
+		m_time = strtol(timeStr.c_str(),NULL,10);
+
 		//m_status = Missing;
+		/*
 		int delim1 = data.find_first_of(":");
 		int delim2 = data.find_first_of(":", delim1+1);
 		int delim3 = data.find_first_of(":", delim2+1);
@@ -40,6 +80,7 @@ public:
 		m_nFiles = strtol(nFilesStr.c_str(),NULL,10);
 		std::string timeStr = data.substr(delim3+1, data.length());
 		m_time = strtol(timeStr.c_str(),NULL,10);
+		*/
 	};
 
 	CatalogFolder(const char *folderName, int folders = 0, int files = 0) {
@@ -226,7 +267,8 @@ void CatalogContainer::add(bool isYear, const char *filename) {
 }
 */
 
-Catalog::Catalog(const char *archivePath) {
+Catalog::Catalog(const char *catalogPath, const char *archivePath) {
+	m_catalogPath = catalogPath;
 	m_archivePath = archivePath;
 	//m_archivePath = m_archivePath + "/.metadata";
 	//m_folderFile = *(new FolderFile);

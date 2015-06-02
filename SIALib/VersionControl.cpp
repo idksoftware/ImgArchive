@@ -1,9 +1,36 @@
-/*
- * VersionControl.cpp
- *
- *  Created on: Feb 24, 2015
- *      Author: wzw7yn
- */
+/* **************************************************
+**
+**    III                DDD  KKK
+**    III                DDD  KKK
+**                       DDD  KKK
+**    III   DDDDDDDDDDD  DDD  KKK            KKK
+**    III  DDD           DDD  KKK            KKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK   KKKKKKKKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK            KKK
+**    III   DDDDDDDDDDDDDDDD  KKK            KKK
+**
+**
+**     SSS         FF
+**    S           F   T
+**     SSS   OO   FF  TTT W   W  AAA  R RR   EEE
+**        S O  O  F   T   W W W  AAAA RR  R EEEEE
+**    S   S O  O  F   T   W W W A   A R     E
+**     SSS   OO  FFF   TT  W W   AAAA R      EEE
+**
+**    Copyright: (c) 2015 IDK Software Ltd
+**
+****************************************************
+**
+**	Filename	: CRegString.cpp
+**	Author		: I.Ferguson
+**	Version		: 1.000
+**	Date		: 26-05-2015
+**
+** #$$@@$$# */
 
 #include <string.h>
 #include <sstream>
@@ -19,7 +46,7 @@
 #include "HistoryEvent.h"
 #include "History.h"
 #include "ImageHistory.h"
-
+#include "CLogger.h"
 #include "CVersion.h"
 #include "CDate.h"
 #include "SAUtils.h"
@@ -36,6 +63,10 @@
 #include "VersionControl.h"
 
 namespace simplearchive {
+
+std::string VersionControl::m_pathToArchive;
+std::string VersionControl::m_pathToShadow;
+
 std::auto_ptr<VersionControl> VersionControl::m_this(0);
 VersionControl::VersionControl() {
 	// TODO Auto-generated constructor stub
@@ -50,61 +81,84 @@ VersionControl &VersionControl::get() {
 
 	if (!m_this.get()) {
 		m_this.reset(new VersionControl());
-
 	}
 	return *(m_this.get());
 }
 
 // filepath is the relative path from the archive root
 bool VersionControl::checkout(const char *filepath, const char *comment) {
-	std::string fullPath = m_pathToArchive + "/" + filepath;
-	std::string filename;
-	std::string path;
 
-	getPathAndFilename(fullPath.c_str(), filename, path);
-	// Full path to metadata directory
-	std::string lockpath = path + "/.metadata/" + filename;
-	// Full path to lock file
-	std::string imageHistoryPath = lockpath + ".hst";
+	CLogger &logger = CLogger::getLogger();
+	ImagePath imagePath(filepath);
+	std::string path = imagePath.getDataPath();
+	std::string fullpath = path + '/' + imagePath.getImageName();
+	std::string hstpath = imagePath.getLocalShadowHistoryPath() + '/' + imagePath.getImageName() + ".hst";
+	std::string lockpath = imagePath.getLocalShadowHistoryPath() + '/' + imagePath.getImageName();
 
 	// Lock the lock file
 	if ((ImageLock::lock(lockpath.c_str())) == false) {
-		// testing
-		//return false;
+		logger.log(CLogger::INFO, "Cannot lock Image: \"%s\"", imagePath.getImageName().c_str());
+		return false;
 	}
 
-	// create the image history object for the image
-	//
-	ImageHistory imageHistory(imageHistoryPath.c_str());
+	
 	// Add the comment
-	CVersion version(fullPath.c_str());
+	CVersion version(fullpath.c_str());
 	int idx = version.getVersion();
-	version.CopyDataVersion2Old();
-	setHistory(imageHistoryPath.c_str(), filepath, comment, HistoryEvent::CHECKOUT, idx);
+	//version.CopyDataVersion2Old();
+	setHistory(hstpath.c_str(), filepath, comment, HistoryEvent::CHECKOUT, idx);
 	return true;
 }
 
+bool VersionControl::CopyNewVersion2Data(const std::string &newImagePath,const std::string &dataPath,const std::string &imageName) {
+	std::string from = newImagePath + '/' + imageName;
+	std::string to = dataPath + "/" + imageName;
+	// data
+
+	if (SAUtils::copy(from.c_str(), to.c_str()) == false) {
+		return false;
+	}
+	return true;
+}
+
+/*
+bool VersionControl::CopyNewVersion2Data(const std::string &newImagePath, const std::string &dataPath, const std::string &imageName) {
+	std::string from = newImagePath + '/' + imageName;
+	std::string to = dataPath + "/" + imageName;
+	// data
+
+	if (SAUtils::copy(from.c_str(), to.c_str()) == false) {
+		return false;
+	}
+	return true;
+}
+*/
+
 bool VersionControl::checkin(const char *filepath, const char *comment) {
-	std::string fullPath = m_pathToArchive + "/" + filepath;
-	std::string filename;
-	std::string path;
-
-	getPathAndFilename(fullPath.c_str(), filename, path);
-
-	std::string hstpath = path + "/.metadata/" + filename + ".hst";
-	std::string lockpath = path + "/.metadata/" + filename;
+	ImagePath imagePath(filepath);
+	
+	std::string path = imagePath.getDataPath();
+	std::string fullpath = path + '/' + imagePath.getImageName();
+	//getPathAndFilename(fullPath.c_str(), filename, path);
+	
+	std::string hstpath = imagePath.getLocalShadowHistoryPath() + '/' + imagePath.getImageName() + ".hst";
+	std::string lockpath = imagePath.getLocalShadowHistoryPath() + '/' + imagePath.getImageName();
 
 	if ((ImageLock::unlock(lockpath.c_str())) == false) {
 		//return false;
 	}
-	CVersion version(fullPath.c_str());
+	CVersion version(fullpath.c_str());
 	if (version.HasChanged() == false) {
 		// check the image has changed
 		uncheckout(filepath, comment);
 		printf("The image has not changed\"%s\"", filepath);
 		//return true;
 	}
+	std::string archivePath = imagePath.getImagePath() + '/' + imagePath.getImageName();
 	const char *newNamePath = version.newVersion();
+	CopyNewVersion2Data(imagePath.getYyyymmddStrPath(), imagePath.getDataPath(), imagePath.getImageName());
+	std::string metadataPath = imagePath.getLocalShadowMetadataPath() + '/' + imagePath.getImageName() + ".xml";
+	//version.newVersionMetadata(metadataPath.c_str());
 	// turn into log message
 	//printf("New Version %s", newNamePath);
 	// use the above for a log message
@@ -117,19 +171,19 @@ bool VersionControl::checkin(const char *filepath, const char *comment) {
 }
 
 bool VersionControl::uncheckout(const char *filepath, const char *comment) {
-	std::string fullPath = m_pathToArchive + "/" + filepath;
-	std::string filename;
-	std::string path;
+	ImagePath imagePath(filepath);
 
-	getPathAndFilename(filepath, filename, path);
+	std::string path = imagePath.getDataPath();
+	std::string fullpath = path + '/' + imagePath.getImageName();
+	//getPathAndFilename(fullPath.c_str(), filename, path);
 
-	std::string hstpath = path + "/.metadata/" + filename + ".hst";
-	std::string lockpath = path + "/.metadata/" + filename;
+	std::string hstpath = imagePath.getLocalShadowHistoryPath() + '/' + imagePath.getImageName() + ".hst";
+	std::string lockpath = imagePath.getLocalShadowHistoryPath() + '/' + imagePath.getImageName();
 
 	if ((ImageLock::unlock(lockpath.c_str())) == false) {
 		//return false;
 	}
-	CVersion version(fullPath.c_str());
+	CVersion version(fullpath.c_str());
 
 	// use the above for a log message
 	int idx = version.Revert();
@@ -196,7 +250,7 @@ std::string VersionControl::versonString(int idx) {
 	return s.str();
 }
 
-void VersionControl::getPathAndFilename(const char *filepath, std::string &filename, std::string &path) {
+bool VersionControl::getPathAndFilename(const char *filepath, std::string &filename, std::string &path) {
 	std::string fullPath = filepath;
 
 	if (SAUtils::FileExists(fullPath.c_str()) == false) {
@@ -217,6 +271,19 @@ void VersionControl::getPathAndFilename(const char *filepath, std::string &filen
 		message += "\"";
 		throw SIAAppException(message);
 	}
+	return true;
+}
+
+std::auto_ptr<ImageHistoryLog>  VersionControl::getHistory(const char *filepath) {
+	std::string fullPath = m_pathToArchive + "/" + filepath;
+	std::string filename;
+	std::string path;
+
+	getPathAndFilename(fullPath.c_str(), filename, path);
+	std::string hstpath = path + "/.metadata/" + filename + ".hst";
+
+	ImageHistory imageHistory(hstpath.c_str());
+	return imageHistory.get();
 }
 
 } /* namespace simplearchive */

@@ -1,9 +1,43 @@
+/* **************************************************
+**
+**    III                DDD  KKK
+**    III                DDD  KKK
+**                       DDD  KKK
+**    III   DDDDDDDDDDD  DDD  KKK            KKK
+**    III  DDD           DDD  KKK            KKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK   KKKKKKKKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK            KKK
+**    III   DDDDDDDDDDDDDDDD  KKK            KKK
+**
+**
+**     SSS         FF
+**    S           F   T
+**     SSS   OO   FF  TTT W   W  AAA  R RR   EEE
+**        S O  O  F   T   W W W  AAAA RR  R EEEEE
+**    S   S O  O  F   T   W W W A   A R     E
+**     SSS   OO  FFF   TT  W W   AAAA R      EEE
+**
+**    Copyright: (c) 2015 IDK Software Ltd
+**
+****************************************************
+**
+**	Filename	: CRegString.cpp
+**	Author		: I.Ferguson
+**	Version		: 1.000
+**	Date		: 26-05-2015
+**
+** #$$@@$$# */
+
 #pragma once
 #include "ConfigReader.h"
 #include "ExifDateTime.h"
 
 #define HOOK_SCRIPTS_PATH       "HookScripsPath" /*< Path to hook scripts */
-#define CONFIG_PATH		"ConfigPath"	 /*< Main configuration path */ 
+#define CONFIG_PATH				"ConfigPath"	 /*< Main configuration path */ 
 #define TOOLS_PATH           	"ToolsPath"
 #define TEMP_PATH           	"TempPath"
 #define SOURCE_PATH         	"SourcePath"
@@ -15,6 +49,7 @@
 #define EXTERNAL_COMMAND_LINE	"ExternalCommandLine"
 #define EXIF_MAP_PATH			"ExifMapPath"
 #define METADATA_TEMPLATE_PATH	"MetadataTemplatePath"
+#define CATALOG_PATH			"CatalogPath"
 
 namespace simplearchive {
 
@@ -55,7 +90,7 @@ namespace simplearchive {
 		static std::string m_tempPath;
 		/// This is the archive repository file path.
 		static std::string m_archivePath;
-
+		static std::string m_shadowArchivePath;
 		static std::string m_masterViewPath;
 
 		static std::string m_sourcePath;
@@ -78,32 +113,39 @@ namespace simplearchive {
 	public:
 		static CAppConfig &get();
 		~CAppConfig();
-		/// Gets the source path.
+		/// @brief Gets the source path.
 		const char *getSourcePath();
-		/// Gets the archive path.
+		/// @brief Gets the archive path.
+		/// user definable
 		const char *getArchivePath();
-		/// Gets the temp file path.
+		/// @brief Gets the shadow archive path
+		/// user definable
+		const char *getShadowPath();
+		/// @brief Gets the temp file path.
+		/// user definable
 		const char *getTempPath();
-		/// Gets tools path
+		/// @brief Gets tools path
 		const char *getToolsPath();
-		/// Gets the hooks path
+		/// @brief Gets the hooks path
+		/// user definable
+		/// 
 		const char *CAppConfig::getHookPath();
-		/// Gets the path to the metadata template files.
+		/// @brief Gets the path to the metadata template files.
 		const char *getMetadataTemplatePath();
-		/// Gets log file path
+		/// @brief Gets log file path
 		const char *getLogPath();
-		/// Gets the path to the crc index database.
+		/// @brief Gets the path to the crc index database.
 		const char *getIndexPath();
-		/// Gets the path the history file are stored. These files are used for
-		/// the history of the changes made to the archive.
+		/// @brief Gets the path the history file are stored. These files are used for
+		/// @brief the history of the changes made to the archive.
 		const char *getHistoryPath();
-		/// gets external Command line
+		/// @brief gets external Command line
 		const char *getExternalCommandLine();
-		/// Gets path to the Exif Map files. For example the Exiftool map
+		/// @brief Gets path to the Exif Map files. For example the Exiftool map
 		/// that maps exiftool keywords to Simple Archive keywords.
 		const char *getExifMapPath();
 		const char *getConfigPath();
-		/// Gets home path. This is the root path all default paths are made.
+		/// @brief Gets home path. This is the root path all default paths are made.
 		const char *getHomePath();
 		const char *getMasterViewPath();
 		const char *getDatabasePath();
@@ -124,12 +166,16 @@ namespace simplearchive {
 		bool isQuiet() const;
 		bool isVerbose() const;
 		const char *getLogLevel();
-		
-	private:
+
+	public:
+ 
+//	private:
+
 		void setDryRun(bool dryRun);
 		void setQuiet(bool quiet);
 		void setVerbose(bool verbose);
 		void setArchivePath(const char *homePath);
+		void setShadowPath(const char *homePath);
 		void setMasterViewPath(const char *viewPath);
 		
 		void setSourcePath(const char *sourcePath);

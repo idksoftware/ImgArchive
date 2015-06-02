@@ -32,33 +32,33 @@
 **
 ** #$$@@$$# */
 
-#ifndef FOLDERLIST_H_
-#define FOLDERLIST_H_
-
-#include <string>
+#ifndef IMAGEHISTORY_H_
+#define IMAGEHISTORY_H_
+#include <vector>
+#include <memory>
+#include "ImageHistoryLog.h"
 
 namespace simplearchive {
 
-class FolderFile;
-/**
- * @Brief This class manages the image folder list in the archive.
- * It records changes to the image folder and maintains an XML list
- * of folders.
- */
+class HistoryEvent;
+class EventList;
 
-class FolderList {
-	std::string m_archivePath;
-	//FolderFile &m_folderFile;
-	bool makeXML();
+class ImageHistory {
 public:
-	FolderList(const char *archivePath);
-	virtual ~FolderList();
 
-	bool addDayFolder(const char *folderName);
-	bool incFolders(const char *folderName);
-	bool incFiles(const char *folderName);
-	bool makeList();
+private:
+
+	bool read(const char *filepath);
+	bool write(const char *filepath);
+	EventList *m_eventList;
+	std::string m_datapath;
+public:
+	ImageHistory(const char *datapath);
+	virtual ~ImageHistory();
+	bool add(const char *filepath, const char *version, const char *comment, const HistoryEvent &he);
+	std::auto_ptr<ImageHistoryLog> get();
+
 };
 
 } /* namespace simplearchive */
-#endif /* FOLDERLIST_H_ */
+#endif /* IMAGEHISTORY_H_ */

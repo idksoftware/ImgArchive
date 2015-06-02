@@ -1,3 +1,37 @@
+/* **************************************************
+**
+**    III                DDD  KKK
+**    III                DDD  KKK
+**                       DDD  KKK
+**    III   DDDDDDDDDDD  DDD  KKK            KKK
+**    III  DDD           DDD  KKK            KKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK   KKKKKKKKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK            KKK
+**    III   DDDDDDDDDDDDDDDD  KKK            KKK
+**
+**
+**     SSS         FF
+**    S           F   T
+**     SSS   OO   FF  TTT W   W  AAA  R RR   EEE
+**        S O  O  F   T   W W W  AAAA RR  R EEEEE
+**    S   S O  O  F   T   W W W A   A R     E
+**     SSS   OO  FFF   TT  W W   AAAA R      EEE
+**
+**    Copyright: (c) 2015 IDK Software Ltd
+**
+****************************************************
+**
+**	Filename	: CRegString.cpp
+**	Author		: I.Ferguson
+**	Version		: 1.000
+**	Date		: 26-05-2015
+**
+** #$$@@$$# */
+
 #include "ArchiveDate.h"
 #include "ImageContainer.h"
 #include "MetadataObject.h"
@@ -97,30 +131,30 @@ namespace simplearchive {
 		if (rawNetadata != nullptr) {
 			std::string captureDate = rawNetadata->getCaptureDate();
 			m_exifDate = new ExifDate(captureDate.c_str());
-			if (m_exifDate->isOk() == false) {
-				return false;
+			if (m_exifDate->isOk() == true) {
+				return true;	// Found date
 			}
 		} else if (picMetadata != nullptr) {
 			std::string captureDate = picMetadata->getCaptureDate();
 			m_exifDate = new ExifDate(captureDate.c_str());
-			if (m_exifDate->isOk() == false) {
-				return false;
+			if (m_exifDate->isOk() == true) {
+				return true;
 			}
 		}
 		if ((rawId != nullptr) && (rawId->isExifFound())) {
 				const ExifDateTime& captureDate = rawId->getDateTimeDigitized();
 				m_exifDate = new ExifDate(captureDate);
-				if (m_exifDate->isOk() == false) {
-					return false;
+				if (m_exifDate->isOk() == true) {
+					return true;
 				}
 		} else if ((picId != nullptr) && (picId->isExifFound())) {
 				const ExifDateTime& captureDate = picId->getDateTimeDigitized();
 				m_exifDate = new ExifDate(captureDate);
-				if (m_exifDate->isOk() == false) {
-					return false;
+				if (m_exifDate->isOk() == true) {
+					return true;
 				}
 		}
-		return true;
+		return false;
 	}
 
 	ExifDate ArchiveDate::getArchiveDate() {

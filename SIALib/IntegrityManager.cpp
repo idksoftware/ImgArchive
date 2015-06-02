@@ -1,9 +1,36 @@
-/*
- * IntegrityManager.cpp
- *
- *  Created on: Oct 7, 2014
- *      Author: wzw7yn
- */
+/* **************************************************
+**
+**    III                DDD  KKK
+**    III                DDD  KKK
+**                       DDD  KKK
+**    III   DDDDDDDDDDD  DDD  KKK            KKK
+**    III  DDD           DDD  KKK            KKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK   KKKKKKKKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK            KKK
+**    III   DDDDDDDDDDDDDDDD  KKK            KKK
+**
+**
+**     SSS         FF
+**    S           F   T
+**     SSS   OO   FF  TTT W   W  AAA  R RR   EEE
+**        S O  O  F   T   W W W  AAAA RR  R EEEEE
+**    S   S O  O  F   T   W W W A   A R     E
+**     SSS   OO  FFF   TT  W W   AAAA R      EEE
+**
+**    Copyright: (c) 2015 IDK Software Ltd
+**
+****************************************************
+**
+**	Filename	: CRegString.cpp
+**	Author		: I.Ferguson
+**	Version		: 1.000
+**	Date		: 26-05-2015
+**
+** #$$@@$$# */
 
 #include <iostream>
 #include <time.h>
@@ -17,8 +44,13 @@ namespace simplearchive {
 
 IntegrityManager *IntegrityManager::m_this = 0;
 
+void IntegrityManager::setArchivePath(const char* archivePath) {
+	m_archivePath = archivePath;
+	CheckDisk::setArchivePath(archivePath);
+}
+
 IntegrityManager::IntegrityManager() {
-	m_archivePath;
+	
 }
 
 IntegrityManager::~IntegrityManager() {
@@ -46,7 +78,7 @@ bool IntegrityManager::makeList() {
 		return false;
 	}
 	// make file list
-	std::string path = m_archivePath + std::string("/.sia/chdsk");
+	std::string path = m_archivePath + std::string("/chdsk");
 	if (SAUtils::DirExists(path.c_str()) == false) {
 		if (SAUtils::mkDir(path.c_str()) == false) {
 			throw std::exception();
@@ -75,7 +107,7 @@ bool IntegrityManager::makeList() {
 			if (c == '.') {
 				continue;
 			}
-			std::string chdskpath = m_archivePath + "/" + *year + "/" + *name + "/.sia/chdsk";
+			std::string chdskpath = m_archivePath + "/" + *year + "/" + *name + "/chdsk";
 			std::string dirpath = m_archivePath + "/" + *year + "/" + *name;
 			std::cout << chdskpath << '\n';
 			std::cout << dirpath << '\n';

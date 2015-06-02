@@ -1,3 +1,37 @@
+/* **************************************************
+**
+**    III                DDD  KKK
+**    III                DDD  KKK
+**                       DDD  KKK
+**    III   DDDDDDDDDDD  DDD  KKK            KKK
+**    III  DDD           DDD  KKK            KKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK   KKKKKKKKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK            KKK
+**    III   DDDDDDDDDDDDDDDD  KKK            KKK
+**
+**
+**     SSS         FF
+**    S           F   T
+**     SSS   OO   FF  TTT W   W  AAA  R RR   EEE
+**        S O  O  F   T   W W W  AAAA RR  R EEEEE
+**    S   S O  O  F   T   W W W A   A R     E
+**     SSS   OO  FFF   TT  W W   AAAA R      EEE
+**
+**    Copyright: (c) 2015 IDK Software Ltd
+**
+****************************************************
+**
+**	Filename	: CRegString.cpp
+**	Author		: I.Ferguson
+**	Version		: 1.000
+**	Date		: 26-05-2015
+**
+** #$$@@$$# */
+
 #include "ImageId.h"
 #include "CIDKCrc.h"
 #include "md5.h"
@@ -11,11 +45,15 @@
 #include "ExifObject.h"
 #include "AppConfig.h"
 #include "SAUtils.h"
+#include "ExifDateTime.h"
+#include "BasicExif.h"
 
 namespace simplearchive {
 
+	
 	CImageId::CImageId()
 	{
+		m_basicExif.reset(new BasicExif);
 		m_exifFound = false;
 	}
 
@@ -35,12 +73,12 @@ namespace simplearchive {
 		ImageHeight = exifInfo.ImageHeight;
 		ImageDescription = exifInfo.ImageDescription;
 		Orientation = exifInfo.Orientation;
-		Copyright = exifInfo.Copyright;
+		Copyright = exifInfo.copyright;
 		DateTime = ExifDateTime(exifInfo.DateTime.c_str());
 		DateTimeOriginal = ExifDateTime(exifInfo.DateTimeOriginal.c_str());
 		DateTimeDigitized = ExifDateTime(exifInfo.DateTimeDigitized.c_str());
 		SubSecTimeOriginal = exifInfo.SubSecTimeOriginal;
-		ExposureTime = (unsigned)(1.0 / exifInfo.ExposureTime);
+		ExposureTime = exifInfo.ExposureTime;
 		FNumber = exifInfo.FNumber;
 		ISOSpeedRatings = exifInfo.ISOSpeedRatings;
 		SubjectDistance = exifInfo.SubjectDistance;
@@ -48,8 +86,35 @@ namespace simplearchive {
 		Flash = exifInfo.Flash;
 		MeteringMode = exifInfo.MeteringMode;
 		FocalLength = exifInfo.FocalLength;
-		
-		//FocalLengthIn35mm = exifInfo.FocalLengthIn35mm;
+		FocalLengthIn35mm = exifInfo.FocalLengthIn35mm;
+		ShutterSpeedValue = exifInfo.ShutterSpeedValue;
+
+		//m_basicExif->setAltitude(const std::string& altitude);
+	//	m_basicExif->setBitsPerSample(exifInfo.BitsPerSample);
+		m_basicExif->setCopyright(exifInfo.copyright);
+		m_basicExif->setDateTime(exifInfo.DateTime.c_str());
+		m_basicExif->setDateTimeDigitized(exifInfo.DateTimeOriginal.c_str());
+		m_basicExif->setDateTimeOriginal(exifInfo.DateTimeDigitized.c_str());
+//		m_basicExif->setExposureBiasValue(const std::string& exposureBiasValue);
+//		m_basicExif->setExposureTime(const std::string& exposureTime);
+//		m_basicExif->setFlash(const std::string& flash);
+//		m_basicExif->setFNumber(const std::string& fNumber);
+//		m_basicExif->setFocalLength(const std::string& focalLength);
+//		m_basicExif->setFocalLengthIn35mm(const std::string& focalLengthIn35mm);
+		m_basicExif->setImageDescription(exifInfo.ImageDescription);
+//		m_basicExif->setImageHeight(const std::string& imageHeight);
+//		m_basicExif->setImageWidth(const std::string& imageWidth);
+//		m_basicExif->setISoSpeedRatings(const std::string& iSoSpeedRatings);
+		//m_basicExif->setLatitude(const std::string& latitude);
+		//m_basicExif->setLongitude(const std::string& longitude);
+		m_basicExif->setMake(exifInfo.Make);
+//		m_basicExif->setMeteringMode(const std::string& meteringMode);
+		m_basicExif->setModel(exifInfo.Model);
+//		m_basicExif->setOrientation(const std::string& orientation);
+//		m_basicExif->setShutterSpeedValue(const std::string& shutterSpeedValue);
+		m_basicExif->setSoftware(exifInfo.Software);
+//		m_basicExif->setSubjectDistance(const std::string& subjectDistance);
+//		m_basicExif->setSubSecTimeOriginal(const std::string& subSecTimeOriginal);
 		/*
 		LatitudeStr
 		LongitudeStr
@@ -85,36 +150,48 @@ namespace simplearchive {
 		metadataObject.setFilename(m_name);
 		metadataObject.setOrginalName(m_name);
 		metadataObject.setFilepath(m_path);
-		metadataObject.setCrc(m_crc);
+		std::string crc = std::to_string(m_crc);
+		metadataObject.setCrc(crc);
 		metadataObject.setMediaType(m_mediaType);
 		metadataObject.setMd5(m_md5);
 		metadataObject.setUniqueId(m_uuid);
-		metadataObject.setFileSize(m_size);
-		metadataObject.setDateModified(m_modTime);
-		metadataObject.setDateCreate(m_createTime);
+		std::string size = std::to_string(m_size);
+		metadataObject.setFileSize(size);
+		ExifDateTime modTime(m_modTime);
+		metadataObject.setDateModified(modTime.toString());
+		ExifDateTime createTime(m_createTime);
+		metadataObject.setDateCreate(createTime.toString());
 
 
 		metadataObject.setMaker(Make);
 		metadataObject.setModel(Model);
 		metadataObject.setSoftware(Software);
 		//metadataObject.setB BitsPerSample);
-		metadataObject.setWidth(ImageWidth);
-		metadataObject.setHeight(ImageHeight);
+		std::string imageWidth = std::to_string(ImageWidth);
+		metadataObject.setWidth(imageWidth);
+		std::string imageHeight = std::to_string(ImageHeight);
+		metadataObject.setHeight(imageHeight);
 		metadataObject.setDescription(ImageDescription);
-		metadataObject.getViewRotation(Orientation);
+		std::string orientation = std::to_string(Orientation);
+		metadataObject.setViewRotation(orientation);
 		metadataObject.setCopyright(Copyright);
 		//metadataObject. DateTime);
 		//metadataObject.set DateTimeOriginal);
 		//metadataObject DateTimeDigitized);
 		//metadataObject SubSecTimeOriginal);
-		metadataObject.setExposureTime(ExposureTime);
+		std::string exposureTime = std::to_string(ExposureTime);
+		metadataObject.setExposureTime(exposureTime);
 		//metadataObject.setAperture(FNumber);
-		metadataObject.setIsoSpeedRating(ISOSpeedRatings);
+		std::string isoSpeedRatings = std::to_string(ISOSpeedRatings);
+		metadataObject.setIsoSpeedRating(isoSpeedRatings);
 		//metadataObject. SubjectDistance);
-		metadataObject.setExposureBias(ExposureBiasValue);
+		std::string exposureBiasValue = std::to_string(ExposureBiasValue);
+		metadataObject.setExposureBias(exposureBiasValue);
 		metadataObject.setFlash((Flash)?"Flash used":"No flash");
-		metadataObject.setMeteringMode(MeteringMode);
-		metadataObject.setFocalLength(FocalLength);
+		std::string meteringMode = std::to_string(MeteringMode);
+		metadataObject.setMeteringMode(meteringMode);
+		std::string focalLength = std::to_string(FocalLength);
+		metadataObject.setFocalLength(focalLength);
 
 	}
 
@@ -152,7 +229,7 @@ namespace simplearchive {
 
 	CImageId::CImageId(std::string &path) {
 		CLogger &logger = CLogger::getLogger();
-		
+		m_basicExif.reset(new BasicExif);
 		CIDKCrc Crc;
 		m_path = path;
 		m_name = splitName(m_path);

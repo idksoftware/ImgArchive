@@ -1,3 +1,37 @@
+/* **************************************************
+**
+**    III                DDD  KKK
+**    III                DDD  KKK
+**                       DDD  KKK
+**    III   DDDDDDDDDDD  DDD  KKK            KKK
+**    III  DDD           DDD  KKK            KKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK   KKKKKKKKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK            KKK
+**    III   DDDDDDDDDDDDDDDD  KKK            KKK
+**
+**
+**     SSS         FF
+**    S           F   T
+**     SSS   OO   FF  TTT W   W  AAA  R RR   EEE
+**        S O  O  F   T   W W W  AAAA RR  R EEEEE
+**    S   S O  O  F   T   W W W A   A R     E
+**     SSS   OO  FFF   TT  W W   AAAA R      EEE
+**
+**    Copyright: (c) 2015 IDK Software Ltd
+**
+****************************************************
+**
+**	Filename	: CRegString.cpp
+**	Author		: I.Ferguson
+**	Version		: 1.000
+**	Date		: 26-05-2015
+**
+** #$$@@$$# */
+
 #include "AppConfig.h"
 #include "SAUtils.h"
 
@@ -15,6 +49,7 @@ namespace simplearchive {
 	std::string CAppConfig::m_hookPath;
 	std::string CAppConfig::m_toolsPath;
 	std::string CAppConfig::m_archivePath;
+	std::string CAppConfig::m_shadowArchivePath;
 	std::string CAppConfig::m_sourcePath;
 	std::string CAppConfig::m_configPath;
 	std::string CAppConfig::m_tempPath;
@@ -99,14 +134,25 @@ namespace simplearchive {
 	const char *CAppConfig::getArchivePath() {
 		if (m_archivePath.empty() == true) {
 			if (value("ArchivePath", m_archivePath) == false) {
-				std::string temp = SAUtils::GetEnvironment("ProgramData");
-					m_archivePath = temp + "/SIARepository"; 
+				std::string temp = SAUtils::GetEnvironment("USERPROFILE");
+					m_archivePath = temp + "/SIAImages"; 
 			}
 		}
 		return m_archivePath.c_str();
 
 	}
+	/// Gets the archive path.
+	const char *CAppConfig::getShadowPath() {
+		if (m_shadowArchivePath.empty() == true) {
+			if (value("ShadowPath", m_shadowArchivePath) == false) {
+				std::string temp = m_homePath;
+				m_shadowArchivePath = temp + "/SIAShadow";
+			}
+		}
+		return m_shadowArchivePath.c_str();
 
+	}
+	
 	const char *CAppConfig::getSourcePath() {
 		if (m_sourcePath.empty() == true) {
 			if (value("SourcePath", m_sourcePath) == false) {
@@ -135,6 +181,10 @@ namespace simplearchive {
 
 	void CAppConfig::setArchivePath(const char *path) {
 		m_archivePath = path;
+	}
+
+	void CAppConfig::setShadowPath(const char *path) {
+		m_shadowArchivePath = path;
 	}
 
 	void CAppConfig::setSourcePath(const char *path) {
@@ -240,17 +290,17 @@ namespace simplearchive {
 	void CAppConfig::setLogLevel(const char *logLevel) {
 		m_logLevel = logLevel;
 	}
-
+	
 	const char *CAppConfig::getIndexPath() {
 		if (value("IndexPath", m_indexPath) == false) {
-			m_indexPath = m_archivePath + "/.sia/index";
+			m_indexPath = m_shadowArchivePath + "/root/index";
 		}
 		return m_indexPath.c_str();
 	}
 
 	const char *CAppConfig::getHistoryPath() {
 		if (value("HistoryPath", m_logPath) == false) {
-			m_historyPath = m_archivePath + "/.sia/history";
+			m_historyPath = m_shadowArchivePath + "/root/history";
 		}
 		return 	m_historyPath.c_str();
 	}
@@ -286,7 +336,6 @@ namespace simplearchive {
 		return 	m_MetadataTemplatePath.c_str();
 	}
 
-	
 	bool CAppConfig::isDryRun() const {
 		return m_dry_run;
 	}

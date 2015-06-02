@@ -1,9 +1,37 @@
-/*
- * ArchiveBuilder.cpp
- *
- *  Created on: May 7, 2014
- *      Author: wzw7yn
- */
+/* **************************************************
+**
+**    III                DDD  KKK
+**    III                DDD  KKK
+**                       DDD  KKK
+**    III   DDDDDDDDDDD  DDD  KKK            KKK
+**    III  DDD           DDD  KKK            KKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK   KKKKKKKKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK            KKK
+**    III   DDDDDDDDDDDDDDDD  KKK            KKK
+**
+**
+**     SSS         FF
+**    S           F   T
+**     SSS   OO   FF  TTT W   W  AAA  R RR   EEE
+**        S O  O  F   T   W W W  AAAA RR  R EEEEE
+**    S   S O  O  F   T   W W W A   A R     E
+**     SSS   OO  FFF   TT  W W   AAAA R      EEE
+**
+**    Copyright: (c) 2015 IDK Software Ltd
+**
+****************************************************
+**
+**	Filename	: CRegString.cpp
+**	Author		: I.Ferguson
+**	Version		: 1.000
+**	Date		: 26-05-2015
+**
+** #$$@@$$# */
+
 #include "AppConfig.h"
 #include "SACmdArgs.h"
 #include "ArchiveDate.h"
@@ -62,19 +90,19 @@ namespace simplearchive {
 	bool ArchiveBuilder::Init() {
 		CAppConfig config = CAppConfig::get();
 		m_Error = false;
-		m_RootOutputDir = config.getArchivePath();
+		m_shadowPath = config.getShadowPath();
 		m_indexPath = config.getIndexPath();
-		m_userRootdir = "c:/user";
+		m_archivePath = config.getArchivePath();
 		m_metatemplatePath = config.getMetadataTemplatePath();
 		m_viewManager->initaliseMaster(config.getArchivePath(), config.getMasterViewPath());
 
 		CLogger &logger = CLogger::getLogger();
 
-		if (SAUtils::DirExists(m_RootOutputDir.c_str()) == false) {
-			logger.log(CLogger::FATAL, "Archive Repository directory not accessable? \"%s\"", m_RootOutputDir.c_str());
+		if (SAUtils::DirExists(m_shadowPath.c_str()) == false) {
+			logger.log(CLogger::FATAL, "Archive Repository directory not accessable? \"%s\"", m_shadowPath.c_str());
 			m_Error = true;
 		}
-		logger.log(CLogger::INFO, "Found Archive Repository directory \"%s\"", m_RootOutputDir.c_str());
+		logger.log(CLogger::INFO, "Found Archive Repository directory \"%s\"", m_shadowPath.c_str());
 
 
 		if (SAUtils::DirExists(m_indexPath.c_str()) == false) {
@@ -84,11 +112,11 @@ namespace simplearchive {
 		logger.log(CLogger::INFO, "Found Archive Index directory \"%s\"", m_indexPath.c_str());
 
 
-		if (SAUtils::DirExists(m_userRootdir.c_str()) == false) {
-			logger.log(CLogger::FATAL, "Secondary Archive Repository directory not accessable? \"%s\"", m_userRootdir.c_str());
+		if (SAUtils::DirExists(m_archivePath.c_str()) == false) {
+			logger.log(CLogger::FATAL, "Secondary Archive Repository directory not accessable? \"%s\"", m_archivePath.c_str());
 			m_Error = true;
 		}
-		logger.log(CLogger::INFO, "Found Secondary Archive Repository directory \"%s\"", m_userRootdir.c_str());
+		logger.log(CLogger::INFO, "Found Secondary Archive Repository directory \"%s\"", m_archivePath.c_str());
 		m_imageIndex->init(m_indexPath.c_str());
 		return (!m_Error);
 	}
@@ -102,7 +130,7 @@ namespace simplearchive {
 		//
 		TargetsList targetsList;
 		targetsList.process(sourcePath);
-		const char *seqPath = ImagePath::getMainSequenceNumberPath().c_str();
+		const char *seqPath = ImagePath::getShadowSequenceNumberPath().c_str();
 		CSVDBFile csvDBFile(seqPath);
 
 		ImageSets *imageSets = 0;
@@ -125,9 +153,9 @@ namespace simplearchive {
 		// Read files into Image group sets (ImageGroups)
 		//
 		ArchiveRepository &archiveRepository = ArchiveRepository::get();
-		archiveRepository.setPathToArchive(m_RootOutputDir);
+		archiveRepository.setPathToArchive(m_shadowPath);
 
-		archiveRepository.setPathToActiveRoot(this->m_userRootdir);
+		archiveRepository.setPathToActiveRoot(this->m_archivePath);
 		/// Iterate the Image Sets
 		for (std::vector<ImageSet *>::iterator i = imageSets->begin(); i != imageSets->end(); i++) {
 			ImageSet *imageSet = *i;
@@ -153,7 +181,7 @@ namespace simplearchive {
 					logger.log(CLogger::INFO, "Not a valid file type \"%s\" rejecting ", imageItem->getFilename().c_str());
 					continue;
 				}
-				logger.log(CLogger::INFO, "Analysing: %s", imageItem->getFilename().c_str());
+				logger.log(CLogger::SUMMARY, "Analysing: %s", imageItem->getFilename().c_str());
 
 				std::string pathstr = imageItem->getPath();
 				logger.log(CLogger::INFO, "Path of image: %s", pathstr.c_str());
@@ -195,9 +223,6 @@ namespace simplearchive {
 					}
 				}
 				// Not a dup so add to group. 
-
-
-
 				if (!imageId->isExifFound()) {
 					logger.log(CLogger::INFO, "No EXIF simple EXIF infomation found in \"%s\"", imageItem->getFilename().c_str());
 				}
@@ -222,7 +247,7 @@ namespace simplearchive {
 					copyExif(metadataObject, exifObject);
 				}
 				imageGroup->add(imageId, metadataObject);
-
+				logger.log(CLogger::INFO, "completed step2 \"%s\"", imageItem->getFilename().c_str());
 				/*
 				XMLWriter xmlWriter;
 				xmlWriter.writeImage(*metadataObject, "c:/temp/image.xml");
@@ -240,14 +265,14 @@ namespace simplearchive {
 					continue;
 				}
 				
-
+				logger.log(CLogger::SUMMARY, "Creating Metadata for Image: \"%s\"", imageSet->getName().c_str());
 				if (m_archiveDate->process(*imageSet) == false) {
 					logger.log(CLogger::INFO, "Error processing image archive date, not archiving: \"%s\"", imageSet->getName().c_str());
 					continue;
 				}
 				ExifDate date = m_archiveDate->getArchiveDate();
 				imageSet->setTime(date.getTime());
-				ImagePath imagePath(date.getTime(), m_RootOutputDir.c_str());
+				ImagePath imagePath(date.getTime());
 
 				logger.log(CLogger::INFO, "Image: %s set to archive date: \"%s\"", imageSet->getName().c_str(), date.toString().c_str());
 				if (imageSet->getComment().empty() == true) {
@@ -274,7 +299,7 @@ namespace simplearchive {
 						return false;
 					}
 
-					std::string tmpImagePath = imagePath.getYyyymmddStr() + "/" + imageSet->getPictureFile();
+					std::string relImagePath = imagePath.getYyyymmddStr() + "/" + imageSet->getPictureFile();
 
 
 					const MetadataObject *picMetadata = imageSet->getPictureMetadata();
@@ -283,8 +308,8 @@ namespace simplearchive {
 					if (imagePath.copyFile(imageSet->getPath(), imageSet->getPictureFile()) == false) {
 						return false;
 					}
-
-					csvDB.add(temp, imagePath.getDBPath().c_str());
+					//std::string shortPath = 
+					csvDB.add(temp, relImagePath.c_str());
 					if (m_viewManager->add(temp.getSequenceNumber()) == false) {
 						return false;
 					}
@@ -295,7 +320,7 @@ namespace simplearchive {
 
 					std::string filepath = imagePath.getRelativePath() + '/' + imageSet->getPictureFile();
 					const HistoryEvent he(HistoryEvent::ADDED);
-					processHistory(filepath.c_str(), imageSet->getComment().c_str(), he, 0);
+					processHistory(imagePath, filepath.c_str(), imageSet->getComment().c_str(), he, 0);
 					
 				}
 				if ((imageId = imageSet->getRawId()) != nullptr) {
@@ -321,7 +346,7 @@ namespace simplearchive {
 			}
 			if (!saCmdArgs.IsMakeNoChanges()) {
 				// process ImageSet
-				logger.log(CLogger::INFO, "+++ Archiving phase +++");
+				logger.log(CLogger::SUMMARY, "Starting Archiving phase");
 				archiveRepository.Import(*group);
 			}
 		}
@@ -332,7 +357,8 @@ namespace simplearchive {
 
 bool ArchiveBuilder::CreateImage(CImageId &imageId, ImagePath &imagePath, CSVDBFile &csvDBFile, MetadataObject &metadataObject) {
 	unsigned long seqNumber = csvDBFile.getNextIndex();
-	metadataObject.setSequenceId(seqNumber);
+	std::string seqNumberStr = std::to_string(seqNumber);
+	metadataObject.setSequenceId(seqNumberStr);
 	unsigned long n = imageId.getSize();
 	unsigned long crc = imageId.getCrc();
 	ExifDate date;
@@ -345,7 +371,7 @@ bool ArchiveBuilder::CreateImage(CImageId &imageId, ImagePath &imagePath, CSVDBF
 }
 // Create metadata xml file for this image.
 bool ArchiveBuilder::CreateMetadataXMLFile(ImagePath &imagePath, CSVDBFile &csvDBFile, MetadataObject &metadataObject) {
-	std::string to = imagePath.getMetadataPath() + '/' + imagePath.getImageName() + ".xml";
+	std::string to = imagePath.getLocalShadowMetadataPath() + '/' + imagePath.getImageName() + ".xml";
 	XMLWriter xmlWriter;
 	if (xmlWriter.writeImage(metadataObject, to.c_str()) == false) {
 		return false;
@@ -362,9 +388,9 @@ bool ArchiveBuilder::CreateMetadataXMLFile(ImagePath &imagePath, CSVDBFile &csvD
 	return true;
 }
 
-bool ArchiveBuilder::processHistory(const char *filepath, const char *comment, const HistoryEvent &he, int ver) {
+bool ArchiveBuilder::processHistory(ImagePath &imagePath, const char *filepath, const char *comment, const HistoryEvent &he, int ver) {
 
-	std::string fullPath = m_RootOutputDir + "/" + filepath;
+	std::string fullPath = m_archivePath + "/" + filepath;
 	std::string filename;
 	std::string path;
 
@@ -377,6 +403,8 @@ bool ArchiveBuilder::processHistory(const char *filepath, const char *comment, c
 	else {
 		//printf("Path to Image in achive invalid \"%s\"", filepath);
 	}
+	std::string hstpath = imagePath.getLocalShadowHistoryPath();
+	/*
 	std::string hstpath = path;
 	hstpath += "/.sia/history";
 	if (SAUtils::DirExists(hstpath.c_str()) == false) {
@@ -384,6 +412,7 @@ bool ArchiveBuilder::processHistory(const char *filepath, const char *comment, c
 			throw std::exception();
 		}
 	}
+	*/
 	// Full path to metadata directory
 	hstpath += "/";
 	hstpath += filename;
@@ -407,7 +436,7 @@ bool ArchiveBuilder::processHistory(const char *filepath, const char *comment, c
 
 // ? metadataObject->setAperture(exifObject-> std::string& aperture);
 // ? metadataObject->setCompression(exifObject-> std::string& compression);
-// ?metadataObject->setDepth(exifObject->getD std::string& depth);
+// ? metadataObject->setDepth(exifObject->getD std::string& depth);
 // ? metadataObject->setDigitalZoom(exifObject-> std::string& digitalZoom);
 // ? metadataObject->setExifVersion(exifObject-> std::string& exifVersion);
 // ? metadataObject->setExposureProgram(exifObject-> std::string& exposureProgram);
@@ -426,20 +455,19 @@ void ArchiveBuilder::copyExif(MetadataObject* metadataObject, ExifObject *exifOb
 	//metadataObject->setTags(exifObject-> std::string& tags);
 	//metadataObject->setComments(exifObject-> std::string& comments);
 	metadataObject->setAperture(exifObject->getFNumber());
-	metadataObject->setCaptureDate(exifObject->getDateTime());
+	metadataObject->setCaptureDate(exifObject->getDateTimeOriginal());
 	metadataObject->setColorSpace(exifObject->getColorSpace());
-	// ? metadataObject->setCompression(exifObject-> std::string& compression);
+	metadataObject->setCompression(exifObject->getCompression());
 	metadataObject->setCopyright(exifObject->getCopyright());
-	// ? metadataObject->setCopyrightUrl(exifObject-> std::string& copyrightUrl);
 	//metadataObject->setDateAdded(exifObject-> std::string& dateAdded);
 	//metadataObject->setDateCreate(exifObject-> std::string& dateCreate);
 	//metadataObject->setDateModified(exifObject-> std::string& dateModified);
-	// ?metadataObject->setDepth(exifObject->getD std::string& depth);
-	//metadataObject->setDescription(exifObject-> std::string& description);
-	// ? metadataObject->setDigitalZoom(exifObject-> std::string& digitalZoom);
-	// ? metadataObject->setExifVersion(exifObject-> std::string& exifVersion);
+	metadataObject->setDepth(exifObject->getDepth());
+	metadataObject->setDescription(exifObject->getImageDescription());
+	metadataObject->setDigitalZoom(exifObject->getDigitalZoom());
+	metadataObject->setExifVersion(exifObject->getExifVersion());
 	metadataObject->setExposureBias(exifObject->getExposureBiasValue());
-	// ? metadataObject->setExposureProgram(exifObject-> std::string& exposureProgram);
+	metadataObject->setExposureProgram(exifObject->getExposureProgram());
 	metadataObject->setExposureTime(exifObject->getExposureTime());
 	metadataObject->setFlash(exifObject->getFlash());
 	metadataObject->setFocalLength(exifObject->getFocalLength());
@@ -471,8 +499,6 @@ bool ArchiveBuilder::checkout(const char *filepath, const char *comment) {
 
 	try {
 		VersionControl &versionControl = VersionControl::get();
-		versionControl.setPathToArchive(m_RootOutputDir);
-		//versionControl.setPathToSourceRoot(m_InputDir);
 		return versionControl.checkout(filepath, comment);
 	}
 	catch (SIAAppException &e) {
@@ -484,8 +510,6 @@ bool ArchiveBuilder::checkout(const char *filepath, const char *comment) {
 bool ArchiveBuilder::checkin(const char *filepath, const char *comment) {
 
 	VersionControl &versionControl = VersionControl::get();
-	versionControl.setPathToArchive(m_RootOutputDir);
-	//versionControl.setPathToSourceRoot(m_InputDir);
 	versionControl.checkin(filepath, comment);
 	return true;
 }
@@ -493,8 +517,6 @@ bool ArchiveBuilder::checkin(const char *filepath, const char *comment) {
 bool ArchiveBuilder::uncheckout(const char *filepath, const char *comment) {
 
 	VersionControl &versionControl = VersionControl::get();
-	versionControl.setPathToArchive(m_RootOutputDir);
-	//versionControl.setPathToSourceRoot(m_InputDir);
 	versionControl.uncheckout(filepath, comment);
 	return true;
 }

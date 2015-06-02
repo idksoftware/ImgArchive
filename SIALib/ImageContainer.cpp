@@ -1,9 +1,37 @@
-/*
- * ImageContainer.cpp
- *
- *  Created on: May 8, 2014
- *      Author: wzw7yn
- */
+/* **************************************************
+**
+**    III                DDD  KKK
+**    III                DDD  KKK
+**                       DDD  KKK
+**    III   DDDDDDDDDDD  DDD  KKK            KKK
+**    III  DDD           DDD  KKK            KKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK   KKKKKKKKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK            KKK
+**    III   DDDDDDDDDDDDDDDD  KKK            KKK
+**
+**
+**     SSS         FF
+**    S           F   T
+**     SSS   OO   FF  TTT W   W  AAA  R RR   EEE
+**        S O  O  F   T   W W W  AAAA RR  R EEEEE
+**    S   S O  O  F   T   W W W A   A R     E
+**     SSS   OO  FFF   TT  W W   AAAA R      EEE
+**
+**    Copyright: (c) 2015 IDK Software Ltd
+**
+****************************************************
+**
+**	Filename	: CRegString.cpp
+**	Author		: I.Ferguson
+**	Version		: 1.000
+**	Date		: 26-05-2015
+**
+** #$$@@$$# */
+
 #include <time.h>
 #ifdef LINUX
 //#include <ctime.h>
@@ -63,7 +91,7 @@ bool ImageContainer::add(const CImageId *imageId, const MetadataObject* metadata
 	case ImageType::PICTURE_EXT:
 		logger.log(CLogger::INFO, "found pic: %s", imagefile);
 		if (m_PictureNode == nullptr) {
-			logger.log(CLogger::INFO, "Associating: %s with %s", imagefile, m_Name.c_str());
+			logger.log(CLogger::SUMMARY, "Associating: %s with %s", imagefile, m_Name.c_str());
 			m_PictureNode = new ImageNode(type, imagefile, imageId, metadataObject);
 		}
 		m_PictureNode->setImageId(imageId, metadataObject);
@@ -90,7 +118,7 @@ bool ImageContainer::add(const CImageId *imageId, const MetadataObject* metadata
 	
 		logger.log(CLogger::INFO, "found raw: %s", imagefile);
 		if (m_RawNode == nullptr) {
-			logger.log(CLogger::INFO, "Associating: %s with %s", imagefile, m_Name.c_str());
+			logger.log(CLogger::SUMMARY, "Associating: %s with %s", imagefile, m_Name.c_str());
 			m_RawNode = new ImageNode(type, imagefile, imageId, metadataObject);
 		}
 		m_RawNode->setImageId(imageId, metadataObject);

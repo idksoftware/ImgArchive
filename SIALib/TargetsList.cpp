@@ -1,3 +1,37 @@
+/* **************************************************
+**
+**    III                DDD  KKK
+**    III                DDD  KKK
+**                       DDD  KKK
+**    III   DDDDDDDDDDD  DDD  KKK            KKK
+**    III  DDD           DDD  KKK            KKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK   KKKKKKKKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK            KKK
+**    III   DDDDDDDDDDDDDDDD  KKK            KKK
+**
+**
+**     SSS         FF
+**    S           F   T
+**     SSS   OO   FF  TTT W   W  AAA  R RR   EEE
+**        S O  O  F   T   W W W  AAAA RR  R EEEEE
+**    S   S O  O  F   T   W W W A   A R     E
+**     SSS   OO  FFF   TT  W W   AAAA R      EEE
+**
+**    Copyright: (c) 2015 IDK Software Ltd
+**
+****************************************************
+**
+**	Filename	: CRegString.cpp
+**	Author		: I.Ferguson
+**	Version		: 1.000
+**	Date		: 26-05-2015
+**
+** #$$@@$$# */
+
 #include "TargetsList.h"
 #include "DirectoryVisitor.h"
 #include "CLogger.h"
@@ -28,25 +62,25 @@ namespace simplearchive {
 			m_imageSet = new ImageSet(path);
 
 			m_imageSets->insert(m_imageSets->end(), m_imageSet);
-			logger.log(CLogger::INFO, "Starting reading folder \"%s\"%d", path, m_count++);
+			logger.log(CLogger::SUMMARY, "Starting reading folder \"%s\"%d", path, m_count++);
 			//printf("==== Start ==== %d \n", m_count++);
 			return true;
 		};
 
 		virtual bool onFile(const char *path) {
 			CLogger &logger = CLogger::getLogger();
-			logger.log(CLogger::INFO, "Reading file: %s", path);
+			logger.log(CLogger::SUMMARY, "Reading file: %s", path);
 			m_imageSet->insert(m_imageSet->end(), new ImageItem(path));
 			return true;
 		};
 		virtual bool onDirectory(const char *path) {
 			CLogger &logger = CLogger::getLogger();
-			logger.log(CLogger::INFO, "Dir:  %s", path);
+			logger.log(CLogger::SUMMARY, "Now reading folder:  %s", path);
 			return true;
 		};
 		virtual bool onEnd() {
 			CLogger &logger = CLogger::getLogger();
-			logger.log(CLogger::INFO, "Ending reader folder %d", m_count++);
+			logger.log(CLogger::SUMMARY, "Ending reader folder %d", m_count++);
 			return true;
 		};
 		virtual FolderVisitor *make() {

@@ -1,9 +1,37 @@
-/*
- * ArchiveRepository.cpp
- *
- *  Created on: May 9, 2014
- *      Author: wzw7yn
- */
+/* **************************************************
+**
+**    III                DDD  KKK
+**    III                DDD  KKK
+**                       DDD  KKK
+**    III   DDDDDDDDDDD  DDD  KKK            KKK
+**    III  DDD           DDD  KKK            KKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK   KKKKKKKKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK            KKK
+**    III   DDDDDDDDDDDDDDDD  KKK            KKK
+**
+**
+**     SSS         FF
+**    S           F   T
+**     SSS   OO   FF  TTT W   W  AAA  R RR   EEE
+**        S O  O  F   T   W W W  AAAA RR  R EEEEE
+**    S   S O  O  F   T   W W W A   A R     E
+**     SSS   OO  FFF   TT  W W   AAAA R      EEE
+**
+**    Copyright: (c) 2015 IDK Software Ltd
+**
+****************************************************
+**
+**	Filename	: CRegString.cpp
+**	Author		: I.Ferguson
+**	Version		: 1.000
+**	Date		: 26-05-2015
+**
+** #$$@@$$# */
+
 #include "CSVDBFile.h"
 #include "ArchiveRepository.h"
 #include "ImageContainer.h"
@@ -185,11 +213,11 @@ bool ArchiveRepository::Import(ImageContainer *imageContainer) {
 
 	CSVDatabase &csvDB = CSVDatabase::get();
 	time_t time = imageContainer->getTime();
-	ImagePath imagePath(time, m_pathToArchive.c_str());
+	ImagePath imagePath(time);
 	CLogger &logger = CLogger::getLogger();
 	
 	
-	logger.log(CLogger::INFO, "Archiving images: \"%s\"", imageContainer->getName().c_str());
+	logger.log(CLogger::SUMMARY, "Archiving images: \"%s\"", imageContainer->getName().c_str());
 	// Archive image path
 	std::string imageRootPath = imageContainer->getPath();
 	logger.log(CLogger::INFO, "Image(s) source path: \"%s\"", imageRootPath.c_str());
@@ -201,6 +229,7 @@ bool ArchiveRepository::Import(ImageContainer *imageContainer) {
 
 	if (imageContainer->hasRawFile()) {
 		logger.log(CLogger::INFO, "Raw image: \"%s\"", imageContainer->getRawFile());
+		imagePath.setImageName(imageContainer->getRawFile());
 		std::string tmpImagePath = imagePath.getYyyymmddStr() + "/" + imageContainer->getRawFile();
 		const MetadataObject *rawMetadata = imageContainer->getRawMetadata();
 	
@@ -217,36 +246,37 @@ bool ArchiveRepository::Import(ImageContainer *imageContainer) {
 		logger.log(CLogger::INFO, "Raw image added: \"%s\"", imageContainer->getRawFile());
 		std::string filepath = imagePath.getRelativePath() + '/' + imageContainer->getRawFile();
 		const HistoryEvent he(HistoryEvent::ADDED);
-		processHistory(filepath.c_str(), imageContainer->getComment().c_str(), he, 0);
+		processHistory(imagePath, filepath.c_str(), imageContainer->getComment().c_str(), he, 0);
 	}
 
 	return true;
 }
 
-bool ArchiveRepository::processHistory(const char *filepath, const char *comment, const HistoryEvent &he, int ver) {
+bool ArchiveRepository::processHistory(ImagePath &imagePath, const char *filepath, const char *comment, const HistoryEvent &he, int ver) {
 
-	std::string fullPath = m_pathToArchive + "/" + filepath;
-	std::string filename;
-	std::string path;
-
+	
 	// This fines the filename from path NEEDS TO BE MOVED INTO UTILS
-	int slashpos = fullPath.find_last_of("/");
-	if (slashpos != -1) {
-		filename = fullPath.substr(slashpos+1, fullPath.length() - slashpos);
-		path = fullPath.substr(0, slashpos);
-	} else {
+	//int slashpos = fullPath.find_last_of("/");
+	//if (slashpos != -1) {
+	//	filename = filepath.substr(slashpos + 1, fullPath.length() - slashpos);
+	//	path = fullPath.substr(0, slashpos);
+	//}
+	//else {
 		//printf("Path to Image in achive invalid \"%s\"", filepath);
-	}
+	//}
+	std::string hstpath = imagePath.getShadowHistoryPath();
+	/*
 	std::string hstpath = path;
 	hstpath += "/.sia/history";
 	if (SAUtils::DirExists(hstpath.c_str()) == false) {
-		if (SAUtils::mkDir(hstpath.c_str()) == false) {
-			throw std::exception();
-		}
+	if (SAUtils::mkDir(hstpath.c_str()) == false) {
+	throw std::exception();
 	}
+	}
+	*/
 	// Full path to metadata directory
 	hstpath += "/";
-	hstpath += filename;
+	hstpath += imagePath.getImageName();
 	hstpath += ".hst";
 
 	// create the image history object for the image
@@ -261,7 +291,6 @@ bool ArchiveRepository::processHistory(const char *filepath, const char *comment
 	history.add(filepath, buff, comment, he);
 
 	return true;
-
 }
 
 

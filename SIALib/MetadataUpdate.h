@@ -32,33 +32,26 @@
 **
 ** #$$@@$$# */
 
-#ifndef FOLDERLIST_H_
-#define FOLDERLIST_H_
-
-#include <string>
+#ifndef METADATAUPDATE_H_
+#define METADATAUPDATE_H_
 
 namespace simplearchive {
 
-class FolderFile;
-/**
- * @Brief This class manages the image folder list in the archive.
- * It records changes to the image folder and maintains an XML list
- * of folders.
- */
-
-class FolderList {
-	std::string m_archivePath;
-	//FolderFile &m_folderFile;
-	bool makeXML();
+class MetadataDocument;
+class MetadataObject;
+class MetadataUpdate {
+	int command(std::string &cmd, MetadataObject &mo);
+	static std::string m_archivePath;
 public:
-	FolderList(const char *archivePath);
-	virtual ~FolderList();
-
-	bool addDayFolder(const char *folderName);
-	bool incFolders(const char *folderName);
-	bool incFiles(const char *folderName);
-	bool makeList();
+	MetadataUpdate();
+	virtual ~MetadataUpdate();
+	static void setArchivePath(const char *archivePath) {
+		m_archivePath = archivePath;
+	}
+	bool process(const char *imagePath, const char *imageName, const char *cmd);
+	std::auto_ptr<MetadataDocument> get(const char *imagePath, const char *imageName);
+	bool loadMetadataDocument(MetadataDocument &metadataDocument, MetadataObject &metadataObject);
 };
 
 } /* namespace simplearchive */
-#endif /* FOLDERLIST_H_ */
+#endif /* METADATAUPDATE_H_ */

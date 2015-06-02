@@ -1,0 +1,165 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{439087AF-7106-492A-9A92-6692E1F0B07D}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>SIALib</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../fclib;../util;../exifcl;../metatp;../csv;../mirror;../sqlite3;../database;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>C:\development\SIA\SimpleArchive\Debug\fclib.lib;C:\development\SIA\SimpleArchive\Debug\util.lib;C:\development\SIA\SimpleArchive\Debug\exifcl.lib;C:\development\SIA\SimpleArchive\Debug\metatp.lib;C:\development\SIA\SimpleArchive\Debug\csv.lib;C:\development\SIA\SimpleArchive\Debug\mirror.lib;C:\development\SIA\SimpleArchive\Debug\sqlite3.lib;C:\development\SIA\SimpleArchive\Debug\database.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../fclib;../util;../exifcl;../metatp;../csv;../mirror;../sqlite3;../database;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AppConfig.h" />
+    <ClInclude Include="AppException.h" />
+    <ClInclude Include="ArchiveBuilder.h" />
+    <ClInclude Include="ArchiveDate.h" />
+    <ClInclude Include="ArchiveRepository.h" />
+    <ClInclude Include="ArchiveVisitor.h" />
+    <ClInclude Include="Catalog.h" />
+    <ClInclude Include="CatalogManager.h" />
+    <ClInclude Include="CFolderStatus.h" />
+    <ClInclude Include="CUnqueName.h" />
+    <ClInclude Include="Environment.h" />
+    <ClInclude Include="FileId.h" />
+    <ClInclude Include="FolderList.h" />
+    <ClInclude Include="HookCmd.h" />
+    <ClInclude Include="ImageContainer.h" />
+    <ClInclude Include="ImageExtentions.h" />
+    <ClInclude Include="ImageFileReader.h" />
+    <ClInclude Include="ImageGroup.h" />
+    <ClInclude Include="ImageHistory.h" />
+    <ClInclude Include="ImageId.h" />
+    <ClInclude Include="ImageIndex.h" />
+    <ClInclude Include="ImageLock.h" />
+    <ClInclude Include="ImagePath.h" />
+    <ClInclude Include="ImageSideCar.h" />
+    <ClInclude Include="ImageType.h" />
+    <ClInclude Include="IntegrityManager.h" />
+    <ClInclude Include="JournalFile.h" />
+    <ClInclude Include="MakeMedia.h" />
+    <ClInclude Include="MetadataUpdate.h" />
+    <ClInclude Include="ReadConfig.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="SACmdArgs.h" />
+    <ClInclude Include="SIALib.h" />
+    <ClInclude Include="StandardOut.h" />
+    <ClInclude Include="TargetsList.h" />
+    <ClInclude Include="VersionControl.h" />
+    <ClInclude Include="XMLReader.h" />
+    <ClInclude Include="XMLWriter.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="AppConfig.cpp" />
+    <ClCompile Include="ArchiveBuilder.cpp" />
+    <ClCompile Include="ArchiveDate.cpp" />
+    <ClCompile Include="ArchiveRepository.cpp" />
+    <ClCompile Include="ArchiveVisitor.cpp" />
+    <ClCompile Include="Catalog.cpp" />
+    <ClCompile Include="CatalogManager.cpp" />
+    <ClCompile Include="CFolderStatus.cpp" />
+    <ClCompile Include="CUnqueName.cpp" />
+    <ClCompile Include="Environment.cpp" />
+    <ClCompile Include="FileId.cpp" />
+    <ClCompile Include="FolderList.cpp" />
+    <ClCompile Include="HookCmd.cpp" />
+    <ClCompile Include="ImageContainer.cpp" />
+    <ClCompile Include="ImageExtentions.cpp" />
+    <ClCompile Include="ImageFileReader.cpp" />
+    <ClCompile Include="ImageGroup.cpp" />
+    <ClCompile Include="ImageHistory.cpp" />
+    <ClCompile Include="ImageId.cpp" />
+    <ClCompile Include="ImageIndex.cpp" />
+    <ClCompile Include="ImageLock.cpp" />
+    <ClCompile Include="ImagePath.cpp" />
+    <ClCompile Include="ImageSideCars.cpp" />
+    <ClCompile Include="IntegrityManager.cpp" />
+    <ClCompile Include="JournalFile.cpp" />
+    <ClCompile Include="MakeMedia.cpp" />
+    <ClCompile Include="MetadataUpdate.cpp" />
+    <ClCompile Include="ReadConfig.cpp" />
+    <ClCompile Include="SACmdArgs.cpp" />
+    <ClCompile Include="SIALib.cpp" />
+    <ClCompile Include="StandardOut.cpp" />
+    <ClCompile Include="TargetsList.cpp" />
+    <ClCompile Include="VersionControl.cpp" />
+    <ClCompile Include="XMLReader.cpp" />
+    <ClCompile Include="XMLWriter.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
