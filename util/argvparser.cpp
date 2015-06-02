@@ -95,9 +95,47 @@ ArgvParser::ParserResults
 ArgvParser::parse(int _argc, char ** _argv)
 {
     bool finished_options = false; // flag whether an argument was found (options are passed)
-
+	unsigned int key = -1;
     // loop over all command line arguments
-    int i = 1; // argument counter
+    int i = 2; // argument counter
+	
+	if (_argc < 2) {
+		// No command found.
+		return(ParserHelpRequested);
+	}
+	// get the command option
+	string _command = _argv[1];
+	if (isValidCommandString(_command))
+	{
+		// string is a real argument since values are processed elsewhere
+		//finished_options = true;
+		//argument_container.push_back(argument);
+		key = option2key.find(_command)->second;
+		if (key == help_option) {// if help is requested return error code
+			if (_argc < 3) {	// General help
+				return(GeneralHelpRequested);
+			}
+			else if (_argc < 4) { // Help on a command
+				_command = _argv[2];
+				if (isValidCommandString(_command) == false) {
+					return(GeneralHelpRequested);
+				}
+				key = option2key.find(_command)->second;
+				current_command_id = key;
+				return(TopicHelpRequested);
+			}
+			else {
+				return(ParserHelpRequested);
+			}
+		}
+		if (option2attribute.find(key)->second != MasterOption) {
+			return(ParserHelpRequested);
+		}
+	}
+	else {
+		return(ParserHelpRequested);
+	}
+	
 
     while( i< _argc )
     {
@@ -413,30 +451,32 @@ string ArgvParser::usageDescription(unsigned int _width) const
 	string usage; // the usage description text
 
 	if (intro_description.length())
-		usage += formatString(intro_description, _width) + "\n\n";
+		usage += formatString(intro_description, _width) + "\n";
 
-	if (max_key > 1) {// if we have some options
-		usage += formatString("Available options\n-----------------", _width) + "\n\n";
-	}
-	else {
+	if (max_key <= 1) {// if we have some options
+	
 		usage += formatString("No options available\n", _width) + "\n\n";
 		return(usage);
 	}
 
 	
-
-	string mc("Synopsis\n");
-	mc += "sia subcommand[options / args]\n\n";
-	mc += "Description:\n";
-	string tmp = "sia is the primary command-line interface to Simple Image Archive. This interface is used to manage the control of images going in and out of the archive software.\n";
-	tmp += "It has a rich set of subcommands that \"add/import\" images to the archive and \"export\" images out of the archive, In addition manages the controlled modification of images";
-    tmp += " using the \"check-in/check-out\" command set";
-	mc += formatString(tmp, _width);
-	mc += "Note:\n";
-	mc += "The administration of the archive is carried out by the siaadmin command-line interface.\n";
 	usage += '\n';
-	usage += mc;
-	usage += formatString("Master Commands\n-----------------", _width) + "\n";
+	usage += "usage: sia subcommand [options] [args]\n\n";
+	usage += "Image archive command line client, version 1.0.0.1\n";
+	usage += "Type 'sia help <subcommand>' for help on a specific subcommand.\n\n";
+
+	string tmp = "sia is the primary command-line interface to Simple Image Archive. This interface is used to manage the control of images going in and out of the archive software. ";
+	tmp += "It has a rich set of subcommands that \"add/import\" images to the archive and \"export\" images out of the archive, In addition manages the controlled modification of images";
+	tmp += " using the \"check-in/check-out\" command set";
+	usage += '\n';
+	usage += formatString(tmp, _width);
+	usage += '\n';
+	usage += '\n';
+	usage += "Note:\n";
+	usage += formatString("The administration of the archive is carried out by the siaadmin command-line interface.", _width) + "\n";
+	usage += '\n';
+	usage += "Available subcommands:\n";
+
 	for (Key2AttributeMap::const_iterator it = option2attribute.begin();
 		it != option2attribute.end();
 		++it)
@@ -456,23 +496,26 @@ string ArgvParser::usageDescription(unsigned int _width) const
 				int option = option2attribute.find(it->first)->second;
 				_os.clear();
 				if (alt->length() > 1) {
-					_longOpt += "--" + *alt;
+					_longOpt += *alt;
 				}
 				else {
-					_shortOpt += "-" + *alt;
+					_shortOpt += *alt;
 				}
 				
 
 			}
 		}
 		
-		if (!_shortOpt.empty()) {
-			_os += _shortOpt;
-		}
 		if (!_longOpt.empty()) {
 			_os += ' ';
 			_os += _longOpt;
 		}
+		if (!_shortOpt.empty()) {
+			_os += " (";
+			_os += _shortOpt;
+			_os += ')';
+		}
+		_os += " : ";
 		usage += formatString(_os, _width) + "\n";
 		_os.clear();
 		_longOpt.clear();
@@ -484,7 +527,8 @@ string ArgvParser::usageDescription(unsigned int _width) const
 		
 	}
 	
-	printf("%s\n", usage.c_str());
+	/*
+	//printf("%s\n", usage.c_str());
     // loop over all option attribute entries (which equals looping over all
     // different options (not option names)
     for (Key2AttributeMap::const_iterator it = option2attribute.begin();
@@ -534,11 +578,11 @@ string ArgvParser::usageDescription(unsigned int _width) const
         // finally a little gap
         usage += "\n\n";
     }
-
+	*/
     if (!errorcode2descr.size()) // if have no errorcodes
         return(usage);
 
-    usage += formatString("Return codes\n-----------------", _width) + "\n";
+    usage += formatString("Return codes:\n", _width) + "\n";
 
     //   map<int, string>::const_iterator eit;
     for( std::map<int, std::string>::const_iterator alt = errorcode2descr.begin();
@@ -551,10 +595,116 @@ string ArgvParser::usageDescription(unsigned int _width) const
         string descr = formatString(alt->second, _width, 10);
         usage += label + descr.substr(label.length()) + "\n";
     }
-
+	usage += '\n';
+	usage += "Image Archive is a tool for image archiving and version control system.\n";
+	usage += "For additional information, see \"http://www.imgarchive.com/\"";
+	usage += '\n';
     return(usage);
 }
+/*
 
+
+
+*/
+string ArgvParser::topicUsageDescription(unsigned int topic, unsigned int _width) const
+{
+	string usage; // the usage description text
+
+	string _os; // temp string for the option
+	if (option2attribute.find(topic)->second != MasterOption) {
+		usage = "error";
+		return usage;
+	}
+	string _longOpt;
+	string _shortOpt;
+
+	list<string> alternatives = getAllOptionAlternatives(topic);
+	for (list<string>::const_iterator alt = alternatives.begin();
+			alt != alternatives.end();
+			++alt)
+	{
+		if (option2attribute.find(topic)->second == MasterOption) {
+			int option = option2attribute.find(topic)->second;
+			_os.clear();
+			if (alt->length() > 1) {
+				_longOpt += *alt;
+			}
+			else {
+				_shortOpt += *alt;
+			}
+
+
+		}
+		
+	}
+	
+	if (!_longOpt.empty()) {
+		_os += ' ';
+		_os += _longOpt;
+	}
+	if (!_shortOpt.empty()) {
+		_os += " (";
+		_os += _shortOpt;
+		_os += ')';
+	}
+	_os += " : ";
+	usage += formatString(_os, _width) + "\n";
+	_os.clear();
+	_longOpt.clear();
+	_shortOpt.clear();
+
+	if (option2descr.find(topic) != option2descr.end())
+		usage += formatString(option2descr.find(topic)->second, _width, 4) + "\n\n";
+	else
+		usage += formatString("(no description)", _width, 4) + "\n\n";
+
+	usage += "Valid options :\n\n";
+	ArgumentContainer ac = command_set.find(topic)->second;
+
+	for (vector<string>::const_iterator opt = ac.begin(); opt != ac.end(); opt++) {
+		//printf("%s\n", opt->c_str());
+		unsigned int key = option2key.find(opt->c_str())->second;
+		list<string> alternatives = getAllOptionAlternatives(key);
+		for (list<string>::const_iterator alt = alternatives.begin();
+			alt != alternatives.end();
+			++alt)
+		{
+			int option = option2attribute.find(key)->second;
+			_os.clear();
+			if (alt->length() > 1) {
+
+				_longOpt += *alt;
+			}
+			else {
+				_shortOpt += *alt;
+			}
+		}
+
+		if (!_longOpt.empty()) {
+			_os += "\t--";
+			_os += _longOpt;
+		}
+		if (!_shortOpt.empty()) {
+			_os += " (-";
+			_os += _shortOpt;
+			_os += ')';
+		}
+		_os += " : ";
+		usage += formatString(_os, _width) + "\n";
+		_os.clear();
+		_longOpt.clear();
+		_shortOpt.clear();
+	
+		if (option2descr.find(key) != option2descr.end()) {
+			std::string desc = "\t";
+			desc += option2descr.find(key)->second;
+			usage += formatString(desc, _width, 4) + "\n\n";
+		}
+		else
+			usage += formatString("\t(no description)", _width, 4) + "\n\n";
+	}
+	return(usage);
+}
 
 
 const string& ArgvParser::errorOption( ) const
@@ -628,6 +778,27 @@ bool ArgvParser::defineOption( const string & _name,
     ++max_key;
 
     return(true);
+}
+
+bool ArgvParser::defineCommandOption(const string & _command,
+	const string& _attrs)
+{
+	unsigned int key = -1;
+	key = option2key.find(_command)->second; // get the key for the extracted option name
+	if (option2attribute.find(key)->second != MasterOption) {
+		return false;
+	}
+	
+	CommandSet::iterator ii = command_set.find(key);
+	if (ii == command_set.end()) {
+		ArgumentContainer ac;
+		ac.push_back(_attrs);
+		command_set[key] = ac;
+	}
+	else {
+		ii->second.push_back(_attrs);
+	}
+	return false;
 }
 
 bool ArgvParser::defineOptionAlternative( const string & _original,
@@ -737,6 +908,18 @@ bool CommandLineProcessing::isValidOptionString(const string& _string)
 
     // let's consider this an option
     return(true);
+}
+
+bool CommandLineProcessing::isValidCommandString(const string& _string) {
+	unsigned int key = 0;
+	// is it an option (check for '--')
+	if (!_string.compare(0, 2, "--")) {
+		return false;
+	}
+	else if (!_string.compare(0, 1, "-")) {
+		return false;
+	}
+	return true;
 }
 
 bool CommandLineProcessing::isValidLongOptionString(const string& _string)

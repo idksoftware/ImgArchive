@@ -70,6 +70,9 @@ namespace CommandLineProcessing
 *
 * \author Michael Hanke
 */
+
+
+
 class ArgvParser
 {
 public:
@@ -79,7 +82,7 @@ public:
     typedef std::map<unsigned int, OptionAttributes> Key2AttributeMap;
     typedef std::map<unsigned int, std::string> Key2StringMap;
     typedef std::vector<std::string> ArgumentContainer;
-
+	typedef std::map<unsigned int, ArgumentContainer> CommandSet;
 
     ArgvParser();
     ~ArgvParser();
@@ -95,13 +98,16 @@ public:
     /** Return values of the parser. */
     enum
     {
-        NoParserError = 0x00,
-        ParserUnknownOption = 0x01,
-        ParserMissingValue = 0x02,
-        ParserOptionAfterArgument = 0x04,
-        ParserMalformedMultipleShortOption = 0x08,
-        ParserRequiredOptionMissing = 0x16,
-        ParserHelpRequested = 0x32
+        NoParserError = 00,
+        ParserUnknownOption = 1,
+        ParserMissingValue = 2,
+        ParserOptionAfterArgument = 4,
+        ParserMalformedMultipleShortOption = 8,
+        ParserRequiredOptionMissing = 16,
+        ParserHelpRequested = 32,
+		GeneralHelpRequested = 64,
+		TopicHelpRequested = 128
+
     };
 	
     /** Defines an option with optional attributes (required, ...) and an
@@ -123,6 +129,10 @@ public:
     */
     bool defineOptionAlternative(const std::string& _original,
                                  const std::string& _alternative);
+
+	bool defineCommandOption(const std::string & _command,
+								const std::string& _attrs);
+
     /** Returns whether _name is a defined option. */
     bool isDefinedOption(const std::string& _name) const;
     /** Returns whether _name is an option that was found while parsing
@@ -176,6 +186,11 @@ public:
     * \retval ParserHelpRequested Help option detected.
     */
     ParserResults parse(int _argc, char ** _argv);
+
+
+	unsigned int getCurrentCommandId() {
+		return current_command_id;
+	}
     /** Return the value of an option.
     * \return Value of a commandline options given by the name of the option or
     * an empty string if there was no such option or the option required no
@@ -198,6 +213,8 @@ public:
     /** Returns a string with the usage descriptions for all options. The
      * description string is formated to fit into a terminal of width _width.*/
     std::string usageDescription(unsigned int _width = 80) const;
+
+	std::string topicUsageDescription(unsigned int topic, unsigned int _width = 80) const;
 
 private:
     /** Returns the key of a defined option with name _name or -1 if such option
@@ -234,6 +251,10 @@ private:
 	/** General description to be returned as first part of the generated help page. */
 	std::string masteroption_description;
 
+	CommandSet command_set;
+
+	unsigned int current_command_id;
+
     /** Holds the key for the help option. */
     unsigned int help_option;
 
@@ -261,6 +282,7 @@ bool isValidOptionString(const std::string& _string);
  */
 bool isValidLongOptionString(const std::string& _string);
 
+bool isValidCommandString(const std::string& _string);
 /** Splits option and value string if they are given in the form 'option=value'.
 * \return Returns TRUE if a value was found.
 */
