@@ -76,7 +76,7 @@
 #define DB_METERINGMODE    "MeteringMode"
 #define DB_MODEL           "Model"
 #define DB_PAGE            "Page"
-#define DB_PRINARYENCODING "PrinaryEncoding"
+#define DB_PRINARYENCODING "PrimaryEncoding"
 #define DB_RATING          "Rating"
 #define DB_RESOLUTION      "Resolution"
 #define DB_SAMPLECOLOR     "SampleColor"
@@ -448,12 +448,12 @@ public:
 		m_page = page;
 	}
 
-	const std::string& getPrinaryEncoding() const {
+	const std::string& getPrimaryEncoding() const {
 		return m_prinaryEncoding;
 	}
 
-	void setPrinaryEncoding(const std::string& prinaryEncoding) {
-		m_prinaryEncoding = prinaryEncoding;
+	void setPrimaryEncoding(const std::string& primaryEncoding) {
+		m_prinaryEncoding = primaryEncoding;
 	}
 
 	const std::string& getRating() const {

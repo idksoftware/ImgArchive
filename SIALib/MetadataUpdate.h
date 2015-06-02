@@ -1,36 +1,9 @@
-/* **************************************************
-**
-**    III                DDD  KKK
-**    III                DDD  KKK
-**                       DDD  KKK
-**    III   DDDDDDDDDDD  DDD  KKK            KKK
-**    III  DDD           DDD  KKK            KKK
-**    III  DDD           DDD  KKK           KKK
-**    III  DDD           DDD  KKK        KKKKKK
-**    III  DDD           DDD  KKK   KKKKKKKKK
-**    III  DDD           DDD  KKK        KKKKKK
-**    III  DDD           DDD  KKK           KKK
-**    III  DDD           DDD  KKK            KKK
-**    III   DDDDDDDDDDDDDDDD  KKK            KKK
-**
-**
-**     SSS         FF
-**    S           F   T
-**     SSS   OO   FF  TTT W   W  AAA  R RR   EEE
-**        S O  O  F   T   W W W  AAAA RR  R EEEEE
-**    S   S O  O  F   T   W W W A   A R     E
-**     SSS   OO  FFF   TT  W W   AAAA R      EEE
-**
-**    Copyright: (c) 2015 IDK Software Ltd
-**
-****************************************************
-**
-**	Filename	: CRegString.cpp
-**	Author		: I.Ferguson
-**	Version		: 1.000
-**	Date		: 26-05-2015
-**
-** #$$@@$$# */
+/*
+ * MetadataUpdate.h
+ *
+ *  Created on: Mar 2, 2015
+ *      Author: wzw7yn
+ */
 
 #ifndef METADATAUPDATE_H_
 #define METADATAUPDATE_H_
@@ -40,18 +13,18 @@ namespace simplearchive {
 class MetadataDocument;
 class MetadataObject;
 class MetadataUpdate {
-	int command(std::string &cmd, MetadataObject &mo);
+	bool command(std::string &cmd, MetadataObject &mo);
 	static std::string m_archivePath;
 public:
 	MetadataUpdate();
 	virtual ~MetadataUpdate();
-	static void setArchivePath(const char *archivePath) {
-		m_archivePath = archivePath;
-	}
+
 	bool process(const char *imagePath, const char *imageName, const char *cmd);
 	std::auto_ptr<MetadataDocument> get(const char *imagePath, const char *imageName);
 	bool loadMetadataDocument(MetadataDocument &metadataDocument, MetadataObject &metadataObject);
 };
+
+
 
 } /* namespace simplearchive */
 #endif /* METADATAUPDATE_H_ */

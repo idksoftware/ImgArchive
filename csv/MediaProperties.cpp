@@ -121,7 +121,7 @@ void MediaProperties::add(MetadataObject &metadataObject) {
 	item->setPage(metadataObject.getPage());
 	item->setColorSpace(metadataObject.getColorSpace());
 	item->setCompression(metadataObject.getCompression());
-	item->setPrinaryEncoding(metadataObject.getPrinaryEncoding());
+	item->setPrimaryEncoding(metadataObject.getPrimaryEncoding());
 	push_back(item);
 	return;
 }
@@ -170,7 +170,7 @@ unsigned int MediaProperties::findImage(const char *text, int col) {
 		case 6: field = item->getPage(); break;
 		case 7: field = item->getColorSpace(); break;
 		case 8: field = item->getCompression(); break;
-		case 9: field = item->getPrinaryEncoding(); break;
+		case 9: field = item->getPrimaryEncoding(); break;
         return std::string::npos;
 		}
 		if (field.compare(text) == 0) {
@@ -193,7 +193,7 @@ bool MediaProperties::load(unsigned int row, MetadataObject &mo) {
     mo.setPage(item->getPage());
     mo.setColorSpace(item->getColorSpace());
     mo.setCompression(item->getCompression());
-    mo.setPrimaryEncoding(item->getPrinaryEncoding());
+    mo.setPrimaryEncoding(item->getPrimaryEncoding());
 
     return true;
 }
@@ -211,7 +211,7 @@ bool MediaProperties::save(unsigned int row, MetadataObject &mo) {
 	item->setPage(mo.getPage());
 	item->setColorSpace(mo.getColorSpace());
 	item->setCompression(mo.getCompression());
-	item->setPrinaryEncoding(mo.getPrinaryEncoding());
+	item->setPrimaryEncoding(mo.getPrimaryEncoding());
     return true;
 }
 
@@ -255,13 +255,13 @@ void MediaPropertiesItem::setPage(const std::string& page) {
 	m_page = page;
 }
 
-const std::string& MediaPropertiesItem::getPrinaryEncoding() const {
+const std::string& MediaPropertiesItem::getPrimaryEncoding() const {
 	return m_prinaryEncoding;
 }
 
-void MediaPropertiesItem::setPrinaryEncoding(
-		const std::string& prinaryEncoding) {
-	m_prinaryEncoding = prinaryEncoding;
+void MediaPropertiesItem::setPrimaryEncoding(
+		const std::string& primaryEncoding) {
+	m_prinaryEncoding = primaryEncoding;
 }
 
 const std::string& MediaPropertiesItem::getResolution() const {

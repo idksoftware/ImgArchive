@@ -46,7 +46,7 @@
 #define GPSTIMESTAMP		"GpsTimeStamp"
 #define LIGHTSOURCE		"LightSource"
 #define PAGE			"Page"
-#define PRINARYENCODING		"PrinaryEncoding"
+#define PRINARYENCODING		"PrimaryEncoding"
 #define RESOLUTION		"Resolution"
 #define SAMPLECOLOR		"SampleColor"
 #define SENSINGMETHOD		"SensingMethod"

@@ -42,7 +42,7 @@ namespace simplearchive {
 class CSVArgs : public std::vector<std::string> {
 	char m_delim;
 public:
-	CSVArgs(char delim);
+	CSVArgs(char delim = '.');
 	virtual ~CSVArgs();
 	bool process(const char *dataString);
 	void print();

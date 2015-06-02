@@ -107,6 +107,7 @@ ArgvParser::parse(int _argc, char ** _argv)
 	string _command = _argv[1];
 	if (isValidCommandString(_command))
 	{
+		current_command = _command;
 		// string is a real argument since values are processed elsewhere
 		//finished_options = true;
 		//argument_container.push_back(argument);
@@ -131,6 +132,7 @@ ArgvParser::parse(int _argc, char ** _argv)
 		if (option2attribute.find(key)->second != MasterOption) {
 			return(ParserHelpRequested);
 		}
+		
 	}
 	else {
 		return(ParserHelpRequested);
@@ -312,6 +314,10 @@ ArgvParser::parse(int _argc, char ** _argv)
     map<unsigned int, OptionAttributes>::iterator it;
     for( it = option2attribute.begin(); it != option2attribute.end(); it++ )
     {
+		if (it->second == MasterOption)
+		{
+			continue;
+		}
         // if the current option is required look if we got it
         if (it->second & OptionRequired)
         {

@@ -161,7 +161,7 @@ bool ImageTable::insert(ImageTableItem &imageTableItem) {
 	insertBulder.addfield(DB_METERINGMODE, imageTableItem.getMeteringMode());
 	insertBulder.addfield(DB_MODEL, imageTableItem.getModel());
 	insertBulder.addfield(DB_PAGE, imageTableItem.getPage());
-	insertBulder.addfield(DB_PRINARYENCODING, imageTableItem.getPrinaryEncoding());
+	insertBulder.addfield(DB_PRINARYENCODING, imageTableItem.getPrimaryEncoding());
 	insertBulder.addfield(DB_RATING, imageTableItem.getRating());
 	insertBulder.addfield(DB_RESOLUTION, imageTableItem.getResolution());
 	insertBulder.addfield(DB_SAMPLECOLOR, imageTableItem.getSampleColor());
@@ -225,7 +225,7 @@ bool ImageTable::update(ImageTableItem &imageTableItem) {
 	updateBuilder.addfield(DB_METERINGMODE, imageTableItem.getMeteringMode());
 	updateBuilder.addfield(DB_MODEL, imageTableItem.getModel());
 	updateBuilder.addfield(DB_PAGE, imageTableItem.getPage());
-	updateBuilder.addfield(DB_PRINARYENCODING, imageTableItem.getPrinaryEncoding());
+	updateBuilder.addfield(DB_PRINARYENCODING, imageTableItem.getPrimaryEncoding());
 	updateBuilder.addfield(DB_RATING, imageTableItem.getRating());
 	updateBuilder.addfield(DB_RESOLUTION, imageTableItem.getResolution());
 	updateBuilder.addfield(DB_SAMPLECOLOR, imageTableItem.getSampleColor());
@@ -287,7 +287,7 @@ bool ImageTable::writeXmlFile(ImageTableItem &imageTableItem, const char *path) 
 	            << writeTag("Page", imageTableItem.getPage())
 	            << writeTag("ColorSpace", imageTableItem.getColorSpace())
 	            << writeTag("Compression", imageTableItem.getCompression())
-	            << writeTag("PrinaryEncoding", imageTableItem.getPrinaryEncoding())
+	            << writeTag("PrimaryEncoding", imageTableItem.getPrimaryEncoding())
 	            << "<MediaProerties>\n"
 	            << "<CameraInformation>\n"
 	            << writeTag("Maker", imageTableItem.getMaker())

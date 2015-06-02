@@ -119,19 +119,19 @@ bool AppOptions::initalise(int argc, char **argv) {
 	
 
 	//define error codes
+	//define error codes
 	m_argvParser->addErrorCode(0, "Success");
 	m_argvParser->addErrorCode(1, "Warnings");
 	m_argvParser->addErrorCode(2, "Errors");
 	m_argvParser->addErrorCode(3, "Fatal");
-	m_argvParser->setIntroductoryDescription("The Image archive provides an organised place to store images. This archive is"
-		"designed to be simple in design and to use. It consists of archiving core that provides the basic archiving"
+	m_argvParser->setIntroductoryDescription("Image archive provides an organized place to store images. This archive is"
+		" designed to be simple in design and to use. It consists of archiving core that provides the basic archiving"
 		" functions but in addition, takes input and provides output from optional external components to provide a"
-		"tailored achieving solution and can be extended into a complete achieving system. ");
+		" tailored achieving solution and can be extended into a complete achieving system. ");
 	m_argvParser->setHelpOption();
-	//parser.defineOption("a", "Adds new images to the archive.", ArgvParser::OptionRequiresValue);
-	//parser.defineOptionAlternative("a", "add");
 
 	
+
 
 	// Subcommands
 	m_argvParser->defineOption("a", "add new images to the archive.", ArgvParser::MasterOption);
@@ -155,7 +155,6 @@ bool AppOptions::initalise(int argc, char **argv) {
 	m_argvParser->defineOptionAlternative("v", "view");
 
 	m_argvParser->defineOption("image-address", "image address", ArgvParser::NoOptionAttribute);
-
 
 	/*
 	m_argvParser->defineOption("I", "Create Archive Commands", ArgvParser::NoOptionAttribute);
@@ -194,16 +193,19 @@ bool AppOptions::initalise(int argc, char **argv) {
 	m_argvParser->defineOption("T", "to date", ArgvParser::OptionRequiresValue);
 	m_argvParser->defineOptionAlternative("T", "to-date");
 
-	m_argvParser->defineOption("r", "location of the archive root folder.", ArgvParser::OptionRequiresValue);
-	m_argvParser->defineOptionAlternative("r", "archive-path");
+	m_argvParser->defineOption("p", "location of the archive root folder.", ArgvParser::OptionRequiresValue);
+	m_argvParser->defineOptionAlternative("p", "archive-path");
 
 	m_argvParser->defineOption("l", "Temporarily changes the logging level for the scope of this command session.", ArgvParser::OptionRequiresValue);
-	m_argvParser->defineOptionAlternative("r", "logging-level");
+	m_argvParser->defineOptionAlternative("l", "logging-level");
 
 	m_argvParser->defineOption("C", "Comment to be included in command", ArgvParser::OptionRequiresValue);
 	m_argvParser->defineOptionAlternative("C", "comment");
 
-	
+	m_argvParser->defineCommandOption("add", "comment");
+	m_argvParser->defineCommandOption("add", "logging-level");
+	m_argvParser->defineCommandOption("add", "archive-path");
+	m_argvParser->defineCommandOption("add", "source-path");
 	
 
 	
@@ -236,15 +238,15 @@ bool AppOptions::initalise(int argc, char **argv) {
 	//testHelpOptionDetection();
 	bool cmdFound = false;
 
-	if (m_argvParser->foundOption("about") == true) {
+	if (m_argvParser->command("about") == true) {
 		setCommandMode(AppOptions::CM_Version);
 		cmdFound = true;
 	}
-	else if (m_argvParser->foundOption("init") == true) {
+	else if (m_argvParser->command("init") == true) {
 		setCommandMode(AppOptions::CM_InitArchive);
 		cmdFound = true;
 	}
-	else if (m_argvParser->foundOption("add") == true) {
+	else if (m_argvParser->command("add") == true) {
 		
 		if (m_argvParser->foundOption("source-path") == true) {			
 			std::string opt = m_argvParser->optionValue("source-path");
@@ -261,7 +263,7 @@ bool AppOptions::initalise(int argc, char **argv) {
 		Environment::setEnvironment();
 		cmdFound = true;
 	}
-	else if (m_argvParser->foundOption("checkout") == true) {
+	else if (m_argvParser->command("checkout") == true) {
 		if (m_argvParser->foundOption("image-address") == true) {
 			m_imageAddress = m_argvParser->optionValue("image-address");
 			printf(m_imageAddress.c_str()); printf("\n");
@@ -279,7 +281,7 @@ bool AppOptions::initalise(int argc, char **argv) {
 		setCommandMode(AppOptions::CM_Checkout);
 		cmdFound = true;
 	}
-	else if (m_argvParser->foundOption("checkin") == true) {
+	else if (m_argvParser->command("checkin") == true) {
 		
 		if (m_argvParser->foundOption("image-address") == true) {
 			m_imageAddress = m_argvParser->optionValue("image-address");
@@ -299,7 +301,7 @@ bool AppOptions::initalise(int argc, char **argv) {
 		setCommandMode(AppOptions::CM_Checkin);
 		cmdFound = true;
 	}
-	else if (m_argvParser->foundOption("uncheckout") == true) {
+	else if (m_argvParser->command("uncheckout") == true) {
 		if (m_argvParser->foundOption("image-address") == true) {
 			m_imageAddress = m_argvParser->optionValue("image-address");
 			printf(m_imageAddress.c_str()); printf("\n");
@@ -317,11 +319,11 @@ bool AppOptions::initalise(int argc, char **argv) {
 		setCommandMode(AppOptions::CM_UnCheckout);
 		cmdFound = true;
 	}
-	else if (m_argvParser->foundOption("export") == true) {
+	else if (m_argvParser->command("export") == true) {
 		setCommandMode(AppOptions::CM_Export);
 		cmdFound = true;
 	}
-	else if (m_argvParser->foundOption("view") == true) {
+	else if (m_argvParser->command("view") == true) {
 		setCommandMode(AppOptions::CM_View);
 		
 		if (m_argvParser->foundOption("archive-path") == true) {
@@ -362,7 +364,7 @@ bool AppOptions::initalise(int argc, char **argv) {
 		cmdFound = true;
 	}
 
-	else if (m_argvParser->foundOption("validate") == true) {
+	else if (m_argvParser->command("validate") == true) {
 		setCommandMode(AppOptions::CM_Validate);
 		cmdFound = true;
 		if (m_argvParser->foundOption("archive-path") == true) {
@@ -372,7 +374,7 @@ bool AppOptions::initalise(int argc, char **argv) {
 			config.setArchivePath(opt.c_str());
 		}
 	}
-	else if (m_argvParser->foundOption("mirror") == true) {
+	else if (m_argvParser->command("mirror") == true) {
 		setCommandMode(AppOptions::CM_Mirror);
 
 		if (m_argvParser->foundOption("archive-path") == true) {
@@ -412,7 +414,7 @@ bool AppOptions::initalise(int argc, char **argv) {
 
 		cmdFound = true;
 	}
-	else if (m_argvParser->foundOption("backup") == true) {
+	else if (m_argvParser->command("backup") == true) {
 		setCommandMode(AppOptions::CM_Archive);
 		
 		if (m_argvParser->foundOption("archive-path") == true) {
@@ -452,7 +454,7 @@ bool AppOptions::initalise(int argc, char **argv) {
 		}
 		cmdFound = true;
 	}
-	else if (m_argvParser->foundOption("version") == true) {
+	else if (m_argvParser->command("version") == true) {
 		setCommandMode(AppOptions::CM_Version);
 		cmdFound = true;
 	}

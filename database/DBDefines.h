@@ -78,7 +78,7 @@
 #define DB_METERINGMODE    "MeteringMode"
 #define DB_MODEL           "Model"
 #define DB_PAGE            "Page"
-#define DB_PRINARYENCODING "PrinaryEncoding"
+#define DB_PRINARYENCODING "PrimaryEncoding"
 #define DB_RATING          "Rating"
 #define DB_RESOLUTION      "Resolution"
 #define DB_SAMPLECOLOR     "SampleColor"

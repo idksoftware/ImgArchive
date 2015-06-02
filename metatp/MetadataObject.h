@@ -34,14 +34,70 @@
 
 #ifndef METADATAOBJECT_H_
 #define METADATAOBJECT_H_
-
 #include <string>
 #include <vector>
-#include "ExifDateTime.h"
-
 #include <map>
+#include "DBDefines.h"
+#include "MetaType.h"
 
 namespace simplearchive {
+
+
+
+class MetadataSchema : public MTTableSchema {
+public:
+	MetadataSchema() : MTTableSchema("MetadataProperties") {
+        	add(MTSchema(MTSchema::Integer, DB_SEQUENCEID));
+        	add(MTSchema(MTSchema::Text, DB_FILENAME));
+        	add(MTSchema(MTSchema::Text, DB_FILEPATH));
+        	add(MTSchema(MTSchema::Text, DB_ORGINALNAME));
+        	add(MTSchema(MTSchema::Text, DB_UUID));
+        	add(MTSchema(MTSchema::Text, DB_LABEL));
+        	add(MTSchema(MTSchema::Integer, DB_RATING));
+        	add(MTSchema(MTSchema::Text, DB_MEDIATYPE));
+        	add(MTSchema(MTSchema::Integer, DB_MD5));
+        	add(MTSchema(MTSchema::Integer, DB_CRC));
+        	add(MTSchema(MTSchema::Integer, DB_FILESIZE));
+        	add(MTSchema(MTSchema::Date, DB_DATECREATE));
+        	add(MTSchema(MTSchema::Date, DB_DATEMODIFIED));
+        	add(MTSchema(MTSchema::Date, DB_DATEADDED));
+        	add(MTSchema(MTSchema::Text, DB_DESCRIPTION));
+			add(MTSchema(MTSchema::Text, DB_WIDTH));
+			add(MTSchema(MTSchema::Text, DB_HEIGHT));
+			add(MTSchema(MTSchema::Text, DB_RESOLUTION));
+			add(MTSchema(MTSchema::Text, DB_DEPTH));
+			add(MTSchema(MTSchema::Text, DB_VIEWROTATION));
+			add(MTSchema(MTSchema::Text, DB_SAMPLECOLOR));
+			add(MTSchema(MTSchema::Text, DB_PAGE));
+			add(MTSchema(MTSchema::Text, DB_COLORSPACE));
+			add(MTSchema(MTSchema::Text, DB_COMPRESSION));
+			add(MTSchema(MTSchema::Text, DB_PRIMARYENCODING));
+			add(MTSchema(MTSchema::Text, DB_MAKER));
+			add(MTSchema(MTSchema::Text, DB_MODEL));
+			add(MTSchema(MTSchema::Text, DB_SOFTWARE));
+			add(MTSchema(MTSchema::Text, DB_SOURCEURL));
+			add(MTSchema(MTSchema::Text, DB_EXIFVERSION));
+			add(MTSchema(MTSchema::Text, DB_CAPTUREDATE));
+			add(MTSchema(MTSchema::Text, DB_EXPOSUREPROGRAM));
+			add(MTSchema(MTSchema::Text, DB_ISOSPEEDRATING));
+			add(MTSchema(MTSchema::Text, DB_EXPOSUREBIAS));
+			add(MTSchema(MTSchema::Text, DB_EXPOSURETIME));
+			add(MTSchema(MTSchema::Text, DB_APERTURE));
+			add(MTSchema(MTSchema::Text, DB_METERINGMODE));
+			add(MTSchema(MTSchema::Text, DB_LIGHTSOURCE));
+			add(MTSchema(MTSchema::Text, DB_FLASH));
+			add(MTSchema(MTSchema::Text, DB_FOCALLENGTH));
+			add(MTSchema(MTSchema::Text, DB_SENSINGMETHOD));
+			add(MTSchema(MTSchema::Text, DB_DIGITALZOOM));
+			add(MTSchema(MTSchema::Text, DB_LATITUDE));
+			add(MTSchema(MTSchema::Text, DB_LONGITUDE));
+			add(MTSchema(MTSchema::Text, DB_GPSTIMESTAMP));
+			add(MTSchema(MTSchema::Text, DB_COPYRIGHT));
+			add(MTSchema(MTSchema::Text, DB_USAGERIGHTS));
+			add(MTSchema(MTSchema::Text, DB_COPYRIGHTURL));
+        }
+};
+
 /**
  * @brief Metadata Container
  *
@@ -50,8 +106,8 @@ namespace simplearchive {
  * will be used for further substitutions by the Exif reading and user defined
  * keyword substitutions.
  */
-	class MetadataObject {
-		//std::map<std::string, std::string *> m_lookup;
+class MetadataObject : public MTRow {
+
 
 	friend class MetadataTemplate;
 	/// Asset Properties
@@ -108,424 +164,404 @@ namespace simplearchive {
 	std::string m_usageRights;
 	std::string m_copyrightURL;
 
-	std::vector<std::string *> m_valueList;
-	static const char *m_labelList[];
-	bool m_doMakeValueList;
 
-	void makeValueList();
-	void makeLabelsList();
+
+
 
 public:
 	MetadataObject();
 	virtual ~MetadataObject();
 
-	const char *getLabelAt(int idx) {
-		return m_labelList[idx];
-	}
+	//static const char *TableLookup(const char *columnName) const ;
 
-	const char *&getLabelList() {
-		return *m_labelList;
-	}
-
-	static unsigned int getListLenght();
-
-    std::string& getValueAt(int idx) {
-		makeValueList();
-		return *(m_valueList.at(idx));
-	}
-
-	std::vector<std::string *>& getAsValueList() {
-		makeValueList();
-		return m_valueList;
-	}
-
-
-	const std::string& getAperture() const {
-		return m_aperture;
+	const std::string getAperture() const {
+		return columnAt(MD_APERTURE_IDX).toString();
 	}
 
 	void setAperture(const std::string& aperture) {
-		m_aperture = aperture;
+		columnAt(MD_APERTURE_IDX).fromString(aperture);
 	}
 
 	const std::string& getCaptureDate() const {
-		return m_captureDate;
+		return columnAt(MD_CAPTURE_DATE_IDX).toString();
+
 	}
 
 	void setCaptureDate(const std::string& captureDate) {
-		m_captureDate = captureDate;
+		columnAt(MD_CAPTURE_DATE_IDX).fromString(captureDate);;
 	}
 
 	const std::string& getColorSpace() const {
-		return m_colorSpace;
+		return columnAt(MD_COLOR_SPACE_IDX).toString();
+
 	}
 
 	void setColorSpace(const std::string& colorSpace) {
-		m_colorSpace = colorSpace;
+	        columnAt(MD_COLOR_SPACE_IDX).fromString(colorSpace);;
 	}
 
 	const std::string& getCompression() const {
-		return m_compression;
+	        return columnAt(MD_COMPRESSION_IDX).toString();
 	}
 
 	void setCompression(const std::string& compression) {
-		m_compression = compression;
+	        columnAt(MD_COMPRESSION_IDX).fromString(compression);;
 	}
 
 	const std::string& getCopyright() const {
-		return m_copyright;
+	        return columnAt(MD_COPYRIGHT_IDX).toString();
 	}
 
 	void setCopyright(const std::string& copyright) {
-		m_copyright = copyright;
+	        columnAt(MD_COPYRIGHT_IDX).fromString(copyright);;
 	}
 
 	const std::string& getCopyrightUrl() const {
-		return m_copyrightURL;
+	        return columnAt(MD_COPYRIGHT_URL_IDX).toString();
 	}
 
 	void setCopyrightUrl(const std::string& copyrightUrl) {
-		m_copyrightURL = copyrightUrl;
+	        columnAt(MD_COPYRIGHT_URL_IDX).fromString(copyrightUrl);;
 	}
 
 	const std::string& getCrc() const {
-		return m_crc;
+	        return columnAt(DB_CRC_IDX).toString();
 	}
 
+
+
 	void setCrc(const std::string& crc) {
-		m_crc = crc;
+	        columnAt(DB_CRC_IDX).fromString(crc);;
 	}
 
 	const std::string& getDateAdded() const {
-		return m_dateAdded;
+	        return columnAt(MD_DATE_ADDED_IDX).toString();
 	}
 
 	void setDateAdded(const std::string& dateAdded) {
-		m_dateAdded = dateAdded;
+	        columnAt(MD_DATE_ADDED_IDX).fromString(dateAdded);;
 	}
 
 	const std::string& getDateCreate() const {
-		return m_dateCreate;
+	        return columnAt(MD_DATE_CREATE_IDX).toString();
 	}
 
 	void setDateCreate(const std::string& dateCreate) {
-		m_dateCreate = dateCreate;
+	        columnAt(MD_DATE_CREATE_IDX).fromString(dateCreate);;
 	}
 
 	const std::string& getDateModified() const {
-		return m_dateModified;
+	        return columnAt(MD_DATE_MODIFIED_IDX).toString();
 	}
 
 	void setDateModified(const std::string& dateModified) {
-		m_dateModified = dateModified;
+	        columnAt(MD_DATE_MODIFIED_IDX).fromString(dateModified);;
 	}
-	
+
 	const std::string& getDepth() const {
-		return m_depth;
+	        return columnAt(MD_DEPTH_IDX).toString();
 	}
 
 	void setDepth(const std::string& depth) {
-		m_depth = depth;
+	        columnAt(MD_DEPTH_IDX).fromString(depth);;
 	}
 
 	const std::string& getDescription() const {
-		return m_description;
+	        return columnAt(MD_DESCRIPTION_IDX).toString();
 	}
 
 	void setDescription(const std::string& description) {
-		m_description = description;
+	        columnAt(MD_DESCRIPTION_IDX).fromString(description);;
 	}
 
 	const std::string& getDigitalZoom() const {
-		return m_digitalZoom;
+	        return columnAt(MD_DIGITAL_ZOOM_IDX).toString();
 	}
 
 	void setDigitalZoom(const std::string& digitalZoom) {
-		m_digitalZoom = digitalZoom;
+	        columnAt(MD_DIGITAL_ZOOM_IDX).fromString(digitalZoom);;
 	}
 
 	const std::string& getExifVersion() const {
-		return m_exifVersion;
+	        return columnAt(MD_SOFTWARE_IDX).toString();
 	}
 
 	void setExifVersion(const std::string& exifVersion) {
-		m_exifVersion = exifVersion;
+	        columnAt(MD_SOFTWARE_IDX).fromString(exifVersion);;
 	}
 
 	const std::string& getExposureBias() const {
-		return m_exposureBias;
+	        return columnAt(MD_EXPOSURE_BIAS_IDX).toString();
 	}
 
 	void setExposureBias(const std::string& exposureBias) {
-		m_exposureBias = exposureBias;
+	        columnAt(MD_EXPOSURE_BIAS_IDX).fromString(exposureBias);;
 	}
 
 	const std::string& getExposureProgram() const {
-		return m_exposureProgram;
+	        return columnAt(MD_EXPOSURE_PROGRAM_IDX).toString();
 	}
 
 	void setExposureProgram(const std::string& exposureProgram) {
-		m_exposureProgram = exposureProgram;
+	        columnAt(MD_EXPOSURE_PROGRAM_IDX).fromString(exposureProgram);;
 	}
 
 	const std::string& getExposureTime() const {
-		return m_exposureTime;
+	        return columnAt(MD_EXPOSURE_TIME_IDX).toString();
 	}
 
 	void setExposureTime(const std::string& exposureTime) {
-		m_exposureTime = exposureTime;
+	        columnAt(MD_EXPOSURE_TIME_IDX).fromString(exposureTime);;
 	}
 
 	const std::string& getFilename() const {
-		return m_filename;
+		return columnAt(MD_FILENAME_IDX).toString();
 	}
 
 	void setFilename(const std::string& filename) {
-		m_filename = filename;
+	        columnAt(MD_FILENAME_IDX).fromString(filename);;
 	}
 
 	const std::string& getFilepath() const {
-		return m_filepath;
+	        return columnAt(MD_FILEPATH_IDX).toString();
 	}
 
 	void setFilepath(const std::string& filepath) {
-		m_filepath = filepath;
+	        columnAt(MD_FILEPATH_IDX).fromString(filepath);;
 	}
 
 	const std::string& getFileSize() const {
-		return m_fileSize;
+	        return columnAt(MD_FILE_SIZE_IDX).toString();
 	}
 
 	void setFileSize(const std::string& fileSize) {
-		m_fileSize = fileSize;
+	        columnAt(MD_FILE_SIZE_IDX).fromString(fileSize);;
 	}
-	
+
 	const std::string& getFlash() const {
-		return m_flash;
+	        return columnAt(MD_FLASH_IDX).toString();
 	}
 
 	void setFlash(const std::string& flash) {
-		m_flash = flash;
+	        columnAt(MD_FLASH_IDX).fromString(flash);;
 	}
 
 	const std::string& getFocalLength() const {
-		return m_focalLength;
+	        return columnAt(MD_FOCAL_LENGTH_IDX).toString();
 	}
 
 	void setFocalLength(const std::string& focalLength) {
-		m_focalLength = focalLength;
+	        columnAt(MD_FOCAL_LENGTH_IDX).fromString(focalLength);;
 	}
 
 	const std::string& getGpsTimeStamp() const {
-		return m_gpsTimeStamp;
+	        return columnAt(MD_GPS_TIMESTAMP_IDX).toString();
 	}
 
 	void setGpsTimeStamp(const std::string& gpsTimeStamp) {
-		m_gpsTimeStamp = gpsTimeStamp;
+	        columnAt(MD_GPS_TIMESTAMP_IDX).fromString(gpsTimeStamp);;
 	}
 
 	const std::string& getHeight() const {
-		return m_height;
+	        return columnAt(MD_HEIGHT_IDX).toString();
 	}
 
 	void setHeight(const std::string& height) {
-		m_height = height;
+	        columnAt(MD_HEIGHT_IDX).fromString(height);;
 	}
 
 	const std::string& getIsoSpeedRating() const {
-		return m_isoSpeedRating;
+	        return columnAt(MD_ISO_SPEED_RATING_IDX).toString();
 	}
 
 	void setIsoSpeedRating(const std::string& isoSpeedRating) {
+	        columnAt(MD_ISO_SPEED_RATING_IDX).fromString(isoSpeedRating);;
 		m_isoSpeedRating = isoSpeedRating;
 	}
 
 	const std::string& getLabel() const {
-		return m_label;
+	        return columnAt(MD_LABEL_IDX).toString();
 	}
 
 	void setLabel(const std::string& label) {
-		m_label = label;
+	        columnAt(MD_LABEL_IDX).fromString(label);;
 	}
 
 	const std::string& getLatitude() const {
-		return m_latitude;
+	        return columnAt(MD_LATITUDE_IDX).toString();
 	}
 
 	void setLatitude(const std::string& latitude) {
-		m_latitude = latitude;
+	        columnAt(MD_LATITUDE_IDX).fromString(latitude);;
 	}
 
 	const std::string& getLightSource() const {
-		return m_lightSource;
+	        return columnAt(MD_LIGHT_SOURCE_IDX).toString();
 	}
 
 	void setLightSource(const std::string& lightSource) {
-		m_lightSource = lightSource;
+	        columnAt(MD_LIGHT_SOURCE_IDX).fromString(lightSource);;
 	}
 
 	const std::string& getLongitude() const {
-		return m_longitude;
+	        return columnAt(MD_LONGITUDE_IDX).toString();
 	}
 
 	void setLongitude(const std::string& longitude) {
-		m_longitude = longitude;
+	        columnAt(MD_LONGITUDE_IDX).fromString(longitude);;
 	}
 
 	const std::string& getMaker() const {
-		return m_maker;
+	        return columnAt(MD_MAKER_IDX).toString();
 	}
 
 	void setMaker(const std::string& maker) {
-		m_maker = maker;
+	        columnAt(MD_MAKER_IDX).fromString(maker);;
 	}
 
 	const std::string& getMd5() const {
-		return m_md5;
+	        return columnAt(MD_MD5_IDX).toString();
 	}
 
 	void setMd5(const std::string& md5) {
-		m_md5 = md5;
+	        columnAt(MD_MD5_IDX).fromString(md5);;
 	}
 
 	const std::string& getMediaType() const {
-		return m_mediaType;
+	        return columnAt(DB_CRC_IDX).toString();
 	}
 
 	void setMediaType(const std::string& mediaType) {
-		m_mediaType = mediaType;
+	        columnAt(DB_CRC_IDX).fromString(mediaType);;
 	}
 
 	const std::string& getMeteringMode() const {
-		return m_meteringMode;
+	        return columnAt(MD_METERING_MODE_IDX).toString();
 	}
 
 	void setMeteringMode(const std::string& meteringMode) {
-		m_meteringMode = meteringMode;
+	        columnAt(MD_METERING_MODE_IDX).fromString(meteringMode);;
 	}
 
 	const std::string& getModel() const {
-		return m_model;
+	        return columnAt(MD_MODEL_IDX).toString();
 	}
 
 	void setModel(const std::string& model) {
-		m_model = model;
+	        columnAt(MD_MODEL_IDX).fromString(model);;
 	}
 
 	const std::string& getOrginalName() const {
-		return m_orginalName;
+	        return columnAt(MD_ORGINAL_NAME_IDX).toString();
 	}
 
 	void setOrginalName(const std::string& orginalName) {
-		m_orginalName = orginalName;
+	        columnAt(MD_ORGINAL_NAME_IDX).fromString(orginalName);;
 	}
 
 	const std::string& getPage() const {
-		return m_page;
+	        return columnAt(MD_PAGE_IDX).toString();
 	}
 
 	void setPage(const std::string& page) {
-		m_page = page;
+	        columnAt(MD_PAGE_IDX).fromString(page);;
 	}
 
-	const std::string& getPrinaryEncoding() const {
-		return m_primaryEncoding;
+	const std::string& getPrimaryEncoding() const {
+	        return columnAt(MD_PRIMARY_ENCODING_IDX).toString();
 	}
 
 	void setPrimaryEncoding(const std::string& primaryEncoding) {
-		m_primaryEncoding = primaryEncoding;
+	        columnAt(MD_PRIMARY_ENCODING_IDX).fromString(primaryEncoding);;
 	}
 
 	const std::string& getRating() const {
-		return m_rating;
+	        return columnAt(MD_RATING_IDX).toString();
 	}
 
 	void setRating(const std::string& rating) {
-		m_rating = rating;
+	        columnAt(MD_RATING_IDX).fromString(rating);;
 	}
 
 	const std::string& getResolution() const {
-		return m_resolution;
+	        return columnAt(MD_RESOLUTION_IDX).toString();
 	}
 
 	void setResolution(const std::string& resolution) {
-		m_resolution = resolution;
+	        columnAt(MD_RESOLUTION_IDX).fromString(resolution);;
 	}
 
 	const std::string& getSampleColor() const {
-		return m_sampleColor;
+	        return columnAt(MD_SAMPLE_COLOR_IDX).toString();
 	}
 
 	void setSampleColor(const std::string& sampleColor) {
-		m_sampleColor = sampleColor;
+	        columnAt(MD_SAMPLE_COLOR_IDX).fromString(sampleColor);;
 	}
 
 	const std::string& getSensingMethod() const {
-		return m_sensingMethod;
+	        return columnAt(MD_SENSING_METHOD_IDX).toString();
 	}
 
 	void setSensingMethod(const std::string& sensingMethod) {
-		m_sensingMethod = sensingMethod;
+	        columnAt(MD_SENSING_METHOD_IDX).fromString(sensingMethod);;
 	}
 
 	const std::string& getSequenceId() const {
-		return m_sequenceId;
-	}
-
-	const int getSequenceNumber() const {
-		return std::stoi(m_sequenceId);
+	        return columnAt(MD_SEQUENCE_ID_IDX).toString();
 	}
 
 	void setSequenceId(const std::string& sequenceId) {
-		m_sequenceId = sequenceId;
+	        columnAt(MD_SEQUENCE_ID_IDX).fromString(sequenceId);;
 	}
 
 	const std::string& getSoftware() const {
-		return m_software;
+	        return columnAt(MD_SOFTWARE_IDX).toString();
 	}
 
 	void setSoftware(const std::string& software) {
-		m_software = software;
+	        columnAt(MD_SOFTWARE_IDX).fromString(software);;
 	}
 
 	const std::string& getSourceUrl() const {
-		return m_sourceURL;
+	        return columnAt(MD_SOURCE_URL_IDX).toString();
 	}
 
 	void setSourceUrl(const std::string& sourceUrl) {
-		m_sourceURL = sourceUrl;
+		columnAt(MD_SOURCE_URL_IDX).fromString(sourceUrl);;
 	}
 
 	const std::string& getUniqueId() const {
-		return m_uniqueId;
+		return columnAt(MD_UNIQUE_ID_IDX).toString();
 	}
 
 	void setUniqueId(const std::string& uniqueId) {
-		m_uniqueId = uniqueId;
+		columnAt(MD_UNIQUE_ID_IDX).fromString(uniqueId);;
 	}
 
 	const std::string& getUsageRights() const {
-		return m_usageRights;
+		return columnAt(MD_USAGE_RIGHTS_IDX).toString();
 	}
 
 	void setUsageRights(const std::string& usageRights) {
-		m_usageRights = usageRights;
+		columnAt(MD_USAGE_RIGHTS_IDX).fromString(usageRights);;
 	}
 
 	const std::string& getViewRotation() const {
-		return m_viewRotation;
+		return columnAt(MD_VIEW_ROTATION_IDX).toString();
 	}
 
 	void setViewRotation(const std::string& viewRotation) {
-		m_viewRotation = viewRotation;
+		columnAt(MD_VIEW_ROTATION_IDX).fromString(viewRotation);;
 	}
 
 	const std::string& getWidth() const {
-		return m_width;
+		return columnAt(MD_WIDTH_IDX).toString();
+
 	}
 
 	void setWidth(const std::string& width) {
-		m_width = width;
+		columnAt(MD_WIDTH_IDX).fromString(width);;
 	}
 };
 

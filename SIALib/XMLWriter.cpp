@@ -120,7 +120,7 @@ bool XMLWriter::writeImage(const MetadataObject &container, const char *path) {
 	            << writeTag("Page", container.getPage())
 	            << writeTag("ColorSpace", container.getColorSpace())
 	            << writeTag("Compression", container.getCompression())
-	            << writeTag("PrinaryEncoding", container.getPrinaryEncoding())
+	            << writeTag("PrimaryEncoding", container.getPrimaryEncoding())
 	            << "</MediaProerties>\n"
 	            << "<CameraInformation>\n"
 	            << writeTag("Maker", container.getMaker())

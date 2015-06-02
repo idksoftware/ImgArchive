@@ -310,7 +310,8 @@ namespace simplearchive {
 					}
 					//std::string shortPath = 
 					csvDB.add(temp, relImagePath.c_str());
-					if (m_viewManager->add(temp.getSequenceNumber()) == false) {
+					int seqNumber = csvDBFile.getMaxIndex();
+					if (m_viewManager->add(seqNumber) == false) {
 						return false;
 					}
 
@@ -443,7 +444,7 @@ bool ArchiveBuilder::processHistory(ImagePath &imagePath, const char *filepath, 
 // metadataObject->setGpsTimeStamp(exifObject-> gpsTimeStamp);
 // ? metadataObject->setLightSource(exifObject-> std::string& lightSource);
 // ? metadataObject->setPage(exifObject-> std::string& page);
-// ? metadataObject->setPrinaryEncoding(exifObject-> std::string& prinaryEncoding);
+// ? metadataObject->setPrimaryEncoding(exifObject-> std::string& primaryEncoding);
 // ? metadataObject->setResolution(exifObject-> std::string& resolution);
 // ? metadataObject->setSampleColor(exifObject-> std::string& sampleColor);
 // ? metadataObject->setSensingMethod(exifObject-> std::string& sensingMethod);
@@ -482,7 +483,7 @@ void ArchiveBuilder::copyExif(MetadataObject* metadataObject, ExifObject *exifOb
 	metadataObject->setMeteringMode(exifObject->getMeteringMode());
 	metadataObject->setModel(exifObject->getModel());
 	// ? metadataObject->setPage(exifObject-> std::string& page);
-	// ? metadataObject->setPrinaryEncoding(exifObject-> std::string& prinaryEncoding);
+	// ? metadataObject->setPrimaryEncoding(exifObject-> std::string& primaryEncoding);
 	//metadataObject->setRating(exifObject-> std::string& rating);
 	// ? metadataObject->setResolution(exifObject-> std::string& resolution);
 	// ? metadataObject->setSampleColor(exifObject-> std::string& sampleColor);

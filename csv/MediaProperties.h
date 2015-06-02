@@ -66,8 +66,8 @@ public:
 	void setHeight(const std::string& height);
 	const std::string& getPage() const;
 	void setPage(const std::string& page);
-	const std::string& getPrinaryEncoding() const;
-	void setPrinaryEncoding(const std::string& prinaryEncoding);
+	const std::string& getPrimaryEncoding() const;
+	void setPrimaryEncoding(const std::string& primaryEncoding);
 	const std::string& getResolution() const;
 	void setResolution(const std::string& resolution);
 	const std::string& getSampleColor() const;

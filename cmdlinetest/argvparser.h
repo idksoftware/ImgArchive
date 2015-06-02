@@ -191,6 +191,9 @@ public:
 	unsigned int getCurrentCommandId() {
 		return current_command_id;
 	}
+	std::string &command() {
+		return current_command;
+	}
     /** Return the value of an option.
     * \return Value of a commandline options given by the name of the option or
     * an empty string if there was no such option or the option required no
@@ -254,6 +257,8 @@ private:
 	CommandSet command_set;
 
 	unsigned int current_command_id;
+
+	std::string current_command;
 
     /** Holds the key for the help option. */
     unsigned int help_option;
