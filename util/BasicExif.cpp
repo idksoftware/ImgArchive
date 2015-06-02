@@ -34,6 +34,7 @@
 
 #include "BasicExif.h"
 
+namespace simplearchive {
 
 BasicExif::BasicExif()
 {
@@ -250,3 +251,4 @@ void BasicExif::setSubSecTimeOriginal(const std::string& subSecTimeOriginal) {
 BasicExif::~BasicExif()
 {
 }
+} /* namespace simplearchive */

@@ -35,10 +35,10 @@
 
 #pragma once
 #include <string>
+#include "MetaType.h"
+namespace simplearchive {
+class BasicExif : public MTRow {
 
-
-class BasicExif
-{
 	std::string  m_make;
 	std::string  m_model;
 	std::string  m_software;
@@ -144,4 +144,4 @@ public:
 	const std::string& getSubSecTimeOriginal() const;
 	void setSubSecTimeOriginal(const std::string& subSecTimeOriginal);
 };
-
+} /* namespace simplearchive */
