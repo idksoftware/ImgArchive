@@ -1,9 +1,37 @@
-/*
- * CExif.cpp
- *
- *  Created on: May 28, 2014
- *      Author: wzw7yn
- */
+/* **************************************************
+**
+**    III                DDD  KKK
+**    III                DDD  KKK
+**                       DDD  KKK
+**    III   DDDDDDDDDDD  DDD  KKK            KKK
+**    III  DDD           DDD  KKK            KKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK   KKKKKKKKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK            KKK
+**    III   DDDDDDDDDDDDDDDD  KKK            KKK
+**
+**
+**     SSS         FF
+**    S           F   T
+**     SSS   OO   FF  TTT W   W  AAA  R RR   EEE
+**        S O  O  F   T   W W W  AAAA RR  R EEEEE
+**    S   S O  O  F   T   W W W A   A R     E
+**     SSS   OO  FFF   TT  W W   AAAA R      EEE
+**
+**    Copyright: (c) 2015 IDK Software Ltd
+**
+****************************************************
+**
+**	Filename	: CRegString.cpp
+**	Author		: I.Ferguson
+**	Version		: 1.000
+**	Date		: 26-05-2015
+**
+** #$$@@$$# */
+
 #include <iostream>
 #include "ExternalComand.h"
 #include "ExternalShell.h"
@@ -84,13 +112,13 @@ ExifObject *ExternalComand::process(const char *imagefile) {
 	ExternalExifMapper externalExifMapper;
 	std::string exifMapFile(m_exifMapPath);
 	exifMapFile += "/exif.ini";
-	if (!externalExifMapper.init(exifMapFile.c_str())) {
-		logger.log(CLogger::FINE, "Reading Exif map file \"%s\"", exifMapFile.c_str());
-		ExifObject *exifObject = externalExifMapper.create(out.c_str());
-		return exifObject;
+	if (externalExifMapper.init(exifMapFile.c_str()) == false) {
+		logger.log(CLogger::ERROR, "Failed reading Exif map file \"%s\"", exifMapFile.c_str());
+		return nullptr;
 	}
-	
-	return nullptr;
+	logger.log(CLogger::FINE, "Reading Exif map file \"%s\"", exifMapFile.c_str());
+	ExifObject *exifObject = externalExifMapper.create(out.c_str());
+	return exifObject;
 }
 
 std::string ExternalComand::replaceToken(std::string &str, const char *toklabel, const char *repstr) {

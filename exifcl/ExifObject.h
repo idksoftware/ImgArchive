@@ -1,14 +1,42 @@
-/*
- * ExifObject.h
- *
- *  Created on: May 30, 2014
- *      Author: wzw7yn
- */
+/* **************************************************
+**
+**    III                DDD  KKK
+**    III                DDD  KKK
+**                       DDD  KKK
+**    III   DDDDDDDDDDD  DDD  KKK            KKK
+**    III  DDD           DDD  KKK            KKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK   KKKKKKKKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK            KKK
+**    III   DDDDDDDDDDDDDDDD  KKK            KKK
+**
+**
+**     SSS         FF
+**    S           F   T
+**     SSS   OO   FF  TTT W   W  AAA  R RR   EEE
+**        S O  O  F   T   W W W  AAAA RR  R EEEEE
+**    S   S O  O  F   T   W W W A   A R     E
+**     SSS   OO  FFF   TT  W W   AAAA R      EEE
+**
+**    Copyright: (c) 2015 IDK Software Ltd
+**
+****************************************************
+**
+**	Filename	: CRegString.cpp
+**	Author		: I.Ferguson
+**	Version		: 1.000
+**	Date		: 26-05-2015
+**
+** #$$@@$$# */
 
 #ifndef EXIFOBJECT_H_
 #define EXIFOBJECT_H_
 #include <string>
 
+/*
 #define COMPRESSION		"Compression"
 #define DEPTH			"Depth"
 #define MIMETYPE		"MIMEType"
@@ -74,6 +102,7 @@
 #define YRESOLUTION		"YResolution"
 #define XRESOLUTION		"XResolution"
 #define ARTIST			"Artist"
+*/
 
 namespace simplearchive {
 /**
@@ -133,7 +162,6 @@ class ExifObject {
 	std::string m_latitude;                  // Image latitude expressed as decimal
 	std::string m_longitude;                 // Image longitude expressed as decimal
 	std::string m_altitude;                  // Altitude in meters, relative to sea level
-//	std::string m_artist;
 	std::string m_xResolution;
 	std::string m_yResolution;
 	
@@ -173,7 +201,23 @@ public:
 	const std::string& getYResolution() const {
 		return m_yResolution;
 	}
-	
+
+	const std::string& getCompression() const {
+		return m_compression;
+	}
+
+	const std::string& getDepth() const {
+		return 	m_depth;
+	}
+
+	const std::string& getDigitalZoom() const {
+		return 	m_digitalZoom;
+	}
+
+	const std::string& getExifVersion() const {
+		return 	m_exifVersion;
+	}
+
 	void print();
 	const std::string& getAltitude() const;
 	void setAltitude(const std::string& altitude);
@@ -189,6 +233,8 @@ public:
 	void setDateTimeOriginal(const std::string& dateTimeOriginal);
 	const std::string& getExposureBiasValue() const;
 	void setExposureBiasValue(const std::string& exposureBiasValue);
+	void setExposureProgram(const std::string& exposureBiasValue);
+	const std::string& ExifObject::getExposureProgram() const;
 	const std::string& getExposureTime() const;
 	void setExposureTime(const std::string& exposureTime);
 	const std::string& getFlash() const;
