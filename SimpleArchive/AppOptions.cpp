@@ -50,7 +50,10 @@ std::string AppOptions::m_comment;
 std::string AppOptions::m_imageAddress;
 
 AppOptions::AppOptions() {
-}
+	m_argvParser.reset(new ArgvParser);
+};
+
+
 
 bool AppOptions::initalise(int argc, char **argv) {
 
@@ -112,120 +115,144 @@ bool AppOptions::initalise(int argc, char **argv) {
 	if (temp.empty() == false) {
 		config.setLogLevel(temp.c_str());
 	}
-	ArgvParser argvParser;
+	
 	
 
 	//define error codes
-	argvParser.addErrorCode(0, "Success");
-	argvParser.addErrorCode(1, "Warnings");
-	argvParser.addErrorCode(2, "Errors");
-	argvParser.addErrorCode(3, "Fatal");
-	argvParser.setIntroductoryDescription("The Image archive provides an organised place to store images. This archive is"
+	m_argvParser->addErrorCode(0, "Success");
+	m_argvParser->addErrorCode(1, "Warnings");
+	m_argvParser->addErrorCode(2, "Errors");
+	m_argvParser->addErrorCode(3, "Fatal");
+	m_argvParser->setIntroductoryDescription("The Image archive provides an organised place to store images. This archive is"
 		"designed to be simple in design and to use. It consists of archiving core that provides the basic archiving"
 		" functions but in addition, takes input and provides output from optional external components to provide a"
 		"tailored achieving solution and can be extended into a complete achieving system. ");
-	argvParser.setHelpOption();
+	m_argvParser->setHelpOption();
 	//parser.defineOption("a", "Adds new images to the archive.", ArgvParser::OptionRequiresValue);
 	//parser.defineOptionAlternative("a", "add");
 
 	
 
 	// Subcommands
-	argvParser.defineOption("a", "add new images to the archive.", ArgvParser::MasterOption);
-	argvParser.defineOptionAlternative("a", "add");
+	m_argvParser->defineOption("a", "add new images to the archive.", ArgvParser::MasterOption);
+	m_argvParser->defineOptionAlternative("a", "add");
 
-	argvParser.defineOption("o", "Checkout images from archive.", ArgvParser::MasterOption);
-	argvParser.defineOptionAlternative("o", "checkout");
+	m_argvParser->defineOption("o", "Checkout images from archive.", ArgvParser::MasterOption);
+	m_argvParser->defineOptionAlternative("o", "checkout");
 
-	argvParser.defineOption("i", "Checkin images to archive.", ArgvParser::MasterOption);
-	argvParser.defineOptionAlternative("i", "checkin");
+	m_argvParser->defineOption("i", "Checkin images to archive.", ArgvParser::MasterOption);
+	m_argvParser->defineOptionAlternative("i", "checkin");
 
-	argvParser.defineOption("u", "Un-checkout images to archive.", ArgvParser::MasterOption);
-	argvParser.defineOptionAlternative("u", "uncheckout");
+	m_argvParser->defineOption("u", "Un-checkout images to archive.", ArgvParser::MasterOption);
+	m_argvParser->defineOptionAlternative("u", "uncheckout");
 
-	argvParser.defineOption("x", "Export images from archive.", ArgvParser::MasterOption);
-	argvParser.defineOptionAlternative("x", "export");
+	m_argvParser->defineOption("x", "Export images from archive.", ArgvParser::MasterOption);
+	m_argvParser->defineOptionAlternative("x", "export");
 
-	argvParser.defineOption("about", "prints the version information", ArgvParser::MasterOption);
+	m_argvParser->defineOption("about", "prints the version information", ArgvParser::MasterOption);
 
-	argvParser.defineOption("v", "View commands", ArgvParser::NoOptionAttribute);
-	argvParser.defineOptionAlternative("v", "view");
+	m_argvParser->defineOption("v", "View commands", ArgvParser::NoOptionAttribute);
+	m_argvParser->defineOptionAlternative("v", "view");
 
-	argvParser.defineOption("image-address", "image address", ArgvParser::NoOptionAttribute);
+	m_argvParser->defineOption("image-address", "image address", ArgvParser::NoOptionAttribute);
 
 
 	/*
-	argvParser.defineOption("I", "Create Archive Commands", ArgvParser::NoOptionAttribute);
-	argvParser.defineOptionAlternative("I", "init");
+	m_argvParser->defineOption("I", "Create Archive Commands", ArgvParser::NoOptionAttribute);
+	m_argvParser->defineOptionAlternative("I", "init");
 
-	argvParser.defineOption("validate", "Validate commands", ArgvParser::NoOptionAttribute);
+	m_argvParser->defineOption("validate", "Validate commands", ArgvParser::NoOptionAttribute);
 
 	
-	argvParser.defineOption("m", "Mirror commands", ArgvParser::NoOptionAttribute);
-	argvParser.defineOptionAlternative("m", "mirror");
+	m_argvParser->defineOption("m", "Mirror commands", ArgvParser::NoOptionAttribute);
+	m_argvParser->defineOptionAlternative("m", "mirror");
 
-	argvParser.defineOption("b", "Goes through the motions of running the subcommand but makes no\nactual changes ether disk or repository.", ArgvParser::NoOptionAttribute);
-	argvParser.defineOptionAlternative("b", "backup");
+	m_argvParser->defineOption("b", "Goes through the motions of running the subcommand but makes no\nactual changes ether disk or repository.", ArgvParser::NoOptionAttribute);
+	m_argvParser->defineOptionAlternative("b", "backup");
 	*/
 	// Options
-	argvParser.defineOption("n", "name of the view.", ArgvParser::OptionRequiresValue);
-	argvParser.defineOptionAlternative("n", "name");
+	m_argvParser->defineOption("n", "name of the view.", ArgvParser::OptionRequiresValue);
+	m_argvParser->defineOptionAlternative("n", "name");
 
-	argvParser.defineOption("q", "no output is sent to the terminal.", ArgvParser::NoOptionAttribute);
-	argvParser.defineOptionAlternative("q", "quiet");
+	m_argvParser->defineOption("q", "no output is sent to the terminal.", ArgvParser::NoOptionAttribute);
+	m_argvParser->defineOptionAlternative("q", "quiet");
 
-	argvParser.defineOption("s", "source of the images", ArgvParser::OptionRequiresValue);
-	argvParser.defineOptionAlternative("s", "source-path");
+	m_argvParser->defineOption("s", "source of the images", ArgvParser::OptionRequiresValue);
+	m_argvParser->defineOptionAlternative("s", "source-path");
 
-	argvParser.defineOption("d", "destination of the images", ArgvParser::OptionRequiresValue);
-	argvParser.defineOptionAlternative("d", "dist-path");
+	m_argvParser->defineOption("d", "destination of the images", ArgvParser::OptionRequiresValue);
+	m_argvParser->defineOptionAlternative("d", "dist-path");
 
-	argvParser.defineOption("S", "size of media", ArgvParser::OptionRequiresValue);
-	argvParser.defineOptionAlternative("S", "media-size");
+	m_argvParser->defineOption("S", "size of media", ArgvParser::OptionRequiresValue);
+	m_argvParser->defineOptionAlternative("S", "media-size");
 
-	argvParser.defineOption("media-path", "Goes through the motions of running the subcommand but makes no\nactual changes ether disk or repository.", ArgvParser::OptionRequiresValue);
+	m_argvParser->defineOption("media-path", "Goes through the motions of running the subcommand but makes no\nactual changes ether disk or repository.", ArgvParser::OptionRequiresValue);
 
-	argvParser.defineOption("F", "from date", ArgvParser::OptionRequiresValue);
-	argvParser.defineOptionAlternative("F", "from-date");
+	m_argvParser->defineOption("F", "from date", ArgvParser::OptionRequiresValue);
+	m_argvParser->defineOptionAlternative("F", "from-date");
 
-	argvParser.defineOption("T", "to date", ArgvParser::OptionRequiresValue);
-	argvParser.defineOptionAlternative("T", "to-date");
+	m_argvParser->defineOption("T", "to date", ArgvParser::OptionRequiresValue);
+	m_argvParser->defineOptionAlternative("T", "to-date");
 
-	argvParser.defineOption("r", "location of the archive root folder.", ArgvParser::OptionRequiresValue);
-	argvParser.defineOptionAlternative("r", "archive-path");
+	m_argvParser->defineOption("r", "location of the archive root folder.", ArgvParser::OptionRequiresValue);
+	m_argvParser->defineOptionAlternative("r", "archive-path");
 
-	argvParser.defineOption("l", "Temporarily changes the logging level for the scope of this command session.", ArgvParser::OptionRequiresValue);
-	argvParser.defineOptionAlternative("r", "logging-level");
+	m_argvParser->defineOption("l", "Temporarily changes the logging level for the scope of this command session.", ArgvParser::OptionRequiresValue);
+	m_argvParser->defineOptionAlternative("r", "logging-level");
 
-	argvParser.defineOption("C", "Comment to be included in command", ArgvParser::OptionRequiresValue);
-	argvParser.defineOptionAlternative("C", "comment");
-
-	
-	
+	m_argvParser->defineOption("C", "Comment to be included in command", ArgvParser::OptionRequiresValue);
+	m_argvParser->defineOptionAlternative("C", "comment");
 
 	
 	
-	ArgvParser::ParserResults res = argvParser.parse(argc, argv);
+
+	
+	
+	ArgvParser::ParserResults res = m_argvParser->parse(argc, argv);
+
+	std::string errStr;
+	switch (res) {
+	case ArgvParser::NoParserError:
+		break;
+	case ArgvParser::ParserUnknownOption:
+	case ArgvParser::ParserMissingValue:
+	case ArgvParser::ParserOptionAfterArgument:
+	case ArgvParser::ParserMalformedMultipleShortOption:
+	case ArgvParser::ParserRequiredOptionMissing:
+	case ArgvParser::ParserHelpRequested:
+		errStr = m_argvParser->parseErrorDescription(res);
+		printf("%s", errStr.c_str());
+		return false;
+	case ArgvParser::GeneralHelpRequested:
+		printf("%s", m_argvParser->usageDescription(80).c_str());
+		return false;
+	case ArgvParser::TopicHelpRequested:
+		printf("%s", m_argvParser->topicUsageDescription(m_argvParser->getCurrentCommandId(), 80).c_str());
+		return false;
+	default:
+		return false;
+	}
+
 	//testHelpOptionDetection();
 	bool cmdFound = false;
 
-	if (argvParser.foundOption("about") == true) {
+	if (m_argvParser->foundOption("about") == true) {
 		setCommandMode(AppOptions::CM_Version);
 		cmdFound = true;
 	}
-	else if (argvParser.foundOption("init") == true) {
+	else if (m_argvParser->foundOption("init") == true) {
 		setCommandMode(AppOptions::CM_InitArchive);
 		cmdFound = true;
 	}
-	else if (argvParser.foundOption("add") == true) {
+	else if (m_argvParser->foundOption("add") == true) {
 		
-		if (argvParser.foundOption("source-path") == true) {			
-			std::string opt = argvParser.optionValue("source-path");
+		if (m_argvParser->foundOption("source-path") == true) {			
+			std::string opt = m_argvParser->optionValue("source-path");
 			printf(opt.c_str()); printf("\n");
 			config.setSourcePath(opt.c_str());			
 		}
-		if (argvParser.foundOption("archive-path") == true) {			
-			std::string opt = argvParser.optionValue("archive-path");
+		if (m_argvParser->foundOption("archive-path") == true) {			
+			std::string opt = m_argvParser->optionValue("archive-path");
 			printf(opt.c_str()); printf("\n");
 			config.setArchivePath(opt.c_str());
 		}
@@ -234,17 +261,17 @@ bool AppOptions::initalise(int argc, char **argv) {
 		Environment::setEnvironment();
 		cmdFound = true;
 	}
-	else if (argvParser.foundOption("checkout") == true) {
-		if (argvParser.foundOption("image-address") == true) {
-			m_imageAddress = argvParser.optionValue("image-address");
+	else if (m_argvParser->foundOption("checkout") == true) {
+		if (m_argvParser->foundOption("image-address") == true) {
+			m_imageAddress = m_argvParser->optionValue("image-address");
 			printf(m_imageAddress.c_str()); printf("\n");
 		}
-		if (argvParser.foundOption("comment") == true) {
-			m_comment = argvParser.optionValue("comment");
+		if (m_argvParser->foundOption("comment") == true) {
+			m_comment = m_argvParser->optionValue("comment");
 			printf(m_comment.c_str()); printf("\n");
 		}
-		if (argvParser.foundOption("archive-path") == true) {
-			std::string opt = argvParser.optionValue("archive-path");
+		if (m_argvParser->foundOption("archive-path") == true) {
+			std::string opt = m_argvParser->optionValue("archive-path");
 			printf(opt.c_str()); printf("\n");
 			config.setArchivePath(opt.c_str());
 		}
@@ -252,18 +279,18 @@ bool AppOptions::initalise(int argc, char **argv) {
 		setCommandMode(AppOptions::CM_Checkout);
 		cmdFound = true;
 	}
-	else if (argvParser.foundOption("checkin") == true) {
+	else if (m_argvParser->foundOption("checkin") == true) {
 		
-		if (argvParser.foundOption("image-address") == true) {
-			m_imageAddress = argvParser.optionValue("image-address");
+		if (m_argvParser->foundOption("image-address") == true) {
+			m_imageAddress = m_argvParser->optionValue("image-address");
 			printf(m_imageAddress.c_str()); printf("\n");
 		}
-		if (argvParser.foundOption("comment") == true) {
-			m_comment = argvParser.optionValue("comment");
+		if (m_argvParser->foundOption("comment") == true) {
+			m_comment = m_argvParser->optionValue("comment");
 			printf(m_comment.c_str()); printf("\n");
 		}
-		if (argvParser.foundOption("archive-path") == true) {
-			std::string opt = argvParser.optionValue("archive-path");
+		if (m_argvParser->foundOption("archive-path") == true) {
+			std::string opt = m_argvParser->optionValue("archive-path");
 			printf(opt.c_str()); printf("\n");
 			config.setArchivePath(opt.c_str());
 		}
@@ -272,17 +299,17 @@ bool AppOptions::initalise(int argc, char **argv) {
 		setCommandMode(AppOptions::CM_Checkin);
 		cmdFound = true;
 	}
-	else if (argvParser.foundOption("uncheckout") == true) {
-		if (argvParser.foundOption("image-address") == true) {
-			m_imageAddress = argvParser.optionValue("image-address");
+	else if (m_argvParser->foundOption("uncheckout") == true) {
+		if (m_argvParser->foundOption("image-address") == true) {
+			m_imageAddress = m_argvParser->optionValue("image-address");
 			printf(m_imageAddress.c_str()); printf("\n");
 		}
-		if (argvParser.foundOption("comment") == true) {
-			m_comment = argvParser.optionValue("comment");
+		if (m_argvParser->foundOption("comment") == true) {
+			m_comment = m_argvParser->optionValue("comment");
 			printf(m_comment.c_str()); printf("\n");
 		}
-		if (argvParser.foundOption("archive-path") == true) {
-			std::string opt = argvParser.optionValue("archive-path");
+		if (m_argvParser->foundOption("archive-path") == true) {
+			std::string opt = m_argvParser->optionValue("archive-path");
 			printf(opt.c_str()); printf("\n");
 			config.setArchivePath(opt.c_str());
 		}
@@ -290,44 +317,44 @@ bool AppOptions::initalise(int argc, char **argv) {
 		setCommandMode(AppOptions::CM_UnCheckout);
 		cmdFound = true;
 	}
-	else if (argvParser.foundOption("export") == true) {
+	else if (m_argvParser->foundOption("export") == true) {
 		setCommandMode(AppOptions::CM_Export);
 		cmdFound = true;
 	}
-	else if (argvParser.foundOption("view") == true) {
+	else if (m_argvParser->foundOption("view") == true) {
 		setCommandMode(AppOptions::CM_View);
 		
-		if (argvParser.foundOption("archive-path") == true) {
+		if (m_argvParser->foundOption("archive-path") == true) {
 
-			std::string opt = argvParser.optionValue("archive-path");
+			std::string opt = m_argvParser->optionValue("archive-path");
 			printf(opt.c_str()); printf("\n");
 			config.setArchivePath(opt.c_str());
 		}
 		/*
-		if (argvParser.foundOption("dist-path") == true) {
+		if (m_argvParser->foundOption("dist-path") == true) {
 
-			std::string opt = argvParser.optionValue("dist-path");
+			std::string opt = m_argvParser->optionValue("dist-path");
 			printf(opt.c_str()); printf("\n");
 			config.setBackupDestinationPath(opt.c_str());
 
 		}
-		if (argvParser.foundOption("size") == true) {
+		if (m_argvParser->foundOption("size") == true) {
 
-			std::string opt = argvParser.optionValue("size");
+			std::string opt = m_argvParser->optionValue("size");
 			printf(opt.c_str()); printf("\n");
 			config.setBackupMediaSize(opt.c_str());
 
 		}
-		if (argvParser.foundOption("from-date") == true) {
+		if (m_argvParser->foundOption("from-date") == true) {
 
-			std::string opt = argvParser.optionValue("from-date");
+			std::string opt = m_argvParser->optionValue("from-date");
 			printf(opt.c_str()); printf("\n");
 			config.setFromDate(opt.c_str());
 
 		}
 		*/
-		if (argvParser.foundOption("name") == true) {
-			std::string opt = argvParser.optionValue("name");
+		if (m_argvParser->foundOption("name") == true) {
+			std::string opt = m_argvParser->optionValue("name");
 			printf(opt.c_str()); printf("\n");
 			setName(opt.c_str());
 		}
@@ -335,97 +362,97 @@ bool AppOptions::initalise(int argc, char **argv) {
 		cmdFound = true;
 	}
 
-	else if (argvParser.foundOption("validate") == true) {
+	else if (m_argvParser->foundOption("validate") == true) {
 		setCommandMode(AppOptions::CM_Validate);
 		cmdFound = true;
-		if (argvParser.foundOption("archive-path") == true) {
+		if (m_argvParser->foundOption("archive-path") == true) {
 
-			std::string opt = argvParser.optionValue("archive-path");
+			std::string opt = m_argvParser->optionValue("archive-path");
 			printf(opt.c_str()); printf("\n");
 			config.setArchivePath(opt.c_str());
 		}
 	}
-	else if (argvParser.foundOption("mirror") == true) {
+	else if (m_argvParser->foundOption("mirror") == true) {
 		setCommandMode(AppOptions::CM_Mirror);
 
-		if (argvParser.foundOption("archive-path") == true) {
+		if (m_argvParser->foundOption("archive-path") == true) {
 
-			std::string opt = argvParser.optionValue("archive-path");
+			std::string opt = m_argvParser->optionValue("archive-path");
 			printf(opt.c_str()); printf("\n");
 			config.setArchivePath(opt.c_str());
 		}
 		/*
-		if (argvParser.foundOption("dist-path") == true) {
+		if (m_argvParser->foundOption("dist-path") == true) {
 
-		std::string opt = argvParser.optionValue("dist-path");
+		std::string opt = m_argvParser->optionValue("dist-path");
 		printf(opt.c_str()); printf("\n");
 		config.setBackupDestinationPath(opt.c_str());
 
 		}
-		if (argvParser.foundOption("size") == true) {
+		if (m_argvParser->foundOption("size") == true) {
 
-		std::string opt = argvParser.optionValue("size");
+		std::string opt = m_argvParser->optionValue("size");
 		printf(opt.c_str()); printf("\n");
 		config.setBackupMediaSize(opt.c_str());
 
 		}
-		if (argvParser.foundOption("from-date") == true) {
+		if (m_argvParser->foundOption("from-date") == true) {
 
-		std::string opt = argvParser.optionValue("from-date");
+		std::string opt = m_argvParser->optionValue("from-date");
 		printf(opt.c_str()); printf("\n");
 		config.setFromDate(opt.c_str());
 
 		}
 		*/
-		if (argvParser.foundOption("name") == true) {
-			std::string opt = argvParser.optionValue("name");
+		if (m_argvParser->foundOption("name") == true) {
+			std::string opt = m_argvParser->optionValue("name");
 			printf(opt.c_str()); printf("\n");
 			setName(opt.c_str());
 		}
 
 		cmdFound = true;
 	}
-	else if (argvParser.foundOption("backup") == true) {
+	else if (m_argvParser->foundOption("backup") == true) {
 		setCommandMode(AppOptions::CM_Archive);
 		
-		if (argvParser.foundOption("archive-path") == true) {
+		if (m_argvParser->foundOption("archive-path") == true) {
 
-			std::string opt = argvParser.optionValue("archive-path");
+			std::string opt = m_argvParser->optionValue("archive-path");
 			printf(opt.c_str()); printf("\n");
 			config.setArchivePath(opt.c_str());
 		}
 
-		if (argvParser.foundOption("dist-path") == true) {
+		if (m_argvParser->foundOption("dist-path") == true) {
 
-			std::string opt = argvParser.optionValue("dist-path");
+			std::string opt = m_argvParser->optionValue("dist-path");
 			printf(opt.c_str()); printf("\n");
 			config.setBackupDestinationPath(opt.c_str());
 
 		}
-		if (argvParser.foundOption("size") == true) {
+		if (m_argvParser->foundOption("size") == true) {
 
-			std::string opt = argvParser.optionValue("size");
+			std::string opt = m_argvParser->optionValue("size");
 			printf(opt.c_str()); printf("\n");
 			config.setBackupMediaSize(opt.c_str());
 
 		}
-		if (argvParser.foundOption("from-date") == true) {
+		if (m_argvParser->foundOption("from-date") == true) {
 
-			std::string opt = argvParser.optionValue("from-date");
+			std::string opt = m_argvParser->optionValue("from-date");
 			printf(opt.c_str()); printf("\n");
 			config.setFromDate(opt.c_str());
 
 		}
-		if (argvParser.foundOption("to-date") == true) {
+		if (m_argvParser->foundOption("to-date") == true) {
 
-			std::string opt = argvParser.optionValue("to-date");
+			std::string opt = m_argvParser->optionValue("to-date");
 			printf(opt.c_str()); printf("\n");
 			config.setToDate(opt.c_str());
 
 		}
 		cmdFound = true;
 	}
-	else if (argvParser.foundOption("version") == true) {
+	else if (m_argvParser->foundOption("version") == true) {
 		setCommandMode(AppOptions::CM_Version);
 		cmdFound = true;
 	}
@@ -433,40 +460,40 @@ bool AppOptions::initalise(int argc, char **argv) {
 		setCommandMode(AppOptions::CM_Unknown);
 		cmdFound = true;
 	}
-	if (argvParser.foundOption("logging-level") == true) {
+	if (m_argvParser->foundOption("logging-level") == true) {
 		
-		std::string opt = argvParser.optionValue("logging-level");
+		std::string opt = m_argvParser->optionValue("logging-level");
 		printf(opt.c_str()); printf("\n");
 		config.setLogLevel(opt.c_str());
 	}
-	if (argvParser.foundOption("dry-run") == true) {
+	if (m_argvParser->foundOption("dry-run") == true) {
 		
-		std::string opt = argvParser.optionValue("dry-run");
+		std::string opt = m_argvParser->optionValue("dry-run");
 		printf(opt.c_str()); printf("\n");
 		config.setDryRun(opt.c_str());
 	}
 
-	if (argvParser.foundOption("media-path") == true) {
+	if (m_argvParser->foundOption("media-path") == true) {
 
-		std::string opt = argvParser.optionValue("media-path");
+		std::string opt = m_argvParser->optionValue("media-path");
 		printf(opt.c_str()); printf("\n");
 		//config.setDryRun(opt.c_str());
 	}
 
-	if (argvParser.foundOption("media-size") == true) {
+	if (m_argvParser->foundOption("media-size") == true) {
 
-		std::string opt = argvParser.optionValue("media-size");
+		std::string opt = m_argvParser->optionValue("media-size");
 		printf(opt.c_str()); printf("\n");
 		//config.setDryRun(opt.c_str());
 	}
 
 	if (res != ArgvParser::NoParserError) {
-		printf("%s\n", argvParser.parseErrorDescription(res).c_str());
-		printf("%s\n", argvParser.usageDescription().c_str());
+		printf("%s\n", m_argvParser->parseErrorDescription(res).c_str());
+		printf("%s\n", m_argvParser->usageDescription().c_str());
 	}
 	if (cmdFound == false) {
 		printf("Main command required?\n\n");
-		printf("%s\n", argvParser.usageDescription().c_str());
+		printf("%s\n", m_argvParser->usageDescription().c_str());
 		return false;
 	}
 	return true;

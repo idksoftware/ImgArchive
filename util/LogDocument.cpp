@@ -62,7 +62,7 @@ std::string LogDocument::writeTag(const char *tag, const std::string& value, int
 	for (int i = 0; i < tab; i++) {
 		xml << '\t';
 	}
-	if (!value.empty()) {
+	if (!value.empty() && (value.compare("null") != 0)) {
 		xml << "<" << tag << ">" << value << "</" << tag << ">\n";
 	} else {
 		xml << "<" << tag << "/>\n";

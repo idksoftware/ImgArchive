@@ -35,8 +35,11 @@
 #ifndef ADMINAPPOPTIONS_H_
 #define ADMINAPPOPTIONS_H_
 #include <string>
+#include <memory>
+#include "argvparser.h"
 
 namespace simplearchive {
+
 
 class AppOptions {
 public:
@@ -65,7 +68,10 @@ private:
 	void setCommandMode(const AppOptions::CommandMode mode);
 	bool setCommandMode(const char *modeString);
 	void setName(const char *name);
+
+	std::unique_ptr<CommandLineProcessing::ArgvParser> m_argvParser;
 	AppOptions();
+
 public:
 	
 	static AppOptions &get();

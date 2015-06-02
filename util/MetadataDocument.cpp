@@ -25,6 +25,7 @@ bool MetadataDocument::write() {
 	for (std::list<std::string>::iterator i = begin(); i != end(); i++) {
 		std::cout << *i << '\n';
 	}
+	return true;
 }
 
 bool MetadataDocument::writeXML() {
@@ -37,10 +38,12 @@ bool MetadataDocument::writeXML() {
 		if (csvArgs.process(i->c_str()) == false) {
 			return false;
 		}
+
 		std::cout << "\t<Item>\n";
 		std::cout << writeTag("Label", csvArgs.at(0), 2);
 		std::cout << writeTag("Value", csvArgs.at(1), 2);
-		std::cout << "\t</Event>\n";
+		std::cout << "\t</Item>\n";
+
 	}
 	std::cout <<	"</Catalog>\n";
 	return true;
@@ -60,10 +63,12 @@ bool MetadataDocument::writeHtml(const char *filePath) {
 		if (csvArgs.process(i->c_str()) == false) {
 			return false;
 		}
-		file << "\t<tr>\n";
-		file << "<th>" << csvArgs.at(0) << "</th>\n";
-		file << "<th>" << csvArgs.at(1) << "</th>\n";
-		file << "\t</tr>\n";
+		if (csvArgs.at(1).compare("null") != 0) {
+			file << "\t<tr>\n";
+			file << "<th>" << csvArgs.at(0) << "</th>\n";
+			file << "<th>" << csvArgs.at(1) << "</th>\n";
+			file << "\t</tr>\n";
+		}
 	}
 	file <<	"</table>\n";
 	file.close();
