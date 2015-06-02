@@ -45,6 +45,7 @@ public:
 	CSVArgs(char delim);
 	virtual ~CSVArgs();
 	bool process(const char *dataString);
+	void print();
 };
 
 } /* namespace simplearchive */

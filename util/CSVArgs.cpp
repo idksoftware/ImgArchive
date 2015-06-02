@@ -33,6 +33,9 @@
 ** #$$@@$$# */
 
 #include <string>
+#include <fstream>
+#include <iostream>
+
 #include "CSVArgs.h"
 
 namespace simplearchive {
@@ -64,6 +67,13 @@ bool CSVArgs::process(const char *dataString) {
 
 	}
 	return true;
+}
+
+void CSVArgs::print() {
+	for (std::vector<std::string>::iterator i = begin(); i != end(); i++) {
+		std::string &data = *i;
+		std::cout << "Arg: " << data.c_str() << '\n';
+	}
 }
 
 } /* namespace simplearchive */
