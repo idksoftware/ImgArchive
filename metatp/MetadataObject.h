@@ -1,14 +1,44 @@
-/*
- * MetadataObject.h
- *
- *  Created on: Jul 4, 2014
- *      Author: wzw7yn
- */
+/* **************************************************
+**
+**    III                DDD  KKK
+**    III                DDD  KKK
+**                       DDD  KKK
+**    III   DDDDDDDDDDD  DDD  KKK            KKK
+**    III  DDD           DDD  KKK            KKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK   KKKKKKKKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK            KKK
+**    III   DDDDDDDDDDDDDDDD  KKK            KKK
+**
+**
+**     SSS         FF
+**    S           F   T
+**     SSS   OO   FF  TTT W   W  AAA  R RR   EEE
+**        S O  O  F   T   W W W  AAAA RR  R EEEEE
+**    S   S O  O  F   T   W W W A   A R     E
+**     SSS   OO  FFF   TT  W W   AAAA R      EEE
+**
+**    Copyright: (c) 2015 IDK Software Ltd
+**
+****************************************************
+**
+**	Filename	: CRegString.cpp
+**	Author		: I.Ferguson
+**	Version		: 1.000
+**	Date		: 26-05-2015
+**
+** #$$@@$$# */
 
 #ifndef METADATAOBJECT_H_
 #define METADATAOBJECT_H_
-#include "ExifDateTime.h"
+
 #include <string>
+#include <vector>
+#include "ExifDateTime.h"
+
 #include <map>
 
 namespace simplearchive {
@@ -23,181 +53,92 @@ namespace simplearchive {
 	class MetadataObject {
 		//std::map<std::string, std::string *> m_lookup;
 
-		friend class MetadataTemplate;
-		/// Asset Properties
-		std::string m_sequenceId;
-		std::string m_title;
-		std::string m_subject;
-		std::string m_rating;
-		std::string m_tags;
-		std::string m_comments;
-		std::string m_filename;
-		std::string m_filepath;
-		std::string m_orginalName;
-		std::string m_uniqueId;
-		std::string m_label;
-		std::string m_mediaType;
-		std::string m_md5;
-		std::string m_crc;
-		std::string m_fileSize;
-		std::string m_dateCreate;
-		std::string m_dateModified;
-		std::string m_dateAdded;
-		std::string m_description;
-		/// Media Properties
-		std::string m_width;
-		std::string m_height;
-		std::string m_resolution;
-		std::string m_depth;
-		std::string m_viewRotation;
-		std::string m_sampleColor;
-		std::string m_page;
-		std::string m_colorSpace;
-		std::string m_compression;
-		std::string m_prinaryEncoding;
-		/// Camerai Information"
-		std::string m_maker;
-		std::string m_model;
-		std::string m_software;
-		std::string m_sourceURL;
-		std::string m_exifVersion;
-		std::string m_captureDate;
-		std::string m_exposureProgram;
-		std::string m_isoSpeedRating;
-		std::string m_exposureBias;
-		std::string m_exposureTime;
-		std::string m_aperture;
-		std::string m_meteringMode;
-		std::string m_lightSource;
-		std::string m_flash;
-		std::string m_focalLength;
-		std::string m_sensingMethod;
-		std::string m_digitalZoom;
-		/// GPS
-		std::string m_latitude;
-		std::string m_longitude;
-		std::string m_gpsTimeStamp;
-		//Copyright Properties
-		std::string m_copyright;
-		std::string m_usageRights;
-		std::string m_copyrightURL;
+	friend class MetadataTemplate;
+	/// Asset Properties
+	std::string m_sequenceId;
+	std::string m_filename;
+	std::string m_filepath;
+	std::string m_orginalName;
+	std::string m_uniqueId;
+	std::string m_label;
+	std::string m_rating;
+	std::string m_mediaType;
+	std::string m_md5;
+	std::string m_crc;
+	std::string m_fileSize;
+	std::string m_dateCreate;
+	std::string m_dateModified;
+	std::string m_dateAdded;
+	std::string m_description;
+	/// Media Properties
+	std::string m_width;
+	std::string m_height;
+	std::string m_resolution;
+	std::string m_depth;
+	std::string m_viewRotation;
+	std::string m_sampleColor;
+	std::string m_page;
+	std::string m_colorSpace;
+	std::string m_compression;
+	std::string m_primaryEncoding;
+	/// Camerai Information"
+	std::string m_maker;
+	std::string m_model;
+	std::string m_software;
+	std::string m_sourceURL;
+	std::string m_exifVersion;
+	std::string m_captureDate;
+	std::string m_exposureProgram;
+	std::string m_isoSpeedRating;
+	std::string m_exposureBias;
+	std::string m_exposureTime;
+	std::string m_aperture;
+	std::string m_meteringMode;
+	std::string m_lightSource;
+	std::string m_flash;
+	std::string m_focalLength;
+	std::string m_sensingMethod;
+	std::string m_digitalZoom;
+	/// GPS
+	std::string m_latitude;
+	std::string m_longitude;
+	std::string m_gpsTimeStamp;
+	//Copyright Properties
+	std::string m_copyright;
+	std::string m_usageRights;
+	std::string m_copyrightURL;
 
-	public:
-		MetadataObject();
-		virtual ~MetadataObject();
+	std::vector<std::string *> m_valueList;
+	static const char *m_labelList[];
+	bool m_doMakeValueList;
 
-		/*
-		//metadataObject.setB BitsPerSample);
+	void makeValueList();
+	void makeLabelsList();
 
-		
-		
-		
-		
-		//metadataObject. DateTime);
-		//metadataObject.set DateTimeOriginal);
-		//metadataObject DateTimeDigitized);
-		//metadataObject SubSecTimeOriginal);
-	
-		//metadataObject. SubjectDistance);
-		
-		*/
-		void setWidth(int imageWidth) {
-			m_width = std::to_string(imageWidth);
-		}
+public:
+	MetadataObject();
+	virtual ~MetadataObject();
 
-		void setHeight(int imageHeight) {
-			m_height = std::to_string(imageHeight);
-		}
-
-		void getViewRotation(int orientation) {
-			m_viewRotation = std::to_string(orientation);
-		}
-
-		void setExposureTime(double exposureTime) {
-			m_exposureTime = std::to_string(exposureTime);
-		}
-
-		void setExposureBias(double exposureBiasValue) {
-			m_exposureBias = std::to_string(exposureBiasValue);
-		}
-
-		//void setAperture(double fNumber) {
-
-		//}
-
-		void setIsoSpeedRating(unsigned short ISOSpeedRatings) {
-			m_isoSpeedRating = std::to_string(ISOSpeedRatings);
-		}
-
-		void setMeteringMode(unsigned short meteringMode) {
-			m_meteringMode = std::to_string(meteringMode);
-		}
-
-		void setFocalLength(double focalLength) {
-			m_focalLength = std::to_string(focalLength);
-		}
-
-		void setSequenceId(unsigned long id) {
-			m_sequenceId = std::to_string(id);
-		}
-
-		void setCrc(unsigned long crc) {
-			m_crc = std::to_string(crc);
-		}
-
-		void setFileSize(unsigned long size) {
-			m_fileSize = std::to_string(size);
-		}
-
-		void setDateCreate(ExifDateTime dateCreate) {
-			m_dateCreate = dateCreate.toString();
-		}
-
-		void setDateModified(ExifDateTime dateModified) {
-			m_dateModified = dateModified.toString();
-		}
-
-	const std::string& getTitle() const {
-		return m_title;
+	const char *getLabelAt(int idx) {
+		return m_labelList[idx];
 	}
 
-	void setTitle(const std::string& title) {
-		m_title = title;
+	const char *&getLabelList() {
+		return *m_labelList;
 	}
 
-	const std::string& getSubject() const {
-		return m_subject;
+	static unsigned int getListLenght();
+
+    std::string& getValueAt(int idx) {
+		makeValueList();
+		return *(m_valueList.at(idx));
 	}
 
-	void setSubject(const std::string& subject) {
-		m_subject = subject;
+	std::vector<std::string *>& getAsValueList() {
+		makeValueList();
+		return m_valueList;
 	}
 
-
-	const std::string& getRating() const {
-		return m_rating;
-	}
-
-	void setRating(const std::string& rating) {
-		m_rating = rating;
-	}
-
-
-	const std::string& getTags() const {
-		return m_tags;
-	}
-
-	void setTags(const std::string& tags) {
-		m_tags = tags;
-	}
-
-	const std::string& getComments() const {
-		return m_comments;
-	}
-
-	void setComments(const std::string& comments) {
-		m_comments = comments;
-	}
 
 	const std::string& getAperture() const {
 		return m_aperture;
@@ -488,14 +429,21 @@ namespace simplearchive {
 	}
 
 	const std::string& getPrinaryEncoding() const {
-		return m_prinaryEncoding;
+		return m_primaryEncoding;
 	}
 
-	void setPrinaryEncoding(const std::string& prinaryEncoding) {
-		m_prinaryEncoding = prinaryEncoding;
+	void setPrimaryEncoding(const std::string& primaryEncoding) {
+		m_primaryEncoding = primaryEncoding;
 	}
 
-	
+	const std::string& getRating() const {
+		return m_rating;
+	}
+
+	void setRating(const std::string& rating) {
+		m_rating = rating;
+	}
+
 	const std::string& getResolution() const {
 		return m_resolution;
 	}
