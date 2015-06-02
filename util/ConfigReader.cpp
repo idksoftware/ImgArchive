@@ -1,9 +1,37 @@
-/*
- * ConfigReader.cpp
- *
- *  Created on: May 27, 2014
- *      Author: wzw7yn
- */
+/* **************************************************
+**
+**    III                DDD  KKK
+**    III                DDD  KKK
+**                       DDD  KKK
+**    III   DDDDDDDDDDD  DDD  KKK            KKK
+**    III  DDD           DDD  KKK            KKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK   KKKKKKKKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK            KKK
+**    III   DDDDDDDDDDDDDDDD  KKK            KKK
+**
+**
+**     SSS         FF
+**    S           F   T
+**     SSS   OO   FF  TTT W   W  AAA  R RR   EEE
+**        S O  O  F   T   W W W  AAAA RR  R EEEEE
+**    S   S O  O  F   T   W W W A   A R     E
+**     SSS   OO  FFF   TT  W W   AAAA R      EEE
+**
+**    Copyright: (c) 2015 IDK Software Ltd
+**
+****************************************************
+**
+**	Filename	: CRegString.cpp
+**	Author		: I.Ferguson
+**	Version		: 1.000
+**	Date		: 26-05-2015
+**
+** #$$@@$$# */
+
 #include <exception>
 //#include <stdio.h>
 #include <vector>
@@ -22,10 +50,20 @@ namespace simplearchive {
 
 void Config::printAll() {
 	int size = this->size();
+	bool empty = true;
 	// &logger = CLogger::getLogger();
 	for (std::map<std::string, std::string>::iterator ii = begin(); ii != end(); ++ii) {
-		//logger.log(CLogger::FINE, "Key: \"%s\" Value: \"%s\"\n", ii->first, ii->second);
-		//std::cout << ii->first << " " << ii->second << '\n';
+		if (empty) {
+			std::cout << "=== Starting ===\n";
+		}
+		std::cout << ii->first << " " << ii->second << '\n';
+			//printf("cmd:\"%s\" opt:\"%s\"\n", (*ii).first.c_str(), (*ii).second.c_str());
+		empty = false;
+	}
+	if (empty) {
+		std::cout << "Empty" << '\n';
+	} else {
+		std::cout << "=== Ending ===\n";
 	}
 }
 
@@ -60,15 +98,15 @@ std::string ConfigReader::includePath(int pos, std::string line) {
 
 bool ConfigReader::read(const char *datafile, Config &config) {
 
-	
-	char text[256];
+
+	char text[2 * 1024];
 	m_path = datafile;
 	std::ifstream file(datafile);
 	if (file.is_open() == false) {
 		return false;
 	}
 
-	while (file.getline(text, 1000)) {
+	while (file.getline(text, 2 * 1024)) {
 		//m_dataContainer->push_back(*(new std::string(text)));
 		switch(parse(text, config)) {
 		case KeyValue:
@@ -187,6 +225,52 @@ ConfigReader::Token ConfigReader::parse(const char *text, Config &config) {
 	return KeyValue;
 }
 
+ConfigWriter::ConfigWriter() {}
+ConfigWriter::~ConfigWriter() {}
 
+bool ConfigWriter::edit(const char *cmd, const char *options, Config &config) {
+	for (std::map<std::string, std::string>::iterator ii = config.begin(); ii != config.end(); ++ii) {
+		//std::cout << ii->first << '\n';
+		if (ii->first.compare(cmd) == 0) {
+			ii->second = options;
+		}
+	}
+	return true;
+}
+
+bool ConfigWriter::add(const char *cmd, const char *options, Config &config) {
+	for (std::map<std::string, std::string>::iterator ii = config.begin(); ii != config.end(); ++ii) {
+		//std::cout << ii->first << '\n';
+		if (ii->first.compare(cmd) == 0) {
+			std::cout << ii->first << '\n';
+			return false;
+		}
+	}
+	std::string cmdp(cmd);
+	std::string optionp(options);
+	config[(cmdp)] = (optionp);
+}
+
+bool ConfigWriter::remove(const char *cmd, Config &config) {
+	for (std::map<std::string, std::string>::iterator ii = config.begin(); ii != config.end(); ++ii) {
+		//std::cout << ii->first << '\n';
+		if (ii->first.compare(cmd) == 0) {
+			config.erase(ii++);
+			return true;
+		}
+	}
+	return false;
+}
+
+bool ConfigWriter::write(const char *datafile, Config &config) {
+	std::ofstream file(datafile, std::ifstream::trunc);
+	if (file.is_open() == false) {
+		return false;
+	}
+	for (std::map<std::string, std::string>::iterator ii = config.begin(); ii != config.end(); ++ii) {
+		file << ii->first << "=" << ii->second << '\n';
+		//std::cout << ii->first << "=" << ii->second << '\n';
+	}
+}
 
 } /* namespace simplearchive */

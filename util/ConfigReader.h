@@ -1,9 +1,36 @@
-/*
- * ConfigReader.h
- *
- *  Created on: May 27, 2014
- *      Author: wzw7yn
- */
+/* **************************************************
+**
+**    III                DDD  KKK
+**    III                DDD  KKK
+**                       DDD  KKK
+**    III   DDDDDDDDDDD  DDD  KKK            KKK
+**    III  DDD           DDD  KKK            KKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK   KKKKKKKKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK            KKK
+**    III   DDDDDDDDDDDDDDDD  KKK            KKK
+**
+**
+**     SSS         FF
+**    S           F   T
+**     SSS   OO   FF  TTT W   W  AAA  R RR   EEE
+**        S O  O  F   T   W W W  AAAA RR  R EEEEE
+**    S   S O  O  F   T   W W W A   A R     E
+**     SSS   OO  FFF   TT  W W   AAAA R      EEE
+**
+**    Copyright: (c) 2015 IDK Software Ltd
+**
+****************************************************
+**
+**	Filename	: CRegString.cpp
+**	Author		: I.Ferguson
+**	Version		: 1.000
+**	Date		: 26-05-2015
+**
+** #$$@@$$# */
 
 #ifndef CONFIGREADER_H_
 #define CONFIGREADER_H_
@@ -21,6 +48,7 @@ namespace simplearchive {
 class Config : public std::map<std::string, std::string> {
 	/// @brief deliminator for the key / value pair.
 	char m_delimChar;
+	
 public:
 	Config() {
 		m_delimChar = '=';
@@ -46,10 +74,7 @@ public:
 	/// @brief This function is called by the ConfigReader to carry out any further
 	/// processing in the map.
 
-	virtual bool process() {
-		return true;
-	};
-	
+
 };
 
 /**
@@ -89,10 +114,34 @@ public:
 	/// @param    config		Config class to be filled out.
 	/// @return	returns true if read correctly.
 	bool read(const char *datafile, Config &config);
-	/// Set no logging. Logging may no be enabled.
+
+	virtual bool process() {
+		return true;
+	}; 
+	
 	void setNoLogging() {
 		m_logging = false;
 	}
+	 
+};
+
+class ConfigWriter {
+public:
+	/// @brief Constructor for class.
+	ConfigWriter();
+
+	/// @brief Destructor for the class.
+	virtual ~ConfigWriter();
+
+	bool add(const char *cmd, const char *options, Config &config);
+	bool edit(const char *cmd, const char *options, Config &config);
+	bool remove(const char *cmd, Config &config);
+	/// @brief This function attempts to read a configuration file.
+	/// @param    datafile	File name to write.
+	/// @param    config		Config class to be written out.
+	/// @return	returns true if read correctly.
+	bool write(const char *datafile, Config &config);
+
 };
 
 } /* namespace simplearchive */

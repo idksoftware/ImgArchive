@@ -1,9 +1,36 @@
-/*
- * CLogger.cpp
- *
- *  Created on: May 21, 2014
- *      Author: wzw7yn
- */
+/* **************************************************
+**
+**    III                DDD  KKK
+**    III                DDD  KKK
+**                       DDD  KKK
+**    III   DDDDDDDDDDD  DDD  KKK            KKK
+**    III  DDD           DDD  KKK            KKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK   KKKKKKKKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK            KKK
+**    III   DDDDDDDDDDDDDDDD  KKK            KKK
+**
+**
+**     SSS         FF
+**    S           F   T
+**     SSS   OO   FF  TTT W   W  AAA  R RR   EEE
+**        S O  O  F   T   W W W  AAAA RR  R EEEEE
+**    S   S O  O  F   T   W W W A   A R     E
+**     SSS   OO  FFF   TT  W W   AAAA R      EEE
+**
+**    Copyright: (c) 2015 IDK Software Ltd
+**
+****************************************************
+**
+**	Filename	: CRegString.cpp
+**	Author		: I.Ferguson
+**	Version		: 1.000
+**	Date		: 26-05-2015
+**
+** #$$@@$$# */
 
 #include <cstdlib>
 #include <fstream>
@@ -22,11 +49,12 @@ std::ofstream CLogger::m_logfile;
 CLogger::Level CLogger::m_level;
 std::string CLogger::m_logpath;
 int CLogger::m_size = 10;
+bool CLogger::m_isSilent = false;
 
 
 CLogger::CLogger() {
 	//m_level = FINE;
-	m_level = INFO;
+	m_level = SUMMARY;
 }
 
 CLogger &CLogger::getLogger() {
@@ -65,13 +93,13 @@ void CLogger::log(Level level, const char *format, ...) {
 #endif
 
 	m_logfile << "\n" << date.Print() << ":\t";
-	m_logfile << levelStr() << ":\t";
+	m_logfile << levelStr(level) << ":\t";
 	m_logfile << message;
-
-	std::cout << "\n" << date.Print() << ":\t";
-	std::cout << levelStr() << ":\t";
-	std::cout << message;
-
+	if (!m_isSilent) {
+		//std::cout << "\n" << date.Print() << ":\t";
+		//std::cout << levelStr(level) << ":\t";
+		std::cout << message << '\n'; 
+	}
 	va_end(args);
 
 }
@@ -112,11 +140,12 @@ inline bool CLogger::IsPrintable(Level level) {
 	return false;
 }
 
-const char *CLogger::levelStr() {
-	switch (m_level) {
+const char *CLogger::levelStr(Level level) {
+	switch (level) {
 	case TRACE: return "TRACE";
 	case FINE: return "FINE";
 	case INFO: return "INFO";
+	case SUMMARY: return "SUMMARY";
 	case WARNING: return "WARNING";
 	case ERROR: return "ERROR";
 	case FATAL: return "FATAL";

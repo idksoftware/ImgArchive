@@ -1,12 +1,40 @@
-/*
- * LogName.cpp
- *
- *  Created on: Sep 23, 2014
- *      Author: wzw7yn
- */
+/* **************************************************
+**
+**    III                DDD  KKK
+**    III                DDD  KKK
+**                       DDD  KKK
+**    III   DDDDDDDDDDD  DDD  KKK            KKK
+**    III  DDD           DDD  KKK            KKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK   KKKKKKKKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK            KKK
+**    III   DDDDDDDDDDDDDDDD  KKK            KKK
+**
+**
+**     SSS         FF
+**    S           F   T
+**     SSS   OO   FF  TTT W   W  AAA  R RR   EEE
+**        S O  O  F   T   W W W  AAAA RR  R EEEEE
+**    S   S O  O  F   T   W W W A   A R     E
+**     SSS   OO  FFF   TT  W W   AAAA R      EEE
+**
+**    Copyright: (c) 2015 IDK Software Ltd
+**
+****************************************************
+**
+**	Filename	: CRegString.cpp
+**	Author		: I.Ferguson
+**	Version		: 1.000
+**	Date		: 26-05-2015
+**
+** #$$@@$$# */
 
 #include "LogName.h"
 #include "SAUtils.h"
+#include "CDate.h"
 #include "ExifDate.h"
 #include <stdio.h>
 #include <cstdlib>
@@ -107,6 +135,28 @@ std::string LogName::makeName(const char *logPath, const char *preName, const ch
 	return result;
 
 
+}
+
+// Date string from filename
+std::string LogName::dateString(CDate &date) {
+
+	int year = date.getYear();
+	int month = date.getMonth();
+	int day = date.getDay();
+	//printf("Time: %d %d %d", year, month, day);
+	std::string dateString;
+
+	std::stringstream s;
+	s << year << std::setw(2) << std::setfill('0') << month
+		<< std::setw(2) << std::setfill('0') << day;
+	dateString += s.str();
+	return dateString;
+}
+
+// todays date string
+std::string LogName::dateStringToday() {
+	CDate date = CDate::timeNow();
+	return dateString(date);
 }
 
 } /* namespace simplearchive */

@@ -98,6 +98,7 @@ ArgvParser::parse(int _argc, char ** _argv)
 
     // loop over all command line arguments
     int i = 1; // argument counter
+
     while( i< _argc )
     {
         string argument = _argv[i];
@@ -327,16 +328,163 @@ const vector<string>& ArgvParser::allArguments() const
     return(argument_container);
 }
 
+/*
 string ArgvParser::usageDescription(unsigned int _width) const
 {
-    string usage; // the usage description text
+	string usage; // the usage description text
 
-    if (intro_description.length())
-        usage += formatString(intro_description, _width) + "\n\n";
+	if (intro_description.length())
+		usage += formatString(intro_description, _width) + "\n\n";
 
-    if (max_key>1) // if we have some options
-        usage += formatString("Available options\n-----------------",_width) + "\n";
+	if (max_key>1) // if we have some options
+		usage += formatString("Available options\n-----------------", _width) + "\n\n";
 
+	// loop over all option attribute entries (which equals looping over all
+	// different options (not option names)
+	for (Key2AttributeMap::const_iterator it = option2attribute.begin();
+		it != option2attribute.end();
+		++it)
+	{
+		string os; // temp string for the option
+
+		// get the list of alternative names for this option
+		list<string> alternatives = getAllOptionAlternatives(it->first);
+
+		unsigned int count = 0;
+		for (list<string>::const_iterator alt = alternatives.begin();
+			alt != alternatives.end();
+			++alt)
+		{
+			++count;
+			// additional '-' for long options
+			if (alt->length() > 1)
+				os += "-";
+
+			os += "-" + *alt;
+
+			// note if the option requires a value
+			if (option2attribute.find(it->first)->second & OptionRequiresValue)
+				os += " <value>";
+
+			// alternatives to come?
+			if (count < alternatives.size())
+				os += ", "; // add separator
+		}
+
+		// note if the option is required
+		if (option2attribute.find(it->first)->second & OptionRequired)
+			os += " [required]";
+
+		usage += formatString(os, _width) + "\n";
+
+		if (option2descr.find(it->first) != option2descr.end())
+			usage += formatString(option2descr.find(it->first)->second, _width, 4);
+		else
+			usage += formatString("(no description)", _width, 4);
+
+		// finally a little gap
+		usage += "\n\n";
+	}
+
+	if (!errorcode2descr.size()) // if have no errorcodes
+		return(usage);
+
+	usage += formatString("Return codes\n-----------------", _width) + "\n";
+
+	//   map<int, string>::const_iterator eit;
+	for (std::map<int, std::string>::const_iterator alt = errorcode2descr.begin();
+		alt != errorcode2descr.end();
+		++alt)
+	{
+		ostringstream code;
+		code << alt->first;
+		string label = formatString(code.str(), _width, 4);
+		string descr = formatString(alt->second, _width, 10);
+		usage += label + descr.substr(label.length()) + "\n";
+	}
+
+	return(usage);
+}
+*/
+
+
+string ArgvParser::usageDescription(unsigned int _width) const
+{
+	string usage; // the usage description text
+
+	if (intro_description.length())
+		usage += formatString(intro_description, _width) + "\n\n";
+
+	if (max_key > 1) {// if we have some options
+		usage += formatString("Available options\n-----------------", _width) + "\n\n";
+	}
+	else {
+		usage += formatString("No options available\n", _width) + "\n\n";
+		return(usage);
+	}
+
+	
+
+	string mc("Synopsis\n");
+	mc += "sia subcommand[options / args]\n\n";
+	mc += "Description:\n";
+	string tmp = "sia is the primary command-line interface to Simple Image Archive. This interface is used to manage the control of images going in and out of the archive software.\n";
+	tmp += "It has a rich set of subcommands that \"add/import\" images to the archive and \"export\" images out of the archive, In addition manages the controlled modification of images";
+    tmp += " using the \"check-in/check-out\" command set";
+	mc += formatString(tmp, _width);
+	mc += "Note:\n";
+	mc += "The administration of the archive is carried out by the siaadmin command-line interface.\n";
+	usage += '\n';
+	usage += mc;
+	usage += formatString("Master Commands\n-----------------", _width) + "\n";
+	for (Key2AttributeMap::const_iterator it = option2attribute.begin();
+		it != option2attribute.end();
+		++it)
+	{
+		string _os; // temp string for the option
+		if (option2attribute.find(it->first)->second != MasterOption) {
+			continue;
+		}
+		string _longOpt;
+		string _shortOpt;
+		list<string> alternatives = getAllOptionAlternatives(it->first);
+		for (list<string>::const_iterator alt = alternatives.begin();
+			alt != alternatives.end();
+			++alt)
+		{
+			if (option2attribute.find(it->first)->second == MasterOption) {
+				int option = option2attribute.find(it->first)->second;
+				_os.clear();
+				if (alt->length() > 1) {
+					_longOpt += "--" + *alt;
+				}
+				else {
+					_shortOpt += "-" + *alt;
+				}
+				
+
+			}
+		}
+		
+		if (!_shortOpt.empty()) {
+			_os += _shortOpt;
+		}
+		if (!_longOpt.empty()) {
+			_os += ' ';
+			_os += _longOpt;
+		}
+		usage += formatString(_os, _width) + "\n";
+		_os.clear();
+		_longOpt.clear();
+		_shortOpt.clear();
+		if (option2descr.find(it->first) != option2descr.end())
+		usage += formatString(option2descr.find(it->first)->second, _width, 4) + "\n\n";
+		else
+		usage += formatString("(no description)", _width, 4) + "\n\n";
+		
+	}
+	
+	printf("%s\n", usage.c_str());
     // loop over all option attribute entries (which equals looping over all
     // different options (not option names)
     for (Key2AttributeMap::const_iterator it = option2attribute.begin();
@@ -354,6 +502,9 @@ string ArgvParser::usageDescription(unsigned int _width) const
                 ++alt )
         {
             ++count;
+			if (option2attribute.find(it->first)->second == MasterOption) {
+				continue;
+			}
             // additional '-' for long options
             if (alt->length() > 1)
                 os += "-";
@@ -404,6 +555,8 @@ string ArgvParser::usageDescription(unsigned int _width) const
     return(usage);
 }
 
+
+
 const string& ArgvParser::errorOption( ) const
 {
     return(error_option);
@@ -436,6 +589,7 @@ std::string ArgvParser::parseErrorDescription( ParserResults _error_code ) const
     case ArgvParser::ParserHelpRequested: // help
         descr = usageDescription();
         break;
+
     default:
         cerr << "ArgvParser::documentParserErrors(): Unknown error code" << endl;
     }

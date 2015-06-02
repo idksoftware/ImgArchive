@@ -32,58 +32,51 @@
 **
 ** #$$@@$$# */
 
-#ifndef HISTORY_H_
-#define HISTORY_H_
-#include <string>
-#include <vector>
-#include <memory>
-#include "HistoryEvent.h"
-#include "CDate.h"
+#include <iostream>
+#include "HistoryLog.h"
+#include "CSVArgs.h"
+#include <sstream>
 
 namespace simplearchive {
 
-#define HISTORY_FILE "history.dat"
-class EventList;
-class CDate;
-class HistoryLog;
+HistoryLog::HistoryLog() {
+	// TODO Auto-generated constructor stub
 
+}
 
-class History {
+HistoryLog::~HistoryLog() {
+	// TODO Auto-generated destructor stub
+}
 
-private:
-
-	bool read(const char *filepath);
-	bool write(const char *filepath);
-	EventList *m_eventList;
-
-	History();
-
-	History(const History&);
-	History& operator = (const History& ) { return *this; }
-	static bool m_isOpen;
-	static std::string m_filename;
-	static std::auto_ptr<History> m_this;
-	static std::ofstream m_logfile;
-	static std::string m_folder;
-	bool readLog(const char *logFile, HistoryLog &historyLog);
-public:
-	static void setPath(const char *path);
-	static History &getHistory();
-	virtual ~History();
-	bool add(const char *filename, const char *version, const char *comment, const HistoryEvent &he);
-	/*
-	bool add(const HistoryEvent &he) {
-		return true;
+bool HistoryLog::write() {
+	for (std::list<std::string>::iterator i = begin(); i != end(); i++) {
+		std::cout << *i << '\n';
 	}
-	*/
-	bool add() {
-		return true;
-	}
+	return true;
+}
 
-	//int getHistory(CDate &from, CDate &to);
-	std::auto_ptr<HistoryLog> getEntries(int daysAgo);
-	//std::string getHistory(int from, int to);
-};
+bool HistoryLog::writeXML() {
+	std::cout << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+			  << "<History ordering=\"date\" from=\"2015-03-6 12.10.45\" to=\"2015-03-6 12.10.45\">\n";
+
+	for (std::list<std::string>::iterator i = begin(); i != end(); i++) {
+		std::cout << *i << '\n';
+		CSVArgs csvArgs(':');
+		if (csvArgs.process(i->c_str()) == false) {
+			return false;
+		}
+		std::cout << "\t<Event>\n";
+		std::cout << writeTag("DateTime", csvArgs.at(0), 2);
+		std::cout << writeTag("ImagePage", csvArgs.at(1), 2);
+		std::cout << writeTag("Value", csvArgs.at(2), 2);
+		std::cout << writeTag("Comment", csvArgs.at(3), 2);
+		std::cout << writeTag("Event", csvArgs.at(4), 2);
+		std::cout << "\t</Event>\n";
+	}
+	std::cout <<	"</Catalog>\n";
+	return true;
+}
+
+
 
 } /* namespace simplearchive */
-#endif /* HISTORY_H_ */

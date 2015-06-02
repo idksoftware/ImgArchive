@@ -32,58 +32,24 @@
 **
 ** #$$@@$$# */
 
-#ifndef HISTORY_H_
-#define HISTORY_H_
+#ifndef LOGDOCUMENT_H_
+#define LOGDOCUMENT_H_
 #include <string>
-#include <vector>
-#include <memory>
-#include "HistoryEvent.h"
-#include "CDate.h"
-
+#include <list>
 namespace simplearchive {
-
-#define HISTORY_FILE "history.dat"
-class EventList;
-class CDate;
-class HistoryLog;
-
-
-class History {
-
-private:
-
-	bool read(const char *filepath);
-	bool write(const char *filepath);
-	EventList *m_eventList;
-
-	History();
-
-	History(const History&);
-	History& operator = (const History& ) { return *this; }
-	static bool m_isOpen;
-	static std::string m_filename;
-	static std::auto_ptr<History> m_this;
-	static std::ofstream m_logfile;
-	static std::string m_folder;
-	bool readLog(const char *logFile, HistoryLog &historyLog);
+/**
+ *
+ */
+class LogDocument : public std::list<std::string> {
+protected:
+	std::string writeTag(const char *tag, const std::string& value, int tab);
+	std::string writeTag(const char *tag, const int value, int tab);
 public:
-	static void setPath(const char *path);
-	static History &getHistory();
-	virtual ~History();
-	bool add(const char *filename, const char *version, const char *comment, const HistoryEvent &he);
-	/*
-	bool add(const HistoryEvent &he) {
-		return true;
-	}
-	*/
-	bool add() {
-		return true;
-	}
-
-	//int getHistory(CDate &from, CDate &to);
-	std::auto_ptr<HistoryLog> getEntries(int daysAgo);
-	//std::string getHistory(int from, int to);
+	LogDocument();
+	virtual ~LogDocument();
+	virtual bool write();
+	virtual bool writeXML() = 0;
 };
 
 } /* namespace simplearchive */
-#endif /* HISTORY_H_ */
+#endif /* LOGDOCUMENT_H_ */

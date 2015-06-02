@@ -80,6 +80,7 @@ public:
     typedef std::map<unsigned int, std::string> Key2StringMap;
     typedef std::vector<std::string> ArgumentContainer;
 
+
     ArgvParser();
     ~ArgvParser();
 
@@ -88,7 +89,8 @@ public:
     {
         NoOptionAttribute = 0x00,
         OptionRequiresValue = 0x01,
-        OptionRequired = 0x02
+        OptionRequired = 0x02,
+		MasterOption = 0x03
     };
     /** Return values of the parser. */
     enum
@@ -101,7 +103,7 @@ public:
         ParserRequiredOptionMissing = 0x16,
         ParserHelpRequested = 0x32
     };
-
+	
     /** Defines an option with optional attributes (required, ...) and an
     * additional (also optional) description. The description becomes part of the
     * generated usage help that can be requested by calling the usageDescription()
@@ -228,6 +230,9 @@ private:
 
     /** General description to be returned as first part of the generated help page. */
     std::string intro_description;
+
+	/** General description to be returned as first part of the generated help page. */
+	std::string masteroption_description;
 
     /** Holds the key for the help option. */
     unsigned int help_option;

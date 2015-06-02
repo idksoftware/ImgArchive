@@ -1,9 +1,36 @@
-/*
- * CVersion.cpp
- *
- *  Created on: May 20, 2014
- *      Author: wzw7yn
- */
+/* **************************************************
+**
+**    III                DDD  KKK
+**    III                DDD  KKK
+**                       DDD  KKK
+**    III   DDDDDDDDDDD  DDD  KKK            KKK
+**    III  DDD           DDD  KKK            KKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK   KKKKKKKKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK            KKK
+**    III   DDDDDDDDDDDDDDDD  KKK            KKK
+**
+**
+**     SSS         FF
+**    S           F   T
+**     SSS   OO   FF  TTT W   W  AAA  R RR   EEE
+**        S O  O  F   T   W W W  AAAA RR  R EEEEE
+**    S   S O  O  F   T   W W W A   A R     E
+**     SSS   OO  FFF   TT  W W   AAAA R      EEE
+**
+**    Copyright: (c) 2015 IDK Software Ltd
+**
+****************************************************
+**
+**	Filename	: CRegString.cpp
+**	Author		: I.Ferguson
+**	Version		: 1.000
+**	Date		: 26-05-2015
+**
+** #$$@@$$# */
 
 #include "CVersion.h"
 #include "SAUtils.h"
@@ -50,15 +77,42 @@ const char *CVersion::newVersion() {
 	if (CopyDataVersion2Old() == false) {
 		return 0;
 	}
-	if (CopyNewVersion2Data() == false) {
-		return 0;
-	}
-	if (RemoveTemp() == false) {
-		return 0;
-	}
+	
 	return m_versionPath.c_str();
 
 }
+
+const char *CVersion::newVersionMetadata(const char *name) {
+	std::string filepath = name;
+	
+	std::string versionFolder = filepath; 
+	versionFolder += VERSION_EXT;
+	if (SAUtils::DirExists(versionFolder.c_str()) == false) {
+
+		if (SAUtils::mkDir(versionFolder.c_str()) == false) {
+			return 0;
+		}
+		
+
+	}
+	int slashpos = filepath.find_last_of("/");
+	std::string filename = filepath.substr(slashpos, filename.length() - slashpos);
+	int dotpos = filepath.find_last_of(".");
+	std::string ext = filepath.substr(dotpos, filepath.length() - dotpos);
+
+
+	m_version;
+	std::stringstream ss;
+	ss << m_nameonly << '[' << m_version << ']' << ext;
+	m_versionName = ss.str();
+	m_versionPath = m_versionFolder + "/" + m_versionName;
+	if (CopyDataVersion2Old() == false) {
+		return 0;
+	}
+
+	return m_versionPath.c_str();
+}
+
 
 int CVersion::Revert() {
 	if (CopyDataVersion2Current() == false) {
@@ -93,20 +147,10 @@ bool CVersion::RemoveTemp() {
 	return true;
 }
 
-bool CVersion::CopyNewVersion2Data() {
-		std::string datapath = m_imagePath + "/.sia/data";
-		std::string from = m_imagePath + "/" + m_imagefilename;
-		std::string to = datapath + "/" + m_imagefilename;
-		// data
 
-		if (SAUtils::copy(from.c_str(), to.c_str()) == false) {
-			return false;
-		}
-		return true;
-}
 
 bool CVersion::CopyDataVersion2Old() {
-	std::string datapath = m_imagePath + "/.data";
+	std::string datapath = m_imagePath;
 	std::string from = datapath + "/" + m_imagefilename;
 	std::string to = m_versionPath;
 	// data
@@ -212,8 +256,8 @@ int CVersion::fileLastVersion(const char *name) {
 	}
 
 	m_nameonly = nameOnly(m_imagefilename.c_str());
-	std::string datapath = m_imagePath + "/.sia/data";
-	m_versionFolder = datapath;
+	
+	m_versionFolder = m_imagePath;
 	m_versionFolder += '/';
 	m_versionFolder += m_imagefilename;
 	m_versionFolder += VERSION_EXT;
@@ -309,7 +353,7 @@ bool CVersion::setToVersion(const char *name, int idx) {
 			m_versionName = namestr.substr(slashpos+1, namestr.length() - slashpos);
 			//m_imagePath = namestr.substr(0, slashpos);
 		} else {
-			return -1;
+			return false;
 		}
 	}
 

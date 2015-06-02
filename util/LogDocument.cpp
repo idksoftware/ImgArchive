@@ -32,58 +32,51 @@
 **
 ** #$$@@$$# */
 
-#ifndef HISTORY_H_
-#define HISTORY_H_
-#include <string>
-#include <vector>
-#include <memory>
-#include "HistoryEvent.h"
-#include "CDate.h"
+#include <iostream>
+#include "LogDocument.h"
+#include "CSVArgs.h"
+#include <sstream>
 
 namespace simplearchive {
 
-#define HISTORY_FILE "history.dat"
-class EventList;
-class CDate;
-class HistoryLog;
+LogDocument::LogDocument() {
+	// TODO Auto-generated constructor stub
 
+}
 
-class History {
+LogDocument::~LogDocument() {
+	// TODO Auto-generated destructor stub
+}
 
-private:
-
-	bool read(const char *filepath);
-	bool write(const char *filepath);
-	EventList *m_eventList;
-
-	History();
-
-	History(const History&);
-	History& operator = (const History& ) { return *this; }
-	static bool m_isOpen;
-	static std::string m_filename;
-	static std::auto_ptr<History> m_this;
-	static std::ofstream m_logfile;
-	static std::string m_folder;
-	bool readLog(const char *logFile, HistoryLog &historyLog);
-public:
-	static void setPath(const char *path);
-	static History &getHistory();
-	virtual ~History();
-	bool add(const char *filename, const char *version, const char *comment, const HistoryEvent &he);
-	/*
-	bool add(const HistoryEvent &he) {
-		return true;
+bool LogDocument::write() {
+	for (std::list<std::string>::iterator i = begin(); i != end(); i++) {
+		std::cout << *i << '\n';
 	}
-	*/
-	bool add() {
-		return true;
-	}
+	return true;
+}
 
-	//int getHistory(CDate &from, CDate &to);
-	std::auto_ptr<HistoryLog> getEntries(int daysAgo);
-	//std::string getHistory(int from, int to);
-};
+
+
+std::string LogDocument::writeTag(const char *tag, const std::string& value, int tab) {
+	std::ostringstream xml;
+	for (int i = 0; i < tab; i++) {
+		xml << '\t';
+	}
+	if (!value.empty()) {
+		xml << "<" << tag << ">" << value << "</" << tag << ">\n";
+	} else {
+		xml << "<" << tag << "/>\n";
+	}
+	return xml.str();
+}
+
+std::string LogDocument::writeTag(const char *tag, const int value, int tab) {
+	std::ostringstream xml;
+	for (int i = 0; i < tab; i++) {
+		xml << '\t';
+	}
+	xml << "<" << tag << ">" << value << "</" << tag << ">\n";
+	return xml.str();
+}
 
 } /* namespace simplearchive */
-#endif /* HISTORY_H_ */
