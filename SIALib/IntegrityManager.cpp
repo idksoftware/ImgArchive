@@ -40,6 +40,12 @@
 #include "SAUtils.h"
 
 
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+//#define new DEBUG_NEW
+#endif
+
 namespace simplearchive {
 
 IntegrityManager *IntegrityManager::m_this = 0;
@@ -85,30 +91,30 @@ bool IntegrityManager::makeList() {
 		}
 	}
 	
-	std::vector<std::string *> *filelist = SAUtils::getFiles(m_archivePath.c_str());
-	for (std::vector<std::string *>::iterator i = filelist->begin(); i != filelist->end(); i++) {
-		std::string *year = *i;
-		std::string filepath = m_archivePath + "/" + *year;
+	FileList_Ptr filelist = SAUtils::getFiles_(m_archivePath.c_str());
+	for (std::vector<std::string>::iterator i = filelist->begin(); i != filelist->end(); i++) {
+		std::string year = *i;
+		std::string filepath = m_archivePath + "/" + year;
 
-		char c = (*year)[0];
+		char c = (year)[0];
 		if (c == '.') {
 			continue;
 		}
 		std::cout << filepath << '\n';
 
-		std::string yearfolder = m_archivePath + '/' + *year;
-		std::vector<std::string *> *dayList = SAUtils::getFiles(yearfolder.c_str());
+		std::string yearfolder = m_archivePath + '/' + year;
+		FileList_Ptr dayList = SAUtils::getFiles_(yearfolder.c_str());
 
-		for (std::vector<std::string *>::iterator i = dayList->begin(); i != dayList->end(); i++) {
-			std::string *name = *i;
+		for (std::vector<std::string>::iterator i = dayList->begin(); i != dayList->end(); i++) {
+			std::string name = *i;
 			
 
-			char c = (*name)[0];
+			char c = (name)[0];
 			if (c == '.') {
 				continue;
 			}
-			std::string chdskpath = m_archivePath + "/" + *year + "/" + *name + "/chdsk";
-			std::string dirpath = m_archivePath + "/" + *year + "/" + *name;
+			std::string chdskpath = m_archivePath + "/" + year + "/" + name + "/chdsk";
+			std::string dirpath = m_archivePath + "/" + year + "/" + name;
 			std::cout << chdskpath << '\n';
 			std::cout << dirpath << '\n';
 			CheckDisk checkDisk;

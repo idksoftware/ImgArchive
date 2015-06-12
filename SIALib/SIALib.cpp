@@ -71,6 +71,12 @@
 #include <stdio.h>
 #include <sstream>
 
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+//#define new DEBUG_NEW
+#endif
+
 #define VERSION	"1.00"
 #define BUILD	"040115.1749"
 #define DB "c:/temp/test3.db"
@@ -147,7 +153,10 @@ namespace simplearchive {
 			std::string csvdbPath = config.getShadowPath();
 			csvdbPath += "/.csvdb";
 			CSVDatabase::setDBPath(csvdbPath.c_str());
-
+			if (ImageExtentions::setExtentionsFilePath(config.getConfigPath()) == false) {
+				logger.log(CLogger::INFO, "Unable to find image extensions file path: \"%s\"", config.getConfigPath());
+				return false;
+			}
 			if (SAUtils::DirExists(temp.c_str()) == false) {
 				logger.log(CLogger::INFO, "Hidden .sia folder not found at location: \"%s\"", temp.c_str());
 
@@ -227,6 +236,7 @@ namespace simplearchive {
 		if (m_ArchiveBuilder->Import(config.getSourcePath()) == false) {
 			return false;
 		}
+		
 		return true;
 	}
 
@@ -263,7 +273,7 @@ namespace simplearchive {
 		}
 		else {
 		*/
-		ViewManager viewManager;
+		ViewManager& viewManager = ViewManager::GetInstance();
 		if (viewManager.process() == false) {
 			return false;
 		}
@@ -287,21 +297,42 @@ namespace simplearchive {
 		}
 		return true;
 	}
-	bool SIALib::archive() {
+	bool SIALib::archive(const char *archivePath, const char *distPath, unsigned long sizeOfMedia, ExifDateTime *startDate, ExifDateTime *endDate) {
+		
+		if (archivePath == nullptr) {
+		}
+
+		if (distPath == nullptr) {
+		}
+
+		if (startDate == nullptr) {
+
+		}
+
+		if (endDate == nullptr) {
+
+		}
+
 		CAppConfig &config = CAppConfig::get();
 		printf("Archive");
+		MakeMedia makeMedia;
 		if (config.isToDateSet() || config.isFromDateSet()) {
-			//MakeMedia makeMedia(config.getArchivePath().c_str(), config.setBackupDestinationPath(), config.getBackupMediaSize(), CDate startDate, CDate endDate);
+			
+			
+			if (makeMedia.initalise(config.getArchivePath(), config.getBackupDestinationPath(), config.getBackupMediaSize(), startDate, endDate) == false) {
+				return false;
+			}
 		}
 		else {
 			MakeMedia makeMedia;
 			if (makeMedia.initalise(config.getArchivePath(), config.getBackupDestinationPath(), config.getBackupMediaSize()) == false) {
 				return false;
 			}
-			if (makeMedia.process() == false) {
-				return false;
-			}
 		}
+		if (makeMedia.process() == false) {
+			return false;
+		}
+		
 		return true;
 	}
 

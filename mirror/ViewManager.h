@@ -35,7 +35,8 @@
 #ifndef VIEWMANAGER_H_
 #define VIEWMANAGER_H_
 #include <string>
-
+#include <mutex>
+#include <memory>
 
 #define VIEW_CONFIG_FILE	"/view.dat"
 
@@ -43,6 +44,12 @@
 
 namespace simplearchive {
 class ViewItemContainer;
+/**
+ * This class manages the view functionality.
+ *
+ * This view manager uses image hold in the shadow archive only.
+ * The View manager need to be one time initialised.
+ */
 class ViewManager {
 public:
 	typedef enum {
@@ -54,7 +61,15 @@ public:
 		VS_ALL
 	} EViewSet;
 private:
-	static ViewManager *m_this;
+	
+	static std::unique_ptr<ViewManager> m_instance;
+	static std::once_flag m_onceFlag;
+	ViewManager();
+	ViewManager(const ViewManager& src);
+	ViewManager& operator=(const ViewManager& rhs);
+
+
+
 	static ViewItemContainer *m_pContainer;
 	static std::string m_confpath;
 	static std::string m_archiveRoot;
@@ -62,9 +77,9 @@ private:
 	bool readConf();
 	static std::string makeOptionString(const char *locationPath, bool mode, bool type, bool access, EViewSet viewSet, bool metadata, const char *setpath);
 public:
-	ViewManager();
+	
 	virtual ~ViewManager();
-
+	static ViewManager& GetInstance();
 	static bool initalise(const char *archiveRoot, const char *confpath);
 	bool initaliseMaster(const char *archiveRoot, const char *masterViewPath) {
 		m_archiveRoot = archiveRoot;

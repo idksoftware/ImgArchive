@@ -40,6 +40,12 @@
 #include "ExifDateTime.h"
 #include "LogFilename.h"
 
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+//#define new DEBUG_NEW
+#endif
+
 using namespace std;
 namespace simplearchive {
 
@@ -86,8 +92,10 @@ public:
 
 };
 
+std::unique_ptr<ChangeLog> ChangeLog::m_this;
+std::once_flag ChangeLog::m_onceFlag;
+
 std::string ChangeLog::m_filename;
-ChangeLog *ChangeLog::m_this = NULL;
 std::ofstream ChangeLog::m_logfile;
 std::string ChangeLog::m_logpath;
 
@@ -97,13 +105,16 @@ ChangeLog::ChangeLog() {
 
 ChangeLog &ChangeLog::getLogger() {
 
-	if (m_this == NULL) {
-		m_this = new ChangeLog();
+	std::call_once(m_onceFlag,
+			[] {
+		m_this.reset(new ChangeLog);
 		LogFilename logFilename(m_logpath.c_str());
 		m_filename = logFilename.filename();
 		m_logfile.open(m_filename.c_str(), ios::out | ios::app);
-	}
-	return *m_this;
+	});
+
+	return *m_this.get();
+
 }
 
 ChangeLog::~ChangeLog() {

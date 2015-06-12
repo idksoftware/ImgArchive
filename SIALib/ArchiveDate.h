@@ -34,8 +34,10 @@
 
 #pragma once
 #include "ExifDate.h"
+#include <memory>
 
 namespace simplearchive {
+	
 	class ImageContainer;
 	/**
 	* @brief This class defines how the Archive date found.
@@ -48,8 +50,8 @@ namespace simplearchive {
 		static bool m_useDate;
 		static bool m_useDateToday;
 		static ExifDate m_date;
-		ExifDate *m_exifDate;
-		ExifDate *m_fileDate;
+		std::unique_ptr<ExifDate> m_exifDate;
+		std::unique_ptr<ExifDate> m_fileDate;
 		ExifDate m_achiveDate;
 		static void setFalse();
 		void processExifDate();
@@ -59,7 +61,7 @@ namespace simplearchive {
 		ArchiveDate();
 		/// Distructor
 		~ArchiveDate();
-		/// 
+		// 
 		static bool getUseEXIFDate();
 		static void setUseEXIFDate(bool b);
 

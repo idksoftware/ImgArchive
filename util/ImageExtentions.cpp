@@ -39,6 +39,13 @@
 #include "ImageExtentions.h"
 #include "SAUtils.h"
 
+
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+//#define new DEBUG_NEW
+#endif
+
 namespace simplearchive {
 
 std::string ExtentionItem::toString() {
@@ -54,7 +61,7 @@ public:
 };
 
 class CExtentionsFile {
-	CExtentionsContainer *m_extentionsContainer;
+	std::unique_ptr<CExtentionsContainer> m_extentionsContainer;
 
 	bool insert(const char *row);
 public:
@@ -69,11 +76,11 @@ public:
 };
 
 CExtentionsFile::CExtentionsFile() {
-	m_extentionsContainer = new CExtentionsContainer;
+	m_extentionsContainer.reset(new CExtentionsContainer);
 }
 
 CExtentionsFile::~CExtentionsFile() {
-	delete m_extentionsContainer;
+	
 }
 
 bool CExtentionsFile::read(const char *datafile) {
@@ -158,6 +165,9 @@ CExtentionsFile *ImageExtentions::m_extentionsFile = 0;
 ImageExtentions *ImageExtentions::m_This = 0;
 bool ImageExtentions::m_isError = false;
 static ImageType defaultImageType;
+static ExtentionItem defaultExtentionItem;
+
+
 
 ImageExtentions::ImageExtentions() {
 
@@ -178,7 +188,7 @@ ImageExtentions &ImageExtentions::get() {
 }
 
 ImageExtentions::~ImageExtentions() {
-	// TODO Auto-generated destructor stub
+	delete m_extentionsFile;
 }
 
 bool ImageExtentions::setExtentionsFilePath(const char *extentionsFilePath) {
@@ -191,6 +201,16 @@ bool ImageExtentions::setExtentionsFilePath(const char *extentionsFilePath) {
 	return true;
 }
 
+ExtentionItem &ImageExtentions::find(const char *filename) {
+	std::string ext = SAUtils::getExtention(filename);
+	std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
+	ExtentionItem *item = m_extentionsFile->find(ext.c_str());
+	if (item != 0) {
+		return *item;
+	}
+	return defaultExtentionItem;
+}
+
 ImageType &ImageExtentions::findType(const char *ext) {
 
 	std::string tmp = ext;
@@ -201,7 +221,6 @@ ImageType &ImageExtentions::findType(const char *ext) {
 	}
 	return defaultImageType;
 }
-
 
 ImageType &ImageExtentions::getType(const char *filename) {
 	std::string ext = SAUtils::getExtention(filename);

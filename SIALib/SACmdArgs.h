@@ -40,13 +40,16 @@ namespace simplearchive {
 	class SACmdArgs
 	{
 		static bool m_isMakeNoChanges;
+		static bool m_isForceChanges;
 		static SACmdArgs *m_this;
 	public:
 
 		bool IsMakeNoChanges() {
 			return m_isMakeNoChanges;
 		}
-
+		bool IsForceChanges() {
+			return m_isForceChanges;
+		}
 		SACmdArgs();
 		~SACmdArgs();
 		static SACmdArgs &get();

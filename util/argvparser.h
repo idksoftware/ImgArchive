@@ -220,6 +220,8 @@ public:
 
 	std::string topicUsageDescription(unsigned int topic, unsigned int _width = 80) const;
 
+	void setHeader(const std::string& _option);
+
 private:
     /** Returns the key of a defined option with name _name or -1 if such option
      * is not defined. */
@@ -251,6 +253,9 @@ private:
 
     /** General description to be returned as first part of the generated help page. */
     std::string intro_description;
+
+	/** Command header. */
+	std::string command_header;
 
 	/** General description to be returned as first part of the generated help page. */
 	std::string masteroption_description;

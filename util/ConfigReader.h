@@ -32,8 +32,8 @@
 **
 ** #$$@@$$# */
 
-#ifndef CONFIGREADER_H_
-#define CONFIGREADER_H_
+#ifndef CONFIGREADER_H
+#define CONFIGREADER_H
 #include <map>
 #include <string>
 

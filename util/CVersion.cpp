@@ -39,6 +39,12 @@
 #include <stdio.h>
 #include <sstream>
 
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+//#define new DEBUG_NEW
+#endif
+
 namespace simplearchive {
 
 CVersion::CVersion(const char *name) {
@@ -262,11 +268,11 @@ int CVersion::fileLastVersion(const char *name) {
 	m_versionFolder += m_imagefilename;
 	m_versionFolder += VERSION_EXT;
 	if (SAUtils::DirExists(m_versionFolder.c_str()) == true) {
-		std::vector<std::string *> *filelist = SAUtils::getFiles(m_versionFolder.c_str());
-		for (std::vector<std::string *>::iterator i = filelist->begin(); i != filelist->end(); i++) {
-			std::string *filenameItem = *i;
+		FileList_Ptr filelist = SAUtils::getFiles_(m_versionFolder.c_str());
+		for (std::vector<std::string>::iterator i = filelist->begin(); i != filelist->end(); i++) {
+			std::string filenameItem = *i;
 			//printf("File \"%s\"\n", filenameItem->c_str());
-			const char *tmp = filenameItem->c_str();
+			const char *tmp = filenameItem.c_str();
 			std::string cname(nameOnly(tmp));
 			const char *s = cname.c_str();
 
@@ -320,18 +326,18 @@ bool CVersion::setToVersion(const char *name, int idx) {
 	m_versionFolder += m_imagefilename;
 	m_versionFolder += VERSION_EXT;
 	if (SAUtils::DirExists(m_versionFolder.c_str()) == true) {
-		std::vector<std::string *> *filelist = SAUtils::getFiles(m_versionFolder.c_str());
-		for (std::vector<std::string *>::iterator i = filelist->begin(); i != filelist->end(); i++) {
-			std::string *filenameItem = *i;
+		FileList_Ptr filelist = SAUtils::getFiles_(m_versionFolder.c_str());
+		for (std::vector<std::string>::iterator i = filelist->begin(); i != filelist->end(); i++) {
+			std::string filenameItem = *i;
 
-			const char *tmp = filenameItem->c_str();
+			const char *tmp = filenameItem.c_str();
 			std::string cname(nameOnly(tmp));
 			const char *s = cname.c_str();
 
 			if (m_nameonly.compare(cname.c_str()) == 0) {
 				int ix = versionIndex(tmp);
 				if (idx == ix) {
-					printf("File: \"%s\"\n", filenameItem->c_str());
+					printf("File: \"%s\"\n", filenameItem.c_str());
 					m_version = ix;
 					m_versionName = tmp;
 				}

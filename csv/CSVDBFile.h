@@ -91,7 +91,7 @@ public:
 	int getNextIndex();
 	int getNextIndex(int current);
 	int getMaxIndex();
-	std::auto_ptr<ImageInfo> getItemAt(int idx);
+	std::unique_ptr<ImageInfo> getItemAt(int idx);
 	static std::string getYear(const char *path);
 };
 

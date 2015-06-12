@@ -42,6 +42,12 @@
 //#include <sys/wait.h>
 //#include <signal.h>
 
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+//#define new DEBUG_NEW
+#endif
+
 
 #ifdef LINUX
   # define sigmask(sig)   __sigmask(sig)

@@ -39,6 +39,13 @@
 #include "SetEnv.h"
 #include "ImagePath.h"
 #include <fstream>
+
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+//#define new DEBUG_NEW
+#endif
+
 namespace simplearchive {
 
 std::string HookCmd::m_hookPath;
@@ -95,19 +102,20 @@ std::string HookCmd::getScriptNames()
 	if (SAUtils::DirExists(m_hookPath.c_str()) == false) {
 		return false;
 	}
-	std::vector<std::string *> *filelist = SAUtils::getFiles(m_hookPath.c_str());
-	for (std::vector<std::string *>::iterator i = filelist->begin(); i != filelist->end(); i++) {
-		std::string *name = *i;
+	FileList_Ptr filelist = SAUtils::getFiles_(m_hookPath.c_str());
+
+	for (std::vector<std::string>::iterator i = filelist->begin(); i != filelist->end(); i++) {
+		std::string name = *i;
 		//printf("name %s\n", name->c_str());
-		if (name->compare(".") == 0 || name->compare("..") == 0) {
+		if (name.compare(".") == 0 || name.compare("..") == 0) {
 			continue;
 		}
-		if (m_name.length() > name->length()) {
+		if (m_name.length() > name.length()) {
 			continue;
 		}
-		std::string match = name->substr(0, m_name.length());
+		std::string match = name.substr(0, m_name.length());
 		if (m_name.compare(match) == 0) {
-			return *name;
+			return name;
 		}
 
 	}

@@ -36,6 +36,12 @@
 #include "SetEnv.h"
 #include "AppConfig.h"
 
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+//#define new DEBUG_NEW
+#endif
+
 namespace simplearchive {
 
 
@@ -50,19 +56,19 @@ namespace simplearchive {
 		SetEnv setEnv;
 		CAppConfig &config = CAppConfig::get();
 		
-		setEnv.insert(setEnv.end(), EnvItem(HOOK_SCRIPTS_PATH, config.getHookPath()));
-		setEnv.insert(setEnv.end(), EnvItem(TOOLS_PATH, config.getToolsPath()));
-		setEnv.insert(setEnv.end(), EnvItem(TEMP_PATH, config.getTempPath()));
-		setEnv.insert(setEnv.end(), EnvItem(SOURCE_PATH, config.getSourcePath()));
-		setEnv.insert(setEnv.end(), EnvItem(ARCHIVE_PATH, config.getArchivePath()));
-		setEnv.insert(setEnv.end(), EnvItem(CONFIG_PATH, config.getConfigPath()));
-		setEnv.insert(setEnv.end(), EnvItem(LOG_PATH, config.getLogPath()));
-		setEnv.insert(setEnv.end(), EnvItem(HOME_PATH, config.getHomePath()));
-		setEnv.insert(setEnv.end(), EnvItem(INDEX_PATH, config.getIndexPath()));
-		setEnv.insert(setEnv.end(), EnvItem(HISTORY_PATH, config.getHistoryPath()));
-		setEnv.insert(setEnv.end(), EnvItem(EXTERNAL_COMMAND_LINE, config.getExternalCommandLine()));
-		setEnv.insert(setEnv.end(), EnvItem(EXIF_MAP_PATH, config.getExifMapPath()));
-		setEnv.insert(setEnv.end(), EnvItem(METADATA_TEMPLATE_PATH, config.getMetadataTemplatePath()));
+		setEnv.insert(setEnv.end(), EnvItem(HOOK_SCRIPTS_PATH_LABEL, config.getHookPath()));
+		setEnv.insert(setEnv.end(), EnvItem(TOOLS_PATH_LABEL, config.getToolsPath()));
+		setEnv.insert(setEnv.end(), EnvItem(TEMP_PATH_LABEL, config.getTempPath()));
+		setEnv.insert(setEnv.end(), EnvItem(SOURCE_PATH_LABEL, config.getSourcePath()));
+		setEnv.insert(setEnv.end(), EnvItem(ARCHIVE_PATH_LABEL, config.getArchivePath()));
+		setEnv.insert(setEnv.end(), EnvItem(CONFIG_PATH_LABEL, config.getConfigPath()));
+		setEnv.insert(setEnv.end(), EnvItem(LOG_PATH_LABEL, config.getLogPath()));
+		setEnv.insert(setEnv.end(), EnvItem(HOME_PATH_LABEL, config.getHomePath()));
+		setEnv.insert(setEnv.end(), EnvItem(INDEX_PATH_LABEL, config.getIndexPath()));
+		setEnv.insert(setEnv.end(), EnvItem(HISTORY_PATH_LABEL, config.getHistoryPath()));
+		setEnv.insert(setEnv.end(), EnvItem(EXTERNAL_COMMAND_LINE_LABEL, config.getExternalCommandLine()));
+		setEnv.insert(setEnv.end(), EnvItem(EXIF_MAP_PATH_LABEL, config.getExifMapPath()));
+		setEnv.insert(setEnv.end(), EnvItem(METADATA_TEMPLATE_PATH_LABEL, config.getMetadataTemplatePath()));
 
 		setEnv.process();
 

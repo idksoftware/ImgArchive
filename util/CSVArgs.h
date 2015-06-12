@@ -37,6 +37,8 @@
 #include <string>
 #include <vector>
 
+#include "global.h"
+
 namespace simplearchive {
 
 class CSVArgs : public std::vector<std::string> {
@@ -46,6 +48,16 @@ public:
 	virtual ~CSVArgs();
 	bool process(const char *dataString);
 	void print();
+	/// @brief This will get an optional argument empty if no argument
+	/// found.
+	std::string getOptional(int pos) {
+		if ((unsigned int)pos >= size()) {
+			return "";
+		}
+		else {
+			return at(pos);
+		}
+	}
 };
 
 } /* namespace simplearchive */

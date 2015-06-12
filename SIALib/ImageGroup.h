@@ -49,7 +49,7 @@ class ImageGroup : public std::vector<ImageContainer *> {
 	std::string m_path;
 public:
 	ImageGroup(const char *path);
-	ImageContainer &add(const BasicExif &basicExif, const MetadataObject* metadataObject);
+	ImageContainer &add(std::unique_ptr<BasicExif>& basicExif, std::unique_ptr<MetadataObject>& metadataObject);
 	bool addMetadata(const char *filename);
 	virtual ~ImageGroup();
 	void print() {
@@ -78,7 +78,7 @@ public:
 			data->print();
 		}
 	}
-
+	virtual ~ImageGroups();
 };
 
 } /* namespace simplearchive */

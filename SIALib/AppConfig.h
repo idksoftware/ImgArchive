@@ -35,21 +35,24 @@
 #pragma once
 #include "ConfigReader.h"
 #include "ExifDateTime.h"
-
-#define HOOK_SCRIPTS_PATH       "HookScripsPath" /*< Path to hook scripts */
-#define CONFIG_PATH				"ConfigPath"	 /*< Main configuration path */ 
-#define TOOLS_PATH           	"ToolsPath"
-#define TEMP_PATH           	"TempPath"
-#define SOURCE_PATH         	"SourcePath"
-#define ARCHIVE_PATH         	"ArchivePath"
-#define LOG_PATH				"LogPath"
-#define HOME_PATH				"HomePath"
-#define INDEX_PATH				"IndexPath"
-#define HISTORY_PATH			"HistoryPath"
-#define EXTERNAL_COMMAND_LINE	"ExternalCommandLine"
-#define EXIF_MAP_PATH			"ExifMapPath"
-#define METADATA_TEMPLATE_PATH	"MetadataTemplatePath"
-#define CATALOG_PATH			"CatalogPath"
+/**
+	@brief These #defines define the labels the hook files will use
+	to reference envronment varibles.
+*/
+#define HOOK_SCRIPTS_PATH_LABEL			"HookScripsPath" /*< Path to hook scripts */
+#define CONFIG_PATH_LABEL				"ConfigPath"	 /*< Main configuration path */ 
+#define TOOLS_PATH_LABEL           		"ToolsPath"
+#define TEMP_PATH_LABEL           		"TempPath"
+#define SOURCE_PATH_LABEL         		"SourcePath"
+#define ARCHIVE_PATH_LABEL         		"ArchivePath"
+#define LOG_PATH_LABEL					"LogPath"
+#define HOME_PATH_LABEL					"HomePath"
+#define INDEX_PATH_LABEL				"IndexPath"
+#define HISTORY_PATH_LABEL				"HistoryPath"
+#define EXTERNAL_COMMAND_LINE_LABEL		"ExternalCommandLine"
+#define EXIF_MAP_PATH_LABEL				"ExifMapPath"
+#define METADATA_TEMPLATE_PATH_LABEL	"MetadataTemplatePath"
+#define CATALOG_PATH_LABEL				"CatalogPath"
 
 namespace simplearchive {
 

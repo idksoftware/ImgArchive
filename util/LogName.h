@@ -46,7 +46,7 @@ class CDate;
  */
 class LogName {
 	std::string fileTemplate(const char *preName);
-	int checkLogSize(const char *logPath, int maxSize);
+	int checkLogSize(const char *logPath, unsigned long maxSize);
 public:
 	/// Constructor
 	LogName();
@@ -64,6 +64,8 @@ public:
 	static std::string dateString(CDate &date);
 	/// Make todays date string
 	static std::string dateStringToday();
+
+	static const int ALWAYS_CREATE = -1;
 };
 
 } /* namespace simplearchive */

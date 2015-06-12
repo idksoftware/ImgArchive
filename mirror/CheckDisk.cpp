@@ -47,6 +47,12 @@
 #include "CLogger.h"
 #include "ExifDateTime.h"
 
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+//#define new DEBUG_NEW
+#endif
+
 namespace simplearchive {
 
 std::string CheckDisk::m_archivePath;
@@ -566,7 +572,7 @@ bool CheckDisk::makeCheckData(const char *targetdir) {
 
 
 bool CheckDisk::makeCheckData(const char *targetdir, const char *savefolder) {
-	std::vector<std::string *> *filelist = SAUtils::getFiles(targetdir);
+	FileList_Ptr filelist = SAUtils::getFiles_(targetdir);
 
 	// do files
 	std::string fpath = savefolder + std::string("/fdata.csv");
@@ -591,37 +597,37 @@ bool CheckDisk::makeCheckData(const char *targetdir, const char *savefolder) {
 		return false;
 	}
 
-	for (std::vector<std::string *>::iterator i = filelist->begin(); i != filelist->end(); i++) {
-		std::string *name = *i;
-		if (name->compare(".") == 0 || name->compare("..") == 0 ) {
+	for (std::vector<std::string>::iterator i = filelist->begin(); i != filelist->end(); i++) {
+		std::string name = *i;
+		if (name.compare(".") == 0 || name.compare("..") == 0 ) {
 			continue;
 		}
-		if (name->compare(".chk") == 0 ) {
+		if (name.compare(".chk") == 0 ) {
 			continue;
 		}
-		std::string filepath = targetdirStr + "/" + *name;
+		std::string filepath = targetdirStr + "/" + name;
 		if (SAUtils::IsFile(filepath.c_str()) == false) {
 			//printf("%s\n", name->c_str());
-			dir << *name +'\n';
+			dir << name +'\n';
 			filexml <<	"<Folder>\n"
-				<< writeTag("Name", name->c_str(), 1);
+				<< writeTag("Name", name.c_str(), 1);
 			filexml <<	"</Folder>\n";
 		}
 	}
 	dir.close();
 
-	for (std::vector<std::string *>::iterator i = filelist->begin(); i != filelist->end(); i++) {
+	for (std::vector<std::string >::iterator i = filelist->begin(); i != filelist->end(); i++) {
 		
-		std::string *name = *i;
-		std::string filepath = targetdirStr + "/" + *name;
-		char c = (*name)[0];
+		std::string name = *i;
+		std::string filepath = targetdirStr + "/" + name;
+		char c = (name)[0];
 		if (c == '.' ) {
 			continue;
 		}
 		if (SAUtils::IsFile(filepath.c_str()) == true) {
 			
 			
-			std::string f_name = *name;
+			std::string f_name = name;
 			CkdskData dskData(filepath.c_str(), f_name.c_str());
 			std::string line = dskData.toString();
 
@@ -629,7 +635,7 @@ bool CheckDisk::makeCheckData(const char *targetdir, const char *savefolder) {
 			ExifDateTime modified;
 			modified.setDateTime(dskData.getModified());
 			filexml <<	"<File>\n"
-					<< writeTag("Name", name->c_str(), 1)
+					<< writeTag("Name", name.c_str(), 1)
 					<< writeTag("Size", dskData.getSize(), 1)
 					<< writeTag("CRC", dskData.getCrc(), 1)
 					<< writeTag("Md5", dskData.getMd5().c_str(), 1)
@@ -734,7 +740,7 @@ bool CheckDisk::check(const char *targetdir) {
 
 bool CheckDisk::check(const char *targetdir, const char *savedir) {
 	// Read the target folder
-	std::vector<std::string *> *filelist = SAUtils::getFiles(targetdir);
+	FileList_Ptr filelist = SAUtils::getFiles_(targetdir);
 	std::string path = savedir;
 	// Check the folder the manifest file folder exists
 	if (SAUtils::DirExists(path.c_str()) == false) {
@@ -755,9 +761,9 @@ bool CheckDisk::check(const char *targetdir, const char *savedir) {
 	// Iterate round the files in the target folder
 	CLogger &logger = CLogger::getLogger();
 	std::string targetdirStr = targetdir;
-	for (std::vector<std::string *>::iterator i = filelist->begin(); i != filelist->end(); i++) {
-		std::string *name = *i;
-		std::string filepath = targetdirStr + "/" + *name;
+	for (std::vector<std::string>::iterator i = filelist->begin(); i != filelist->end(); i++) {
+		std::string name = *i;
+		std::string filepath = targetdirStr + "/" + name;
 		if (SAUtils::IsFile(filepath.c_str()) == true) {
 			unsigned long size;
 			if (SAUtils::fileSize(filepath.c_str(), &size) == false) {
@@ -769,9 +775,9 @@ bool CheckDisk::check(const char *targetdir, const char *savedir) {
 			MD5 md5(buf);
 			std::string md5Str = md5.hexdigest();
 			unsigned int crc = Crc.crc((unsigned char *)buf.c_str(), size);
-			if (ckdskDiffFile.find(crc, md5Str.c_str(), name->c_str()) == false) {
+			if (ckdskDiffFile.find(crc, md5Str.c_str(), name.c_str()) == false) {
 				errors = true;
-				ckdskDiffFile.add(filepath.c_str(), name->c_str());
+				ckdskDiffFile.add(filepath.c_str(), name.c_str());
 			}
 		}
 	}

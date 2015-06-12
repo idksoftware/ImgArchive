@@ -32,12 +32,19 @@
 **
 ** #$$@@$$# */
 
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+//#define new DEBUG_NEW
+#endif
+
 #include "SACmdArgs.h"
 
 namespace simplearchive {
 
 	SACmdArgs *SACmdArgs::m_this = nullptr;
 	bool SACmdArgs::m_isMakeNoChanges = false;
+	bool SACmdArgs::m_isForceChanges = false;
 	SACmdArgs::SACmdArgs()
 	{
 	}

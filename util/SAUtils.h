@@ -38,6 +38,8 @@
 
 #include <string>
 #include <vector>
+#include <memory>
+#include "global.h"
 
 #ifdef WIN32
 
@@ -60,7 +62,8 @@ public:
 
 
 
-
+typedef std::vector<std::string> FileList;
+typedef std::unique_ptr<FileList> FileList_Ptr;
 class SAUtils {
 public:
 	SAUtils();
@@ -72,6 +75,7 @@ public:
 	static time_t createTime(const char *path);
 	static time_t modTime(const char *path);
 	static std::vector<std::string *> *getFiles(const char *dirpath);
+	static FileList_Ptr getFiles_(const char *dirpath);
 	static std::string getExtention(const std::string &file);
 	static std::string getExtention(const char *file);
 	static std::string getFilePathNoExt(const std::string &file);
@@ -89,7 +93,7 @@ public:
 	static bool delFile(const char *file);
 	static bool delDir(const char *file);
 	static std::string to_string(int i);
-	static void sprintf(std::string &s, const std::string fmt, ...);
+	//static void sprintf(std::string &s, const std::string fmt, ...);
 	static bool makePath(const char *from, const char *to);
 	static bool makeLink(const char *file, const char *link);
 	static std::string getFileContents(const char *filename);

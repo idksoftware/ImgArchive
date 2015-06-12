@@ -55,15 +55,16 @@ public:
         	add(MTSchema(MTSchema::Text, DB_LABEL));
         	add(MTSchema(MTSchema::Integer, DB_RATING));
         	add(MTSchema(MTSchema::Text, DB_MEDIATYPE));
-        	add(MTSchema(MTSchema::Integer, DB_MD5));
+        	add(MTSchema(MTSchema::Text, DB_MD5));
         	add(MTSchema(MTSchema::Integer, DB_CRC));
         	add(MTSchema(MTSchema::Integer, DB_FILESIZE));
         	add(MTSchema(MTSchema::Date, DB_DATECREATE));
         	add(MTSchema(MTSchema::Date, DB_DATEMODIFIED));
         	add(MTSchema(MTSchema::Date, DB_DATEADDED));
         	add(MTSchema(MTSchema::Text, DB_DESCRIPTION));
-			add(MTSchema(MTSchema::Text, DB_WIDTH));
-			add(MTSchema(MTSchema::Text, DB_HEIGHT));
+			add(MTSchema(MTSchema::Text, DB_KEYWORDS));
+			add(MTSchema(MTSchema::Integer, DB_WIDTH));
+			add(MTSchema(MTSchema::Integer, DB_HEIGHT));
 			add(MTSchema(MTSchema::Text, DB_RESOLUTION));
 			add(MTSchema(MTSchema::Text, DB_DEPTH));
 			add(MTSchema(MTSchema::Text, DB_VIEWROTATION));
@@ -77,7 +78,7 @@ public:
 			add(MTSchema(MTSchema::Text, DB_SOFTWARE));
 			add(MTSchema(MTSchema::Text, DB_SOURCEURL));
 			add(MTSchema(MTSchema::Text, DB_EXIFVERSION));
-			add(MTSchema(MTSchema::Text, DB_CAPTUREDATE));
+			add(MTSchema(MTSchema::Date, DB_CAPTUREDATE));
 			add(MTSchema(MTSchema::Text, DB_EXPOSUREPROGRAM));
 			add(MTSchema(MTSchema::Text, DB_ISOSPEEDRATING));
 			add(MTSchema(MTSchema::Text, DB_EXPOSUREBIAS));
@@ -95,6 +96,7 @@ public:
 			add(MTSchema(MTSchema::Text, DB_COPYRIGHT));
 			add(MTSchema(MTSchema::Text, DB_USAGERIGHTS));
 			add(MTSchema(MTSchema::Text, DB_COPYRIGHTURL));
+			
         }
 };
 
@@ -111,6 +113,7 @@ class MetadataObject : public MTRow {
 
 	friend class MetadataTemplate;
 	/// Asset Properties
+	/*
 	std::string m_sequenceId;
 	std::string m_filename;
 	std::string m_filepath;
@@ -163,7 +166,7 @@ class MetadataObject : public MTRow {
 	std::string m_copyright;
 	std::string m_usageRights;
 	std::string m_copyrightURL;
-
+	*/
 
 
 
@@ -182,8 +185,8 @@ public:
 		columnAt(MD_APERTURE_IDX).fromString(aperture);
 	}
 
-	const std::string& getCaptureDate() const {
-		return columnAt(MD_CAPTURE_DATE_IDX).toString();
+	const ExifDateTime& getCaptureDate() const {
+		return columnAt(MD_CAPTURE_DATE_IDX).getDate();
 
 	}
 
@@ -240,6 +243,10 @@ public:
 
 	void setDateAdded(const std::string& dateAdded) {
 	        columnAt(MD_DATE_ADDED_IDX).fromString(dateAdded);;
+	}
+
+	void setDateAdded(const ExifDateTime& dateAdded) {
+		columnAt(MD_DATE_ADDED_IDX) = dateAdded;
 	}
 
 	const std::string& getDateCreate() const {
@@ -375,8 +382,7 @@ public:
 	}
 
 	void setIsoSpeedRating(const std::string& isoSpeedRating) {
-	        columnAt(MD_ISO_SPEED_RATING_IDX).fromString(isoSpeedRating);;
-		m_isoSpeedRating = isoSpeedRating;
+	        columnAt(MD_ISO_SPEED_RATING_IDX).fromString(isoSpeedRating);
 	}
 
 	const std::string& getLabel() const {
@@ -515,6 +521,9 @@ public:
 	        columnAt(MD_SEQUENCE_ID_IDX).fromString(sequenceId);;
 	}
 
+	void setSequenceId(const int sequenceId) {
+		columnAt(MD_SEQUENCE_ID_IDX) = sequenceId;
+	}
 	const std::string& getSoftware() const {
 	        return columnAt(MD_SOFTWARE_IDX).toString();
 	}

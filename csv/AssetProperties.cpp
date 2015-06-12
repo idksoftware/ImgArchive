@@ -36,6 +36,14 @@
 #include "AssetProperties.h"
 #include "MetadataObject.h"
 #include <stdio.h>
+
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+//#define new DEBUG_NEW
+#endif
+
+
 namespace simplearchive {
 
 class AssetPropertiesString : public CSVString {
@@ -210,6 +218,7 @@ bool AssetProperties::load(unsigned int row, MetadataObject &mo) {
 	mo.setDateModified(item->getDateModified());
 	mo.setDateAdded(item->getDateAdded());
     mo.setDescription(item->getDescription());
+	return true;
 }
 
 bool AssetProperties::save(unsigned int row, MetadataObject &mo) {
@@ -233,6 +242,7 @@ bool AssetProperties::save(unsigned int row, MetadataObject &mo) {
 	item->setDateModified(mo.getDateModified());
 	item->setDateAdded(mo.getDateAdded());
     item->setDescription(mo.getDescription());
+	return true;
 }
 
 

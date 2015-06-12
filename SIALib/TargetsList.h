@@ -36,6 +36,7 @@
 #include <iostream>
 #include <stdio.h>
 #include "DirectoryVisitor.h"
+#include "ImportJournal.h"
 
 namespace simplearchive {
 
@@ -76,6 +77,10 @@ namespace simplearchive {
 			m_path = path;
 		}
 		virtual ~ImageSet() {
+			for (std::vector<ImageItem *>::iterator i = this->begin(); i != this->end(); i++) {
+				ImageItem *data = *i;
+				delete data;
+			}
 			//printf("deleting item %s\n", m_path.c_str());
 		}
 		void print() {
@@ -92,12 +97,28 @@ namespace simplearchive {
 				data->processHook();
 			}
 		}
+
+		void processImportJournal(ImportJournal& importJournal) {
+			for (std::vector<ImageItem *>::iterator i = this->begin(); i != this->end(); i++) {
+				ImageItem *data = *i;
+				importJournal.add(data->getPath());
+				
+			}
+		}
+
 		const char *getPath() {
 			return m_path.c_str();
 		}
 	};
 	class ImageSets : public std::vector < ImageSet * > {
 	public:
+		virtual ~ImageSets() {
+			for (std::vector<ImageSet *>::iterator i = this->begin(); i != this->end(); i++) {
+				ImageSet *data = *i;
+				delete data;
+			}
+			//printf("deleting item %s\n", m_path.c_str());
+		}
 		void print() {
 
 			for (std::vector<ImageSet *>::iterator i = this->begin(); i != this->end(); i++) {
@@ -113,15 +134,23 @@ namespace simplearchive {
 				data->processHook();
 			}
 		}
+		void processImportJournal(ImportJournal& importJournal) {
+			for (std::vector<ImageSet *>::iterator i = this->begin(); i != this->end(); i++) {
+				ImageSet *data = *i;
+				data->processImportJournal(importJournal);
+			}
+		}
+
 	};
 
-
-/// This class Provides the target list. this contains the target images.
-/// Note this is the raw list. Further processing is required to process the list into
+/// @class TargetsList TargetsList.h "TargetsList.h"
+/// @brief This class Provides the target list. this contains the target images.
+/// @note this is the raw list. Further processing is required to process the list into
 /// true image sets.
 class TargetsList
 {
-
+	static int m_fileCount;
+	static int m_folderCount;
 public:
 	TargetsList();
 	virtual ~TargetsList();
@@ -133,6 +162,8 @@ public:
 	/// This returns the resulting Image Sets 
 	static ImageSets *getImageSets();
 	static void destroy();
+	static int getFileCount();
+	static int getFolderCount();
 
 };
 

@@ -58,6 +58,13 @@
 #include <sys/stat.h>
 #include <cstdio>
 #include <memory>
+#include "cport.h"
+
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+//#define new DEBUG_NEW
+#endif
 
 using namespace std;
 
@@ -136,6 +143,38 @@ std::vector<std::string *> *SAUtils::getFiles(const char *dirpath) {
 	return fileList;
 
 }
+
+FileList_Ptr SAUtils::getFiles_(const char *dirpath) {
+
+	std::unique_ptr<std::vector<std::string>> fileList(new std::vector<std::string>);
+	/*
+	DIR *dir;
+	struct dirent *ent;
+	if ((dir = opendir(dirpath)) == NULL) {
+	return false;
+	}
+	while ((ent = readdir(dir)) != NULL) {
+	printf("%s", ent->d_name);
+	fileList->push_back(new std::string(ent->d_name));
+	}
+	*/
+	std::string dirpathstr(dirpath);
+	dirpathstr = dirpathstr + "/*.*";
+	CIDKFileFind fileFind(dirpathstr);
+	fileFind.Open();
+	if (fileFind.GotFile() == false) {
+		return fileList;
+	}
+	do {
+		std::string tmp(fileFind.GetFileName());
+		fileList->push_back(tmp);
+	} while (fileFind.GetNext());
+
+	return fileList;
+
+}
+
+
 
 bool SAUtils::IsFile(const char *path) {
 	struct stat info;
@@ -304,11 +343,13 @@ bool SAUtils::copy(const char *from, const char *to) {
 	char buf[BUFSIZ];
 	size_t size;
 
-	FILE *source = fopen(from, "rb");
+	FILE *source = nullptr;
+	fopen_p(source, from, "rb");
 	if (source == nullptr) {
 		return false;
 	}
-	FILE *dest = fopen(to, "wb");
+	FILE *dest = nullptr;
+	fopen_p(dest, to, "wb");
 	if (dest == nullptr) {
 		return false;
 	}
@@ -325,7 +366,7 @@ bool SAUtils::verify(const char *from, const char *to) {
 	return fileCompare(from, to);
 }
 
-
+/*
 void SAUtils::sprintf(std::string &s, const std::string fmt, ...)
 {
 	int n, size = 100;
@@ -341,7 +382,7 @@ void SAUtils::sprintf(std::string &s, const std::string fmt, ...)
 		if ((n>0) && ((b = (n<size)) == true)) s.resize(n); else size *= 2;
 	}
 }
-
+*/
 
 bool SAUtils::delDir(const char *path) {
 #ifdef _WIN32

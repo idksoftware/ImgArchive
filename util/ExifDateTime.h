@@ -38,6 +38,7 @@
 namespace simplearchive {
 
 class ExifDateTime {
+	friend class ExifDate;
 	int m_sec;
 	int m_min;
 	int m_hour;

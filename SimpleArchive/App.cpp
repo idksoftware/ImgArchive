@@ -73,6 +73,15 @@ java version "1.7.0_51"
 Java(TM) SE Runtime Environment (build 1.7.0_51-b13)
 Java HotSpot(TM) 64-Bit Server VM (build 24.51-b03, mixed mode)
 */
+
+
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+//#define new DEBUG_NEW
+#endif
+
+
 namespace simplearchive {
 
 
@@ -159,7 +168,7 @@ bool App::Run()
 	case AppOptions::CM_Uncheckin:
 		break;
 	case AppOptions::CM_Archive:
-		if (siaLib.archive() == false) {
+		if (siaLib.archive(nullptr, nullptr, 200, nullptr, nullptr) == false) {
 			return false;
 		}
 		break;
@@ -212,6 +221,7 @@ int main(int argc, char **argv)
 	if (app.Run() == false) {
 		return 0;
 	}
+	_CrtDumpMemoryLeaks();
 	return 1;
 
 }

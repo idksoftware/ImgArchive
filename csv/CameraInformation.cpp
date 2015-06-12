@@ -35,6 +35,12 @@
 #include "MetadataObject.h"
 #include "CameraInformation.h"
 
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+//#define new DEBUG_NEW
+#endif
+
 namespace simplearchive {
 
 class CameraInformationString : public CSVString {
@@ -128,7 +134,7 @@ void CameraInformation::add(MetadataObject &metadataObject) {
 	item->setModel(metadataObject.getModel());
 	//item->setSourceUrl(metadataObject.getSourceUrl());
 	item->setExifVersion(metadataObject.getExifVersion());
-	item->setCaptureDate(metadataObject.getCaptureDate());
+	item->setCaptureDate(metadataObject.columnAt(DB_CAPTUREDATE).toString());
 	item->setExposureProgram(metadataObject.getExposureProgram());
 	item->setIsoSpeedRating(metadataObject.getIsoSpeedRating());
 	item->setExposureBias(metadataObject.getExposureBias());
@@ -220,6 +226,7 @@ bool CameraInformation::load(unsigned int row, MetadataObject &mo) {
 	mo.setFocalLength(item->getFocalLength());
 	mo.setSensingMethod(item->getSensingMethod());
 	mo.setDigitalZoom(item->getDigitalZoom());
+	return true;
 }
 bool CameraInformation::save(unsigned int row, MetadataObject &mo) {
 	if (this->size() < row ) {
@@ -229,7 +236,7 @@ bool CameraInformation::save(unsigned int row, MetadataObject &mo) {
 	item->setMaker(mo.getMaker());
 	item->setModel(mo.getModel());
 	item->setExifVersion(mo.getExifVersion());
-	item->setCaptureDate(mo.getCaptureDate());
+	item->setCaptureDate(mo.columnAt(DB_CAPTUREDATE).toString());
 	item->setExposureProgram(mo.getExposureProgram());
 	item->setIsoSpeedRating(mo.getIsoSpeedRating());
 	item->setExposureBias(mo.getExposureBias());
@@ -240,6 +247,7 @@ bool CameraInformation::save(unsigned int row, MetadataObject &mo) {
 	item->setFocalLength(mo.getFocalLength());
 	item->setSensingMethod(mo.getSensingMethod());
 	item->setDigitalZoom(mo.getDigitalZoom());
+	return true;
 }
 
 const std::string& CameraInformationItem::getAperture() const {

@@ -40,6 +40,12 @@
 #include "DirectoryVisitor.h"
 #include "JournalFile.h"
 
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+//#define new DEBUG_NEW
+#endif
+
 #define MEGABYTE (1474560)
 
 namespace simplearchive {
@@ -97,13 +103,26 @@ bool MakeMedia::initalise(const char *archivePath, const char *distPath, unsigne
 	return true;
 	
 }
-bool MakeMedia::initalise(const char *archivePath, const char *distPath, unsigned long sizeOfMedia, ExifDateTime &startDate, ExifDateTime &endDate) {
+bool MakeMedia::initalise(const char *archivePath, const char *distPath, unsigned long sizeOfMedia, ExifDateTime *startDate, ExifDateTime *endDate) {
+	m_fromBegining = true;
+	m_toEnd = true;
+	m_all = true;
 	m_archivePath = archivePath;
 	m_sizeOfMedia = sizeOfMedia;
 	m_distPath = distPath;
-	m_startDate = startDate;
-	m_endDate = endDate;
-	m_all = false;
+	if (startDate != nullptr) {
+		m_fromBegining = false;
+	}
+
+	if (endDate != nullptr) {
+		m_toEnd = false;
+	}
+	if (m_fromBegining || m_toEnd) {
+		m_all = false;
+	}
+	m_startDate = *startDate;
+	m_endDate = *endDate;
+	
 	return true;
 }
 MakeMedia::~MakeMedia() {
@@ -161,7 +180,7 @@ bool MakeMedia::process() {
 	std::auto_ptr<CSVJournalFile> pJournalFile (new CSVJournalFile);
 
 	for (;current < max; current++) {
-		std::auto_ptr<ImageInfo> ii = csvDBFile.getItemAt(current);
+		std::unique_ptr<ImageInfo> ii = csvDBFile.getItemAt(current);
 		//printf("%d\n", ii->getIdx());
 		size += ii->getSize();
 

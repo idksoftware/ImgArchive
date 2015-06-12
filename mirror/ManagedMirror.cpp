@@ -38,6 +38,12 @@
 #include "Mirror.h"
 #include "CSVDBFile.h"
 
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+//#define new DEBUG_NEW
+#endif
+
 namespace simplearchive {
 
 ManagedMirror::ManagedMirror() {
@@ -95,7 +101,7 @@ bool ManagedMirror::process() {
 	//std::auto_ptr<CSVJournalFile> pJournalFile (new CSVJournalFile);
 
 	for (;current < max; current++) {
-		std::auto_ptr<ImageInfo> ii = csvDBFile.getItemAt(current);
+		std::unique_ptr<ImageInfo> ii = csvDBFile.getItemAt(current);
 		//printf("%d\n", ii->getIdx());
 		size += ii->getSize();
 		//CDate created = CDate::timeNow();

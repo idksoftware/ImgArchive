@@ -45,6 +45,12 @@
 #include "SAUtils.h"
 #include "ExifDate.h"
 
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+//#define new DEBUG_NEW
+#endif
+
 namespace simplearchive {
 
 LogFilename::LogFilename(const char *logfilePath) {
@@ -73,11 +79,12 @@ time_t toDate(const char *str) {
 	int m_day = strtol(numstr.c_str(), NULL, 10);
 	time_t m_timenum;
 	time(&m_timenum);
-	struct tm *timeinfo = gmtime(&m_timenum);
-	timeinfo->tm_year = m_year - 1900;
-	timeinfo->tm_mon = m_month - 1;
-	timeinfo->tm_mday = m_day;
-	m_timenum = mktime(timeinfo);
+	struct tm timeinfo;
+	gmtime_p(&timeinfo, &m_timenum);
+	timeinfo.tm_year = m_year - 1900;
+	timeinfo.tm_mon = m_month - 1;
+	timeinfo.tm_mday = m_day;
+	m_timenum = mktime(&timeinfo);
 	return m_timenum;
 }
 
@@ -159,7 +166,7 @@ const std::string LogFilename::filename() {
 	std::string lastFilename = lastfile();
 	char buf[10];
 	if (m_ver > 0) {
-		sprintf(buf, "%d", m_ver);
+		sprintf_s(buf, 10, "%d", m_ver);
 		std::string path = m_logfilePath + '/' + filename + buf;
 		path = path + ".log";
 		return path;

@@ -37,6 +37,7 @@
 
 #include <string>
 #include <cstdlib>
+#include "CSVArgs.h"
 
 namespace simplearchive {
 
@@ -45,16 +46,19 @@ class ImageId {
 	std::string m_name;
 	unsigned long m_crc;
 	std::string m_md5;
+	std::string m_location;
 public:
-	ImageId();
+	ImageId() {};
 	ImageId(const char *dataString) {
-		std::string m_data = dataString;
-		int delim1 = m_data.find_first_of(':');
-		int delim2 = m_data.find_first_of(delim1, ':');
-		std::string crcStr = m_data.substr(0,delim1);
+		
+		CSVArgs csvArgs(':');
+		csvArgs.process(dataString);
+		
+		std::string crcStr = csvArgs.at(0);
 		m_crc = std::stoul(crcStr.c_str(),NULL,16);
-		std::string name = m_data.substr(delim1, delim2);
-		std::string md5 = m_data.substr(delim2, m_data.length());
+		m_name = csvArgs.at(1);
+		m_md5 = csvArgs.at(2);
+		m_location = csvArgs.getOptional(3);
 	}
 
 	ImageId(const char *name, unsigned long crc, const char *md5) {
@@ -85,17 +89,24 @@ public:
 		return m_name;
 	}
 
+	const std::string& getLocation() const {
+		return m_location;
+	}
+
 	void setName(const std::string& name) {
 		this->m_name = name;
 	}
 };
+
+
 class DupDataFile;
 class BasicExif;
+
 class ImageIndex {
 	std::string m_dbpath;
 	unsigned char m_data[4];
 	bool add(const char *name, unsigned long crc, const char *md5);
-	DupDataFile *findDupDataFile(unsigned long crc);
+	DupDataFile* findDupDataFile(unsigned long crc);
 public:
 	ImageIndex();
 	virtual ~ImageIndex();
@@ -106,7 +117,17 @@ public:
 	*/
 	bool add(const BasicExif &basicExif);
 	bool IsDup(unsigned long crc);
-	bool getData(unsigned long crc);
+	std::string FindDup(unsigned long crc);
+	bool updatePath(unsigned long crc, const char *path);
+	ImageId findDup(unsigned long crc) {
+		std::string data = FindDup(crc);
+		if (data.empty()) {
+			ImageId imageId;
+			return imageId;	// return empty object
+		}
+		ImageId imageId(data.c_str());
+		return imageId;
+	}
 };
 
 } /* namespace simplearchive */

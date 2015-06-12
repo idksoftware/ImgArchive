@@ -36,17 +36,24 @@
 #include "ExifObject.h"
 #include "CLogger.h"
 
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+//#define new DEBUG_NEW
+#endif
+
 namespace simplearchive {
 
-ExifObject::ExifObject() {
+ExifObject::ExifObject() : MTRow(new ExifObjectSchema) {
 	// TODO Auto-generated constructor stub
-
 }
 
 ExifObject::~ExifObject() {
 	// TODO Auto-generated destructor stub
 }
 
+
+/*
 const std::string& ExifObject::getAltitude() const {
 	return m_altitude;
 }
@@ -263,9 +270,10 @@ void ExifObject::setXResolution(const std::string& xResolution) {
 void ExifObject::setYResolution(const std::string& yResolution) {
 	m_yResolution = yResolution;
 }
-
+*/
 void ExifObject::print() {
 	CLogger &logger = CLogger::getLogger();
+	/*
 	logger.log(CLogger::FINE, "Using Exif Color Space: \"%s\"", m_colorSpace.c_str());
 	logger.log(CLogger::FINE, "Using Exif Image Width: \"%s\"", m_imageWidth.c_str());
 	logger.log(CLogger::FINE, "Using Exif Image Height: \"%s\"", m_imageHeight.c_str());
@@ -274,6 +282,7 @@ void ExifObject::print() {
 	logger.log(CLogger::FINE, "Using Exif Artist: \"%s\"", m_artist.c_str());
 	logger.log(CLogger::FINE, "Using Exif X Resolution: \"%s\"", m_xResolution.c_str());
 	logger.log(CLogger::FINE, "Using Exif Y Resolution: \"%s\"", m_yResolution.c_str());
+	*/
 }
 
 } /* namespace simplearchive */

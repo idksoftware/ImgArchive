@@ -47,6 +47,7 @@
 #define TABLE_COPYRIGHT_PROPERTIES	"CopyrightProperties"
 #define TABLE_GPS_PROPERTIES		"GPSProperties"
 #define ROW_BASIC_EXIF				"BasicExif"
+#define ROW_EXTERNAL_EXIF			"ExternalExif"
 
 #define BE_FILENAME_IDX			0
 #define BE_ORGINALNAME_IDX		1
@@ -78,7 +79,47 @@
 #define BE_LATITUDE_IDX			26
 #define BE_LONGITUDE_IDX		27
 #define BE_COPYRIGHT_IDX		28
+#define BE_KEYWORDS_IDX			29
 
+#define EE_DESCRIPTION_IDX      0
+/// Media Properties
+#define EE_WIDTH_IDX            1
+#define EE_HEIGHT_IDX           2
+#define EE_RESOLUTION_IDX       3
+#define EE_DEPTH_IDX            4
+#define EE_VIEW_ROTATION_IDX    5
+#define EE_SAMPLE_COLOR_IDX     6
+#define EE_PAGE_IDX             7
+#define EE_COLOR_SPACE_IDX      8
+#define EE_COMPRESSION_IDX      9
+#define EE_PRIMARY_ENCODING_IDX 10
+/// Camerai Information"
+#define EE_MAKER_IDX            11
+#define EE_MODEL_IDX            12
+#define EE_SOFTWARE_IDX         13
+#define EE_SOURCE_URL_IDX       14
+#define EE_EXIF_VERSION_IDX     15
+#define EE_CAPTURE_DATE_IDX     16
+#define EE_EXPOSURE_PROGRAM_IDX 17
+#define EE_ISO_SPEED_RATING_IDX 18
+#define EE_EXPOSURE_BIAS_IDX    19
+#define EE_EXPOSURE_TIME_IDX    20
+#define EE_APERTURE_IDX         21
+#define EE_METERING_MODE_IDX    22
+#define EE_LIGHT_SOURCE_IDX     23
+#define EE_FLASH_IDX            24
+#define EE_FOCAL_LENGTH_IDX     25
+#define EE_SENSING_METHOD_IDX   26
+#define EE_DIGITAL_ZOOM_IDX     27
+/// GPS
+#define EE_LATITUDE_IDX         28
+#define EE_LONGITUDE_IDX        29
+#define EE_GPS_TIMESTAMP_IDX    30
+//Copyright Properties
+#define EE_COPYRIGHT_IDX        31
+#define EE_USAGE_RIGHTS_IDX     32
+#define EE_COPYRIGHT_URL_IDX    33
+#define EE_MEDIATYPE_IDX		34
 
 
 /// Metadata Defines
@@ -98,43 +139,44 @@
 #define MD_DATE_MODIFIED_IDX    12
 #define MD_DATE_ADDED_IDX       13
 #define MD_DESCRIPTION_IDX      14
+#define MD_KEYWORDS_IDX			15
 	/// Media Properties
-#define MD_WIDTH_IDX            15
-#define MD_HEIGHT_IDX           16
-#define MD_RESOLUTION_IDX       17
-#define MD_DEPTH_IDX            18
-#define MD_VIEW_ROTATION_IDX    19
-#define MD_SAMPLE_COLOR_IDX     20
-#define MD_PAGE_IDX             21
-#define MD_COLOR_SPACE_IDX      22
-#define MD_COMPRESSION_IDX      23
-#define MD_PRIMARY_ENCODING_IDX 24
+#define MD_WIDTH_IDX            16
+#define MD_HEIGHT_IDX           17
+#define MD_RESOLUTION_IDX       18
+#define MD_DEPTH_IDX            19
+#define MD_VIEW_ROTATION_IDX    20
+#define MD_SAMPLE_COLOR_IDX     21
+#define MD_PAGE_IDX             22
+#define MD_COLOR_SPACE_IDX      23
+#define MD_COMPRESSION_IDX      24
+#define MD_PRIMARY_ENCODING_IDX 25
 	/// Camerai Information"
-#define MD_MAKER_IDX            25
-#define MD_MODEL_IDX            26
-#define MD_SOFTWARE_IDX         27
-#define MD_SOURCE_URL_IDX       28
-#define MD_EXIF_VERSION_IDX     29
-#define MD_CAPTURE_DATE_IDX     30
-#define MD_EXPOSURE_PROGRAM_IDX 31
-#define MD_ISO_SPEED_RATING_IDX 32
-#define MD_EXPOSURE_BIAS_IDX    33
-#define MD_EXPOSURE_TIME_IDX    34
-#define MD_APERTURE_IDX         35
-#define MD_METERING_MODE_IDX    36
-#define MD_LIGHT_SOURCE_IDX     37
-#define MD_FLASH_IDX            38
-#define MD_FOCAL_LENGTH_IDX     39
-#define MD_SENSING_METHOD_IDX   40
-#define MD_DIGITAL_ZOOM_IDX     41
+#define MD_MAKER_IDX            26
+#define MD_MODEL_IDX            27
+#define MD_SOFTWARE_IDX         28
+#define MD_SOURCE_URL_IDX       29
+#define MD_EXIF_VERSION_IDX     30
+#define MD_CAPTURE_DATE_IDX     31
+#define MD_EXPOSURE_PROGRAM_IDX 32
+#define MD_ISO_SPEED_RATING_IDX 33
+#define MD_EXPOSURE_BIAS_IDX    34
+#define MD_EXPOSURE_TIME_IDX    35
+#define MD_APERTURE_IDX         36
+#define MD_METERING_MODE_IDX    37
+#define MD_LIGHT_SOURCE_IDX     38
+#define MD_FLASH_IDX            39
+#define MD_FOCAL_LENGTH_IDX     40
+#define MD_SENSING_METHOD_IDX   41
+#define MD_DIGITAL_ZOOM_IDX     42
 	/// GPS
-#define MD_LATITUDE_IDX         42
-#define MD_LONGITUDE_IDX        43
-#define MD_GPS_TIMESTAMP_IDX    44
+#define MD_LATITUDE_IDX         43
+#define MD_LONGITUDE_IDX        44
+#define MD_GPS_TIMESTAMP_IDX    45
 	//Copyright Properties
-#define MD_COPYRIGHT_IDX        45
-#define MD_USAGE_RIGHTS_IDX     46
-#define MD_COPYRIGHT_URL_IDX    47
+#define MD_COPYRIGHT_IDX        46
+#define MD_USAGE_RIGHTS_IDX     47
+#define MD_COPYRIGHT_URL_IDX    48
 
 
 // CSV Database Defines
@@ -245,5 +287,6 @@
 #define DB_USAGERIGHTS     "UsageRights"
 #define DB_VIEWROTATION    "ViewRotation"
 #define DB_WIDTH           "Width"
+#define	DB_KEYWORDS		   "Keywords"
 
 #endif /* DBDEFINES_H_ */

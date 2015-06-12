@@ -36,7 +36,10 @@
 #define IMAGEEXTENTIONS_H_
 
 #include <string>
+#include <memory>
 #include "ImageType.h"
+#include "CSVArgs.h"
+
 namespace simplearchive {
 
 class CExtentionsFile;
@@ -47,21 +50,23 @@ class ExtentionItem {
 	std::string m_mimeType;
 	std::string m_desciption;
 public:
+	ExtentionItem() {
+		m_ext = "";
+		m_type = ImageType::Type::UNKNOWN_EXT;
+		m_mimeType;
+	}
 
 	ExtentionItem(const char *row) {
 		std::string data = row;
 		//printf("%s", data.c_str());
-		int delim1 = data.find_first_of(':');
-		int delim2 = data.find_first_of(":", delim1+1);
-		int delim3 = data.find_first_of(":", delim2+1);
-		m_ext = data.substr(0,delim1);
-		std::string typeStr = data.substr(delim1+1, delim2-(delim1+1));
+		
+		CSVArgs csvArgs(':');
+		csvArgs.process(row);
+		m_ext = csvArgs.at(0);
+		std::string typeStr = csvArgs.at(1);
 		m_type = typeStr.c_str();
-
-		m_mimeType = data.substr(delim2+1, delim3-(delim2+1));
-		m_desciption = data.substr(delim2+1, data.length());
-
-
+		m_mimeType = csvArgs.at(2);
+		m_desciption = csvArgs.at(3);
 	}
 
 	ExtentionItem(std::string &ext,
@@ -109,7 +114,7 @@ public:
 	std::string toString();
 
 };
-
+typedef std::unique_ptr<ExtentionItem> ExtentionItem_Ptr;
 
 class ImageExtentions {
 
@@ -124,6 +129,7 @@ public:
 	virtual ~ImageExtentions();
 	ImageType &getType(const char *filename);
 	ImageType &findType(const char *ext);
+	ExtentionItem &find(const char *ext);
 	static ImageExtentions &get();
 	bool IsValid(const char *filename);
 	bool IsValidXML(const char *filename);

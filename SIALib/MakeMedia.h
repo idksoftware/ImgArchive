@@ -41,6 +41,8 @@ namespace simplearchive {
 
 class MakeMedia {
 	bool m_all;
+	bool m_fromBegining;
+	bool m_toEnd;
 	int m_sizeOfMedia;
 	ExifDateTime m_startDate;
 	ExifDateTime m_endDate;
@@ -51,7 +53,7 @@ public:
 	virtual ~MakeMedia();
 
 	bool initalise(const char *archivePath, const char *distPath, unsigned long sizeOfMedia);
-	bool initalise(const char *archivePath, const char *distPath, unsigned long sizeOfMedia, ExifDateTime &startDate, ExifDateTime &endDate);
+	bool initalise(const char *archivePath, const char *distPath, unsigned long sizeOfMedia, ExifDateTime *startDate, ExifDateTime *endDate);
 	
 	bool process();
 	bool clearBackup();

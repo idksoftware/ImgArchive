@@ -467,6 +467,7 @@ string ArgvParser::usageDescription(unsigned int _width) const
 
 	
 	usage += '\n';
+	/*
 	usage += "usage: sia subcommand [options] [args]\n\n";
 	usage += "Image archive command line client, version 1.0.0.1\n";
 	usage += "Type 'sia help <subcommand>' for help on a specific subcommand.\n\n";
@@ -480,6 +481,8 @@ string ArgvParser::usageDescription(unsigned int _width) const
 	usage += '\n';
 	usage += "Note:\n";
 	usage += formatString("The administration of the archive is carried out by the siaadmin command-line interface.", _width) + "\n";
+	*/
+	usage = formatString(command_header, _width) + "\n";
 	usage += '\n';
 	usage += "Available subcommands:\n";
 
@@ -866,6 +869,11 @@ void ArgvParser::addErrorCode(int _code, const string& _descr)
 void ArgvParser::setIntroductoryDescription(const string& _descr)
 {
     intro_description = _descr;
+}
+
+void ArgvParser::setHeader(const std::string& _option)
+{
+	command_header = _option;
 }
 
 list<string> ArgvParser::getAllOptionAlternatives( unsigned int _key ) const

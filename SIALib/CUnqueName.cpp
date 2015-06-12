@@ -37,6 +37,12 @@
 #include <sstream>
 #include "CUnqueName.h"
 
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+//#define new DEBUG_NEW
+#endif
+
 namespace simplearchive {
 
 CUnqueName::CUnqueName() {
@@ -67,7 +73,7 @@ const char *CUnqueName::make(const char *name) {
 	int dotpos = filename.find_last_of(".");
 	std::string nameonly = filename.substr(0, dotpos);
 	std::string ext = filename.substr(dotpos, filename.length() - dotpos);
-	int vepos = nameonly.find_last_of(m_pre);
+	unsigned int vepos = nameonly.find_last_of(m_pre);
 
 	if (vepos == -1 || (vepos <= (nameonly.length() - 2))) {
 		nameonly = nameonly + m_pre + "1" + m_post;

@@ -31,9 +31,15 @@
 **	Date		: 26-05-2015
 **
 ** #$$@@$$# */
-
+#include <sstream>
 #include "BasicExif.h"
 #include "SimpleExifReader.h"
+
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+//#define new DEBUG_NEW
+#endif
 
 namespace simplearchive {
 
@@ -60,6 +66,26 @@ BasicExif::BasicExif() : MTRow(new BasicExifSchema) {
 #define BE_LONGITUDE_IDX		15
 #define BE_COPYRIGHT_IDX		16
 */
+
+BasicExif::~BasicExif()
+{
+	//printf("+++ Deleting BasicExif +++\n");
+}
+
+std::string FloatToString(float fNumber)
+{
+	std::stringstream os;
+	os << fNumber;
+	return os.str();
+}
+
+std::string IntToString(float fNumber)
+{
+	std::stringstream os;
+	os << fNumber;
+	return os.str();
+}
+
 void BasicExif::copyBasicEXIF(EXIFInfo &exifInfo) {
 
 	columnAt(BE_MAKER_IDX) = exifInfo.Make;
@@ -68,16 +94,16 @@ void BasicExif::copyBasicEXIF(EXIFInfo &exifInfo) {
 	columnAt(BE_WIDTH_IDX) = exifInfo.ImageWidth;
 	columnAt(BE_HEIGHT_IDX) = exifInfo.ImageHeight;
 	columnAt(BE_DESCRIPTION_IDX) = exifInfo.ImageDescription;
-	columnAt(BE_VIEWROTATION_IDX) = exifInfo.Orientation;
+	columnAt(BE_VIEWROTATION_IDX) = IntToString(exifInfo.Orientation);
 	columnAt(BE_COPYRIGHT_IDX) = exifInfo.copyright;
 	ExifDateTime dateTimeDigitized(exifInfo.DateTimeDigitized.c_str());
 	columnAt(BE_CAPTUREDATE_IDX) = dateTimeDigitized;
-	columnAt(BE_EXPOSURETIME_IDX) = exifInfo.ExposureTime;
-	columnAt(BE_APERTURE_IDX) = exifInfo.FNumber;
-	columnAt(BE_ISOSPEEDRATING_IDX) = exifInfo.ISOSpeedRatings;
-	columnAt(BE_EXPOSUREBIAS_IDX) = exifInfo.ExposureBiasValue;
-	columnAt(BE_METERINGMODE_IDX) = exifInfo.MeteringMode;
-	columnAt(BE_FOCALLENGTH_IDX) = exifInfo.FocalLength;
+	columnAt(BE_EXPOSURETIME_IDX) = FloatToString((float)exifInfo.ExposureTime);
+	columnAt(BE_APERTURE_IDX) = FloatToString((float)exifInfo.FNumber);
+	columnAt(BE_ISOSPEEDRATING_IDX) = IntToString(exifInfo.ISOSpeedRatings);
+	columnAt(BE_EXPOSUREBIAS_IDX) = FloatToString((float)exifInfo.ExposureBiasValue);
+	columnAt(BE_METERINGMODE_IDX) = IntToString(exifInfo.MeteringMode);
+	columnAt(BE_FOCALLENGTH_IDX) = FloatToString((float)exifInfo.FocalLength);
 	m_exifFound = true;
 }
 
@@ -151,6 +177,13 @@ const std::string& BasicExif::getPath() const {
 
 void BasicExif::setPath(const std::string& path) {
 	columnAt(BE_FILEPATH_IDX) = path.c_str();
+}
+
+const int BasicExif::getRating() const {
+	return columnAt(BE_RATING_IDX).getInt();
+}
+void BasicExif::setRating(const int rating) {
+	columnAt(BE_RATING_IDX) = rating;
 }
 
 const std::string BasicExif::getExt() const {
@@ -381,7 +414,5 @@ void BasicExif::setSoftware(const std::string& software) {
 //	m_subSecTimeOriginal = subSecTimeOriginal;
 //}
 
-BasicExif::~BasicExif()
-{
-}
+
 } /* namespace simplearchive */

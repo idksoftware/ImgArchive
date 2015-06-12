@@ -40,6 +40,12 @@
 #include "argvparser.h"
 #include "Environment.h"
 
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+//#define new DEBUG_NEW
+#endif
+
 using namespace CommandLineProcessing;
 namespace simplearchive {
 
@@ -78,7 +84,7 @@ bool AppOptions::initalise(int argc, char **argv) {
 		
 	}
 	if (SAUtils::DirExists(homePath.c_str()) == false) {
-		printf("SIA Unable to start?\nEnvironment SA_HOME not set and configuration not in default location.");
+		printf("SIA Unable to start? No archive found in the default location or the environment variable SA_HOME not set.\nUse siaadmin to initalise an archive.");
 		m_error = true;
 		return false;
 	}
@@ -201,6 +207,8 @@ bool AppOptions::initalise(int argc, char **argv) {
 
 	m_argvParser->defineOption("C", "Comment to be included in command", ArgvParser::OptionRequiresValue);
 	m_argvParser->defineOptionAlternative("C", "comment");
+
+	
 
 	m_argvParser->defineCommandOption("add", "comment");
 	m_argvParser->defineCommandOption("add", "logging-level");
@@ -472,6 +480,7 @@ bool AppOptions::initalise(int argc, char **argv) {
 		
 		std::string opt = m_argvParser->optionValue("dry-run");
 		printf(opt.c_str()); printf("\n");
+		
 		config.setDryRun(opt.c_str());
 	}
 

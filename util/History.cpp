@@ -48,6 +48,12 @@
 #include "HistoryLog.h"
 #include "CSVArgs.h"
 
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+//#define new DEBUG_NEW
+#endif
+
 namespace simplearchive {
 class HistoryItem {
 	std::string m_comment;
@@ -194,21 +200,21 @@ std::auto_ptr<HistoryLog>  History::getEntries(int daysAgo) {
 
 	std::vector<std::string> fileList;
 	std::string filepath = "X";
-	std::vector<std::string *> *filelist = SAUtils::getFiles(m_folder.c_str());
+	FileList_Ptr filelist = SAUtils::getFiles_(m_folder.c_str());
 	std::string dateString = LogName::dateString(date);
 	std::auto_ptr<HistoryLog> historyLog(new HistoryLog);
-	for (std::vector<std::string *>::iterator i = filelist->begin(); i != filelist->end(); i++) {
-		std::string *logFile = *i;
+	for (std::vector<std::string>::iterator i = filelist->begin(); i != filelist->end(); i++) {
+		std::string logFile = *i;
 
-		if (logFile->at(0) == '.') {
+		if (logFile.at(0) == '.') {
 			continue;
 		}
-		std::string logFileNoExt = SAUtils::getFilenameNoExt(logFile->c_str());
+		std::string logFileNoExt = SAUtils::getFilenameNoExt(logFile.c_str());
 		std::string datePart = logFileNoExt.substr(4,8);
 		//printf("datePart: %s dateString: %s\n", datePart.c_str(), dateString.c_str());
 		if (dateString.compare(datePart) == 0) {
 			//printf("%s\n", logFile->c_str());
-			readLog(logFile->c_str(), *historyLog);
+			readLog(logFile.c_str(), *historyLog);
 
 		}
 	}

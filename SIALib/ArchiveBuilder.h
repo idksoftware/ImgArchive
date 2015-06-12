@@ -66,12 +66,17 @@ class ArchiveBuilder {
 	std::string m_metatemplatePath;
 	ImageIndex *m_imageIndex;
 	ArchiveDate *m_archiveDate;
-	ViewManager *m_viewManager;
+	
 	bool m_useExternalExifTool;
-	void copyExif(MetadataObject* metadataObject, ExifObject *exifObject);
-	bool CreateMetadataXMLFile(ImagePath &imagePath, CSVDBFile &csvDBFile, MetadataObject &metadataObject);
+	void copyBasicExit(MetadataObject& metadataObject, const BasicExif &eb);
+	void copyExternalExif(MetadataObject& metadataObject, ExifObject &exifObject);
+	//bool CreateMetadataXMLFile(ImagePath &imagePath, CSVDBFile &csvDBFile, MetadataObject &metadataObject);
 	bool CreateImage(const BasicExif &basicExif, ImagePath &imagePath, CSVDBFile &csvDBFile, MetadataObject &metadataObject);
+	
 	bool processHistory(ImagePath &imagePath, const char *filepath, const char *comment, const HistoryEvent &he, int ver);
+	void print(ExifObject &eo);
+	void print(const BasicExif &be);
+	void print(const MetadataObject& mo);
 public:
 	ArchiveBuilder();
 	/// @brief This initalises the archive builder

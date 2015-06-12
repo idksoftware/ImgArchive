@@ -34,12 +34,20 @@
 
 
 
+#include "global.h"
+
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
 #include <cstdarg>
 #include "SummaryFile.h"
 #include "EXifDateTime.h"
+
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+//#define new DEBUG_NEW
+#endif
 
 //using namespace std;
 namespace simplearchive {
@@ -108,17 +116,17 @@ void SummaryFile::doMessage(Level level, Action action, const char *message) {
 void SummaryFile::doSummary() {
 	char message[256];
 
-	sprintf(message, "Added: %d", m_added);
+	sprintf_s(message, 256, "Added: %d", m_added);
 	doMessage(SF_BRIEF, SF_TOTAL, message);
-	sprintf(message, "Rejected: %d", m_rejected);
+	sprintf_s(message, 256, "Rejected: %d", m_rejected);
 	doMessage(SF_BRIEF, SF_TOTAL, message);
-	sprintf(message, "Duplicates: %d", m_duplicates);
+	sprintf_s(message, 256, "Duplicates: %d", m_duplicates);
 	doMessage(SF_BRIEF, SF_TOTAL, message);
-	sprintf(message, "Exported: %d", m_exported);
+	sprintf_s(message, 256, "Exported: %d", m_exported);
 	doMessage(SF_BRIEF, SF_TOTAL, message);
-	sprintf(message, "Checked in: %d", m_checkedIn);
+	sprintf_s(message, 256, "Checked in: %d", m_checkedIn);
 	doMessage(SF_BRIEF, SF_TOTAL, message);
-	sprintf(message, "Checked out: %d", m_chectedOut);
+	sprintf_s(message, 256, "Checked out: %d", m_chectedOut);
 	doMessage(SF_BRIEF, SF_TOTAL, message);
 
 }
@@ -132,7 +140,7 @@ void SummaryFile::log(Level level, Action action, const char *format, ...) {
 	char message[256];
 	va_list args;
 	va_start(args, format);
-	vsprintf(message, format, args);
+	vsprintf_s(message, 256, format, args);
 	doMessage(level, action, message);
 	va_end(args);
 

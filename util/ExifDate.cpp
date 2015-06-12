@@ -39,6 +39,12 @@
 #include <stdio.h>
 #include "ExifDate.h"
 
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+//#define new DEBUG_NEW
+#endif
+
 namespace simplearchive {
 
 ExifDate::ExifDate() {
@@ -66,11 +72,13 @@ ExifDate::ExifDate(const char *str) {
 	numstr = datestr.substr(s, e-s);
 	m_day = strtol(numstr.c_str(), NULL, 10);
 	time(&m_timenum);
-	struct tm *timeinfo = gmtime(&m_timenum);
-	timeinfo->tm_year = m_year - 1900;
-	timeinfo->tm_mon = m_month - 1;
-	timeinfo->tm_mday = m_day;
-	m_timenum = mktime(timeinfo);
+	struct tm timeinfo;
+		
+	gmtime_p(&timeinfo, &m_timenum);
+	timeinfo.tm_year = m_year - 1900;
+	timeinfo.tm_mon = m_month - 1;
+	timeinfo.tm_mday = m_day;
+	m_timenum = mktime(&timeinfo);
 	m_isOk = true;
 }
 
@@ -90,11 +98,12 @@ ExifDate::ExifDate(int y, int m, int d) {
 
 ExifDate::ExifDate(time_t time) {
 	m_timenum = time;
-	struct tm *timeinfo = localtime(&m_timenum);
+	struct tm timeinfo;
+	localtime_p(&timeinfo, &m_timenum);
 
-	m_year = timeinfo->tm_year + 1900;
-	m_month = timeinfo->tm_mon + 1;
-	m_day = timeinfo->tm_mday;
+	m_year = timeinfo.tm_year + 1900;
+	m_month = timeinfo.tm_mon + 1;
+	m_day = timeinfo.tm_mday;
 	
 	m_isOk = true;
 }
@@ -105,11 +114,12 @@ ExifDate::~ExifDate() {
 
 void ExifDate::now() {
 	time(&m_timenum);
-	struct tm *timeinfo = localtime(&m_timenum);
+	struct tm timeinfo;
+	localtime_p(&timeinfo, &m_timenum);
 
-	m_year = timeinfo->tm_year + 1900;
-	m_month = timeinfo->tm_mon + 1;
-	m_day = timeinfo->tm_mday;
+	m_year = timeinfo.tm_year + 1900;
+	m_month = timeinfo.tm_mon + 1;
+	m_day = timeinfo.tm_mday;
 
 	m_isOk = true;
 }
@@ -131,8 +141,9 @@ std::string ExifDate::toFileString() {
 
 }
 
-
+/*
 ExifDate& ExifDate::operator=(ExifDate& d) {
+
 	m_timenum = d.m_timenum;
 	m_year = d.m_year;
 	m_month = d.m_month;
@@ -149,5 +160,6 @@ ExifDate& ExifDate::operator=(ExifDateTime& d) {
 	m_isOk = d.isOk();
 	return *this;
 }
+*/
 
 } /* namespace simplearchive */

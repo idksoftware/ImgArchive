@@ -37,6 +37,7 @@
 
 #include <string>
 #include <memory>
+#include "ExifDateTime.h"
 /*
 */
 namespace simplearchive {
@@ -66,7 +67,7 @@ namespace simplearchive {
 
 		bool mirror(const char *name);
 		
-		bool archive();  //< Create backup volumes
+		bool archive(const char *archivePath, const char *distPath, unsigned long sizeOfMedia, ExifDateTime *startDate, ExifDateTime *endDate);  //< Create backup volumes
 
 	};
 

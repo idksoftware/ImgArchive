@@ -41,10 +41,18 @@
 #include <string>
 #include <streambuf>
 #include <algorithm>
+#include "global.h"
 #include "CIDKCrc.h"
 #include "md5.h"
 #include "BasicExifFactory.h"
 #include "CLogger.h"
+#include "cport.h"
+
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+//#define new DEBUG_NEW
+#endif
 
 namespace simplearchive {
 
@@ -55,14 +63,16 @@ public:
 };
 
 class DupDataFile {
-	DataContainer *m_dataContainer;
+	std::unique_ptr<DataContainer> m_dataContainer;
 	bool compare(std::string c1, std::string c2);
 	void sorted();
-	void insert(unsigned long crc, std::string);
+	// Used to write file
+	std::string m_filePath;
 public:
 	DupDataFile();
 	virtual ~DupDataFile();
 	bool read(const char *datafile);
+	bool write();
 	bool write(const char *datafile);
 	bool add(const char *name, unsigned long crc, const char *md5);
 	int find(unsigned long crc);
@@ -70,11 +80,13 @@ public:
 	bool IsEmpty() {
 		return m_dataContainer->empty();
 	}
-
+	void insert(unsigned long crc, std::string);
+	std::string& getAt(int pos);
+	void putAt(int pos, std::string item);
 };
 
 DupDataFile::DupDataFile() {
-	m_dataContainer = new DataContainer();
+	m_dataContainer.reset(new DataContainer());
 }
 
 DupDataFile::~DupDataFile() {
@@ -87,7 +99,7 @@ bool DupDataFile::read(const char *datafile) {
 	if (file.is_open() == false) {
 		return false;
 	}
-
+	m_filePath = datafile;
 	while (file.getline(text, 100)) {
 		m_dataContainer->push_back(*(new std::string(text)));
 	}
@@ -95,6 +107,11 @@ bool DupDataFile::read(const char *datafile) {
 
 	return true;
 }
+
+bool DupDataFile::write() {
+	return write(m_filePath.c_str());
+}
+
 bool DupDataFile::write(const char *datafile) {
 	std::ofstream file(datafile);
 	if (file.is_open() == false) {
@@ -111,7 +128,7 @@ bool DupDataFile::write(const char *datafile) {
 bool DupDataFile::add(const char *name, unsigned long crc, const char *md5) {
 	//char c_crc[9];
 	std::string crcStr; // = c_crc;
-	SAUtils::sprintf(crcStr, "%.8x", crc);
+	sprintf_p(crcStr, "%.8x", crc);
 	//std::string crcStr = c_crc;
 	std::string nameStr = name;
 	std::string md5Str = md5;
@@ -123,6 +140,14 @@ bool DupDataFile::add(const char *name, unsigned long crc, const char *md5) {
 	return true;
 }
 
+std::string& DupDataFile::getAt(int pos) {
+	return m_dataContainer->at(pos);
+}
+
+void DupDataFile::putAt(int pos, std::string item) {
+	(*m_dataContainer)[pos] = item;
+}
+
 void DupDataFile::insert(unsigned long crc, std::string row) {
 	bool found = false;
 	int pos = 0;
@@ -131,7 +156,7 @@ void DupDataFile::insert(unsigned long crc, std::string row) {
 		//printf("%s", data.c_str());
 		int delim1 = data.find_first_of(':');
 		std::string crcStr = data.substr(0,delim1);
-		int newcrc = std::stoul(crcStr.c_str(), NULL, 16);
+		unsigned long newcrc = std::stoul(crcStr.c_str(), NULL, 16);
 		if (newcrc > crc) {
 			found = true;
 			break;
@@ -228,7 +253,7 @@ bool ImageIndex::init(const char *path) {
 std::string get_file_contents(const char *filename)
 {
 
-	char buff[2048];
+	
 	int count = 0;
 	std::ifstream in(filename, std::ios::in | std::ios::binary);
 	if (in)
@@ -261,7 +286,7 @@ bool ImageIndex::add(const BasicExif &basicExif) {
 }
 
 bool ImageIndex::add(const char *name, unsigned long crc, const char *md5) {
-	char tmppath[3];
+	char tmppath[10];
 
 	m_data[0] = (unsigned char)crc & 0xFF;
 	m_data[1] = (unsigned char)(crc >> 8) & 0xFF;
@@ -269,14 +294,14 @@ bool ImageIndex::add(const char *name, unsigned long crc, const char *md5) {
 	m_data[3] = (unsigned char)(crc >> 3 * 8) & 0xFF;
 
 	//printf("%x %x %x %x : ", m_data[3], m_data[2], m_data[1], m_data[0]);
-	sprintf(tmppath, "%.2x", m_data[3]);
+	sprintf_s(tmppath, 10, "%.2x", m_data[3]);
 	std::string path = m_dbpath + '/' + tmppath;
 	if (SAUtils::DirExists(path.c_str()) == false) {
 		if (SAUtils::mkDir(path.c_str()) == false) {
 			throw std::exception();
 		}
 	}
-	sprintf(tmppath, "%.2x", m_data[2]);
+	sprintf_s(tmppath, 10, "%.2x", m_data[2]);
 	path = path + '/' + tmppath;
 	if (SAUtils::DirExists(path.c_str()) == false) {
 		if (SAUtils::mkDir(path.c_str()) == false) {
@@ -285,7 +310,7 @@ bool ImageIndex::add(const char *name, unsigned long crc, const char *md5) {
 	}
 
 	DupDataFile dupDataFile;
-	sprintf(tmppath, "%.2x", m_data[1]);
+	sprintf_s(tmppath, 10, "%.2x", m_data[1]);
 	path = path + '/' + tmppath;
 	if (SAUtils::FileExists(path.c_str()) == true) {
 		if (dupDataFile.read(path.c_str()) == false) {
@@ -311,23 +336,23 @@ DupDataFile *ImageIndex::findDupDataFile(unsigned long crc) {
 	m_data[3] = (unsigned char)(crc >> 3 * 8) & 0xFF;
 
 	//printf("%x %x %x %x : ", m_data[3], m_data[2], m_data[1], m_data[0]);
-	SAUtils::sprintf(tmppath, "%.2x", m_data[3]);
+	sprintf_p(tmppath, "%.2x", m_data[3]);
 	std::string path = m_dbpath + '/' + tmppath;
 	if (SAUtils::DirExists(path.c_str()) == false) {
 		if (SAUtils::mkDir(path.c_str()) == false) {
 			throw std::exception();
 		}
 	}
-	SAUtils::sprintf(tmppath, "%.2x", m_data[2]);
+	sprintf_p(tmppath, "%.2x", m_data[2]);
 	path = path + '/' + tmppath;
 	if (SAUtils::DirExists(path.c_str()) == false) {
 		if (SAUtils::mkDir(path.c_str()) == false) {
 			throw std::exception();
 		}
 	}
-
+	
 	DupDataFile *dupDataFile = new DupDataFile;
-	SAUtils::sprintf(tmppath, "%.2x", m_data[1]);
+	sprintf_p(tmppath, "%.2x", m_data[1]);
 	path = path + '/' + tmppath;
 	if (SAUtils::FileExists(path.c_str()) == true) {
 		if (dupDataFile->read(path.c_str()) == false) {
@@ -340,25 +365,54 @@ DupDataFile *ImageIndex::findDupDataFile(unsigned long crc) {
 
 bool ImageIndex::IsDup(unsigned long crc) {
 	// this is a possable memory leek
-	DupDataFile *dupDataFile = findDupDataFile(crc);
-	if (dupDataFile->IsEmpty() == true) {
-		delete dupDataFile;
+	std::unique_ptr<DupDataFile> pDupDataFile(findDupDataFile(crc));
+	//DupDataFile *dupDataFile = findDupDataFile(crc);
+	if (pDupDataFile->IsEmpty() == true) {
 		return false;
 	}
-	if (dupDataFile->find(crc) < 0) {
+	if (pDupDataFile->find(crc) < 0) {
 		return false;	// not found
 	}
 	return true;
 }
 
-bool ImageIndex::getData(unsigned long crc) {
+std::string ImageIndex::FindDup(unsigned long crc) {
 	// this is a possable memory leek
-	DupDataFile *dupDataFile = findDupDataFile(crc);
-	if (dupDataFile->IsEmpty() == true) {
-		delete dupDataFile;
+	std::string data;
+	std::unique_ptr<DupDataFile> pDupDataFile(findDupDataFile(crc));
+	//DupDataFile *dupDataFile = findDupDataFile(crc);
+	if (pDupDataFile->IsEmpty() == true) {
+		//delete dupDataFile;
+		return data;
+	}
+	
+	data = pDupDataFile->findData(crc);
+	if (data.empty()) {
+		return data;	// not found
+	}
+	return data;
+}
+
+
+bool ImageIndex::updatePath(unsigned long crc, const char *path) {
+	// this is a possable memory leek
+	std::unique_ptr<DupDataFile> pDupDataFile(findDupDataFile(crc));
+	//DupDataFile *dupDataFile = findDupDataFile(crc);
+	if (pDupDataFile->IsEmpty() == true) {
+		//delete dupDataFile;
 		return false;
 	}
-	std::string data = dupDataFile->findData(crc);
+	int pos = pDupDataFile->find(crc);
+	if (pos < 0) {
+		return false;
+	}
+	std::string& data = pDupDataFile->getAt(pos);
+	data += ':';
+	data += path;
+	//pDupDataFile->putAt(pos, data);
+	if (pDupDataFile->write() == false) {
+		throw std::exception();
+	}
 	return true;
 }
 

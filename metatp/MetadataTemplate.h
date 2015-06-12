@@ -32,11 +32,18 @@
 **
 ** #$$@@$$# */
 
-#include <map>
+
 #ifndef METADATATEMPLATE_H_
 #define METADATATEMPLATE_H_
 
+#include <map>
+#include <mutex>
+#include "ConfigReader.h"
+
 namespace simplearchive {
+
+
+
 /**
  * @brief Metadata Container
  *
@@ -50,19 +57,28 @@ namespace simplearchive {
  */
 
 class MetadataObject;
-class MetadataTemplate {
-	std::map<std::string, std::string *> m_lookup;
-	MetadataObject *m_metadataObject;
-public:
-	MetadataTemplate();
-	virtual ~MetadataTemplate();
-	bool read(const char *datafile);
-	std::string *getValue(const char *key);
 
-	// change to auto ptr
-	MetadataObject* getMetadataObject() {
-		return m_metadataObject;
-	}
+typedef std::unique_ptr<MetadataObject> MetadataObject_ptr;
+typedef std::unique_ptr<Config> Config_ptr;
+//class Config;
+class MetadataTemplate {
+	//std::map<std::string, std::string *> m_lookup;
+	//MetadataObject *m_metadataObject;
+	//static std::unique_ptr<Config> m_templateFile;
+	static Config_ptr m_templateFile;
+	static std::string &getValue(const char *key);
+
+	static std::unique_ptr<MetadataTemplate> m_instance;
+	static std::once_flag m_onceFlag;
+	MetadataTemplate() {};
+	MetadataTemplate(const MetadataTemplate& src);
+	MetadataTemplate& operator=(const MetadataTemplate& rhs);
+
+public:
+	static MetadataTemplate& GetInstance();
+	virtual ~MetadataTemplate();
+	static bool read(const char *datafile);
+	static MetadataObject_ptr getMetadataObject();
 };
 
 } /* namespace simplearchive */

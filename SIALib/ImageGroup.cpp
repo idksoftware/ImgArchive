@@ -39,7 +39,14 @@
 #include <vector>
 #include <stdio.h>
 #include "BasicExifFactory.h"
+#include "BasicExif.h"
 #include "CLogger.h"
+
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+//#define new DEBUG_NEW
+#endif
 
 namespace simplearchive {
 
@@ -64,10 +71,10 @@ ImageContainer *ImageGroup::find(const char *imageFilename) {
 	return NULL;
 }
 //const BasicExifFactory *imageId
-ImageContainer &ImageGroup::add(const BasicExif &basicExif, const MetadataObject *metadataObject = nullptr)
+ImageContainer &ImageGroup::add(std::unique_ptr<BasicExif>& basicExif, std::unique_ptr<MetadataObject>& metadataObject)
 {
 	CLogger &logger = CLogger::getLogger();
-	const std::string &imageFilename = basicExif.getName();
+	const std::string &imageFilename = basicExif->getName();
 	std::string filenameOnly = SAUtils::getFilenameNoExt(imageFilename);
 	ImageContainer *imageContainer = nullptr;
 	if ((imageContainer = find(filenameOnly.c_str())) != nullptr) {
@@ -77,7 +84,7 @@ ImageContainer &ImageGroup::add(const BasicExif &basicExif, const MetadataObject
 	} else {
 		// First Instance with this name.
 		// note all images share the same path in the group.
-		logger.log(CLogger::INFO, "New image name: %s using %s", filenameOnly.c_str(), basicExif.getName().c_str());
+		logger.log(CLogger::INFO, "New image name: %s using %s", filenameOnly.c_str(), basicExif->getName().c_str());
 		imageContainer = new ImageContainer(getPath(), filenameOnly.c_str());
 		imageContainer->add(basicExif, metadataObject);
 		add(imageContainer);
@@ -89,7 +96,7 @@ bool ImageGroup::addMetadata(const char *filename)
 {
 
 	/*
-	ImageExtentions ie = ImageExtentions::get();
+	ImageExtentions& ie = ImageExtentions::get();
 	if (ie.IsValidXML(filename) == false) {
 		return false;
 	}
@@ -104,7 +111,19 @@ bool ImageGroup::addMetadata(const char *filename)
 }
 
 ImageGroup::~ImageGroup() {
-	// TODO Auto-generated destructor stub
+	for (std::vector<ImageContainer *>::iterator i = begin(); i != end(); i++) {
+		ImageContainer *imageContainer = *i;
+		delete imageContainer;
+	}
+	clear();
+}
+
+ImageGroups::~ImageGroups() {
+	for (std::vector<ImageGroup *>::iterator i = begin(); i != end(); i++) {
+		ImageGroup *imageGroup = *i;
+		delete imageGroup;
+	}
+	clear();
 }
 
 } /* namespace simplearchive */

@@ -37,6 +37,7 @@
 #include <time.h>
 #include <string>
 #include "ExifDateTime.h"
+#include "cport.h"
 
 namespace simplearchive {
 
@@ -57,11 +58,12 @@ public:
 		m_year = exifDate.m_year;
 		m_isOk = exifDate.m_isOk;
 		time(&m_timenum);
-		struct tm *timeinfo = gmtime(&m_timenum);
-		timeinfo->tm_year = m_year - 1900;
-		timeinfo->tm_mon = m_month - 1;
-		timeinfo->tm_mday = m_day;
-		m_timenum = mktime(timeinfo);
+		struct tm timeinfo;
+		gmtime_p(&timeinfo, &m_timenum);
+		timeinfo.tm_year = m_year - 1900;
+		timeinfo.tm_mon = m_month - 1;
+		timeinfo.tm_mday = m_day;
+		m_timenum = mktime(&timeinfo);
 		m_isOk = true;
 	}
 	ExifDate(const ExifDateTime &exifDate) {
@@ -71,15 +73,17 @@ public:
 		m_isOk = exifDate.isOk();
 		
 		time(&m_timenum);
-		struct tm *timeinfo = gmtime(&m_timenum);
-		timeinfo->tm_year = m_year - 1900;
-		timeinfo->tm_mon = m_month - 1;
-		timeinfo->tm_mday = m_day;
-		m_timenum = mktime(timeinfo);
+		struct tm timeinfo;
+		gmtime_p(&timeinfo, &m_timenum);
+		timeinfo.tm_year = m_year - 1900;
+		timeinfo.tm_mon = m_month - 1;
+		timeinfo.tm_mday = m_day;
+		m_timenum = mktime(&timeinfo);
 		
 	}
-	ExifDate& operator=(ExifDate& d);
-	ExifDate& operator=(ExifDateTime& d);
+
+	//ExifDate& operator=(ExifDate& d);
+	//ExifDate& operator=(ExifDateTime& d);
 
 	ExifDate &operator=(const ExifDate &exifDate) {
 		m_day = exifDate.m_day;
@@ -87,11 +91,28 @@ public:
 		m_year = exifDate.m_year;
 		m_isOk = exifDate.m_isOk;
 		time(&m_timenum);
-		struct tm *timeinfo = gmtime(&m_timenum);
-		timeinfo->tm_year = m_year - 1900;
-		timeinfo->tm_mon = m_month - 1;
-		timeinfo->tm_mday = m_day;
-		m_timenum = mktime(timeinfo);
+		struct tm timeinfo;
+		gmtime_p(&timeinfo, &m_timenum);
+		timeinfo.tm_year = m_year - 1900;
+		timeinfo.tm_mon = m_month - 1;
+		timeinfo.tm_mday = m_day;
+		m_timenum = mktime(&timeinfo);
+		m_isOk = true;
+		return *this;
+	}
+
+	ExifDate &operator=(const ExifDateTime &exifDate) {
+		m_day = exifDate.m_day;
+		m_month = exifDate.m_month;
+		m_year = exifDate.m_year;
+		m_isOk = exifDate.m_isOk;
+		time(&m_timenum);
+		struct tm timeinfo;
+		gmtime_p(&timeinfo, &m_timenum);
+		timeinfo.tm_year = m_year - 1900;
+		timeinfo.tm_mon = m_month - 1;
+		timeinfo.tm_mday = m_day;
+		m_timenum = mktime(&timeinfo);
 		m_isOk = true;
 		return *this;
 	}

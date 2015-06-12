@@ -43,9 +43,16 @@
 #include "CDate.h"
 #include "CLogger.h"
 #include "BasicExifFactory.h"
+#include "BasicExif.h"
 
 namespace simplearchive {
 
+
+#ifdef _DEBUG
+#undef THIS_FILE
+	static char THIS_FILE[] = __FILE__;
+//#define new DEBUG_NEW
+#endif
 
 
 ImageContainer::ImageContainer(const char *path, const char *imageName) {
@@ -74,11 +81,11 @@ ImageContainer::~ImageContainer() {
 	}
 }
 
-bool ImageContainer::add(const BasicExif &basicExif, const MetadataObject* metadataObject) {
+bool ImageContainer::add(std::unique_ptr<BasicExif> &basicExif, std::unique_ptr<MetadataObject>& metadataObject) {
 	CLogger &logger = CLogger::getLogger();
 
 	//
-	const char *imagefile = basicExif.getName().c_str();
+	const char *imagefile = basicExif->getName().c_str();
 	ImageExtentions &imageExtentions = ImageExtentions::get();
 	ImageType type = imageExtentions.getType(imagefile);
 	switch (type.getType()) {
@@ -86,16 +93,19 @@ bool ImageContainer::add(const BasicExif &basicExif, const MetadataObject* metad
 	case ImageType::PICTURE_EXT:
 		logger.log(CLogger::INFO, "found pic: %s", imagefile);
 		if (m_PictureNode == nullptr) {
+			/* not sure needed
+			if (basicExif->isExifFound()) {
+				const ExifDateTime &dateTime = basicExif->getDateTimeDigitized();
+				logger.log(CLogger::INFO, "Using Exif date: %d ", ((ExifDateTime&)dateTime).toString().c_str());
+				m_Time = dateTime.getTime();
+			}
+			*/
 			logger.log(CLogger::SUMMARY, "Associating: %s with %s", imagefile, m_Name.c_str());
 			m_PictureNode = new ImageNode(type, basicExif, metadataObject);
 		}
 		//m_PictureNode->setImageId(basicExif, metadataObject);
 		
-		if (basicExif.isExifFound()) {
-			const ExifDateTime &dateTime = basicExif.getDateTimeDigitized();
-			logger.log(CLogger::INFO, "Using Exif date: %d ", ((ExifDateTime&)dateTime).toString().c_str());
-			m_Time = dateTime.getTime();
-		}
+		
 
 		/*
 		else {
@@ -123,7 +133,7 @@ bool ImageContainer::add(const BasicExif &basicExif, const MetadataObject* metad
 	case ImageType::UNKNOWN_EXT:
 	default:
 		logger.log(CLogger::ERROR, "No extention found for this file type %s", imagefile);
-		int m_Error;
+		m_error = -1;
 		return false;
 	}
 
@@ -135,8 +145,7 @@ void ImageContainer::PostProcess() {
 	
 	if (m_PictureNode != nullptr) {
 		m_basicExif = &(m_PictureNode->getBasicExif());
-	}
-	if (m_RawNode != nullptr) {
+	} else if (m_RawNode != nullptr) {
 		m_basicExif = &(m_RawNode->getBasicExif());
 	}
 	else {
@@ -189,6 +198,7 @@ void ImageNode::setImageID2Metadata(BasicExifFactory *imageIdData, MetadataObjec
 }
 */
 
+/*
 void ImageNode::setMetadataObject(
 		const MetadataObject*& metadataObject) {
 	m_metadataObject = metadataObject;
@@ -198,5 +208,6 @@ void ImageNode::setMetadataObject(
 		//setImageID2Metadata(m_basicExif, mo);
 	}
 }
+*/
 
 } /* namespace simplearchive */

@@ -36,6 +36,8 @@
 #define CHANGELOG_H_
 #include <fstream>
 #include <iostream>
+#include <memory>
+#include <mutex>
 #include "HistoryEvent.h"
 
 namespace simplearchive {
@@ -47,17 +49,27 @@ public:
 	}
 	static ChangeLog &getLogger();
 	bool log(const char *filename, const char *version, const char *comment, HistoryEvent &he);
+
+	virtual ~ChangeLog();
+
 private:
 
 	ChangeLog();
-	ChangeLog(const ChangeLog&) {};
-	ChangeLog& operator = (const ChangeLog& ) { return *this; }
+
+	static std::unique_ptr<ChangeLog> m_this;
+	static std::once_flag m_onceFlag;
+	
+	ChangeLog(const ChangeLog& src);
+	ChangeLog& operator=(const ChangeLog& rhs);
+
+
+
 
 	static std::string m_filename;
-	static ChangeLog* m_this;
+	
 	static std::ofstream m_logfile;
 	static std::string m_logpath;
-	virtual ~ChangeLog();
+	
 };
 
 } /* namespace simplearchive */

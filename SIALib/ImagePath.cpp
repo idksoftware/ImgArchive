@@ -40,6 +40,12 @@
 #include <iomanip>
 #include "IntegrityManager.h"
 
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+//#define new DEBUG_NEW
+#endif
+
 namespace simplearchive {
 
 std::string ImagePath::m_mainMetadataPath;
@@ -54,6 +60,7 @@ std::string ImagePath::m_shadowSequenceNumberPath;
 
 std::string ImagePath::m_shadowHistory;
 std::string ImagePath::m_shadowCatalog;
+std::string ImagePath::m_shadowJournalPath;
 
 bool ImagePath::settupMainArchiveFolders(const char *pathToArchive, const char *pathToShadow) {
 	if (SAUtils::DirExists(pathToArchive) == false) {
@@ -70,11 +77,12 @@ bool ImagePath::settupMainArchiveFolders(const char *pathToArchive, const char *
 	m_dataFolder += "/root";
 	if (SAUtils::DirExists(m_dataFolder.c_str()) == false) {
 		SAUtils::mkDir(m_dataFolder.c_str());
+
 	}
 	if (m_shadowMetadataPath.empty() == true) {
 		m_shadowMetadataPath = m_dataFolder + "/metadata";
 		m_shadowSequenceNumberPath = m_dataFolder + "/imageid";
-		
+		m_shadowJournalPath = m_dataFolder + "/journal";
 		m_shadowHistory = m_dataFolder + "/history";
 		if (SAUtils::DirExists(m_shadowMetadataPath.c_str()) == false) {
 			SAUtils::mkDir(m_shadowMetadataPath.c_str());
@@ -92,10 +100,8 @@ bool ImagePath::settupMainArchiveFolders(const char *pathToArchive, const char *
 
 ImagePath::ImagePath(time_t time) {
 
-	CDate date = CDate(time);
+	CDate date(time);
 	
-
-
 	int year = date.getYear();
 	int month = date.getMonth();
 	int day = date.getDay();
@@ -188,10 +194,11 @@ bool ImagePath::copyFile(std::string  pathToSourceRoot, std::string file) {
 	std::string from = pathToSourceRoot + "/" + file;
 	std::string to = m_yyyymmddStrPath + '/' + file;
 	
+	// Working Archive
 	if (SAUtils::copy(from.c_str(), to.c_str()) == false) {
 		return false;
 	}
-	// data
+	// Shadow Archive
 	to = m_localShadowDataPath + '/' + file;
 	if (SAUtils::copy(from.c_str(), to.c_str()) == false) {
 		return false;

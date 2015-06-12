@@ -36,98 +36,80 @@
 #include "DBDefines.h"
 #include "MetadataObject.h"
 #include "MetadataTemplate.h"
-#include "ConfigReader.h"
+//#include "ConfigReader.h"
+
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+//#define new DEBUG_NEW
+#endif
 
 namespace simplearchive {
+	
+std::unique_ptr<Config>	MetadataTemplate::m_templateFile(new Config);
+//Config *MetadataTemplate::m_templateFile = 0;
 
-MetadataTemplate::MetadataTemplate() {
-	m_metadataObject = new MetadataObject;
+std::unique_ptr<MetadataTemplate> MetadataTemplate::m_instance;
+std::once_flag MetadataTemplate::m_onceFlag;
 
-	m_lookup.insert(std::make_pair( DB_SEQUENCEID, &(m_metadataObject->m_sequenceId)));
-	//m_lookup.insert(std::make_pair( DB_FILENAME, &(m_metadataObject->m_filename)));
-	//m_lookup.insert(std::make_pair( DB_FILEPATH, &(m_metadataObject->m_filepath)));
-	//m_lookup.insert(std::make_pair( DB_ORGINALNAME, &(m_metadataObject->m_orginalName)));
-	//m_lookup.insert(std::make_pair( DB_UUID, &(m_metadataObject->m_uniqueId)));
-	m_lookup.insert(std::make_pair( DB_LABEL, &(m_metadataObject->m_label)));
-	m_lookup.insert(std::make_pair( DB_RATING, &(m_metadataObject->m_rating)));
-	//m_lookup.insert(std::make_pair( DB_MEDIATYPE, &(m_metadataObject->m_mediaType)));
-	//m_lookup.insert(std::make_pair( DB_MD5, &(m_metadataObject->m_md5)));
-	//m_lookup.insert(std::make_pair( DB_CRC, &(m_metadataObject->m_crc)));
-	//m_lookup.insert(std::make_pair( DB_FILESIZE, &(m_metadataObject->m_fileSize)));
-	/*
-	m_lookup.insert(std::make_pair( DB_DATECREATE, &(m_metadataObject->m_dateCreate)));
-	m_lookup.insert(std::make_pair( DB_DATEMODIFIED, &(m_metadataObject->m_dateModified)));
-	m_lookup.insert(std::make_pair( DB_DATEADDED, &(m_metadataObject->m_dateAdded)));
-	m_lookup.insert(std::make_pair( DB_DESCRIPTION, &(m_metadataObject->m_description)));
-    */
-	/// Media Properties
-	m_lookup.insert(std::make_pair( DB_WIDTH, &(m_metadataObject->m_width)));
-	m_lookup.insert(std::make_pair( DB_HEIGHT, &(m_metadataObject->m_height)));
-	m_lookup.insert(std::make_pair( DB_RESOLUTION, &(m_metadataObject->m_resolution)));
-	m_lookup.insert(std::make_pair( DB_DEPTH, &(m_metadataObject->m_depth)));
-	m_lookup.insert(std::make_pair( DB_VIEWROTATION, &(m_metadataObject->m_viewRotation)));
-	m_lookup.insert(std::make_pair( DB_SAMPLECOLOR, &(m_metadataObject->m_sampleColor)));
-	m_lookup.insert(std::make_pair( DB_PAGE, &(m_metadataObject->m_page)));
-	m_lookup.insert(std::make_pair( DB_COLORSPACE, &(m_metadataObject->m_colorSpace)));
-	m_lookup.insert(std::make_pair( DB_COMPRESSION, &(m_metadataObject->m_compression)));
-	m_lookup.insert(std::make_pair( DB_PRIMARYENCODING, &(m_metadataObject->m_primaryEncoding)));
-	/// Camera Information
-	m_lookup.insert(std::make_pair( DB_MAKER, &(m_metadataObject->m_maker)));
-	m_lookup.insert(std::make_pair( DB_MODEL, &(m_metadataObject->m_model)));
-	m_lookup.insert(std::make_pair( DB_SOFTWARE, &(m_metadataObject->m_software)));
-	m_lookup.insert(std::make_pair( DB_SOURCEURL, &(m_metadataObject->m_sourceURL)));
-	m_lookup.insert(std::make_pair( DB_EXIFVERSION, &(m_metadataObject->m_exifVersion)));
-	m_lookup.insert(std::make_pair( DB_CAPTUREDATE, &(m_metadataObject->m_captureDate)));
-	m_lookup.insert(std::make_pair( DB_EXPOSUREPROGRAM, &(m_metadataObject->m_exposureProgram)));
-	m_lookup.insert(std::make_pair( DB_ISOSPEEDRATING, &(m_metadataObject->m_isoSpeedRating)));
-	m_lookup.insert(std::make_pair( DB_EXPOSUREBIAS, &(m_metadataObject->m_exposureBias)));
-	m_lookup.insert(std::make_pair( DB_EXPOSURETIME, &(m_metadataObject->m_exposureTime)));
-	m_lookup.insert(std::make_pair( DB_APERTURE, &(m_metadataObject->m_aperture)));
-	m_lookup.insert(std::make_pair( DB_METERINGMODE, &(m_metadataObject->m_meteringMode)));
-	m_lookup.insert(std::make_pair( DB_LIGHTSOURCE, &(m_metadataObject->m_lightSource)));
-	m_lookup.insert(std::make_pair( DB_FLASH, &(m_metadataObject->m_flash)));
-	m_lookup.insert(std::make_pair( DB_FOCALLENGTH, &(m_metadataObject->m_focalLength)));
-	m_lookup.insert(std::make_pair( DB_SENSINGMETHOD, &(m_metadataObject->m_sensingMethod)));
-	m_lookup.insert(std::make_pair( DB_DIGITALZOOM, &(m_metadataObject->m_digitalZoom)));
-	/// GPS
-	m_lookup.insert(std::make_pair( DB_LATITUDE, &(m_metadataObject->m_latitude)));
-	m_lookup.insert(std::make_pair( DB_LONGITUDE, &(m_metadataObject->m_longitude)));
-	m_lookup.insert(std::make_pair( DB_GPSTIMESTAMP, &(m_metadataObject->m_gpsTimeStamp)));
-	//Copyright Properties
-	m_lookup.insert(std::make_pair( DB_COPYRIGHT, &(m_metadataObject->m_copyright)));
-	m_lookup.insert(std::make_pair( DB_USAGERIGHTS, &(m_metadataObject->m_usageRights)));
-	m_lookup.insert(std::make_pair( DB_COPYRIGHTURL, &(m_metadataObject->m_copyrightURL)));
-
+MetadataTemplate& MetadataTemplate::GetInstance()
+{
+	std::call_once(m_onceFlag,
+		[] {
+		m_instance.reset(new MetadataTemplate);
+	});
+	return *m_instance.get();
 }
 
-MetadataTemplate::~MetadataTemplate() {
-	// TODO Auto-generated destructor stub
-}
+MetadataTemplate::~MetadataTemplate() {}
 
-std::string *MetadataTemplate::getValue(const char *key) {
-	std::map<std::string, std::string *>::iterator it;
+static std::string default = "";
 
-	if ((it = m_lookup.find(key)) == m_lookup.end()) {
-		return 0;
+std::string& MetadataTemplate::getValue(const char *key) {
+	std::map<std::string, std::string>::iterator it;
+
+	if ((it = m_templateFile->find(key)) == m_templateFile->end()) {
+		return default;
 	}
 	return it->second;
 }
 
 bool MetadataTemplate::read(const char *datafile) {
-	Config templateFile;
+
 	ConfigReader configReader;
-	if (configReader.read(datafile, templateFile) == false) {
+	if (configReader.read(datafile, *m_templateFile) == false) {
 		return false;
 	}
 	//templateFile.printAll();
-	for (std::map<std::string, std::string>::iterator ii = templateFile.begin(); ii != templateFile.end(); ++ii) {
-		std::string *value = getValue((*ii).first.c_str());
+	for (std::map<std::string, std::string>::iterator ii = m_templateFile->begin(); ii != m_templateFile->end(); ++ii) {
+		std::string &value = getValue((*ii).first.c_str());
 		//printf("\"%s\" opt:\"%s\"\n", (*ii).first.c_str(), (*ii).second.c_str());
-		if (value != 0) {
-			*value = (*ii).second.c_str();
-		}
+		//if (value.compare("")) {
+		//	*value = (*ii).second.c_str();
+		//}
 	}
 	return true;
 }
-
+MetadataObject_ptr MetadataTemplate::getMetadataObject() {
+	MetadataObject* metadataObject = new MetadataObject;
+	for (std::map<std::string, std::string>::iterator ii = m_templateFile->begin(); ii != m_templateFile->end(); ++ii) {
+		std::string &value = getValue((*ii).first.c_str());
+		//printf("\"%s\" opt:\"%s\"\n", (*ii).first.c_str(), (*ii).second.c_str());
+		try {
+			MTColumn& col = metadataObject->columnAt((*ii).first.c_str());
+			col = (*ii).second.c_str();
+		}
+		catch (std::invalid_argument &e) {
+			printf("%s", e.what());
+		}
+		catch (MTTypeException &e) {
+			const char *tmp = e.what();
+			printf("%s\n", tmp);
+		}
+		//if (value.compare("")) {
+		//	*value = (*ii).second.c_str();
+		//}
+	}
+	return MetadataObject_ptr(metadataObject);
+}
 } /* namespace simplearchive */

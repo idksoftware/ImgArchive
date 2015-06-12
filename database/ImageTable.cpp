@@ -45,6 +45,12 @@
 //namespace simplearchive {
 
 
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+//#define new DEBUG_NEW
+#endif
+
 ImageTable::ImageTable(Database &db) {
 	m_errcode = SQLITE_OK;
 	m_database = &db;

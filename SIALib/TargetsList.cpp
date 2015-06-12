@@ -37,6 +37,12 @@
 #include "CLogger.h"
 #include "HookCmd.h"
 
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+//#define new DEBUG_NEW
+#endif
+
 namespace simplearchive {
 
 	void ImageItem::processHook() {
@@ -48,10 +54,11 @@ namespace simplearchive {
 	/// This class creates a folder list for
 	class FolderDir : public FolderVisitor {
 
-		static int m_count;
+		static int m_folderCount;
+		static int m_fileCount;
 		static ImageSets *m_imageSets;
 		ImageSet *m_imageSet;
-
+		std::string m_path;
 	protected:
 		virtual bool onStart(const char *path) {
 			CLogger &logger = CLogger::getLogger();
@@ -62,25 +69,28 @@ namespace simplearchive {
 			m_imageSet = new ImageSet(path);
 
 			m_imageSets->insert(m_imageSets->end(), m_imageSet);
-			logger.log(CLogger::SUMMARY, "Starting reading folder \"%s\"%d", path, m_count++);
-			//printf("==== Start ==== %d \n", m_count++);
+			logger.log(CLogger::INFO, "Starting reading folder \"%s\"", path);
+			//printf("==== Start ==== %d \n", m_folderCount++);
 			return true;
 		};
 
 		virtual bool onFile(const char *path) {
+			m_fileCount++;
 			CLogger &logger = CLogger::getLogger();
-			logger.log(CLogger::SUMMARY, "Reading file: %s", path);
+			logger.log(CLogger::INFO, "Reading file: %s", path);
 			m_imageSet->insert(m_imageSet->end(), new ImageItem(path));
 			return true;
 		};
 		virtual bool onDirectory(const char *path) {
+			m_path = path;
+			m_folderCount++;
 			CLogger &logger = CLogger::getLogger();
-			logger.log(CLogger::SUMMARY, "Now reading folder:  %s", path);
+			logger.log(CLogger::INFO, "Now reading folder:  %s", m_path.c_str());
 			return true;
 		};
 		virtual bool onEnd() {
 			CLogger &logger = CLogger::getLogger();
-			logger.log(CLogger::SUMMARY, "Ending reader folder %d", m_count++);
+			logger.log(CLogger::INFO, "Ending reader folder %s", m_path.c_str());
 			return true;
 		};
 		virtual FolderVisitor *make() {
@@ -93,15 +103,31 @@ namespace simplearchive {
 			return m_imageSets;
 		}
 		static void destroy() {
-			m_count = 0;
+			
 			delete m_imageSets;
 			m_imageSets = 0;
 		}
+
+		static int getFileCount() {
+			return m_fileCount;
+		}
+
+		static int getFolderCount() {
+			return m_folderCount;
+		}
 	};
 
-	int FolderDir::m_count = 0;
+	int FolderDir::m_folderCount = 0;
+	int FolderDir::m_fileCount = 0;
 	ImageSets *FolderDir::m_imageSets = 0;
 
+	int TargetsList::getFileCount() {
+		return FolderDir::getFileCount();
+	}
+
+	int TargetsList::getFolderCount() {
+		return FolderDir::getFolderCount();
+	}
 
 	TargetsList::TargetsList()
 	{
@@ -123,7 +149,7 @@ namespace simplearchive {
 		return FolderDir::getImageSets();
 	}
 
-	static void destroy() {
+	void TargetsList::destroy() {
 		FolderDir::destroy();
 	}
 } /* namespace simplearchive */

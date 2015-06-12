@@ -35,6 +35,8 @@
 #ifndef EXIFOBJECT_H_
 #define EXIFOBJECT_H_
 #include <string>
+#include "MetaType.h"
+#include "DBDefines.h"
 
 /*
 #define COMPRESSION		"Compression"
@@ -105,12 +107,58 @@
 */
 
 namespace simplearchive {
+
+	class ExifObjectSchema : public MTTableSchema {
+	public:
+		ExifObjectSchema() : MTTableSchema(ROW_EXTERNAL_EXIF) {
+
+			
+			add(MTSchema(MTSchema::Text, DB_DESCRIPTION));
+			add(MTSchema(MTSchema::Integer, DB_WIDTH));
+			add(MTSchema(MTSchema::Integer, DB_HEIGHT));
+			add(MTSchema(MTSchema::Text, DB_RESOLUTION));
+			add(MTSchema(MTSchema::Text, DB_DEPTH));
+			add(MTSchema(MTSchema::Text, DB_VIEWROTATION));
+			add(MTSchema(MTSchema::Text, DB_SAMPLECOLOR));
+			add(MTSchema(MTSchema::Text, DB_PAGE));
+			add(MTSchema(MTSchema::Text, DB_COLORSPACE));
+			add(MTSchema(MTSchema::Text, DB_COMPRESSION));
+			add(MTSchema(MTSchema::Text, DB_PRIMARYENCODING));
+			add(MTSchema(MTSchema::Text, DB_MAKER));
+			add(MTSchema(MTSchema::Text, DB_MODEL));
+			add(MTSchema(MTSchema::Text, DB_SOFTWARE));
+			add(MTSchema(MTSchema::Text, DB_SOURCEURL));
+			add(MTSchema(MTSchema::Text, DB_EXIFVERSION));
+			add(MTSchema(MTSchema::Date, DB_CAPTUREDATE));
+			add(MTSchema(MTSchema::Text, DB_EXPOSUREPROGRAM));
+			add(MTSchema(MTSchema::Text, DB_ISOSPEEDRATING));
+			add(MTSchema(MTSchema::Text, DB_EXPOSUREBIAS));
+			add(MTSchema(MTSchema::Text, DB_EXPOSURETIME));
+			add(MTSchema(MTSchema::Text, DB_APERTURE));
+			add(MTSchema(MTSchema::Text, DB_METERINGMODE));
+			add(MTSchema(MTSchema::Text, DB_LIGHTSOURCE));
+			add(MTSchema(MTSchema::Text, DB_FLASH));
+			add(MTSchema(MTSchema::Text, DB_FOCALLENGTH));
+			add(MTSchema(MTSchema::Text, DB_SENSINGMETHOD));
+			add(MTSchema(MTSchema::Text, DB_DIGITALZOOM));
+			add(MTSchema(MTSchema::Text, DB_LATITUDE));
+			add(MTSchema(MTSchema::Text, DB_LONGITUDE));
+			add(MTSchema(MTSchema::Text, DB_GPSTIMESTAMP));
+			add(MTSchema(MTSchema::Text, DB_COPYRIGHT));
+			add(MTSchema(MTSchema::Text, DB_USAGERIGHTS));
+			add(MTSchema(MTSchema::Text, DB_COPYRIGHTURL));
+			add(MTSchema(MTSchema::Text, DB_MEDIATYPE));
+		}
+	};
+
+
 /**
  * @brief This class contains the EXIF data for an image.
  */
-class ExifObject {
+class ExifObject : public MTRow {
+		
 	friend class ExternalExifMapper;
-	
+	/*
 	std::string m_compression;
 	std::string m_depth;
 	std::string m_mimetype;	
@@ -164,12 +212,12 @@ class ExifObject {
 	std::string m_altitude;                  // Altitude in meters, relative to sea level
 	std::string m_xResolution;
 	std::string m_yResolution;
-	
+	*/
 public:
 
 	ExifObject();
 	virtual ~ExifObject();
-
+	/*
 	const std::string& getArtist() const {
 		return m_artist;
 	}
@@ -217,8 +265,9 @@ public:
 	const std::string& getExifVersion() const {
 		return 	m_exifVersion;
 	}
-
+	*/
 	void print();
+	/*
 	const std::string& getAltitude() const;
 	void setAltitude(const std::string& altitude);
 	void setArtist(const std::string& artist);
@@ -273,6 +322,7 @@ public:
 	void setSubSecTimeOriginal(const std::string& subSecTimeOriginal);
 	void setXResolution(const std::string& xResolution);
 	void setYResolution(const std::string& yResolution);
+	*/
 };
 
 } /* namespace simplearchive */

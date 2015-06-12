@@ -44,6 +44,12 @@
 //#include "CSVArgs.h"
 #include "ArchiveVisitor.h"
 
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+//#define new DEBUG_NEW
+#endif
+
 namespace simplearchive {
 
 	ArchiveVisitor::ArchiveVisitor(AVAction *folderVisitor) {
@@ -61,10 +67,10 @@ namespace simplearchive {
 
 		m_folderVisitor->onStart();
 		// read years in shadow folder
-		std::vector<std::string *> *filelist = SAUtils::getFiles(path.c_str());
-		for (std::vector<std::string *>::iterator i = filelist->begin(); i != filelist->end(); i++) {
-			std::string *year = *i;
-			char c = (*year)[0];
+		FileList_Ptr filelist = SAUtils::getFiles_(path.c_str());
+		for (std::vector<std::string>::iterator i = filelist->begin(); i != filelist->end(); i++) {
+			std::string year = *i;
+			char c = (year)[0];
 			if (c == '.') {
 				continue;
 			}
@@ -73,36 +79,36 @@ namespace simplearchive {
 			//}
 			// read day folders for this year in shadow folder
 			std::string yearShadow = path;
-			m_folderVisitor->onYearFolder(year->c_str());
+			m_folderVisitor->onYearFolder(year.c_str());
 			yearShadow += '/';
-			yearShadow += *year;
-			std::vector<std::string *> *filelist = SAUtils::getFiles(yearShadow.c_str());
-			for (std::vector<std::string *>::iterator i = filelist->begin(); i != filelist->end(); i++) {
-				std::string *dayfolder = *i;
-				char c = (*dayfolder)[0];
+			yearShadow += year;
+			FileList_Ptr filelist = SAUtils::getFiles_(yearShadow.c_str());
+			for (std::vector<std::string>::iterator i = filelist->begin(); i != filelist->end(); i++) {
+				std::string dayfolder = *i;
+				char c = (dayfolder)[0];
 				if (c == '.') {
 					continue;
 				}
 
-				m_folderVisitor->onDayFolder(dayfolder->c_str());
+				m_folderVisitor->onDayFolder(dayfolder.c_str());
 				std::string dayFolderShadow = yearShadow;
 				dayFolderShadow += '/';
-				dayFolderShadow += *dayfolder;
+				dayFolderShadow += dayfolder;
 				dayFolderShadow += "/data";
 
-				std::vector<std::string *> *filelist = SAUtils::getFiles(dayFolderShadow.c_str());
-				for (std::vector<std::string *>::iterator i = filelist->begin(); i != filelist->end(); i++) {
-					std::string *imageFile = *i;
-					char c = (*imageFile)[0];
+				FileList_Ptr filelist = SAUtils::getFiles_(dayFolderShadow.c_str());
+				for (std::vector<std::string>::iterator i = filelist->begin(); i != filelist->end(); i++) {
+					std::string imageFile = *i;
+					char c = (imageFile)[0];
 					if (c == '.') {
 						continue;
 					}
-					if (SAUtils::getExtention(*imageFile).compare("ver") == 0) {
+					if (SAUtils::getExtention(imageFile).compare("ver") == 0) {
 						continue;
 					}
 				//printf("\t\tImage %s: \n", imageFile->c_str());
 				std::string imagePath = dayFolderShadow;
-				m_folderVisitor->onImage(dayFolderShadow.c_str(), imageFile->c_str());
+				m_folderVisitor->onImage(dayFolderShadow.c_str(), imageFile.c_str());
 			}
 			m_folderVisitor->onDayEnd();
 		}

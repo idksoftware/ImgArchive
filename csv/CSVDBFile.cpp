@@ -43,6 +43,12 @@
 #include "CSVDBFile.h"
 #include "CSVArgs.h"
 
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+//#define new DEBUG_NEW
+#endif
+
 namespace simplearchive {
 
 ImageInfo::ImageInfo(int idx, const char *imagePath, const char *name, unsigned long size, unsigned long crc,
@@ -198,7 +204,13 @@ public:
 			list[i] = 0;
 		}
 	};
-	virtual ~IdxFile() {};
+	virtual ~IdxFile() {
+		for (int i = 0; i < 256; i++) {
+			if (list[i] != 0) {
+				delete list[i];
+			}
+		}
+	};
 	bool read(const char *datafile);
 	bool write(const char *datafile);
 	bool update(int idx, const char *imagePath, const char *name, unsigned long size, unsigned long crc,
@@ -222,7 +234,7 @@ bool CSVDBFile::insert(int idx, const char *imagePath, const char *name, unsigne
 	}
 	//printf("%x: %x %x %x\n",idx,  m_data[2], m_data[1], m_data[0]);
 
-	sprintf(tmppath, "%.3x", m_data[2]);
+	sprintf_s(tmppath, 10, "%.3x", m_data[2]);
 	std::string path = m_dbpath + '/' + tmppath;
 	//printf("%s\n",path.c_str());
 	if (SAUtils::DirExists(path.c_str()) == false) {
@@ -230,7 +242,7 @@ bool CSVDBFile::insert(int idx, const char *imagePath, const char *name, unsigne
 			throw std::exception();
 		}
 	}
-	sprintf(tmppath, "%.3x.csv", m_data[1]);
+	sprintf_s(tmppath, 10, "%.3x.csv", m_data[1]);
 	path = path + '/' + tmppath;
 	IdxFile idxFile;
 	//printf("%s\n",path.c_str());
@@ -264,7 +276,7 @@ int CSVDBFile::getMaxIndex() {
 	}
 	// Folders
 	m_data[3] = getMaxDirIndex(m_dbpath);
-	sprintf(tmppath, "%.3x", m_data[3]);
+	sprintf_s(tmppath, 10, "%.3x", m_data[3]);
 	std::string path = m_dbpath + '/' + tmppath;
 	if (SAUtils::DirExists(path.c_str()) == false) {
 		// if empty and getMaxIndex returned zero no sequence numbers. so create
@@ -278,7 +290,7 @@ int CSVDBFile::getMaxIndex() {
 	// files
 	//printf("%s\n", path.c_str());
 	m_data[2] = getMaxDirIndex(path);
-	sprintf(tmppath, "%.3x.csv", m_data[2]);
+	sprintf_s(tmppath, 10, "%.3x.csv", m_data[2]);
 	path = path + '/' + tmppath;
 	if (SAUtils::FileExists(path.c_str()) == false) {
 		if (m_data[2] != 0) {
@@ -303,7 +315,7 @@ int CSVDBFile::getNextIndex(int current) {
 	m_data[0] = (unsigned int)current & 0xFF;
 	m_data[1] = (unsigned int)(current >> 8) & 0xFFF;
 	m_data[2] = (unsigned int)(current >> (12 + 8)) & 0xFFF;
-	sprintf(tmppath, "%.3x", m_data[3]);
+	sprintf_s(tmppath, 10, "%.3x", m_data[3]);
 	std::string path = m_dbpath + '/' + tmppath;
 	if (SAUtils::DirExists(path.c_str()) == false) {
 		// if empty and getMaxIndex returned zero no sequence numbers. so create
@@ -317,7 +329,7 @@ int CSVDBFile::getNextIndex(int current) {
 	// files
 	//printf("%s\n", path.c_str());
 	m_data[2] = getMaxDirIndex(path);
-	sprintf(tmppath, "%.3x.csv", m_data[2]);
+	sprintf_s(tmppath, 10, "%.3x.csv", m_data[2]);
 	path = path + '/' + tmppath;
 	if (SAUtils::FileExists(path.c_str()) == false) {
 		if (m_data[2] != 0) {
@@ -345,14 +357,14 @@ int CSVDBFile::getMaxDirIndex(std::string &path) {
 
 	int max = 0;
 
-	std::vector<std::string *> *filelist = SAUtils::getFiles(path.c_str());
-	for (std::vector<std::string *>::iterator i = filelist->begin(); i != filelist->end(); i++) {
-		std::string *name = *i;
-		if (!(name->compare(".")) || !(name->compare(".."))) {
+	FileList_Ptr filelist = SAUtils::getFiles_(path.c_str());
+	for (std::vector<std::string>::iterator i = filelist->begin(); i != filelist->end(); i++) {
+		std::string name = *i;
+		if (!(name.compare(".")) || !(name.compare(".."))) {
 			continue;
 		}
-		//printf("%s", name->c_str());
-		int idx = strtol(name->c_str(), NULL, 16);
+		//printf("%s", name.c_str());
+		int idx = strtol(name.c_str(), NULL, 16);
 		if (idx > max) {
 			max = idx;
 		}
@@ -361,7 +373,7 @@ int CSVDBFile::getMaxDirIndex(std::string &path) {
 	return max;
 }
 
-std::auto_ptr<ImageInfo> CSVDBFile::getItemAt(int idx) {
+std::unique_ptr<ImageInfo> CSVDBFile::getItemAt(int idx) {
 	char tmppath[10];
 
 	m_data[0] = (unsigned int)idx & 0xFF;
@@ -373,13 +385,13 @@ std::auto_ptr<ImageInfo> CSVDBFile::getItemAt(int idx) {
 	}
 	//printf("%x: %x %x %x\n",idx,  m_data[2], m_data[1], m_data[0]);
 
-	sprintf(tmppath, "%.3x", m_data[2]);
+	sprintf_s(tmppath, 10, "%.3x", m_data[2]);
 	std::string path = m_dbpath + '/' + tmppath;
 	//printf("%s\n",path.c_str());
 	if (SAUtils::DirExists(path.c_str()) == false) {
 		throw std::exception();
 	}
-	sprintf(tmppath, "%.3x.csv", m_data[1]);
+	sprintf_s(tmppath, 10, "%.3x.csv", m_data[1]);
 	path = path + '/' + tmppath;
 	IdxFile idxFile;
 	//printf("%s\n",path.c_str());
@@ -394,7 +406,7 @@ std::auto_ptr<ImageInfo> CSVDBFile::getItemAt(int idx) {
 	if ((item = idxFile.find(idx)) == 0) {
 		throw std::exception();
 	}
-	std::auto_ptr<ImageInfo> ii = item->getImageInfo();
+	std::unique_ptr<ImageInfo> ii = item->getImageInfo();
 	return ii;
 
 
@@ -412,7 +424,7 @@ unsigned long CSVDBFile::findSize(unsigned int idx) {
 	}
 	//printf("%x: %x %x %x\n",idx,  m_data[2], m_data[1], m_data[0]);
 
-	sprintf(tmppath, "%.3x", m_data[2]);
+	sprintf_s(tmppath, 10, "%.3x", m_data[2]);
 	std::string path = m_dbpath + '/' + tmppath;
 	//printf("%s\n",path.c_str());
 	if (SAUtils::DirExists(path.c_str()) == false) {
@@ -420,7 +432,7 @@ unsigned long CSVDBFile::findSize(unsigned int idx) {
 			return 0;
 		}
 	}
-	sprintf(tmppath, "%.3x.csv", m_data[1]);
+	sprintf_s(tmppath, 10, "%.3x.csv", m_data[1]);
 	path = path + '/' + tmppath;
 	IdxFile idxFile;
 	//printf("%s\n",path.c_str());
@@ -451,7 +463,7 @@ const char* CSVDBFile::findPath(unsigned int idx) {
 	}
 	//printf("%x: %x %x %x\n",idx,  m_data[2], m_data[1], m_data[0]);
 
-	sprintf(tmppath, "%.3x", m_data[2]);
+	sprintf_s(tmppath, 10, "%.3x", m_data[2]);
 	std::string path = m_dbpath + '/' + tmppath;
 	//printf("%s\n",path.c_str());
 	if (SAUtils::DirExists(path.c_str()) == false) {
@@ -459,7 +471,7 @@ const char* CSVDBFile::findPath(unsigned int idx) {
 			return 0;
 		}
 	}
-	sprintf(tmppath, "%.3x.csv", m_data[1]);
+	sprintf_s(tmppath, 10, "%.3x.csv", m_data[1]);
 	path = path + '/' + tmppath;
 	IdxFile idxFile;
 	//printf("%s\n",path.c_str());

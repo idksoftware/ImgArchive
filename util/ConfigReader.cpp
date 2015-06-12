@@ -45,6 +45,12 @@
 #include "ConfigReader.h"
 #include "CLogger.h"
 
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+//#define new DEBUG_NEW
+#endif
+
 
 namespace simplearchive {
 
@@ -61,7 +67,7 @@ void Config::printAll() {
 		empty = false;
 	}
 	if (empty) {
-		std::cout << "Empty" << '\n';
+		//std::cout << "Empty" << '\n';
 	} else {
 		std::cout << "=== Ending ===\n";
 	}
@@ -249,6 +255,7 @@ bool ConfigWriter::add(const char *cmd, const char *options, Config &config) {
 	std::string cmdp(cmd);
 	std::string optionp(options);
 	config[(cmdp)] = (optionp);
+	return true;
 }
 
 bool ConfigWriter::remove(const char *cmd, Config &config) {
@@ -271,6 +278,7 @@ bool ConfigWriter::write(const char *datafile, Config &config) {
 		file << ii->first << "=" << ii->second << '\n';
 		//std::cout << ii->first << "=" << ii->second << '\n';
 	}
+	return true;
 }
 
 } /* namespace simplearchive */

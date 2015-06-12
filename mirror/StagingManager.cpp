@@ -42,6 +42,12 @@
 #include"SAUtils.h"
 
 
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+//#define new DEBUG_NEW
+#endif
+
 namespace simplearchive {
 
 static int m_count = 0;
@@ -80,13 +86,13 @@ bool StagingManager::put(const char *path) {
 
 bool StagingManager::putMirror() {
 
-	std::vector<std::string *> *filelist = SAUtils::getFiles(m_stagingFolder.c_str());
+	FileList_Ptr filelist = SAUtils::getFiles_(m_stagingFolder.c_str());
 	if (filelist == 0) {
 		return false;
 	}
-	for (std::vector<std::string *>::iterator i = filelist->begin(); i != filelist->end(); i++) {
-		std::string *tmpPtr = *i;
-		std::string filename = *tmpPtr;
+	for (std::vector<std::string>::iterator i = filelist->begin(); i != filelist->end(); i++) {
+		std::string tmpPtr = *i;
+		std::string filename = tmpPtr;
 		std::string ext = SAUtils::getExtention(filename);
 		std::string name = SAUtils::getFilenameNoExt(filename);
 		if (ext.compare("txt") == 0) {

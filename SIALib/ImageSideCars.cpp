@@ -36,6 +36,12 @@
 #include "ImageSideCar.h"
 #include "MetadataObject.h"
 
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+//#define new DEBUG_NEW
+#endif
+
 namespace simplearchive {
 
 SideCarItem::SideCarItem(const char * sequenceId, const char * uniqueId, const char * crc,

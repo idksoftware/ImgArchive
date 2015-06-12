@@ -39,6 +39,12 @@
 #include "CheckDisk.h"
 
 
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+//#define new DEBUG_NEW
+#endif
+
 namespace simplearchive {
 
 VerifyMirror::VerifyMirror() {
@@ -53,10 +59,10 @@ VerifyMirror::~VerifyMirror() {
 bool VerifyMirror::verifyMirror(const char *mirrorRoot, const char *chkRoot) {
 	CheckDisk checkDisk;
 	// Read the list of check files
-	std::vector<std::string *> *filelist = SAUtils::getFiles(chkRoot);
-	for (std::vector<std::string *>::iterator i = filelist->begin(); i != filelist->end(); i++) {
-			std::string *name = *i;
-			std::string dirname = *name;
+	FileList_Ptr filelist = SAUtils::getFiles_(chkRoot);
+	for (std::vector<std::string>::iterator i = filelist->begin(); i != filelist->end(); i++) {
+			std::string name = *i;
+			std::string dirname = name;
 			std::string chkpath = mirrorRoot;
 			chkpath += "/.chk/";
 			chkpath += dirname.c_str();
@@ -74,13 +80,13 @@ bool VerifyMirror::verifyMirror(const char *mirrorRoot, const char *chkRoot) {
 bool VerifyMirror::verifySource(const char *mirrorRoot, const char *chkRoot) {
 	bool errors = false;
 	CheckDisk checkDisk;
-	std::vector<std::string *> *filelist = SAUtils::getFiles(chkRoot);
-	for (std::vector<std::string *>::iterator i = filelist->begin(); i != filelist->end(); i++) {
-			std::string *name = *i;
-			if (name->compare(".") == 0 || name->compare("..") == 0 ) {
+	FileList_Ptr filelist = SAUtils::getFiles_(chkRoot);
+	for (std::vector<std::string>::iterator i = filelist->begin(); i != filelist->end(); i++) {
+			std::string name = *i;
+			if (name.compare(".") == 0 || name.compare("..") == 0 ) {
 				continue;
 			}
-			std::string dirname = *name;
+			std::string dirname = name;
 			std::string chkpath = chkRoot;
 			chkpath += "/";
 			chkpath += dirname.c_str();

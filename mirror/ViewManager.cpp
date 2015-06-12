@@ -44,13 +44,31 @@
 #include "CSVArgs.h"
 #include "AppPaths.h"
 
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+//#define new DEBUG_NEW
+#endif
+
 namespace simplearchive {
 
 std::string ViewManager::m_confpath;
-ViewManager *ViewManager::m_this = 0;
+
 std::string ViewManager::m_archiveRoot;
 std::string ViewManager::m_masterViewPath;
 ViewItemContainer *ViewManager::m_pContainer = 0;
+
+
+
+std::unique_ptr<ViewManager> ViewManager::m_instance;
+std::once_flag ViewManager::m_onceFlag;
+
+ViewManager& ViewManager::GetInstance()
+{
+	// Add safe guard against not calling initalise()  
+	return *m_instance.get();
+}
+
 
 /**
 	This is a View Item i.e. a View not the items in the view.
@@ -124,7 +142,7 @@ private:
 	bool processSearch(const char *setFile, bool include);
 	void findImage();
 	bool copyFile(const char*source, const char *distfile);
-	bool add(std::auto_ptr<ImageInfo> imageInfo);
+	bool add(std::unique_ptr<ImageInfo>& imageInfo);
 public:
 
 	ViewItem(std::string &root, std::string &path) {
@@ -389,7 +407,7 @@ bool ViewItem::add(int id) {
 	std::string indexPath = m_archivePath;
 	indexPath += IMAGEID_FOLDER;
 	CSVDBFile csvDBFile(indexPath.c_str());
-	std::auto_ptr<ImageInfo> ii = csvDBFile.getItemAt(id);
+	std::unique_ptr<ImageInfo> ii = csvDBFile.getItemAt(id);
 	switch (getSet()) {
 		/*
 	case VS_IncludeSet:
@@ -425,7 +443,7 @@ bool ViewItem::add(int id) {
 	//findImage();
 }
 
-bool ViewItem::add(std::auto_ptr<ImageInfo> imageInfo) {
+bool ViewItem::add(std::unique_ptr<ImageInfo>& imageInfo) {
 
 	std::string relpath = imageInfo->getImagePath();
 	// source
@@ -494,34 +512,34 @@ bool ViewItem::processSet(const char *setFile, bool include) {
 
 void ViewItem::findImage() {
 
-	std::vector<std::string *> *filelist = SAUtils::getFiles(m_archivePath.c_str());
+	FileList_Ptr filelist = SAUtils::getFiles_(m_archivePath.c_str());
 
-	for (std::vector<std::string *>::iterator i = filelist->begin(); i != filelist->end(); i++) {
-		std::string *name = *i;
-		if ((*name)[0] == '.') {
+	for (std::vector<std::string>::iterator i = filelist->begin(); i != filelist->end(); i++) {
+		std::string name = *i;
+		if ((name)[0] == '.') {
 			continue;
 		}
-		printf("name %s\n", name->c_str());
+		printf("name %s\n", name.c_str());
 		std::string path = m_archivePath;
 		path += '/';
-		path += name->c_str();
-		std::vector<std::string *> *filelist = SAUtils::getFiles(path.c_str());
-		for (std::vector<std::string *>::iterator i = filelist->begin(); i != filelist->end(); i++) {
-			std::string *name = *i;
-			if ((*name)[0] == '.') {
+		path += name.c_str();
+		FileList_Ptr filelist = SAUtils::getFiles_(path.c_str());
+		for (std::vector<std::string>::iterator i = filelist->begin(); i != filelist->end(); i++) {
+			std::string name = *i;
+			if ((name)[0] == '.') {
 				continue;
 			}
-			printf("name %s\n", name->c_str());
+			printf("name %s\n", name.c_str());
 			std::string filepath = path;
 			filepath += '/';
-			filepath += name->c_str();
-			std::vector<std::string *> *filelist = SAUtils::getFiles(filepath.c_str());
-			for (std::vector<std::string *>::iterator i = filelist->begin(); i != filelist->end(); i++) {
-				std::string *name = *i;
-				if ((*name)[0] == '.') {
+			filepath += name.c_str();
+			FileList_Ptr filelist = SAUtils::getFiles_(filepath.c_str());
+			for (std::vector<std::string>::iterator i = filelist->begin(); i != filelist->end(); i++) {
+				std::string name = *i;
+				if ((name)[0] == '.') {
 					continue;
 				}
-				printf("name %s\n", name->c_str());
+				printf("name %s\n", name.c_str());
 			}
 		}
 	}
@@ -544,7 +562,7 @@ bool ViewItem::processAll() {
 	int current = 0;
 
 	for (;current <= max; current++) {
-		std::auto_ptr<ImageInfo> ii = csvDBFile.getItemAt(current);
+		std::unique_ptr<ImageInfo> ii = csvDBFile.getItemAt(current);
 		if (add(ii) == false) {
 			return false;
 		}
@@ -605,11 +623,15 @@ bool ViewManager::initalise(const char *archiveRoot, const char *confpath) {
 	CLogger &logger = CLogger::getLogger();
 	m_confpath = confpath;
 	m_archiveRoot = archiveRoot;
+	
+	std::call_once(m_onceFlag,
+		[] {
+		m_instance.reset(new ViewManager);
+	});
 
-	if (m_this == 0) {
-		m_this = new ViewManager;
-	}
-	if (m_this->readConf() == false) {
+	ViewManager *viewManager = m_instance.get();
+
+	if (viewManager->readConf() == false) {
 		logger.log(CLogger::ERROR, "Cannot read view config file: \"%s\"", confpath);
 		return false;
 	}

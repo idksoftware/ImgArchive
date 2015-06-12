@@ -38,6 +38,12 @@
 #include <stdio.h> 
 #include <windows.h> 
 
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+//#define new DEBUG_NEW
+#endif
+
 #define BUFSIZE 4096 
 
 static HANDLE hChildStdinRd, hChildStdinWr, hChildStdinWrDup,

@@ -44,6 +44,12 @@
 #include "CheckDisk.h"
 #include "VerifyMirror.h"
 
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+//#define new DEBUG_NEW
+#endif
+
 namespace simplearchive {
 
 Mirror *Mirror::m_this = 0;
@@ -418,7 +424,7 @@ bool Mirror::verifyMirrors() {
 }
 
 bool Mirror::verifySource() {
-	int ret = true;
+	bool ret = true;
 	VerifyMirror verifyMirror;
 	for (std::vector<MirrorItem>::iterator i = m_pContainer->begin(); i != m_pContainer->end(); i++) {
 		MirrorItem &data = *i;

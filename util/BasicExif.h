@@ -94,7 +94,7 @@ public:
 		add(MTSchema(MTSchema::Integer, DB_HEIGHT));
 		//add(MTSchema(MTSchema::Text, DB_RESOLUTION));
 		//add(MTSchema(MTSchema::Text, DB_DEPTH));
-		add(MTSchema(MTSchema::Integer, DB_VIEWROTATION));
+		add(MTSchema(MTSchema::Text, DB_VIEWROTATION));
 		//add(MTSchema(MTSchema::Text, DB_SAMPLECOLOR));
 		//add(MTSchema(MTSchema::Text, DB_PAGE));
 		//add(MTSchema(MTSchema::Text, DB_COLORSPACE));
@@ -107,20 +107,21 @@ public:
 		add(MTSchema(MTSchema::Text, DB_EXIFVERSION));
 		add(MTSchema(MTSchema::Date, DB_CAPTUREDATE));
 		//add(MTSchema(MTSchema::Text, DB_EXPOSUREPROGRAM));
-		add(MTSchema(MTSchema::Integer, DB_ISOSPEEDRATING));
-		add(MTSchema(MTSchema::Float, DB_EXPOSUREBIAS));
-		add(MTSchema(MTSchema::Float, DB_EXPOSURETIME));
-		add(MTSchema(MTSchema::Float, DB_APERTURE));
-		add(MTSchema(MTSchema::Integer, DB_METERINGMODE));
+		add(MTSchema(MTSchema::Text, DB_ISOSPEEDRATING));
+		add(MTSchema(MTSchema::Text, DB_EXPOSUREBIAS));
+		add(MTSchema(MTSchema::Text, DB_EXPOSURETIME));
+		add(MTSchema(MTSchema::Text, DB_APERTURE));
+		add(MTSchema(MTSchema::Text, DB_METERINGMODE));
 		//add(MTSchema(MTSchema::Text, DB_LIGHTSOURCE));
 		//add(MTSchema(MTSchema::Text, DB_FLASH));
-		add(MTSchema(MTSchema::Float, DB_FOCALLENGTH));
+		add(MTSchema(MTSchema::Text, DB_FOCALLENGTH));
 		//add(MTSchema(MTSchema::Text, DB_SENSINGMETHOD));
 		//add(MTSchema(MTSchema::Text, DB_DIGITALZOOM));
-		add(MTSchema(MTSchema::Float, DB_LATITUDE));
-		add(MTSchema(MTSchema::Float, DB_LONGITUDE));
+		add(MTSchema(MTSchema::Text, DB_LATITUDE));
+		add(MTSchema(MTSchema::Text, DB_LONGITUDE));
 		//add(MTSchema(MTSchema::Text, DB_GPSTIMESTAMP));
 		add(MTSchema(MTSchema::Text, DB_COPYRIGHT));
+		add(MTSchema(MTSchema::Text, DB_KEYWORDS));
 		//add(MTSchema(MTSchema::Text, DB_USAGERIGHTS));
 		//add(MTSchema(MTSchema::Text, DB_COPYRIGHTURL));
 	}
@@ -226,6 +227,9 @@ public:
 
 	const std::string& getPath() const;
 	void setPath(const std::string& path);
+
+	const int getRating() const;
+	void setRating(const int rating);
 
 	const std::string getExt() const;
 	void setCreateTime(ExifDateTime &time);

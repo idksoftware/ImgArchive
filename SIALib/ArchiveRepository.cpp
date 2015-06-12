@@ -56,6 +56,12 @@
 #include "XMLWriter.h"
 #include "CLogger.h"
 
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+//#define new DEBUG_NEW
+#endif
+
 namespace simplearchive {
 using namespace std;
 
@@ -116,7 +122,7 @@ bool ArchiveRepository::checkout(const char *filepath, const char *comment) {
 	int idx = version.getVersion();
 	version.CopyDataVersion2Old();
 	char buff[128];
-	sprintf(buff, "%.4d", idx);
+	sprintf_s(buff, 128, "%.4d", idx);
 	History &history = History::getHistory();
 	HistoryEvent he(HistoryEvent::CHECKOUT);
 	history.add(filepath, buff, comment, he);
@@ -154,7 +160,7 @@ bool ArchiveRepository::checkin(const char *filepath, const char *comment) {
 	//printf("New Version %s", newNamePath);
 	// use the above for a log message
 	int idx = version.getVersion();
-	sprintf(buff, "%.4d", idx);
+	sprintf_s(buff, 128, "%.4d", idx);
 	ImageHistory imageHistory(hstpath.c_str());
 
 	History &history = History::getHistory();
@@ -193,7 +199,7 @@ bool ArchiveRepository::uncheckout(const char *filepath, const char *comment) {
 	if (idx < 0) {
 		// log error
 	}
-	sprintf(buff, "%.4d", idx);
+	sprintf_s(buff, 128, "%.4d", idx);
 	ImageHistory imageHistory(hstpath.c_str());
 	const HistoryEvent he(HistoryEvent::UNCHECKOUT);
 	//imageHistory.add(filepath, buff, comment, he);
@@ -284,7 +290,7 @@ bool ArchiveRepository::processHistory(ImagePath &imagePath, const char *filepat
 	ImageHistory imageHistory(hstpath.c_str());
 	// Add the comment
 	char buff[128];
-	sprintf(buff, "%.4d", ver);
+	sprintf_s(buff, 128, "%.4d", ver);
 
 	History &history = History::getHistory();
 	imageHistory.add(filepath, buff, comment, he);

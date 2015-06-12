@@ -99,42 +99,45 @@ bool App::initalise(int argc, char **argv) {
 
 bool App::Run()
 {
+	// Find if the archive exists
+	AppOptions &appOptions = AppOptions::get();
+	if (appOptions.isConfiguratedOk() == false) {
+		if (appOptions.getCommandMode() == AppOptions::CM_InitArchive) {
+#ifdef _DEBUG
+			if (CreateArchive("c:/temp") == false) {
+#else
+			if (CreateArchive(config.getArchivePath()) == false) {
+#endif
+				return false;
+			}
+			printf("\n\nInit Archive\n");
+			return true;
+		}
+		return false;
+	}
 
 	SIALib siaLib;
 	siaLib.initalise();
 
-	
-	AppOptions &appOptions = AppOptions::get();
 	CAppConfig &config = CAppConfig::get();
 	
 
 	switch (appOptions.getCommandMode()) {
 	case AppOptions::CM_InitArchive:
+		if (appOptions.isConfiguratedOk() == true) {
+			// Do not create a new archive. The old one needs to be deleted?
+			return false;
+		}
+#ifdef _DEBUG
+		if (CreateArchive("c:/temp") == false) {
+#else
 		if (CreateArchive(config.getArchivePath()) == false) {
+#endif
 			return false;
 		}
 		printf("\n\nInit Archive\n");
 		break;
-	case AppOptions::CM_Import:
-		siaLib.Import();
-		break;
-	case AppOptions::CM_Export:
-		break;
-	case AppOptions::CM_Checkout:
-		if (siaLib.checkout(appOptions.getImageAddress(), appOptions.getComment()) == false) {
-			return false;
-		}
-		break;
-	case AppOptions::CM_Checkin:
-		if (siaLib.checkin(appOptions.getImageAddress(), appOptions.getComment()) == false) {
-			return false;
-		}
-		break;
-	case AppOptions::CM_UnCheckout:
-		if (siaLib.uncheckout(appOptions.getImageAddress(), appOptions.getComment()) == false) {
-			return false;
-		}
-		break;
+		
 	case AppOptions::CM_View:
 	{
 		if (siaLib.view(appOptions.getName()) == false) {
@@ -152,7 +155,10 @@ bool App::Run()
 	}
 	case AppOptions::CM_Validate:
 	{
-		
+		if (appOptions.isConfiguratedOk() == true) {
+			// Do not create a new archive. The old one needs to be deleted?
+			return false;
+		}
 		IntegrityManager &integrityManager = IntegrityManager::get(config.getShadowPath());
 		
 		if (integrityManager.makeList() == false) {
@@ -161,13 +167,7 @@ bool App::Run()
 		//}
 		break;
 	}
-	case AppOptions::CM_Uncheckin:
-		break;
-	case AppOptions::CM_Archive:
-		if (siaLib.archive() == false) {
-			return false;
-		}
-		break;
+	
 	case AppOptions::CM_Version:
 		printf("\n\nSia version \"%s\" (build %s)\n", VERSION, BUILD);
 		return true;
@@ -201,16 +201,16 @@ bool App::CreateArchive(const char *archivePath) {
 	
 	if (CreateArchive::makeFolders(archivePath) == false) {
 		std::cout << "Failed" << '\n';
-		return -1;
+		return false;
 	}
 
 	if (CreateArchive::createHookFiles(archivePath, HOOKS_PATH) == false) {
 		std::cout << "Failed" << '\n';
-		return -1;
+		return false;
 	}
 	if (CreateArchive::createConfigFiles(archivePath, CONFIG_PATH) == false) {
 		std::cout << "Failed" << '\n';
-		return -1;
+		return false;
 	}
 	return true;
 }

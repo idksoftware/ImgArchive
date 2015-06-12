@@ -43,6 +43,12 @@
 #include "SAUtils.h"
 #include "CSVArgs.h"
 
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+//#define new DEBUG_NEW
+#endif
+
 namespace simplearchive {
 
 class CatalogFolder {
@@ -406,40 +412,40 @@ bool Catalog::makeList() {
 	time(&timeValue);
 	filexml <<	"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 					<<	"<FolderList>\n";
-	std::vector<std::string *> *filelist = SAUtils::getFiles(m_archivePath.c_str());
-	for (std::vector<std::string *>::iterator i = filelist->begin(); i != filelist->end(); i++) {
-		std::string *year = *i;
-		std::string filepath = m_archivePath + "/" + *year;
+	FileList_Ptr filelist = SAUtils::getFiles_(m_archivePath.c_str());
+	for (std::vector<std::string>::iterator i = filelist->begin(); i != filelist->end(); i++) {
+		std::string year = *i;
+		std::string filepath = m_archivePath + "/" + year;
 
-		char c = (*year)[0];
+		char c = (year)[0];
 		if (c == '.' ) {
 			continue;
 		}
 		//printf("%s: \n", year->c_str());
-		filexml <<	"\t<YearFolder Name=\"" << *year << "\" >\n";
+		filexml <<	"\t<YearFolder Name=\"" << year << "\" >\n";
 
-		std::string yearfolder = m_archivePath + '/' + *year;
-		std::vector<std::string *> *dayList = SAUtils::getFiles(yearfolder.c_str());
+		std::string yearfolder = m_archivePath + '/' + year;
+		FileList_Ptr dayList = SAUtils::getFiles_(yearfolder.c_str());
 
-		for (std::vector<std::string *>::iterator i = dayList->begin(); i != dayList->end(); i++) {
-			std::string *name = *i;
+		for (std::vector<std::string>::iterator i = dayList->begin(); i != dayList->end(); i++) {
+			std::string name = *i;
 
-			char c = (*name)[0];
+			char c = (name)[0];
 			if (c == '.' ) {
 				continue;
 			}
-			std::string filepath = *year + '/' + *name;
-			std::string linkpath = *name + "/index.xml";
-			if (makeFolder(filepath, *name) == false) {
+			std::string filepath = year + '/' + name;
+			std::string linkpath = name + "/index.xml";
+			if (makeFolder(filepath, name) == false) {
 				return false;
 			}
 			//printf("folder: %s \n", name->c_str());
-			filexml <<	"\t\t<DayFolder Name=\"" << *name << "\" >\n";
+			filexml <<	"\t\t<DayFolder Name=\"" << name << "\" >\n";
 				filexml <<	"\t\t\t<Filelist>";
 				filexml <<	linkpath;
 				filexml <<	"</Filelist>\n";
 			filexml <<	"\t\t</DayFolder>\n";
-			filedat << *name << "::" << timeValue << '\n';
+			filedat << name << "::" << timeValue << '\n';
 		}
 		filexml <<	"\t</YearFolder>\n";
 	}
@@ -475,23 +481,23 @@ bool Catalog::makeFolder(std::string &targetFolder, std::string &filepath) {
 					<<	"<FolderList Name=\"" <<  filepath << "\">\n";
 
 
-	std::vector<std::string *> *dayList = SAUtils::getFiles(filefolder.c_str());
+	FileList_Ptr dayList = SAUtils::getFiles_(filefolder.c_str());
 
-	for (std::vector<std::string *>::iterator i = dayList->begin(); i != dayList->end(); i++) {
-		std::string *name = *i;
-		std::string filepath = *name;
-		std::string linkpath = *name + "/index.xml";
-		char c = (*name)[0];
+	for (std::vector<std::string>::iterator i = dayList->begin(); i != dayList->end(); i++) {
+		std::string name = *i;
+		std::string filepath = name;
+		std::string linkpath = name + "/index.xml";
+		char c = (name)[0];
 		if (c == '.' ) {
 			continue;
 		}
 		//printf("folder: %s \n", name->c_str());
-		filexml <<	"\t<DayFolder Name=\"" << *name << "\" >\n";
+		filexml <<	"\t<DayFolder Name=\"" << name << "\" >\n";
 			filexml <<	"\t\t<Image>";
 			filexml <<	linkpath;
 			filexml <<	"</Image>\n";
 		filexml <<	"\t</DayFolder>\n";
-		filedat << *name << "::" << timeValue << '\n';
+		filedat << name << "::" << timeValue << '\n';
 	}
 
 

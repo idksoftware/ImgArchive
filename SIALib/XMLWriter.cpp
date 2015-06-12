@@ -39,6 +39,12 @@
 #include <iostream>
 #include <fstream>
 
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+//#define new DEBUG_NEW
+#endif
+
 namespace simplearchive {
 
 XMLWriter::XMLWriter() {
@@ -128,7 +134,7 @@ bool XMLWriter::writeImage(const MetadataObject &container, const char *path) {
 	            << writeTag("Software", container.getSoftware())
 	            << writeTag("SourceURL", container.getSourceUrl())
 	            << writeTag("ExifVersion", container.getExifVersion())
-	            << writeTag("CaptureDate", container.getCaptureDate())
+				<< writeTag("CaptureDate", container.columnAt(DB_CAPTUREDATE).toString())
 	            << writeTag("ExposureProgram", container.getExposureProgram())
 	            << writeTag("ISOSpeedRating", container.getIsoSpeedRating())
 	            << writeTag("ExposureBias", container.getExposureBias())

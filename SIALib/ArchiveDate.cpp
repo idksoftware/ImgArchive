@@ -38,6 +38,12 @@
 #include "ExifDate.h"
 #include "BasicExifFactory.h"
 
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+//#define new DEBUG_NEW
+#endif
+
 namespace simplearchive {
 
 	bool ArchiveDate::m_useEXIFDate = true;
@@ -48,37 +54,21 @@ namespace simplearchive {
 
 	ArchiveDate::ArchiveDate()
 	{
-		m_exifDate = nullptr;
-		m_fileDate = nullptr;
+		m_exifDate.reset(0);
+		m_fileDate.reset(0);
 	}
 
 
 	ArchiveDate::~ArchiveDate()
 	{
-		if (m_exifDate) {
-			delete m_exifDate;
-		}
-		if (m_fileDate) {
-			delete m_fileDate;
-		}
-		
 	}
 
 	void ArchiveDate::setExitDate(ExifDate& d) {
-		if (m_exifDate) {
-			*m_exifDate = d;
-		} else {
-			m_exifDate = new ExifDate(d);
-		}
+		m_exifDate.reset(new ExifDate(d));
 	}
 
 	void ArchiveDate::setFileDate(ExifDate& d) {
-		if (m_fileDate) {
-			*m_fileDate = d;
-		}
-		else {
-			m_fileDate = new ExifDate(d);
-		}
+		m_fileDate.reset(new ExifDate(d));
 	}
 
 	void ArchiveDate::setDate(ExifDate& d) {
@@ -135,27 +125,27 @@ namespace simplearchive {
 			rawId = (BasicExif *)&(ic.getRawId());
 		}
 		if (rawMetadata != nullptr) {
-			std::string captureDate = rawMetadata->getCaptureDate();
-			m_exifDate = new ExifDate(captureDate.c_str());
+			const ExifDateTime captureDate = rawMetadata->getCaptureDate();
+			m_exifDate.reset(new ExifDate(captureDate));
 			if (m_exifDate->isOk() == true) {
 				return true;	// Found date
 			}
 		} else if (picMetadata != nullptr) {
-			std::string captureDate = picMetadata->getCaptureDate();
-			m_exifDate = new ExifDate(captureDate.c_str());
+			const ExifDateTime captureDate = picMetadata->getCaptureDate();
+			m_exifDate.reset(new ExifDate(captureDate));
 			if (m_exifDate->isOk() == true) {
 				return true;
 			}
 		}
 		if ((rawId != nullptr) && (rawId->isExifFound())) {
 				const ExifDateTime& captureDate = rawId->getDateTimeDigitized();
-				m_exifDate = new ExifDate(captureDate);
+				m_exifDate.reset(new ExifDate(captureDate));
 				if (m_exifDate->isOk() == true) {
 					return true;
 				}
 		} else if ((picId != nullptr) && (picId->isExifFound())) {
 				const ExifDateTime& captureDate = picId->getDateTimeDigitized();
-				m_exifDate = new ExifDate(captureDate);
+				m_exifDate.reset(new ExifDate(captureDate));
 				if (m_exifDate->isOk() == true) {
 					return true;
 				}

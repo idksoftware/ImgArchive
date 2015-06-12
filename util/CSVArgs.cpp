@@ -38,6 +38,12 @@
 
 #include "CSVArgs.h"
 
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+//#define new DEBUG_NEW
+#endif
+
 namespace simplearchive {
 
 CSVArgs::CSVArgs(char delim) {
@@ -45,7 +51,7 @@ CSVArgs::CSVArgs(char delim) {
 }
 
 CSVArgs::~CSVArgs() {
-	// TODO Auto-generated destructor stub
+	clear();
 }
 
 bool CSVArgs::process(const char *dataString) {

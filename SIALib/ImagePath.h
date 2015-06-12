@@ -83,6 +83,7 @@ class ImagePath {
 	static std::string m_shadowMetadataPath;
 	static std::string m_shadowSequenceNumberPath;
 	static std::string m_shadowHistory;
+	static std::string m_shadowJournalPath;
 	static std::string m_shadowCatalog;
 	//IntegrityManager& m_integrityManager;
 	void init(std::string &yyyymmddStr);
@@ -194,6 +195,11 @@ public:
 	// Get shadow history path
 	static const std::string& getShadowCatalogPath() {
 		return m_shadowCatalog;
+	}
+
+	// Get shadow journal path
+	static const std::string& getShadowJournalPath() {
+		return m_shadowJournalPath;
 	}
 
 	static std::string getYearDay(std::string &dataImage) {

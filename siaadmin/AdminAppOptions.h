@@ -42,15 +42,9 @@ class AppOptions {
 public:
 	typedef enum {
 		CM_InitArchive,
-		CM_Import,
-		CM_Export,
-		CM_Checkout,
-		CM_Checkin,
-		CM_UnCheckout,
 		CM_Version,
 		CM_View,
 		CM_Mirror,
-		CM_Uncheckin,
 		CM_Archive,
 		CM_Validate,
 		CM_Unknown
@@ -62,6 +56,10 @@ private:
 	static std::string m_comment;
 	static std::string m_imageAddress;
 	bool m_error;
+	/**
+		@brief Set to true if no archive configuration found. 
+	*/
+	bool m_noConfiguration;
 	void setCommandMode(const AppOptions::CommandMode mode);
 	bool setCommandMode(const char *modeString);
 	void setName(const char *name);
@@ -78,6 +76,10 @@ public:
 	const char *getCommand();
 	const char *getComment();
 	const char *getImageAddress();
+
+	bool isConfiguratedOk() {
+		return (m_noConfiguration == false);
+	}
 	
 };
 

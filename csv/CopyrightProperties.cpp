@@ -36,6 +36,12 @@
 #include "MetadataObject.h"
 #include "CopyrightProperties.h"
 
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+//#define new DEBUG_NEW
+#endif
+
 namespace simplearchive {
 
 class CopyrightPropertiesString : public CSVString {
@@ -117,7 +123,7 @@ bool CopyrightProperties::load(unsigned int row, MetadataObject &mo) {
 	mo.setUsageRights(item->getUsageRights());
 	mo.setCopyrightUrl(item->getCopyrightUrl());
 
-
+	return true;
 }
 bool CopyrightProperties::save(unsigned int row, MetadataObject &mo) {
 	if (this->size() < row ) {
