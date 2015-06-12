@@ -36,7 +36,7 @@
 #include "ImageContainer.h"
 #include "MetadataObject.h"
 #include "ExifDate.h"
-#include "ImageId.h"
+#include "BasicExifFactory.h"
 
 namespace simplearchive {
 
@@ -124,12 +124,18 @@ namespace simplearchive {
 
 	bool ArchiveDate::process(ImageContainer &ic) {
 		const MetadataObject *picMetadata = ic.getPictureMetadata();
-		const MetadataObject *rawNetadata = ic.getRawMetadata();
-		const CImageId *picId = ic.getPictureId();
-		const CImageId *rawId = ic.getRawId();
-
-		if (rawNetadata != nullptr) {
-			std::string captureDate = rawNetadata->getCaptureDate();
+		const MetadataObject *rawMetadata = ic.getRawMetadata();
+		
+		BasicExif *picId = nullptr;
+		BasicExif *rawId = nullptr;
+		if (ic.hasPictureFile()) {
+			picId = (BasicExif *)&(ic.getPictureId());
+		}
+		if (ic.hasRawFile()) {
+			rawId = (BasicExif *)&(ic.getRawId());
+		}
+		if (rawMetadata != nullptr) {
+			std::string captureDate = rawMetadata->getCaptureDate();
 			m_exifDate = new ExifDate(captureDate.c_str());
 			if (m_exifDate->isOk() == true) {
 				return true;	// Found date

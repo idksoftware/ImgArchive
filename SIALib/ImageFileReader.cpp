@@ -32,7 +32,7 @@
 **
 ** #$$@@$$# */
 
-#include "ImageId.h"
+#include "BasicExifFactory.h"
 #include "CIDKCrc.h"
 #include "md5.h"
 #include <string>

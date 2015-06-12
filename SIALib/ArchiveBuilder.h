@@ -41,7 +41,7 @@ namespace simplearchive {
 class ImageIndex;
 class ImageSets;
 class MetadataObject;
-class CImageId;
+class BasicExif;
 class ExifObject;
 class ImagePath;
 class CSVDBFile;
@@ -70,7 +70,7 @@ class ArchiveBuilder {
 	bool m_useExternalExifTool;
 	void copyExif(MetadataObject* metadataObject, ExifObject *exifObject);
 	bool CreateMetadataXMLFile(ImagePath &imagePath, CSVDBFile &csvDBFile, MetadataObject &metadataObject);
-	bool CreateImage(CImageId &imageId, ImagePath &imagePath, CSVDBFile &csvDBFile, MetadataObject &metadataObject);
+	bool CreateImage(const BasicExif &basicExif, ImagePath &imagePath, CSVDBFile &csvDBFile, MetadataObject &metadataObject);
 	bool processHistory(ImagePath &imagePath, const char *filepath, const char *comment, const HistoryEvent &he, int ver);
 public:
 	ArchiveBuilder();

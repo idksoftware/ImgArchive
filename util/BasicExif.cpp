@@ -33,63 +33,196 @@
 ** #$$@@$$# */
 
 #include "BasicExif.h"
+#include "SimpleExifReader.h"
 
 namespace simplearchive {
 
-BasicExif::BasicExif()
-{
+BasicExif::BasicExif() : MTRow(new BasicExifSchema) {
+	m_exifFound = false;
+}
+	
+/*
+#define BE_DESCRIPTION_IDX		0
+#define BE_WIDTH_IDX			1
+#define BE_HEIGHT_IDX			2
+#define BE_VIEWROTATION_IDX		3
+#define BE_MAKER_IDX			4
+#define BE_MODEL_IDX			5
+#define BE_EXIFVERSION_IDX		6
+#define BE_CAPTUREDATE_IDX		7
+#define BE_ISOSPEEDRATING_IDX	8
+#define BE_EXPOSUREBIAS_IDX		9
+#define BE_EXPOSURETIME_IDX		10
+#define BE_APERTURE_IDX			11
+#define BE_METERINGMODE_IDX		12
+#define BE_FOCALLENGTH_IDX		13
+#define BE_LATITUDE_IDX			14
+#define BE_LONGITUDE_IDX		15
+#define BE_COPYRIGHT_IDX		16
+*/
+void BasicExif::copyBasicEXIF(EXIFInfo &exifInfo) {
+
+	columnAt(BE_MAKER_IDX) = exifInfo.Make;
+	columnAt(BE_MODEL_IDX) = exifInfo.Model;
+	columnAt(BE_EXIFVERSION_IDX) = exifInfo.Software;
+	columnAt(BE_WIDTH_IDX) = exifInfo.ImageWidth;
+	columnAt(BE_HEIGHT_IDX) = exifInfo.ImageHeight;
+	columnAt(BE_DESCRIPTION_IDX) = exifInfo.ImageDescription;
+	columnAt(BE_VIEWROTATION_IDX) = exifInfo.Orientation;
+	columnAt(BE_COPYRIGHT_IDX) = exifInfo.copyright;
+	ExifDateTime dateTimeDigitized(exifInfo.DateTimeDigitized.c_str());
+	columnAt(BE_CAPTUREDATE_IDX) = dateTimeDigitized;
+	columnAt(BE_EXPOSURETIME_IDX) = exifInfo.ExposureTime;
+	columnAt(BE_APERTURE_IDX) = exifInfo.FNumber;
+	columnAt(BE_ISOSPEEDRATING_IDX) = exifInfo.ISOSpeedRatings;
+	columnAt(BE_EXPOSUREBIAS_IDX) = exifInfo.ExposureBiasValue;
+	columnAt(BE_METERINGMODE_IDX) = exifInfo.MeteringMode;
+	columnAt(BE_FOCALLENGTH_IDX) = exifInfo.FocalLength;
+	m_exifFound = true;
+}
+
+unsigned long BasicExif::getCrc() const {
+	return columnAt(BE_CRC_IDX).getULong();
+}
+
+void BasicExif::setCrc(unsigned long crc) {
+	columnAt(BE_CRC_IDX) = crc;
+}
+
+unsigned long BasicExif::getSize() const {
+	return columnAt(BE_FILESIZE_IDX).getULong();
+}
+
+void BasicExif::setSize(unsigned long size) {
+	columnAt(BE_FILESIZE_IDX) = size;
+}
+
+const std::string& BasicExif::getMd5() const {
+	return columnAt(BE_MD5_IDX).getString();
+}
+
+void BasicExif::setMd5(const std::string& md5) {
+	columnAt(BE_MD5_IDX).fromString(md5);
+}
+
+const std::string& BasicExif::getMediaType() const {
+	return columnAt(BE_MEDIATYPE_IDX).getString();
+}
+
+void BasicExif::setMediaType(const std::string& mediaType) {
+	columnAt(BE_MEDIATYPE_IDX) = mediaType.c_str();
+}
+
+const std::string& BasicExif::getUuid() const {
+	return columnAt(BE_UUID_IDX).getString();
+}
+
+void BasicExif::setUuid(const std::string& uuid) {
+	columnAt(BE_UUID_IDX) = uuid.c_str();
+}
+
+const std::string& BasicExif::getLabel() const {
+	return columnAt(BE_LABEL_IDX).getString();
+}
+
+void BasicExif::setLabel(const std::string& name) {
+	columnAt(BE_LABEL_IDX) = name.c_str();
+}
+
+const std::string& BasicExif::getName() const {
+	return columnAt(BE_FILENAME_IDX).getString();
+}
+
+void BasicExif::setName(const std::string& name) {
+	columnAt(BE_FILENAME_IDX) = name.c_str();
+}
+
+const std::string& BasicExif::getOrginalName() const {
+	return columnAt(BE_ORGINALNAME_IDX).getString();
+}
+
+void BasicExif::setOrginalName(const std::string& name) {
+	columnAt(BE_ORGINALNAME_IDX) = name.c_str();
+}
+
+const std::string& BasicExif::getPath() const {
+	return columnAt(BE_FILEPATH_IDX).getString();
+}
+
+void BasicExif::setPath(const std::string& path) {
+	columnAt(BE_FILEPATH_IDX) = path.c_str();
+}
+
+const std::string BasicExif::getExt() const {
+	return m_path.substr(m_path.find_last_of(".") + 1);
+}
+
+void BasicExif::setCreateTime(ExifDateTime &time) {
+	columnAt(BE_DATECREATE_IDX) = time;
+}
+
+const ExifDateTime &BasicExif::getCreateTime() const {
+	return columnAt(BE_DATECREATE_IDX).getDate();
+}
+
+const ExifDateTime &BasicExif::getModTime() const {
+	return columnAt(BE_DATEMODIFIED_IDX).getDate();
+}
+
+void BasicExif::setModTime(ExifDateTime &time) {
+	columnAt(BE_DATEMODIFIED_IDX) = time;
 }
 
 const std::string& BasicExif::getAltitude() const {
-	return m_altitude;
+	return ""; // columnAt(BE_ALTITUDE_IDX).toString();
 }
 
 void BasicExif::setAltitude(const std::string& altitude) {
 	m_altitude = altitude;
 }
 
-const std::string& BasicExif::getBitsPerSample() const {
-	return m_bitsPerSample;
-}
+//const std::string& BasicExif::getBitsPerSample() const {
+//	return m_bitsPerSample;
+//}
 
-void BasicExif::setBitsPerSample(const std::string& bitsPerSample) {
-	m_bitsPerSample = bitsPerSample;
-}
+//void BasicExif::setBitsPerSample(const std::string& bitsPerSample) {
+//	m_bitsPerSample = bitsPerSample;
+//}
 
-const std::string& BasicExif::getCopyright() const {
-	return m_copyright;
-}
+//const std::string& BasicExif::getCopyright() const {
+//	return m_copyright;
+//}
 
 void BasicExif::setCopyright(const std::string& copyright) {
-	m_copyright = copyright;
+	columnAt(BE_COPYRIGHT_IDX) = copyright.c_str();
 }
 
-const std::string& BasicExif::getDateTime() const {
-	return m_dateTime;
+//const std::string& BasicExif::getDateTime() const {
+//	return m_dateTime;
+//}
+
+//void BasicExif::setDateTime(const std::string& dateTime) {
+//	m_dateTime = dateTime;
+//}
+
+const ExifDateTime &BasicExif::getDateTimeDigitized() const {
+	return columnAt(BE_CAPTUREDATE_IDX).getDate();
 }
 
-void BasicExif::setDateTime(const std::string& dateTime) {
-	m_dateTime = dateTime;
+void BasicExif::setDateTimeDigitized(ExifDateTime& dateTimeDigitized) {
+	columnAt(BE_CAPTUREDATE_IDX) = dateTimeDigitized;
 }
 
-const std::string& BasicExif::getDateTimeDigitized() const {
-	return m_dateTimeDigitized;
-}
+//const std::string& BasicExif::getDateTimeOriginal() const {
+//	return m_dateTimeOriginal;
+//}
 
-void BasicExif::setDateTimeDigitized(const std::string& dateTimeDigitized) {
-	m_dateTimeDigitized = dateTimeDigitized;
-}
-
-const std::string& BasicExif::getDateTimeOriginal() const {
-	return m_dateTimeOriginal;
-}
-
-void BasicExif::setDateTimeOriginal(const std::string& dateTimeOriginal) {
-	m_dateTimeOriginal = dateTimeOriginal;
-}
+//void BasicExif::setDateTimeOriginal(const std::string& dateTimeOriginal) {
+//	m_dateTimeOriginal = dateTimeOriginal;
+//}
 
 const std::string& BasicExif::getExposureBiasValue() const {
-	return m_exposureBiasValue;
+	return columnAt(BE_MEDIATYPE_IDX).getString();
 }
 
 void BasicExif::setExposureBiasValue(const std::string& exposureBiasValue) {
@@ -97,7 +230,7 @@ void BasicExif::setExposureBiasValue(const std::string& exposureBiasValue) {
 }
 
 const std::string& BasicExif::getExposureTime() const {
-	return m_exposureTime;
+	return columnAt(BE_MEDIATYPE_IDX).getString();
 }
 
 void BasicExif::setExposureTime(const std::string& exposureTime) {
@@ -105,7 +238,7 @@ void BasicExif::setExposureTime(const std::string& exposureTime) {
 }
 
 const std::string& BasicExif::getFlash() const {
-	return m_flash;
+	return columnAt(BE_MEDIATYPE_IDX).getString();
 }
 
 void BasicExif::setFlash(const std::string& flash) {
@@ -113,7 +246,7 @@ void BasicExif::setFlash(const std::string& flash) {
 }
 
 const std::string& BasicExif::getFNumber() const {
-	return m_fNumber;
+	return columnAt(BE_MEDIATYPE_IDX).getString();
 }
 
 void BasicExif::setFNumber(const std::string& fNumber) {
@@ -121,23 +254,23 @@ void BasicExif::setFNumber(const std::string& fNumber) {
 }
 
 const std::string& BasicExif::getFocalLength() const {
-	return m_focalLength;
+	return columnAt(BE_MEDIATYPE_IDX).getString();
 }
 
 void BasicExif::setFocalLength(const std::string& focalLength) {
 	m_focalLength = focalLength;
 }
 
-const std::string& BasicExif::getFocalLengthIn35mm() const {
-	return m_focalLengthIn35mm;
-}
+//const std::string& BasicExif::getFocalLengthIn35mm() const {
+//	return m_focalLengthIn35mm;
+//}
 
-void BasicExif::setFocalLengthIn35mm(const std::string& focalLengthIn35mm) {
-	m_focalLengthIn35mm = focalLengthIn35mm;
-}
+//void BasicExif::setFocalLengthIn35mm(const std::string& focalLengthIn35mm) {
+//	m_focalLengthIn35mm = focalLengthIn35mm;
+//}
 
 const std::string& BasicExif::getImageDescription() const {
-	return m_imageDescription;
+	return columnAt(BE_MEDIATYPE_IDX).getString();
 }
 
 void BasicExif::setImageDescription(const std::string& imageDescription) {
@@ -145,7 +278,7 @@ void BasicExif::setImageDescription(const std::string& imageDescription) {
 }
 
 const std::string& BasicExif::getImageHeight() const {
-	return m_imageHeight;
+	return columnAt(BE_MEDIATYPE_IDX).getString();
 }
 
 void BasicExif::setImageHeight(const std::string& imageHeight) {
@@ -153,7 +286,7 @@ void BasicExif::setImageHeight(const std::string& imageHeight) {
 }
 
 const std::string& BasicExif::getImageWidth() const {
-	return m_imageWidth;
+	return columnAt(BE_MEDIATYPE_IDX).getString();
 }
 
 void BasicExif::setImageWidth(const std::string& imageWidth) {
@@ -161,7 +294,7 @@ void BasicExif::setImageWidth(const std::string& imageWidth) {
 }
 
 const std::string& BasicExif::getISoSpeedRatings() const {
-	return m_iSOSpeedRatings;
+	return columnAt(BE_MEDIATYPE_IDX).getString();
 }
 
 void BasicExif::setISoSpeedRatings(const std::string& iSoSpeedRatings) {
@@ -169,7 +302,7 @@ void BasicExif::setISoSpeedRatings(const std::string& iSoSpeedRatings) {
 }
 
 const std::string& BasicExif::getLatitude() const {
-	return m_latitude;
+	return columnAt(BE_MEDIATYPE_IDX).getString();
 }
 
 void BasicExif::setLatitude(const std::string& latitude) {
@@ -177,7 +310,7 @@ void BasicExif::setLatitude(const std::string& latitude) {
 }
 
 const std::string& BasicExif::getLongitude() const {
-	return m_longitude;
+	return columnAt(BE_MEDIATYPE_IDX).getString();
 }
 
 void BasicExif::setLongitude(const std::string& longitude) {
@@ -185,7 +318,7 @@ void BasicExif::setLongitude(const std::string& longitude) {
 }
 
 const std::string& BasicExif::getMake() const {
-	return m_make;
+	return columnAt(BE_MEDIATYPE_IDX).getString();
 }
 
 void BasicExif::setMake(const std::string& make) {
@@ -193,7 +326,7 @@ void BasicExif::setMake(const std::string& make) {
 }
 
 const std::string& BasicExif::getMeteringMode() const {
-	return m_meteringMode;
+	return columnAt(BE_MEDIATYPE_IDX).getString();
 }
 
 void BasicExif::setMeteringMode(const std::string& meteringMode) {
@@ -201,7 +334,7 @@ void BasicExif::setMeteringMode(const std::string& meteringMode) {
 }
 
 const std::string& BasicExif::getModel() const {
-	return m_model;
+	return columnAt(BE_MEDIATYPE_IDX).getString();
 }
 
 void BasicExif::setModel(const std::string& model) {
@@ -209,44 +342,44 @@ void BasicExif::setModel(const std::string& model) {
 }
 
 const std::string& BasicExif::getOrientation() const {
-	return m_orientation;
+	return columnAt(BE_MEDIATYPE_IDX).getString();
 }
 
 void BasicExif::setOrientation(const std::string& orientation) {
 	m_orientation = orientation;
 }
 
-const std::string& BasicExif::getShutterSpeedValue() const {
-	return m_shutterSpeedValue;
-}
+//const std::string& BasicExif::getShutterSpeedValue() const {
+//	return m_shutterSpeedValue;
+//}
 
-void BasicExif::setShutterSpeedValue(const std::string& shutterSpeedValue) {
-	m_shutterSpeedValue = shutterSpeedValue;
-}
+//void BasicExif::setShutterSpeedValue(const std::string& shutterSpeedValue) {
+//	m_shutterSpeedValue = shutterSpeedValue;
+//}
 
 const std::string& BasicExif::getSoftware() const {
-	return m_software;
+	return columnAt(BE_MEDIATYPE_IDX).getString();
 }
 
 void BasicExif::setSoftware(const std::string& software) {
 	m_software = software;
 }
 
-const std::string& BasicExif::getSubjectDistance() const {
-	return m_subjectDistance;
-}
+//const std::string& BasicExif::getSubjectDistance() const {
+//	return m_subjectDistance;
+//}
 
-void BasicExif::setSubjectDistance(const std::string& subjectDistance) {
-	m_subjectDistance = subjectDistance;
-}
+//void BasicExif::setSubjectDistance(const std::string& subjectDistance) {
+//	m_subjectDistance = subjectDistance;
+//}
 
-const std::string& BasicExif::getSubSecTimeOriginal() const {
-	return m_subSecTimeOriginal;
-}
+//const std::string& BasicExif::getSubSecTimeOriginal() const {
+//	return m_subSecTimeOriginal;
+//}
 
-void BasicExif::setSubSecTimeOriginal(const std::string& subSecTimeOriginal) {
-	m_subSecTimeOriginal = subSecTimeOriginal;
-}
+//void BasicExif::setSubSecTimeOriginal(const std::string& subSecTimeOriginal) {
+//	m_subSecTimeOriginal = subSecTimeOriginal;
+//}
 
 BasicExif::~BasicExif()
 {

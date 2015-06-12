@@ -48,8 +48,8 @@
 #include "CLogger.h"
 #include "ImageGroup.h"
 #include "TargetsList.h"
-#include "FileId.h"
-#include "ImageId.h"
+#include "FileInfo.h"
+#include "BasicExifFactory.h"
 #include "XMLWriter.h"
 #include "ImagePath.h"
 #include "CSVDBFile.h"
@@ -187,8 +187,11 @@ namespace simplearchive {
 				logger.log(CLogger::INFO, "Path of image: %s", pathstr.c_str());
 				// This needs to be replaced with a factory class
 				// ImageId object reads the image byte by byte for md5 and crc and Basic Exif.
-				CImageId *imageId = new CImageId(pathstr);
+				
 
+				BasicExif_Ptr basicExifPtr = BasicExifFactory::make(pathstr);
+				const BasicExif& basicExif = *basicExifPtr;
+				basicExifPtr->debugPrint();
 				// Add Image to the Index database if not a dup.
 				logger.log(CLogger::INFO, "Find if dup %s", imageItem->getFilename().c_str());
 				// If Make no changes == true, do not add this image into the dups index
@@ -196,8 +199,8 @@ namespace simplearchive {
 					// Force changes i.e the archive is damaged and images are being
 					// added from a backup
 					if (/*saCmdArgs.IsForceChanges()*/1) {
-						if (m_imageIndex->IsDup(imageId->getCrc())) {
-							m_imageIndex->getData(imageId->getCrc());
+						if (m_imageIndex->IsDup(basicExif.getCrc())) {
+							m_imageIndex->getData(basicExif.getCrc());
 							logger.log(CLogger::INFO, "Dup %s", imageItem->getFilename().c_str());
 							// reject image from import
 							continue;
@@ -205,7 +208,7 @@ namespace simplearchive {
 					}
 					else {
 						// normal operation. dups are rejected 
-						if (m_imageIndex->IsDup(imageId->getCrc())) {
+						if (m_imageIndex->IsDup(basicExif.getCrc())) {
 							//m_imageIndex->getData(imageId->getCrc());
 							logger.log(CLogger::INFO, "Rejecting Dup from import %s", imageItem->getFilename().c_str());
 							// reject image from import
@@ -213,7 +216,7 @@ namespace simplearchive {
 						}
 						else {
 							// Add To the Image Indexing (used to find duplicates)
-							if (m_imageIndex->add(imageId) == false) {
+							if (m_imageIndex->add(basicExif) == false) {
 								logger.log(CLogger::INFO, "Dup %s", imageItem->getFilename().c_str());
 								// reject image from import
 								continue;
@@ -223,11 +226,11 @@ namespace simplearchive {
 					}
 				}
 				// Not a dup so add to group. 
-				if (!imageId->isExifFound()) {
+				if (!basicExif.isExifFound()) {
 					logger.log(CLogger::INFO, "No EXIF simple EXIF infomation found in \"%s\"", imageItem->getFilename().c_str());
 				}
 				logger.log(CLogger::INFO, "EXIF simple EXIF infomation found in \"%s\"", imageItem->getFilename().c_str());
-				if (!imageId->isExifFound() || m_useExternalExifTool) {
+				if (!basicExif.isExifFound() || m_useExternalExifTool) {
 					// Try external Exif Tool
 					logger.log(CLogger::INFO, "Using external EXIF tool on file \"%s\"", imageItem->getFilename().c_str());
 					exifObject = ImageFileReader::externalExifTool(pathstr);
@@ -246,7 +249,7 @@ namespace simplearchive {
 				if (exifObject != nullptr) {
 					copyExif(metadataObject, exifObject);
 				}
-				imageGroup->add(imageId, metadataObject);
+				imageGroup->add(basicExif, metadataObject);
 				logger.log(CLogger::INFO, "completed step2 \"%s\"", imageItem->getFilename().c_str());
 				/*
 				XMLWriter xmlWriter;
@@ -283,14 +286,15 @@ namespace simplearchive {
 				logger.log(CLogger::INFO, "Image(s) source path: \"%s\"", imageRootPath.c_str());
 				imageSet->setImageRootPath(imagePath.getRelativePath());
 
-				const CImageId *imageId;
+				const BasicExifFactory *imageId;
 				const MetadataObject *metadataObject;
-				if ((imageId = imageSet->getPictureId()) != nullptr) {
+				if (imageSet->hasPictureFile()) {
+					const BasicExif &basicExif = imageSet->getPictureId();
 					metadataObject = imageSet->getPictureMetadata();
 					std::string picPath = imageSet->getPictureFile();
 					imagePath.setImageName(picPath.c_str());
 
-					if (CreateImage(*((CImageId *)imageId), imagePath, csvDBFile, *((MetadataObject *)metadataObject)) == false) {
+					if (CreateImage(basicExif, imagePath, csvDBFile, *((MetadataObject *)metadataObject)) == false) {
 						return false;
 					}
 					
@@ -324,12 +328,13 @@ namespace simplearchive {
 					processHistory(imagePath, filepath.c_str(), imageSet->getComment().c_str(), he, 0);
 					
 				}
-				if ((imageId = imageSet->getRawId()) != nullptr) {
+				if (imageSet->hasRawFile()) {
+					const BasicExif &basicExif = imageSet->getRawId();
 					metadataObject = imageSet->getRawMetadata();
 					std::string rawPath = imageSet->getRawFile();
 					imagePath.setImageName(rawPath.c_str());
 
-					if (CreateImage(*((CImageId *)imageId), imagePath, csvDBFile, *((MetadataObject *)metadataObject)) == false) {
+					if (CreateImage(basicExif, imagePath, csvDBFile, *((MetadataObject *)metadataObject)) == false) {
 						return false;
 					}
 
@@ -356,16 +361,16 @@ namespace simplearchive {
 		return true;
 	}
 
-bool ArchiveBuilder::CreateImage(CImageId &imageId, ImagePath &imagePath, CSVDBFile &csvDBFile, MetadataObject &metadataObject) {
+bool ArchiveBuilder::CreateImage(const BasicExif &basicExif, ImagePath &imagePath, CSVDBFile &csvDBFile, MetadataObject &metadataObject) {
 	unsigned long seqNumber = csvDBFile.getNextIndex();
 	std::string seqNumberStr = std::to_string(seqNumber);
 	metadataObject.setSequenceId(seqNumberStr);
-	unsigned long n = imageId.getSize();
-	unsigned long crc = imageId.getCrc();
+	unsigned long n = basicExif.getSize();
+	unsigned long crc = basicExif.getCrc();
 	ExifDate date;
 	date.now();
-	if (csvDBFile.insert(seqNumber, imagePath.getRelativePath().c_str(), imagePath.getImageName().c_str(), n, crc, imageId.getMd5().c_str(),
-																imageId.getUuid().c_str(), 0, date) == false) {
+	if (csvDBFile.insert(seqNumber, imagePath.getRelativePath().c_str(), imagePath.getImageName().c_str(), n, crc, basicExif.getMd5().c_str(),
+																									basicExif.getUuid().c_str(), 0, date) == false) {
 		return false;
 	}
 	return true;
@@ -380,7 +385,7 @@ bool ArchiveBuilder::CreateMetadataXMLFile(ImagePath &imagePath, CSVDBFile &csvD
 	unsigned long seqNumber = csvDBFile.getNextIndex();
 	ExifDate date;
 	date.now();
-	FileId fileId(to);
+	FileInfo fileId(to);
 	std::string relPath = imagePath.getRelativePath() + '/' + imagePath.getImageName() + ".xml";
 	if (csvDBFile.insert(seqNumber, imagePath.getRelativePath().c_str(), imagePath.getImageName().c_str(), fileId.getSize(), fileId.getCrc(), fileId.getMd5().c_str(),
 																			fileId.getUuid().c_str(), 0, date) == false) {

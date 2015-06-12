@@ -94,7 +94,6 @@
     <ClInclude Include="CFolderStatus.h" />
     <ClInclude Include="CUnqueName.h" />
     <ClInclude Include="Environment.h" />
-    <ClInclude Include="FileId.h" />
     <ClInclude Include="FolderList.h" />
     <ClInclude Include="HookCmd.h" />
     <ClInclude Include="ImageContainer.h" />
@@ -102,7 +101,7 @@
     <ClInclude Include="ImageFileReader.h" />
     <ClInclude Include="ImageGroup.h" />
     <ClInclude Include="ImageHistory.h" />
-    <ClInclude Include="ImageId.h" />
+    <ClInclude Include="BasicExifFactory.h" />
     <ClInclude Include="ImageIndex.h" />
     <ClInclude Include="ImageLock.h" />
     <ClInclude Include="ImagePath.h" />
@@ -133,7 +132,6 @@
     <ClCompile Include="CFolderStatus.cpp" />
     <ClCompile Include="CUnqueName.cpp" />
     <ClCompile Include="Environment.cpp" />
-    <ClCompile Include="FileId.cpp" />
     <ClCompile Include="FolderList.cpp" />
     <ClCompile Include="HookCmd.cpp" />
     <ClCompile Include="ImageContainer.cpp" />
@@ -141,7 +139,7 @@
     <ClCompile Include="ImageFileReader.cpp" />
     <ClCompile Include="ImageGroup.cpp" />
     <ClCompile Include="ImageHistory.cpp" />
-    <ClCompile Include="ImageId.cpp" />
+    <ClCompile Include="BasicExifFactory.cpp" />
     <ClCompile Include="ImageIndex.cpp" />
     <ClCompile Include="ImageLock.cpp" />
     <ClCompile Include="ImagePath.cpp" />

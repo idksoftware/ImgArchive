@@ -90,7 +90,7 @@ public:
 	}
 };
 class DupDataFile;
-class CImageId;
+class BasicExif;
 class ImageIndex {
 	std::string m_dbpath;
 	unsigned char m_data[4];
@@ -104,7 +104,7 @@ public:
 	/**
 	*	This function returns true if added, false if dup
 	*/
-	bool add(CImageId *imageId);
+	bool add(const BasicExif &basicExif);
 	bool IsDup(unsigned long crc);
 	bool getData(unsigned long crc);
 };

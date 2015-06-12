@@ -25,7 +25,7 @@
 **
 ****************************************************
 **
-**	Filename	: CRegString.cpp
+**	Filename	: FileInfo.cpp
 **	Author		: I.Ferguson
 **	Version		: 1.000
 **	Date		: 26-05-2015
@@ -49,8 +49,8 @@
 #include "CLogger.h"
 #include "ImageGroup.h"
 #include "TargetsList.h"
-#include "FileId.h"
-#include "ImageId.h"
+#include "FileInfo.h"
+#include "BasicExifFactory.h"
 #include "XMLWriter.h"
 #include "ImagePath.h"
 #include "CSVDBFile.h"

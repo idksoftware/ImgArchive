@@ -41,7 +41,8 @@
 
 namespace simplearchive {
 
-class CImageId;
+class BasicExif;
+class BasicExifFactory;
 class MetadataObject;
 
 /// 
@@ -51,34 +52,34 @@ class ImageNode
 	ImageType m_type;
 	/// This contains the path to the Image file.
 	std::string m_file;
-	/// This contains a pointer to the CImageId.
-	const CImageId *m_imageId;
+	/// This contains a pointer to the BasicExifFactory.
+	const BasicExif &m_basicExif;
 	/// This contains a pointer to the MetadataObject.
 	const MetadataObject *m_metadataObject;
 
-	void setImageID2Metadata(CImageId *imageIdData, MetadataObject &metadataObject);
+	//void setImageID2Metadata(const BasicExif &basicExif, MetadataObject &metadataObject);
 public:
-	ImageNode(ImageType &type, const char *filename, const CImageId *imageId = nullptr, const MetadataObject *metadataObject = nullptr) {
+	ImageNode(ImageType &type, const BasicExif &basicExif, const MetadataObject *metadataObject = nullptr) : m_basicExif(basicExif) {
 		m_type = type;
-		m_file = filename;
-		m_imageId = imageId;
+		
+		//m_basicExif = basicExif;
 		m_metadataObject = metadataObject;
 	}
 
 	~ImageNode() {
-		if (m_imageId != nullptr) {
-			delete m_imageId;
-		}
+		//if (m_basicExif != nullptr) {
+		//	delete m_imageId;
+		//}
 		if (m_metadataObject != nullptr) {
 			delete m_metadataObject;
 		}
 	}
 
 	const std::string& getFile() const;
-	const CImageId* getImageId() {
-		return m_imageId;
+	const BasicExif &getBasicExif() {
+		return m_basicExif;
 	}
-	void setImageId(const CImageId*& imageId, const MetadataObject *metadataObject = nullptr);
+	void setImageId(const BasicExifFactory*& imageId, const MetadataObject *metadataObject = nullptr);
 
 	const MetadataObject* getMetadataObject() {
 		return m_metadataObject;
@@ -94,7 +95,7 @@ class ImageContainer {
 	std::string m_MetadataFile;
 	std::string m_imageRootPath;
 	std::string m_comment;
-	const CImageId *m_ImageId;
+	const BasicExif *m_basicExif;
 	ImageNode *m_PictureNode;
 	ImageNode *m_RawNode;
 	time_t m_Time;
@@ -104,7 +105,7 @@ class ImageContainer {
 public:
 	
 	ImageContainer(const char *path, const char *imageName);
-	bool add(const CImageId *imageId, const MetadataObject *metadataObject = nullptr);
+	bool add(const BasicExif &basicExif, const MetadataObject *metadataObject = nullptr);
 	bool add(const char *xmlfile) {
 		return true; // to be added
 	}
@@ -148,19 +149,19 @@ public:
 	}
 
 	/// Get Picture image id 
-	const CImageId *getPictureId() const {
-		if (m_PictureNode == nullptr) {
-			return nullptr;
-		}
-		return m_PictureNode->getImageId();
+	const BasicExif &getPictureId() const {
+		//if (m_PictureNode == nullptr) {
+		//	return nullptr;
+		//}
+		return m_PictureNode->getBasicExif();
 	}
 
 	/// Get RAW Image id
-	const CImageId *getRawId() const {
-		if (m_RawNode == nullptr) {
-			return nullptr;
-		}
-		return m_RawNode->getImageId();
+	const BasicExif &getRawId() const {
+		//if (m_RawNode == nullptr) {
+		//	return nullptr;
+		//}
+		return m_RawNode->getBasicExif();
 	}
 	/// Get Image path in the archive
 	const std::string& getPath() const {

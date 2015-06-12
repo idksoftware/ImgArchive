@@ -1,9 +1,36 @@
-/*
- * FieldDefines.h
- *
- *  Created on: Jul 1, 2014
- *      Author: wzw7yn
- */
+/* **************************************************
+**
+**    III                DDD  KKK
+**    III                DDD  KKK
+**                       DDD  KKK
+**    III   DDDDDDDDDDD  DDD  KKK            KKK
+**    III  DDD           DDD  KKK            KKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK   KKKKKKKKK
+**    III  DDD           DDD  KKK        KKKKKK
+**    III  DDD           DDD  KKK           KKK
+**    III  DDD           DDD  KKK            KKK
+**    III   DDDDDDDDDDDDDDDD  KKK            KKK
+**
+**
+**     SSS         FF
+**    S           F   T
+**     SSS   OO   FF  TTT W   W  AAA  R RR   EEE
+**        S O  O  F   T   W W W  AAAA RR  R EEEEE
+**    S   S O  O  F   T   W W W A   A R     E
+**     SSS   OO  FFF   TT  W W   AAAA R      EEE
+**
+**    Copyright: (c) 2015 IDK Software Ltd
+**
+****************************************************
+**
+**	Filename	: DBDefines.h
+**	Author		: I.Ferguson
+**	Version		: 1.000
+**	Date		: 26-05-2015
+**
+** #$$@@$$# */
 
 #ifndef DBDEFINES_H_
 #define DBDEFINES_H_
@@ -19,6 +46,40 @@
 #define TABLE_MEDIA_PROPERTIES		"MediaProperties"
 #define TABLE_COPYRIGHT_PROPERTIES	"CopyrightProperties"
 #define TABLE_GPS_PROPERTIES		"GPSProperties"
+#define ROW_BASIC_EXIF				"BasicExif"
+
+#define BE_FILENAME_IDX			0
+#define BE_ORGINALNAME_IDX		1
+#define BE_FILEPATH_IDX			2
+#define BE_CRC_IDX			3
+#define BE_MD5_IDX			4
+#define BE_UUID_IDX			5
+#define BE_LABEL_IDX			6
+#define BE_MEDIATYPE_IDX		7
+#define BE_RATING_IDX			8
+#define BE_FILESIZE_IDX			9
+#define BE_DATEMODIFIED_IDX		10
+#define BE_DATECREATE_IDX		11
+
+#define BE_DESCRIPTION_IDX		12
+#define BE_WIDTH_IDX			13
+#define BE_HEIGHT_IDX			14
+#define BE_VIEWROTATION_IDX		15
+#define BE_MAKER_IDX			16
+#define BE_MODEL_IDX			17
+#define BE_EXIFVERSION_IDX		18
+#define BE_CAPTUREDATE_IDX		19
+#define BE_ISOSPEEDRATING_IDX	20
+#define BE_EXPOSUREBIAS_IDX		21
+#define BE_EXPOSURETIME_IDX		22
+#define BE_APERTURE_IDX			23
+#define BE_METERINGMODE_IDX		24
+#define BE_FOCALLENGTH_IDX		25
+#define BE_LATITUDE_IDX			26
+#define BE_LONGITUDE_IDX		27
+#define BE_COPYRIGHT_IDX		28
+
+
 
 /// Metadata Defines
 	/// Asset Properties

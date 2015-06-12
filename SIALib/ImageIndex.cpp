@@ -43,7 +43,7 @@
 #include <algorithm>
 #include "CIDKCrc.h"
 #include "md5.h"
-#include "ImageId.h"
+#include "BasicExifFactory.h"
 #include "CLogger.h"
 
 namespace simplearchive {
@@ -245,21 +245,19 @@ std::string get_file_contents(const char *filename)
 }
 
 
-bool ImageIndex::add(CImageId *imageId) {
-	if (imageId == 0) {
-		return false;
-	}
-	std::string pathStr = imageId->getPath();
+bool ImageIndex::add(const BasicExif &basicExif) {
+	
+	std::string pathStr = basicExif.getPath();
 	
 #ifdef _WIN32
 #define SEP "\\"
 #else
 #define SEP "/"
 #endif
-	unsigned long c = imageId->getCrc();
+	unsigned long c = basicExif.getCrc();
 
 	std::string filename = pathStr.substr(pathStr.find_last_of("/") + 1);
-	return add(filename.c_str(), imageId->getCrc(), imageId->getMd5().c_str());
+	return add(filename.c_str(), basicExif.getCrc(), basicExif.getMd5().c_str());
 }
 
 bool ImageIndex::add(const char *name, unsigned long crc, const char *md5) {

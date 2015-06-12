@@ -51,9 +51,6 @@
     <ClInclude Include="Environment.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FileId.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="FolderList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -70,9 +67,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ImageGroup.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageId.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ImageIndex.h">
@@ -132,6 +126,9 @@
     <ClInclude Include="ArchiveVisitor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="BasicExifFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SIALib.cpp">
@@ -164,9 +161,6 @@
     <ClCompile Include="Environment.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FileId.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="FolderList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -183,9 +177,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ImageGroup.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageId.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ImageIndex.cpp">
@@ -237,6 +228,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ArchiveVisitor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BasicExifFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
