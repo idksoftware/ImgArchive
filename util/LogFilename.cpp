@@ -80,7 +80,7 @@ time_t toDate(const char *str) {
 	time_t m_timenum;
 	time(&m_timenum);
 	struct tm timeinfo;
-	gmtime_p(&timeinfo, &m_timenum);
+	gmtime_p(timeinfo, &m_timenum);
 	timeinfo.tm_year = m_year - 1900;
 	timeinfo.tm_mon = m_month - 1;
 	timeinfo.tm_mday = m_day;

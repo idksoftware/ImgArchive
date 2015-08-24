@@ -103,11 +103,8 @@ bool App::Run()
 	AppOptions &appOptions = AppOptions::get();
 	if (appOptions.isConfiguratedOk() == false) {
 		if (appOptions.getCommandMode() == AppOptions::CM_InitArchive) {
-#ifdef _DEBUG
-			if (CreateArchive("c:/temp") == false) {
-#else
-			if (CreateArchive(config.getArchivePath()) == false) {
-#endif
+
+			if (CreateArchive(appOptions.getHomePath(), appOptions.getWorkspacePath(), appOptions.getShadowPath()) == false) {
 				return false;
 			}
 			printf("\n\nInit Archive\n");
@@ -123,21 +120,30 @@ bool App::Run()
 	
 
 	switch (appOptions.getCommandMode()) {
+		/*
 	case AppOptions::CM_InitArchive:
 		if (appOptions.isConfiguratedOk() == true) {
 			// Do not create a new archive. The old one needs to be deleted?
 			return false;
 		}
 #ifdef _DEBUG
-		if (CreateArchive("c:/temp") == false) {
+		if (CreateArchive("c:/temp", "c:/output", "c:/shadow") == false) {
 #else
-		if (CreateArchive(config.getArchivePath()) == false) {
+		if (CreateArchive(config.getHomePath(), config.getWorkspacePath()) == false) {
 #endif
 			return false;
 		}
 		printf("\n\nInit Archive\n");
 		break;
-		
+		*/
+
+	case AppOptions::CM_Show:
+	{
+		if (siaLib.show(appOptions.getName()) == false) {
+			return false;
+		}
+		break;
+	}
 	case AppOptions::CM_View:
 	{
 		if (siaLib.view(appOptions.getName()) == false) {
@@ -155,16 +161,19 @@ bool App::Run()
 	}
 	case AppOptions::CM_Validate:
 	{
-		if (appOptions.isConfiguratedOk() == true) {
+		if (appOptions.isConfiguratedOk() == false) {
 			// Do not create a new archive. The old one needs to be deleted?
 			return false;
 		}
 		IntegrityManager &integrityManager = IntegrityManager::get(config.getShadowPath());
-		
+		/*
 		if (integrityManager.makeList() == false) {
 			return false;
 		}
-		//}
+		*/
+		if (integrityManager.validate() == false) {
+			return false;
+		}
 		break;
 	}
 	
@@ -196,20 +205,25 @@ bool failed()
 	return(false);
 }
 
-bool App::CreateArchive(const char *archivePath) {
+bool App::CreateArchive(const char *archivePath, const char *workspacePath, const char *shadowPath) {
 
-	
+	if (CreateArchive::createHomeEnvVar(archivePath) == false) {
+		std::cout << "Failed creating enviroment variable SIA_HOME" << '\n';
+		return false;
+	}
+
 	if (CreateArchive::makeFolders(archivePath) == false) {
-		std::cout << "Failed" << '\n';
+		std::cout << "Failed creating folders" << '\n';
 		return false;
 	}
 
 	if (CreateArchive::createHookFiles(archivePath, HOOKS_PATH) == false) {
-		std::cout << "Failed" << '\n';
+		std::cout << "Failed creating hook files" << '\n';
 		return false;
 	}
-	if (CreateArchive::createConfigFiles(archivePath, CONFIG_PATH) == false) {
-		std::cout << "Failed" << '\n';
+
+	if (CreateArchive::createConfigFiles(archivePath, CONFIG_PATH, workspacePath, shadowPath) == false) {
+		std::cout << "Failed creating configuration files" << '\n';
 		return false;
 	}
 	return true;

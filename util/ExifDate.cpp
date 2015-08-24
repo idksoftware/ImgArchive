@@ -74,7 +74,7 @@ ExifDate::ExifDate(const char *str) {
 	time(&m_timenum);
 	struct tm timeinfo;
 		
-	gmtime_p(&timeinfo, &m_timenum);
+	gmtime_p(timeinfo, &m_timenum);
 	timeinfo.tm_year = m_year - 1900;
 	timeinfo.tm_mon = m_month - 1;
 	timeinfo.tm_mday = m_day;
@@ -99,7 +99,7 @@ ExifDate::ExifDate(int y, int m, int d) {
 ExifDate::ExifDate(time_t time) {
 	m_timenum = time;
 	struct tm timeinfo;
-	localtime_p(&timeinfo, &m_timenum);
+	localtime_p(timeinfo, &m_timenum);
 
 	m_year = timeinfo.tm_year + 1900;
 	m_month = timeinfo.tm_mon + 1;
@@ -115,7 +115,7 @@ ExifDate::~ExifDate() {
 void ExifDate::now() {
 	time(&m_timenum);
 	struct tm timeinfo;
-	localtime_p(&timeinfo, &m_timenum);
+	localtime_p(timeinfo, &m_timenum);
 
 	m_year = timeinfo.tm_year + 1900;
 	m_month = timeinfo.tm_mon + 1;

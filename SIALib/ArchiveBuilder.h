@@ -62,7 +62,7 @@ class ArchiveBuilder {
 	
 	std::string m_shadowPath;
 	std::string m_indexPath;
-	std::string m_archivePath;
+	std::string m_workspacePath;
 	std::string m_metatemplatePath;
 	ImageIndex *m_imageIndex;
 	ArchiveDate *m_archiveDate;

@@ -51,16 +51,10 @@
     <ClInclude Include="Environment.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FolderList.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="HookCmd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ImageContainer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageExtentions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ImageFileReader.h">
@@ -82,9 +76,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ImageType.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IntegrityManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="JournalFile.h">
@@ -129,6 +120,9 @@
     <ClInclude Include="BasicExifFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ImportJournal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SIALib.cpp">
@@ -161,16 +155,10 @@
     <ClCompile Include="Environment.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FolderList.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="HookCmd.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ImageContainer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageExtentions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ImageFileReader.cpp">
@@ -189,9 +177,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ImageSideCars.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="IntegrityManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="JournalFile.cpp">
@@ -233,5 +218,12 @@
     <ClCompile Include="BasicExifFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ImportJournal.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="doxygen.dxy" />
+    <None Include="mainpage.dox" />
   </ItemGroup>
 </Project>

@@ -37,7 +37,7 @@
 
 #include <string>
 #include <memory>
-#include "ExifDateTime.h"
+#include "../util/ExifDateTime.h"
 /*
 */
 namespace simplearchive {
@@ -62,6 +62,8 @@ namespace simplearchive {
 		bool checkin(const char *filepath, const char *comment);
 			
 		bool uncheckout(const char *filepath, const char *comment);
+
+		bool show(const char *name);
 			
 		bool view(const char *name);
 
@@ -69,6 +71,7 @@ namespace simplearchive {
 		
 		bool archive(const char *archivePath, const char *distPath, unsigned long sizeOfMedia, ExifDateTime *startDate, ExifDateTime *endDate);  //< Create backup volumes
 
+		bool checkDisk();
 	};
 
 }

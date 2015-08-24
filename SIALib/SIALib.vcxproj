@@ -94,7 +94,6 @@
     <ClInclude Include="CFolderStatus.h" />
     <ClInclude Include="CUnqueName.h" />
     <ClInclude Include="Environment.h" />
-    <ClInclude Include="FolderList.h" />
     <ClInclude Include="HookCmd.h" />
     <ClInclude Include="ImageContainer.h" />
     <ClInclude Include="ImageFileReader.h" />
@@ -107,7 +106,6 @@
     <ClInclude Include="ImageSideCar.h" />
     <ClInclude Include="ImageType.h" />
     <ClInclude Include="ImportJournal.h" />
-    <ClInclude Include="IntegrityManager.h" />
     <ClInclude Include="JournalFile.h" />
     <ClInclude Include="MakeMedia.h" />
     <ClInclude Include="MetadataUpdate.h" />
@@ -132,7 +130,6 @@
     <ClCompile Include="CFolderStatus.cpp" />
     <ClCompile Include="CUnqueName.cpp" />
     <ClCompile Include="Environment.cpp" />
-    <ClCompile Include="FolderList.cpp" />
     <ClCompile Include="HookCmd.cpp" />
     <ClCompile Include="ImageContainer.cpp" />
     <ClCompile Include="ImageFileReader.cpp" />
@@ -144,7 +141,6 @@
     <ClCompile Include="ImagePath.cpp" />
     <ClCompile Include="ImageSideCars.cpp" />
     <ClCompile Include="ImportJournal.cpp" />
-    <ClCompile Include="IntegrityManager.cpp" />
     <ClCompile Include="JournalFile.cpp" />
     <ClCompile Include="MakeMedia.cpp" />
     <ClCompile Include="MetadataUpdate.cpp" />

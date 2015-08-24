@@ -92,7 +92,7 @@ namespace simplearchive {
 		/// This is the temp file path.
 		static std::string m_tempPath;
 		/// This is the archive repository file path.
-		static std::string m_archivePath;
+		static std::string m_workspacePath;
 		static std::string m_shadowArchivePath;
 		static std::string m_masterViewPath;
 
@@ -120,7 +120,7 @@ namespace simplearchive {
 		const char *getSourcePath();
 		/// @brief Gets the archive path.
 		/// user definable
-		const char *getArchivePath();
+		const char *getWorkspacePath();
 		/// @brief Gets the shadow archive path
 		/// user definable
 		const char *getShadowPath();
@@ -170,6 +170,8 @@ namespace simplearchive {
 		bool isVerbose() const;
 		const char *getLogLevel();
 
+		std::string toString();
+
 	public:
  
 //	private:
@@ -177,7 +179,7 @@ namespace simplearchive {
 		void setDryRun(bool dryRun);
 		void setQuiet(bool quiet);
 		void setVerbose(bool verbose);
-		void setArchivePath(const char *homePath);
+		void setWorkspacePath(const char *homePath);
 		void setShadowPath(const char *homePath);
 		void setMasterViewPath(const char *viewPath);
 		
@@ -187,7 +189,7 @@ namespace simplearchive {
 		void setToolsPath(const char *toolsPath);
 		/// Sets home path. This is the root path all default paths are made. 
 		void setHomePath(const char *homePath);
-		bool validArchivePath();
+		bool validWorkspacePath();
 		bool validSourcePath();
 		bool validHomePath();
 	};

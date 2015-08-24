@@ -109,7 +109,9 @@ bool App::Run()
 {
 
 	SIALib siaLib;
-	siaLib.initalise();
+	if (siaLib.initalise() < 0) {
+		return false;
+	}
 
 	
 	AppOptions &appOptions = AppOptions::get();
@@ -221,7 +223,7 @@ int main(int argc, char **argv)
 	if (app.Run() == false) {
 		return 0;
 	}
-	_CrtDumpMemoryLeaks();
+	
 	return 1;
 
 }

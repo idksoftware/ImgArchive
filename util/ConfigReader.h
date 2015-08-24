@@ -135,7 +135,13 @@ public:
 
 	bool add(const char *cmd, const char *options, Config &config);
 	bool edit(const char *cmd, const char *options, Config &config);
+
+	/// @brief This function attempts to read a configuration file.
+	/// @param    cmd			.
+	/// @param    config		Config class to be written out.
+	/// @return	returns true if read correctly.
 	bool remove(const char *cmd, Config &config);
+	
 	/// @brief This function attempts to read a configuration file.
 	/// @param    datafile	File name to write.
 	/// @param    config		Config class to be written out.

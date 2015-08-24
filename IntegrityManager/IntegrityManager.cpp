@@ -78,6 +78,14 @@ bool IntegrityManager::addFile(const char *folderPath, const char *fileName) {
 	return true;
 }
 
+bool IntegrityManager::validate() {
+	return true;
+}
+
+bool IntegrityManager::repair() {
+	return true;
+}
+
 bool IntegrityManager::makeList() {
 	FolderList folderList(m_archivePath.c_str());
 	if (folderList.makeList() == false) {

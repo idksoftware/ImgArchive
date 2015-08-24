@@ -59,7 +59,9 @@ namespace simplearchive {
 class DataContainer : public std::vector<std::string> {
 
 public:
-
+	~DataContainer() {
+		
+	}
 };
 
 class DupDataFile {
@@ -90,7 +92,7 @@ DupDataFile::DupDataFile() {
 }
 
 DupDataFile::~DupDataFile() {
-
+	
 }
 
 bool DupDataFile::read(const char *datafile) {

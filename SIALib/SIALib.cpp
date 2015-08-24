@@ -118,7 +118,7 @@ namespace simplearchive {
 		logger.log(CLogger::INFO, "Home path is \"%s\"", config.getHomePath());
 
 		try {
-			std::string temp = config.getArchivePath();
+			std::string temp = config.getWorkspacePath();
 
 			if (SAUtils::DirExists(temp.c_str()) == false) {
 
@@ -142,12 +142,12 @@ namespace simplearchive {
 				}
 				logger.log(CLogger::INFO, "Shadow repository folder created at location: \"%s\"", temp.c_str());
 			}
-			if (ImagePath::settupMainArchiveFolders(config.getArchivePath(), config.getShadowPath()) == false) {
+			if (ImagePath::settupMainArchiveFolders(config.getWorkspacePath(), config.getShadowPath()) == false) {
 
 				return -1;
 			}
 	
-			VersionControl::setPathToArchives(config.getArchivePath(), config.getShadowPath());
+			VersionControl::setPathToArchives(config.getWorkspacePath(), config.getShadowPath());
 			History::setPath(config.getHistoryPath());
 			History &history = History::getHistory();
 			std::string csvdbPath = config.getShadowPath();
@@ -155,7 +155,7 @@ namespace simplearchive {
 			CSVDatabase::setDBPath(csvdbPath.c_str());
 			if (ImageExtentions::setExtentionsFilePath(config.getConfigPath()) == false) {
 				logger.log(CLogger::INFO, "Unable to find image extensions file path: \"%s\"", config.getConfigPath());
-				return false;
+				return -1;
 			}
 			if (SAUtils::DirExists(temp.c_str()) == false) {
 				logger.log(CLogger::INFO, "Hidden .sia folder not found at location: \"%s\"", temp.c_str());
@@ -215,7 +215,7 @@ namespace simplearchive {
 		}
 		catch (SIAAppException e) {
 			logger.log(CLogger::FATAL, "Failed to complete initalisation %s\n", e.what());
-			
+			return -1;
 		}
 		logger.log(CLogger::SUMMARY, "Initalisation complete");
 		return 0;
@@ -260,6 +260,11 @@ namespace simplearchive {
 		}
 		return true;
 		
+	}
+
+	bool SIALib::show(const char *name) {
+		printf("show %s", name);
+		return true;
 	}
 
 	bool SIALib::view(const char *name) {
@@ -319,13 +324,13 @@ namespace simplearchive {
 		if (config.isToDateSet() || config.isFromDateSet()) {
 			
 			
-			if (makeMedia.initalise(config.getArchivePath(), config.getBackupDestinationPath(), config.getBackupMediaSize(), startDate, endDate) == false) {
+			if (makeMedia.initalise(config.getWorkspacePath(), config.getBackupDestinationPath(), config.getBackupMediaSize(), startDate, endDate) == false) {
 				return false;
 			}
 		}
 		else {
 			MakeMedia makeMedia;
-			if (makeMedia.initalise(config.getArchivePath(), config.getBackupDestinationPath(), config.getBackupMediaSize()) == false) {
+			if (makeMedia.initalise(config.getWorkspacePath(), config.getBackupDestinationPath(), config.getBackupMediaSize()) == false) {
 				return false;
 			}
 		}
@@ -333,6 +338,12 @@ namespace simplearchive {
 			return false;
 		}
 		
+		return true;
+	}
+
+	bool SIALib::checkDisk() {
+		IntegrityManager &im = IntegrityManager::get();
+		im.makeList();
 		return true;
 	}
 

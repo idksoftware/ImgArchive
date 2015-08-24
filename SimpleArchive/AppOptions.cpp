@@ -39,6 +39,7 @@
 #include "stdio.h"
 #include "argvparser.h"
 #include "Environment.h"
+#include "EnvFunc.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -49,7 +50,7 @@ static char THIS_FILE[] = __FILE__;
 using namespace CommandLineProcessing;
 namespace simplearchive {
 
-AppOptions *AppOptions::m_this = 0;
+AppOptions *AppOptions::m_this = nullptr;
 std::string AppOptions::m_name;
 AppOptions::CommandMode AppOptions::m_commandMode = AppOptions::CM_Unknown;
 std::string AppOptions::m_comment;
@@ -72,8 +73,15 @@ bool AppOptions::initalise(int argc, char **argv) {
 	m_dry_run = false;
 	*/
 	CAppConfig &config = CAppConfig::get();
-	const std::string key = "SA_HOME";
+	/*
+	const std::string key = "SIA_HOME";
 	std::string temp = SAUtils::GetEnvironment(key);
+	std::string homePath = temp;
+	*/
+	std::string temp;
+	if (GetEnv(temp, false) == false) {
+		return false;
+	}
 	std::string homePath = temp;
 //	printf("%s", homePath.c_str());
 	int i = homePath.length();
@@ -88,7 +96,7 @@ bool AppOptions::initalise(int argc, char **argv) {
 		m_error = true;
 		return false;
 	}
-	std::string configfile = homePath + "/conf/" + "config.dat";
+	std::string configfile = homePath + "/config/" + "config.dat";
 	if (SAUtils::FileExists(configfile.c_str()) == false) {
 		m_error = true;
 		return false;
@@ -111,7 +119,7 @@ bool AppOptions::initalise(int argc, char **argv) {
 	config.setHomePath(homePath.c_str());
 	temp = SAUtils::GetEnvironment("SIA_ARCHIVE");
 	if (temp.empty() == false) {
-		config.setArchivePath(temp.c_str());
+		config.setWorkspacePath(temp.c_str());
 	}
 	temp = SAUtils::GetEnvironment("SIA_SOURCE");
 	if (temp.empty() == false) {
@@ -264,7 +272,7 @@ bool AppOptions::initalise(int argc, char **argv) {
 		if (m_argvParser->foundOption("archive-path") == true) {			
 			std::string opt = m_argvParser->optionValue("archive-path");
 			printf(opt.c_str()); printf("\n");
-			config.setArchivePath(opt.c_str());
+			config.setWorkspacePath(opt.c_str());
 		}
 		setCommandMode(AppOptions::CM_Import);
 
@@ -283,7 +291,7 @@ bool AppOptions::initalise(int argc, char **argv) {
 		if (m_argvParser->foundOption("archive-path") == true) {
 			std::string opt = m_argvParser->optionValue("archive-path");
 			printf(opt.c_str()); printf("\n");
-			config.setArchivePath(opt.c_str());
+			config.setWorkspacePath(opt.c_str());
 		}
 
 		setCommandMode(AppOptions::CM_Checkout);
@@ -302,7 +310,7 @@ bool AppOptions::initalise(int argc, char **argv) {
 		if (m_argvParser->foundOption("archive-path") == true) {
 			std::string opt = m_argvParser->optionValue("archive-path");
 			printf(opt.c_str()); printf("\n");
-			config.setArchivePath(opt.c_str());
+			config.setWorkspacePath(opt.c_str());
 		}
 
 
@@ -321,7 +329,7 @@ bool AppOptions::initalise(int argc, char **argv) {
 		if (m_argvParser->foundOption("archive-path") == true) {
 			std::string opt = m_argvParser->optionValue("archive-path");
 			printf(opt.c_str()); printf("\n");
-			config.setArchivePath(opt.c_str());
+			config.setWorkspacePath(opt.c_str());
 		}
 		
 		setCommandMode(AppOptions::CM_UnCheckout);
@@ -338,7 +346,7 @@ bool AppOptions::initalise(int argc, char **argv) {
 
 			std::string opt = m_argvParser->optionValue("archive-path");
 			printf(opt.c_str()); printf("\n");
-			config.setArchivePath(opt.c_str());
+			config.setWorkspacePath(opt.c_str());
 		}
 		/*
 		if (m_argvParser->foundOption("dist-path") == true) {
@@ -379,7 +387,7 @@ bool AppOptions::initalise(int argc, char **argv) {
 
 			std::string opt = m_argvParser->optionValue("archive-path");
 			printf(opt.c_str()); printf("\n");
-			config.setArchivePath(opt.c_str());
+			config.setWorkspacePath(opt.c_str());
 		}
 	}
 	else if (m_argvParser->command("mirror") == true) {
@@ -389,7 +397,7 @@ bool AppOptions::initalise(int argc, char **argv) {
 
 			std::string opt = m_argvParser->optionValue("archive-path");
 			printf(opt.c_str()); printf("\n");
-			config.setArchivePath(opt.c_str());
+			config.setWorkspacePath(opt.c_str());
 		}
 		/*
 		if (m_argvParser->foundOption("dist-path") == true) {
@@ -429,7 +437,7 @@ bool AppOptions::initalise(int argc, char **argv) {
 
 			std::string opt = m_argvParser->optionValue("archive-path");
 			printf(opt.c_str()); printf("\n");
-			config.setArchivePath(opt.c_str());
+			config.setWorkspacePath(opt.c_str());
 		}
 
 		if (m_argvParser->foundOption("dist-path") == true) {
@@ -512,10 +520,13 @@ bool AppOptions::initalise(int argc, char **argv) {
 
 AppOptions::~AppOptions() {
 	// TODO Auto-generated destructor stub
+	if (m_this != nullptr) {
+		delete m_this;
+	}
 }
 
 AppOptions &AppOptions::get() {
-	if (m_this == NULL) {
+	if (m_this == nullptr) {
 		m_this = new AppOptions;
 	}
 	return *m_this;

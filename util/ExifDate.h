@@ -37,7 +37,7 @@
 #include <time.h>
 #include <string>
 #include "ExifDateTime.h"
-#include "cport.h"
+#include "../fclib/cport.h"
 
 namespace simplearchive {
 
@@ -59,7 +59,7 @@ public:
 		m_isOk = exifDate.m_isOk;
 		time(&m_timenum);
 		struct tm timeinfo;
-		gmtime_p(&timeinfo, &m_timenum);
+		gmtime_p(timeinfo, &m_timenum);
 		timeinfo.tm_year = m_year - 1900;
 		timeinfo.tm_mon = m_month - 1;
 		timeinfo.tm_mday = m_day;
@@ -74,7 +74,7 @@ public:
 		
 		time(&m_timenum);
 		struct tm timeinfo;
-		gmtime_p(&timeinfo, &m_timenum);
+		gmtime_p(timeinfo, &m_timenum);
 		timeinfo.tm_year = m_year - 1900;
 		timeinfo.tm_mon = m_month - 1;
 		timeinfo.tm_mday = m_day;
@@ -92,7 +92,7 @@ public:
 		m_isOk = exifDate.m_isOk;
 		time(&m_timenum);
 		struct tm timeinfo;
-		gmtime_p(&timeinfo, &m_timenum);
+		gmtime_p(timeinfo, &m_timenum);
 		timeinfo.tm_year = m_year - 1900;
 		timeinfo.tm_mon = m_month - 1;
 		timeinfo.tm_mday = m_day;
@@ -108,7 +108,7 @@ public:
 		m_isOk = exifDate.m_isOk;
 		time(&m_timenum);
 		struct tm timeinfo;
-		gmtime_p(&timeinfo, &m_timenum);
+		gmtime_p(timeinfo, &m_timenum);
 		timeinfo.tm_year = m_year - 1900;
 		timeinfo.tm_mon = m_month - 1;
 		timeinfo.tm_mday = m_day;

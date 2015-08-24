@@ -60,7 +60,7 @@ namespace simplearchive {
 		setEnv.insert(setEnv.end(), EnvItem(TOOLS_PATH_LABEL, config.getToolsPath()));
 		setEnv.insert(setEnv.end(), EnvItem(TEMP_PATH_LABEL, config.getTempPath()));
 		setEnv.insert(setEnv.end(), EnvItem(SOURCE_PATH_LABEL, config.getSourcePath()));
-		setEnv.insert(setEnv.end(), EnvItem(ARCHIVE_PATH_LABEL, config.getArchivePath()));
+		setEnv.insert(setEnv.end(), EnvItem(ARCHIVE_PATH_LABEL, config.getWorkspacePath()));
 		setEnv.insert(setEnv.end(), EnvItem(CONFIG_PATH_LABEL, config.getConfigPath()));
 		setEnv.insert(setEnv.end(), EnvItem(LOG_PATH_LABEL, config.getLogPath()));
 		setEnv.insert(setEnv.end(), EnvItem(HOME_PATH_LABEL, config.getHomePath()));

@@ -48,6 +48,8 @@ public:
 	bool addDayFolder(const char *folderName);
 	bool addFile(const char *folderPath, const char *fileName);
 	bool makeList();
+	bool validate();
+	bool repair();
 	static IntegrityManager &get(const char *archivePath);
 	static IntegrityManager &get();
 	void setArchivePath(const char* archivePath);

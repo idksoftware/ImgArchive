@@ -42,6 +42,7 @@ class AppOptions {
 public:
 	typedef enum {
 		CM_InitArchive,
+		CM_Show,
 		CM_Version,
 		CM_View,
 		CM_Mirror,
@@ -55,30 +56,39 @@ private:
 	static std::string m_name;
 	static std::string m_comment;
 	static std::string m_imageAddress;
+	static std::string m_homePath;
+	static std::string m_workspacePath;
+	static std::string m_shadowPath;
 	bool m_error;
 	/**
 		@brief Set to true if no archive configuration found. 
 	*/
-	bool m_noConfiguration;
+	bool m_configured;
 	void setCommandMode(const AppOptions::CommandMode mode);
 	bool setCommandMode(const char *modeString);
 	void setName(const char *name);
+	void setHomePath(const char *homePath);
+	void setWorkspacePath(const char *workspacePath);
+	void setShadowPath(const char *shadowPath);
 	AppOptions();
 public:
 	
 	static AppOptions &get();
 
 	virtual ~AppOptions();
-
+	bool initaliseConfig();
 	bool initalise(int argc, char **argv);
 	AppOptions::CommandMode getCommandMode();
 	const char *getName();
 	const char *getCommand();
 	const char *getComment();
 	const char *getImageAddress();
+	const char *getHomePath();
+	const char *getWorkspacePath();
+	const char *getShadowPath();
 
 	bool isConfiguratedOk() {
-		return (m_noConfiguration == false);
+		return m_configured;
 	}
 	
 };

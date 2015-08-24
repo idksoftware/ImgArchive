@@ -54,23 +54,18 @@ std::string AppOptions::m_name;
 AppOptions::CommandMode AppOptions::m_commandMode = AppOptions::CM_Unknown;
 std::string AppOptions::m_comment;
 std::string AppOptions::m_imageAddress;
+std::string AppOptions::m_homePath;
+std::string AppOptions::m_workspacePath;
+std::string AppOptions::m_shadowPath;
 
 AppOptions::AppOptions() {
-	m_noConfiguration = false;
+	m_configured = true;
 }
 
-bool AppOptions::initalise(int argc, char **argv) {
+bool AppOptions::initaliseConfig() {
 
-	
-	/*
-	m_error = false;
-	m_verbose = false;
-	m_quiet = false;
-	m_logLevel = "INFO";
-	m_dry_run = false;
-	*/
 	CAppConfig &config = CAppConfig::get();
-	const std::string key = "SA_HOME";
+	const std::string key = "SIA_HOME";
 	std::string temp = SAUtils::GetEnvironment(key);
 	std::string homePath = temp;
 	printf("%s", homePath.c_str());
@@ -79,15 +74,15 @@ bool AppOptions::initalise(int argc, char **argv) {
 		homePath = SAUtils::GetEnvironment("ProgramData");
 		//C:\ProgramData\IDK Software\ImageArchive1.0
 		homePath += "/IDK Software/ImageArchive1.0";
-		
+
 	}
-	std::string configfile = homePath + "/conf/" + "config.dat";
+	std::string configfile = homePath + "/config/" + "config.dat";
 	if (SAUtils::DirExists(homePath.c_str()) == false) {
 		//printf("SIA Unable to start?\nArchive not found at default location and the environment variable SA_HOME not set.\n"
 		//	"Use siaadmin -i to create an empty archive at the default location (see documentation).\n");
 		//m_error = true;
 		//return false;
-		m_noConfiguration = true;
+		m_configured = false;
 	}
 	else {
 
@@ -109,9 +104,9 @@ bool AppOptions::initalise(int argc, char **argv) {
 			}
 			*/
 			config.setHomePath(homePath.c_str());
-			temp = SAUtils::GetEnvironment("SIA_ARCHIVE");
+			temp = SAUtils::GetEnvironment("SIA_WORKSPACE");
 			if (temp.empty() == false) {
-				config.setArchivePath(temp.c_str());
+				config.setWorkspacePath(temp.c_str());
 			}
 			temp = SAUtils::GetEnvironment("SIA_SOURCE");
 			if (temp.empty() == false) {
@@ -123,9 +118,14 @@ bool AppOptions::initalise(int argc, char **argv) {
 			}
 		}
 		else {
-			m_noConfiguration = true;
+			m_configured = false;
 		}
 	}
+	return true;
+}
+
+bool AppOptions::initalise(int argc, char **argv) {
+
 	ArgvParser argvParser;
 	
 
@@ -137,8 +137,7 @@ bool AppOptions::initalise(int argc, char **argv) {
 		" functions but in addition, takes input and provides output from optional external components to provide a"
 		"tailored achieving solution and can be extended into a complete achieving system. ");
 	argvParser.setHelpOption();
-	//parser.defineOption("a", "Adds new images to the archive.", ArgvParser::OptionRequiresValue);
-	//parser.defineOptionAlternative("a", "add");
+	
 	argvParser.setHeader("usage: siaadmin subcommand [options] [args]\n\n"
 		"Image archive command line client, version 1.0.0.1\n"
 		"Type 'siaadmin help <subcommand>' for help on a specific subcommand.\n\n"
@@ -153,37 +152,20 @@ bool AppOptions::initalise(int argc, char **argv) {
 
 	// Subcommands
 
-	/*
-	argvParser.defineOption("a", "add new images to the archive.", ArgvParser::NoOptionAttribute);
-	argvParser.defineOptionAlternative("a", "add");
-
-	argvParser.defineOption("o", "Checkout images from archive.", ArgvParser::NoOptionAttribute);
-	argvParser.defineOptionAlternative("o", "checkout");
-
-	argvParser.defineOption("i", "Checkin images to archive.", ArgvParser::NoOptionAttribute);
-	argvParser.defineOptionAlternative("i", "checkin");
-
-	argvParser.defineOption("I", "Create Archive Commands", ArgvParser::NoOptionAttribute);
-	argvParser.defineOptionAlternative("I", "init");
-
-	argvParser.defineOption("u", "Un-checkout images to archive.", ArgvParser::NoOptionAttribute);
-	argvParser.defineOptionAlternative("u", "uncheckout");
-
-	argvParser.defineOption("x", "Export images from archive.", ArgvParser::NoOptionAttribute);
-	argvParser.defineOptionAlternative("x", "export");
-
-	argvParser.defineOption("v", "View commands", ArgvParser::NoOptionAttribute);
-	argvParser.defineOptionAlternative("v", "view");
-
-	*/
+	
 	argvParser.defineOption("i", "Create Archive Commands", ArgvParser::MasterOption);
 	argvParser.defineOptionAlternative("i", "init");
 
-	argvParser.defineOption("about", "prints the version information", ArgvParser::NoOptionAttribute);
+	argvParser.defineOption("s", "Show settings", ArgvParser::MasterOption);
+	argvParser.defineOptionAlternative("s", "show");
+
+	// Arguments
+	argvParser.defineOption("about", "prints the version information", ArgvParser::MasterOption);
 
 	
-	argvParser.defineOption("validate", "Validate commands", ArgvParser::NoOptionAttribute);
+	argvParser.defineOption("validate", "Validate commands", ArgvParser::MasterOption);
 
+	/*
 	argvParser.defineOption("image-address", "image address", ArgvParser::NoOptionAttribute);
 
 	argvParser.defineOption("m", "Mirror commands", ArgvParser::NoOptionAttribute);
@@ -191,15 +173,16 @@ bool AppOptions::initalise(int argc, char **argv) {
 
 	argvParser.defineOption("b", "Goes through the motions of running the subcommand but makes no\nactual changes ether disk or repository.", ArgvParser::NoOptionAttribute);
 	argvParser.defineOptionAlternative("b", "backup");
+	*/
 	// Options
-	argvParser.defineOption("n", "name of the view.", ArgvParser::OptionRequiresValue);
+	argvParser.defineOption("n", "name of the item.", ArgvParser::OptionRequiresValue);
 	argvParser.defineOptionAlternative("n", "name");
 
+	/*
 	argvParser.defineOption("q", "no output is sent to the terminal.", ArgvParser::NoOptionAttribute);
 	argvParser.defineOptionAlternative("q", "quiet");
 
-	argvParser.defineOption("s", "source of the images", ArgvParser::OptionRequiresValue);
-	argvParser.defineOptionAlternative("s", "source-path");
+	
 
 	argvParser.defineOption("d", "destination of the images", ArgvParser::OptionRequiresValue);
 	argvParser.defineOptionAlternative("d", "dist-path");
@@ -218,6 +201,9 @@ bool AppOptions::initalise(int argc, char **argv) {
 	argvParser.defineOption("r", "location of the archive root folder.", ArgvParser::OptionRequiresValue);
 	argvParser.defineOptionAlternative("r", "archive-path");
 
+	argvParser.defineOption("w", "location of the workspace folder.", ArgvParser::OptionRequiresValue);
+	argvParser.defineOptionAlternative("w", "workspace");
+
 	argvParser.defineOption("l", "Temporarily changes the logging level for the scope of this command session.", ArgvParser::OptionRequiresValue);
 	argvParser.defineOptionAlternative("r", "logging-level");
 
@@ -225,11 +211,12 @@ bool AppOptions::initalise(int argc, char **argv) {
 	argvParser.defineOptionAlternative("C", "comment");
 
 	argvParser.defineOption("w", "Location of the archive Workspace", ArgvParser::OptionRequiresValue);
-	argvParser.defineOptionAlternative("w", "workspace");
+	argvParser.defineOptionAlternative("w", "workspace-path");
 	
-	argvParser.defineCommandOption("init", "comment");
-	
-	
+	argvParser.defineCommandOption("init", "archive-path");
+	argvParser.defineCommandOption("init", "workspace-path");
+	*/
+
 	ArgvParser::ParserResults res = argvParser.parse(argc, argv);
 
 	std::string errStr;
@@ -257,118 +244,187 @@ bool AppOptions::initalise(int argc, char **argv) {
 
 	//testHelpOptionDetection();
 	bool cmdFound = false;
-
-	if (argvParser.foundOption("about") == true) {
-		setCommandMode(AppOptions::CM_Version);
-		cmdFound = true;
-	}
-	else if (argvParser.foundOption("init") == true) {
-		setCommandMode(AppOptions::CM_InitArchive);
-		if (argvParser.foundOption("archive-path") == true) {
-			std::string opt = argvParser.optionValue("archive-path");
-			printf(opt.c_str()); printf("\n");
-			config.setArchivePath(opt.c_str());
-		}
-		cmdFound = true;
-	}
+	CAppConfig &config = CAppConfig::get();
 	
-	else if (argvParser.foundOption("validate") == true) {
-		setCommandMode(AppOptions::CM_Validate);
-		cmdFound = true;
+	if (argvParser.command("init") == true) {
+		// This command will initalise the configuration.
+		// so the the configuration need not to be initalised.
+		setCommandMode(AppOptions::CM_InitArchive);
+		m_configured = false;
+		std::string opt;
 		if (argvParser.foundOption("archive-path") == true) {
-
-			std::string opt = argvParser.optionValue("archive-path");
-			printf(opt.c_str()); printf("\n");
-			config.setArchivePath(opt.c_str());
+			opt = argvParser.optionValue("archive-path");
 		}
-	}
-	else if (argvParser.foundOption("mirror") == true) {
-		setCommandMode(AppOptions::CM_Mirror);
-
-		if (argvParser.foundOption("archive-path") == true) {
-
-			std::string opt = argvParser.optionValue("archive-path");
-			printf(opt.c_str()); printf("\n");
-			config.setArchivePath(opt.c_str());
+		else {
+			std::string progPath = SAUtils::GetEnvironment("ProgramData");
+			std::string siaPath = "/IDK Software/ImageArchive1.0";
+			if (SAUtils::makePath(progPath.c_str(), siaPath.c_str()) == false) {
+				return false;
+			}
+			opt = progPath;
+			opt += siaPath;
 		}
-		/*
-		if (argvParser.foundOption("dist-path") == true) {
-
-		std::string opt = argvParser.optionValue("dist-path");
-		printf(opt.c_str()); printf("\n");
-		config.setBackupDestinationPath(opt.c_str());
-
+		if (SAUtils::FileExists(opt.c_str()) == false) {
+			return false;
 		}
-		if (argvParser.foundOption("size") == true) {
+		setHomePath(opt.c_str());
 
-		std::string opt = argvParser.optionValue("size");
-		printf(opt.c_str()); printf("\n");
-		config.setBackupMediaSize(opt.c_str());
-
+		if (argvParser.foundOption("workspace-path") == true) {
+			std::string opt = argvParser.optionValue("workspace-path");
 		}
-		if (argvParser.foundOption("from-date") == true) {
-
-		std::string opt = argvParser.optionValue("from-date");
-		printf(opt.c_str()); printf("\n");
-		config.setFromDate(opt.c_str());
-
+		else {
+			std::string temp = SAUtils::GetEnvironment("USERPROFILE");
+			opt = temp + "/Documents";
+			if (SAUtils::FileExists(temp.c_str()) == false) {
+				return false;
+			}
+			opt = opt + "/SIA Workspace";
+			if (SAUtils::FileExists(opt.c_str()) == false) {
+				if (SAUtils::mkDir(opt.c_str()) == false) {
+					return false;
+				}
+			}
+			
 		}
-		*/
-		if (argvParser.foundOption("name") == true) {
-			std::string opt = argvParser.optionValue("name");
-			printf(opt.c_str()); printf("\n");
-			setName(opt.c_str());
+		if (SAUtils::FileExists(opt.c_str()) == false) {
+			return false;
 		}
-
-		cmdFound = true;
-	}
-	else if (argvParser.foundOption("backup") == true) {
-		setCommandMode(AppOptions::CM_Archive);
+		setWorkspacePath(opt.c_str());
 		
-		if (argvParser.foundOption("archive-path") == true) {
-
-			std::string opt = argvParser.optionValue("archive-path");
-			printf(opt.c_str()); printf("\n");
-			config.setArchivePath(opt.c_str());
+		if (argvParser.foundOption("repository-path") == true) {
+			std::string opt = argvParser.optionValue("repository-path");
 		}
+		else {
+			std::string progPath = SAUtils::GetEnvironment("ProgramData");
+			std::string siaPath = "/IDK Software/ImageArchive1.0/shadow";
+			if (SAUtils::makePath(progPath.c_str(), siaPath.c_str()) == false) {
+				return false;
+			}
+			opt = progPath;
+			opt += siaPath;
+		}
+		if (SAUtils::FileExists(opt.c_str()) == false) {
+			return false;
+		}
+		setShadowPath(opt.c_str());
+		cmdFound = true;
+	}
+	else {
+		if (initaliseConfig() == false) {
+			return false;
+		}
+		
+		if (argvParser.command("about") == true) {
+			setCommandMode(AppOptions::CM_Version);
+			cmdFound = true;
+		}
+		else if (argvParser.command("show") == true) {
+			setCommandMode(AppOptions::CM_Show);
+			if (argvParser.foundOption("name") == true) {
+				std::string opt = argvParser.optionValue("name");
+				printf(opt.c_str()); printf("\n");
+				setName(opt.c_str());
+			}
+			cmdFound = true;
+		}
+		else if (argvParser.command("validate") == true) {
+			setCommandMode(AppOptions::CM_Validate);
+			cmdFound = true;
+			if (argvParser.foundOption("archive-path") == true) {
 
-		if (argvParser.foundOption("dist-path") == true) {
+				std::string opt = argvParser.optionValue("archive-path");
+				printf(opt.c_str()); printf("\n");
+				config.setWorkspacePath(opt.c_str());
+			}
+		}
+		else if (argvParser.command("mirror") == true) {
+			setCommandMode(AppOptions::CM_Mirror);
+
+			if (argvParser.foundOption("archive-path") == true) {
+
+				std::string opt = argvParser.optionValue("archive-path");
+				printf(opt.c_str()); printf("\n");
+				config.setWorkspacePath(opt.c_str());
+			}
+			/*
+			if (argvParser.foundOption("dist-path") == true) {
 
 			std::string opt = argvParser.optionValue("dist-path");
 			printf(opt.c_str()); printf("\n");
 			config.setBackupDestinationPath(opt.c_str());
 
-		}
-		if (argvParser.foundOption("size") == true) {
+			}
+			if (argvParser.foundOption("size") == true) {
 
 			std::string opt = argvParser.optionValue("size");
 			printf(opt.c_str()); printf("\n");
 			config.setBackupMediaSize(opt.c_str());
 
-		}
-		if (argvParser.foundOption("from-date") == true) {
+			}
+			if (argvParser.foundOption("from-date") == true) {
 
 			std::string opt = argvParser.optionValue("from-date");
 			printf(opt.c_str()); printf("\n");
 			config.setFromDate(opt.c_str());
 
-		}
-		if (argvParser.foundOption("to-date") == true) {
+			}
+			*/
+			if (argvParser.foundOption("name") == true) {
+				std::string opt = argvParser.optionValue("name");
+				printf(opt.c_str()); printf("\n");
+				setName(opt.c_str());
+			}
 
-			std::string opt = argvParser.optionValue("to-date");
-			printf(opt.c_str()); printf("\n");
-			config.setToDate(opt.c_str());
-
+			cmdFound = true;
 		}
-		cmdFound = true;
-	}
-	else if (argvParser.foundOption("version") == true) {
-		setCommandMode(AppOptions::CM_Version);
-		cmdFound = true;
-	}
-	else {
-		setCommandMode(AppOptions::CM_Unknown);
-		cmdFound = true;
+		else if (argvParser.foundOption("backup") == true) {
+			setCommandMode(AppOptions::CM_Archive);
+
+			if (argvParser.foundOption("archive-path") == true) {
+
+				std::string opt = argvParser.optionValue("archive-path");
+				printf(opt.c_str()); printf("\n");
+				config.setWorkspacePath(opt.c_str());
+			}
+
+			if (argvParser.foundOption("dist-path") == true) {
+
+				std::string opt = argvParser.optionValue("dist-path");
+				printf(opt.c_str()); printf("\n");
+				config.setBackupDestinationPath(opt.c_str());
+
+			}
+			if (argvParser.foundOption("size") == true) {
+
+				std::string opt = argvParser.optionValue("size");
+				printf(opt.c_str()); printf("\n");
+				config.setBackupMediaSize(opt.c_str());
+
+			}
+			if (argvParser.foundOption("from-date") == true) {
+
+				std::string opt = argvParser.optionValue("from-date");
+				printf(opt.c_str()); printf("\n");
+				config.setFromDate(opt.c_str());
+
+			}
+			if (argvParser.foundOption("to-date") == true) {
+
+				std::string opt = argvParser.optionValue("to-date");
+				printf(opt.c_str()); printf("\n");
+				config.setToDate(opt.c_str());
+
+			}
+			cmdFound = true;
+		}
+		else if (argvParser.foundOption("version") == true) {
+			setCommandMode(AppOptions::CM_Version);
+			cmdFound = true;
+		}
+		else {
+			setCommandMode(AppOptions::CM_Unknown);
+			cmdFound = true;
+		}
 	}
 	if (argvParser.foundOption("logging-level") == true) {
 		
@@ -465,11 +521,34 @@ void AppOptions::setName(const char *name) {
 	m_name = name;
 }
 
+void AppOptions::setHomePath(const char *homePath) {
+	m_homePath = homePath;
+}
+
+void AppOptions::setWorkspacePath(const char *workspacePath) {
+	m_workspacePath = workspacePath;
+}
+void AppOptions::setShadowPath(const char *shadowPath) {
+	m_shadowPath = shadowPath;
+}
+
 const char *AppOptions::getComment() {
 	return m_comment.c_str();
 }
 const char *AppOptions::getImageAddress() {
 	return m_imageAddress.c_str();
 }
+
+const char *AppOptions::getHomePath() {
+	return m_homePath.c_str();
+}
+
+const char *AppOptions::getWorkspacePath() {
+	return m_workspacePath.c_str();
+}
+const char *AppOptions::getShadowPath() {
+	return m_shadowPath.c_str();
+}
+
 
 } /* namespace simplearchive */

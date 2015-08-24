@@ -84,12 +84,12 @@ namespace simplearchive {
 		std::unique_ptr<ImagePath> m_imagePath;
 		ImageContainer *m_curImageSet;
 		std::unique_ptr<ArchiveDate> m_archiveDate;
-		std::string& m_archivePath;
+		std::string& m_workspacePath;
 		ImageIndex& m_imageIndex;
 	public:
 		
-		ImageProcessor(ImageContainer *curImageSet, CSVDBFile &csvDBFile, CSVDatabase &csvDatabase, std::string& archivePath, ImageIndex& imageIndex)
-			: m_csvDBFile(csvDBFile), m_csvDatabase(csvDatabase), m_curImageSet(curImageSet), m_archivePath(archivePath), m_imageIndex(imageIndex)
+		ImageProcessor(ImageContainer *curImageSet, CSVDBFile &csvDBFile, CSVDatabase &csvDatabase, std::string& workspacePath, ImageIndex& imageIndex)
+			: m_csvDBFile(csvDBFile), m_csvDatabase(csvDatabase), m_curImageSet(curImageSet), m_workspacePath(workspacePath), m_imageIndex(imageIndex)
 		{
 			CLogger &logger = CLogger::getLogger();
 
@@ -221,7 +221,7 @@ namespace simplearchive {
 
 		bool processHistory(ImagePath &imagePath, const char *filepath, const char *comment, const HistoryEvent &he, int ver) {
 
-			std::string fullPath = m_archivePath + "/" + filepath;
+			std::string fullPath = m_workspacePath + "/" + filepath;
 			std::string filename;
 			std::string path;
 
@@ -288,13 +288,13 @@ namespace simplearchive {
 		m_Error = false;
 		m_shadowPath = config.getShadowPath();
 		m_indexPath = config.getIndexPath();
-		m_archivePath = config.getArchivePath();
+		m_workspacePath = config.getWorkspacePath();
 		m_metatemplatePath = config.getMetadataTemplatePath();
 
 		std::string shadowJournalPath = ImagePath::getShadowJournalPath();
 		ImportJournalManager::setJournalFilePath(shadowJournalPath.c_str());
 
-		ViewManager::GetInstance().initaliseMaster(config.getArchivePath(), config.getMasterViewPath());
+		ViewManager::GetInstance().initaliseMaster(config.getWorkspacePath(), config.getMasterViewPath());
 
 		CLogger &logger = CLogger::getLogger();
 
@@ -312,11 +312,11 @@ namespace simplearchive {
 		logger.log(CLogger::INFO, "Found Archive Index directory \"%s\"", m_indexPath.c_str());
 
 
-		if (SAUtils::DirExists(m_archivePath.c_str()) == false) {
-			logger.log(CLogger::FATAL, "Secondary Archive Repository directory not accessable? \"%s\"", m_archivePath.c_str());
+		if (SAUtils::DirExists(m_workspacePath.c_str()) == false) {
+			logger.log(CLogger::FATAL, "Secondary Archive Repository directory not accessable? \"%s\"", m_workspacePath.c_str());
 			m_Error = true;
 		}
-		logger.log(CLogger::INFO, "Found Secondary Archive Repository directory \"%s\"", m_archivePath.c_str());
+		logger.log(CLogger::INFO, "Found Secondary Archive Repository directory \"%s\"", m_workspacePath.c_str());
 		m_imageIndex->init(m_indexPath.c_str());
 		return (!m_Error);
 	}
@@ -373,7 +373,7 @@ namespace simplearchive {
 		ArchiveRepository &archiveRepository = ArchiveRepository::get();
 		archiveRepository.setPathToArchive(m_shadowPath);
 		logger.log(CLogger::ERROR, "Stage 2: Processing Image files");
-		archiveRepository.setPathToActiveRoot(this->m_archivePath);
+		archiveRepository.setPathToActiveRoot(this->m_workspacePath);
 		/// Iterate the Image Sets
 		for (std::vector<ImageSet *>::iterator i = imageSets->begin(); i != imageSets->end(); i++) {
 			ImageSet *imageSet = *i;
@@ -512,7 +512,7 @@ namespace simplearchive {
 			ImageGroup *group = *i;
 			for (std::vector<ImageContainer *>::iterator i = group->begin(); i != group->end(); i++) {
 				ImageContainer *imageSet = *i;
-				ImageProcessor imageProcessor(imageSet, csvDBFile, csvDB, m_archivePath, *m_imageIndex);
+				ImageProcessor imageProcessor(imageSet, csvDBFile, csvDB, m_workspacePath, *m_imageIndex);
 				
 				/*
 				imageSet->PostProcess();
@@ -619,6 +619,7 @@ namespace simplearchive {
 
 		}
 		ImportJournalManager::save();
+		_CrtDumpMemoryLeaks();
 		return true;
 	}
 
@@ -673,7 +674,7 @@ bool ArchiveBuilder::CreateMetadataXMLFile(ImagePath &imagePath, CSVDBFile &csvD
 
 bool ArchiveBuilder::processHistory(ImagePath &imagePath, const char *filepath, const char *comment, const HistoryEvent &he, int ver) {
 
-	std::string fullPath = m_archivePath + "/" + filepath;
+	std::string fullPath = m_workspacePath + "/" + filepath;
 	std::string filename;
 	std::string path;
 

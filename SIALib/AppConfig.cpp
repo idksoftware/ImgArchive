@@ -32,6 +32,8 @@
 **
 ** #$$@@$$# */
 
+#include <sstream>
+#include <iomanip>
 #include "AppConfig.h"
 #include "SAUtils.h"
 
@@ -52,7 +54,7 @@ namespace simplearchive {
 	bool CAppConfig::m_useDatabase = true;
 	std::string CAppConfig::m_hookPath;
 	std::string CAppConfig::m_toolsPath;
-	std::string CAppConfig::m_archivePath;
+	std::string CAppConfig::m_workspacePath;
 	std::string CAppConfig::m_shadowArchivePath;
 	std::string CAppConfig::m_sourcePath;
 	std::string CAppConfig::m_configPath;
@@ -94,21 +96,7 @@ namespace simplearchive {
 		return *m_this;
 	}
 
-	/*
-#define HOOK_SCRIPTS_PATH       "HookScripsPath"
-#define CONFIG_PATH				"ConfigPath"
-#define TOOLS_PATH           	"ToolsPath"
-#define TEMP_PATH           	"TempPath"
-#define SOURCE_PATH         	"SourcePath"
-#define ARCHIVE_PATH         	"ArchivePath"
-#define LOG_PATH				"LogPath"
-#define HOME_PATH				"HomePath"
-#define INDEX_PATH				"IndexPath"
-#define HISTORY_PATH			"HistoryPath"
-#define EXTERNAL_COMMAND_LINE	"ExternalCommandLine"
-#define EXIF_MAP_PATH			"ExifMapPath"
-#define METADATA_TEMPLATE_PATH	"MetadataTemplatePath"
-*/
+
 	void CAppConfig::setToolsPath(const char *toolsPath) {
 		m_toolsPath = toolsPath;
 	}
@@ -135,14 +123,14 @@ namespace simplearchive {
 
 	}
 	/// Gets the archive path.
-	const char *CAppConfig::getArchivePath() {
-		if (m_archivePath.empty() == true) {
-			if (value("ArchivePath", m_archivePath) == false) {
+	const char *CAppConfig::getWorkspacePath() {
+		if (m_workspacePath.empty() == true) {
+			if (value("WorkspacePath", m_workspacePath) == false) {
 				std::string temp = SAUtils::GetEnvironment("USERPROFILE");
-					m_archivePath = temp + "/SIAImages"; 
+					m_workspacePath = temp + "/SIA Workspace"; 
 			}
 		}
-		return m_archivePath.c_str();
+		return m_workspacePath.c_str();
 
 	}
 	/// Gets the archive path.
@@ -183,8 +171,8 @@ namespace simplearchive {
 		m_masterViewPath = path;
 	}
 
-	void CAppConfig::setArchivePath(const char *path) {
-		m_archivePath = path;
+	void CAppConfig::setWorkspacePath(const char *path) {
+		m_workspacePath = path;
 	}
 
 	void CAppConfig::setShadowPath(const char *path) {
@@ -311,7 +299,7 @@ namespace simplearchive {
 
 	const char *CAppConfig::getConfigPath() {
 		if (value("ConfigPath", m_configPath) == false) {
-			m_configPath = m_homePath + "/conf";
+			m_configPath = m_homePath + "/config";
 		}
 		return 	m_configPath.c_str();
 	}
@@ -369,7 +357,7 @@ namespace simplearchive {
 
 	//void setSourcePath(const char *sourcePath);
 
-	bool CAppConfig::validArchivePath() {
+	bool CAppConfig::validWorkspacePath() {
 		return true;
 	}
 	bool CAppConfig::validSourcePath() {
@@ -377,5 +365,61 @@ namespace simplearchive {
 	}
 	bool CAppConfig::validHomePath() {
 		return true;
+	}
+
+	std::string CAppConfig::toString() {
+		/// @brief Gets the source path.
+		///const char *getSourcePath();
+
+		/// @brief Gets the archive path.
+		/// user definable
+		std::stringstream str;
+		str << "<Configuration>" << '\n';
+		str << "<WorkspacePath>" << getWorkspacePath() << "</WorkspacePath>" << '\n';
+		/// @brief Gets the shadow archive path
+		/// user definable
+		str << "<ShadowPath>" << getShadowPath() << "</ShadowPath>" << '\n';
+		/// @brief Gets the temp file path.
+		/// user definable
+		str << "<TempPath>" << getTempPath() << "</TempPath>" << '\n';
+		/// @brief Gets tools path
+		str << "<ToolsPath>" << getToolsPath() << "</ToolsPath>" << '\n';
+		/// @brief Gets the hooks path
+		/// user definable
+		/// 
+		str << "<HookPath>" << getHookPath() << "</HookPath>" << '\n';
+		/// @brief Gets the path to the metadata template files.
+		str << "<MetadataTemplatePath>" << getMetadataTemplatePath() << "</MetadataTemplatePath>" << '\n';
+		/// @brief Gets log file path
+		str << "<LogPath>" << getLogPath() << "</LogPath>" << '\n';
+		/// @brief Gets the path to the crc index database.
+		str << "<IndexPath>" << getIndexPath() << "</IndexPath>" << '\n';
+		/// @brief Gets the path the history file are stored. These files are used for
+		/// @brief the history of the changes made to the archive.
+		str << "<HistoryPath>" << getHistoryPath() << "</HistoryPath>" << '\n';
+		/// @brief gets external Command line
+		str << "<ExternalCommandLine>" << getExternalCommandLine() << "</ExternalCommandLine>" << '\n';
+		/// @brief Gets path to the Exif Map files. For example the Exiftool map
+		/// that maps exiftool keywords to Simple Archive keywords.
+		str << "<ExifMapPath>" << getExifMapPath() << "</ExifMapPath>" << '\n';
+		str << "<ConfigPath>" << getConfigPath() << "</ConfigPath>" << '\n';
+		/// @brief Gets home path. This is the root path all default paths are made.
+		str << "<HomePath>" << getHomePath() << "</HomePath>" << '\n';
+		str << "<MasterViewPath>" << getMasterViewPath() << "</MasterViewPath>" << '\n';
+		str << "<DatabasePath>" << getDatabasePath() << "</DatabasePath>" << '\n';
+		str << "<BackupDestinationPath>" << getBackupDestinationPath() << "</BackupDestinationPath>" << '\n';
+		str << "<BackupMediaSize>" << getBackupMediaSize() << "</BackupMediaSize>" << '\n';
+		if (isFromDateSet() == true) {
+			str << "<FromDate>" << getFromDate().toString() << "</FromDate>" << '\n';
+		}
+		if (isToDateSet() == true) {
+			str << "<FromDate>" << getToDate().toString() << "</FromDate>" << '\n';
+		}
+		str << "<IsDryRun>" << (isDryRun()?"true":"false") << "</IsDryRun>" << '\n';
+		str << "<IsQuiet>" << (isQuiet() ? "true" : "false") << "</IsQuiet>" << '\n';
+		str << "<IsVerbose>" << (isVerbose() ? "true" : "false") << "</IsVerbose>" << '\n';
+		str << "<LogLevel>" << getLogLevel() << "</LogLevel>" << '\n';
+		str << "</Configuration>" << '\n';
+		return str.str();
 	}
 }

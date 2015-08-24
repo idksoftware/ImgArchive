@@ -68,7 +68,15 @@ class App {
 private:
 	std::string m_HomePath;
 	ArchiveBuilder m_ArchiveBuilder;
-	bool CreateArchive(const char *archivePath);
+	/**
+		@brief This command creates a template archive. This includes the home configuration and the shadow
+		archive. However the shadow archive will be create on the first addition of an image. The config file.
+		will be updated with the location of both the shadow archive and the workspace.
+		@param archivePath		Home path of archive.
+		@param workspacePath	Workspace location.
+		@param shadowPath		Shadow archive location.
+	*/
+	bool CreateArchive(const char *archivePath, const char *workspacePath, const char *shadowPath);
 	
 public:
 	/// Constructor
