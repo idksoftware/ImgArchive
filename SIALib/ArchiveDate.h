@@ -45,6 +45,13 @@ namespace simplearchive {
 	*/
 	class ArchiveDate
 	{
+	public: 
+		typedef enum {
+			USING_CAPTURE_RAWDATE,
+			USING_CAPTURE_PICDATE,
+			USING_DIGITIZED_RAWDATE,
+			USING_DIGITIZED_PICDATE,
+		};
 		static bool m_useEXIFDate;
 		static bool m_useFileDate;
 		static bool m_useDate;

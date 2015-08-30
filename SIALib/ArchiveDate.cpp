@@ -125,30 +125,55 @@ namespace simplearchive {
 			rawId = (BasicExif *)&(ic.getRawId());
 		}
 		if (rawMetadata != nullptr) {
-			const ExifDateTime captureDate = rawMetadata->getCaptureDate();
-			m_exifDate.reset(new ExifDate(captureDate));
-			if (m_exifDate->isOk() == true) {
-				return true;	// Found date
+			try {
+				const ExifDateTime captureDate = rawMetadata->getCaptureDate();
+				m_exifDate.reset(new ExifDate(captureDate));
+				if (m_exifDate->isOk() == true) {
+					return true;	// Found date
+				}
 			}
-		} else if (picMetadata != nullptr) {
-			const ExifDateTime captureDate = picMetadata->getCaptureDate();
-			m_exifDate.reset(new ExifDate(captureDate));
-			if (m_exifDate->isOk() == true) {
-				return true;
+			catch (MTTypeException e) {
+				printf("No raw capture date\n");
 			}
-		}
+			
+		} 
 		if ((rawId != nullptr) && (rawId->isExifFound())) {
+			try {
 				const ExifDateTime& captureDate = rawId->getDateTimeDigitized();
 				m_exifDate.reset(new ExifDate(captureDate));
 				if (m_exifDate->isOk() == true) {
 					return true;
 				}
-		} else if ((picId != nullptr) && (picId->isExifFound())) {
+			}
+			catch (MTTypeException e) {
+				printf("No raw digitized date\n");
+			}
+		}
+		if (picMetadata != nullptr) {
+			try {
+				const ExifDateTime captureDate = picMetadata->getCaptureDate();
+				m_exifDate.reset(new ExifDate(captureDate));
+				if (m_exifDate->isOk() == true) {
+					return true;
+				}
+			}
+			catch (MTTypeException e) {
+				printf("No picture capture date\n");
+			}
+		}
+			
+		
+		if ((picId != nullptr) && (picId->isExifFound())) {
+			try {
 				const ExifDateTime& captureDate = picId->getDateTimeDigitized();
 				m_exifDate.reset(new ExifDate(captureDate));
 				if (m_exifDate->isOk() == true) {
 					return true;
 				}
+			}
+			catch (MTTypeException e) {
+				printf("No picture digitized date\n");
+			}
 		}
 		return false;
 	}

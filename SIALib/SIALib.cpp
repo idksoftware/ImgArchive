@@ -297,7 +297,14 @@ namespace simplearchive {
 		else {
 		*/
 		MirrorManager mirrorManager;
+		
+		// Make mirror
+		/*
 		if (mirrorManager.mirror() == false) {
+			return false;
+		}
+		*/
+		if (mirrorManager.verifyMirror() == false) {
 			return false;
 		}
 		return true;
