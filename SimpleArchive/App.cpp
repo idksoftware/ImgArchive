@@ -25,7 +25,7 @@
 **
 ****************************************************
 **
-**	Filename	: CRegString.cpp
+**	Filename	: App.cpp
 **	Author		: I.Ferguson
 **	Version		: 1.000
 **	Date		: 26-05-2015
@@ -55,6 +55,8 @@
 #include "IntegrityManager.h"
 #include "SIALib.h"
 
+#include "UDPOut.h"
+
 #ifdef _WIN32
 #pragma comment(lib, "ws2_32.lib")
 #endif
@@ -65,6 +67,8 @@ using namespace std;
 #include <string>
 #include <vector>
 #include "AppOptions.h"
+#include "TerminalServer.h"
+
 #define VERSION	"1.00"
 #define BUILD	"040115.1749"
 #define DB "c:/temp/test3.db"
@@ -84,7 +88,20 @@ static char THIS_FILE[] = __FILE__;
 
 namespace simplearchive {
 
+int startTerminal()
+{
+	CTerminalServer l_Server;
+	if (!l_Server.Init())
+	{
+		return -1;
+	}
+	if (!l_Server.Run())
+	{
+		return -1;
+	}
 
+	return 0;
+}
 
 
 int test(const std::string key) {
@@ -94,16 +111,20 @@ int test(const std::string key) {
 App::App() {
 }
 
+#define BUFLEN 512	//Max length of buffer
+
 bool App::initalise(int argc, char **argv) {
-	
+
 	AppOptions &appOptions = AppOptions::get();	
 	if (appOptions.initalise(argc, argv) == false) {
 		
 		return false;
 	}
-	
 	return true;
 };
+
+
+
 
 bool App::Run()
 {
@@ -118,13 +139,36 @@ bool App::Run()
 	CAppConfig &config = CAppConfig::get();
 	
 	switch (appOptions.getCommandMode()) {
-	case AppOptions::CM_InitArchive:
-		printf("\n\nInit Archive\n");
-		break;
+
 	case AppOptions::CM_Import:
-		siaLib.Import();
+		if (appOptions.isUsingFile()) {
+			siaLib.ImportFile(appOptions.getFilePath());
+		}
+		else {
+			siaLib.Import();
+		}
 		break;
 	case AppOptions::CM_Export:
+		if (siaLib.exportImage(appOptions.getImageAddress()) == false) {
+			return false;
+		}
+		break;
+		break;
+	case AppOptions::CM_Show:
+		switch (appOptions.getShowCommandOption()) {
+		case AppOptions::SC_ShowCheckedOut:
+			if (siaLib.showCheckedOut(appOptions.getImageAddress()) == false) {
+				return false;
+			}
+			
+		case AppOptions::SC_ShowUncheckedOutChanges:
+			if (siaLib.showUncheckedOutChanges(appOptions.getImageAddress()) == false) {
+				return false;
+			}
+			return true;
+		case AppOptions::SC_Unknown:
+			return false;	
+		}
 		break;
 	case AppOptions::CM_Checkout:
 		if (siaLib.checkout(appOptions.getImageAddress(), appOptions.getComment()) == false) {
@@ -148,32 +192,17 @@ bool App::Run()
 		}
 		break;
 	}
-	case AppOptions::CM_Mirror:
+	case AppOptions::CM_Prop:
 	{
+		if (siaLib.listContents(appOptions.getImageAddress()) == false) {
+			return false;
+		}
+		break;
+	}
 
-		if (siaLib.mirror(appOptions.getName()) == false) {
-			return false;
-		}
-		break;
-	}
-	case AppOptions::CM_Validate:
-	{
-		
-		IntegrityManager &integrityManager = IntegrityManager::get(config.getShadowPath());
-		
-		if (integrityManager.makeList() == false) {
-			return false;
-		}
-		//}
-		break;
-	}
 	case AppOptions::CM_Uncheckin:
 		break;
-	case AppOptions::CM_Archive:
-		if (siaLib.archive(nullptr, nullptr, 200, nullptr, nullptr) == false) {
-			return false;
-		}
-		break;
+	
 	case AppOptions::CM_Version:
 		printf("\n\nSia version \"%s\" (build %s)\n", VERSION, BUILD);
 		return true;

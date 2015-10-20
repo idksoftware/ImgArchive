@@ -67,6 +67,8 @@
 #include "Database.h"
 #include "CSVDatabase.h"
 #include "MakeMedia.h"
+#include "UDPOut.h"
+#include "IntegrityManager.h"
 
 #include <stdio.h>
 #include <sstream>
@@ -100,6 +102,12 @@ namespace simplearchive {
 
 	int SIALib::initalise() {
 		
+		int port = 8888;
+		const char *address = "127.0.0.1";
+
+		if (UDPOut::enableUDPOutput(port, address) == false) {
+			return false;
+		}
 		CAppConfig &config = CAppConfig::get();
 		//AppOptions &appOptions = AppOptions::get();
 
@@ -107,7 +115,7 @@ namespace simplearchive {
 		CLogger::setLevel(CLogger::FINE);
 		CLogger::setLogPath(config.getLogPath());
 		//ChangeLog::setLogPath(config.getHistoryPath());
-
+		
 		CLogger &logger = CLogger::getLogger();
 		SummaryFile::setPath(config.getHistoryPath());
 		SummaryFile &summaryFile = SummaryFile::getSummaryFile();
@@ -142,7 +150,7 @@ namespace simplearchive {
 				}
 				logger.log(CLogger::INFO, "Shadow repository folder created at location: \"%s\"", temp.c_str());
 			}
-			if (ImagePath::settupMainArchiveFolders(config.getWorkspacePath(), config.getShadowPath()) == false) {
+			if (ImagePath::settupMainArchiveFolders(config.getWorkspacePath(), config.getShadowPath(), config.getHomePath()) == false) {
 
 				return -1;
 			}
@@ -221,6 +229,8 @@ namespace simplearchive {
 		return 0;
 	}
 
+	
+
 	int SIALib::complete() {
 		CLogger &logger = CLogger::getLogger();
 		SummaryFile &summaryFile = SummaryFile::getSummaryFile();
@@ -231,12 +241,44 @@ namespace simplearchive {
 		return 0;
 	}
 
+	bool SIALib::ImportFile(const char *filePath) {
+		if (m_ArchiveBuilder->ImportFile(filePath) == false) {
+			return false;
+		}
+
+		return true;
+	}
+
 	bool SIALib::Import() {
 		CAppConfig &config = CAppConfig::get();
 		if (m_ArchiveBuilder->Import(config.getSourcePath()) == false) {
 			return false;
 		}
 		
+		return true;
+	}
+
+	bool SIALib::exportImage(const char *distpath) {
+		if (m_ArchiveBuilder->exportImages(distpath) == false) {
+			return false;
+		}
+
+		return true;
+	}
+
+
+	bool SIALib::showCheckedOut(const char *filepath) {
+
+		if (m_ArchiveBuilder->showCheckedOut(filepath) == false) {
+			return false;
+		}
+		return true;
+	}
+
+	bool SIALib::showUncheckedOutChanges(const char *filepath) {
+		if (m_ArchiveBuilder->showUncheckedOutChanges(filepath) == false) {
+			return false;
+		}
 		return true;
 	}
 
@@ -262,8 +304,12 @@ namespace simplearchive {
 		
 	}
 
-	bool SIALib::show(const char *name) {
-		printf("show %s", name);
+	
+
+	bool SIALib::listContents(const char *addressScope) {
+		if (m_ArchiveBuilder->listContents(addressScope) == false) {
+			return false;
+		}
 		return true;
 	}
 

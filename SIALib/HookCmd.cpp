@@ -143,6 +143,9 @@ bool HookCmd::readScriptsNames() {
 	case HC_PreProcess:
 		m_name = "post-process";
 		break;
+	case HC_OnFileCopy:
+		m_name = "copy-file";
+		break;
 	case HC_Unknown:
 		return false;
 	default:
@@ -159,6 +162,20 @@ bool OnFileCmd::process() {
 	SetEnv setEnv;
 	setEnv.insert(setEnv.end(), EnvItem(IMAGE_PATH, m_file.c_str()));
 
+	setEnv.process();
+	HookCmd::process();
+	return true;
+}
+
+OnFileCopyCmd::OnFileCopyCmd(const char *path, const char *image) : HookCmd(HookCmd::HC_OnFileCopy) {
+	m_path = path;
+	m_image = image;
+};
+
+bool OnFileCopyCmd::process() {
+	SetEnv setEnv;
+	setEnv.insert(setEnv.end(), EnvItem(IMAGE_PATH, m_path.c_str()));
+	setEnv.insert(setEnv.end(), EnvItem(IMAGE_NAME, m_image.c_str()));
 	setEnv.process();
 	HookCmd::process();
 	return true;

@@ -86,14 +86,24 @@ public:
 	bool Init();
 	/// @param sourcePath - source folder were the images to be imported reside.
 	bool Import(const char *sourcePath);
+	bool ImportFile(const char *filePath);
+	bool exportImages(const char *distPath);
+	/// @brief Show checked out files into the Workspace
+	/// @param fileath - distination folder were the images that may be checked out.
+	bool showCheckedOut(const char *filepath);
+	/// @brief Show un-checked out changes in the Workspace
+	/// @param fileath - distination folder were the images that may be checked out.
+	bool showUncheckedOutChanges(const char *filepath);
 	/// @brief Checkout
 	/// @param fileath - distination folder were the images to be checked out reside.
 	bool checkout(const char *filepath, const char *comment);
 	/// @brief Checkin
 	/// @param fileath - distination folder were the images to be checked out reside.
 	bool checkin(const char *filepath, const char *comment);
-	bool ArchiveBuilder::uncheckout(const char *filepath, const char *comment);
+	bool uncheckout(const char *filepath, const char *comment);
 	bool uncheckout(const char *filepath);
+
+	bool listContents(const char *addressScope);
 	/// Distructor
 	virtual ~ArchiveBuilder();
 	/// @brief The 

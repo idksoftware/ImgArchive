@@ -39,9 +39,11 @@
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
+#include <sstream>
 #include <cstdarg>
 #include "SummaryFile.h"
 #include "EXifDateTime.h"
+#include "UDPOut.h";
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -95,6 +97,12 @@ void SummaryFile::doMessage(Level level, Action action, const char *message) {
 		m_summaryFile << actionStr(action) << ":\t";
 		m_summaryFile << message;
 	}
+	std::stringstream udpout;
+	udpout << dateNow.current() << ":\t";
+	udpout << actionStr(action) << ":\t";
+	udpout << message;
+	UDPOut::out(udpout.str().c_str());
+
 	m_detailedFile << "\n" << dateNow.current() << ":\t";
 	m_detailedFile << actionStr(action) << ":\t";
 	m_detailedFile << message;
@@ -134,8 +142,6 @@ void SummaryFile::doSummary() {
 
 
 void SummaryFile::log(Level level, Action action, const char *format, ...) {
-
-
 
 	char message[256];
 	va_list args;

@@ -92,7 +92,6 @@ DupDataFile::DupDataFile() {
 }
 
 DupDataFile::~DupDataFile() {
-	
 }
 
 bool DupDataFile::read(const char *datafile) {
@@ -103,7 +102,7 @@ bool DupDataFile::read(const char *datafile) {
 	}
 	m_filePath = datafile;
 	while (file.getline(text, 100)) {
-		m_dataContainer->push_back(*(new std::string(text)));
+		m_dataContainer->push_back(text);
 	}
 	file.close();
 
@@ -210,6 +209,10 @@ std::string DupDataFile::findData(unsigned long crc) {
 
 int DupDataFile::find(unsigned long crc) {
 	int pos = 0;
+	if (m_dataContainer->size() == 2) {
+		int debug = 2;
+		printf("%d", debug);
+	}
 	if (m_dataContainer->size() == 0) {
 		return -1;
 	}
@@ -229,7 +232,6 @@ int DupDataFile::find(unsigned long crc) {
 			*/
 			return pos;
 		}
-		pos++;
 	}
 
 	return ((int)-1);

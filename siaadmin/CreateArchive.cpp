@@ -76,7 +76,7 @@ std::string configFileStr;
 
 const char *mirrordoc[] = {
 	"#name=mode. path, type",
-	"disk1=direct,/backup/home/tmp1,mirror"
+	"disk1=direct,c:/temp/siamirror,mirror"
 };
 
 

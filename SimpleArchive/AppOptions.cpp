@@ -25,7 +25,7 @@
 **
 ****************************************************
 **
-**	Filename	: CRegString.cpp
+**	Filename	: AppOptions.cpp
 **	Author		: I.Ferguson
 **	Version		: 1.000
 **	Date		: 26-05-2015
@@ -51,13 +51,20 @@ using namespace CommandLineProcessing;
 namespace simplearchive {
 
 AppOptions *AppOptions::m_this = nullptr;
+
+bool AppOptions::m_list = false;
+bool AppOptions::m_usingFile = false;
+
 std::string AppOptions::m_name;
 AppOptions::CommandMode AppOptions::m_commandMode = AppOptions::CM_Unknown;
 std::string AppOptions::m_comment;
 std::string AppOptions::m_imageAddress;
+std::string AppOptions::m_distinationPath;
+std::string AppOptions::m_filePath;
 
 AppOptions::AppOptions() {
 	m_argvParser.reset(new ArgvParser);
+	m_usingFile = false;
 };
 
 
@@ -165,25 +172,23 @@ bool AppOptions::initalise(int argc, char **argv) {
 
 	m_argvParser->defineOption("about", "prints the version information", ArgvParser::MasterOption);
 
-	m_argvParser->defineOption("v", "View commands", ArgvParser::NoOptionAttribute);
+	m_argvParser->defineOption("v", "View commands", ArgvParser::MasterOption);
 	m_argvParser->defineOptionAlternative("v", "view");
 
-	m_argvParser->defineOption("image-address", "image address", ArgvParser::NoOptionAttribute);
+	m_argvParser->defineOption("s", "Show details", ArgvParser::MasterOption);
+	m_argvParser->defineOptionAlternative("s", "show");
+
+	m_argvParser->defineOption("p", "Manage image properties", ArgvParser::MasterOption);
+	m_argvParser->defineOptionAlternative("p", "prop");
 
 	/*
-	m_argvParser->defineOption("I", "Create Archive Commands", ArgvParser::NoOptionAttribute);
-	m_argvParser->defineOptionAlternative("I", "init");
-
-	m_argvParser->defineOption("validate", "Validate commands", ArgvParser::NoOptionAttribute);
-
-	
-	m_argvParser->defineOption("m", "Mirror commands", ArgvParser::NoOptionAttribute);
-	m_argvParser->defineOptionAlternative("m", "mirror");
-
 	m_argvParser->defineOption("b", "Goes through the motions of running the subcommand but makes no\nactual changes ether disk or repository.", ArgvParser::NoOptionAttribute);
 	m_argvParser->defineOptionAlternative("b", "backup");
 	*/
 	// Options
+	m_argvParser->defineOption("i", "image address.", ArgvParser::OptionRequiresValue);
+	m_argvParser->defineOptionAlternative("i", "image-address");
+
 	m_argvParser->defineOption("n", "name of the view.", ArgvParser::OptionRequiresValue);
 	m_argvParser->defineOptionAlternative("n", "name");
 
@@ -204,6 +209,9 @@ bool AppOptions::initalise(int argc, char **argv) {
 	m_argvParser->defineOption("F", "from date", ArgvParser::OptionRequiresValue);
 	m_argvParser->defineOptionAlternative("F", "from-date");
 
+	m_argvParser->defineOption("f", "Specifies a file", ArgvParser::OptionRequiresValue);
+	m_argvParser->defineOptionAlternative("f", "file");
+
 	m_argvParser->defineOption("T", "to date", ArgvParser::OptionRequiresValue);
 	m_argvParser->defineOptionAlternative("T", "to-date");
 
@@ -216,7 +224,10 @@ bool AppOptions::initalise(int argc, char **argv) {
 	m_argvParser->defineOption("C", "Comment to be included in command", ArgvParser::OptionRequiresValue);
 	m_argvParser->defineOptionAlternative("C", "comment");
 
+	m_argvParser->defineOption("list", "List items", ArgvParser::OptionRequiresValue);
 	
+	m_argvParser->defineOption("checked-out", "Show checked out", ArgvParser::OptionRequiresValue); // =all =year{2015}
+	m_argvParser->defineOption("unchecked-out", "Show changed images which are not checked out", ArgvParser::OptionRequiresValue);
 
 	m_argvParser->defineCommandOption("add", "comment");
 	m_argvParser->defineCommandOption("add", "logging-level");
@@ -258,10 +269,7 @@ bool AppOptions::initalise(int argc, char **argv) {
 		setCommandMode(AppOptions::CM_Version);
 		cmdFound = true;
 	}
-	else if (m_argvParser->command("init") == true) {
-		setCommandMode(AppOptions::CM_InitArchive);
-		cmdFound = true;
-	}
+	
 	else if (m_argvParser->command("add") == true) {
 		
 		if (m_argvParser->foundOption("source-path") == true) {			
@@ -274,6 +282,12 @@ bool AppOptions::initalise(int argc, char **argv) {
 			printf(opt.c_str()); printf("\n");
 			config.setWorkspacePath(opt.c_str());
 		}
+		if (m_argvParser->foundOption("file") == true) {
+			std::string m_filePath = m_argvParser->optionValue("file");
+			m_usingFile = true;
+			printf(m_filePath.c_str()); printf("\n");
+			
+		}
 		setCommandMode(AppOptions::CM_Import);
 
 		Environment::setEnvironment();
@@ -284,6 +298,12 @@ bool AppOptions::initalise(int argc, char **argv) {
 			m_imageAddress = m_argvParser->optionValue("image-address");
 			printf(m_imageAddress.c_str()); printf("\n");
 		}
+
+		if (m_argvParser->foundOption("list") == true) {
+			m_list = true;
+			printf(m_comment.c_str()); printf("\n");
+		}
+
 		if (m_argvParser->foundOption("comment") == true) {
 			m_comment = m_argvParser->optionValue("comment");
 			printf(m_comment.c_str()); printf("\n");
@@ -335,7 +355,34 @@ bool AppOptions::initalise(int argc, char **argv) {
 		setCommandMode(AppOptions::CM_UnCheckout);
 		cmdFound = true;
 	}
+	else if (m_argvParser->command("show") == true) {
+		if (m_argvParser->foundOption("checked-out") == true) {
+			m_showCommandOption = ShowCommandOption::SC_ShowCheckedOut;
+			m_imageAddress = m_argvParser->optionValue("checked-out");
+			printf(m_imageAddress.c_str()); printf("\n");
+		}
+		if (m_argvParser->foundOption("unchecked-out") == true) {
+			m_showCommandOption = ShowCommandOption::SC_ShowUncheckedOutChanges;
+			m_imageAddress = m_argvParser->optionValue("checked-out");
+			printf(m_imageAddress.c_str()); printf("\n");
+		}
+		setCommandMode(AppOptions::CM_Show);
+		cmdFound = true;
+	}
+	else if (m_argvParser->command("prop") == true) {
+		if (m_argvParser->foundOption("list") == true) {
+			//m_showCommandOption = ShowCommandOption::SC_ShowCheckedOut;
+			m_imageAddress = m_argvParser->optionValue("list");
+			printf(m_imageAddress.c_str()); printf("\n");
+		}
+		setCommandMode(AppOptions::CM_Prop);
+		cmdFound = true;
+	}
 	else if (m_argvParser->command("export") == true) {
+		if (m_argvParser->foundOption("dist-path") == true) {
+			m_distinationPath = m_argvParser->optionValue("dist-path");
+			printf(m_distinationPath.c_str()); printf("\n");	
+		}
 		setCommandMode(AppOptions::CM_Export);
 		cmdFound = true;
 	}
@@ -380,96 +427,9 @@ bool AppOptions::initalise(int argc, char **argv) {
 		cmdFound = true;
 	}
 
-	else if (m_argvParser->command("validate") == true) {
-		setCommandMode(AppOptions::CM_Validate);
-		cmdFound = true;
-		if (m_argvParser->foundOption("archive-path") == true) {
-
-			std::string opt = m_argvParser->optionValue("archive-path");
-			printf(opt.c_str()); printf("\n");
-			config.setWorkspacePath(opt.c_str());
-		}
-	}
-	else if (m_argvParser->command("mirror") == true) {
-		setCommandMode(AppOptions::CM_Mirror);
-
-		if (m_argvParser->foundOption("archive-path") == true) {
-
-			std::string opt = m_argvParser->optionValue("archive-path");
-			printf(opt.c_str()); printf("\n");
-			config.setWorkspacePath(opt.c_str());
-		}
-		/*
-		if (m_argvParser->foundOption("dist-path") == true) {
-
-		std::string opt = m_argvParser->optionValue("dist-path");
-		printf(opt.c_str()); printf("\n");
-		config.setBackupDestinationPath(opt.c_str());
-
-		}
-		if (m_argvParser->foundOption("size") == true) {
-
-		std::string opt = m_argvParser->optionValue("size");
-		printf(opt.c_str()); printf("\n");
-		config.setBackupMediaSize(opt.c_str());
-
-		}
-		if (m_argvParser->foundOption("from-date") == true) {
-
-		std::string opt = m_argvParser->optionValue("from-date");
-		printf(opt.c_str()); printf("\n");
-		config.setFromDate(opt.c_str());
-
-		}
-		*/
-		if (m_argvParser->foundOption("name") == true) {
-			std::string opt = m_argvParser->optionValue("name");
-			printf(opt.c_str()); printf("\n");
-			setName(opt.c_str());
-		}
-
-		cmdFound = true;
-	}
-	else if (m_argvParser->command("backup") == true) {
-		setCommandMode(AppOptions::CM_Archive);
-		
-		if (m_argvParser->foundOption("archive-path") == true) {
-
-			std::string opt = m_argvParser->optionValue("archive-path");
-			printf(opt.c_str()); printf("\n");
-			config.setWorkspacePath(opt.c_str());
-		}
-
-		if (m_argvParser->foundOption("dist-path") == true) {
-
-			std::string opt = m_argvParser->optionValue("dist-path");
-			printf(opt.c_str()); printf("\n");
-			config.setBackupDestinationPath(opt.c_str());
-
-		}
-		if (m_argvParser->foundOption("size") == true) {
-
-			std::string opt = m_argvParser->optionValue("size");
-			printf(opt.c_str()); printf("\n");
-			config.setBackupMediaSize(opt.c_str());
-
-		}
-		if (m_argvParser->foundOption("from-date") == true) {
-
-			std::string opt = m_argvParser->optionValue("from-date");
-			printf(opt.c_str()); printf("\n");
-			config.setFromDate(opt.c_str());
-
-		}
-		if (m_argvParser->foundOption("to-date") == true) {
-
-			std::string opt = m_argvParser->optionValue("to-date");
-			printf(opt.c_str()); printf("\n");
-			config.setToDate(opt.c_str());
-
-		}
-		cmdFound = true;
-	}
+	
+	
+	
 	else if (m_argvParser->command("version") == true) {
 		setCommandMode(AppOptions::CM_Version);
 		cmdFound = true;
@@ -580,6 +540,12 @@ const char *AppOptions::getComment() {
 }
 const char *AppOptions::getImageAddress() {
 	return m_imageAddress.c_str();
+}
+const char *AppOptions::getDistinationPath() {
+	return m_distinationPath.c_str();
+}
+const char *AppOptions::getFilePath() {
+	return m_filePath.c_str();
 }
 
 } /* namespace simplearchive */

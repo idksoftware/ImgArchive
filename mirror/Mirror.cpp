@@ -43,6 +43,7 @@
 #include "StagingManager.h"
 #include "CheckDisk.h"
 #include "VerifyMirror.h"
+#include "CSVArgs.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -98,61 +99,36 @@ public:
 		m_name = name;
 		m_stagingManager = 0;
 		std::string data = dataString;
-		int delim1 = data.find_first_of(",");			// Mode (Direct/Indirect).
-		int delim2 = data.find_first_of(",", delim1+1);	//
-		int delim3 = data.find_first_of(",", delim2+1);
-		int delim4 = data.find_first_of(",", delim3+1);
-		int delim5 = data.find_first_of(",", delim4+1);
 
-		bool complete = false;
 		std::string type;
 		std::string opt1;
 		std::string opt2;
 		std::string opt3;
-		std::string mode = data.substr(0,delim1);			// pos 1
-		m_path = data.substr(delim1+1, delim2-(delim1+1));	// pos 2
-		if (delim3 != std::string::npos) {
-			type = data.substr(delim2+1, (delim3-delim2)-1);
-															// pos 3
-		} else if (complete != true) {
-			type = data.substr(delim2+1, data.length());
-			complete = true;												// pos 3 and end
-		}
-		if (delim4 != std::string::npos) {
-			opt1 = data.substr(delim3+1, (delim4-delim3)-1);
-															// pos 4
-		} else if (complete != true) {
-			opt1 = data.substr(delim3+1, data.length());
-			complete = true;								// pos 4 and end
-		}
-		if (delim4 != std::string::npos) {
-			opt2 = data.substr(delim3+1, (delim4-delim3)-1);
-															// pos 5
-		} else if (complete != true) {
-			opt2 = data.substr(delim4+1, data.length());
-			complete = true;								// pos 5 and end
-		}
-		if (delim4 != std::string::npos) {
-			opt3 = data.substr(delim3+1, (delim4-delim3)-1);
-															// pos 6
-		} else if (complete != true) {
-			opt3 = data.substr(delim4+1, data.length());
-			complete = true;								// pos 6 and end
-		}
-		/*
-		int delim1 = m_row.find_first_of(':');
-	int delim2 = m_row.find_first_of(':', delim1+1);
-	int delim3 = m_row.find_first_of(':', delim2+1);
-	int delim4 = m_row.find_first_of(':', delim3+1);
-	int delim5 = m_row.find_first_of(':', delim4+1);
-	m_sequenceId = m_row.substr(0,delim1);
-	m_filename = m_row.substr(delim1+1, (delim2-delim1)-1);
-	m_filepath = m_row.substr(delim2+1, (delim3-delim2)-1);
-	m_uniqueId = m_row.substr(delim3+1, (delim4-delim3)-1);
-	m_crc = m_row.substr(delim4+1, (delim4-delim4)-1);
-	m_md5 = m_row.substr(delim5+1, m_row.length());
-		*/
+		std::string mode;
 
+		bool complete = false;
+		CSVArgs csvArgs(',');
+		csvArgs.process(dataString);
+		int size = csvArgs.size();
+		
+		if (size > 0) {
+			mode = csvArgs.at(0);
+		}
+		if (size > 1) {
+			m_path = csvArgs.at(1);
+		}
+		if (size > 2) {
+			type = csvArgs.at(2);
+		}
+		if (size > 3) {
+			opt1 = csvArgs.at(3);
+		}
+		if (size > 4) {
+			opt2 = csvArgs.at(4);
+		}
+		if (size > 5) {
+			opt3 = csvArgs.at(5);
+		}
 
 		if (mode.compare("direct") == 0) {
 			m_eMode = MM_Direct;
@@ -245,12 +221,14 @@ Mirror::~Mirror() {
 bool Mirror::readConf() {
 	ConfigReader configReader;
 	Config config;
-	configReader.read(m_confpath.c_str(), config);
+	if (configReader.read(m_confpath.c_str(), config) == false) {
+		return false;
+	}
 	for (std::map<std::string, std::string>::iterator ii = config.begin(); ii != config.end(); ++ii) {
-			MirrorItem mirrorItem(m_root.c_str(), (*ii).first.c_str(), (*ii).second.c_str());
-			mirrorItem.print();
-			m_pContainer->insert(m_pContainer->end(), mirrorItem);
-		}
+		MirrorItem mirrorItem(m_root.c_str(), (*ii).first.c_str(), (*ii).second.c_str());
+		mirrorItem.print();
+		m_pContainer->insert(m_pContainer->end(), mirrorItem);
+	}
 	return true;
 }
 
@@ -270,12 +248,16 @@ bool Mirror::initalise(const char *rootPath, const char *confpath) {
 	}
 	m_this->m_root = rootPath;
 	m_this->m_confpath = confpath;
-	m_this->readConf();
+	if (m_this->readConf() == false) {
+		return false;
+	}
 
 	for (std::vector<MirrorItem>::iterator i = m_pContainer->begin(); i != m_pContainer->end(); i++) {
 		MirrorItem &data = *i;
 		if (SAUtils::DirExists(data.getPath().c_str()) == false) {
-			printf("Mirror:%s cannot find path \"%s\"", data.getName().c_str(), data.getPath().c_str());
+			std::string errString;
+			//SAUtils::sprintf(errString, "Mirror name:%s cannot find path \"%s\"", data.getName().c_str(), data.getPath().c_str());
+			//sprintf_s(errString, "Mirror name:%s cannot find path \"%s\"", data.getName().c_str(), data.getPath().c_str());
 			throw MirrorException("Some error");
 			return false;
 		}

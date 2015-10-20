@@ -44,6 +44,7 @@
 #include "CSVArgs.h"
 #include "AppPaths.h"
 
+
 #ifdef _DEBUG
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
@@ -649,6 +650,8 @@ bool ViewManager::initalise(const char *archiveRoot, const char *confpath) {
 }
 
 bool ViewManager::process() {
+	
+
 	CLogger &logger = CLogger::getLogger();
 
 	for (std::vector<ViewItem>::iterator i = m_pContainer->begin(); i != m_pContainer->end(); i++) {

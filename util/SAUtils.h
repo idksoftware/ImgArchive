@@ -89,11 +89,12 @@ public:
 	static bool mkDir(const char *path);
 	static bool setHidden(const char *path);
 	static bool copy(const char *from, const char *to);
+	static bool rename(const char *from, const char *to);
 	static bool verify(const char *from, const char *to);
 	static bool delFile(const char *file);
 	static bool delDir(const char *file);
 	static std::string to_string(int i);
-	//static void sprintf(std::string &s, const std::string fmt, ...);
+	static void sprintf(std::string &s, const std::string &fmt, ...);
 	static bool makePath(const char *from, const char *to);
 	static bool makeLink(const char *file, const char *link);
 	static std::string getFileContents(const char *filename);

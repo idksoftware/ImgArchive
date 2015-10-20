@@ -151,7 +151,7 @@ bool ImageHistory::read(const char *filepath) {
 	}
 
 	while (file.getline(text, 100)) {
-		m_eventList->push_back(*(new ImageHistoryItem(text)));
+		m_eventList->push_back(ImageHistoryItem(text));
 	}
 	file.close();
 

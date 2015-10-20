@@ -62,7 +62,7 @@ std::string ImagePath::m_shadowHistory;
 std::string ImagePath::m_shadowCatalog;
 std::string ImagePath::m_shadowJournalPath;
 
-bool ImagePath::settupMainArchiveFolders(const char *pathToArchive, const char *pathToShadow) {
+bool ImagePath::settupMainArchiveFolders(const char *pathToArchive, const char *pathToShadow, const char *pathToHome) {
 	if (SAUtils::DirExists(pathToArchive) == false) {
 		return false;
 	}
@@ -71,7 +71,7 @@ bool ImagePath::settupMainArchiveFolders(const char *pathToArchive, const char *
 	}
 	m_pathToArchive = pathToArchive;
 	m_pathToShadow = pathToShadow;
-	IntegrityManager &integrityManager = IntegrityManager::get(pathToShadow);
+	IntegrityManager &integrityManager = IntegrityManager::get(pathToShadow, pathToArchive, pathToHome);
 	// Shadow Archive
 	std::string m_dataFolder = m_pathToShadow;
 	m_dataFolder += "/root";

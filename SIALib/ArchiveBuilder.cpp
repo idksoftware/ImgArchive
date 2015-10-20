@@ -61,6 +61,9 @@
 #include "ViewManager.h"
 #include "VersionControl.h"
 #include "ImportJournal.h"
+#include "CheckoutStatus.h"
+#include "ContentsLister.h"
+#include "ExportImages.h"
 
 #include <stdio.h>
 #include <sstream>
@@ -76,6 +79,8 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 namespace simplearchive {
+
+	class importFile vector<std::string> {};
 
 	class ImageProcessor {
 		
@@ -321,6 +326,10 @@ namespace simplearchive {
 		return (!m_Error);
 	}
 
+	bool ArchiveBuilder::ImportFile(const char *sourcePath) {
+		return true;
+	}
+
 	bool ArchiveBuilder::Import(const char *sourcePath) {
 
 		CLogger &logger = CLogger::getLogger();
@@ -357,9 +366,10 @@ namespace simplearchive {
 		}
 		imageSets->processImportJournal(importJournal);
 		imageSets->processHook();
-
+		logger.log(CLogger::INFO, "Found %d images to be processed", importJournal.numberOfImages());
+		ImportJournalManager::save();
 		// process folder sets into image groups
-		ImageGroups imageGroups;
+		//ImageGroups imageGroups;
 
 
 		if (imageSets == 0) {
@@ -375,18 +385,21 @@ namespace simplearchive {
 		logger.log(CLogger::ERROR, "Stage 2: Processing Image files");
 		archiveRepository.setPathToActiveRoot(this->m_workspacePath);
 		/// Iterate the Image Sets
+		
 		for (std::vector<ImageSet *>::iterator i = imageSets->begin(); i != imageSets->end(); i++) {
 			ImageSet *imageSet = *i;
 
 			/// Create a Image Group container
 			ImageGroup *imageGroup = new ImageGroup(imageSet->getPath());
 			/// Insert into Image Group Sets
-			imageGroups.insert(imageGroups.end(), imageGroup);
+			//imageGroups.insert(imageGroups.end(), imageGroup);
 			logger.log(CLogger::SUMMARY, "Processing Image files in the source location %s", imageSet->getPath());
 			/// Iterate the current image set
 			for (std::vector<ImageItem *>::iterator i = imageSet->begin(); i != imageSet->end(); i++) {
 				/// Image Item
 				ImageItem *imageItem = *i;
+				importJournal.setCurrent(imageItem->getPath());
+				printf("CurrentItem %d\n", importJournal.getCurrentImageIndex());
 				logger.log(CLogger::SUMMARY, "Processing Image file: %s", imageItem->getFilename().c_str());
 				ExifObject *exifObject = nullptr;
 				//data->print();	
@@ -501,123 +514,27 @@ namespace simplearchive {
 				xmlWriter.writeImage(*metadataObject, "c:/temp/image.xml");
 				*/
 			}
-
+			for (std::vector<ImageContainer *>::iterator i = imageGroup->begin(); i != imageGroup->end(); i++) {
+				ImageContainer *imageSet = *i;
+				ImageProcessor imageProcessor(imageSet, csvDBFile, csvDB, m_workspacePath, *m_imageIndex);
+				
+			}
 		}
 
 		
 		// imageSets are no longer required so can be deleted.
 		targetsList.destroy();
-
+		/*
 		for (std::vector<ImageGroup *>::iterator i = imageGroups.begin(); i != imageGroups.end(); i++) {
 			ImageGroup *group = *i;
 			for (std::vector<ImageContainer *>::iterator i = group->begin(); i != group->end(); i++) {
 				ImageContainer *imageSet = *i;
 				ImageProcessor imageProcessor(imageSet, csvDBFile, csvDB, m_workspacePath, *m_imageIndex);
 				
-				/*
-				imageSet->PostProcess();
-				if (imageSet->getError() < 0) {
-					logger.log(CLogger::INFO, "Error processing image not archiving: \"%s\"", imageSet->getName().c_str());
-					continue;
-				}
-
-				logger.log(CLogger::SUMMARY, "Creating Metadata for Image: \"%s\"", imageSet->getName().c_str());
-				if (m_archiveDate->process(*imageSet) == false) {
-					logger.log(CLogger::INFO, "Error processing image archive date, not archiving: \"%s\"", imageSet->getName().c_str());
-					continue;
-				}
-				ExifDate archiveDate = m_archiveDate->getArchiveDate();
-				imageSet->setTime(archiveDate.getTime());
-				ImagePath imagePath(archiveDate.getTime());
-
-				logger.log(CLogger::INFO, "Image: %s set to archive date: \"%s\"", imageSet->getName().c_str(), archiveDate.toString().c_str());
-				if (imageSet->getComment().empty() == true) {
-					imageSet->setComment("New Image");
-				}
-
-				std::string imageRootPath = imageSet->getPath();
-				logger.log(CLogger::INFO, "Image(s) source path: \"%s\"", imageRootPath.c_str());
-				imageSet->setImageRootPath(imagePath.getRelativePath());
-
-				const BasicExifFactory *imageId;
-				MetadataObject *metadataObject;
-				if (imageSet->hasPictureFile()) {
-					const BasicExif &basicExif = imageSet->getPictureId();
-					MetadataObject *metadataObject = (MetadataObject *)imageSet->getPictureMetadata();
-					std::string picName = imageSet->getPictureFile();
-					
-					
-					imagePath.setImageName(picName.c_str());
-					int seqNumber = csvDBFile.getMaxIndex();
-					metadataObject->setSequenceId(seqNumber);
-					ExifDateTime timeNow;
-					timeNow.now();
-					metadataObject->setDateAdded(timeNow);
-					// Create metadata xml file for this image.
-					if (CreateImage(basicExif, imagePath, csvDBFile, *((MetadataObject *)metadataObject)) == false) {
-						return false;
-					}
-
-
-
-
-					std::string relImagePath = imagePath.getYyyymmddStr() + "/" + imageSet->getPictureFile();
-
-
-					const MetadataObject *picMetadata = imageSet->getPictureMetadata();
-					MetadataObject &temp = (MetadataObject &)*picMetadata;
-					// main
-					if (imagePath.copyFile(imageSet->getPath(), imageSet->getPictureFile()) == false) {
-						return false;
-					}
-					//std::string shortPath = 
-					csvDB.add(temp, relImagePath.c_str());
-
-					if (ViewManager::GetInstance().add(seqNumber) == false) {
-						return false;
-					}
-
-					PostArchiveCmd postArchiveCmd(imagePath);
-					postArchiveCmd.process();
-					logger.log(CLogger::INFO, "Picture image added: \"%s\"", imageSet->getPictureFile());
-
-					std::string filepath = imagePath.getRelativePath() + '/' + imageSet->getPictureFile();
-					const HistoryEvent he(HistoryEvent::ADDED);
-					processHistory(imagePath, filepath.c_str(), imageSet->getComment().c_str(), he, 0);
-					
-				}
-				if (imageSet->hasRawFile()) {
-					const BasicExif &basicExif = imageSet->getRawId();
-					metadataObject = (MetadataObject *)imageSet->getRawMetadata();
-					std::string rawPath = imageSet->getRawFile();
-					imagePath.setImageName(rawPath.c_str());
-
-					if (CreateImage(basicExif, imagePath, csvDBFile, *((MetadataObject *)metadataObject)) == false) {
-						return false;
-					}
-
-					// Create metadata xml file for this image.
-					//if (CreateMetadataXMLFile(imagePath, csvDBFile, *((MetadataObject *)metadataObject)) == false) {
-					//	return false;
-					//}
-					//					if (m_viewManager->add2Master(imagePath.getRelativePath().c_str(), imageSet->getRawFile()) == false) {
-					//						return false;
-					//					}
-
-				}
-
-*/
+				
 			}
-			
-			/*
-			if (!saCmdArgs.IsMakeNoChanges()) {
-				// process ImageSet
-				logger.log(CLogger::SUMMARY, "Starting Archiving phase");
-				archiveRepository.Import(*group);
-			}
-			*/
-
 		}
+		*/
 		ImportJournalManager::save();
 		_CrtDumpMemoryLeaks();
 		return true;
@@ -725,22 +642,62 @@ void ArchiveBuilder::copyExternalExif(MetadataObject& metadataObject, ExifObject
 	metadataObject.join(exifObject);
 }
 
-bool ArchiveBuilder::checkout(const char *filepath, const char *comment) {
 
+bool ArchiveBuilder::showCheckedOut(const char *filepath) {
+	CheckoutStatus checkoutStatus;
+	if (checkoutStatus.showCheckedOut(filepath) == false) {
+		return false;
+	}
+	return true;
+}
+
+bool ArchiveBuilder::showUncheckedOutChanges(const char *filepath) {
+	CheckoutStatus checkoutStatus;
+	if (checkoutStatus.showUncheckedOutChanges(filepath) == false) {
+		return false;
+	}
+	return true;
+}
+
+
+bool ArchiveBuilder::checkout(const char *filepath, const char *comment) {
+	CheckoutStatus checkoutStatus;
+	if (checkoutStatus.checkout(filepath) == false) {
+		return false;
+	}
 	try {
 		VersionControl &versionControl = VersionControl::get();
 		return versionControl.checkout(filepath, comment);
 	}
 	catch (SIAAppException &e) {
 		printf("Error: %s\n", e.what());
+		if (checkoutStatus.checkin(filepath) == false) {
+			return false;
+		}
 		return false;
 	}
+
+	return true;
 }
 
 bool ArchiveBuilder::checkin(const char *filepath, const char *comment) {
 
-	VersionControl &versionControl = VersionControl::get();
-	versionControl.checkin(filepath, comment);
+	CheckoutStatus checkoutStatus;
+	if (checkoutStatus.checkin(filepath) == false) {
+		return false;
+	}
+	try {
+		VersionControl &versionControl = VersionControl::get();
+		versionControl.checkin(filepath, comment);
+		return true;
+	}
+	catch (SIAAppException &e) {
+		printf("Error: %s\n", e.what());
+		if (checkoutStatus.checkin(filepath) == false) {
+			return false;
+		}
+		return false;
+	}
 	return true;
 }
 
@@ -785,6 +742,18 @@ void ArchiveBuilder::print(const MetadataObject& mo) {
 		//printf("%-20s %s\n", columnInfo.getName().c_str(), mo.columnAt(columnInfo.getName().c_str()).toString().c_str());
 		logger.log(CLogger::FINE, "%-20s %s\n", columnInfo.getName().c_str(), mo.columnAt(columnInfo.getName().c_str()).toString().c_str());
 	}
+}
+
+bool ArchiveBuilder::exportImages(const char *dispPath) {
+	ExportImages exportImages(m_shadowPath.c_str());
+	exportImages.process();
+	return true;
+}
+
+bool ArchiveBuilder::listContents(const char *addressScope) {
+	ContentsLister contentsLister(m_shadowPath.c_str());
+	contentsLister.List();
+	return true;
 }
 
 /*

@@ -49,6 +49,7 @@ class HookCmd {
 public:
 	typedef enum {
 		HC_OnFile,
+		HC_OnFileCopy,
 		HC_OnFolder,
 		HC_OnContainer,
 		HC_PostArchive,
@@ -106,6 +107,15 @@ class OnFileCmd : public HookCmd {
 	std::string m_file;
 public:
 	OnFileCmd(const char *file);
+	bool process();
+
+};
+
+class OnFileCopyCmd : public HookCmd {
+	std::string m_path;
+	std::string m_image;
+public:
+	OnFileCopyCmd(const char *path, const char *image);
 	bool process();
 
 };

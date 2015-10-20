@@ -106,7 +106,8 @@ public:
         ParserRequiredOptionMissing = 16,
         ParserHelpRequested = 32,
 		GeneralHelpRequested = 64,
-		TopicHelpRequested = 128
+		TopicHelpRequested = 128,
+		ParserCommandNotFound = 256
 
     };
 	

@@ -106,7 +106,7 @@ void AppOptions::defineArgs() {
 
 	m_argvParser->defineOption("about", "prints the version information", ArgvParser::MasterOption);
 
-	m_argvParser->defineOption("v", "View commands", ArgvParser::NoOptionAttribute);
+	m_argvParser->defineOption("v", "View commands", ArgvParser::MasterOption);
 	m_argvParser->defineOptionAlternative("v", "view");
 
 	m_argvParser->defineOption("image-address", "image address", ArgvParser::NoOptionAttribute);

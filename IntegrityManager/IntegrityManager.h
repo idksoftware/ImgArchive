@@ -41,6 +41,8 @@ namespace simplearchive {
 class IntegrityManager {
 	static IntegrityManager *m_this;
 	std::string m_archivePath;
+	std::string m_workspacePath;
+	std::string m_homePath;
 	IntegrityManager();
 public:
 	
@@ -50,9 +52,9 @@ public:
 	bool makeList();
 	bool validate();
 	bool repair();
-	static IntegrityManager &get(const char *archivePath);
+	static IntegrityManager &get(const char *archivePath, const char* workspacePath, const char* homePath);
 	static IntegrityManager &get();
-	void setArchivePath(const char* archivePath);
+	void setPaths(const char* archivePath, const char* workspacePath, const char* homePath);
 };
 
 } /* namespace simplearchive */

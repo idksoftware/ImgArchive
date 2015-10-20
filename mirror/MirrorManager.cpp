@@ -65,7 +65,7 @@ MirrorManager::~MirrorManager() {
 bool MirrorManager::initalise(const char *rootFolder, const char *configFile) {
 	m_rootFolder = rootFolder;
 	m_configFile = configFile;
-	m_configFile += "/mirror.conf";
+	m_configFile += "/mirror.dat";
 
 	MirrorList::setRootFolder(rootFolder);
 

@@ -38,7 +38,8 @@
 #include "FolderList.h"
 #include "CheckDisk.h"
 #include "SAUtils.h"
-
+#include "ValidateReportingObject.h"
+#include "CheckoutStatus.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -50,9 +51,12 @@ namespace simplearchive {
 
 IntegrityManager *IntegrityManager::m_this = 0;
 
-void IntegrityManager::setArchivePath(const char* archivePath) {
+void IntegrityManager::setPaths(const char* archivePath, const char* workspacePath, const char* homePath) {
 	m_archivePath = archivePath;
+	m_workspacePath = workspacePath;
+	m_homePath = homePath;
 	CheckDisk::setArchivePath(archivePath);
+	CheckoutStatus::Init(archivePath, workspacePath);
 }
 
 IntegrityManager::IntegrityManager() {
@@ -79,6 +83,23 @@ bool IntegrityManager::addFile(const char *folderPath, const char *fileName) {
 }
 
 bool IntegrityManager::validate() {
+//	FolderList folderList(m_archivePath.c_str());
+	std::string tmp = m_archivePath;
+	tmp += "/root/journal";
+	if (SAUtils::DirExists(tmp.c_str()) == false) {
+		throw std::exception();
+	}
+	tmp += "/checkdisk";
+	if (SAUtils::DirExists(tmp.c_str()) == false) {
+		if (SAUtils::mkDir(tmp.c_str()) == false) {
+			throw std::exception();
+		}
+	}
+	ValidateReportingObject::setPath(tmp.c_str());
+	FolderList folderList(m_archivePath.c_str(), m_workspacePath.c_str());
+	if (folderList.validate() == false) {
+		return false;
+	}
 	return true;
 }
 
@@ -134,11 +155,11 @@ bool IntegrityManager::makeList() {
 	return true;
 }
 
-IntegrityManager &IntegrityManager::get(const char *archivePath) {
+IntegrityManager &IntegrityManager::get(const char *archivePath, const char *workspacePath, const char *homePath) {
 	if (m_this == 0) {
 		m_this = new IntegrityManager();
 	}
-	m_this->setArchivePath(archivePath);
+	m_this->setPaths(archivePath, workspacePath, homePath);
 	return *m_this;
 }
 

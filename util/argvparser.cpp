@@ -111,6 +111,10 @@ ArgvParser::parse(int _argc, char ** _argv)
 		// string is a real argument since values are processed elsewhere
 		//finished_options = true;
 		//argument_container.push_back(argument);
+		auto it = option2key.find(_command);
+		if (it == option2key.end()) {
+			return(ParserCommandNotFound);
+		}
 		key = option2key.find(_command)->second;
 		if (key == help_option) {// if help is requested return error code
 			if (_argc < 3) {	// General help

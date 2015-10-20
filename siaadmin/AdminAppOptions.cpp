@@ -57,6 +57,7 @@ std::string AppOptions::m_imageAddress;
 std::string AppOptions::m_homePath;
 std::string AppOptions::m_workspacePath;
 std::string AppOptions::m_shadowPath;
+std::string AppOptions::m_configPath;
 
 AppOptions::AppOptions() {
 	m_configured = true;
@@ -77,6 +78,7 @@ bool AppOptions::initaliseConfig() {
 
 	}
 	std::string configfile = homePath + "/config/" + "config.dat";
+	std::string configPath = homePath + "/config";
 	if (SAUtils::DirExists(homePath.c_str()) == false) {
 		//printf("SIA Unable to start?\nArchive not found at default location and the environment variable SA_HOME not set.\n"
 		//	"Use siaadmin -i to create an empty archive at the default location (see documentation).\n");
@@ -85,9 +87,9 @@ bool AppOptions::initaliseConfig() {
 		m_configured = false;
 	}
 	else {
-
+		
 		if (SAUtils::FileExists(configfile.c_str()) == true) {
-
+			setConfigPath(configPath.c_str());
 			ConfigReader configReader;
 			configReader.setNoLogging();
 			configReader.read(configfile.c_str(), config);
@@ -165,6 +167,8 @@ bool AppOptions::initalise(int argc, char **argv) {
 	
 	argvParser.defineOption("validate", "Validate commands", ArgvParser::MasterOption);
 
+	argvParser.defineOption("m", "Mirror commands", ArgvParser::MasterOption);
+	argvParser.defineOptionAlternative("m", "mirror");
 	/*
 	argvParser.defineOption("image-address", "image address", ArgvParser::NoOptionAttribute);
 
@@ -237,6 +241,9 @@ bool AppOptions::initalise(int argc, char **argv) {
 		return false;
 	case ArgvParser::TopicHelpRequested:
 		printf("%s", argvParser.topicUsageDescription(argvParser.getCurrentCommandId(), 80).c_str());
+		return false;
+	case ArgvParser::ParserCommandNotFound:
+		//printf("%s", argvParser.topicUsageDescription(argvParser.getCurrentCommandId(), 80).c_str());
 		return false;
 	default:
 		return false;
@@ -532,6 +539,10 @@ void AppOptions::setShadowPath(const char *shadowPath) {
 	m_shadowPath = shadowPath;
 }
 
+void AppOptions::setConfigPath(const char *configPath) {
+	m_configPath = configPath;
+}
+
 const char *AppOptions::getComment() {
 	return m_comment.c_str();
 }
@@ -549,6 +560,9 @@ const char *AppOptions::getWorkspacePath() {
 const char *AppOptions::getShadowPath() {
 	return m_shadowPath.c_str();
 }
-
+const char *AppOptions::getConfigPath() {
+	return m_configPath.c_str();
+}
+void setConfigPath(const char *configPath);
 
 } /* namespace simplearchive */

@@ -56,6 +56,18 @@ namespace simplearchive {
 		int checkin();
 
 		bool Import();
+		bool ImportFile(const char *filePath);
+		/**
+		This shows the checked out images. The file path will be in the form:
+		null = all archive
+		year = all the year	i.e "2015"
+		day  = all the day  i.e "2015-02-11"
+		*/
+		bool showCheckedOut(const char *addressScope);
+
+		bool showUncheckedOutChanges(const char *addressScope);
+
+		bool listContents(const char *addressScope);
 
 		bool checkout(const char *filepath, const char *comment);
 
@@ -63,8 +75,8 @@ namespace simplearchive {
 			
 		bool uncheckout(const char *filepath, const char *comment);
 
-		bool show(const char *name);
-			
+		bool exportImage(const char *distpath);
+
 		bool view(const char *name);
 
 		bool mirror(const char *name);

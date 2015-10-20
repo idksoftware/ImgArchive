@@ -40,6 +40,7 @@
 
 namespace simplearchive {
 
+#define IMAGE_NAME              "ImageName"
 #define RELATIVE_PATH           "RelativePath"
 #define IMAGE_PATH              "ImagePath"
 #define YEAR                    "Year"
@@ -159,7 +160,7 @@ public:
 		return m_relpath;
 	}
 
-	static bool settupMainArchiveFolders(const char *pathToArchive, const char *pathToShadow);
+	static bool settupMainArchiveFolders(const char *pathToArchive, const char *pathToShadow, const char *pathToHome);
 
 	// main
 	/// @brief The dups path is set in the configuation file (Default is $SHADOW_FOLDER/root/dups)

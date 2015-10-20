@@ -187,7 +187,6 @@ public:
 
 	const ExifDateTime& getCaptureDate() const {
 		return columnAt(MD_CAPTURE_DATE_IDX).getDate();
-
 	}
 
 	void setCaptureDate(const std::string& captureDate) {

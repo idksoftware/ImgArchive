@@ -182,7 +182,7 @@ bool History::read(const char *filepath) {
 	}
 
 	while (file.getline(text, 100)) {
-		m_eventList->push_back(*(new HistoryItem(text)));
+		m_eventList->push_back(HistoryItem(text));
 	}
 	file.close();
 

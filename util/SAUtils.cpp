@@ -338,6 +338,11 @@ bool SAUtils::fileSize(const char *filePath, unsigned long *size) {
 	return true;
 }
 
+bool SAUtils::rename(const char *from, const char *to) {
+	int result = ::rename(from, to);
+	perror("file error");
+	return (result >= 0);
+}
 
 bool SAUtils::copy(const char *from, const char *to) {
 	char buf[BUFSIZ];
@@ -366,23 +371,22 @@ bool SAUtils::verify(const char *from, const char *to) {
 	return fileCompare(from, to);
 }
 
-/*
-void SAUtils::sprintf(std::string &s, const std::string fmt, ...)
+void SAUtils::sprintf(std::string &s, const std::string &fmt, ...)
 {
 	int n, size = 100;
 	bool b = false;
 	va_list marker;
-
+	char buff[2014];
 	while (!b)
 	{
 		s.resize(size);
 		va_start(marker, fmt);
-		n = vsnprintf((char*)s.c_str(), size, fmt.c_str(), marker);
+		n = vsnprintf(buff, 2014, fmt.c_str(), marker);
 		va_end(marker);
 		if ((n>0) && ((b = (n<size)) == true)) s.resize(n); else size *= 2;
 	}
 }
-*/
+
 
 bool SAUtils::delDir(const char *path) {
 #ifdef _WIN32

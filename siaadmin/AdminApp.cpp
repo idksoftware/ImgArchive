@@ -153,10 +153,13 @@ bool App::Run()
 	}
 	case AppOptions::CM_Mirror:
 	{
-
+		// make mirror
 		if (siaLib.mirror(appOptions.getName()) == false) {
 			return false;
 		}
+		// 
+
+		
 		break;
 	}
 	case AppOptions::CM_Validate:
@@ -165,7 +168,7 @@ bool App::Run()
 			// Do not create a new archive. The old one needs to be deleted?
 			return false;
 		}
-		IntegrityManager &integrityManager = IntegrityManager::get(config.getShadowPath());
+		IntegrityManager &integrityManager = IntegrityManager::get(config.getShadowPath(), config.getWorkspacePath(), config.getHomePath());
 		/*
 		if (integrityManager.makeList() == false) {
 			return false;

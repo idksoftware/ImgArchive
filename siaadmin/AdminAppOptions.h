@@ -41,13 +41,14 @@ namespace simplearchive {
 class AppOptions {
 public:
 	typedef enum {
-		CM_InitArchive,
-		CM_Show,
-		CM_Version,
-		CM_View,
-		CM_Mirror,
-		CM_Archive,
-		CM_Validate,
+		CM_InitArchive, //* Initalise an archive with the default prameter
+		CM_Show,        //* Show
+		CM_Version,     //* show version
+		CM_View,        //* View
+		CM_Mirror,      //* Mirror
+		CM_Archive,     //*
+		CM_Validate,    //* Validate the archive.
+        CM_Fix,         //* Fix the archive
 		CM_Unknown
 	} CommandMode;
 private:
@@ -59,6 +60,8 @@ private:
 	static std::string m_homePath;
 	static std::string m_workspacePath;
 	static std::string m_shadowPath;
+	static std::string m_configPath;
+
 	bool m_error;
 	/**
 		@brief Set to true if no archive configuration found. 
@@ -70,6 +73,7 @@ private:
 	void setHomePath(const char *homePath);
 	void setWorkspacePath(const char *workspacePath);
 	void setShadowPath(const char *shadowPath);
+	void setConfigPath(const char *configPath);
 	AppOptions();
 public:
 	
@@ -86,6 +90,7 @@ public:
 	const char *getHomePath();
 	const char *getWorkspacePath();
 	const char *getShadowPath();
+	const char *getConfigPath();
 
 	bool isConfiguratedOk() {
 		return m_configured;
