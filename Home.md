@@ -1,0 +1,2 @@
+SIA upload is a front end to sia.exe allowing images to be added to the archive a straight forward automated way. image to be added to the archive normally will come from two sources; directly from camera memory cards or from a folder in the computers file system.
+SIA uploader runs as an icon normally on the right side of the task bar, by right clicking on this will open a menu giving access to the uploaders funct 
