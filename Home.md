@@ -5,7 +5,7 @@ A number of import jobs can be put into a import job queue; like a printer job q
 Each import job will have a unique job number
 
 SIA uploader runs as an icon normally on the right side of the task bar, by right clicking on this will open a menu giving access to the uploaders functionality.
-Direct Import
+## Direct Import ##
 This menu item allows you to select the folder containing images for importing directly. On selecting this option the Direct Import dialog will open allowing you to browse the computers file system for the folder containing images. On clicking the "Ok" button will enter the import as a new import job in the job queue.
 Flash import
 This menu item allows you to select a removable flash drive; normally a camera flash drive. On   
