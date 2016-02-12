@@ -44,19 +44,47 @@ namespace simplearchive {
 
 
 	class ArchiveBuilder;
+	class ArchiveObject;
 	class SIALib
 	{
+	public:
+		typedef enum {
+			Workspace,		//* Initalise an archive with the default 
+			Shadow,			//* Show
+			Both			//* show version
+		} Scope;
+	private:
 		std::string m_HomePath;
 		std::auto_ptr<ArchiveBuilder> m_ArchiveBuilder;
+		
+		bool m_winsockRequired;
+		bool m_socklibStarted;
+		bool m_enableEvents;
+		int m_udpPortNum;
+		int m_tcpPortNum;
+		bool m_enableServer;
+		std::string m_udpAddress;
 	public:
 		SIALib();
 		~SIALib();
+		void enableEvents(const char *address, int port);
+		void enableServer(int port);
 		int initalise();
 		int complete();
 		int checkin();
 
 		bool Import();
 		bool ImportFile(const char *filePath);
+		void setForceDate();
+		void setUseEXIFDate();
+		void setUseFileDate();
+		void setUseDateToday();
+		void setUseDate(ExifDate &date);
+
+		static const int getLastCode();
+		
+		static const char *getLastMessage();
+		
 		/**
 		This shows the checked out images. The file path will be in the form:
 		null = all archive
@@ -84,6 +112,8 @@ namespace simplearchive {
 		bool archive(const char *archivePath, const char *distPath, unsigned long sizeOfMedia, ExifDateTime *startDate, ExifDateTime *endDate);  //< Create backup volumes
 
 		bool checkDisk();
+
+		bool validate(const char *archivePath, const char *workspacePath, const char *homePath, Scope, bool repair = false);
 	};
 
 }

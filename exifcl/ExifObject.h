@@ -112,7 +112,11 @@ namespace simplearchive {
 	public:
 		ExifObjectSchema() : MTTableSchema(ROW_EXTERNAL_EXIF) {
 
-			
+			add(MTSchema(MTSchema::Text, DB_ORGINALNAME));
+			add(MTSchema(MTSchema::Text, DB_LABEL));
+			add(MTSchema(MTSchema::Integer, DB_RATING));
+			add(MTSchema(MTSchema::Text, DB_MEDIATYPE));
+			add(MTSchema(MTSchema::Date, DB_DATECREATE));
 			add(MTSchema(MTSchema::Text, DB_DESCRIPTION));
 			add(MTSchema(MTSchema::Integer, DB_WIDTH));
 			add(MTSchema(MTSchema::Integer, DB_HEIGHT));

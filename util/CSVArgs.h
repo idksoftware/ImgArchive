@@ -37,7 +37,7 @@
 #include <string>
 #include <vector>
 
-#include "global.h"
+#include "siaglobal.h"
 
 namespace simplearchive {
 

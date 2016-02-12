@@ -35,6 +35,7 @@
 #pragma once
 #include "ConfigReader.h"
 #include "ExifDateTime.h"
+
 /**
 	@brief These #defines define the labels the hook files will use
 	to reference envronment varibles.
@@ -112,10 +113,18 @@ namespace simplearchive {
 		static bool m_isFromDate;
 		static ExifDateTime m_toDate;
 		static bool m_isToDate;
+
+		static std::string m_backup1;
+		static std::string m_backup2;
+		static bool m_backup1Enabled;
+		static bool m_backup2Enabled;
 		CAppConfig();
 	public:
 		static CAppConfig &get();
 		~CAppConfig();
+
+		/// @brief Initalises the config object
+		void init();
 		/// @brief Gets the source path.
 		const char *getSourcePath();
 		/// @brief Gets the archive path.
@@ -152,7 +161,15 @@ namespace simplearchive {
 		const char *getHomePath();
 		const char *getMasterViewPath();
 		const char *getDatabasePath();
+		// This is for media backups
 		const char *getBackupDestinationPath();
+
+		const char *getBackup1();
+		const char *getBackup2();
+
+		bool isBackup1Enabled() { return m_backup1Enabled; };
+		bool isBackup2Enabled() { return m_backup2Enabled; };
+
 		void setBackupDestinationPath(const char *path);
 		long getBackupMediaSize();
 		void setBackupMediaSize(const char *path);
@@ -171,7 +188,7 @@ namespace simplearchive {
 		const char *getLogLevel();
 
 		std::string toString();
-
+		
 	public:
  
 //	private:
@@ -182,7 +199,8 @@ namespace simplearchive {
 		void setWorkspacePath(const char *homePath);
 		void setShadowPath(const char *homePath);
 		void setMasterViewPath(const char *viewPath);
-		
+		void setBackup1(const char *backupPath);
+		void setBackup2(const char *backupPath);
 		void setSourcePath(const char *sourcePath);
 		void setLogLevel(const char *logLevel);
 		/// Sets tools path

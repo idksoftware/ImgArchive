@@ -34,7 +34,7 @@
 
 #include "SetEnv.h"
 #include <stdlib.h>
-#ifdef WIN32
+#ifdef _WIN32
 #include <windows.h>
 #endif
 
@@ -58,7 +58,7 @@ SetEnv::~SetEnv() {
 void SetEnv::process() {
 	for (std::vector<EnvItem>::iterator i = begin(); i != end(); i++) {
 		EnvItem &data = *i;
-#ifdef WIN32
+#ifdef _WIN32
 		//::SetEnvironmentVariable(data.getName().c_str(), data.getValue().c_str());
 		std::string tmp = data.getName() + '=' + data.getValue().c_str();
 		_putenv(tmp.c_str());

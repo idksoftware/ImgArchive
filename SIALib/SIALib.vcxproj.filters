@@ -78,9 +78,6 @@
     <ClInclude Include="MakeMedia.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ReadConfig.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -102,9 +99,6 @@
     <ClInclude Include="XMLWriter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ImageHistory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="MetadataUpdate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -121,6 +115,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ExportImages.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SIAApplicationState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TerminalServer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ArchiveObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CheckFile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -182,9 +188,6 @@
     <ClCompile Include="MakeMedia.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ReadConfig.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SACmdArgs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -203,9 +206,6 @@
     <ClCompile Include="XMLWriter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ImageHistory.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="MetadataUpdate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -222,6 +222,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ExportImages.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SIAApplicationState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TerminalServer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ArchiveObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CheckFile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

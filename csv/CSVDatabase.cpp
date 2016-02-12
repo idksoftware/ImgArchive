@@ -40,12 +40,12 @@
 #include "CSVDatabase.h"
 #include "AssetProperties.h"
 #include "CameraInformation.h"
-
+#include "ArchivePath.h"
 #include "GPSProperties.h"
-
 #include "CopyrightProperties.h"
 #include "SAUtils.h"
 #include "CSVDBVisitor.h"
+#include "DefineNames.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -54,6 +54,22 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 namespace simplearchive {
+	
+class MirrorDB {
+	std::string m_path;
+	std::string m_primary;
+	std::string m_backup1;
+	std::string m_backup2;
+	std::string m_shadow;
+	std::string makeFolders(std::string &pasePath, std::string &relPath);
+	bool copy(std::string &from, std::string &to);
+	bool copyDB(std::string &from, std::string &to, const char *name);
+
+public:
+	MirrorDB(const char *rootPath);
+	~MirrorDB() {};
+	bool process(std::string &shortPath);
+};
 
 class FolderSet {
 	AssetProperties m_assetProperties;
@@ -72,6 +88,7 @@ public:
 	void add(MetadataObject &metadataObject);
 	std::auto_ptr<MetadataObject> get(const char *image);
 	bool put(const char *image, MetadataObject &mo);
+	
 };
 
 
@@ -135,6 +152,7 @@ std::auto_ptr<CSVDatabase> CSVDatabase::m_this(0);
 std::string CSVDatabase::m_dbpath;
 
 CSVDatabase::CSVDatabase() {
+	m_mirrorDB.reset(new MirrorDB(m_dbpath.c_str()));
 }
 
 CSVDatabase::~CSVDatabase() {
@@ -156,9 +174,6 @@ void CSVDatabase::addold(MetadataObject &metadataObject, const char *path) {
 	FolderSet folderSet(path);
 	folderSet.add(metadataObject);
 }
-
-
-
 
 
 void CSVDatabase::add(MetadataObject &metadataObject, const char *relpath) {
@@ -190,6 +205,7 @@ void CSVDatabase::add(MetadataObject &metadataObject, const char *relpath) {
 	}
 	FolderSet folderSet(fullPath.c_str());
 	folderSet.add(metadataObject);
+	m_mirrorDB->process(relPath);
 }
 
 const MetadataObject *CSVDatabase::get(unsigned int idx, const char *path) {
@@ -241,6 +257,112 @@ bool CSVDatabase::put(const char *name, const char *path, MetadataObject &mo) {
 	folderSet.put(name, mo);
 	return true;
 }
+
+MirrorDB::MirrorDB(const char *rootPath) {
+	m_path = rootPath;
+
+	if (ArchivePath::isShadowEnabled() == true) {
+		m_shadow = ArchivePath::getShadow().getCSVDatabasePath();
+	}
+	if (ArchivePath::isBackup1Enabled() == true) {
+		m_backup1 = ArchivePath::getBackup1().getCSVDatabasePath();
+		
+	}
+	if (ArchivePath::isBackup2Enabled() == true) {
+		m_backup2 = ArchivePath::getBackup2().getCSVDatabasePath();;
+	}
+
+}
+
+bool MirrorDB::copyDB(std::string &from, std::string &to, const char *name) {
+	std::string fromfull = from;
+	fromfull += '/'; fromfull += name;
+	std::string tofull = to;
+	tofull += '/'; tofull += name;
+	if (SAUtils::copy(fromfull.c_str(), tofull.c_str()) == false) {
+		return false;
+	}
+	return true;
+}
+
+bool MirrorDB::copy(std::string &from, std::string &to) {
+	if (copyDB(from, to, AssetPropertiesFilename) == false) {
+		return false;
+	}
+	if (copyDB(from, to, CameraInformationFilename) == false) {
+		return false;
+	}
+	if (copyDB(from, to, CopyrightPropertiesFilename) == false) {
+		return false;
+	}
+	if (copyDB(from, to, GPSPropertiesFilename) == false) {
+		return false;
+	}
+	if (copyDB(from, to, MediaPropertiesFilename) == false) {
+		return false;
+	}
+	
+	return true;
+}
+
+std::string MirrorDB::makeFolders(std::string &basePath, std::string &relPath) {
+	std::string dayStr = relPath.substr(0, 10);
+	std::string yearStr = relPath.substr(0, 4);
+
+	std::string fullPath = basePath;
+
+	fullPath += '/';
+	fullPath += yearStr;
+	if (SAUtils::DirExists(fullPath.c_str()) == false) {
+		if (SAUtils::mkDir(fullPath.c_str()) == false) {
+			throw std::exception();
+		}
+	}
+	fullPath += '/';
+	fullPath += dayStr;
+	if (SAUtils::DirExists(fullPath.c_str()) == false) {
+		if (SAUtils::mkDir(fullPath.c_str()) == false) {
+			throw std::exception();
+		}
+	}
+	return fullPath;
+}
+
+bool MirrorDB::process(std::string &relPath) {
+	
+	std::string dayStr = relPath.substr(0, 10);
+	std::string yearStr = relPath.substr(0, 4);
+	std::string imagename = relPath.substr(11, relPath.length() - 11);
+	std::string fromfull = m_path;
+	fromfull += '/'; fromfull += yearStr;
+	fromfull += '/'; fromfull += dayStr;
+	
+	
+	if (ArchivePath::isShadowEnabled() == true) {
+		std::string fullPath = makeFolders(m_shadow, relPath);
+		if (copy(fromfull, fullPath) == false) {
+			return false;
+		}
+	}
+	if (ArchivePath::isBackup1Enabled() == true) {
+		std::string fullPath = makeFolders(m_backup1, relPath);
+		if (copy(fromfull, fullPath) == false) {
+			return false;
+		}
+	}
+	if (ArchivePath::isBackup2Enabled() == true) {
+		std::string fullPath = makeFolders(m_backup2, relPath);
+		if (copy(fromfull, fullPath) == false) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+/********************************/
+
+
 
 class CSVDBCopyAction : public CSVDBAction {
 	std::string m_copyPath;

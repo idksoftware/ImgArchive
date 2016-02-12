@@ -63,7 +63,7 @@ void HookCmd::init(ImagePath &imagePath) {
 	setEnv.insert(setEnv.end(), EnvItem(IMAGE_PATH, imagePath.getImagePath().c_str()));
 	setEnv.insert(setEnv.end(), EnvItem(YEAR, imagePath.getYearStr().c_str()));
 	setEnv.insert(setEnv.end(), EnvItem(YYYYMMDD, imagePath.getYyyymmddStr().c_str()));
-	setEnv.insert(setEnv.end(), EnvItem(PATH_TO_ARCHIVE, imagePath.getPathToArchive().c_str()));
+	setEnv.insert(setEnv.end(), EnvItem(PATH_TO_ARCHIVE, imagePath.getPathToWorkspace().c_str()));
 	setEnv.insert(setEnv.end(), EnvItem(DATA_PATH, imagePath.getRelativePath().c_str()));
 	setEnv.insert(setEnv.end(), EnvItem(METADATA_PATH, imagePath.getLocalShadowMetadataPath().c_str()));
 	setEnv.insert(setEnv.end(), EnvItem(MAIN_METADATA_PATH, imagePath.getMainMetadataPath().c_str()));

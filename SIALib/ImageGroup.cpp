@@ -79,12 +79,12 @@ ImageContainer &ImageGroup::add(std::unique_ptr<BasicExif>& basicExif, std::uniq
 	ImageContainer *imageContainer = nullptr;
 	if ((imageContainer = find(filenameOnly.c_str())) != nullptr) {
 		// Second Instance with this name so needs to be assocated.
-		logger.log(CLogger::INFO, "Found name: %s, Associating: %s with %s", imageFilename.c_str(), imageFilename.c_str(), imageContainer->getName().c_str());
+		logger.log(LOG_OK, CLogger::INFO, "Found name: %s, Associating: %s with %s", imageFilename.c_str(), imageFilename.c_str(), imageContainer->getName().c_str());
 		imageContainer->add(basicExif, metadataObject);
 	} else {
 		// First Instance with this name.
 		// note all images share the same path in the group.
-		logger.log(CLogger::INFO, "New image name: %s using %s", filenameOnly.c_str(), basicExif->getName().c_str());
+		logger.log(LOG_OK, CLogger::INFO, "New image name: %s using %s", filenameOnly.c_str(), basicExif->getName().c_str());
 		imageContainer = new ImageContainer(getPath(), filenameOnly.c_str());
 		imageContainer->add(basicExif, metadataObject);
 		add(imageContainer);

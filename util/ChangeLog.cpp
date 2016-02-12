@@ -109,7 +109,7 @@ ChangeLog &ChangeLog::getLogger() {
 			[] {
 		m_this.reset(new ChangeLog);
 		LogFilename logFilename(m_logpath.c_str());
-		m_filename = logFilename.filename();
+		m_filename = logFilename.filepath();
 		m_logfile.open(m_filename.c_str(), ios::out | ios::app);
 	});
 

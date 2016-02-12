@@ -34,7 +34,7 @@
 
 
 
-#include "global.h"
+#include "siaglobal.h"
 
 #include <cstdlib>
 #include <fstream>

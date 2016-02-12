@@ -37,7 +37,7 @@
 #include <cstdlib>
 #include <string>
 #include <cstring>
-#ifndef WIN32
+#ifndef _WIN32
 #include <unistd.h>
 #endif
 //#include <sys/wait.h>
@@ -73,7 +73,7 @@ ExternalShell::~ExternalShell() {
  */
 #define MAX_LINE_LENGTH 255
 bool ExternalShell::exec(const char *cmd) {
-#ifdef WIN32
+#ifdef _WIN32
 	std::string tmp = "\"";
 	tmp += cmd;
 	tmp += "\"";
@@ -104,7 +104,7 @@ bool ExternalShell::exec(const char *cmd) {
 			m_output += buffer;
 		}
 	}
-#ifdef WIN32
+#ifdef _WIN32
 	_pclose(pipe);
 #else
 	pclose(pipe);

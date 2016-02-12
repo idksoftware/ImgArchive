@@ -35,6 +35,6 @@
 #ifndef APP_PATHS_H_
 #define APP_PATHS_H_
 
-#define IMAGEID_FOLDER	"/root/imageid"
+#define IMAGEID_FOLDER	"/system/imageid"
 
 #endif // APP_PATHS_H_

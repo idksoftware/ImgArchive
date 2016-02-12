@@ -146,7 +146,7 @@ std::vector<std::string *> *SAUtils::getFiles(const char *dirpath) {
 
 FileList_Ptr SAUtils::getFiles_(const char *dirpath) {
 
-	std::unique_ptr<std::vector<std::string>> fileList(new std::vector<std::string>);
+	FileList_Ptr fileList(new std::vector<std::string>);
 	/*
 	DIR *dir;
 	struct dirent *ent;
@@ -243,6 +243,30 @@ std::string SAUtils::getFilePathNoExt(const char *file) {
 std::string SAUtils::getFilePathNoExt(const std::string &file) {
 
 	std::string name = file.substr(0,file.find_last_of("/"));
+	return name;
+}
+
+std::string SAUtils::getFilename(const std::string &filepath) {
+	int sp = filepath.find_last_of("/");
+	if (sp == string::npos) {
+		sp = filepath.find_last_of("\\");
+	}
+	if (sp == string::npos) {
+		return filepath;
+	}
+	std::string name = filepath.substr(++sp);
+	return name;
+}
+
+std::string SAUtils::getFolder(const std::string &filepath) {
+	int sp = filepath.find_last_of("/");
+	if (sp == string::npos) {
+		sp = filepath.find_last_of("\\");
+	}
+	if (sp == string::npos) {
+		return filepath;
+	}
+	std::string name = filepath.substr(0, filepath.length() - (sp + 1));
 	return name;
 }
 
@@ -458,22 +482,28 @@ bool SAUtils::makeLink(const char *file, const char *link) {
 	return true;
 }
 
-std::string SAUtils::getFileContents(const char *filename)
+void SAUtils::splitpath(const char *path, char *drive, char *dir, char *fname, char *ext) {
+#ifdef _WIN32
+	_splitpath(path, drive, dir, fname, ext);
+#endif
+}
+
+
+int SAUtils::getFileContents(const char *filename, std::string &contents)
 {
 
 	int count = 0;
 	std::ifstream in(filename, std::ios::in | std::ios::binary);
 	if (in)
 	{
-		std::string contents;
 		in.seekg(0, std::ios::end);
 		contents.resize(in.tellg());
 		in.seekg(0, std::ios::beg);
 		in.read(&contents[0], contents.size());
 		in.close();
-		return(contents);
+		return 0;
 	}
-	throw(errno);
+	return errno;
 }
 
 std::string SAUtils::getYear(const char *path) {

@@ -82,10 +82,10 @@ bool IntegrityManager::addFile(const char *folderPath, const char *fileName) {
 	return true;
 }
 
-bool IntegrityManager::validate() {
+bool IntegrityManager::validate(bool workspace, bool shadow) {
 //	FolderList folderList(m_archivePath.c_str());
 	std::string tmp = m_archivePath;
-	tmp += "/root/journal";
+	tmp += "/system/journal";
 	if (SAUtils::DirExists(tmp.c_str()) == false) {
 		throw std::exception();
 	}
@@ -103,9 +103,27 @@ bool IntegrityManager::validate() {
 	return true;
 }
 
-bool IntegrityManager::repair() {
+bool IntegrityManager::repair(bool workspace, bool shadow) {
+	//	FolderList folderList(m_archivePath.c_str());
+	std::string tmp = m_archivePath;
+	tmp += "/system/journal";
+	if (SAUtils::DirExists(tmp.c_str()) == false) {
+		throw std::exception();
+	}
+	tmp += "/checkdisk";
+	if (SAUtils::DirExists(tmp.c_str()) == false) {
+		if (SAUtils::mkDir(tmp.c_str()) == false) {
+			throw std::exception();
+		}
+	}
+	ValidateReportingObject::setPath(tmp.c_str());
+	FolderList folderList(m_archivePath.c_str(), m_workspacePath.c_str());
+	if (folderList.validateAndRepair() == false) {
+		return false;
+	}
 	return true;
 }
+
 
 bool IntegrityManager::makeList() {
 	FolderList folderList(m_archivePath.c_str());

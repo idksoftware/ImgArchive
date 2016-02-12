@@ -80,7 +80,8 @@ public:
 		return *m_metadataObject.get();
 	}
 
-	//void setMetadataObject(const MetadataObject*& metadataObject);
+	void setMetadataObject(const MetadataObject& metadataObject);
+	
 
 };
 

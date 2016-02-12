@@ -51,6 +51,13 @@ public:
         CM_Fix,         //* Fix the archive
 		CM_Unknown
 	} CommandMode;
+
+	typedef enum {
+		Workspace,		//* Initalise an archive with the default 
+		Shadow,			//* Show
+		Both			//* show version
+	} Scope;
+
 private:
 	static AppOptions *m_this;
 	static CommandMode m_commandMode;
@@ -61,7 +68,9 @@ private:
 	static std::string m_workspacePath;
 	static std::string m_shadowPath;
 	static std::string m_configPath;
-
+	static Scope m_scope;
+	static bool m_repair;
+	static bool m_users;
 	bool m_error;
 	/**
 		@brief Set to true if no archive configuration found. 
@@ -95,7 +104,18 @@ public:
 	bool isConfiguratedOk() {
 		return m_configured;
 	}
-	
+
+	bool repair() {
+		return m_repair;
+	}
+
+	Scope getScope() {
+		return m_scope;
+	}
+
+	bool getUsers() {
+		return m_users;
+	}
 };
 
 } /* namespace simplearchive */

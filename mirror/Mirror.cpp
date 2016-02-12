@@ -258,7 +258,7 @@ bool Mirror::initalise(const char *rootPath, const char *confpath) {
 			std::string errString;
 			//SAUtils::sprintf(errString, "Mirror name:%s cannot find path \"%s\"", data.getName().c_str(), data.getPath().c_str());
 			//sprintf_s(errString, "Mirror name:%s cannot find path \"%s\"", data.getName().c_str(), data.getPath().c_str());
-			throw MirrorException("Some error");
+			//throw MirrorException("Mirror: %s, Path not found %s", data.getName().c_str(), data.getPath().c_str());
 			return false;
 		}
 	}

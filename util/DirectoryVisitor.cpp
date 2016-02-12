@@ -131,7 +131,7 @@ bool DirectoryVisitor::process(const char *rf) {
 }
 
 bool DirNode::process() {
-#ifdef WIN32
+#ifdef _WIN32
 	std::string path = m_dirpath;
 	path = path + "/*.*";
 	CIDKFileFind fileFind(path);

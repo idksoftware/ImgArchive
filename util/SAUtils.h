@@ -39,10 +39,10 @@
 #include <string>
 #include <vector>
 #include <memory>
-#include "global.h"
+#include "siaglobal.h"
 
-#ifdef WIN32
-
+#ifdef _WIN32
+#define MAX_PATH	260
 #define unlink _unlink
 
 #endif
@@ -82,6 +82,8 @@ public:
 	static std::string getFilePathNoExt(const char *file);
 	static std::string getFilenameNoExt(const std::string &file);
 	static std::string getFilenameNoExt(const char *file);
+	static std::string getFilename(const std::string &filepath);
+	static std::string getFolder(const std::string &filepath);
 	static bool fileCompare(const char *file1, const char *file2);
 	static bool fileSize(const char *filePath, unsigned long *size);
 	static bool hasExt(const char *file);
@@ -97,9 +99,10 @@ public:
 	static void sprintf(std::string &s, const std::string &fmt, ...);
 	static bool makePath(const char *from, const char *to);
 	static bool makeLink(const char *file, const char *link);
-	static std::string getFileContents(const char *filename);
+	static int getFileContents(const char *filename, std::string &contents);
 	static std::string getYear(const char *path);
 	static std::string getFullRelativePath(const char *path);
+	static void splitpath(const char *path, char *drive, char *dir, char *fname, char *ext);
 };
 
 

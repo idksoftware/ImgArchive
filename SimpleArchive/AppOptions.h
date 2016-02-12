@@ -37,6 +37,7 @@
 #include <string>
 #include <memory>
 #include "argvparser.h"
+#include "ExifDate.h"
 
 namespace simplearchive {
 
@@ -180,6 +181,20 @@ private:
 	static AppOptions *m_this;
 	static bool m_list;
 	static bool m_usingFile;
+	static bool m_peekOnly;
+	static bool m_eventsOn; // UDP events
+	static bool m_serverOn;
+	static bool m_forceDate; // false;
+	static bool m_useDate;
+	static bool m_useFileDate;
+	static bool m_useDateToday;
+	static ExifDate m_archiveDate;	// used as the forced or default time.
+
+	//static bool m_enableUDP;
+	static int m_tcpPortNum;
+	static int m_udpPortNum;
+	static std::string m_udpAddress;
+
 	static CommandMode m_commandMode;
 	static std::string m_name;
 	static std::string m_comment;
@@ -217,8 +232,17 @@ public:
 	//* return the pathe to an options file
 	const char *getFilePath();
     //* Is the list option valid
+	bool isEnventsOn();
+	int eventPort();
+	const char *eventAddress();
+	bool isServerOn();
+	int serverPort();
 	bool isList() { return m_list;  }
 	bool isUsingFile() { return m_usingFile; }
+	bool getUseFileDate();
+	bool getUseDateToday();
+	bool isDataForced();
+	ExifDate &getArchiveDate();
     //* Ge The Show Command Option (only if the show command active).
 	ShowCommandOption getShowCommandOption() { return m_showCommandOption; };
 };

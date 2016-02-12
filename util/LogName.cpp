@@ -126,10 +126,10 @@ std::string LogName::makeName(const char *logPath, const char *preName, const ch
 	std::stringstream s;
 	if (found == false) {
 
-		s << logPath << '/' << fileMatch << "_0001." << ext;
+		s << fileMatch << "_0001." << ext;
 	} else {
 
-		s << logPath << '/' << fileMatch << '_' << std::setw(4) << std::setfill('0') << version << '.' << ext;
+		s << fileMatch << '_' << std::setw(4) << std::setfill('0') << version << '.' << ext;
 		if (maxSize != ALWAYS_CREATE) { // always create new filename.
 			int res = checkLogSize(s.str().c_str(), maxSize * 1024);
 			if (res == 1) {
@@ -140,9 +140,12 @@ std::string LogName::makeName(const char *logPath, const char *preName, const ch
 		}
 		s.str(std::string());
 		version++;
-		s << logPath << '/' << fileMatch << '_' << std::setw(4) << std::setfill('0') << version << '.' << ext;
+		s << fileMatch << '_' << std::setw(4) << std::setfill('0') << version << '.' << ext;
 	}
-	result = s.str();
+
+	m_filename = s.str();
+	result = logPath;
+	result += '/'; result += m_filename;
 	return result;
 
 

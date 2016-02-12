@@ -33,6 +33,7 @@
 ** #$$@@$$# */
 
 #include "TargetsList.h"
+#include "ImageExtentions.h"
 #include "DirectoryVisitor.h"
 #include "CLogger.h"
 #include "HookCmd.h"
@@ -69,7 +70,7 @@ namespace simplearchive {
 			m_imageSet = new ImageSet(path);
 
 			m_imageSets->insert(m_imageSets->end(), m_imageSet);
-			logger.log(CLogger::INFO, "Starting reading folder \"%s\"", path);
+			logger.log(LOG_OK, CLogger::INFO, "Starting reading folder \"%s\"", path);
 			//printf("==== Start ==== %d \n", m_folderCount++);
 			return true;
 		};
@@ -77,7 +78,14 @@ namespace simplearchive {
 		virtual bool onFile(const char *path) {
 			m_fileCount++;
 			CLogger &logger = CLogger::getLogger();
-			logger.log(CLogger::INFO, "Reading file: %s", path);
+			logger.log(LOG_OK, CLogger::INFO, "Reading file: %s", path);
+			ImageExtentions& ie = ImageExtentions::get();
+			std::string tmp = path;
+			std::string filename = SAUtils::getFilename(tmp);
+			if (ie.IsValid(filename.c_str()) == false) {
+				logger.log(LOG_OK, CLogger::WARNING, "Not a valid file type \"%s\" rejecting ", filename.c_str());
+				return true;
+			}
 			m_imageSet->insert(m_imageSet->end(), new ImageItem(path));
 			return true;
 		};
@@ -85,12 +93,12 @@ namespace simplearchive {
 			m_path = path;
 			m_folderCount++;
 			CLogger &logger = CLogger::getLogger();
-			logger.log(CLogger::INFO, "Now reading folder:  %s", m_path.c_str());
+			logger.log(LOG_OK, CLogger::INFO, "Now reading folder:  %s", m_path.c_str());
 			return true;
 		};
 		virtual bool onEnd() {
 			CLogger &logger = CLogger::getLogger();
-			logger.log(CLogger::INFO, "Ending reader folder %s", m_path.c_str());
+			logger.log(LOG_OK, CLogger::INFO, "Ending reader folder %s", m_path.c_str());
 			return true;
 		};
 		virtual FolderVisitor *make() {

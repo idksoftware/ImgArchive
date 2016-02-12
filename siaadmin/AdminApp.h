@@ -60,14 +60,13 @@
 
 namespace simplearchive {
 
-class ArchiveBuilder;
+
 /**
 * @brief This is the main application class. This class is the first object main() will execute.
 */
 class App {
 private:
 	std::string m_HomePath;
-	ArchiveBuilder m_ArchiveBuilder;
 	/**
 		@brief This command creates a template archive. This includes the home configuration and the shadow
 		archive. However the shadow archive will be create on the first addition of an image. The config file.
@@ -76,7 +75,7 @@ private:
 		@param workspacePath	Workspace location.
 		@param shadowPath		Shadow archive location.
 	*/
-	bool CreateArchive(const char *archivePath, const char *workspacePath, const char *shadowPath);
+	bool CreateArchive(const char *archivePath, const char *workspacePath, const char *shadowPath, bool users);
 	
 public:
 	/// Constructor

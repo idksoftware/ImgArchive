@@ -55,19 +55,19 @@
  */
 #ifndef APP_H_
 #define APP_H_
-#include "ArchiveBuilder.h"
+//#include "ArchiveBuilder.h"
 //#include "SIALib.h"
 
 namespace simplearchive {
 
-class ArchiveBuilder;
+
 /**
 * @brief This is the main application class. This class is the first object main() will execute.
 */
 class App {
 private:
 	std::string m_HomePath;
-	ArchiveBuilder m_ArchiveBuilder;
+	
 	
 	
 public:

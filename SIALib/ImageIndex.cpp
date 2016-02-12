@@ -32,22 +32,23 @@
 **
 ** #$$@@$$# */
 
-#include "ImageIndex.h"
-#include "SAUtils.h"
+
 #include <exception>
-//#include <stdio.h>
+#include <memory>
 #include <vector>
 #include <fstream>
 #include <string>
 #include <streambuf>
 #include <algorithm>
-#include "global.h"
+#include "siaglobal.h"
 #include "CIDKCrc.h"
 #include "md5.h"
 #include "BasicExifFactory.h"
 #include "CLogger.h"
 #include "cport.h"
-
+#include "ArchivePath.h"
+#include "ImageIndex.h"
+#include "SAUtils.h"
 #ifdef _DEBUG
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
@@ -55,6 +56,22 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 namespace simplearchive {
+
+class MirrorImageIndex {
+	std::string m_path;
+	std::string m_primary;
+	std::string m_backup1;
+	std::string m_backup2;
+	std::string m_shadow;
+	std::string makeFolders(std::string &pasePath, unsigned long crc);
+
+public:
+	MirrorImageIndex(const char *rootPath);
+	~MirrorImageIndex() {};
+	bool init(const char *rootPath);
+	bool process(unsigned long crc);
+};
+
 
 class DataContainer : public std::vector<std::string> {
 
@@ -237,7 +254,9 @@ int DupDataFile::find(unsigned long crc) {
 	return ((int)-1);
 }
 
-ImageIndex::ImageIndex() {}
+ImageIndex::ImageIndex() {
+	m_mirrorImageIndex.reset(new MirrorImageIndex(m_dbpath.c_str()));
+}
 
 ImageIndex::~ImageIndex() {
 	// TODO Auto-generated destructor stub
@@ -246,13 +265,92 @@ ImageIndex::~ImageIndex() {
 bool ImageIndex::init(const char *path) {
 	if (SAUtils::DirExists(path) == false) {
 		CLogger &logger = CLogger::getLogger();
-		logger.log(CLogger::FATAL, "De-duplication database path not found: %s", path);
+		logger.log(LOG_OK, CLogger::FATAL, "De-duplication database path not found: %s", path);
 		// "De-duplication database path not found"
 		return false;
 	}
+	m_mirrorImageIndex->init(path);
 	m_dbpath = path;
 	return true;
 }
+
+MirrorImageIndex::MirrorImageIndex(const char *rootPath) {
+	init(rootPath);
+}
+bool MirrorImageIndex::init(const char *rootPath) {
+	m_path = rootPath;
+
+	if (ArchivePath::isShadowEnabled() == true) {
+		m_shadow = ArchivePath::getShadow().getImageIdxPath();
+	}
+	if (ArchivePath::isBackup1Enabled() == true) {
+		m_backup1 = ArchivePath::getBackup1().getImageIdxPath();
+
+	}
+	if (ArchivePath::isBackup2Enabled() == true) {
+		m_backup2 = ArchivePath::getBackup2().getImageIdxPath();;
+	}
+	return true;
+}
+std::string MirrorImageIndex::makeFolders(std::string &basePath, unsigned long crc) {
+	char tmppath[10];
+	unsigned char data[4];
+	data[0] = (unsigned char)crc & 0xFF;
+	data[1] = (unsigned char)(crc >> 8) & 0xFF;
+	data[2] = (unsigned char)(crc >> 2 * 8) & 0xFF;
+	data[3] = (unsigned char)(crc >> 3 * 8) & 0xFF;
+
+	std::string dbpath = basePath;
+	//printf("%x %x %x %x : ", m_data[3], m_data[2], m_data[1], m_data[0]);
+	sprintf_s(tmppath, 10, "%.2x", data[3]);
+	std::string path = dbpath + '/' + tmppath;
+	if (SAUtils::DirExists(path.c_str()) == false) {
+		if (SAUtils::mkDir(path.c_str()) == false) {
+			throw std::exception();
+		}
+	}
+	sprintf_s(tmppath, 10, "%.2x", data[2]);
+	path = path + '/' + tmppath;
+	if (SAUtils::DirExists(path.c_str()) == false) {
+		if (SAUtils::mkDir(path.c_str()) == false) {
+			throw std::exception();
+		}
+	}
+
+	
+	sprintf_s(tmppath, 10, "%.2x", data[1]);
+	path = path + '/' + tmppath;
+	
+	return path;
+}
+
+bool MirrorImageIndex::process(unsigned long idx) {
+
+	std::string source = makeFolders(m_path, idx);
+	/*
+	if (ArchivePath::isShadowEnabled() == true) {
+	std::string fullPath = makeFolders(m_shadow, idx);
+	if (SAUtils::copy(source.c_str(), fullPath.c_str()) == false) {
+	return false;
+	}
+	}
+	*/
+	if (ArchivePath::isBackup1Enabled() == true) {
+		std::string fullPath = makeFolders(m_backup1, idx);
+		if (SAUtils::copy(source.c_str(), fullPath.c_str()) == false) {
+			return false;
+		}
+	}
+	if (ArchivePath::isBackup2Enabled() == true) {
+		std::string fullPath = makeFolders(m_backup2, idx);
+		if (SAUtils::copy(source.c_str(), fullPath.c_str()) == false) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
 
 std::string get_file_contents(const char *filename)
 {
@@ -274,6 +372,7 @@ std::string get_file_contents(const char *filename)
 }
 
 
+
 bool ImageIndex::add(const BasicExif &basicExif) {
 	
 	std::string pathStr = basicExif.getPath();
@@ -290,6 +389,17 @@ bool ImageIndex::add(const BasicExif &basicExif) {
 }
 
 bool ImageIndex::add(const char *name, unsigned long crc, const char *md5) {
+	if (add(name, crc, md5, m_dbpath.c_str()) == false) {
+		return false;
+	}
+	
+	if (m_mirrorImageIndex->process(crc) == false) {
+		return false;
+	}
+	return true;
+}
+
+bool ImageIndex::add(const char *name, unsigned long crc, const char *md5, const char *rootPath) {
 	char tmppath[10];
 
 	m_data[0] = (unsigned char)crc & 0xFF;
@@ -297,9 +407,10 @@ bool ImageIndex::add(const char *name, unsigned long crc, const char *md5) {
 	m_data[2] = (unsigned char)(crc >> 2 * 8) & 0xFF;
 	m_data[3] = (unsigned char)(crc >> 3 * 8) & 0xFF;
 
+	std::string dbpath = rootPath;
 	//printf("%x %x %x %x : ", m_data[3], m_data[2], m_data[1], m_data[0]);
 	sprintf_s(tmppath, 10, "%.2x", m_data[3]);
-	std::string path = m_dbpath + '/' + tmppath;
+	std::string path = dbpath + '/' + tmppath;
 	if (SAUtils::DirExists(path.c_str()) == false) {
 		if (SAUtils::mkDir(path.c_str()) == false) {
 			throw std::exception();
@@ -331,7 +442,11 @@ bool ImageIndex::add(const char *name, unsigned long crc, const char *md5) {
 	return true;
 }
 
-DupDataFile *ImageIndex::findDupDataFile(unsigned long crc) {
+DupDataFile_Ptr ImageIndex::findDupDataFile(unsigned long crc) {
+	return findDupDataFile(crc, m_dbpath.c_str());
+}
+
+DupDataFile_Ptr ImageIndex::findDupDataFile(unsigned long crc, const char *rootPath) {
 	std::string tmppath;
 
 	m_data[0] = (unsigned char)crc & 0xFF;
@@ -341,7 +456,8 @@ DupDataFile *ImageIndex::findDupDataFile(unsigned long crc) {
 
 	//printf("%x %x %x %x : ", m_data[3], m_data[2], m_data[1], m_data[0]);
 	sprintf_p(tmppath, "%.2x", m_data[3]);
-	std::string path = m_dbpath + '/' + tmppath;
+	std::string dbpath = rootPath;
+	std::string path = dbpath + '/' + tmppath;
 	if (SAUtils::DirExists(path.c_str()) == false) {
 		if (SAUtils::mkDir(path.c_str()) == false) {
 			throw std::exception();
@@ -355,7 +471,7 @@ DupDataFile *ImageIndex::findDupDataFile(unsigned long crc) {
 		}
 	}
 	
-	DupDataFile *dupDataFile = new DupDataFile;
+	DupDataFile_Ptr dupDataFile(new DupDataFile);
 	sprintf_p(tmppath, "%.2x", m_data[1]);
 	path = path + '/' + tmppath;
 	if (SAUtils::FileExists(path.c_str()) == true) {
@@ -397,10 +513,19 @@ std::string ImageIndex::FindDup(unsigned long crc) {
 	return data;
 }
 
-
 bool ImageIndex::updatePath(unsigned long crc, const char *path) {
+	if (updatePath(crc, path, m_dbpath.c_str()) == false) {
+		return false;
+	}
+	if (m_mirrorImageIndex->process(crc) == false) {
+		return false;
+	}
+	return true;
+}
+
+bool ImageIndex::updatePath(unsigned long crc, const char *path, const char *root) {
 	// this is a possable memory leek
-	std::unique_ptr<DupDataFile> pDupDataFile(findDupDataFile(crc));
+	std::unique_ptr<DupDataFile> pDupDataFile(findDupDataFile(crc, root));
 	//DupDataFile *dupDataFile = findDupDataFile(crc);
 	if (pDupDataFile->IsEmpty() == true) {
 		//delete dupDataFile;

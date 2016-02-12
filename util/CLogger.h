@@ -47,13 +47,13 @@ public:
 		INFO	= 2,
 		SUMMARY = 3,
 		WARNING = 4,
-		ERROR	= 5,
+		ERR	= 5,
 		FATAL	= 6,
 	} Level;
 	
 
-	void log(Level level, const std::string &message);
-	void log(Level level, const char *format, ...);
+	void log(int code, Level level, const std::string &message);
+	void log(int code, Level level, const char *format, ...);
 	CLogger& operator << (const std::string& message);
 	static CLogger &getLogger();
 
@@ -69,6 +69,12 @@ public:
 		return m_level;
 	}
 
+	static const int getLastCode() {
+		return m_lastCode;
+	}
+	static const char *getLastMessage() {
+		return m_lastMessage.c_str();
+	}
 	static void setMaxSize(int size) {
 		m_size = size;
 	}
@@ -107,6 +113,8 @@ private:
 	static Level m_level;
 	static std::string m_logpath;
 	static int m_size;
+	static int m_lastCode;
+	static std::string m_lastMessage;
 	virtual ~CLogger();
 };
 

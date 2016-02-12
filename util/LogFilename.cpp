@@ -158,7 +158,7 @@ std::string LogFilename::lastfile() {
 	} while (fileFind.GetNext());
 	return nFilename;
 }
-const std::string LogFilename::filename() {
+const std::string LogFilename::filepath() {
 	ExifDate exifDate;
 	std::stringstream tmp;
 	tmp << exifDate.getYear() << '-' << exifDate.getMonth() << '-' << exifDate.getDay();

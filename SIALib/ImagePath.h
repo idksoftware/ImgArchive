@@ -50,8 +50,96 @@ namespace simplearchive {
 #define METADATA_PATH           "MetadataPath"
 #define MAIN_METADATA_PATH      "GlobalMetadataPath"
 
+/**
+* This class contains the paths for the archives.
+* The archives consist of a primary Shadow Archive and a number
+* of continuously backed-up Backup Archives.
+*/
 
+/*
+class ArchiveFolder {
+
+	std::string m_pathToArchive;
+	std::string m_mainMetadataPath;
+	//	static std::string m_userDefinedSequenceNumberPath;
+	std::string m_mainDupsPath;
+	std::string m_mainHistory;
+
+	std::string m_shadowMetadataPath;
+	std::string m_shadowSequenceNumberPath;
+	std::string m_shadowHistory;
+	std::string m_shadowJournalPath;
+	std::string m_shadowCatalog;
+
+	std::string m_shadowYearStrPath;
+	std::string m_shadowYyyymmddStrPath;
+
+	std::string m_localShadowDataPath;
+	std::string m_localShadowMetadataPath;
+	std::string m_localShadowDBPath;
+	// Local shadow history path
+	std::string m_localShadowHistoryPath;
+
+public:
+	ArchiveFolder(const char *root) {
+		m_pathToArchive = root;
+		
+		m_mainMetadataPath;
+		//	static std::string m_userDefinedSequenceNumberPath;
+		m_mainDupsPath;
+		m_mainHistory = "";
+
+		m_shadowMetadataPath = "";
+		m_shadowSequenceNumberPath = "";
+		m_shadowHistory = "";
+		m_shadowJournalPath = "";
+		m_shadowCatalog = "";
+
+		m_shadowYearStrPath = "";
+		m_shadowYyyymmddStrPath = "";
+
+		m_localShadowDataPath = "";
+		m_localShadowMetadataPath = "";
+		m_localShadowDBPath = "";
+		// Local shadow history path
+		m_localShadowHistoryPath = "";
+	}
+
+	bool settup();
+	bool Relative(const char *year, const char *yyyymmdd);
+
+	const std::string& getPathToArchive() const {
+		return m_pathToArchive;
+	}
+
+	const std::string& getMainShadowMetadataPath() {
+		return m_shadowMetadataPath;
+	}
+
+	const std::string& getShadowSequenceNumberPath() {
+		return m_shadowSequenceNumberPath;
+	}
+
+	// Get shadow history path
+	const std::string& getShadowHistoryPath() {
+		return m_shadowHistory;
+	}
+
+	// Get shadow history path
+	const std::string& getShadowCatalogPath() {
+		return m_shadowCatalog;
+	}
+
+	// Get shadow journal path
+	const std::string& getShadowJournalPath() {
+		return m_shadowJournalPath;
+	}
+};
+
+*/
 class ImagePath {
+	std::string m_currentSourcePath;
+
 	std::string m_relpath;
 	std::string m_imagePath;
 	std::string m_imageName;
@@ -59,9 +147,11 @@ class ImagePath {
 	std::string m_yyyymmddStr;
 	std::string m_yearStrPath;
 	std::string m_yyyymmddStrPath;
+	std::string m_workspaceMetadataPath;
 
 	std::string m_shadowYearStrPath;
 	std::string m_shadowYyyymmddStrPath;
+	
 	
 	std::string m_dataPath;
 	std::string m_dbPath;
@@ -74,19 +164,21 @@ class ImagePath {
 	// Local shadow history path
 	std::string m_localShadowHistoryPath;
 
-	static std::string m_pathToArchive;
+	static std::string m_pathToWorkspace;
 	static std::string m_mainMetadataPath;
 //	static std::string m_userDefinedSequenceNumberPath;
 	static std::string m_mainDupsPath;
 	static std::string m_mainHistory;
 
+
+	//static ArchiveFolder *m_shadow;
 	static std::string m_pathToShadow;
 	static std::string m_shadowMetadataPath;
 	static std::string m_shadowSequenceNumberPath;
 	static std::string m_shadowHistory;
 	static std::string m_shadowJournalPath;
 	static std::string m_shadowCatalog;
-	//IntegrityManager& m_integrityManager;
+	
 	void init(std::string &yyyymmddStr);
 public:
 	ImagePath(time_t time);
@@ -102,6 +194,14 @@ public:
 
 	const std::string& getImageName() const {
 		return m_imageName;
+	}
+
+	void setCurrentSourcePath(const char *currentSourcePath) {
+		m_currentSourcePath = currentSourcePath;
+	}
+
+	const std::string& getCurrentSourcePath() const {
+		return m_currentSourcePath;
 	}
 
 	const std::string& getDataPath() const {
@@ -151,8 +251,13 @@ public:
 		return m_yyyymmddStrPath;
 	}
 
-	const std::string& getPathToArchive() const {
-		return m_pathToArchive;
+	const std::string& getWorkspaceMetadataPath() {
+		return m_workspaceMetadataPath;
+	}
+
+
+	const std::string& getPathToWorkspace() const {
+		return m_pathToWorkspace;
 	}
 
 	const std::string& getRelativePath() const {

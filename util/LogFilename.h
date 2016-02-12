@@ -46,7 +46,7 @@ class LogFilename {
 public:
 	LogFilename(const char *logfilePath);
 	virtual ~LogFilename();
-	const std::string filename();
+	const std::string filepath();
 	std::string lastfile();
 
 	int getMaxSize() const {

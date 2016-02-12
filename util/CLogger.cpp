@@ -35,10 +35,12 @@
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
+#include <iomanip>
+#include <sstream>
 #include <cstdarg>
 #include "CLogger.h"
 #include "CIDKDate.h"
-//#include "LogFilename.h"
+#include "UDPOut.h"
 #include "LogName.h"
 
 #ifdef _DEBUG
@@ -56,7 +58,8 @@ CLogger::Level CLogger::m_level;
 std::string CLogger::m_logpath;
 int CLogger::m_size = 10;
 bool CLogger::m_isSilent = false;
-
+int CLogger::m_lastCode;
+std::string CLogger::m_lastMessage;
 
 CLogger::CLogger() {
 	//m_level = FINE;
@@ -84,28 +87,39 @@ CLogger::~CLogger() {
 	m_logfile.close();
 }
 
-void CLogger::log(Level level, const char *format, ...) {
 
-	if (!IsPrintable(level)) return;
+
+void CLogger::log(int code, Level level, const char *format, ...) {
+
+	if (!IsPrintable(level)) {
+		return;
+	}
 	CIDKDate date;
 	date.Now();
-	char message[256];
+	char message[512];
 	va_list args;
 	va_start(args, format);
-#ifdef WIN32
+#ifdef _WIN32
 	vsprintf_s(message, format, args);
 #else
 	vsprintf(message, format, args);
 #endif
-
-	m_logfile << "\n" << date.Print() << ":\t";
-	m_logfile << levelStr(level) << ":\t";
-	m_logfile << message;
-	if (!m_isSilent) {
-		//std::cout << "\n" << date.Print() << ":\t";
-		//std::cout << levelStr(level) << ":\t";
-		std::cout << message << '\n'; 
+	m_lastMessage = message;
+	m_lastCode = code;
+	if (code < 99) {
+		m_logfile << "\n" << date.Print() << ":\t";
+		m_logfile << levelStr(level) << ":\t";
+		m_logfile << message;
+		if (!m_isSilent) {
+			//std::cout << "\n" << date.Print() << ":\t";
+			//std::cout << levelStr(level) << ":\t";
+			std::cout << message << '\n';
+		}
 	}
+	std::stringstream str;
+	str << setfill('0') << setw(3) << code << ":" << message;
+	std::string udpMessage = str.str();
+	UDPOut::out(udpMessage.c_str());
 	va_end(args);
 
 }
@@ -122,13 +136,14 @@ void CLogger::Log(Level level, const char *format, ...) {
 	Logger.Log(level, message);
 }
 */
-void CLogger::log(Level level, const std::string &message) {
+void CLogger::log(int code, Level level, const std::string &message) {
 
 	if (!IsPrintable(level)) return;
 	CIDKDate date;
 	date.Now();
 	m_logfile << "\n" << date.Print() << ":\t";
 	m_logfile << message;
+	UDPOut::out(message.c_str());
 }
 
 CLogger& CLogger::operator << (const std::string& message) {
@@ -136,6 +151,7 @@ CLogger& CLogger::operator << (const std::string& message) {
 	date.Now();
 	m_logfile << "\n" << date.Print() << ":\t";
 	m_logfile << message;
+	UDPOut::out(message.c_str());
 	return *this;
 }
 
@@ -148,12 +164,12 @@ inline bool CLogger::IsPrintable(Level level) {
 
 const char *CLogger::levelStr(Level level) {
 	switch (level) {
-	case TRACE: return "TRACE";
-	case FINE: return "FINE";
-	case INFO: return "INFO";
-	case SUMMARY: return "SUMMARY";
-	case WARNING: return "WARNING";
-	case ERROR: return "ERROR";
+	case CLogger::TRACE: return "TRACE";
+	case CLogger::FINE: return "FINE";
+	case CLogger::INFO: return "INFO";
+	case CLogger::SUMMARY: return "SUMMARY";
+	case CLogger::WARNING: return "WARNING";
+	case CLogger::ERR: return "ERROR";
 	case FATAL: return "FATAL";
 	}
 	return "FATAL";

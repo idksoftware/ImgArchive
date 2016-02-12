@@ -81,6 +81,8 @@ ImageContainer::~ImageContainer() {
 	}
 }
 
+
+
 bool ImageContainer::add(std::unique_ptr<BasicExif> &basicExif, std::unique_ptr<MetadataObject>& metadataObject) {
 	CLogger &logger = CLogger::getLogger();
 
@@ -91,16 +93,16 @@ bool ImageContainer::add(std::unique_ptr<BasicExif> &basicExif, std::unique_ptr<
 	switch (type.getType()) {
 	// Found Picture Image
 	case ImageType::PICTURE_EXT:
-		logger.log(CLogger::INFO, "found pic: %s", imagefile);
+		logger.log(LOG_OK, CLogger::INFO, "found pic: %s", imagefile);
 		if (m_PictureNode == nullptr) {
 			/* not sure needed
 			if (basicExif->isExifFound()) {
 				const ExifDateTime &dateTime = basicExif->getDateTimeDigitized();
-				logger.log(CLogger::INFO, "Using Exif date: %d ", ((ExifDateTime&)dateTime).toString().c_str());
+				logger.log(LOG_OK, CLogger::INFO, "Using Exif date: %d ", ((ExifDateTime&)dateTime).toString().c_str());
 				m_Time = dateTime.getTime();
 			}
 			*/
-			logger.log(CLogger::SUMMARY, "Associating: %s with %s", imagefile, m_Name.c_str());
+			logger.log(LOG_OK, CLogger::SUMMARY, "Associating: %s with %s", imagefile, m_Name.c_str());
 			m_PictureNode = new ImageNode(type, basicExif, metadataObject);
 		}
 		//m_PictureNode->setImageId(basicExif, metadataObject);
@@ -121,9 +123,9 @@ bool ImageContainer::add(std::unique_ptr<BasicExif> &basicExif, std::unique_ptr<
 	// Found RAW Image
 	case ImageType::RAW_EXT:
 	
-		logger.log(CLogger::INFO, "found raw: %s", imagefile);
+		logger.log(LOG_OK, CLogger::INFO, "found raw: %s", imagefile);
 		if (m_RawNode == nullptr) {
-			logger.log(CLogger::SUMMARY, "Associating: %s with %s", imagefile, m_Name.c_str());
+			logger.log(LOG_OK, CLogger::SUMMARY, "Associating: %s with %s", imagefile, m_Name.c_str());
 			m_RawNode = new ImageNode(type, basicExif, metadataObject);
 		}
 		//m_RawNode->setImageId(imageId, metadataObject);
@@ -132,7 +134,7 @@ bool ImageContainer::add(std::unique_ptr<BasicExif> &basicExif, std::unique_ptr<
 		break;
 	case ImageType::UNKNOWN_EXT:
 	default:
-		logger.log(CLogger::ERROR, "No extention found for this file type %s", imagefile);
+		logger.log(LOG_OK, CLogger::ERR, "No extention found for this file type %s", imagefile);
 		m_error = -1;
 		return false;
 	}
@@ -152,24 +154,89 @@ void ImageContainer::PostProcess() {
 		// Error
 		m_error = -1;
 	}
+	if ((m_PictureNode != nullptr) && (m_RawNode != nullptr)) {
+		const MetadataObject& picMO = m_PictureNode->getMetadataObject();
+		m_RawNode->setMetadataObject(picMO);
+	
+	
+
+		/*
+
+		<Width>6016</Width>
+
+		<Height>4000</Height>
+
+		<Resolution/>
+
+		<Depth/>
+
+		<ViewRotation>6</ViewRotation>
+
+		<SampleColor/>
+
+		<Page/>
+
+		<ColorSpace/>
+
+		<Compression/>
+
+		<PrimaryEncoding/>
+
+		</MediaProerties>
+
+
+		-<CameraInformation>
+
+		<Maker>NIKON CORPORATION</Maker>
+
+		<Model>NIKON D3200</Model>
+
+		<Software/>
+
+		<SourceURL/>
+
+		<ExifVersion/>
+
+		<CaptureDate>2012.04.25.15.56.07</CaptureDate>
+
+		<ExposureProgram/>
+
+		<ISOSpeedRating>400</ISOSpeedRating>
+
+		<ExposureBias>0</ExposureBias>
+
+		<ExposureTime>0.0008</ExposureTime>
+
+		<Aperture>9</Aperture>
+
+		<MeteringMode>3</MeteringMode>
+
+		<LightSource/>
+
+		<Flash/>
+
+		<FocalLength>65</FocalLength>
+		*/
+
+	}
 }
 
 void ImageContainer::print() {
 	CLogger &logger = CLogger::getLogger();
 	
-	logger.log(CLogger::FINE, "Item Name: %s\n", m_Name.c_str());
+	logger.log(LOG_OK, CLogger::FINE, "Item Name: %s\n", m_Name.c_str());
 	if (hasPictureFile()) {
-		logger.log(CLogger::FINE, "PictureFile: %s\n", m_PictureNode->getFile());
+		logger.log(LOG_OK, CLogger::FINE, "PictureFile: %s\n", m_PictureNode->getFile());
 	}
 	else
 	{
-		logger.log(CLogger::FINE, "No Picture File");
+		logger.log(LOG_OK, CLogger::FINE, "No Picture File");
 	}
 	if (hasRawFile()) {
-		logger.log(CLogger::FINE, "Has RAW File: %s\n", m_RawNode->getFile());
+		logger.log(LOG_OK, CLogger::FINE, "Has RAW File: %s\n", m_RawNode->getFile());
 	}
 	else {
-		logger.log(CLogger::FINE, "No RAW File");
+		logger.log(LOG_OK, CLogger::FINE, "No RAW File");
 	}
 }
 
@@ -177,7 +244,9 @@ const std::string& ImageNode::getFile() const {
 	return m_file;
 }
 
-
+void ImageNode::setMetadataObject(const MetadataObject& metadataObject) {
+	m_metadataObject->update(metadataObject);
+}
 /*
 void ImageNode::setImageId(const BasicExifFactory*& imageId, const MetadataObject *metadataObject) {
 	m_imageId = imageId;

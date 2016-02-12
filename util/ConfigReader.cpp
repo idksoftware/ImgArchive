@@ -43,6 +43,7 @@
 #include <map>
 #include <cstdlib>
 #include "ConfigReader.h"
+#include "siaglobal.h"
 #include "CLogger.h"
 
 #ifdef _DEBUG
@@ -123,14 +124,14 @@ bool ConfigReader::read(const char *datafile, Config &config) {
 			m_includeCnt++;
 			if (m_includeCnt >= 10) {
 				if (m_logging) {
-					CLogger::getLogger().log(CLogger::ERROR, "include files more than ten deep \"%s\"", m_path.c_str());
+					CLogger::getLogger().log(LOG_OK, CLogger::ERR, "include files more than ten deep \"%s\"", m_path.c_str());
 				}
 				return false;
 			}
 			if (read(m_path.c_str(), config) == false) {
 				m_includeCnt--;
 				if (m_logging) {
-					CLogger::getLogger().log(CLogger::WARNING, "Cannot include file \"%s\"", m_path.c_str());
+					CLogger::getLogger().log(LOG_OK, CLogger::WARNING, "Cannot include file \"%s\"", m_path.c_str());
 				}
 				return false;
 			}
@@ -139,7 +140,7 @@ bool ConfigReader::read(const char *datafile, Config &config) {
 			return false;
 		default:
 			if (m_logging) {
-				CLogger::getLogger().log(CLogger::WARNING, "Cannot read token in config file \"%s\"", m_path.c_str());
+				CLogger::getLogger().log(LOG_OK, CLogger::WARNING, "Cannot read token in config file \"%s\"", m_path.c_str());
 			}
 			return false;
 		}
@@ -150,7 +151,7 @@ bool ConfigReader::read(const char *datafile, Config &config) {
 	return true;
 }
 
-#ifdef WIN32
+#ifdef _WIN32
 static std::string trim(std::string const& str)
 {
 	std::size_t first = str.find_first_not_of(' ');
@@ -210,7 +211,7 @@ ConfigReader::Token ConfigReader::parse(const char *text, Config &config) {
 			return Include;
 		} else {
 			if (m_logging) {
-				CLogger::getLogger().log(CLogger::WARNING, "Cannot read \"%s\" in config file \"%s\"", line.c_str(), m_path.c_str());
+				CLogger::getLogger().log(LOG_OK, CLogger::WARNING, "Cannot read \"%s\" in config file \"%s\"", line.c_str(), m_path.c_str());
 			}
 			return Error;
 		}

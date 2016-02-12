@@ -54,6 +54,14 @@ AppOptions *AppOptions::m_this = nullptr;
 
 bool AppOptions::m_list = false;
 bool AppOptions::m_usingFile = false;
+bool AppOptions::m_peekOnly = false;
+bool AppOptions::m_eventsOn = false; // UDP events
+bool AppOptions::m_serverOn = true; // false;
+bool AppOptions::m_forceDate = false; // false;
+bool AppOptions::m_useDate = false;
+bool AppOptions::m_useFileDate = false;
+bool AppOptions::m_useDateToday = false;
+ExifDate AppOptions::m_archiveDate;
 
 std::string AppOptions::m_name;
 AppOptions::CommandMode AppOptions::m_commandMode = AppOptions::CM_Unknown;
@@ -61,10 +69,16 @@ std::string AppOptions::m_comment;
 std::string AppOptions::m_imageAddress;
 std::string AppOptions::m_distinationPath;
 std::string AppOptions::m_filePath;
+int AppOptions::m_udpPortNum = 64321;
+std::string AppOptions::m_udpAddress = "127.0.0.1";
+int AppOptions::m_tcpPortNum = 64322;
+
+
 
 AppOptions::AppOptions() {
 	m_argvParser.reset(new ArgvParser);
 	m_usingFile = false;
+	m_archiveDate.now();
 };
 
 
@@ -87,6 +101,8 @@ bool AppOptions::initalise(int argc, char **argv) {
 	*/
 	std::string temp;
 	if (GetEnv(temp, false) == false) {
+		printf("SIA Unable to start? The environment variable SA_HOME not set.\nUse siaadmin to initalise an archive.");
+		m_error = true;
 		return false;
 	}
 	std::string homePath = temp;
@@ -195,6 +211,9 @@ bool AppOptions::initalise(int argc, char **argv) {
 	m_argvParser->defineOption("q", "no output is sent to the terminal.", ArgvParser::NoOptionAttribute);
 	m_argvParser->defineOptionAlternative("q", "quiet");
 
+	m_argvParser->defineOption("e", "Generate progress events.", ArgvParser::NoOptionAttribute);
+	m_argvParser->defineOptionAlternative("e", "events");
+
 	m_argvParser->defineOption("s", "source of the images", ArgvParser::OptionRequiresValue);
 	m_argvParser->defineOptionAlternative("s", "source-path");
 
@@ -215,8 +234,12 @@ bool AppOptions::initalise(int argc, char **argv) {
 	m_argvParser->defineOption("T", "to date", ArgvParser::OptionRequiresValue);
 	m_argvParser->defineOptionAlternative("T", "to-date");
 
-	m_argvParser->defineOption("p", "location of the archive root folder.", ArgvParser::OptionRequiresValue);
-	m_argvParser->defineOptionAlternative("p", "archive-path");
+	m_argvParser->defineOption("a", "location of the archive root folder.", ArgvParser::OptionRequiresValue);
+	m_argvParser->defineOptionAlternative("a", "archive-path");
+
+	m_argvParser->defineOption("p", "location of the archive root folder.", ArgvParser::NoOptionAttribute);
+	m_argvParser->defineOptionAlternative("p", "peek");
+
 
 	m_argvParser->defineOption("l", "Temporarily changes the logging level for the scope of this command session.", ArgvParser::OptionRequiresValue);
 	m_argvParser->defineOptionAlternative("l", "logging-level");
@@ -225,6 +248,9 @@ bool AppOptions::initalise(int argc, char **argv) {
 	m_argvParser->defineOptionAlternative("C", "comment");
 
 	m_argvParser->defineOption("list", "List items", ArgvParser::OptionRequiresValue);
+
+	m_argvParser->defineOption("force-date", "Overrides all dates found associated with the images in the selection", ArgvParser::OptionRequiresValue);
+	m_argvParser->defineOption("default-date", "Uses this date if none found associated with an image", ArgvParser::OptionRequiresValue);
 	
 	m_argvParser->defineOption("checked-out", "Show checked out", ArgvParser::OptionRequiresValue); // =all =year{2015}
 	m_argvParser->defineOption("unchecked-out", "Show changed images which are not checked out", ArgvParser::OptionRequiresValue);
@@ -283,11 +309,49 @@ bool AppOptions::initalise(int argc, char **argv) {
 			config.setWorkspacePath(opt.c_str());
 		}
 		if (m_argvParser->foundOption("file") == true) {
-			std::string m_filePath = m_argvParser->optionValue("file");
+			m_filePath = m_argvParser->optionValue("file");
 			m_usingFile = true;
 			printf(m_filePath.c_str()); printf("\n");
 			
 		}
+		if (m_argvParser->foundOption("peek") == true) {
+			m_peekOnly = true;
+			printf(m_filePath.c_str()); printf("\n");
+
+		}
+		if (m_argvParser->foundOption("force-date") == true) {
+			std::string opt = m_argvParser->optionValue("force-date");
+			printf(opt.c_str()); printf("\n");
+			if (opt.compare("FileDate") == 0) {
+				m_useFileDate = true;
+			}
+
+			if (opt.compare("TodaysDate") == 0) {
+				m_useDateToday = true;
+			}
+			else {
+				m_archiveDate = ExifDate(opt.c_str());
+			}
+			m_forceDate = true;
+
+		}
+		if (m_argvParser->foundOption("default-date") == true) {
+			std::string opt = m_argvParser->optionValue("default-date");
+			printf(opt.c_str()); printf("\n");
+			config.setSourcePath(opt.c_str());
+			if (opt.compare("FileDate") == 0) {
+				m_useFileDate = true;
+			}
+
+			if (opt.compare("TodaysDate") == 0) {
+				m_useDateToday = true;
+			}
+			else {
+				m_archiveDate = ExifDate(opt.c_str());
+			}
+			m_useDate = true;
+		}
+		
 		setCommandMode(AppOptions::CM_Import);
 
 		Environment::setEnvironment();
@@ -302,6 +366,12 @@ bool AppOptions::initalise(int argc, char **argv) {
 		if (m_argvParser->foundOption("list") == true) {
 			m_list = true;
 			printf(m_comment.c_str()); printf("\n");
+		}
+
+		if (m_argvParser->foundOption("file") == true) {
+			m_filePath = m_argvParser->optionValue("file");
+			m_usingFile = true;
+			printf(m_filePath.c_str()); printf("\n");
 		}
 
 		if (m_argvParser->foundOption("comment") == true) {
@@ -438,6 +508,12 @@ bool AppOptions::initalise(int argc, char **argv) {
 		setCommandMode(AppOptions::CM_Unknown);
 		cmdFound = true;
 	}
+	// global options:
+
+	if (m_argvParser->foundOption("events") == true) {
+		m_eventsOn = true;
+	}
+
 	if (m_argvParser->foundOption("logging-level") == true) {
 		
 		std::string opt = m_argvParser->optionValue("logging-level");
@@ -449,7 +525,7 @@ bool AppOptions::initalise(int argc, char **argv) {
 		std::string opt = m_argvParser->optionValue("dry-run");
 		printf(opt.c_str()); printf("\n");
 		
-		config.setDryRun(opt.c_str());
+		//config.setDryRun(opt.c_str());
 	}
 
 	if (m_argvParser->foundOption("media-path") == true) {
@@ -546,6 +622,43 @@ const char *AppOptions::getDistinationPath() {
 }
 const char *AppOptions::getFilePath() {
 	return m_filePath.c_str();
+}
+
+bool AppOptions::isEnventsOn() {
+	return m_eventsOn;
+}
+
+int AppOptions::eventPort() {
+	return m_udpPortNum;
+	
+}
+const char *AppOptions::eventAddress() {
+	return m_udpAddress.c_str();
+}
+
+bool AppOptions::isServerOn() {
+	return m_serverOn;
+}
+
+int AppOptions::serverPort() {
+	return m_tcpPortNum;
+
+}
+
+bool AppOptions::getUseFileDate() {
+	return m_useFileDate;
+}
+
+bool AppOptions::getUseDateToday() {
+	return m_useDateToday;
+}
+
+bool AppOptions::isDataForced() {
+	return m_forceDate;
+}
+
+ExifDate &AppOptions::getArchiveDate() {
+	return m_archiveDate;
 }
 
 } /* namespace simplearchive */

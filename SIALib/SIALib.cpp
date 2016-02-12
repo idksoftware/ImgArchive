@@ -53,6 +53,7 @@
 #include "BasicExifFactory.h"
 #include "XMLWriter.h"
 #include "ImagePath.h"
+#include "ArchiveObject.h"
 #include "CSVDBFile.h"
 #include "HistoryEvent.h"
 #include "History.h"
@@ -69,6 +70,8 @@
 #include "MakeMedia.h"
 #include "UDPOut.h"
 #include "IntegrityManager.h"
+#include "TerminalServer.h"
+#include "ArchivePath.h"
 
 #include <stdio.h>
 #include <sstream>
@@ -85,30 +88,120 @@ static char THIS_FILE[] = __FILE__;
 
 
 namespace simplearchive {
+	
+
+
+	
+
+
+/////////////////////////////////////////////////////////
+
 
 	SIALib::SIALib()
 	{
-		m_ArchiveBuilder.reset(new ArchiveBuilder);
+		m_ArchiveBuilder.reset(new ArchiveBuilder(ArchiveObject::get()));
+		m_winsockRequired = false;
+		m_socklibStarted = false;
+		m_enableEvents = false;
+
+		
 	}
 
 
 	SIALib::~SIALib()
 	{
+		if (m_socklibStarted) {
+			WSACleanup();
+		}
 	}
+
+	void SIALib::setForceDate() {
+		ArchiveDate::setForceDate(true);
+	}
+
+	void SIALib::setUseEXIFDate() {
+		ArchiveDate::setUseEXIFDate(true);
+	}
+
+	void SIALib::setUseFileDate() {
+		ArchiveDate::setUseFileDate(true);
+	}
+
+	void SIALib::setUseDateToday() {
+		ArchiveDate::setUseDateToday(true);
+	}
+
+	void SIALib::setUseDate(ExifDate &date) {
+		ArchiveDate::setUseDate(date);
+		ArchiveDate::setDefaultDateSet(true);
+	}
+
+	
+
+
 
 	int SIALib::checkin() {
 		return 99;
 	}
 
+	void  SIALib::enableEvents(const char *address, int port) {
+		m_udpPortNum = port;
+		m_udpAddress = address;
+		m_enableEvents = true;
+		m_winsockRequired = true;
+	}
+
+	void  SIALib::enableServer(int port) {
+		m_tcpPortNum = port;
+		m_enableServer = true;
+		m_winsockRequired = true;
+	}
+
+	const int SIALib::getLastCode() {
+		return CLogger::getLogger().getLastCode();
+	}
+	const char *SIALib::getLastMessage() {
+		return CLogger::getLogger().getLastMessage();
+	}
+
+
 	int SIALib::initalise() {
 		
-		int port = 8888;
-		const char *address = "127.0.0.1";
-
-		if (UDPOut::enableUDPOutput(port, address) == false) {
-			return false;
+		WSADATA wsa;
+		if (m_winsockRequired) {
+			//Initialise winsock
+			if (m_socklibStarted == false) {
+				printf("\nInitialising Winsock...");
+				if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
+				{
+					printf("Failed. Error Code : %d", WSAGetLastError());
+					return EXIT_FAILURE;
+				}
+				printf("Initialised.\n");
+				m_socklibStarted = true;
+			}
 		}
+
+
+
+		if (m_enableEvents == true && m_socklibStarted == true) {
+			if (UDPOut::enableUDPOutput(m_udpPortNum, m_udpAddress.c_str()) == false) {
+				return false;
+			}
+		}
+
+		if (m_enableServer == true && m_socklibStarted == true) {
+			if (UDPOut::enableUDPOutput(m_udpPortNum, m_udpAddress.c_str()) == false) {
+				return false;
+			}
+		}
+
+		CTerminalServerManager &terminalServerManager = CTerminalServerManager::getInstance();
+		terminalServerManager.start();
+
 		CAppConfig &config = CAppConfig::get();
+
+		config.init();
 		//AppOptions &appOptions = AppOptions::get();
 
 		//CLogger::setLevel(CLogger::INFO);
@@ -122,34 +215,35 @@ namespace simplearchive {
 		CIDKDate date;
 		date.Now();
 		summaryFile.log(SummaryFile::SF_BRIEF, SummaryFile::SF_COMMENT, "Summary start %s", date.Print().c_str());
-		logger.log(CLogger::SUMMARY, "Application starting at %s", date.Print().c_str());
-		logger.log(CLogger::INFO, "Home path is \"%s\"", config.getHomePath());
+		logger.log(LOG_STARTING, CLogger::SUMMARY, "Application starting at %s", date.Print().c_str());
+		logger.log(LOG_OK, CLogger::INFO, "Home path is \"%s\"", config.getHomePath());
 
 		try {
 			std::string temp = config.getWorkspacePath();
 
 			if (SAUtils::DirExists(temp.c_str()) == false) {
 
-				logger.log(CLogger::INFO, "Main repository folder not found at location: \"%s\"", temp.c_str());
+				logger.log(LOG_OK, CLogger::INFO, "Main repository folder not found at location: \"%s\"", temp.c_str());
 
 				if (SAUtils::mkDir(temp.c_str()) == false) {
-					logger.log(CLogger::INFO, "Cannot create Main repository folder at location: \"%s\"", temp.c_str());
+					logger.log(LOG_WORKSPACE_NOT_FOUND, CLogger::INFO, "Cannot create Main repository folder at location: \"%s\"", temp.c_str());
 					return -1;
 				}
-				logger.log(CLogger::INFO, "Main repository folder created at location: \"%s\"", temp.c_str());
+				logger.log(LOG_OK, CLogger::INFO, "Main repository folder created at location: \"%s\"", temp.c_str());
 			}
 
 			temp = config.getShadowPath();
 			if (SAUtils::DirExists(temp.c_str()) == false) {
 
-				logger.log(CLogger::INFO, "Shadow Repository folder not found at location: \"%s\"", temp.c_str());
+				logger.log(LOG_OK, CLogger::INFO, "Shadow Repository folder not found at location: \"%s\"", temp.c_str());
 
 				if (SAUtils::mkDir(temp.c_str()) == false) {
-					logger.log(CLogger::INFO, "Cannot create Shadow Repository folder at location: \"%s\"", temp.c_str());
+					logger.log(LOG_OK, CLogger::INFO, "Cannot create Shadow Repository folder at location: \"%s\"", temp.c_str());
 					return -1;
 				}
-				logger.log(CLogger::INFO, "Shadow repository folder created at location: \"%s\"", temp.c_str());
+				logger.log(LOG_OK, CLogger::INFO, "Shadow repository folder created at location: \"%s\"", temp.c_str());
 			}
+			/* ArchiveObject
 			if (ImagePath::settupMainArchiveFolders(config.getWorkspacePath(), config.getShadowPath(), config.getHomePath()) == false) {
 
 				return -1;
@@ -161,44 +255,49 @@ namespace simplearchive {
 			std::string csvdbPath = config.getShadowPath();
 			csvdbPath += "/.csvdb";
 			CSVDatabase::setDBPath(csvdbPath.c_str());
+			*/
+			if (ArchiveObject::get().Initalise() == false) {
+				return -1;
+			}
+
 			if (ImageExtentions::setExtentionsFilePath(config.getConfigPath()) == false) {
-				logger.log(CLogger::INFO, "Unable to find image extensions file path: \"%s\"", config.getConfigPath());
+				logger.log(LOG_OK, CLogger::INFO, "Unable to find image extensions file path: \"%s\"", config.getConfigPath());
 				return -1;
 			}
 			if (SAUtils::DirExists(temp.c_str()) == false) {
-				logger.log(CLogger::INFO, "Hidden .sia folder not found at location: \"%s\"", temp.c_str());
+				logger.log(LOG_OK, CLogger::INFO, "Hidden .sia folder not found at location: \"%s\"", temp.c_str());
 
 				if (SAUtils::mkDir(temp.c_str()) == false) {
-					logger.log(CLogger::INFO, "Cannot create Hidden .sia folder at location: \"%s\"", temp.c_str());
+					logger.log(LOG_OK, CLogger::INFO, "Cannot create Hidden .sia folder at location: \"%s\"", temp.c_str());
 					return -1;
 				}
 				if (SAUtils::setHidden(temp.c_str()) == false) {
-					logger.log(CLogger::INFO, "Cannot set Hidden .sia folder to a hidden folder \"%s\"", temp.c_str());
+					logger.log(LOG_OK, CLogger::INFO, "Cannot set Hidden .sia folder to a hidden folder \"%s\"", temp.c_str());
 					return -1;
 				}
-				logger.log(CLogger::INFO, "Hidden .sia folder created at location: \"%s\"", temp.c_str());
+				logger.log(LOG_OK, CLogger::INFO, "Hidden .sia folder created at location: \"%s\"", temp.c_str());
 			}
 
-			logger.log(CLogger::FINE, "Log path \"%s\"", config.getLogPath());
+			logger.log(LOG_OK, CLogger::FINE, "Log path \"%s\"", config.getLogPath());
 			temp = config.getHistoryPath();
 			if (SAUtils::DirExists(temp.c_str()) == false) {
-				logger.log(CLogger::INFO, "History folder not found at location: \"%s\"", temp.c_str());
+				logger.log(LOG_OK, CLogger::INFO, "History folder not found at location: \"%s\"", temp.c_str());
 
 				if (SAUtils::mkDir(temp.c_str()) == false) {
-					logger.log(CLogger::INFO, "Cannot create History folder at location: \"%s\"", temp.c_str());
+					logger.log(LOG_OK, CLogger::INFO, "Cannot create History folder at location: \"%s\"", temp.c_str());
 					return -1;
 				}
-				logger.log(CLogger::INFO, "History folder created at location: \"%s\"", temp.c_str());
+				logger.log(LOG_OK, CLogger::INFO, "History folder created at location: \"%s\"", temp.c_str());
 			}
 			temp = config.getIndexPath();
 			if (SAUtils::DirExists(temp.c_str()) == false) {
-				logger.log(CLogger::INFO, "Index folder not found at location: \"%s\"", temp.c_str());
+				logger.log(LOG_OK, CLogger::INFO, "Index folder not found at location: \"%s\"", temp.c_str());
 
 				if (SAUtils::mkDir(temp.c_str()) == false) {
-					logger.log(CLogger::INFO, "Cannot create Index folder at location: \"%s\"", temp.c_str());
+					logger.log(LOG_OK, CLogger::INFO, "Cannot create Index folder at location: \"%s\"", temp.c_str());
 					return -1;
 				}
-				logger.log(CLogger::INFO, "Index folder created at location: \"%s\"", temp.c_str());
+				logger.log(LOG_OK, CLogger::INFO, "Index folder created at location: \"%s\"", temp.c_str());
 			}
 			if (ImageExtentions::setExtentionsFilePath(config.getConfigPath()) == false) {
 				return -1;
@@ -222,10 +321,10 @@ namespace simplearchive {
 			}
 		}
 		catch (SIAAppException e) {
-			logger.log(CLogger::FATAL, "Failed to complete initalisation %s\n", e.what());
+			logger.log(LOG_OK, CLogger::FATAL, "Failed to complete initalisation %s\n", e.what());
 			return -1;
 		}
-		logger.log(CLogger::SUMMARY, "Initalisation complete");
+		logger.log(LOG_OK, CLogger::SUMMARY, "Initalisation complete");
 		return 0;
 	}
 
@@ -236,7 +335,7 @@ namespace simplearchive {
 		SummaryFile &summaryFile = SummaryFile::getSummaryFile();
 		CIDKDate date;
 		date.Now();
-		logger.log(CLogger::SUMMARY, "Application completed successfully at %s", date.Print().c_str());
+		logger.log(LOG_OK, CLogger::SUMMARY, "Application completed successfully at %s", date.Print().c_str());
 		summaryFile.log(SummaryFile::SF_BRIEF, SummaryFile::SF_COMMENT, "Summary start");
 		return 0;
 	}
@@ -259,7 +358,7 @@ namespace simplearchive {
 	}
 
 	bool SIALib::exportImage(const char *distpath) {
-		if (m_ArchiveBuilder->exportImages(distpath) == false) {
+		if (ArchiveObject::get().exportImages(distpath) == false) {
 			return false;
 		}
 
@@ -269,35 +368,36 @@ namespace simplearchive {
 
 	bool SIALib::showCheckedOut(const char *filepath) {
 
-		if (m_ArchiveBuilder->showCheckedOut(filepath) == false) {
+		if (ArchiveObject::get().showCheckedOut(filepath) == false) {
 			return false;
 		}
 		return true;
 	}
 
 	bool SIALib::showUncheckedOutChanges(const char *filepath) {
-		if (m_ArchiveBuilder->showUncheckedOutChanges(filepath) == false) {
+		if (ArchiveObject::get().showUncheckedOutChanges(filepath) == false) {
 			return false;
 		}
 		return true;
 	}
 
 	bool SIALib::checkout(const char *filepath, const char *comment) {
-		if (m_ArchiveBuilder->checkout(filepath, comment) == false) {
+		if (ArchiveObject::get().checkout(filepath, comment) == false) {
 			return false;
 		}
+		
 		return true;
 	}
 
 	bool SIALib::checkin(const char *filepath, const char *comment) {
-		if (m_ArchiveBuilder->checkin(filepath, comment) == false) {
+		if (ArchiveObject::get().checkin(filepath, comment) == false) {
 			return false;
 		}
 		return true;
 	}
 
 	bool SIALib::uncheckout(const char *filepath, const char *comment) {
-		if (m_ArchiveBuilder->uncheckout(filepath, comment) == false) {
+		if (ArchiveObject::get().uncheckout(filepath, comment) == false) {
 			return false;
 		}
 		return true;
@@ -307,7 +407,7 @@ namespace simplearchive {
 	
 
 	bool SIALib::listContents(const char *addressScope) {
-		if (m_ArchiveBuilder->listContents(addressScope) == false) {
+		if (ArchiveObject::get().listContents(addressScope) == false) {
 			return false;
 		}
 		return true;
@@ -345,11 +445,11 @@ namespace simplearchive {
 		MirrorManager mirrorManager;
 		
 		// Make mirror
-		/*
+		
 		if (mirrorManager.mirror() == false) {
 			return false;
 		}
-		*/
+		
 		if (mirrorManager.verifyMirror() == false) {
 			return false;
 		}
@@ -400,4 +500,42 @@ namespace simplearchive {
 		return true;
 	}
 
+	bool SIALib::validate(const char *archivePath, const char *workspacePath, const char *homePath, Scope scope, bool repair) {
+		IntegrityManager &im = IntegrityManager::get();
+		if (repair) {
+			switch (scope) {
+			case Workspace:
+				if (im.repair(true, false) == false) {
+					return false;
+				}
+			case Shadow:
+				if (im.repair(false, true) == false) {
+					return false;
+				}
+			default:
+				if (im.repair(true, true) == false) {
+					return false;
+				}
+			}
+			return true;
+		}
+		else {
+			switch (scope) {
+			case Workspace:
+				if (im.validate(true, false) == false) {
+					return false;
+				}
+			case Shadow:
+				if (im.validate(false, true) == false) {
+					return false;
+				}
+			default:
+				if (im.validate(true, true) == false) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return true;
+	}
 } // simplearchive

@@ -47,29 +47,33 @@ class EventList;
 class CDate;
 class HistoryLog;
 
-
+/**
+	This is the Image only log for one image.
+	The history normaly will end in <imagename>.<ext>.hst
+*/
+class HistoryItem;
+class ArchivePath;
 class History {
 
 private:
-
-	bool read(const char *filepath);
-	bool write(const char *filepath);
-	EventList *m_eventList;
-
+	static std::string m_localPath;
+	static std::string m_archivePath;
 	History();
-
 	History(const History&);
-	History& operator = (const History& ) { return *this; }
-	static bool m_isOpen;
-	static std::string m_filename;
+	History& operator = (const History&) { return *this; };
 	static std::auto_ptr<History> m_this;
-	static std::ofstream m_logfile;
-	static std::string m_folder;
+	bool writeLog(HistoryItem &item, const char *path);
 	bool readLog(const char *logFile, HistoryLog &historyLog);
 public:
-	static void setPath(const char *path);
-	static History &getHistory();
+
+	static bool newImage(const char *filename, const char *shortPath, const char *comment);
+
+	static void init();
+	static History &getHistory(const char *localPath);
 	virtual ~History();
+	bool add(const char *filename, const char *comment);
+	bool add(const char *filename, int version, const char *comment, const HistoryEvent &he);
+	
 	bool add(const char *filename, const char *version, const char *comment, const HistoryEvent &he);
 	/*
 	bool add(const HistoryEvent &he) {

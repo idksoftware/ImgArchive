@@ -165,6 +165,9 @@ bool AssetProperties::write(const char *path) {
 	return true;
 }
 
+
+
+
 unsigned int AssetProperties::findImage(const char *text, int col) {
 	unsigned int count = 0;
 	for (std::vector<CSVRowItem *>::iterator i = this->begin(); i != this->end(); i++, count++) {

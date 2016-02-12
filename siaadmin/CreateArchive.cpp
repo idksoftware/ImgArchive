@@ -51,7 +51,7 @@ namespace simplearchive {
 // hook folder
 
 const char *onfiledoc[] = {
-#ifdef WIN32
+#ifdef _WIN32
 #else
 	"#!/bin/ksh",
 #endif
@@ -141,11 +141,12 @@ CreateArchive::~CreateArchive() {
 	// TODO Auto-generated destructor stub
 }
 
-bool CreateArchive::createHomeEnvVar(const char *root) {
+bool CreateArchive::createHomeEnvVar(const char *root, bool users) {
 	if (SAUtils::DirExists(root) == false) {
 		return false;
 	}
-	return SetEnv(root,false);
+	
+	return SetEnv(root, users);
 }
 
 std::string CreateArchive::makeConfigFile(const char *root, const char *workspace, const char *shadow) {
@@ -212,7 +213,7 @@ bool CreateArchive::createConfigFiles(const char *root, const char *folder, cons
 }
 
 bool CreateArchive::createHookFiles(const char *root, const char *folder) {
-#ifdef WIN32
+#ifdef _WIN32
 	if (createFile(root, folder, "on-file-test.bat", (const char **)onfiledoc, (sizeof(onfiledoc)/sizeof(char *))) == false) {
 #else
 	if (createFile(root, folder, "on-file-test.sh", (const char **)onfiledoc, (sizeof(onfiledoc)/sizeof(char *))) == false) {

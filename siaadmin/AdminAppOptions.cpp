@@ -58,6 +58,9 @@ std::string AppOptions::m_homePath;
 std::string AppOptions::m_workspacePath;
 std::string AppOptions::m_shadowPath;
 std::string AppOptions::m_configPath;
+AppOptions::Scope AppOptions::m_scope = AppOptions::Both;
+bool AppOptions::m_repair = false;
+bool AppOptions::m_users = true;
 
 AppOptions::AppOptions() {
 	m_configured = true;
@@ -182,12 +185,16 @@ bool AppOptions::initalise(int argc, char **argv) {
 	argvParser.defineOption("n", "name of the item.", ArgvParser::OptionRequiresValue);
 	argvParser.defineOptionAlternative("n", "name");
 
+	argvParser.defineOption("r", "Validate and repair.", ArgvParser::NoOptionAttribute);
+	argvParser.defineOptionAlternative("r", "repair");
+
+	argvParser.defineOption("s", "Scope validate. i.e. Workspace/Shadow or both", ArgvParser::OptionRequiresValue);
+	argvParser.defineOptionAlternative("s", "scope");
+
+	argvParser.defineOption("u", "Make archive available to you only or everyone with a logon to this computer (Myself/All).", ArgvParser::OptionRequiresValue);
+	argvParser.defineOptionAlternative("u", "users");
+
 	/*
-	argvParser.defineOption("q", "no output is sent to the terminal.", ArgvParser::NoOptionAttribute);
-	argvParser.defineOptionAlternative("q", "quiet");
-
-	
-
 	argvParser.defineOption("d", "destination of the images", ArgvParser::OptionRequiresValue);
 	argvParser.defineOptionAlternative("d", "dist-path");
 
@@ -259,6 +266,12 @@ bool AppOptions::initalise(int argc, char **argv) {
 		setCommandMode(AppOptions::CM_InitArchive);
 		m_configured = false;
 		std::string opt;
+		if (argvParser.foundOption("users") == true) {
+			std::string users = argvParser.optionValue("users");
+			if (users.compare("Myself") == 0) {
+				m_users = false;
+			}
+		}
 		if (argvParser.foundOption("archive-path") == true) {
 			opt = argvParser.optionValue("archive-path");
 		}
@@ -342,6 +355,23 @@ bool AppOptions::initalise(int argc, char **argv) {
 				std::string opt = argvParser.optionValue("archive-path");
 				printf(opt.c_str()); printf("\n");
 				config.setWorkspacePath(opt.c_str());
+			}
+			if (argvParser.foundOption("scope") == true) {
+
+				std::string opt = argvParser.optionValue("scope");
+				printf(opt.c_str()); printf("\n");
+				if (opt.compare("Workspace") == 0) {
+					m_scope = Workspace;
+				}
+				else if (opt.compare("Shadow") == 0) {
+					m_scope = Shadow;
+				}
+				else {
+					m_scope = Both;
+				}
+			}
+			if (argvParser.foundOption("repair") == true) {
+				m_repair = true;
 			}
 		}
 		else if (argvParser.command("mirror") == true) {

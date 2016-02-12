@@ -40,9 +40,12 @@
 
 namespace simplearchive {
 
+class ImageHistoryItem;
 class HistoryEvent;
 class EventList;
-
+/**
+This is the rolling system history log.
+*/
 class ImageHistory {
 public:
 
@@ -51,13 +54,34 @@ private:
 	bool read(const char *filepath);
 	bool write(const char *filepath);
 	EventList *m_eventList;
-	std::string m_datapath;
+	
+	static ImageHistory *m_this;
+	static std::ofstream m_hstfile;
+	static std::string m_primary;
+	static std::string m_backup1;
+	static std::string m_backup2;
+	static std::string m_shadow;
+	static std::string m_filename;
+	ImageHistory(const ImageHistory&);
+	ImageHistory& operator = (const ImageHistory&) { return *this; }
+	ImageHistory();
+	bool add(ImageHistoryItem &historyItem, const char *historyFile);
 public:
-	ImageHistory(const char *datapath);
 	virtual ~ImageHistory();
+	bool add(const char *filepath, int version, const char *comment, const HistoryEvent &he);
 	bool add(const char *filepath, const char *version, const char *comment, const HistoryEvent &he);
 	std::auto_ptr<ImageHistoryLog> get();
-
+	static ImageHistory &getImageHistory();
+	static void setPath(const char *primaryPath, const char *shadowPath) {
+		m_primary = primaryPath;
+		m_shadow = shadowPath;
+	}
+	static void setBackup1Path(const char *path) {
+		m_backup1 = path;
+	}
+	static void setBackup2Path(const char *path) {
+		m_backup2 = path;
+	}
 };
 
 } /* namespace simplearchive */

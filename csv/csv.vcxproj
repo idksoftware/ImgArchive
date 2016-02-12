@@ -157,6 +157,7 @@
     <ClInclude Include="CSVDBFile.h" />
     <ClInclude Include="CSVDBVisitor.h" />
     <ClInclude Include="CSVRow.h" />
+    <ClInclude Include="DefineNames.h" />
     <ClInclude Include="GPSProperties.h" />
     <ClInclude Include="MediaProperties.h" />
   </ItemGroup>

@@ -47,6 +47,9 @@
 #include "SAUtils.h"
 #include "HistoryLog.h"
 #include "CSVArgs.h"
+#include "ImageHistory.h"
+#include "ArchivePath.h"
+
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -76,17 +79,7 @@ public:
 		m_filepath = csvArgs.at(2);
 		m_comment = csvArgs.at(3);
 		m_event = csvArgs.at(4);
-		/*
-		int delim1 = m_data.find_first_of(':');
-		int delim2 = m_data.find_first_of(':', delim1+1);
-		int delim3 = m_data.find_first_of(':', delim2+1);
-		int delim4 = m_data.find_first_of(':', delim2+1);
-		m_date = m_data.substr(0,delim1);
-		m_version = m_data.substr(delim1+1, (delim2-delim1)-1);
-		m_filepath = m_data.substr(delim2+1, (delim3-delim2)-1);
-		m_comment = m_data.substr(delim3+1, (delim4-delim3)-1);
-		m_event = m_data.substr(delim4+1, m_data.length());
-		*/
+		
 
 	}
 
@@ -106,74 +99,155 @@ public:
 	}
 
 };
-class EventList : public std::vector<HistoryItem> {};
 
-
-bool History::m_isOpen = false;
 
 History::History() {
-	m_eventList = new EventList;
-
 }
 
-History::~History() {
-	if (m_isOpen) {
-		m_logfile.close();
-	}
-	delete m_eventList;
+History::~History() {	
 }
 
-std::string History::m_filename = "";
+std::string History::m_archivePath;
+std::string History::m_localPath;
 std::auto_ptr<History> History::m_this(0);
-std::ofstream History::m_logfile;
-std::string History::m_folder;
 
-void History::setPath(const char *path) {
-	LogName logName;
-	m_folder = path;
-	m_filename = logName.makeName(path, "hist", "log", 256);
+void History::init() {
+	
+	ImageHistory::setPath(ArchivePath::getMainHistory().c_str(), ArchivePath::getShadowHistory().c_str());
+	if (ArchivePath::isBackup1Enabled() == true) {
+		ImageHistory::setBackup1Path(ArchivePath::getBackup1().getHistory().c_str());
+	}
+	if (ArchivePath::isBackup2Enabled() == true) {
+		ImageHistory::setBackup2Path(ArchivePath::getBackup2().getHistory().c_str());
+	}
+	/*
+	m_workspacePath = workspacePath;
+	m_backup1Path = backup1Path;
+	m_backup1Path = backup1Path;
+	m_backup1Path = backup1Path;
+	*/
 }
 
-History &History::getHistory() {
+History &History::getHistory(const char *localpath) {
 
 	if (!m_this.get()) {
 		m_this.reset(new History());
-		m_logfile.open(m_filename.c_str(), std::ios::out | std::ios::app);
-		if (m_logfile.is_open()) {
-			m_isOpen = true;
-		}
 	}
+	m_this->m_localPath = localpath;
 	return *(m_this.get());
 }
 
+bool History::newImage(const char *filename, const char *shortPath, const char *comment) {
+	ImageHistory &imageHistory = ImageHistory::getImageHistory();
+	
+	std::string filepath = shortPath;
+	filepath += '/'; filepath += filename;
+	imageHistory.add(filepath.c_str(), "0000", comment, HistoryEvent::ADDED);
+	History &history = History::getHistory(shortPath);
+	history.add(filename, "0000", comment, HistoryEvent::ADDED);
+	return true;
+}
 
+bool History::add(const char *filename, const char *comment) {
+	return add(filename, "0000", comment, HistoryEvent::ADDED);
+}
 /**
  * This function adds history to an image.
  */
-bool History::add(const char *filepath, const char *version, const char *comment, const HistoryEvent &he) {
-	std::string filepathstr = filepath;
-	std::string filename;
-	std::string path;
-	int slashpos = filepathstr.find_last_of("/");
-	if (slashpos != -1) {
-		filename = filepathstr.substr(slashpos+1, filepathstr.length() - slashpos);
-		path = filepathstr.substr(0, slashpos);
-	} else {
-		filename = filepathstr;
-	}
-	//read(m_filename.c_str());
+bool History::add(const char *filepath, int version, const char *comment, const HistoryEvent &he) {
+	char buff[50];
+	sprintf_s(buff, 50, "%.4d", version);
+	add(filepath, buff, comment, he);
+	return true;
+}
+/**
+	filepath i.e 2015-11-10/DSC1236.jpg
+*/
+bool History::add(const char *filename, const char *version, const char *comment, const HistoryEvent &he) {
+	
+
+	
+
 	ExifDateTime date;
 	date.now();
 	//CDate dateNow = CDate::timeNow();
 	std::string dateStr = date.current();
 	//std::string date =
 	const char *event = he.getString();
-	HistoryItem historyItem(dateStr.c_str(), filepath, version, comment, event);
-	m_logfile << historyItem.toString() << '\n';
 
+	HistoryItem historyItem(dateStr.c_str(), filename, version, comment, event);
+
+	std::string workspacePath = ArchivePath::getPathToWorkspace();
+	workspacePath += '/'; workspacePath += m_localPath.substr(0, 4);
+	workspacePath += '/'; workspacePath += m_localPath;
+	workspacePath += "/.sia/"; workspacePath += filename;
+	workspacePath += ".hst";
+
+	if (writeLog(historyItem, workspacePath.c_str()) == false) {
+		return false;
+	}
+
+	if (ArchivePath::isShadowEnabled()) {
+		
+		std::string shadowPath = ArchivePath::getShadow().getRepositoryPath();
+		shadowPath += '/'; shadowPath += m_localPath.substr(0, 4);
+		shadowPath += '/'; shadowPath += m_localPath;
+		shadowPath += "/history/"; shadowPath += filename;
+		shadowPath += ".hst";
+
+		if (writeLog(historyItem, shadowPath.c_str()) == false) {
+			return false;
+		}
+	}
+
+	if (ArchivePath::isBackup1Enabled()) {
+		std::string backup1Path = ArchivePath::getBackup1().getRepositoryPath();
+		backup1Path += '/'; backup1Path += m_localPath.substr(0, 4);
+		backup1Path += '/'; backup1Path += m_localPath;
+		backup1Path += "/history/"; backup1Path += filename;
+		backup1Path += ".hst";
+
+		if (writeLog(historyItem, backup1Path.c_str()) == false) {
+			return false;
+		}
+	}
+	if (ArchivePath::isBackup2Enabled()) {
+		std::string backup2Path = ArchivePath::getBackup2().getRepositoryPath();
+		backup2Path += '/'; backup2Path += m_localPath.substr(0, 4);
+		backup2Path += '/'; backup2Path += m_localPath;
+		backup2Path += "/history/"; backup2Path += filename;
+		backup2Path += ".hst";
+
+		if (writeLog(historyItem, backup2Path.c_str()) == false) {
+			return false;
+		}
+	}
+	
+	return true;
+	/*
+	std::ofstream file;
+	file.open(filepathstr.c_str(), std::ios::out | std::ios::app);
+	if (file.is_open() == false) {
+		return false;
+	}
+	file << historyItem.toString().c_str() << '\n';
+	file.close();
+	return true;
+	*/
+}
+
+bool History::writeLog(HistoryItem &item, const char *path) {
+	std::ofstream file;
+	file.open(path, std::ios::out | std::ios::app);
+	if (file.is_open() == false) {
+		return false;
+	}
+	file << item.toString().c_str() << '\n';
+	file.close();
 	return true;
 }
 
+/*
 bool History::read(const char *filepath) {
 	char text[256];
 	std::ifstream file(filepath);
@@ -188,13 +262,14 @@ bool History::read(const char *filepath) {
 
 	return true;
 }
-
+*/
 /*
 std::string History::getHistory(CDate from, CDate to) {
 	std::string str;
 	return str;
 }
 */
+/*
 std::auto_ptr<HistoryLog>  History::getEntries(int daysAgo) {
 	CDate date = CDate::daysAgo(daysAgo);
 
@@ -220,7 +295,8 @@ std::auto_ptr<HistoryLog>  History::getEntries(int daysAgo) {
 	}
 	return historyLog;
 }
-
+*/
+/*
 bool History::readLog(const char *logFile, HistoryLog &historyLog) {
 	std::string path = m_folder;
 	path += '/';
@@ -238,6 +314,7 @@ bool History::readLog(const char *logFile, HistoryLog &historyLog) {
 	//HistoryLog
 	return true;
 }
+*/
 /*
 std::string History::getHistory(int entrys) {
 	std::string str;

@@ -75,14 +75,14 @@ bool ExternalExifMapper::init(const char *exifMapFile) {
 
 ExifObject *ExternalExifMapper::create(const char *exiffile) {
 	// test
-	exiffile = "c:/temp/test.exf";
+	
 	ConfigReader configReader;
 	Config exifData;
 	exifData.setDelimChar(':');
 	CLogger &logger = CLogger::getLogger();
-	logger.log(CLogger::FINE, "Reading external Exif data file: \"%s\"", exiffile);
+	logger.log(LOG_OK, CLogger::FINE, "Reading external Exif data file: \"%s\"", exiffile);
 	if (!configReader.read(exiffile, exifData)) {
-		logger.log(CLogger::ERROR, "Failed reading external Exif data file: \"%s\"", exiffile);
+		logger.log(LOG_OK, CLogger::ERR, "Failed reading external Exif data file: \"%s\"", exiffile);
 		return 0;
 	}
 	return create(exifData);
@@ -92,20 +92,20 @@ ExifObject *ExternalExifMapper::create(Config &exifData) {
 	ExifObject *exifObject = new ExifObject;
 	//exifData.printAll();
 	CLogger &logger = CLogger::getLogger();
-	logger.log(CLogger::FINE, "EXIF Data");
+	logger.log(LOG_OK, CLogger::FINE, "EXIF Data");
 
 //	printf("Print the EXIF File generated\n");
 	for (std::map<std::string, std::string>::iterator ii = exifData.begin(); ii != exifData.end(); ++ii) {
-		logger.log(CLogger::FINE, "Exif data Key: \"%s\" Value: \"%s\"", ii->first.c_str(), ii->second.c_str());
+		logger.log(LOG_OK, CLogger::FINE, "Exif data Key: \"%s\" Value: \"%s\"", ii->first.c_str(), ii->second.c_str());
 //		printf("Exif data Key: \"%s\" Value: \"%s\"\n", ii->first.c_str(), ii->second.c_str());
 		//std::cout << ii->first << " " << ii->second << '\n';
 	}
 	
 	//m_exifMap->printAll();
-	logger.log(CLogger::FINE, "EXIF Map");
+	logger.log(LOG_OK, CLogger::FINE, "EXIF Map");
 //	printf("Print the EXIF map\n");
 	for (std::map<std::string, std::string>::iterator ii = m_exifMap->begin(); ii != m_exifMap->end(); ++ii) {
-		logger.log(CLogger::FINE, "Exif map Key: \"%s\" Value: \"%s\"", ii->first.c_str(), ii->second.c_str());
+		logger.log(LOG_OK, CLogger::FINE, "Exif map Key: \"%s\" Value: \"%s\"", ii->first.c_str(), ii->second.c_str());
 //		printf("Exif map Key: \"%s\" Value: \"%s\"\n", ii->first.c_str(), ii->second.c_str());
 		//std::cout << ii->first << " " << ii->second << '\n';
 	}
@@ -118,17 +118,17 @@ ExifObject *ExternalExifMapper::create(Config &exifData) {
 //		printf("Found\n");
 		std::string &keyword = iter->second;
 		std::string &value = ii->second;
-		logger.log(CLogger::FINE, "maping:\"%s\" value:\"%s\"", keyword.c_str(), value.c_str());
+		logger.log(LOG_OK, CLogger::FINE, "maping:\"%s\" value:\"%s\"", keyword.c_str(), value.c_str());
 //		printf("maping:\"%s\" value:\"%s\"\n", keyword.c_str(), value.c_str());
 
 		try {
 			MTColumn &col = exifObject->columnAt(keyword.c_str());
 			if (col.fromString(value) == false) {
-				logger.log(CLogger::WARNING, "Invalid value. keyword:\"%s\" value:\"%s\"", keyword.c_str(), value.c_str());
+				logger.log(LOG_OK, CLogger::WARNING, "Invalid value. keyword:\"%s\" value:\"%s\"", keyword.c_str(), value.c_str());
 			}
 		}
 		catch (std::exception /*&e*/) {
-			logger.log(CLogger::WARNING, "invalid keyword:\"%s\"", keyword.c_str());
+			logger.log(LOG_OK, CLogger::WARNING, "invalid keyword:\"%s\"", keyword.c_str());
 		}
 		
 	}

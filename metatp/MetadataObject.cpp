@@ -23,4 +23,6 @@ MetadataObject::~MetadataObject() {
 	//printf("+++ MetadataObject Deleting +++\n");
 }
 
+
+
 } /* namespace simplearchive */

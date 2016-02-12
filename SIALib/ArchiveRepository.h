@@ -49,13 +49,13 @@ class ArchiveRepository {
 	std::string m_pathToArchive;
 	std::string m_pathToSourceRoot;
 	std::string m_pathToActiveRoot;
-	bool processHistory(ImagePath &imagePath, const char *filepath, const char *comment, const HistoryEvent &evt, int ver);
+	//bool processHistory(ImagePath &imagePath, const char *filepath, const char *comment, const HistoryEvent &evt, int ver);
 public:
 
 	virtual ~ArchiveRepository();
 	static ArchiveRepository &get();
 
-	bool Import(ImageGroup &imageGroup);
+	//bool Import(ImageGroup &imageGroup);
 	bool checkout(const char *filepath, const char *comment);
 	bool checkin(const char *filepath, const char *comment);
 	bool uncheckout(const char *filepath, const char *comment);

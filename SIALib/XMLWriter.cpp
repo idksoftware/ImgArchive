@@ -58,7 +58,7 @@ XMLWriter::~XMLWriter() {
 
 std::string XMLWriter::writeTag(const char *tag, const std::string& value) {
 	std::ostringstream xml;
-	if (!value.empty()) {
+	if (!value.empty() && (value.compare("null") != 0)) {
 		xml << "<" << tag << ">" << value << "</" << tag << ">\n";
 	} else {
 		xml << "<" << tag << "/>\n";

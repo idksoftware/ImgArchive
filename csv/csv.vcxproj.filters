@@ -74,6 +74,9 @@
     <ClInclude Include="CSVDBVisitor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DefineNames.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="csvmain.dox" />

@@ -36,6 +36,7 @@
 #define IMAGEINDEX_H_
 
 #include <string>
+#include <memory>
 #include <cstdlib>
 #include "CSVArgs.h"
 
@@ -101,16 +102,30 @@ public:
 
 class DupDataFile;
 class BasicExif;
+class MirrorImageIndex;
+
+typedef std::unique_ptr<DupDataFile> DupDataFile_Ptr;
 
 class ImageIndex {
+	
+	std::unique_ptr<MirrorImageIndex> m_mirrorImageIndex;
 	std::string m_dbpath;
 	unsigned char m_data[4];
+	/** Adds to primary and backups */
 	bool add(const char *name, unsigned long crc, const char *md5);
-	DupDataFile* findDupDataFile(unsigned long crc);
+	/** Adds to the Image index db using the given path */
+	bool add(const char *name, unsigned long crc, const char *md5, const char *rootPath);
+	DupDataFile_Ptr findDupDataFile(unsigned long crc);
+	DupDataFile_Ptr findDupDataFile(unsigned long crc, const char *root);
+	/**
+	* This function is used to update the path to the image with the addition of the root db folder.
+	*/
+	bool updatePath(unsigned long crc, const char *path, const char *root);
 public:
 	ImageIndex();
 	virtual ~ImageIndex();
 
+	/** initalise the image index database with the primary path */
 	bool init(const char *path);
 	/**
 	*	This function returns true if added, false if dup
@@ -118,6 +133,9 @@ public:
 	bool add(const BasicExif &basicExif);
 	bool IsDup(unsigned long crc);
 	std::string FindDup(unsigned long crc);
+	/**
+	* This function is used to update the path to the image.
+	*/
 	bool updatePath(unsigned long crc, const char *path);
 	ImageId findDup(unsigned long crc) {
 		std::string data = FindDup(crc);

@@ -81,7 +81,7 @@ bool ImageLock::unlock(const char *filename) {
 	if (SAUtils::FileExists(filelockname.c_str()) == false) {
 			return false; // already locked
 	}
-#ifdef WIN32
+#ifdef _WIN32
 	_unlink(filelockname.c_str());
 #else
 	unlink(filelockname.c_str());

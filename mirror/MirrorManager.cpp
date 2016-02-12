@@ -75,6 +75,7 @@ bool MirrorManager::initalise(const char *rootFolder, const char *configFile) {
 		}
 	} catch (MirrorException &e) {
 		printf("Error: %s\n", e.what());
+		return false;
 	}
 	return true;
 }

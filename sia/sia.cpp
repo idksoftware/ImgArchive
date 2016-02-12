@@ -72,5 +72,6 @@ bool SIADll::mirror(const char *name) {
 	
 }
 bool SIADll::archive() {
-	return m_sialib.archive();
+	//return m_sialib.archive();
+	return true;
 }

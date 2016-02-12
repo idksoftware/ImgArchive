@@ -36,6 +36,7 @@
 #include <iomanip>
 #include "AppConfig.h"
 #include "SAUtils.h"
+#include "ArchivePath.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -52,6 +53,7 @@ namespace simplearchive {
 	std::string CAppConfig::m_logLevel = "INFO";
 	bool CAppConfig::m_dry_run = false;
 	bool CAppConfig::m_useDatabase = true;
+
 	std::string CAppConfig::m_hookPath;
 	std::string CAppConfig::m_toolsPath;
 	std::string CAppConfig::m_workspacePath;
@@ -69,7 +71,11 @@ namespace simplearchive {
 	std::string CAppConfig::m_backupDestinationPath;
 	std::string CAppConfig::m_masterViewPath;
 	std::string CAppConfig::m_DatabasePath;
+	std::string CAppConfig::m_backup1;
+	std::string CAppConfig::m_backup2;
 
+	bool CAppConfig::m_backup1Enabled = false;
+	bool CAppConfig::m_backup2Enabled = false;
 
 	long CAppConfig::m_backupMediaSize;
 	ExifDateTime CAppConfig::m_fromDate;
@@ -96,7 +102,63 @@ namespace simplearchive {
 		return *m_this;
 	}
 
+	void CAppConfig::init() {
+		if (m_homePath.empty() == true) {
+			if (value("HomePath", m_homePath) == false) {
+				m_homePath = SAUtils::GetEnvironment("HOMEPATH");
+			}
+		}
+		ArchivePath::setPathToHome(m_homePath);
 
+		if (m_backup1.empty() == true) {
+			if (value("BackupOne", m_backup1) == true) {
+				ArchivePath::setBackup1Path(m_backup1);
+				m_backup1Enabled = true;
+			}
+		}
+		else {
+			ArchivePath::setBackup1Path(m_backup1);
+		}
+		
+		if (m_backup2.empty() == true) {
+			if (value("BackupTwo", m_backup2) == true) {
+				ArchivePath::setBackup2Path(m_backup2);
+				m_backup2Enabled = true;
+			}
+		}
+		else {
+			ArchivePath::setBackup2Path(m_backup2);
+		}
+
+		if (m_shadowArchivePath.empty() == true) {
+			if (value("ShadowPath", m_shadowArchivePath) == false) {
+				std::string temp = m_homePath;
+				m_shadowArchivePath = temp + "/shadow";
+				ArchivePath::setPathToShadow(m_shadowArchivePath);
+			}
+		}
+		ArchivePath::setPathToShadow(m_shadowArchivePath);
+
+		if (m_historyPath.empty() == true) {
+			if (value("HistoryPath", m_logPath) == false) {
+				std::string temp = SAUtils::GetEnvironment("HOMEPATH");
+				m_historyPath = m_homePath + "/history";
+				
+			}
+		}
+		ArchivePath::setMainHistory(m_historyPath);
+
+		if (m_workspacePath.empty() == true) {
+			if (value("WorkspacePath", m_workspacePath) == false) {
+				std::string temp = SAUtils::GetEnvironment("USERPROFILE");
+				m_workspacePath = temp + "/SIA Workspace";
+
+			}
+		}
+		ArchivePath::setPathToWorkspace(m_workspacePath);
+		
+	}
+	
 	void CAppConfig::setToolsPath(const char *toolsPath) {
 		m_toolsPath = toolsPath;
 	}
@@ -105,6 +167,7 @@ namespace simplearchive {
 			if (value("ToolsPath", m_toolsPath) == false) {
 				std::string temp = SAUtils::GetEnvironment("HOMEPATH");
 				m_toolsPath = temp + "/tools";
+
 			}
 		}
 		return m_toolsPath.c_str();
@@ -112,22 +175,47 @@ namespace simplearchive {
 	}
 	void CAppConfig::setHomePath(const char *homePath) {
 		m_homePath = homePath;
+		ArchivePath::setPathToHome(m_homePath);
 	}
+	
 	const char *CAppConfig::getHomePath() {
 		if (m_homePath.empty() == true) {
 			if (value("HomePath", m_homePath) == false) {
 				m_homePath = SAUtils::GetEnvironment("HOMEPATH");
+				ArchivePath::setPathToHome(m_homePath);
 			}
 		}
 		return m_homePath.c_str();
 
 	}
+
+	const char *CAppConfig::getBackup1() {
+		if (m_backup1.empty() == true) {
+			if (value("BackupOne", m_backup1) == true) {
+				ArchivePath::setBackup1Path(m_backup1);
+				m_backup1Enabled = true;
+			}
+		}
+		return m_backup1.c_str();
+	}
+
+	const char *CAppConfig::getBackup2() {
+		if (m_backup2.empty() == true) {
+			if (value("BackupTwo", m_backup2) == true) {
+				ArchivePath::setBackup2Path(m_backup2);
+				m_backup2Enabled = true;
+			}
+		}
+		return m_backup2.c_str();
+	}
+
 	/// Gets the archive path.
 	const char *CAppConfig::getWorkspacePath() {
 		if (m_workspacePath.empty() == true) {
 			if (value("WorkspacePath", m_workspacePath) == false) {
 				std::string temp = SAUtils::GetEnvironment("USERPROFILE");
-					m_workspacePath = temp + "/SIA Workspace"; 
+				m_workspacePath = temp + "/SIA Workspace";
+					
 			}
 		}
 		return m_workspacePath.c_str();
@@ -138,7 +226,8 @@ namespace simplearchive {
 		if (m_shadowArchivePath.empty() == true) {
 			if (value("ShadowPath", m_shadowArchivePath) == false) {
 				std::string temp = m_homePath;
-				m_shadowArchivePath = temp + "/SIAShadow";
+				m_shadowArchivePath = temp + "/shadow";
+				ArchivePath::setPathToShadow(m_shadowArchivePath);
 			}
 		}
 		return m_shadowArchivePath.c_str();
@@ -173,10 +262,12 @@ namespace simplearchive {
 
 	void CAppConfig::setWorkspacePath(const char *path) {
 		m_workspacePath = path;
+		ArchivePath::setPathToWorkspace(m_workspacePath);
 	}
 
 	void CAppConfig::setShadowPath(const char *path) {
 		m_shadowArchivePath = path;
+		ArchivePath::setPathToShadow(m_shadowArchivePath);
 	}
 
 	void CAppConfig::setSourcePath(const char *path) {
@@ -285,14 +376,18 @@ namespace simplearchive {
 	
 	const char *CAppConfig::getIndexPath() {
 		if (value("IndexPath", m_indexPath) == false) {
-			m_indexPath = m_shadowArchivePath + "/root/index";
+			m_indexPath = m_shadowArchivePath + "/system/index";
 		}
 		return m_indexPath.c_str();
 	}
 
 	const char *CAppConfig::getHistoryPath() {
-		if (value("HistoryPath", m_logPath) == false) {
-			m_historyPath = m_shadowArchivePath + "/root/history";
+		if (m_historyPath.empty() == true) {
+			if (value("HistoryPath", m_logPath) == false) {
+				std::string temp = SAUtils::GetEnvironment("HOMEPATH");
+				m_historyPath = m_homePath + "/history";
+				ArchivePath::setMainHistory(m_historyPath);
+			}
 		}
 		return 	m_historyPath.c_str();
 	}
@@ -314,7 +409,7 @@ namespace simplearchive {
 
 	const char *CAppConfig::getExifMapPath() {
 		if (value("ExifMapPath", m_ExternalCommandLine) == false) {
-			m_ExifMapPath = m_homePath + "/conf";
+			m_ExifMapPath = m_homePath + "/config";
 			return m_ExifMapPath.c_str();
 		}
 		return 	m_ExifMapPath.c_str();

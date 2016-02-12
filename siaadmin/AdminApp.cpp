@@ -104,7 +104,7 @@ bool App::Run()
 	if (appOptions.isConfiguratedOk() == false) {
 		if (appOptions.getCommandMode() == AppOptions::CM_InitArchive) {
 
-			if (CreateArchive(appOptions.getHomePath(), appOptions.getWorkspacePath(), appOptions.getShadowPath()) == false) {
+			if (CreateArchive(appOptions.getHomePath(), appOptions.getWorkspacePath(), appOptions.getShadowPath(), appOptions.getUsers()) == false) {
 				return false;
 			}
 			printf("\n\nInit Archive\n");
@@ -139,9 +139,9 @@ bool App::Run()
 
 	case AppOptions::CM_Show:
 	{
-		if (siaLib.show(appOptions.getName()) == false) {
-			return false;
-		}
+		//if (siaLib.show(appOptions.getName()) == false) {
+		//	return false;
+		//}
 		break;
 	}
 	case AppOptions::CM_View:
@@ -168,15 +168,23 @@ bool App::Run()
 			// Do not create a new archive. The old one needs to be deleted?
 			return false;
 		}
-		IntegrityManager &integrityManager = IntegrityManager::get(config.getShadowPath(), config.getWorkspacePath(), config.getHomePath());
-		/*
-		if (integrityManager.makeList() == false) {
-			return false;
+		
+		switch (appOptions.getScope()) {
+		case AppOptions::Workspace:
+			if (siaLib.validate(config.getShadowPath(), config.getWorkspacePath(), config.getHomePath(), SIALib::Workspace, appOptions.repair()) == false) {
+				return false;
+			}
+
+		case AppOptions::Shadow:			//* Show
+			if (siaLib.validate(config.getShadowPath(), config.getWorkspacePath(), config.getHomePath(), SIALib::Shadow, appOptions.repair()) == false) {
+				return false;
+			}
+		default:
+			if (siaLib.validate(config.getShadowPath(), config.getWorkspacePath(), config.getHomePath(), SIALib::Both, appOptions.repair()) == false) {
+				return false;
+			}
 		}
-		*/
-		if (integrityManager.validate() == false) {
-			return false;
-		}
+		
 		break;
 	}
 	
@@ -208,9 +216,9 @@ bool failed()
 	return(false);
 }
 
-bool App::CreateArchive(const char *archivePath, const char *workspacePath, const char *shadowPath) {
+bool App::CreateArchive(const char *archivePath, const char *workspacePath, const char *shadowPath, bool users) {
 
-	if (CreateArchive::createHomeEnvVar(archivePath) == false) {
+	if (CreateArchive::createHomeEnvVar(archivePath, users) == false) {
 		std::cout << "Failed creating enviroment variable SIA_HOME" << '\n';
 		return false;
 	}

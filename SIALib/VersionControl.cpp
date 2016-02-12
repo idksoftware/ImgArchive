@@ -103,7 +103,7 @@ bool VersionControl::checkout(const char *filepath, const char *comment) {
 
 	// Lock the lock file
 	if ((ImageLock::lock(lockpath.c_str())) == false) {
-		logger.log(CLogger::INFO, "Cannot lock Image: \"%s\"", imagePath.getImageName().c_str());
+		logger.log(LOG_OK, CLogger::INFO, "Cannot lock Image: \"%s\"", imagePath.getImageName().c_str());
 		return false;
 	}
 
@@ -113,6 +113,8 @@ bool VersionControl::checkout(const char *filepath, const char *comment) {
 	int idx = version.getVersion();
 	//version.CopyDataVersion2Old();
 	setHistory(hstpath.c_str(), filepath, comment, HistoryEvent::CHECKOUT, idx);
+	ImageHistory &imageHistory = ImageHistory::getImageHistory();
+	imageHistory.add(filepath, idx, comment, HistoryEvent::CHECKOUT);
 	return true;
 }
 
@@ -170,7 +172,8 @@ bool VersionControl::checkin(const char *filepath, const char *comment) {
 	// use the above for a log message
 	int idx = version.getVersion();
 	setHistory(hstpath.c_str(), filepath, comment, HistoryEvent::CHECKIN, idx);
-
+	ImageHistory &imageHistory = ImageHistory::getImageHistory();
+	imageHistory.add(filepath, idx, comment, HistoryEvent::CHECKIN);
 
 	// use the above for a log message
 	return true;
@@ -197,6 +200,8 @@ bool VersionControl::uncheckout(const char *filepath, const char *comment) {
 		// log error
 	}
 	setHistory(hstpath.c_str(), filepath, comment, HistoryEvent::UNCHECKOUT, idx);
+	ImageHistory &imageHistory = ImageHistory::getImageHistory();
+	imageHistory.add(filepath, idx, comment, HistoryEvent::UNCHECKOUT);
 
 	// use the above for a log message
 	return true;
@@ -240,10 +245,10 @@ bool VersionControl::uncheckout(const char *imagePath,const char *targetPath, in
 
 
 bool VersionControl::setHistory(const char *hstpath, const char *filepath, const char *comment, HistoryEvent evt, int idx) {
-	ImageHistory imageHistory(hstpath);
+	//ImageHistory imageHistory(hstpath);
 	std::string idxStr = versonString(idx);
-	imageHistory.add(filepath, idxStr.c_str(), comment, HistoryEvent::UNCHECKOUT);
-	History &history = History::getHistory();
+	//imageHistory.add(filepath, idxStr.c_str(), comment, HistoryEvent::UNCHECKOUT);
+	History &history = History::getHistory(filepath);
 	HistoryEvent he(HistoryEvent::CHECKIN);
 
 	history.add(filepath, idxStr.c_str(), comment, he);
@@ -280,6 +285,7 @@ bool VersionControl::getPathAndFilename(const char *filepath, std::string &filen
 	return true;
 }
 
+/*
 std::auto_ptr<ImageHistoryLog>  VersionControl::getHistory(const char *filepath) {
 	std::string fullPath = m_pathToArchive + "/" + filepath;
 	std::string filename;
@@ -291,5 +297,6 @@ std::auto_ptr<ImageHistoryLog>  VersionControl::getHistory(const char *filepath)
 	ImageHistory imageHistory(hstpath.c_str());
 	return imageHistory.get();
 }
+*/
 
 } /* namespace simplearchive */

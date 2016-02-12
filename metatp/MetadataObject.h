@@ -176,6 +176,19 @@ public:
 	virtual ~MetadataObject();
 
 	//static const char *TableLookup(const char *columnName) const ;
+	
+	void update(const MetadataObject& mo) {
+		
+		if (getHeight().compare("null") == 0) {
+			setHeight(mo.getHeight());
+		}
+		if (getWidth().compare("null") == 0) {
+			setWidth(mo.getWidth());
+		}
+		
+	}
+
+
 
 	const std::string getAperture() const {
 		return columnAt(MD_APERTURE_IDX).toString();

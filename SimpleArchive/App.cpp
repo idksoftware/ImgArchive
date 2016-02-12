@@ -67,7 +67,7 @@ using namespace std;
 #include <string>
 #include <vector>
 #include "AppOptions.h"
-#include "TerminalServer.h"
+#include "Threads.h"
 
 #define VERSION	"1.00"
 #define BUILD	"040115.1749"
@@ -88,20 +88,7 @@ static char THIS_FILE[] = __FILE__;
 
 namespace simplearchive {
 
-int startTerminal()
-{
-	CTerminalServer l_Server;
-	if (!l_Server.Init())
-	{
-		return -1;
-	}
-	if (!l_Server.Run())
-	{
-		return -1;
-	}
 
-	return 0;
-}
 
 
 int test(const std::string key) {
@@ -128,31 +115,53 @@ bool App::initalise(int argc, char **argv) {
 
 bool App::Run()
 {
+	AppOptions &appOptions = AppOptions::get();
+	CAppConfig &config = CAppConfig::get();
 
 	SIALib siaLib;
+	// Set global options
+	if (appOptions.isEnventsOn() == true) {
+
+		siaLib.enableEvents(appOptions.eventAddress(), appOptions.eventPort());
+	}
+
+	if (appOptions.isServerOn() == true) {
+
+		siaLib.enableServer(appOptions.eventPort());
+	}
+
 	if (siaLib.initalise() < 0) {
 		return false;
 	}
 
-	
-	AppOptions &appOptions = AppOptions::get();
-	CAppConfig &config = CAppConfig::get();
-	
 	switch (appOptions.getCommandMode()) {
 
+		// run sub-comand
 	case AppOptions::CM_Import:
+
+		if (appOptions.isDataForced() == true) {
+			siaLib.setForceDate();
+		}
+		if (appOptions.getUseFileDate() == true) {
+			siaLib.setUseFileDate();
+		}
+		else if (appOptions.getUseDateToday() == true) {
+			siaLib.setUseDateToday();
+		}
+		
 		if (appOptions.isUsingFile()) {
 			siaLib.ImportFile(appOptions.getFilePath());
 		}
 		else {
-			siaLib.Import();
+			if (siaLib.Import() == false) {
+				return false;
+			}
 		}
 		break;
 	case AppOptions::CM_Export:
 		if (siaLib.exportImage(appOptions.getImageAddress()) == false) {
 			return false;
 		}
-		break;
 		break;
 	case AppOptions::CM_Show:
 		switch (appOptions.getShowCommandOption()) {
@@ -213,7 +222,14 @@ bool App::Run()
 	//m_ArchiveBuilder.checkout("/2014/2014-6-3/_DSC0001.jpg", "Some changes");
 	//m_ArchiveBuilder.checkin("/2014/2014-6-3/GB-wp6.jpg", "Some changes");
 	siaLib.complete();
-	
+	/*
+	int i = 0;
+	while (i < 1000) {
+		SIASleep(500);
+		printf("waiting\n");
+		i++;
+	}
+	*/
 	return true;
 }
 
@@ -243,6 +259,7 @@ bool failed()
  *
  */
 
+
 int main(int argc, char **argv)
 {
 	simplearchive::App app;
@@ -250,7 +267,8 @@ int main(int argc, char **argv)
 		return false;
 	}
 	if (app.Run() == false) {
-		return 0;
+		int code = simplearchive::SIALib::getLastCode();
+		return code;
 	}
 	
 	return 1;

@@ -74,6 +74,7 @@ ArchiveRepository::~ArchiveRepository() {
 	// TODO Auto-generated destructor stub
 }
 
+/*
 bool ArchiveRepository::Import(ImageGroup &imageGroup) {
 	//ImageGroup imageGroup
 	for (std::vector<ImageContainer *>::iterator i = imageGroup.begin(); i != imageGroup.end(); i++) {
@@ -85,6 +86,7 @@ bool ArchiveRepository::Import(ImageGroup &imageGroup) {
 	}
 	return true;
 }
+*/
 // filepath is the relative path from the archive root
 bool ArchiveRepository::checkout(const char *filepath, const char *comment) {
 	// Path to root of Archive
@@ -116,14 +118,14 @@ bool ArchiveRepository::checkout(const char *filepath, const char *comment) {
 
 	// create the image history object for the image
 	//
-	ImageHistory imageHistory(imageHistoryPath.c_str());
+	ImageHistory& imageHistory = ImageHistory::getImageHistory();
 	// Add the comment
 	CVersion version(fullPath.c_str());
 	int idx = version.getVersion();
 	version.CopyDataVersion2Old();
 	char buff[128];
 	sprintf_s(buff, 128, "%.4d", idx);
-	History &history = History::getHistory();
+	History &history = History::getHistory(filepath);
 	HistoryEvent he(HistoryEvent::CHECKOUT);
 	history.add(filepath, buff, comment, he);
 	imageHistory.add(filepath, buff, comment, he);
@@ -161,12 +163,12 @@ bool ArchiveRepository::checkin(const char *filepath, const char *comment) {
 	// use the above for a log message
 	int idx = version.getVersion();
 	sprintf_s(buff, 128, "%.4d", idx);
-	ImageHistory imageHistory(hstpath.c_str());
+//ImageHistory imageHistory(hstpath.c_str());
 
-	History &history = History::getHistory();
+	History &history = History::getHistory(filepath);
 	HistoryEvent he(HistoryEvent::CHECKIN);
 	history.add(filepath, buff, comment, he);
-	imageHistory.add(filepath, buff, comment, he);
+//	imageHistory.add(filepath, buff, comment, he);
 
 	// use the above for a log message
 	return true;
@@ -200,11 +202,11 @@ bool ArchiveRepository::uncheckout(const char *filepath, const char *comment) {
 		// log error
 	}
 	sprintf_s(buff, 128, "%.4d", idx);
-	ImageHistory imageHistory(hstpath.c_str());
+	//ImageHistory imageHistory(hstpath.c_str());
 	const HistoryEvent he(HistoryEvent::UNCHECKOUT);
 	//imageHistory.add(filepath, buff, comment, he);
-	History &history = History::getHistory();
-	imageHistory.add(filepath, buff, comment, he);
+	History &history = History::getHistory(filepath);
+	//imageHistory.add(filepath, buff, comment, he);
 	history.add(filepath, buff, comment, he);
 
 
@@ -214,7 +216,7 @@ bool ArchiveRepository::uncheckout(const char *filepath, const char *comment) {
 
 }
 
-
+#ifdef XXXXXXXXXXXXXXXXXXX
 bool ArchiveRepository::Import(ImageContainer *imageContainer) {
 
 	CSVDatabase &csvDB = CSVDatabase::get();
@@ -223,18 +225,18 @@ bool ArchiveRepository::Import(ImageContainer *imageContainer) {
 	CLogger &logger = CLogger::getLogger();
 	
 	
-	logger.log(CLogger::SUMMARY, "Archiving images: \"%s\"", imageContainer->getName().c_str());
+	logger.log(LOG_OK, CLogger::SUMMARY, "Archiving images: \"%s\"", imageContainer->getName().c_str());
 	// Archive image path
 	std::string imageRootPath = imageContainer->getPath();
-	logger.log(CLogger::INFO, "Image(s) source path: \"%s\"", imageRootPath.c_str());
+	logger.log(LOG_OK, CLogger::INFO, "Image(s) source path: \"%s\"", imageRootPath.c_str());
 	imageContainer->setImageRootPath(imagePath.getRelativePath());
 	if (imageContainer->hasPictureFile()) {
-		logger.log(CLogger::INFO, "Picture image: \"%s\"", imageContainer->getPictureFile());
+		logger.log(LOG_OK, CLogger::INFO, "Picture image: \"%s\"", imageContainer->getPictureFile());
 	
 	}
 
 	if (imageContainer->hasRawFile()) {
-		logger.log(CLogger::INFO, "Raw image: \"%s\"", imageContainer->getRawFile());
+		logger.log(LOG_OK, CLogger::INFO, "Raw image: \"%s\"", imageContainer->getRawFile());
 		imagePath.setImageName(imageContainer->getRawFile());
 		std::string tmpImagePath = imagePath.getYyyymmddStr() + "/" + imageContainer->getRawFile();
 		const MetadataObject *rawMetadata = imageContainer->getRawMetadata();
@@ -249,7 +251,7 @@ bool ArchiveRepository::Import(ImageContainer *imageContainer) {
 		//	return false;
 		//}
 		
-		logger.log(CLogger::INFO, "Raw image added: \"%s\"", imageContainer->getRawFile());
+		logger.log(LOG_OK, CLogger::INFO, "Raw image added: \"%s\"", imageContainer->getRawFile());
 		std::string filepath = imagePath.getRelativePath() + '/' + imageContainer->getRawFile();
 		const HistoryEvent he(HistoryEvent::ADDED);
 		processHistory(imagePath, filepath.c_str(), imageContainer->getComment().c_str(), he, 0);
@@ -258,6 +260,8 @@ bool ArchiveRepository::Import(ImageContainer *imageContainer) {
 	return true;
 }
 
+
+// This is a dup od the one in ArchiveBuilder and needs removing
 bool ArchiveRepository::processHistory(ImagePath &imagePath, const char *filepath, const char *comment, const HistoryEvent &he, int ver) {
 
 	
@@ -298,7 +302,7 @@ bool ArchiveRepository::processHistory(ImagePath &imagePath, const char *filepat
 
 	return true;
 }
-
+#endif
 
 ArchiveRepository &ArchiveRepository::get() {
 	if (m_This == 0) {

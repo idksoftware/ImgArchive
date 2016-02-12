@@ -73,17 +73,17 @@ ExifObject *ImageFileReader::externalExifTool(std::string &path) {
 
 	const char *externalCommandLine;
 	if (!(externalCommandLine = config.getExternalCommandLine())) {
-		//logger.log(CLogger::ERROR, "Exif command line not found\n");
+		//logger.log(LOG_OK, CLogger::ERROR, "Exif command line not found\n");
 		
 		return nullptr;
 	}
 	const char *exifMapPath;
 	if (!(exifMapPath = config.getExifMapPath())) {
-		//logger.log(CLogger::ERROR, "Exif map path not found");
+		//logger.log(LOG_OK, CLogger::ERROR, "Exif map path not found");
 		
 		return nullptr;
 	}
-	logger.log(CLogger::FINE, "Raw exif command line found \"%s\"", externalCommandLine);
+	logger.log(LOG_OK, CLogger::FINE, "Raw exif command line found \"%s\"", externalCommandLine);
 	if (!externalComand.init(externalCommandLine, exifMapPath)) {
 		
 		return nullptr;

@@ -36,6 +36,7 @@
 #define CSVDBFILE_H_
 #include <string>
 #include <memory>
+#include <vector>
 #include "ExifDate.h"
 
 
@@ -77,21 +78,27 @@ public:
 	int getVersion() const;
 };
 
+
+class MirrorIdxDB;
 class CSVDBFile {
 	std::string m_dbpath;
+	std::unique_ptr<MirrorIdxDB> m_mirrorIdxDB;
 	unsigned int m_data[3];
 	int getMaxDirIndex(std::string &path);
+	bool insert(int idx, const char *imagePath, const char *name, unsigned long size, unsigned long crc,
+		const char *md5, const char *uuid, int version, ExifDate &date, const char*rootPath);
 public:
 	CSVDBFile(const char *path);
 	virtual ~CSVDBFile();
 	bool insert(int idx, const char *imagePath, const char *name, unsigned long size, unsigned long crc,
 						const char *md5, const char *uuid, int version, ExifDate &date);
+	bool backupPaths(const char *path);
 	const char* findPath(unsigned int idx);
 	unsigned long findSize(unsigned int idx);
 	int getNextIndex();
 	int getNextIndex(int current);
 	int getMaxIndex();
-	std::unique_ptr<ImageInfo> getItemAt(int idx);
+	const std::unique_ptr<ImageInfo> getItemAt(int idx);
 	static std::string getYear(const char *path);
 };
 

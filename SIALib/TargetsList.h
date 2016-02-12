@@ -126,7 +126,16 @@ namespace simplearchive {
 				data->print();
 			}
 		}
+		ImageSet *find(const char *folder) {
 
+			for (std::vector<ImageSet *>::iterator i = this->begin(); i != this->end(); i++) {
+				ImageSet *data = *i;
+				if (strcmp(data->getPath(), folder) == 0) {
+					return data;
+				}
+			}
+			return nullptr;
+		}
 		void processHook() {
 
 			for (std::vector<ImageSet *>::iterator i = this->begin(); i != this->end(); i++) {

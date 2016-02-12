@@ -42,6 +42,7 @@
 #include "SAUtils.h"
 #include "CSVDBFile.h"
 #include "CSVArgs.h"
+#include "ArchivePath.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -72,18 +73,7 @@ ImageInfo::~ImageInfo() {
 	//printf("ImageInfo deleted\n");
 }
 
-std::string CSVDBFile::getYear(const char *path) {
-	std::string fpath = path;
-	return fpath.substr(0, 4);
-}
 
-CSVDBFile::CSVDBFile(const char *path) {
-	m_dbpath = path;
-}
-
-CSVDBFile::~CSVDBFile() {
-
-}
 
 class IdxFileItem {
 	int m_idx;
@@ -220,22 +210,59 @@ public:
 
 };
 
+class MirrorIdxDB {
+	std::string m_path;
+	std::string m_primary;
+	std::string m_backup1;
+	std::string m_backup2;
+	std::string m_shadow;
+	std::string makeFolders(std::string &pasePath, unsigned int idx);
+
+public:
+	MirrorIdxDB(const char *rootPath);
+	~MirrorIdxDB() {};
+	bool process(unsigned int idx);
+};
+
+std::string CSVDBFile::getYear(const char *path) {
+	std::string fpath = path;
+	return fpath.substr(0, 4);
+}
+
+CSVDBFile::CSVDBFile(const char *path) {
+	m_dbpath = path;
+	m_mirrorIdxDB.reset(new MirrorIdxDB(path));
+}
+
+CSVDBFile::~CSVDBFile() {
+
+}
 bool CSVDBFile::insert(int idx, const char *imagePath, const char *name, unsigned long size, unsigned long crc,
-		const char *md5, const char *uuid, int version, ExifDate &date) {
+	const char *md5, const char *uuid, int version, ExifDate &date) {
+
+	if (insert(idx, imagePath, name, size, crc, md5, uuid, version, date, m_dbpath.c_str()) == false) {
+		return false;
+	}
+	
+	return true;
+}
+
+bool CSVDBFile::insert(int idx, const char *imagePath, const char *name, unsigned long size, unsigned long crc,
+		const char *md5, const char *uuid, int version, ExifDate &date, const char*rootPath) {
 
 	char tmppath[10];
 	//unsigned int idx = indx - 1;
 	m_data[0] = (unsigned int)idx & 0xFF;
 	m_data[1] = (unsigned int)(idx >> 8) & 0xFFF;
 	m_data[2] = (unsigned int)(idx >> (12 + 8)) & 0xFFF;
-
-	if (SAUtils::DirExists(m_dbpath.c_str()) == false) {
+	std::string dbpath = rootPath;
+	if (SAUtils::DirExists(dbpath.c_str()) == false) {
 		return false;
 	}
 	//printf("%x: %x %x %x\n",idx,  m_data[2], m_data[1], m_data[0]);
 
 	sprintf_s(tmppath, 10, "%.3x", m_data[2]);
-	std::string path = m_dbpath + '/' + tmppath;
+	std::string path = dbpath + '/' + tmppath;
 	//printf("%s\n",path.c_str());
 	if (SAUtils::DirExists(path.c_str()) == false) {
 		if (SAUtils::mkDir(path.c_str()) == false) {
@@ -264,6 +291,9 @@ bool CSVDBFile::insert(int idx, const char *imagePath, const char *name, unsigne
 	}
 	if (idxFile.write(path.c_str()) == false) {
 		throw std::exception();
+	}
+	if (m_mirrorIdxDB->process(idx) == false) {
+		return false;
 	}
 	return true;
 }
@@ -301,7 +331,8 @@ int CSVDBFile::getMaxIndex() {
 	IdxFile idxFile;
 	//printf("%s\n",path.c_str());
 	if (idxFile.read(path.c_str()) == false) {
-		last = -1;
+		// first one
+		last = 0;
 	} else {
 		last = idxFile.findLast();
 	}
@@ -340,7 +371,7 @@ int CSVDBFile::getNextIndex(int current) {
 	IdxFile idxFile;
 	//printf("%s\n",path.c_str());
 	if (idxFile.read(path.c_str()) == false) {
-		last = -1;
+		last = 0;
 	} else {
 		last = idxFile.findLast();
 	}
@@ -373,8 +404,8 @@ int CSVDBFile::getMaxDirIndex(std::string &path) {
 	return max;
 }
 
-std::unique_ptr<ImageInfo> CSVDBFile::getItemAt(int idx) {
-	char tmppath[10];
+const std::unique_ptr<ImageInfo> CSVDBFile::getItemAt(int idx) {
+	char tmppath[20];
 
 	m_data[0] = (unsigned int)idx & 0xFF;
 	m_data[1] = (unsigned int)(idx >> 8) & 0xFFF;
@@ -385,13 +416,13 @@ std::unique_ptr<ImageInfo> CSVDBFile::getItemAt(int idx) {
 	}
 	//printf("%x: %x %x %x\n",idx,  m_data[2], m_data[1], m_data[0]);
 
-	sprintf_s(tmppath, 10, "%.3x", m_data[2]);
+	sprintf_s(tmppath, 20, "%.3x", m_data[2]);
 	std::string path = m_dbpath + '/' + tmppath;
 	//printf("%s\n",path.c_str());
 	if (SAUtils::DirExists(path.c_str()) == false) {
 		throw std::exception();
 	}
-	sprintf_s(tmppath, 10, "%.3x.csv", m_data[1]);
+	sprintf_s(tmppath, 20, "%.3x.csv", m_data[1]);
 	path = path + '/' + tmppath;
 	IdxFile idxFile;
 	//printf("%s\n",path.c_str());
@@ -490,6 +521,76 @@ const char* CSVDBFile::findPath(unsigned int idx) {
 	return 0;
 }
 
+MirrorIdxDB::MirrorIdxDB(const char *rootPath) {
+	m_path = rootPath;
+
+	if (ArchivePath::isShadowEnabled() == true) {
+		m_shadow = ArchivePath::getShadow().getIdxDBPath();
+	}
+	if (ArchivePath::isBackup1Enabled() == true) {
+		m_backup1 = ArchivePath::getBackup1().getIdxDBPath();
+
+	}
+	if (ArchivePath::isBackup2Enabled() == true) {
+		m_backup2 = ArchivePath::getBackup2().getIdxDBPath();;
+	}
+
+}
+
+std::string MirrorIdxDB::makeFolders(std::string &basePath, unsigned int idx) {
+	char tmppath[10];
+	unsigned int data[3];
+	data[0] = (unsigned int)idx & 0xFF;
+	data[1] = (unsigned int)(idx >> 8) & 0xFFF;
+	data[2] = (unsigned int)(idx >> (12 + 8)) & 0xFFF;
+	std::string dbpath = basePath;
+	if (SAUtils::DirExists(dbpath.c_str()) == false) {
+		return false;
+	}
+	//printf("%x: %x %x %x\n",idx,  m_data[2], m_data[1], m_data[0]);
+
+	sprintf_s(tmppath, 10, "%.3x", data[2]);
+	std::string path = dbpath + '/' + tmppath;
+	//printf("%s\n",path.c_str());
+	if (SAUtils::DirExists(path.c_str()) == false) {
+		if (SAUtils::mkDir(path.c_str()) == false) {
+			throw std::exception();
+		}
+	}
+	sprintf_s(tmppath, 10, "%.3x.csv", data[1]);
+	path = path + '/' + tmppath;
+	
+	return path;
+}
+bool MirrorIdxDB::process(unsigned int idx) {
+
+	std::string source = makeFolders(m_path, idx);
+	/*
+	if (ArchivePath::isShadowEnabled() == true) {
+		std::string fullPath = makeFolders(m_shadow, idx);
+		if (SAUtils::copy(source.c_str(), fullPath.c_str()) == false) {
+			return false;
+		}
+	}
+	*/
+	if (ArchivePath::isBackup1Enabled() == true) {
+		std::string fullPath = makeFolders(m_backup1, idx);
+		if (SAUtils::copy(source.c_str(), fullPath.c_str()) == false) {
+			return false;
+		}
+	}
+	if (ArchivePath::isBackup2Enabled() == true) {
+		std::string fullPath = makeFolders(m_backup2, idx);
+		if (SAUtils::copy(source.c_str(), fullPath.c_str()) == false) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+/********************************/
+
 bool IdxFile::read(const char *datafile) {
 	char text[2 * 1012];
 	m_last = -1;
@@ -514,6 +615,7 @@ bool IdxFile::read(const char *datafile) {
 	file.close();
 	return true;
 }
+
 bool IdxFile::write(const char *datafile) {
 	std::ofstream file(datafile);
 	if (file.is_open() == false) {

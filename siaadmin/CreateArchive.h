@@ -81,7 +81,7 @@ public:
 	/**
 	/* @brief Creates the enviroment variable SIA_HOME the the path given.
 	*/
-	static bool createHomeEnvVar(const char *root);
+	static bool createHomeEnvVar(const char *root, bool users);
 };
 
 } /* namespace simplearchive */
