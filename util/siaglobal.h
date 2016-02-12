@@ -25,37 +25,37 @@
 **
 ****************************************************
 **
-**	Filename	: CRegString.cpp
-**	Author		: I.Ferguson
-**	Version		: 1.000
-**	Date		: 26-05-2015
+**	@File		siaglobal.h
+**	@Author		I.Ferguson
+**	@Version	1.000
+**	@Date		26-05-2015
 **
 ** #$$@@$$# */
 
-#ifndef READCONFIG_H_
-#define READCONFIG_H_
+#pragma once
 
-/*
-#include <xercesc/dom/DOMImplementation.hpp>
-#include <xercesc/dom/DOM.hpp>
-#include <xercesc/dom/DOMNode.hpp>
-#include "DOMNode.hpp"
-*/
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
 
-namespace simplearchive {
+#ifdef _DEBUG
+#ifndef DEBUG_NEW
+#define DEBUG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
+#define new DEBUG_NEW
+#endif
+#endif  // _DEBUG
 
-class ReadConfig {
-private:
-	//DOMImplementation* m_impl;
-	//DOMLSParser*       m_parser;
-	//DOMDocument*       m_doc;
-	//DOMNode*           m_element;
+#define LOG_OK					0
+#define LOG_DUPLICATE			10
+#define LOG_INVALID_FILE_TYPE	11
+#define LOG_WORKSPACE_NOT_FOUND	12
 
+#define LOG_STARTING			30
+#define LOG_ANALISING			31
+#define LOG_IMPORTING			32
 
-public:
-	ReadConfig();
-	virtual ~ReadConfig();
-};
+#define LOG_IMAGE_SUMMARY		101
+#define LOG_FOLDER_SUMMARY		102
+#define LOG_CURRENT_IMAGE		103
+#define LOG_IMAGE_NAME			104
 
-} /* namespace simplearchive */
-#endif /* READCONFIG_H_ */
