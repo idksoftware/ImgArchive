@@ -3,11 +3,11 @@ Wherever the images are sourced from will constitute an image set to be imported
 This set is then documented in a journal file which is the used to manage the imports progress and confirm the import concluded successfully, Called an import job.
 A number of import jobs can be put into a import job queue; like a printer job queue. Each job is run in turn to completion or can be canceled, what ever the case the Journal file will verify which images were imported or not. If the image was not imported the reason will be entered in the Journal.
 Each import job will have a unique job number
-
+## The SIA Uploader application ##
 SIA uploader runs as an icon normally on the right side of the task bar, by right clicking on this will open a menu giving access to the uploaders functionality.
-## Direct Import ##
+### Direct Import ###
 This menu item allows you to select the folder containing images for importing directly. On selecting this option the Direct Import dialog will open allowing you to browse the computers file system for the folder containing images. On clicking the "Ok" button will enter the import as a new import job in the job queue.
-Flash import
-This menu item allows you to select a removable flash drive; normally a camera flash drive. On   
+### Flash import ###
+This menu item allows you to select a removable flash drive; normally a camera flash drive. On selecting this option the Flash Drive Import dialog will open. This will list the removable flash drives available on your computer. On selecting on a drive from the list and clicking "Ok" will create a new import job put the job in the queue.     
 
 The import progress dialog shows the progress of an import job
