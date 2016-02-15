@@ -76,7 +76,7 @@ namespace simplearchive {
 		};
 
 		virtual bool onFile(const char *path) {
-			m_fileCount++;
+			
 			CLogger &logger = CLogger::getLogger();
 			logger.log(LOG_OK, CLogger::INFO, "Reading file: %s", path);
 			ImageExtentions& ie = ImageExtentions::get();
@@ -86,6 +86,7 @@ namespace simplearchive {
 				logger.log(LOG_OK, CLogger::WARNING, "Not a valid file type \"%s\" rejecting ", filename.c_str());
 				return true;
 			}
+			m_fileCount++;
 			m_imageSet->insert(m_imageSet->end(), new ImageItem(path));
 			return true;
 		};

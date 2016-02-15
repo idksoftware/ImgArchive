@@ -46,9 +46,6 @@ static char THIS_FILE[] = __FILE__;
 
 namespace simplearchive {
 
-
-
-
 std::string MirrorManager::m_rootFolder;
 std::string MirrorManager::m_configFile;
 

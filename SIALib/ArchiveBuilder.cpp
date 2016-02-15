@@ -446,7 +446,7 @@ namespace simplearchive {
 				SIAApplicationState::RunState state = SIAApplicationState::getState();
 				ImageItem *imageItem = *i;
 				importJournal.setCurrent(imageItem->getPath());
-				logger.log(LOG_CURRENT_IMAGE, CLogger::SUMMARY, "%d image\n", importJournal.getCurrentImageIndex());
+				logger.log(LOG_CURRENT_IMAGE, CLogger::SUMMARY, "%d image\n", importJournal.getCurrentImageIndex()+1);
 				logger.log(LOG_IMAGE_NAME, CLogger::SUMMARY, "%s", imageItem->getFilename().c_str());
 				logger.log(LOG_OK, CLogger::SUMMARY, "Processing Image file: %s", imageItem->getFilename().c_str());
 				ExifObject *exifObject = nullptr;
