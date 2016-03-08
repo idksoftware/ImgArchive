@@ -288,5 +288,10 @@
 #define DB_VIEWROTATION    "ViewRotation"
 #define DB_WIDTH           "Width"
 #define	DB_KEYWORDS		   "Keywords"
-
+#define	DB_Tags			   "Tags"
+/*
+keywords are used to find things via search engines; tags are used to find things within your own Archive.
+So, you would use keywords to help label your article so when people search on Google, they hopefully use
+the words in your archive(or in your archive keyword Metadata).
+*/
 #endif /* DBDEFINES_H_ */
