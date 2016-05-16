@@ -1,0 +1,2 @@
+#Overview
+The Image archive provides an organised place to store digital images for safe keeping, editing and viewing. SIA is a full featured Digital Image archive system with version control following the Digital Asset Management (DAM) design goals. At its core SIA uses the base Operating Systems file system in order to store image in an organised file structure. Metadata associated with each image is also stored in an organised file structure with addition of an optional SQLite database.    
