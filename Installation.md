@@ -20,3 +20,9 @@ SIA will search these two paths looking for the SIA installed files. SIAHOME may
 SIAHOME=”c:\ProgramData\IDK Software\sia1.1”
 Or can be left blank.
 The standard location for windows binaries is C:\Program Files
+Apple Mac
+Under the Apple Mac SIA can be installed using Apple Install package sia.pic. This will install SIA into the default locations. 
+Linux
+Under the Apple Mac SIA can be installed using Apple Install package sia.pic. This will install SIA into the default locations
+ 
+
