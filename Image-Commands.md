@@ -2,7 +2,7 @@
 Its functions are offered via a collection of task specific commands most of which accept a number of options to tailor its behaviour to individual requirements.  
 SIA command line arguments are organised into two major command sets, within these are the task specific commands. These are as follows:
 
-1. add - add new images to the archive
+1. add - add new images to the archive.
 2. checkout - Checkout images from archive.
 3. checkin - Checkin images to archive.
 4. uncheckout - Un-checkout images to archive.
