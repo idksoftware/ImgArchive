@@ -1,10 +1,17 @@
 #Add Images (--add)
 This is how images are placed in the archive repository. 
-In order to add images to the archive two important pieces of information needs to be known, the first being the source folder of the imported images and second the archive the importing images are to be imported in too. This information is obligatory. However these values can be defaulted using environment variables or placed in the main configuration file. In addition, these are defaulted. If source folder can be found in the configuration will use the current directory and archive folder cannot be found in the configuration will use the platform default. See platform defaults.  
+In order to add images to the archive two important pieces of information needs to be known, the first being the source folder of the imported images and second the archive the importing images are to be imported in too. This information is obligatory. However these values can be defaulted using environment variables or placed in the main configuration file.
+
+In addition, these are defaulted, meaning, If source folder cannot be found in the configuration file the archive will use the current directory, If archive folder cannot be found in the configuration file will use the platform default. See platform defaults.  
+
 The command line options are as follows:
+
 --archive-folder	The archive this command will used to added the images.
+
 --source-folder	The folder the images will be taken from to be placed in the archive
+
 --current-path 	Use the current path to take the images
+
 -–quiet	No output to the terminal
 -–verbose	All information to the terminal
 -–logging-level	Sets the logging level of detail that will be places in the log file.
