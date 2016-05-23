@@ -1,6 +1,6 @@
 #Digital Asset management Overview
 
-Can you find your digital images when you need them, or do you spent more time looking through endless folders on your hard drive? This can be even worse if you spent hours editing the image in Photoshop but can’t find the latest version. The Image archive provides an organised place to store digital images for safe keeping, editing and viewing. SIA is a full featured Digital Image archive system with version control following the Digital Asset Management (DAM) design goals. 
+Can you find your digital images when you need them, or do you spent more time looking through endless folders on your hard drive? This can be even worse if you spent hours editing the image in Photoshop but can’t find the latest version. The Image archive provides an organised place to store digital images for safe keeping, editing and viewing. SIA is a full featured Digital Image archive system with version control following the Digital Asset Management (DAM) design goals. These are not hard and fast rules but common sense rules to manage your digital assets in a meaningful constructive way, most of which are standard practice in IT. These rules are described as follows, as well as how SIA can support the implementation of these rules:
 
 ## 1. Do No Harm
 
@@ -18,7 +18,7 @@ Digital images fractions of a second to make and fractions of a second to destro
 
 ## 3. Back Up Supporting Documents
 
-As part of the DAM process is to create metadata on you images 
+As part of the DAM process is to create metadata on you images. Metadata is the descriptive information about your images files (data about your data). Digital asset management systems rely heavily on metadata, as it’s critical for searching, retrieving and managing your rich media assets. This is because the archive needs to know as many aspects about an image in order to find an image or set of images from a search criteria. For example just looking at an image will not allow the system to associate the image with the Walkers wedding. However tagging the Walkers wedding photos with Walkers-wedding will. 
 
 At its core SIA uses the base Operating Systems file system in order to store image in an organised file structure. Metadata associated with each image is also stored in an organised file structure with addition of an optional SQLite database. 
 
