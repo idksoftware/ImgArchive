@@ -30,10 +30,9 @@ Luckily SIA contains the ability to maintain two online backups. This may take s
 
 ### Long term archival storage of the Archive  
 One way of safe guarding the archive is to periodically update an archival copy of the archive using Blu-ray. One of the major benefits of Blu-ray as a data archiving solution is the format's durability. Traditional hard disk drives are prone to hardware failure as their components inevitably diminish over time. Blu-ray discs, meanwhile, are much sturdier, ensuring that this information will be available for years to come. If you use Archival quality Blu-ray disks then some manufactures specify a 100 year life of the disk.
-SIA makes burning Blu-ray easy, given the size of the Bly-ray you are using SIA will create a set of volumes. each 
+SIA makes burning Blu-ray easy, given the size of the Bly-ray you are using SIA will create a set of volumes. each no larger in size than the maximum size of your Bly-ray disks. Each volume will have a number this is its volume set number,
+on recovering the archive the volumes will be read back in the same order to recreate the archive. 
 
 ## 5. Regularly Check and Update Your Archive
 
-Looking in your file directory and seeing an organized list of all of your image files is such a reassuring vision, but don’t be fooled. Just because the image file shows up in your file directory does not mean that the file is usable. The file could be corrupted or it could be in an out-dated format. The storage medium could also be corrupt, damaged, or out-dated.
-
-It’s a pretty safe bet that you’ll be able to open your files without proprietary software in years to come if you save your RAW files as .DNGs and your finished working files as .TIFFs (with layers where necessary), but that doesn’t preclude other problems with the files or storage media. Establish a process for validating your files and verifying the integrity of your storage media. (There’s much to learn about data validation; we’ll be publishing an article dealing with that in this series.)
+The way most archives are used, images within them may only be accessed infrequently but does not diminish the importance of the image, you expect the image to be accessible and intact. Looking in your file directory and seeing an organized list of all of your image files may be reassuring, but don’t be fooled. Just because the image file shows up in your file directory does not mean that the file is usable. The file could be corrupted or the storage medium could also be corrupt or damaged. 
