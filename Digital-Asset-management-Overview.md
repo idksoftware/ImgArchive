@@ -29,8 +29,8 @@ An archive is the place where one copy of each version of an image are stored. T
 Luckily SIA contains the ability to maintain two online backups. This may take space on a second and possibly a third hard drive but the cost of hard is small compared to the lost of the archive. One possible way of using the two online backups is to have one backup on a second drive and one backup going to a USB hard drive this can be taken of the system a night and taken off-site, or better have a number of USB hard drives and plug a different one in each day. SIA will update the missing data from the last time it was attached so by rotating USB hard drives you will have two up-to-date backups and plus a set of almost up-to-date backups. 
 
 ### Long term archival storage of the Archive  
-One way of safe guarding the archive is to periodically update an archival copy of the archive using Blu-ray   
-One of the major benefits of Blu-ray as a data archiving solution is the format's durability. Traditional hard disk drives are prone to hardware failure as their components inevitably diminish over time. Blu-ray discs, meanwhile, are much sturdier, ensuring that this information will be available for years to come.
+One way of safe guarding the archive is to periodically update an archival copy of the archive using Blu-ray. One of the major benefits of Blu-ray as a data archiving solution is the format's durability. Traditional hard disk drives are prone to hardware failure as their components inevitably diminish over time. Blu-ray discs, meanwhile, are much sturdier, ensuring that this information will be available for years to come. If you use Archival quality Blu-ray disks then some manufactures specify a 100 year life of the disk.
+SIA makes burning Blu-ray easy, given the size of the Bly-ray you are using SIA will create a set of volumes. each 
 
 ## 5. Regularly Check and Update Your Archive
 
