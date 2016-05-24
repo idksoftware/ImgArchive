@@ -1,8 +1,9 @@
 #Add Images (--add)
-This is how images are placed in the archive repository. 
-In order to add images to the archive two important pieces of information needs to be known, the first being the source folder of the imported images and second the archive the importing images are to be imported in too. This information is obligatory. However these values can be defaulted using environment variables or placed in the main configuration file.
+This is how images are placed in the archive repository. The DAM term is Ingestion, or just simply getting the images into the archive.
+In order to add images to the archive two important pieces of information needs to be known, the first being the source folder of the imported images. This may be a camera connected by USB or a folder with images contained within it. The second is the archive the importing images are to be imported in too. This information is obligatory. However these values can be found automaticaly using environment variables or placed in the main configuration file.
 
-In addition, these are defaulted, meaning, If source folder cannot be found in the configuration file the archive will use the current directory, If archive folder cannot be found in the configuration file will use the platform default. See platform defaults.  
+In addition, these are defaulted, meaning, If source folder cannot be found in the configuration file the archive will use the current directory, If archive folder cannot be found in the configuration file will use the platform default. for example, on a system running Windows the archive will be placed in the Folder:
+$ProgramData/IDK Software/Simple Image Archive. See platform defaults.  
 
 The command line options are as follows:
 
