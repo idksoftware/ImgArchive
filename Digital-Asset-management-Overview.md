@@ -18,17 +18,19 @@ Digital images fractions of a second to make and fractions of a second to destro
 
 ## 3. Back Up Supporting Documents
 
-As part of the DAM process is to create metadata on you images. Metadata is the descriptive information about your images files (data about your data). Digital asset management systems rely heavily on metadata, as it’s critical for searching, retrieving and managing your rich media assets. This is because the archive needs to know as many aspects about an image in order to find an image or set of images from a search criteria. For example just looking at an image will not allow the system to associate the image with the Walkers wedding. However tagging the Walkers wedding photos with Walkers-wedding will. 
+As part of the DAM process is to create metadata on you images. Metadata is the descriptive information about your images files (data about your data). Digital asset management systems rely heavily on metadata, as it’s critical for searching, retrieving and managing your digital assets. This is because the archive needs to know many aspects about an image in order to find an image or set of images from a search criteria. For example just looking at an image will not allow the system to associate the image with the Walkers wedding. However tagging the Walkers wedding photos with Walkers-wedding will. 
 
-At its core SIA uses the base Operating Systems file system in order to store image in an organised file structure. Metadata associated with each image is also stored in an organised file structure with addition of an optional SQLite database. 
+At its core SIA uses the base Operating Systems file system in order to store image in an organised file structure. Metadata associated with each image is also stored in an organised file structure with the addition of an optional SQLite database. 
 
 ## 4. Never Use Your Archive for a Backup.
 
 An archive is the place where one copy of each version of an image are stored. This usually means that your archive contains the original, untouched image file, and possibly the final working versions of the edited image files derived from the original or originals. These may be your originals which may be irreplaceable, but also may contain versions that may of taken some time to edit and get them just how you like them. If the archive is lost how would you recover?
-Luckily SIA contains the ability to maintain  
 
+Luckily SIA contains the ability to maintain two online backups. This may take space on a second and possibly a third hard drive but the cost of hard is small compared to the lost of the archive. One possible way of using the two online backups is to have one backup on a second drive and one backup going to a USB hard drive this can be taken of the system a night and taken off-site, or better have a number of USB hard drives and plug a different one in each day. SIA will update the missing data from the last time it was attached so by rotating USB hard drives you will have two up-to-date backups and plus a set of almost up-to-date backups. 
 
-It is so tempting to use a little corner of the drive holding your archive to back up working files. It would be so easy. I knew the advice not to use an archive for a backup, but I did it anyway. Just once. And I forgot to protect the root structure in the destination drive. I had a great backup of all of my working files, which had nicely overwritten my archived files. I was lucky and was able to restore my archive from my archive backup, but I can tell you that it took hours for my heart to settle back down into a normal rhythm. Save yourself the potential for disaster and keep the medium you use for your archive just for your archive.
+### Long term archival storage of the Archive  
+One way of safe guarding the archive is to periodically update an archival copy of the archive using Blu-ray   
+One of the major benefits of Blu-ray as a data archiving solution is the format's durability. Traditional hard disk drives are prone to hardware failure as their components inevitably diminish over time. Blu-ray discs, meanwhile, are much sturdier, ensuring that this information will be available for years to come.
 
 ## 5. Regularly Check and Update Your Archive
 
