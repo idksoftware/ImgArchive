@@ -8,7 +8,7 @@ Under the Apple Mac SIA can be installed using Apple Install package sia.pic. Th
 Linux
 Under the Apple Mac SIA can be installed using Apple Install package sia.pic. This will install SIA into the default locations. 
 
-Standard OS platform installation locations
+##Standard OS platform installation locations
 SIA is normally installed in a default location defined for the OS platform it is running under. Each OS platform has a default location for third party applications. The standard locations or each of the three main platforms are described as follows:
 Windows
 Windows uses the environment variables; ProgramData and ProgramFiles.  These locate the standard locations of the program data and the program files. SIA extends these to make a SIA specified folder path.
