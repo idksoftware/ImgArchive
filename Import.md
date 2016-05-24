@@ -14,16 +14,26 @@ The command line options are as follows:
 --current-path 	Use the current path to take the images
 
 -–quiet	No output to the terminal
+
 -–verbose	All information to the terminal
+
 -–logging-level	Sets the logging level of detail that will be places in the log file.
----dry-run	Run the command but do not change the archive. 
---refresh	Add the images to the archive. if found to be missing or changed replace the images in the archive with these ones. 
+
+---dry-run	Run the command but do not change the archive.
+ 
+--refresh	Add the images to the archive. if found to be missing or changed replace the images in the archive with these ones.
+ 
 --keep-dups=<duplicates folder>	On finding a duplicate image place the new image in the duplicates folder.
+
 --use-today
 	This option forces the archive date to be todays date. All other dates are ignored.
+
 --use-filedate
-	Use file date forces the archive data to be the image file date. In the case of a RAW/JPG pair then the RAW image file date will be used.
+	Use file date forces the archive data to be the image file date. In the case of a RAW/JPG pair then the RAW image 
+file date will be used.
+
 --use-date=<year.month.day>	This option forces the archive date to be the date specified in the date argument. This can be used in the case were the capture date in the camera may be incorrect and the correct date to be explicitly specified.
+
 For example:
 --use-date=2014.07.12
 	
