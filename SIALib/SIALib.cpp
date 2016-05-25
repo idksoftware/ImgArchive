@@ -166,18 +166,31 @@ namespace simplearchive {
 
 
 	int SIALib::initalise() {
-		
+		CTerminalServerManager &terminalServerManager = CTerminalServerManager::getInstance();
+		terminalServerManager.start();
+
+		CAppConfig &config = CAppConfig::get();
+
+		config.init();
+		//AppOptions &appOptions = AppOptions::get();
+
+		//CLogger::setLevel(CLogger::INFO);
+		CLogger::setLevel(CLogger::FINE);
+		CLogger::setLogPath(config.getLogPath());
+		//ChangeLog::setLogPath(config.getHistoryPath());
+
+		CLogger &logger = CLogger::getLogger();
 		WSADATA wsa;
 		if (m_winsockRequired) {
 			//Initialise winsock
 			if (m_socklibStarted == false) {
-				printf("\nInitialising Winsock...");
+				
 				if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
 				{
-					printf("Failed. Error Code : %d", WSAGetLastError());
-					return EXIT_FAILURE;
+					//printf("Failed. Error Code : %d", WSAGetLastError());
+					return false;
 				}
-				printf("Initialised.\n");
+				
 				m_socklibStarted = true;
 			}
 		}
@@ -196,20 +209,7 @@ namespace simplearchive {
 			}
 		}
 
-		CTerminalServerManager &terminalServerManager = CTerminalServerManager::getInstance();
-		terminalServerManager.start();
-
-		CAppConfig &config = CAppConfig::get();
-
-		config.init();
-		//AppOptions &appOptions = AppOptions::get();
-
-		//CLogger::setLevel(CLogger::INFO);
-		CLogger::setLevel(CLogger::FINE);
-		CLogger::setLogPath(config.getLogPath());
-		//ChangeLog::setLogPath(config.getHistoryPath());
 		
-		CLogger &logger = CLogger::getLogger();
 		SummaryFile::setPath(config.getHistoryPath());
 		SummaryFile &summaryFile = SummaryFile::getSummaryFile();
 		CIDKDate date;

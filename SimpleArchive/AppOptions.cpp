@@ -173,31 +173,16 @@ bool AppOptions::initalise(int argc, char **argv) {
 
 
 	// Subcommands
-	m_argvParser->defineOption("a", "add new images to the archive.", ArgvParser::MasterOption);
-	m_argvParser->defineOptionAlternative("a", "add");
-
-	m_argvParser->defineOption("o", "Checkout images from archive.", ArgvParser::MasterOption);
-	m_argvParser->defineOptionAlternative("o", "checkout");
-
-	m_argvParser->defineOption("i", "Checkin images to archive.", ArgvParser::MasterOption);
-	m_argvParser->defineOptionAlternative("i", "checkin");
-
-	m_argvParser->defineOption("u", "Un-checkout images to archive.", ArgvParser::MasterOption);
-	m_argvParser->defineOptionAlternative("u", "uncheckout");
-
-	m_argvParser->defineOption("x", "Export images from archive.", ArgvParser::MasterOption);
-	m_argvParser->defineOptionAlternative("x", "export");
-
+	m_argvParser->defineOption("add", "add new images to the archive.", ArgvParser::MasterOption);
+	m_argvParser->defineOption("checkout", "Checkout images from archive.", ArgvParser::MasterOption);
+	m_argvParser->defineOption("checkin", "Checkin images to archive.", ArgvParser::MasterOption);
+	m_argvParser->defineOption("uncheckout", "Un-checkout images to archive.", ArgvParser::MasterOption);
+	m_argvParser->defineOption("export", "Export images from archive.", ArgvParser::MasterOption);
 	m_argvParser->defineOption("about", "prints the version information", ArgvParser::MasterOption);
-
-	m_argvParser->defineOption("v", "View commands", ArgvParser::MasterOption);
-	m_argvParser->defineOptionAlternative("v", "view");
-
-	m_argvParser->defineOption("s", "Show details", ArgvParser::MasterOption);
-	m_argvParser->defineOptionAlternative("s", "show");
-
-	m_argvParser->defineOption("p", "Manage image properties", ArgvParser::MasterOption);
-	m_argvParser->defineOptionAlternative("p", "prop");
+	m_argvParser->defineOption("view", "View commands", ArgvParser::MasterOption);
+	m_argvParser->defineOption("show", "Show details", ArgvParser::MasterOption);
+	m_argvParser->defineOption("prop", "Manage image properties", ArgvParser::MasterOption);
+	
 
 	/*
 	m_argvParser->defineOption("b", "Goes through the motions of running the subcommand but makes no\nactual changes ether disk or repository.", ArgvParser::NoOptionAttribute);
@@ -225,31 +210,33 @@ bool AppOptions::initalise(int argc, char **argv) {
 	m_argvParser->defineOption("S", "size of media", ArgvParser::OptionRequiresValue);
 	m_argvParser->defineOptionAlternative("S", "media-size");
 
-	m_argvParser->defineOption("media-path", "Goes through the motions of running the subcommand but makes no\nactual changes ether disk or repository.", ArgvParser::OptionRequiresValue);
+	m_argvParser->defineOption("m", "Goes through the motions of running the subcommand but makes no\nactual changes ether disk or repository.", ArgvParser::OptionRequiresValue);
+	m_argvParser->defineOptionAlternative("m", "media-path");
 
-	m_argvParser->defineOption("F", "from date", ArgvParser::OptionRequiresValue);
-	m_argvParser->defineOptionAlternative("F", "from-date");
+	m_argvParser->defineOption("fd", "from date", ArgvParser::OptionRequiresValue);
+	m_argvParser->defineOptionAlternative("fd", "from-date");
 
 	m_argvParser->defineOption("f", "Specifies a file", ArgvParser::OptionRequiresValue);
 	m_argvParser->defineOptionAlternative("f", "file");
 
-	m_argvParser->defineOption("T", "to date", ArgvParser::OptionRequiresValue);
-	m_argvParser->defineOptionAlternative("T", "to-date");
+	m_argvParser->defineOption("td", "to date", ArgvParser::OptionRequiresValue);
+	m_argvParser->defineOptionAlternative("td", "to-date");
 
 	m_argvParser->defineOption("a", "location of the archive root folder.", ArgvParser::OptionRequiresValue);
 	m_argvParser->defineOptionAlternative("a", "archive-path");
 
-	m_argvParser->defineOption("p", "location of the archive root folder.", ArgvParser::NoOptionAttribute);
-	m_argvParser->defineOptionAlternative("p", "peek");
+	m_argvParser->defineOption("r", "location of the archive root folder.", ArgvParser::NoOptionAttribute);
+	m_argvParser->defineOptionAlternative("r", "root");
 
 
 	m_argvParser->defineOption("l", "Temporarily changes the logging level for the scope of this command session.", ArgvParser::OptionRequiresValue);
 	m_argvParser->defineOptionAlternative("l", "logging-level");
 
-	m_argvParser->defineOption("C", "Comment to be included in command", ArgvParser::OptionRequiresValue);
-	m_argvParser->defineOptionAlternative("C", "comment");
+	m_argvParser->defineOption("c", "Comment to be included in command", ArgvParser::OptionRequiresValue);
+	m_argvParser->defineOptionAlternative("c", "comment");
 
-	m_argvParser->defineOption("list", "List items", ArgvParser::OptionRequiresValue);
+	m_argvParser->defineOption("li", "List items", ArgvParser::OptionRequiresValue);
+	m_argvParser->defineOptionAlternative("li", "list");
 
 	m_argvParser->defineOption("force-date", "Overrides all dates found associated with the images in the selection", ArgvParser::OptionRequiresValue);
 	m_argvParser->defineOption("default-date", "Uses this date if none found associated with an image", ArgvParser::OptionRequiresValue);
@@ -302,28 +289,28 @@ bool AppOptions::initalise(int argc, char **argv) {
 		
 		if (m_argvParser->foundOption("source-path") == true) {			
 			std::string opt = m_argvParser->optionValue("source-path");
-			printf(opt.c_str()); printf("\n");
+			//printf(opt.c_str()); printf("\n");
 			config.setSourcePath(opt.c_str());			
 		}
 		if (m_argvParser->foundOption("archive-path") == true) {			
 			std::string opt = m_argvParser->optionValue("archive-path");
-			printf(opt.c_str()); printf("\n");
+			//printf(opt.c_str()); printf("\n");
 			config.setWorkspacePath(opt.c_str());
 		}
 		if (m_argvParser->foundOption("file") == true) {
 			m_filePath = m_argvParser->optionValue("file");
 			m_usingFile = true;
-			printf(m_filePath.c_str()); printf("\n");
+			//printf(m_filePath.c_str()); printf("\n");
 			
 		}
 		if (m_argvParser->foundOption("peek") == true) {
 			m_peekOnly = true;
-			printf(m_filePath.c_str()); printf("\n");
+			//printf(m_filePath.c_str()); printf("\n");
 
 		}
 		if (m_argvParser->foundOption("force-date") == true) {
 			std::string opt = m_argvParser->optionValue("force-date");
-			printf(opt.c_str()); printf("\n");
+			//printf(opt.c_str()); printf("\n");
 			if (opt.compare("FileDate") == 0) {
 				m_useFileDate = true;
 			}
@@ -339,7 +326,7 @@ bool AppOptions::initalise(int argc, char **argv) {
 		}
 		if (m_argvParser->foundOption("default-date") == true) {
 			std::string opt = m_argvParser->optionValue("default-date");
-			printf(opt.c_str()); printf("\n");
+			//printf(opt.c_str()); printf("\n");
 			config.setSourcePath(opt.c_str());
 			if (opt.compare("FileDate") == 0) {
 				m_useFileDate = true;
@@ -362,12 +349,12 @@ bool AppOptions::initalise(int argc, char **argv) {
 	else if (m_argvParser->command("checkout") == true) {
 		if (m_argvParser->foundOption("image-address") == true) {
 			m_imageAddress = m_argvParser->optionValue("image-address");
-			printf(m_imageAddress.c_str()); printf("\n");
+			//printf(m_imageAddress.c_str()); printf("\n");
 		}
 
 		if (m_argvParser->foundOption("list") == true) {
 			m_list = true;
-			printf(m_comment.c_str()); printf("\n");
+			//printf(m_comment.c_str()); printf("\n");
 		}
 
 		if (m_argvParser->foundOption("file") == true) {
