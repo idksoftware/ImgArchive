@@ -117,14 +117,14 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>./;../fclib;../util;../exifcl;../metatp;../csv;../mirror;../sqlite3;../SIALib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../IntegrityManager;../fclib;../util;../exifcl;../metatp;../csv;../mirror;../sqlite3;../SIALib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>C:\development\SIA\SimpleArchive\Release\fclib.lib;C:\development\SIA\SimpleArchive\Release\util.lib;C:\development\SIA\SimpleArchive\Release\exifcl.lib;C:\development\SIA\SimpleArchive\Release\metatp.lib;C:\development\SIA\SimpleArchive\Release\csv.lib;C:\development\SIA\SimpleArchive\Release\sqlite3.lib;C:\development\SIA\SimpleArchive\Release\mirror.lib;C:\development\SIA\SimpleArchive\Release\database.lib;C:\development\SIA\SimpleArchive\Release\SIALib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>C:\development\SIA\SimpleArchive\Release\fclib.lib;C:\development\SIA\SimpleArchive\Release\util.lib;C:\development\SIA\SimpleArchive\Release\exifcl.lib;C:\development\SIA\SimpleArchive\Release\metatp.lib;C:\development\SIA\SimpleArchive\Release\csv.lib;C:\development\SIA\SimpleArchive\Release\sqlite3.lib;C:\development\SIA\SimpleArchive\Release\mirror.lib;C:\development\SIA\SimpleArchive\Release\database.lib;C:\development\SIA\SimpleArchive\Release\SIALib.lib;C:\development\SIA\SimpleArchive\Release\IntegrityManager.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

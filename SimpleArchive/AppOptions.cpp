@@ -249,9 +249,6 @@ bool AppOptions::initalise(int argc, char **argv) {
 	m_argvParser->defineCommandOption("add", "archive-path");
 	m_argvParser->defineCommandOption("add", "source-path");
 	
-
-	
-	
 	ArgvParser::ParserResults res = m_argvParser->parse(argc, argv);
 
 	std::string errStr;
