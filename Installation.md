@@ -3,11 +3,14 @@ Initial installation is simple because SIA consists of two executables called:
 * sia.exe - The main archive management tool
 * siaadim.exe - This supports the archive by providing housekeeping functions.
 
-These can be downloaded and much like any command line tool. However under windows, this application uses Microsoft’s redistributable packages for Visual Studio 2013. These packages need to be installed before sia.exe can be used. These may already be on you system as a lot of applications also need them. If you do need to install them, these can be downloads from Microsoft for free at https://www.microsoft.com/en-gb/download/details.aspx?id=40784
-
+These can be downloaded and much like any command line tool.
 
 ###Windows
-Under windows, this application uses Microsoft’s redistributable packages for Visual Studio 2013. These packages need to be installed before sia.exe can be used. However a MSI install package “sia.msi”  this contains all the required packages and installs the application in the default locations.
+Under windows, this application uses Microsoft’s redistributable packages for Visual Studio 2013. These packages need to be installed before sia.exe can be used. These may already be on you system as a lot of applications also need them. If you do need to install them, these can be downloads from Microsoft for free at:
+
+ https://www.microsoft.com/en-gb/download/details.aspx?id=40784
+
+However a MSI install package “sia.msi” is available, this contains all the required packages and installs the application in the default locations.
 ###Apple Mac
 Under the Apple Mac SIA can be installed using Apple Install package sia.pic. This will install SIA into the default locations. 
 ###Linux
