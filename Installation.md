@@ -1,7 +1,8 @@
 #Installation
 Initial installation is simple because SIA consists of two executables called:
 * sia.exe - The main archive management tool
-* siaadim.exe - This supports the archive by providing housekeeping functions. 
+* siaadim.exe - This supports the archive by providing housekeeping functions.
+These can be downloaded and much like any command line tool.
 
 
 ###Windows
