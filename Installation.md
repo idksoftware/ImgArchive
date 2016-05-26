@@ -1,6 +1,9 @@
-Installation
-Initial installation is simple because SIA is a single executable called:
- sia.exe
+#Installation
+Initial installation is simple because SIA consists of two executables called:
+* sia.exe - The main archive management tool
+* siaadim.exe - This supports the archive by providing housekeeping functions. 
+
+
 ###Windows
 Under windows, this application uses Microsoft’s redistributable packages for Visual Studio 2013. These packages need to be installed before sia.exe can be used. However a MSI install package “sia.msi”  this contains all the required packages and installs the application in the default locations.
 ###Apple Mac
