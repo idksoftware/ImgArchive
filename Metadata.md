@@ -31,7 +31,7 @@ These are camera orientated properties such is the make/model of the camera, the
 The location of where the image was taken using latitude and longitude measurements. 
 ####Copyright Information
 Copyright Information is information on the owner of the image and the rights to the image. 
-Metadata Types
+###Metadata Types
 This refers to how the data is generated and is divided into three levels. Each level adds greater descriptive value but at the expense of additional effort. This may be offset by the ease of finding images in the archive.
 Automatically generated
 This is the lowest level of metadata but lays a base for all higher levels and contains the boiler plate information on the image.
@@ -65,8 +65,11 @@ This information is generated from the attributes of the file. For example the f
 5.	A file path in the archive
 
 In addition SIA will use the image file to generate the CRC and MD5 checksums. These checksums are used the guarantee the image has not changed after the checksum has been made. For example, if a checksum was created from an image. If that image is then changed (even one byte), if a new checksum is taken then the new checksum will not match the old indicating the image has indeed changed.
+
 The checksums can be used for a number of purposes in the archive. This includes checking for accidental modification of images and testing if an image is not the same as another. One important use is preventing duplicates of an image being added to the archive by maintaining a list of checksums of images already in the archive. It is very unlikely for two different images having the same checksum (I in 14 million in the case of CRC). The MD5 checksum is even less likely to produce the sane checksum for different images.
-A form of UUID (Universal Unique identifier) is also generated for each image. This is a unique identifier generated using a random key based the time and date in seconds plus other random data found on the commuter the identifier is generated.              
+
+A form of UUID (Universal Unique identifier) is also generated for each image. This is a unique identifier generated using a random key based the time and date in seconds plus other random data found on the commuter the identifier is generated.      
+        
 All this information is automatically saved a part of the images asset properties.
 
 Exif standard information
