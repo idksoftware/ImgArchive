@@ -1,47 +1,69 @@
 Metadata
 Introduction
 Normally one thing about photos is that in order to use them you need to see them to known what’s on them. This normally means looking through hundreds of images to find the one you looking for. A better way is to keep information on each image so the search for image is much more targeted so the number of images needed to be searched through is very much reduced. This information is called metadata. 
-Metadata is traditionally found in in the card catalogues of libraries.  This information as become more digital and extended to describe digital data using metadata standards specific to a particular field, in this instance photography.      
+Metadata is traditionally found in in the card catalogues of libraries.  This information as become more digital and extended to describe digital data using metadata standards specific to a particular field, in this instance photography.
+    
 Metadata is the information about every aspect of the photographic image. This can be split into the main properties the image presences, this being: 
+
 1)	Image File Properties
-2)	Asset Properties 
+
+2)	Asset Properties
+ 
 3)	Media Properties
+
 4)	Camera Information
+
 5)	Location Information
+
 6)	Copyright Information
-Image File properties
+
+####Image File properties
 These properties refer to the Image file its self. These properties can be applied to almost any file. These properties incl  
 
 
-Asset Properties
+####Asset Properties
 Asset Properties are things like the file name of the image, is location in the archive, the time data added to the archive etc. 
-Media Properties
+####Media Properties
 Are the images properties such as the images width and height in pixels, its view rotation, is primary encoding. 
-Camera Information
+###Camera Information
 These are camera orientated properties such is the make/model of the camera, the ISO speed rating, exposure time, aperture etc.
-Geographical Location Information
+####Geographical Location Information
 The location of where the image was taken using latitude and longitude measurements. 
-Copyright Information
+####Copyright Information
 Copyright Information is information on the owner of the image and the rights to the image. 
 Metadata Types
 This refers to how the data is generated and is divided into three levels. Each level adds greater descriptive value but at the expense of additional effort. This may be offset by the ease of finding images in the archive.
 Automatically generated
 This is the lowest level of metadata but lays a base for all higher levels and contains the boiler plate information on the image.
+
 This information can come from four sources:
+
 1.	base template information
+
 2.	The image file information
+
 3.	Exif standard information
+
 4.	Tool generated information.
+
 5.	Hand edited information.
-base template information
+
+###base template information
 This information is default information held in the base template. This is stored in the templates folder. This information contains information that almost all images in the archive will contain. If you are the only photographer submitting to the archive then your name and copyright will be in the base template.
 The image file information
+
 This information is generated from the attributes of the file. For example the file will have the following information:
+
 1.	Creation date and time
+
 2.	Modified data and time
+
 3.	A file size
+
 4.	A file name
+
 5.	A file path in the archive
+
 In addition SIA will use the image file to generate the CRC and MD5 checksums. These checksums are used the guarantee the image has not changed after the checksum has been made. For example, if a checksum was created from an image. If that image is then changed (even one byte), if a new checksum is taken then the new checksum will not match the old indicating the image has indeed changed.
 The checksums can be used for a number of purposes in the archive. This includes checking for accidental modification of images and testing if an image is not the same as another. One important use is preventing duplicates of an image being added to the archive by maintaining a list of checksums of images already in the archive. It is very unlikely for two different images having the same checksum (I in 14 million in the case of CRC). The MD5 checksum is even less likely to produce the sane checksum for different images.
 A form of UUID (Universal Unique identifier) is also generated for each image. This is a unique identifier generated using a random key based the time and date in seconds plus other random data found on the commuter the identifier is generated.              
