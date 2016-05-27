@@ -120,6 +120,7 @@ bool App::Run()
 	
 
 	switch (appOptions.getCommandMode()) {
+	case AppOptions::CM_InitArchive:
 		/*
 	case AppOptions::CM_InitArchive:
 		if (appOptions.isConfiguratedOk() == true) {
@@ -218,11 +219,22 @@ bool failed()
 
 bool App::CreateArchive(const char *archivePath, const char *workspacePath, const char *shadowPath, bool users) {
 
+	if (users == true) {
+		if (CreateArchive::IsAdmin() == false) {
+			std::cout << "Failed you need administrator privileges" << '\n';
+			return false;
+		}
+	}
+		
+	if (CreateArchive::createSystem(users, archivePath, workspacePath, shadowPath) == false) {
+		std::cout << "Failed creating enviroment variable SIA_HOME" << '\n';
+		return false;
+	}
 	if (CreateArchive::createHomeEnvVar(archivePath, users) == false) {
 		std::cout << "Failed creating enviroment variable SIA_HOME" << '\n';
 		return false;
 	}
-
+	
 	if (CreateArchive::makeFolders(archivePath) == false) {
 		std::cout << "Failed creating folders" << '\n';
 		return false;

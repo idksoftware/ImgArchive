@@ -66,6 +66,7 @@ class CreateArchive {
 public:
 	CreateArchive();
 	virtual ~CreateArchive();
+	static bool createSystem(bool users, const char *archivePath, const char *workspace, const char *shadow);
 	/**
 	/* @brief Creates the configuration folders.
 	*/
@@ -82,6 +83,8 @@ public:
 	/* @brief Creates the enviroment variable SIA_HOME the the path given.
 	*/
 	static bool createHomeEnvVar(const char *root, bool users);
+
+	static bool IsAdmin();
 };
 
 } /* namespace simplearchive */

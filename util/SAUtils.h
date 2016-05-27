@@ -98,6 +98,7 @@ public:
 	static std::string to_string(int i);
 	static void sprintf(std::string &s, const std::string &fmt, ...);
 	static bool makePath(const char *from, const char *to);
+	static bool makePath(const char *to);
 	static bool makeLink(const char *file, const char *link);
 	static int getFileContents(const char *filename, std::string &contents);
 	static std::string getYear(const char *path);

@@ -432,6 +432,7 @@ bool SAUtils::delFile(const char *file) {
 }
 
 bool SAUtils::makePath(const char *from, const char *to) {
+	
 	if (SAUtils::DirExists(from) == false) {
 		if (SAUtils::mkDir(from) == false) {
 			return false;
@@ -466,6 +467,40 @@ bool SAUtils::makePath(const char *from, const char *to) {
 	}
 	return true;
 }
+
+bool SAUtils::makePath(const char *to) {
+
+	
+	
+	std::string fullPath = to;
+
+	
+	bool last = false;
+	std::string node;
+	while (last != true) {
+		unsigned int start = fullPath.length();
+		unsigned int end = 0;
+		if ((end = fullPath.find_first_of("/", start + 2)) == std::string::npos) {
+			node = fullPath.substr(start + 1, (fullPath.length() - start) - 1);
+			last = true;
+		}
+		else {
+			node = fullPath.substr(start + 1, (end - 1) - (start));
+		}
+
+
+		curPath += '/';
+		curPath += node;
+		node.clear();
+		if (SAUtils::DirExists(curPath.c_str()) == false) {
+			if (SAUtils::mkDir(curPath.c_str()) == false) {
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
 
 bool SAUtils::makeLink(const char *file, const char *link) {
 #ifdef _WIN32

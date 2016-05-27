@@ -161,9 +161,7 @@ bool AppOptions::initalise(int argc, char **argv) {
 	argvParser.defineOption("i", "Create Archive Commands", ArgvParser::MasterOption);
 	argvParser.defineOptionAlternative("i", "init");
 
-	argvParser.defineOption("s", "Show settings", ArgvParser::MasterOption);
-	argvParser.defineOptionAlternative("s", "show");
-
+	argvParser.defineOption("show", "Show settings", ArgvParser::MasterOption);
 	// Arguments
 	argvParser.defineOption("about", "prints the version information", ArgvParser::MasterOption);
 
@@ -264,12 +262,16 @@ bool AppOptions::initalise(int argc, char **argv) {
 		// This command will initalise the configuration.
 		// so the the configuration need not to be initalised.
 		setCommandMode(AppOptions::CM_InitArchive);
+
 		m_configured = false;
 		std::string opt;
 		if (argvParser.foundOption("users") == true) {
 			std::string users = argvParser.optionValue("users");
 			if (users.compare("Myself") == 0) {
-				m_users = false;
+				setAllUsers(false);
+			}
+			else {
+				setAllUsers(true);
 			}
 		}
 		if (argvParser.foundOption("archive-path") == true) {
@@ -278,9 +280,9 @@ bool AppOptions::initalise(int argc, char **argv) {
 		else {
 			std::string progPath = SAUtils::GetEnvironment("ProgramData");
 			std::string siaPath = "/IDK Software/ImageArchive1.0";
-			if (SAUtils::makePath(progPath.c_str(), siaPath.c_str()) == false) {
-				return false;
-			}
+			//if (SAUtils::makePath(progPath.c_str(), siaPath.c_str()) == false) {
+			//	return false;
+			//}
 			opt = progPath;
 			opt += siaPath;
 		}
@@ -299,16 +301,16 @@ bool AppOptions::initalise(int argc, char **argv) {
 				return false;
 			}
 			opt = opt + "/SIA Workspace";
-			if (SAUtils::FileExists(opt.c_str()) == false) {
-				if (SAUtils::mkDir(opt.c_str()) == false) {
-					return false;
-				}
-			}
+			//if (SAUtils::FileExists(opt.c_str()) == false) {
+			//	if (SAUtils::mkDir(opt.c_str()) == false) {
+			//		return false;
+			//	}
+			//}
 			
 		}
-		if (SAUtils::FileExists(opt.c_str()) == false) {
-			return false;
-		}
+		//if (SAUtils::FileExists(opt.c_str()) == false) {
+		//	return false;
+		//}
 		setWorkspacePath(opt.c_str());
 		
 		if (argvParser.foundOption("repository-path") == true) {
@@ -317,15 +319,15 @@ bool AppOptions::initalise(int argc, char **argv) {
 		else {
 			std::string progPath = SAUtils::GetEnvironment("ProgramData");
 			std::string siaPath = "/IDK Software/ImageArchive1.0/shadow";
-			if (SAUtils::makePath(progPath.c_str(), siaPath.c_str()) == false) {
-				return false;
-			}
+			//if (SAUtils::makePath(progPath.c_str(), siaPath.c_str()) == false) {
+			//	return false;
+			//}
 			opt = progPath;
 			opt += siaPath;
 		}
-		if (SAUtils::FileExists(opt.c_str()) == false) {
-			return false;
-		}
+		//if (SAUtils::FileExists(opt.c_str()) == false) {
+		//	return false;
+		//}
 		setShadowPath(opt.c_str());
 		cmdFound = true;
 	}
@@ -548,6 +550,14 @@ bool AppOptions::setCommandMode(const char *modeString) {
 
 void AppOptions::setCommandMode(const AppOptions::CommandMode mode) {
 	m_commandMode = mode;
+}
+
+bool AppOptions::isAllUsers() {
+	return m_users;
+}
+
+void AppOptions::setAllUsers(bool allUsers) {
+	m_users = allUsers;
 }
 
 const char *AppOptions::getName() {

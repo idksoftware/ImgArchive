@@ -45,7 +45,7 @@
 static char THIS_FILE[] = __FILE__;
 //#define new DEBUG_NEW
 #endif
-
+bool IsElevated();
 namespace simplearchive {
 
 // hook folder
@@ -158,7 +158,92 @@ std::string CreateArchive::makeConfigFile(const char *root, const char *workspac
 	return s.str();
 }
 
+bool CreateArchive::createSystem(bool users, const char *archivePath, const char *workspace, const char *shadow) {
 
+	/*
+	if (argvParser.foundOption("users") == true) {
+		std::string users = argvParser.optionValue("users");
+		if (users.compare("Myself") == 0) {
+			m_users = false;
+		}
+	}
+	*/
+	if (users == true) {
+		if (IsAdmin() == false) {
+			return false;
+		}
+	}
+
+	if (archivePath == nullptr) {
+		std::string progPath = SAUtils::GetEnvironment("ProgramData");
+		std::string siaPath = "/IDK Software/ImageArchive1.0";
+		std::string path = progPath;
+		path += siaPath;
+		if (SAUtils::FileExists(archivePath) == false) {
+			return false;
+		}
+		if (SAUtils::makePath(progPath.c_str(), siaPath.c_str()) == false) {
+			return false;
+		}
+		
+	} else {
+		if (SAUtils::FileExists(archivePath) == false) {
+			return false;
+		}
+		if (SAUtils::makePath(archivePath) == false) {
+			return false;
+		}
+	
+	}
+
+	if (workspace == nullptr) {
+	
+		std::string temp = SAUtils::GetEnvironment("USERPROFILE");
+		std::string path = temp + "/Documents";
+		if (SAUtils::FileExists(path.c_str()) == false) {
+			return false;
+		}
+		path =+ "/SIA Workspace";
+		if (SAUtils::FileExists(path.c_str()) == false) {
+			if (SAUtils::mkDir(path.c_str()) == false) {
+				return false;
+			}
+		}
+
+	}
+	else {
+		if (SAUtils::FileExists(workspace) == false) {
+			return false;
+		}
+		if (SAUtils::makePath(workspace) == false) {
+			return false;
+		}
+	}
+	
+
+	if (shadow == nullptr) {
+		std::string progPath = SAUtils::GetEnvironment("ProgramData");
+		std::string siaPath = "/IDK Software/ImageArchive1.0/shadow";
+		
+		std::string path = progPath;
+		path += siaPath;
+		if (SAUtils::FileExists(path.c_str()) == false) {
+			return false;
+		}
+		if (SAUtils::makePath(progPath.c_str(), siaPath.c_str()) == false) {
+			return false;
+		}
+	}
+	else {
+		if (SAUtils::FileExists(shadow) == false) {
+			return false;
+		}
+		if (SAUtils::makePath(shadow) == false) {
+			return false;
+		}
+	}
+	
+}
 
 bool CreateArchive::makeFolders(const char *root) {
 
@@ -275,4 +360,29 @@ bool CreateArchive::makeFolder(const char *root, const char *folder) {
 	}
 	return true;
 }
+
+static bool IsAdmin() {
+	return IsElevated();
+}
+
 } /* namespace simplearchive */
+#if _WIN32
+#include <Windows.h>
+
+bool IsElevated() {
+	bool fRet = false;
+	HANDLE hToken = NULL;
+	if (OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &hToken)) {
+		TOKEN_ELEVATION Elevation;
+		DWORD cbSize = sizeof(TOKEN_ELEVATION);
+		if (GetTokenInformation(hToken, TokenElevation, &Elevation, sizeof(Elevation), &cbSize)) {
+			fRet = Elevation.TokenIsElevated;
+		}
+	}
+	if (hToken) {
+		CloseHandle(hToken);
+	}
+	return fRet;
+}
+
+#endif

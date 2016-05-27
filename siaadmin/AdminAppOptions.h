@@ -83,6 +83,7 @@ private:
 	void setWorkspacePath(const char *workspacePath);
 	void setShadowPath(const char *shadowPath);
 	void setConfigPath(const char *configPath);
+	void setAllUsers(bool allUsers);
 	AppOptions();
 public:
 	
@@ -100,6 +101,8 @@ public:
 	const char *getWorkspacePath();
 	const char *getShadowPath();
 	const char *getConfigPath();
+	bool isAllUsers()
+
 
 	bool isConfiguratedOk() {
 		return m_configured;
