@@ -108,7 +108,7 @@ To update it with your correct  find   The next level may be the general informa
 
 
 # Camera Generated Metadata.
-When the camera captures an image it will store information on that image at the same time, this can be quite detailed. However most of the important details can be stored in a short set of data this will include the image size, is orientation, the date and time the image was taken, the ISO, aperture, exposure, if a flash was used and in some circumstances the GPS location. This information is in a standard called [Exif](Exif).  SIA will read the basic EXIF information. However it can also operate with other tools to provide a more detail set of EXIF date if required.
+When the camera captures an image it will store information on that image at the same time, this can be quite detailed. However most of the important details can be stored in a short set of data this will include the image size, is orientation, the date and time the image was taken, the ISO, aperture, exposure, if a flash was used and in some circumstances the GPS location. This information is in a standard called EXIF.  SIA will read the basic EXIF information. However it can also operate with other tools to provide a more detail set of EXIF date if required.
 The basic data SIA extracts:
 
 •	Camera Make/model
@@ -141,24 +141,9 @@ This information will normally be cascaded i.e. base data may be preplaced will 
 The templates are text files that contain a metadata keyword and the value that the will be placed in that keyword. One template may include other templates. Templates are read from the top down to the bottom of the page, any included templates will be read when the include statement is encountered.  A primary template will be associated with an image or images. This will be the first template to be read and the process will continue until this template is read from top to bottom. An in memory template will be created at the end of the session to be used in further metadata processing namely the addition of Exif metadata and user generated metadata. 
 
 This contains the metadata to be substituted during the template process. As each template is read the contents will be placed into this class. This class will be used for further substitutions by the Exif reading and user defined keyword substitutions.
-The need for DNG
+##The need for DNG
 If you shoot RAW images then the RAW image format you capture will be proprietary to the manufacturer of the camera you are using. Each major manufacturer will have their own format which will probably incompatible with other manufacturer’s format   The manufacturer will control that format and may change it at any time. This is not good news for an archive that may be around for many years and have RAW images from any number of cameras from different manufacturers. What is required if a RAW format that is independent and open to all. Adobe saw the need for such a format and came up with DNG. Digital Negative (DNG) is open source so any one can read or write the format and the are no licence restrictions. 
-SIA support for DNG
+###SIA support for DNG
 SIA supports DNG using a SIA process-raw hook. This hook is called on a RAW image file before being added to the archive. After this hook is call the source directory is scanned for new file with the same name as the one being archived. For example if a RAW file called DSC_1243.nef is being processed then if the process-raw hook creates  DSC_1243.dng, SIA will add this to the archive and add it as a side car file of DSC_1243.
-Adobe DNG converter
+###Adobe DNG converter
 This is a command line tool produced be Adobe to generate DNG files from RAW files. Using –e the tool will not show a options dialog but work only with the command line.
-The Digital image Workflow
-This defines the normal activities you may carry out from capturing the image to the final cataloguing it in the archive. A lot of these steps can be automated using SIA. But to start here is a basic work order:
-1.	Capture Image(s)
-2.	If out on location without full back-office support make second backup copy to second memory card, data-bank drop-box etc.
-3.	Download to computer.
-4.	Make DNGs
-5.	Rename 
-6.	Apply Metadata
-7.	Apply Ratings
-8.	Apply Keywords
-9.	Archive Images
-10.	Copy to primary backup system
-11.	Copy to off-site or cloud backup system
-12.	Erase cards  
-Some of the above are optional. However it may be prudent not to erase the memory until you are confident that your images are safe in the archive and backed-up
