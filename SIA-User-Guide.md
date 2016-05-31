@@ -6,4 +6,4 @@
 
 [Archive Storage](Archive Storage)
 
-[A[Archive validation](Archive validation)
+[Archive validation](Archive validation)
