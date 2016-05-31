@@ -1,5 +1,5 @@
-Metadata
-Introduction
+#Metadata
+##Introduction
 Normally one thing about photos is that in order to use them you need to see them to known what’s on them. This normally means looking through hundreds of images to find the one you looking for. A better way is to keep information on each image so the search for image is much more targeted so the number of images needed to be searched through is very much reduced. This information is called metadata. 
 Metadata is traditionally found in in the card catalogues of libraries.  This information as become more digital and extended to describe digital data using metadata standards specific to a particular field, in this instance photography.
     
@@ -108,7 +108,7 @@ To update it with your correct  find   The next level may be the general informa
 
 
 # Camera Generated Metadata.
-When the camera captures an image it will store information on that image at the same time, this can be quite detailed. However most of the important details can be stored in a short set of data this will include the image size, is orientation, the date and time the image was taken, the ISO, aperture, exposure, if a flash was used and in some circumstances the GPS location. This information is in a standard called EXIF.  SIA will read the basic EXIF information. However it can also operate with other tools to provide a more detail set of EXIF date if required.
+When the camera captures an image it will store information on that image at the same time, this can be quite detailed. However most of the important details can be stored in a short set of data this will include the image size, is orientation, the date and time the image was taken, the ISO, aperture, exposure, if a flash was used and in some circumstances the GPS location. This information is in a standard called [Exif](Exif).  SIA will read the basic EXIF information. However it can also operate with other tools to provide a more detail set of EXIF date if required.
 The basic data SIA extracts:
 
 •	Camera Make/model
