@@ -10,4 +10,4 @@ Digital Asset management
 Digital asset management (DAM) consists of management tasks and decisions surrounding the ingestion, annotation, cataloguing, storage, retrieval and distribution of digital assets i.e. Digital photographs. This description is merely a encompassing definition, the goals of DAM an how it can increase the effectiveness of your archive as described in the   
 [Digital Asset management Overview](Digital Asset management Overview) 
 
-A User Guide of SIA can be found in the following: This will also describe DAM in more detail and how SIA fits in with DAM.
+A [User Guide](SIA User Guide) of SIA can be found in the following: This will also describe DAM in more detail and how SIA fits in with DAM.
