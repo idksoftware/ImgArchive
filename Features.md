@@ -4,65 +4,65 @@ Simple Image Archive (SIA) is a small set of executables that proves the followi
 
 1. Simple in design and use.
 
-2.Supports Bulk import and export.
+2. Supports Bulk import and export.
 
-3.Supports image versioning.
+3. Supports image versioning.
 
-4.Can be extended using third party tools.
+4. Can be extended using third party tools.
 
-5.Uses only the base OS’s file system
+5. Uses only the base OS’s file system
 
-6.Integrates into the Cloud infrastructure.
+6. Integrates into the Cloud infrastructure.
   
-7.Can be used with almost any graphical photo editing tool.
+7. Can be used with almost any graphical photo editing tool.
 
-8.Provides support for RAW and JPG image pairs and image groups.
+8. Provides support for RAW and JPG image pairs and image groups.
 
-9.Full activity reporting.
+9. Full activity reporting.
 
-10.Provides both Image and change histories.
+10. Provides both Image and change histories.
 
-11.Integrated integrity and recovery systems
+11. Integrated integrity and recovery systems
 
-12.Is robust by providing a shadow archive which is not directly accessed.
+12. Is robust by providing a shadow archive which is not directly accessed.
  
-13.Provides both on and off site mirroring of the archive.
+13. Provides both on and off site mirroring of the archive.
 
-14.Provides an XML cataloguing.
+14. Provides an XML cataloguing.
 
-Simple in design and use
+## Simple in design and use
 
 The Information Structure is a simple file based one that follows an open format giving the ability of other tools to be integrated into the archive system.
 
- 
-
-Supports Bulk import and export
+##Supports Bulk import and export
 
 Provides Bulk metadata entry using cascading metadata templates, these templates allow you to build information into sets of image without having to repeat common information.
 
-Support image versioning
+##Support image versioning
 
 Prove versioning of images, so when editing images previous versions of an image can be recovered.  
 
-Can be extended using third party tools
+##Can be extended using third party tools
 
 SIA provides the ability to execute hook scripts where an event is about to happen (pre-action) or just after the event (post-action). These scripts allow external applications to inter act with SIA as it operates.   
 
-Uses only the base OS’s file system
+##Uses only the base OS’s file system
 
-                By only using the file system any damage to the archive can be easily corrected. 
+By only using the file system any damage to the archive can be easily corrected. 
 
-Integrates into the Cloud infrastructure
+##Integrates into the Cloud infrastructure
 
 Being based on the file system only, SIA can be integrated into the Cloud infrastructure. A simple means of integration would be to use the in-built mirroring system to replicate the archive in the cloud.   
 
-Can be used with almost any graphical photo editing tool
+##Can be used with almost any graphical photo editing tool
 
-SIA uses a check-out/check-in system for editing images. Before editing the image can be checked-out of the archive, when the editing is complete then the image can be checked back in to the archive. A version of the image before the image was edited will be saved as the previous version. Each time this check-out/check-in process takes place a new version of the image will be created.    
+##SIA uses a check-out/check-in system for editing images.
 
-Provides support for RAW and JPG image pairs and image groups
+Before editing the image can be checked-out of the archive, when the editing is complete then the image can be checked back in to the archive. A version of the image before the image was edited will be saved as the previous version. Each time this check-out/check-in process takes place a new version of the image will be created.    
 
-                Most modern digital cameras can produce JPG, RAW and RAW/JPG paired images   
+##Provides support for RAW and JPG image pairs and image groups
+
+Most modern digital cameras can produce JPG, RAW and RAW/JPG paired images   
 
 Full activity reporting
 
