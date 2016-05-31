@@ -7,6 +7,5 @@ Simple Image archive provides an organised place to store digital images for saf
 The functionality of Simple Image Archive is typically utilized from the command line or you can use its features from programs written in your favourite language.   
 
 Digital Asset management
-Digital asset management (DAM) consists of management tasks and decisions surrounding the ingestion, annotation, cataloguing, storage, retrieval and distribution of digital assets i.e. Digital photographs.
-T
+Digital asset management (DAM) consists of management tasks and decisions surrounding the ingestion, annotation, cataloguing, storage, retrieval and distribution of digital assets i.e. Digital photographs. This description is merely a encompassing definition, the goals of DAM an how it can increase the effectiveness of your archive as described in the   
 [Digital Asset management Overview](Digital Asset management Overview) 
