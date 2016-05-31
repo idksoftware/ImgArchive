@@ -64,23 +64,23 @@ Before editing the image can be checked-out of the archive, when the editing is 
 
 Most modern digital cameras can produce JPG, RAW and RAW/JPG paired images   
 
-Full activity reporting
+##Full activity reporting
 
-Both Image and change histories
+##Both Image and change histories
 
-Integrated integrity and recovery systems
+##Integrated integrity and recovery systems
 
 Maintain data integrity of the archive by providing integrated integrity systems to guard against accidently corrupting the archive.  
 
  
 
-Provides an XML cataloguing
+##Provides an XML cataloguing
 
 Provides an XML cataloguing that can be extended into providing an on-line image catalogue.
 
  
 
-Built-in SQLite to be used as a backend database
+##Built-in SQLite to be used as a backend database
 
 Built-in SQLite to be used as a backend database, However this is not required for the operation of the archive but provides support for operations such as searching the archive for which a database is ideal.  
 
@@ -102,4 +102,4 @@ So a typical archive will have a root or main folder and sub-folders for each ye
 
 Image information is also stored in a flat file system that is directly viewable by a text editor using XML and CSV file formats. Optionally an SQLite database can also be used as an Information management 
 
-15.Built-in SQLite to be used as a backend database.
+Built-in SQLite to be used as a backend database.
