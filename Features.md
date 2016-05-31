@@ -30,15 +30,14 @@ Simple Image Archive (SIA) is a small set of executables that proves the followi
 
 14. Provides an XML cataloguing.
 
-## Simple in design and use
+## 1.Simple in design and use
 
 The Information Structure is a simple file based one that follows an open format giving the ability of other tools to be integrated into the archive system.
 
-##Supports Bulk import and export
+## 2.Supports Bulk import and export
 
-Provides Bulk metadata entry using cascading metadata templates, these templates allow you to build information into sets of image without having to repeat common information.
-
-##Support image versioning
+Provides Bulk metadata entry using cascading metadata templates, these templates allow you to build information into sets of image without having to repeat common information. see [Metadata](Metadata)
+## 3.Support image versioning
 
 Prove versioning of images, so when editing images previous versions of an image can be recovered.  
 
