@@ -1,19 +1,33 @@
-Features
+#Features
 
 Simple Image Archive (SIA) is a small set of executables that proves the following:
-1.Simple in design and use.
+
+1. Simple in design and use.
+
 2.Supports Bulk import and export.
+
 3.Supports image versioning.
+
 4.Can be extended using third party tools.
+
 5.Uses only the base OS’s file system
-6.Integrates into the Cloud infrastructure.  
+
+6.Integrates into the Cloud infrastructure.
+  
 7.Can be used with almost any graphical photo editing tool.
+
 8.Provides support for RAW and JPG image pairs and image groups.
+
 9.Full activity reporting.
+
 10.Provides both Image and change histories.
+
 11.Integrated integrity and recovery systems
-12.Is robust by providing a shadow archive which is not directly accessed. 
+
+12.Is robust by providing a shadow archive which is not directly accessed.
+ 
 13.Provides both on and off site mirroring of the archive.
+
 14.Provides an XML cataloguing.
 
 Simple in design and use
