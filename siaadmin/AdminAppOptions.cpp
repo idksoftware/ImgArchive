@@ -277,6 +277,7 @@ bool AppOptions::initalise(int argc, char **argv) {
 		if (argvParser.foundOption("archive-path") == true) {
 			opt = argvParser.optionValue("archive-path");
 		}
+		/*
 		else {
 			std::string progPath = SAUtils::GetEnvironment("ProgramData");
 			std::string siaPath = "/IDK Software/ImageArchive1.0";
@@ -289,11 +290,13 @@ bool AppOptions::initalise(int argc, char **argv) {
 		if (SAUtils::FileExists(opt.c_str()) == false) {
 			return false;
 		}
+		*/
 		setHomePath(opt.c_str());
 
 		if (argvParser.foundOption("workspace-path") == true) {
 			std::string opt = argvParser.optionValue("workspace-path");
 		}
+		/*
 		else {
 			std::string temp = SAUtils::GetEnvironment("USERPROFILE");
 			opt = temp + "/Documents";
@@ -308,6 +311,7 @@ bool AppOptions::initalise(int argc, char **argv) {
 			//}
 			
 		}
+		*/
 		//if (SAUtils::FileExists(opt.c_str()) == false) {
 		//	return false;
 		//}
@@ -316,6 +320,7 @@ bool AppOptions::initalise(int argc, char **argv) {
 		if (argvParser.foundOption("repository-path") == true) {
 			std::string opt = argvParser.optionValue("repository-path");
 		}
+		/*
 		else {
 			std::string progPath = SAUtils::GetEnvironment("ProgramData");
 			std::string siaPath = "/IDK Software/ImageArchive1.0/shadow";
@@ -328,6 +333,7 @@ bool AppOptions::initalise(int argc, char **argv) {
 		//if (SAUtils::FileExists(opt.c_str()) == false) {
 		//	return false;
 		//}
+		*/
 		setShadowPath(opt.c_str());
 		cmdFound = true;
 	}

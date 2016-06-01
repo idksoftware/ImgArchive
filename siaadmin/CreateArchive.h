@@ -48,43 +48,61 @@ namespace simplearchive {
 #define TOOLS_PATH "/tools"
 #define HOOKS_PATH "/hooks"
 
-class CreateArchive {
-	/**
-	/* @brief Creates the folder using the the root and folder name.
-	*/
-	static bool makeFolder(const char *root, const char *folder);
-	/**
-	/* @brief Creates a file using the the folder and file name as the file path. The file is then filled
-	/* with the containts of the char array.
-	*/
-	static bool createFile(const char *root, const char *folder, const char *filename,
-														const char *array[], unsigned int size);
+	class CreateArchive {
+		/**
+		/* @brief Creates the folder using the the root and folder name.
+		*/
+		static bool makeFolder(const char *root, const char *folder);
+		/**
+		/* @brief Creates a file using the the folder and file name as the file path. The file is then filled
+		/* with the containts of the char array.
+		*/
+		static bool createFile(const char *root, const char *folder, const char *filename,
+			const char *array[], unsigned int size);
 
-	static bool CreateArchive::createFile(const char *root, const char *folder, const char *filename, std::string &str);
+		static bool CreateArchive::createFile(const char *root, const char *folder, const char *filename, std::string &str);
 
-	static std::string  makeConfigFile(const char *root, const char *workspace, const char *shadow);
-public:
-	CreateArchive();
-	virtual ~CreateArchive();
-	static bool createSystem(bool users, const char *archivePath, const char *workspace, const char *shadow);
-	/**
-	/* @brief Creates the configuration folders.
-	*/
-	static bool makeFolders(const char *root);
-	/**
-	/* @brief Creates the default configuration files.
-	*/
-	static bool createConfigFiles(const char *root, const char *folder, const char *workspace, const char *shadow);
-	/**
-	/* @brief Creates the default hook files.
-	*/
-	static bool createHookFiles(const char *root, const char *folder);
-	/**
-	/* @brief Creates the enviroment variable SIA_HOME the the path given.
-	*/
-	static bool createHomeEnvVar(const char *root, bool users);
+		static std::string  makeConfigFile(const char *root, const char *workspace, const char *shadow);
+		static bool createAdminSystem(const char *archivePath, const char *workspace, const char *shadow);
+		static bool createUserSystem(const char *archivePath, const char *workspace, const char *shadow);
+		static std::string  m_archivePath;
+		static std::string  m_workspace;
+		static std::string  m_shadow;
+	public:
+		CreateArchive();
+		virtual ~CreateArchive();
+		static bool createSystem(bool users, const char *archivePath, const char *workspace, const char *shadow);
+		/**
+		/* @brief Creates the configuration folders.
+		*/
+		static bool makeFolders(const char *root);
+		/**
+		/* @brief Creates the default configuration files.
+		*/
+		static bool createConfigFiles(const char *root, const char *folder, const char *workspace, const char *shadow);
+		/**
+		/* @brief Creates the default hook files.
+		*/
+		static bool createHookFiles(const char *root, const char *folder);
+		/**
+		/* @brief Creates the enviroment variable SIA_HOME the the path given.
+		*/
+		static bool createHomeEnvVar(const char *root, bool users);
 
-	static bool IsAdmin();
+		static bool IsAdmin();
+
+		static std::string  getArchivePath() {
+			return m_archivePath;
+		}
+
+		static std::string  getWorkspace() {
+			return m_workspace;
+		}
+
+		static std::string  getShadow() {
+			return m_shadow;
+		}
+	
 };
 
 } /* namespace simplearchive */

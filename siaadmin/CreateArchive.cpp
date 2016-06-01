@@ -65,7 +65,9 @@ const char *onfiledoc[] = {
 
 };
 
-
+std::string  CreateArchive::m_archivePath;
+std::string  CreateArchive::m_workspace;
+std::string  CreateArchive::m_shadow;
 
 // Config folder files
 const char *configdoc[] = {
@@ -159,22 +161,26 @@ std::string CreateArchive::makeConfigFile(const char *root, const char *workspac
 }
 
 bool CreateArchive::createSystem(bool users, const char *archivePath, const char *workspace, const char *shadow) {
-
-	/*
-	if (argvParser.foundOption("users") == true) {
-		std::string users = argvParser.optionValue("users");
-		if (users.compare("Myself") == 0) {
-			m_users = false;
-		}
-	}
-	*/
 	if (users == true) {
+		// Admin version
 		if (IsAdmin() == false) {
 			return false;
 		}
+		if (createAdminSystem(archivePath, workspace, shadow) == false) {
+			return false;
+		}
 	}
+	else {
+		// User version
+		if (createUserSystem(archivePath, workspace, shadow) == false) {
+			return false;
+		}
+	}
+}
 
-	if (archivePath == nullptr) {
+bool CreateArchive::createAdminSystem(const char *archivePath, const char *workspace, const char *shadow) {
+
+	if (archivePath == nullptr || *archivePath == '\0') {
 		std::string progPath = SAUtils::GetEnvironment("ProgramData");
 		std::string siaPath = "/IDK Software/ImageArchive1.0";
 		std::string path = progPath;
@@ -185,7 +191,7 @@ bool CreateArchive::createSystem(bool users, const char *archivePath, const char
 		if (SAUtils::makePath(progPath.c_str(), siaPath.c_str()) == false) {
 			return false;
 		}
-		
+		m_archivePath = path;
 	} else {
 		if (SAUtils::FileExists(archivePath) == false) {
 			return false;
@@ -193,10 +199,10 @@ bool CreateArchive::createSystem(bool users, const char *archivePath, const char
 		if (SAUtils::makePath(archivePath) == false) {
 			return false;
 		}
-	
+		m_archivePath = archivePath;
 	}
 
-	if (workspace == nullptr) {
+	if (workspace == nullptr || *workspace == '\0') {
 	
 		std::string temp = SAUtils::GetEnvironment("USERPROFILE");
 		std::string path = temp + "/Documents";
@@ -209,7 +215,7 @@ bool CreateArchive::createSystem(bool users, const char *archivePath, const char
 				return false;
 			}
 		}
-
+		m_workspace = path;
 	}
 	else {
 		if (SAUtils::FileExists(workspace) == false) {
@@ -218,10 +224,11 @@ bool CreateArchive::createSystem(bool users, const char *archivePath, const char
 		if (SAUtils::makePath(workspace) == false) {
 			return false;
 		}
+		m_workspace = workspace;
 	}
 	
 
-	if (shadow == nullptr) {
+	if (shadow == nullptr || *shadow == '\0') {
 		std::string progPath = SAUtils::GetEnvironment("ProgramData");
 		std::string siaPath = "/IDK Software/ImageArchive1.0/shadow";
 		
@@ -233,6 +240,7 @@ bool CreateArchive::createSystem(bool users, const char *archivePath, const char
 		if (SAUtils::makePath(progPath.c_str(), siaPath.c_str()) == false) {
 			return false;
 		}
+		m_shadow = path;
 	}
 	else {
 		if (SAUtils::FileExists(shadow) == false) {
@@ -241,8 +249,90 @@ bool CreateArchive::createSystem(bool users, const char *archivePath, const char
 		if (SAUtils::makePath(shadow) == false) {
 			return false;
 		}
+		m_shadow = shadow;
 	}
 	
+	return true;
+}
+
+bool CreateArchive::createUserSystem(const char *archivePath, const char *workspace, const char *shadow) {
+
+	if (archivePath == nullptr || *archivePath == '\0') {
+		std::string progPath = SAUtils::GetEnvironment("USERPROFILE");
+		std::string siaPath = "/IDK Software/ImageArchive1.0";
+		std::string path = progPath;
+		path += siaPath;
+		if (SAUtils::FileExists(progPath.c_str()) == false) {
+			return false;
+		}
+		if (SAUtils::makePath(progPath.c_str(), siaPath.c_str()) == false) {
+			return false;
+		}
+		m_archivePath = path;
+
+	}
+	else {
+		if (SAUtils::FileExists(archivePath) == false) {
+			return false;
+		}
+		if (SAUtils::makePath(archivePath) == false) {
+			return false;
+		}
+		m_archivePath = archivePath;
+	}
+
+	if (workspace == nullptr || *workspace == '\0') {
+
+		std::string temp = SAUtils::GetEnvironment("USERPROFILE");
+		std::string path = temp;
+		path += "/Documents";
+		if (SAUtils::FileExists(path.c_str()) == false) {
+			return false;
+		}
+		path += "/SIA Workspace";
+		if (SAUtils::FileExists(path.c_str()) == false) {
+			if (SAUtils::mkDir(path.c_str()) == false) {
+				return false;
+			}
+		}
+		m_workspace = path;
+	}
+	else {
+		if (SAUtils::FileExists(workspace) == false) {
+			return false;
+		}
+		if (SAUtils::makePath(workspace) == false) {
+			return false;
+		}
+		m_workspace = workspace;
+	}
+
+
+	if (shadow == nullptr || *shadow == '\0') {
+		std::string progPath = SAUtils::GetEnvironment("USERPROFILE");
+		std::string siaPath = "/IDK Software/ImageArchive1.0/shadow";
+
+		std::string path = progPath;
+		path += siaPath;
+		if (SAUtils::FileExists(progPath.c_str()) == false) {
+			return false;
+		}
+		if (SAUtils::makePath(progPath.c_str(), siaPath.c_str()) == false) {
+			return false;
+		}
+		m_shadow = path;
+	}
+	else {
+		if (SAUtils::FileExists(shadow) == false) {
+			return false;
+		}
+		if (SAUtils::makePath(shadow) == false) {
+			return false;
+		}
+		m_shadow = shadow;
+	}
+	
+	return true;
 }
 
 bool CreateArchive::makeFolders(const char *root) {
@@ -361,7 +451,7 @@ bool CreateArchive::makeFolder(const char *root, const char *folder) {
 	return true;
 }
 
-static bool IsAdmin() {
+bool CreateArchive::IsAdmin() {
 	return IsElevated();
 }
 

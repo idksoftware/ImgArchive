@@ -101,8 +101,7 @@ public:
 	const char *getWorkspacePath();
 	const char *getShadowPath();
 	const char *getConfigPath();
-	bool isAllUsers()
-
+	bool isAllUsers();
 
 	bool isConfiguratedOk() {
 		return m_configured;

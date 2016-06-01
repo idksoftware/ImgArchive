@@ -230,22 +230,22 @@ bool App::CreateArchive(const char *archivePath, const char *workspacePath, cons
 		std::cout << "Failed creating enviroment variable SIA_HOME" << '\n';
 		return false;
 	}
-	if (CreateArchive::createHomeEnvVar(archivePath, users) == false) {
+	if (CreateArchive::createHomeEnvVar(CreateArchive::getArchivePath().c_str(), users) == false) {
 		std::cout << "Failed creating enviroment variable SIA_HOME" << '\n';
 		return false;
 	}
 	
-	if (CreateArchive::makeFolders(archivePath) == false) {
+	if (CreateArchive::makeFolders(CreateArchive::getArchivePath().c_str()) == false) {
 		std::cout << "Failed creating folders" << '\n';
 		return false;
 	}
 
-	if (CreateArchive::createHookFiles(archivePath, HOOKS_PATH) == false) {
+	if (CreateArchive::createHookFiles(CreateArchive::getArchivePath().c_str(), HOOKS_PATH) == false) {
 		std::cout << "Failed creating hook files" << '\n';
 		return false;
 	}
 
-	if (CreateArchive::createConfigFiles(archivePath, CONFIG_PATH, workspacePath, shadowPath) == false) {
+	if (CreateArchive::createConfigFiles(CreateArchive::getArchivePath().c_str(), CONFIG_PATH, CreateArchive::getWorkspace().c_str(), CreateArchive::getShadow().c_str()) == false) {
 		std::cout << "Failed creating configuration files" << '\n';
 		return false;
 	}

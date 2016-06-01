@@ -308,9 +308,11 @@ namespace simplearchive {
 			if (m_ArchiveBuilder->Init() == false) {
 				return -1;
 			}
+			/* this needs looking at??
 			if (MirrorManager::initalise(config.getShadowPath(), config.getConfigPath()) == false) {
 				return -1;
 			}
+			*/
 			if (ViewManager::initalise(config.getShadowPath(), config.getConfigPath()) == false) {
 				return -1;
 			}

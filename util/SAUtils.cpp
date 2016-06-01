@@ -470,33 +470,32 @@ bool SAUtils::makePath(const char *from, const char *to) {
 
 bool SAUtils::makePath(const char *to) {
 
-	
-	
 	std::string fullPath = to;
-
-	
+	int idx = fullPath.find_first_of(':');
+	std::string drive = fullPath.substr(0, idx + 1);
 	bool last = false;
+	unsigned int start = idx + 1;
+	unsigned int end = 0;
+	std::string curPath = drive;
 	std::string node;
 	while (last != true) {
-		unsigned int start = fullPath.length();
-		unsigned int end = 0;
+
 		if ((end = fullPath.find_first_of("/", start + 2)) == std::string::npos) {
-			node = fullPath.substr(start + 1, (fullPath.length() - start) - 1);
+			node = fullPath.substr(start + 1, (fullPath.length() - start + 1));
 			last = true;
 		}
 		else {
-			node = fullPath.substr(start + 1, (end - 1) - (start));
+			node = fullPath.substr(start + 1, (end)-(start + 1));
 		}
-
-
-		curPath += '/';
+		curPath += '//';
 		curPath += node;
 		node.clear();
-		if (SAUtils::DirExists(curPath.c_str()) == false) {
-			if (SAUtils::mkDir(curPath.c_str()) == false) {
+		if (DirExists(curPath.c_str()) == false) {
+			if (mkDir(curPath.c_str()) == false) {
 				return false;
 			}
 		}
+		start = curPath.length();
 	}
 	return true;
 }
