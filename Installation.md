@@ -15,9 +15,11 @@ However a MSI install package “sia.msi” is available, this contains all the 
 ###Apple Mac
 Under the Apple Mac SIA can be installed using Apple Install package sia.pic. This will install SIA into the default locations. 
 ###Linux
-Under the Apple Mac SIA can be installed using Apple Install package sia.pic. This will install SIA into the default locations. 
+Under the Apple Mac SIA can be installed using Apple Install package sia.pic. This will install SIA into the default locations.
 
-##Standard OS platform installation locations
+##Using SIA administration tool
+
+###Standard OS platform installation locations
 SIA is normally installed in a default location defined for the OS platform it is running under. Each OS platform has a default location for third party applications. The standard locations or each of the three main platforms are described as follows:
 ###Windows
 Windows uses the environment variables; ProgramData and ProgramFiles. These locate the standard locations of the program data and the program files. SIA extends these to make a SIA specified folder path. For example the standard location under windows for SIA to install is self is $(ProgramData)\IDK Software\sia1.1 for the data files needed to run SIA and $(DrogramFiles)\IDK Software\sia1.1\bin
