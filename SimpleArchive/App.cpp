@@ -111,8 +111,6 @@ bool App::initalise(int argc, char **argv) {
 };
 
 
-
-
 bool App::Run()
 {
 	AppOptions &appOptions = AppOptions::get();
