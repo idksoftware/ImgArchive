@@ -13,3 +13,5 @@ Digital asset management (DAM) consists of management tasks and decisions surrou
 [Digital Asset management Overview](Digital Asset management Overview) 
 
 A [User Guide](SIA User Guide) of SIA can be found in the following: This will also describe DAM in more detail and how SIA fits in with DAM.
+
+[Downloading](Downloading)
