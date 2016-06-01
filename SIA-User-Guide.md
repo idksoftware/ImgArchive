@@ -12,6 +12,10 @@ Metadata is the data or information about an image or images. It is this informa
  
 [Image Workflow](Image Workflow) is the workflow required to take the digital image or images from an external source such as a camera and import them into the archive.
 
+[Installation](Installation)
+
+[Basic operation](Basic operation)
+
 [Archive Storage](Archive Storage)
 
 [Archive validation](Archive validation)
