@@ -19,7 +19,9 @@ Under the Apple Mac SIA can be installed using Apple Install package sia.pic. Th
 
 ##Using SIA administration tool
 The SIA administration tool siaadmin.exe can be used to install the SIA environments using the initialisation command "init".
-This command will initialise the environment allowing SIA to manage the archive, the location of which will be determined be the arguments passed to the "init" command. If no arguments are passed then the "init" command will use the standard OS platform installation locations.
+This command will initialise the environment allowing SIA to manage the archive, the location of which will be determined be the arguments passed to the "init" command. If no arguments are passed then the "init" command will use the standard OS platform installation locations using administration privileges.
+For example:
+`siaadmin init`
 
 ###Initialisation command arguments 
 These arguments will enable you pick the location of the initialled environment, the archive and the workspace. On windows programs can be installed as for all users of the machine or for just you the current user.
