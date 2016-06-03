@@ -16,7 +16,7 @@ To use the command prompt you would type in the commands and instructions you wa
 SIA for the sake of simplicity and uses command line tools that can be access in the most basic of ways that is pretty much uniform across operating systems. The core features of SIA are in a simple command line command sia.exe or sia on Mac and Linux. The administration of the archive comes from a simple command line command siaadmin.exe or siaadmin on Mac or Linux. These commands can be called by wrapper applications that are graphical user interfaces. The command line arguments are simple to interface from other applications and will change infrequently.
 
 ##Apple Mac (XOS)
-The mac prides its self being a graphical user interface, however it's based on BSD Unix and so under the hood is just another Unix like linux and like linux can be drive almost intilly from the 
+The mac prides its self being a graphical user interface, however it's based on BSD Unix and so under the hood is just another Unix like linux and like linux can be driveñ almost intilly from the command line, so much of the mac can be driven as linux. Indeed if you are familiar with with linux then look out for mac ports, thesee are  
  
 
  
