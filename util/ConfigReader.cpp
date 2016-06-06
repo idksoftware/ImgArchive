@@ -61,16 +61,16 @@ void Config::printAll() {
 	// &logger = CLogger::getLogger();
 	for (std::map<std::string, std::string>::iterator ii = begin(); ii != end(); ++ii) {
 		if (empty) {
-			std::cout << "=== Starting ===\n";
+			std::cout << "Basic configuation\n";
 		}
-		std::cout << ii->first << " " << ii->second << '\n';
+		std::cout << "   " << ii->first << " " << ii->second << '\n';
 			//printf("cmd:\"%s\" opt:\"%s\"\n", (*ii).first.c_str(), (*ii).second.c_str());
 		empty = false;
 	}
 	if (empty) {
 		//std::cout << "Empty" << '\n';
 	} else {
-		std::cout << "=== Ending ===\n";
+		std::cout << "\n";
 	}
 }
 

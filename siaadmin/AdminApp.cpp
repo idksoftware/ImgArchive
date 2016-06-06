@@ -113,58 +113,48 @@ bool App::Run()
 		return false;
 	}
 
-	SIALib siaLib;
-	siaLib.initalise();
-
-	CAppConfig &config = CAppConfig::get();
+	
 	
 
 	switch (appOptions.getCommandMode()) {
 	case AppOptions::CM_InitArchive:
-		/*
-	case AppOptions::CM_InitArchive:
-		if (appOptions.isConfiguratedOk() == true) {
-			// Do not create a new archive. The old one needs to be deleted?
-			return false;
-		}
-#ifdef _DEBUG
-		if (CreateArchive("c:/temp", "c:/output", "c:/shadow") == false) {
-#else
-		if (CreateArchive(config.getHomePath(), config.getWorkspacePath()) == false) {
-#endif
-			return false;
-		}
-		printf("\n\nInit Archive\n");
 		break;
-		*/
-
 	case AppOptions::CM_Show:
 	{
-		//if (siaLib.show(appOptions.getName()) == false) {
-		//	return false;
-		//}
+		CAppConfig &config = CAppConfig::get();
+		config.printAll();
 		break;
 	}
 	case AppOptions::CM_View:
 	{
+		SIALib siaLib;
+		siaLib.initalise();
+		CAppConfig &config = CAppConfig::get();
 		if (siaLib.view(appOptions.getName()) == false) {
 			return false;
 		}
+		siaLib.complete();
 		break;
 	}
 	case AppOptions::CM_Mirror:
 	{
 		// make mirror
+		SIALib siaLib;
+		siaLib.initalise();
+		CAppConfig &config = CAppConfig::get();
 		if (siaLib.mirror(appOptions.getName()) == false) {
 			return false;
 		}
 		// 
 
-		
+		siaLib.complete();
 		break;
 	}
 	case AppOptions::CM_Validate:
 	{
+		SIALib siaLib;
+		siaLib.initalise();
+		CAppConfig &config = CAppConfig::get();
 		if (appOptions.isConfiguratedOk() == false) {
 			// Do not create a new archive. The old one needs to be deleted?
 			return false;
@@ -185,18 +175,20 @@ bool App::Run()
 				return false;
 			}
 		}
-		
+		siaLib.complete();
 		break;
 	}
 	
 	case AppOptions::CM_Version:
-		printf("\n\nSia version \"%s\" (build %s)\n", VERSION, BUILD);
+		printf("Simple Image Archive Administrator\n"
+			   "siaadmin version \"%s\" (build %s)\n"
+			   "Copyright@(2010-2016) IDK Sftware Ltd.\n", VERSION, BUILD);
 		return true;
 	case AppOptions::CM_Unknown:
 		break;
 	}
 
-	siaLib.complete();
+	
 	
 	return true;
 }

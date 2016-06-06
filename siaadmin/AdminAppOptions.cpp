@@ -72,7 +72,7 @@ bool AppOptions::initaliseConfig() {
 	const std::string key = "SIA_HOME";
 	std::string temp = SAUtils::GetEnvironment(key);
 	std::string homePath = temp;
-	printf("%s", homePath.c_str());
+	//printf("%s", homePath.c_str());
 	int i = homePath.length();
 	if (homePath.empty() == true || homePath.length() == 0) {
 		homePath = SAUtils::GetEnvironment("ProgramData");
@@ -96,7 +96,8 @@ bool AppOptions::initaliseConfig() {
 			ConfigReader configReader;
 			configReader.setNoLogging();
 			configReader.read(configfile.c_str(), config);
-			config.printAll();
+			// This is usfull to print the config
+			//config.printAll();
 			/*
 			if (config.value("SourcePath", temp) == true) {
 			m_sourcePath = temp;
@@ -144,26 +145,21 @@ bool AppOptions::initalise(int argc, char **argv) {
 	argvParser.setHelpOption();
 	
 	argvParser.setHeader("usage: siaadmin subcommand [options] [args]\n\n"
-		"Image archive command line client, version 1.0.0.1\n"
+		"Image archive command line administrator, version 1.0.0.1\n"
 		"Type 'siaadmin help <subcommand>' for help on a specific subcommand.\n\n"
-		"siaadmin is the primary command-line interface to administer a Simple Image Archive. This interface is used to manage the control of images"
-		" going in and out of the archive software. "
-		"It has a rich set of subcommands that control the configuration of the archive and \"export\" images out of the archive,"
-		"\n"
-		"Note:\n"
-		"The administration of the archive is carried out by the siaadmin command-line interface."
+		"siaadmin is the primary command-line interface to administer Simple Image Archive (sia)."
 		"\n");
 	
 
 	// Subcommands
 
 	
-	argvParser.defineOption("i", "Create Archive Commands", ArgvParser::MasterOption);
-	argvParser.defineOptionAlternative("i", "init");
+	argvParser.defineOption("init", "Create Archive enviroment", ArgvParser::MasterOption);
+	//argvParser.defineOptionAlternative("i", "init");
 
 	argvParser.defineOption("show", "Show settings", ArgvParser::MasterOption);
 	// Arguments
-	argvParser.defineOption("about", "prints the version information", ArgvParser::MasterOption);
+	argvParser.defineOption("version", "prints the version information", ArgvParser::MasterOption);
 
 	
 	argvParser.defineOption("validate", "Validate commands", ArgvParser::MasterOption);
@@ -346,7 +342,7 @@ bool AppOptions::initalise(int argc, char **argv) {
 			return false;
 		}
 		
-		if (argvParser.command("about") == true) {
+		if (argvParser.command("version") == true) {
 			setCommandMode(AppOptions::CM_Version);
 			cmdFound = true;
 		}
