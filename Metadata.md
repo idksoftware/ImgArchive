@@ -17,6 +17,8 @@ Metadata is the information about every aspect of the photographic image. This c
 
 6)	Copyright Information
 
+7)      Administrative Metadata
+
 ####Image File properties
 These properties refer to the Image file its self. These properties can be applied to almost any file. These properties incl  
 
@@ -30,7 +32,10 @@ These are camera orientated properties such is the make/model of the camera, the
 ####Geographical Location Information
 The location of where the image was taken using latitude and longitude measurements. 
 ####Copyright Information
-Copyright Information is information on the owner of the image and the rights to the image. 
+Copyright Information is information on the owner of the image and the rights to the image.
+####Administrative Metadata
+This may also be referred to as system metadata and covers data generated as a result of the asset being introduced and modified within the DAM system. For example, the sequence number, its unique identifyer  There is some cross-over between administrative metadata and workflow information but in general the former usually relates to any metadata which is integral to the asset itself.
+ 
 ###Metadata Types
 This refers to how the data is generated and is divided into levels. Each level adds greater descriptive value but at the expense of additional effort. This may be offset by the ease of finding images in the archive.
 Automatically generated
