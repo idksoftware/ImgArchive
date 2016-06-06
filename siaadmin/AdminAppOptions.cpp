@@ -180,48 +180,52 @@ bool AppOptions::initalise(int argc, char **argv) {
 	argvParser.defineOptionAlternative("b", "backup");
 	*/
 	// Options
-	argvParser.defineOption("n", "name of the item.", ArgvParser::OptionRequiresValue);
-	argvParser.defineOptionAlternative("n", "name");
+	argvParser.defineOption("name", "name of the item.", ArgvParser::OptionRequiresValue);
+	//argvParser.defineOptionAlternative("n", "name");
 
-	argvParser.defineOption("r", "Validate and repair.", ArgvParser::NoOptionAttribute);
-	argvParser.defineOptionAlternative("r", "repair");
+	argvParser.defineOption("repair", "Validate and repair.", ArgvParser::NoOptionAttribute);
+	//argvParser.defineOptionAlternative("r", "repair");
 
-	argvParser.defineOption("s", "Scope validate. i.e. Workspace/Shadow or both", ArgvParser::OptionRequiresValue);
-	argvParser.defineOptionAlternative("s", "scope");
+	argvParser.defineOption("scope", "Scope validate. i.e. Workspace/Shadow or both", ArgvParser::OptionRequiresValue);
+	//argvParser.defineOptionAlternative("s", "scope");
 
-	argvParser.defineOption("u", "Make archive available to you only or everyone with a logon to this computer (Myself/All).", ArgvParser::OptionRequiresValue);
-	argvParser.defineOptionAlternative("u", "users");
+	argvParser.defineOption("users", "Make archive available to you only or everyone with a logon to this computer (Myself/All).", ArgvParser::OptionRequiresValue);
+	//argvParser.defineOptionAlternative("u", "users");
 
-	/*
-	argvParser.defineOption("d", "destination of the images", ArgvParser::OptionRequiresValue);
-	argvParser.defineOptionAlternative("d", "dist-path");
+	
+	argvParser.defineOption("dist-path", "destination of the images", ArgvParser::OptionRequiresValue);
+	//argvParser.defineOptionAlternative("d", "dist-path");
 
-	argvParser.defineOption("S", "size of media", ArgvParser::OptionRequiresValue);
-	argvParser.defineOptionAlternative("S", "media-size");
+	argvParser.defineOption("media-size", "size of media", ArgvParser::OptionRequiresValue);
+	//argvParser.defineOptionAlternative("S", "media-size");
 
 	argvParser.defineOption("media-path", "Goes through the motions of running the subcommand but makes no\nactual changes ether disk or repository.", ArgvParser::OptionRequiresValue);
 
-	argvParser.defineOption("F", "from date", ArgvParser::OptionRequiresValue);
-	argvParser.defineOptionAlternative("F", "from-date");
+	argvParser.defineOption("from-date", "from date", ArgvParser::OptionRequiresValue);
+	//argvParser.defineOptionAlternative("F", "from-date");
 
-	argvParser.defineOption("T", "to date", ArgvParser::OptionRequiresValue);
-	argvParser.defineOptionAlternative("T", "to-date");
+	argvParser.defineOption("to-date", "to date", ArgvParser::OptionRequiresValue);
+	//argvParser.defineOptionAlternative("T", "to-date");
 
-	argvParser.defineOption("r", "location of the archive root folder.", ArgvParser::OptionRequiresValue);
-	argvParser.defineOptionAlternative("r", "archive-path");
+	argvParser.defineOption("archive-path", "location of the archive root folder.", ArgvParser::OptionRequiresValue);
+	//argvParser.defineOptionAlternative("r", "archive-path");
 
-	argvParser.defineOption("w", "location of the workspace folder.", ArgvParser::OptionRequiresValue);
-	argvParser.defineOptionAlternative("w", "workspace");
-
-	argvParser.defineOption("l", "Temporarily changes the logging level for the scope of this command session.", ArgvParser::OptionRequiresValue);
-	argvParser.defineOptionAlternative("r", "logging-level");
-
-	argvParser.defineOption("C", "Comment to be included in command", ArgvParser::OptionRequiresValue);
-	argvParser.defineOptionAlternative("C", "comment");
-
-	argvParser.defineOption("w", "Location of the archive Workspace", ArgvParser::OptionRequiresValue);
-	argvParser.defineOptionAlternative("w", "workspace-path");
+	argvParser.defineOption("workspace", "location of the workspace folder.", ArgvParser::OptionRequiresValue);
+	//argvParser.defineOptionAlternative("w", "workspace");
 	
+	argvParser.defineOption("repository-path", "location of the repository folder.", ArgvParser::OptionRequiresValue);
+	//argvParser.defineOptionAlternative("w", "workspace");
+
+	argvParser.defineOption("logging-level", "Temporarily changes the logging level for the scope of this command session.", ArgvParser::OptionRequiresValue);
+	//argvParser.defineOptionAlternative("r", "logging-level");
+
+	argvParser.defineOption("comment", "Comment to be included in command", ArgvParser::OptionRequiresValue);
+	//argvParser.defineOptionAlternative("C", "comment");
+
+	argvParser.defineOption("workspace-path", "Location of the archive Workspace", ArgvParser::OptionRequiresValue);
+	//argvParser.defineOptionAlternative("w", "workspace-path");
+	
+	/*
 	argvParser.defineCommandOption("init", "archive-path");
 	argvParser.defineCommandOption("init", "workspace-path");
 	*/
