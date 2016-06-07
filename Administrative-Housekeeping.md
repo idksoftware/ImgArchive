@@ -58,3 +58,18 @@ This contains the full path of where the images to be import can be found. By de
 -s –sourcefolder=<value>
 <value> is the full path to the root folder of the source of images to be imported.
 
+config.setHomePath(homePath.c_str());
+	std::string temp;
+	temp = SAUtils::GetEnvironment("SIA_ARCHIVE");
+	if (temp.empty() == false) {
+		config.setWorkspacePath(temp.c_str());
+	}
+	temp = SAUtils::GetEnvironment("SIA_SOURCE");
+	if (temp.empty() == false) {
+		config.setSourcePath(temp.c_str());
+	}
+	temp = SAUtils::GetEnvironment("SIA_LOGLEVEL");
+	if (temp.empty() == false) {
+		config.setLogLevel(temp.c_str());
+	}
+
