@@ -1,4 +1,4 @@
-administrative housekeeping
+#administrative housekeeping
 
 1. 	Housekeeping Commands
 
@@ -16,7 +16,13 @@ See environment variables and configuration file
 While SIA has different options for its subcommands however all options have the same meaning if used in different subcommands. For example –verbose (-v) always means verbose output to the control terminal regardless of the subcommand being used.
 SIA will normality exit quickly with an error if it is passed an option that does not apply to the subcommand  
 
-Housekeeping Commands
+##Housekeeping Commands
+
+###initialise command (init)
+The initialise command (init) initialises the environment in order for SIA to operate correctly. This in tails creating required folders in locations accessible to SIA and populating these folders with operational files such as the main configuration file. SIA will locate these files by a environment variable SIA_HOME or default locations specified by the OS.
+This command takes four arguments. The first specifies the install use. This is common to almost all OS's that an application can install for one user or all uses who can login to the computer running the application.
+`--users=<Myself|All>`
+
 
 Mirror commands (--mirror)
 These commands control the image mirroring functions. The default configuration is normal maintained by using configuration files as this function is carried out as part of an automatic operation.
@@ -29,11 +35,13 @@ These commands control the image mirroring functions. The default configuration 
 
 Archive validation commands (--validate)
 
-This command helps to maintain the integrity of the mirror by scanning each file in the archive and comparing it with a list of checksums that validate that the files are not corrupted or missing. Because the archive contains images that may not be accessed for some time images, sometimes months, even years, these image can go missing or get corrupted without you knowing for some time. This can be done by accident or maliciously. However the damage is done and the longer left untreated the more likely that the repair will be harder as the backup may be harder to find. The process of validating the archive may take some time to scan the entire archive so this command allows you to be selective of what is to be scanned.   
+This command helps to maintain the integrity of the mirror by scanning each file in the archive and comparing it with a list of checksums that validate that the files are not corrupted or missing. Because the archive contains images that may not be accessed for some time images, sometimes months, even years, these image can go missing or get corrupted without you knowing for some time. This can be done by accident or maliciously. However the damage is done and the longer left untreated the more likely that the repair will be harder as the backup may be harder to find. The process of validating the archive may take some time to scan the entire archive so this command allows you to be selective of what is to be scanned.
+   
 --all
 --archive
 --view
 --mirror
+
 Backup commands (--backup)
 
 Global Commands
