@@ -101,22 +101,43 @@ bool AppOptions::initalise(int argc, char **argv) {
 	std::string temp = SAUtils::GetEnvironment(key);
 	std::string homePath = temp;
 	*/
-	std::string temp;
-	if (GetEnv(temp, false) == false) {
-		printf("SIA Unable to start? The environment variable SA_HOME not set.\nUse siaadmin to initalise an archive.");
-		m_error = true;
-		return false;
+	bool found = false;
+	std::string homePath;
+	// Looking the HKEY_LOCAL_MACHINE first
+	if (GetEnv(homePath, true) == true) {
+		printf("Found SIA_HOME in system variables: %s", homePath.c_str());
+		found = true;
+	} else if (GetEnv(homePath, false) == true) {
+		printf("Found SIA_HOME in user variables: %s", homePath.c_str());
+		found = true;
+	} else {
+		bool found = false;
+		homePath = SAUtils::GetEnvironment("USERPROFILE");
+		if (homePath.empty() == true || homePath.length() == 0) {
+			printf("SIA Unable to start? Cannot read user profile.");
+			return false;
+		}
+		else {
+			homePath += "/IDK Software/ImageArchive1.0";
+			if (SAUtils::DirExists(homePath.c_str()) == true) {
+				printf("Found SIA_HOME in user profile: %s", homePath.c_str());
+				found = true;
+			}
+		}
+		if (found == false) {
+			homePath = SAUtils::GetEnvironment("ProgramData");
+			if (homePath.empty() == true || homePath.length() == 0) {
+				printf("SIA Unable to start? Cannot read all users profile.");
+				return false;
+			}
+			homePath += "/IDK Software/ImageArchive1.0";
+			if (SAUtils::DirExists(homePath.c_str()) == true) {
+				printf("Found SIA_HOME in all users profile: %s", homePath.c_str());
+				found = true;
+			}
+		}
 	}
-	std::string homePath = temp;
-//	printf("%s", homePath.c_str());
-	int i = homePath.length();
-	if (homePath.empty() == true || homePath.length() == 0) {
-		homePath = SAUtils::GetEnvironment("ProgramData");
-		//C:\ProgramData\IDK Software\ImageArchive1.0
-		homePath += "/IDK Software/ImageArchive1.0";
-		
-	}
-	if (SAUtils::DirExists(homePath.c_str()) == false) {
+	if (found = false) {
 		printf("SIA Unable to start? No archive found in the default location or the environment variable SA_HOME not set.\nUse siaadmin to initalise an archive.");
 		m_error = true;
 		return false;
@@ -142,6 +163,7 @@ bool AppOptions::initalise(int argc, char **argv) {
 		}
 		*/
 	config.setHomePath(homePath.c_str());
+	std::string temp;
 	temp = SAUtils::GetEnvironment("SIA_ARCHIVE");
 	if (temp.empty() == false) {
 		config.setWorkspacePath(temp.c_str());
