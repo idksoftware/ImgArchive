@@ -23,6 +23,15 @@ The initialise command (init) initialises the environment in order for SIA to op
 This command takes four arguments. The first specifies the install use. This is common to almost all OS's that an application can install for one user or all uses who can login to the computer running the application.
 `--users=<Myself|All>`
 
+The other arguments relate to the location of archive components. these components are as follows:
+
+The archive repository i.e. where the archive are located.
+
+The system environment i.e. where the system files are located.
+
+The workspace i.e. where the working copies of images are located.
+
+The locat  
 
 Mirror commands (--mirror)
 These commands control the image mirroring functions. The default configuration is normal maintained by using configuration files as this function is carried out as part of an automatic operation.
