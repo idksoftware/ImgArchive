@@ -20,16 +20,20 @@ SIA will normality exit quickly with an error if it is passed an option that doe
 
 ###initialise command (init)
 The initialise command (init) initialises the environment in order for SIA to operate correctly. This in tails creating required folders in locations accessible to SIA and populating these folders with operational files such as the main configuration file. SIA will locate these files by a environment variable SIA_HOME or default locations specified by the OS.
-This command takes four arguments. The first specifies the install use. This is common to almost all OS's that an application can install for one user or all uses who can login to the computer running the application.
+This command takes four arguments. The first specifies the installed user or users. This is common to almost all OS's that an application can install for one user or all uses who can login to the computer running the application.
 `--users=<Myself|All>`
+
+however, to install an application for all uses who can login to the computer normally requires elevated privileges i.e. root privileges under UNIX based systems (Linux and OSX) and administer privileges under windows. The preferred option it install in elevated privileges because normally the application is run under normal user privilege which protects system files against modification by users. Unfortunately sometimes the root or administer passwords are not available so the application as to be installed for the current logged in user.
+
+if the --users option is not present then the installation will default to "all users" and elevated privileges will be required and will fail to install if the privilege are not found    
 
 The other arguments relate to the location of archive components. these components are as follows:
 
-The archive repository i.e. where the archive are located.
+The archive repository i.e. where the archive are located (--shadow-path).
 
-The system environment i.e. where the system files are located.
+The system environment i.e. where the system files are located (archive-path). 
 
-The workspace i.e. where the working copies of images are located.
+The workspace i.e. where the working copies of images are located (workspace-path).
 
 The locat  
 
