@@ -36,17 +36,18 @@ The other arguments relate to the location of archive components. these componen
 
 * The workspace i.e. where the working copies of images are located (workspace-path).
 
-### The archive Location
+#### The archive Location
 The location of the archive can be specified individually and not part of there the configuration is located as the archive can be quite large. Therefore this can be specified as a separate augment on the command line. If these is not supplied then the default will be to add it as a folder in the configuration.
 
-### The system environment location
+#### The system environment location
 This is the home location of the archive. All the core configuration will be in folders located as sub-folders from this home folder. If this augment is used, and the location used for the configuration is not one of the OS default locations then SIA_HOME environment variable will need to be created to contain the path to this location. 
 By using the siaadmin tool this environment variable will be managed for you.
 
-### The workspace location
+#### The workspace location
 This is where all the working copies of images are located. This folder can also become quite large so it is specified as a specified individually. In addition this will need to be a folder that you have permission to modify as the current user.
 
- 
+###Show configuration command (show)
+This command will display the current configuration settings to the screen. This command helps you view the archives configuration settings as the archive reads them. Any problems with the configuration can hopefully be corrected by inspecting the output from this command.  
 
 Mirror commands (--mirror)
 These commands control the image mirroring functions. The default configuration is normal maintained by using configuration files as this function is carried out as part of an automatic operation.
