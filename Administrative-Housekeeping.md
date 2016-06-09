@@ -19,7 +19,8 @@ SIA will normality exit quickly with an error if it is passed an option that doe
 ##Housekeeping Commands
 
 ###initialise command (init)
-The initialise command (init) initialises the environment in order for SIA to operate correctly. This in tails creating required folders in locations accessible to SIA and populating these folders with operational files such as the main configuration file. SIA will locate these files by a environment variable SIA_HOME or default locations specified by the OS.
+The initialise command (init) initialises the environment in order for SIA to operate correctly. This entails creating required folders in locations accessible to SIA and populating these folders with operational files such as the main configuration file. SIA will locate these files by a environment variable SIA_HOME or default locations specified by the OS.
+
 This command takes four arguments. The first specifies the installed user or users. This is common to almost all OS's that an application can install for one user or all uses who can login to the computer running the application.
 `--users=<Myself|All>`
 
@@ -29,13 +30,23 @@ if the --users option is not present then the installation will default to "all 
 
 The other arguments relate to the location of archive components. these components are as follows:
 
-The archive repository i.e. where the archive are located (--shadow-path).
+* The archive repository i.e. where the archive are located (--shadow-path).
 
-The system environment i.e. where the system files are located (archive-path). 
+* The system environment i.e. where the system files are located (--archive-path). 
 
-The workspace i.e. where the working copies of images are located (workspace-path).
+* The workspace i.e. where the working copies of images are located (workspace-path).
 
-The locat  
+### The archive Location
+The location of the archive can be specified individually and not part of there the configuration is located as the archive can be quite large. Therefore this can be specified as a separate augment on the command line. If these is not supplied then the default will be to add it as a folder in the configuration.
+
+### The system environment location
+This is the home location of the archive. All the core configuration will be in folders located as sub-folders from this home folder. If this augment is used, and the location used for the configuration is not one of the OS default locations then SIA_HOME environment variable will need to be created to contain the path to this location. 
+By using the siaadmin tool this environment variable will be managed for you.
+
+### The workspace location
+This is where all the working copies of images are located. This folder can also become quite large so it is specified as a specified individually. In addition this will need to be a folder that you have permission to modify as the current user.
+
+ 
 
 Mirror commands (--mirror)
 These commands control the image mirroring functions. The default configuration is normal maintained by using configuration files as this function is carried out as part of an automatic operation.
