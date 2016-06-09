@@ -367,6 +367,56 @@ bool CreateArchive::makeFolders(const char *root) {
 	return true;
 }
 
+bool CreateArchive::checkFolders(const char *root) {
+	std::cout << "System Folders\n";
+	std::cout << "==============\n";
+	//if (checkFolder(root, CONFIG_PATH) == false) {
+	//	std::cout << "Failed you need administrator privileges" << '\n';
+	//	return false;
+	//}
+	if (checkFolder(root, TMP_PATH) == false) {
+		std::cout << "Failed to find " << TMP_PATH << " folder : " << root << TMP_PATH << '\n';
+	}
+	std::cout << "Found " << TMP_PATH << " folder: " << root << TMP_PATH << '\n';
+
+	if (checkFolder(root, DUPS_PATH) == false) {
+		std::cout << "Failed to find " << DUPS_PATH << " folder: " << root << DUPS_PATH << '\n';
+	}
+	std::cout << "Found " << DUPS_PATH << " folder: " << root << DUPS_PATH << '\n';
+
+	if (checkFolder(root, SQLITEDB_PATH) == false) {
+		std::cout << "Failed to find " << SQLITEDB_PATH << " folder: " << root << SQLITEDB_PATH << '\n';
+	}
+	std::cout << "Found " << SQLITEDB_PATH << " folder: " << root << SQLITEDB_PATH << '\n';
+
+	if (checkFolder(root, LOG_PATH) == false) {
+		std::cout << "Failed to find " << LOG_PATH << " folder: " << root << LOG_PATH << '\n';
+	}
+	std::cout << "Found " << LOG_PATH << "  folder: " << root << LOG_PATH << '\n';
+
+	if (checkFolder(root, HISTORY_PATH) == false) {
+		std::cout << "Failed to find " << HISTORY_PATH << " folder: " << root << HISTORY_PATH << '\n';
+	}
+	std::cout << "Found " << HISTORY_PATH << " folder: " << root << HISTORY_PATH << '\n';
+
+	if (checkFolder(root, BACKUP_PATH) == false) {
+		std::cout << "Failed to find " << BACKUP_PATH << " folder: " << root << BACKUP_PATH << '\n';
+	}
+	std::cout << "Found " << BACKUP_PATH << " folder: " << root << BACKUP_PATH << '\n';
+
+	if (checkFolder(root, TOOLS_PATH) == false) {
+		std::cout << "Failed to find " << TOOLS_PATH << " folder: " << root << TOOLS_PATH << '\n';
+	}
+	std::cout << "Found  " << TOOLS_PATH << " folder: " << root << TOOLS_PATH << '\n';
+
+	if (checkFolder(root, HOOKS_PATH) == false) {
+		std::cout << "Failed to find " << HOOKS_PATH << " folder: " << root << '\\' << HOOKS_PATH << '\n';
+	}
+	std::cout << "Found " << HOOKS_PATH << " folder: " << root << HOOKS_PATH << '\n';
+
+	return true;
+}
+
 bool CreateArchive::createConfigFiles(const char *root, const char *folder, const char *workspace, const char *shadow) {
 	//createFile(const char *root, const char *folder, const char *filename, std::string &str) {
 	std::string configFile = makeConfigFile(root, workspace, shadow);
@@ -447,6 +497,15 @@ bool CreateArchive::makeFolder(const char *root, const char *folder) {
 		if (SAUtils::mkDir(folderPath.c_str()) == false) {
 			return false;
 		}
+	}
+	return true;
+}
+
+bool CreateArchive::checkFolder(const char *root, const char *folder) {
+	std::string folderPath = root;
+	folderPath += folder;
+	if (SAUtils::DirExists(folderPath.c_str()) == false) {
+		return false;
 	}
 	return true;
 }

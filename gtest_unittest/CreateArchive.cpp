@@ -295,4 +295,14 @@ bool CreateArchive::makeFolder(const char *root, const char *folder) {
 	}
 	return true;
 }
+
+bool CreateArchive::checkFolder(const char *root, const char *folder) {
+	std::string folderPath = root;
+	folderPath += folder;
+	if (SAUtils::DirExists(folderPath.c_str()) == false) {
+			return false;
+	}
+	return true;
+}
+
 } /* namespace simplearchive */

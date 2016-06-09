@@ -86,8 +86,8 @@ public:
 	bool initalise(int argc, char **argv);
 	/// @brief This is the main application run function. All application processing starts here.
 	bool Run();
-
-	
+	/// @brief Shows the configuration of the archive. All application processing starts here.
+	bool Show();
 };
 
 }

@@ -65,6 +65,7 @@ using namespace std;
 #include <string>
 #include <vector>
 #include "AdminAppOptions.h"
+#include "EnvFunc.h"
 
 #define VERSION	"1.00"
 #define BUILD	"040115.1749"
@@ -75,8 +76,103 @@ Java(TM) SE Runtime Environment (build 1.7.0_51-b13)
 Java HotSpot(TM) 64-Bit Server VM (build 24.51-b03, mixed mode)
 */
 namespace simplearchive {
-
-
+	
+bool App::Show() {
+	/*
+	m_error = false;
+	m_verbose = false;
+	m_quiet = false;
+	m_logLevel = "INFO";
+	m_dry_run = false;
+	*/
+	CAppConfig &config = CAppConfig::get();
+	/*
+	const std::string key = "SIA_HOME";
+	std::string temp = SAUtils::GetEnvironment(key);
+	std::string homePath = temp;
+	*/
+	bool found = false;
+	std::string homePath;
+	// Looking the HKEY_LOCAL_MACHINE first
+	if (GetEnv(homePath, true) == true) {
+		printf("Found SIA_HOME in system variables: %s", homePath.c_str());
+		found = true;
+	}
+	else if (GetEnv(homePath, false) == true) {
+		//printf("Found SIA_HOME in user variables: %s", homePath.c_str());
+		found = true;
+	}
+	else {
+		bool found = false;
+		homePath = SAUtils::GetEnvironment("USERPROFILE");
+		if (homePath.empty() == true || homePath.length() == 0) {
+			printf("SIA Unable to start? Cannot read user profile.");
+			return false;
+		}
+		else {
+			homePath += "/IDK Software/ImageArchive1.0";
+			if (SAUtils::DirExists(homePath.c_str()) == true) {
+				printf("Found SIA_HOME in user profile: %s", homePath.c_str());
+				found = true;
+			}
+		}
+		if (found == false) {
+			homePath = SAUtils::GetEnvironment("ProgramData");
+			if (homePath.empty() == true || homePath.length() == 0) {
+				printf("SIA Unable to start? Cannot read all users profile.");
+				return false;
+			}
+			homePath += "/IDK Software/ImageArchive1.0";
+			if (SAUtils::DirExists(homePath.c_str()) == true) {
+				printf("Found SIA_HOME in all users profile: %s", homePath.c_str());
+				found = true;
+			}
+		}
+	}
+	if (found = false) {
+		printf("SIA Unable to start? No archive found in the default location or"
+			" the environment variable SIA_HOME not set.\nUse siaadmin to initalise an archive.\n");
+		
+		return false;
+	}
+	std::string configfile = homePath + "/config/" + "config.dat";
+	if (SAUtils::FileExists(configfile.c_str()) == false) {
+		
+		printf("SIA Unable to start? No config.dat file found in the default location or"
+			" the environment variable SIA_HOME not set.\nUse siaadmin to initalise an archive.\n");
+		return false;
+	}
+	ConfigReader configReader;
+	configReader.setNoLogging();
+	configReader.read(configfile.c_str(), config);
+	config.printAll();
+	/*
+	if (config.value("SourcePath", temp) == true) {
+	m_sourcePath = temp;
+	}
+	if (config.value("ArchivePath", temp) == true) {
+	m_archivePath = temp;
+	}
+	if (config.value("LogLevel", temp) == true) {
+	m_logLevel = temp;
+	}
+	*/
+	config.setHomePath(homePath.c_str());
+	std::string temp;
+	temp = SAUtils::GetEnvironment("SIA_ARCHIVE");
+	if (temp.empty() == false) {
+		config.setWorkspacePath(temp.c_str());
+	}
+	temp = SAUtils::GetEnvironment("SIA_SOURCE");
+	if (temp.empty() == false) {
+		config.setSourcePath(temp.c_str());
+	}
+	temp = SAUtils::GetEnvironment("SIA_LOGLEVEL");
+	if (temp.empty() == false) {
+		config.setLogLevel(temp.c_str());
+	}
+	CreateArchive::checkFolders(homePath.c_str());
+}
 
 
 int test(const std::string key) {
@@ -102,6 +198,10 @@ bool App::Run()
 	// Find if the archive exists
 	AppOptions &appOptions = AppOptions::get();
 	if (appOptions.isConfiguratedOk() == false) {
+		if (appOptions.getCommandMode() == AppOptions::CM_Show) {
+			Show();
+			return false;
+		}
 		if (appOptions.getCommandMode() == AppOptions::CM_InitArchive) {
 
 			if (CreateArchive(appOptions.getHomePath(), appOptions.getWorkspacePath(), appOptions.getShadowPath(), appOptions.getUsers()) == false) {

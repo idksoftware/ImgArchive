@@ -105,10 +105,10 @@ bool AppOptions::initalise(int argc, char **argv) {
 	std::string homePath;
 	// Looking the HKEY_LOCAL_MACHINE first
 	if (GetEnv(homePath, true) == true) {
-		printf("Found SIA_HOME in system variables: %s", homePath.c_str());
+		//printf("Found SIA_HOME in system variables: %s", homePath.c_str());
 		found = true;
 	} else if (GetEnv(homePath, false) == true) {
-		printf("Found SIA_HOME in user variables: %s", homePath.c_str());
+		//printf("Found SIA_HOME in user variables: %s", homePath.c_str());
 		found = true;
 	} else {
 		bool found = false;
@@ -120,7 +120,7 @@ bool AppOptions::initalise(int argc, char **argv) {
 		else {
 			homePath += "/IDK Software/ImageArchive1.0";
 			if (SAUtils::DirExists(homePath.c_str()) == true) {
-				printf("Found SIA_HOME in user profile: %s", homePath.c_str());
+				//printf("Found SIA_HOME in user profile: %s", homePath.c_str());
 				found = true;
 			}
 		}
@@ -132,19 +132,22 @@ bool AppOptions::initalise(int argc, char **argv) {
 			}
 			homePath += "/IDK Software/ImageArchive1.0";
 			if (SAUtils::DirExists(homePath.c_str()) == true) {
-				printf("Found SIA_HOME in all users profile: %s", homePath.c_str());
+				//printf("Found SIA_HOME in all users profile: %s", homePath.c_str());
 				found = true;
 			}
 		}
 	}
 	if (found = false) {
-		printf("SIA Unable to start? No archive found in the default location or the environment variable SA_HOME not set.\nUse siaadmin to initalise an archive.");
+		printf("SIA Unable to start? No archive found in the default location or"
+			   " the environment variable SIA_HOME not set.\nUse siaadmin to initalise an archive.\n");
 		m_error = true;
 		return false;
 	}
 	std::string configfile = homePath + "/config/" + "config.dat";
 	if (SAUtils::FileExists(configfile.c_str()) == false) {
 		m_error = true;
+		printf("SIA Unable to start? No config.dat file found in the default location or"
+			   " the environment variable SIA_HOME not set.\nUse siaadmin to initalise an archive.\n");
 		return false;
 	}
 	ConfigReader configReader;

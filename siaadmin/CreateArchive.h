@@ -60,6 +60,8 @@ namespace simplearchive {
 		static bool createFile(const char *root, const char *folder, const char *filename,
 			const char *array[], unsigned int size);
 
+		static bool checkFolder(const char *root, const char *folder);
+
 		static bool CreateArchive::createFile(const char *root, const char *folder, const char *filename, std::string &str);
 
 		static std::string  makeConfigFile(const char *root, const char *workspace, const char *shadow);
@@ -88,6 +90,8 @@ namespace simplearchive {
 		/* @brief Creates the enviroment variable SIA_HOME the the path given.
 		*/
 		static bool createHomeEnvVar(const char *root, bool users);
+
+		static bool checkFolders(const char *root);
 
 		static bool IsAdmin();
 
