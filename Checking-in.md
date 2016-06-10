@@ -9,9 +9,9 @@ The command line options are as follows:
 
 `--export-folder`	The folder the images will be taken from to be placed in the archive
 
-`--current-path 	Use the current path to take the images
+`--current-path` 	Use the current path to take the images
 
-`--recheck-out	Check the image back out after check it in. 
+`--recheck-out`	Check the image back out after check it in. 
 
 `-–quiet`	No output to the terminal
 
