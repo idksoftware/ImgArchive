@@ -49,7 +49,7 @@ This is where all the working copies of images are located. This folder can also
 ###Show configuration command (show)
 This command will display the current configuration settings to the screen. This command helps you view the archives configuration settings as the archive reads them. Any problems with the configuration can hopefully be corrected by inspecting the output from this command.  
 
-Mirror commands (--mirror)
+##Mirror commands (--mirror)
 These commands control the image mirroring functions. The default configuration is normal maintained by using configuration files as this function is carried out as part of an automatic operation.
 
 --sync
@@ -58,7 +58,7 @@ These commands control the image mirroring functions. The default configuration 
 
 --all
 
-Archive validation commands (--validate)
+##Archive validation commands (--validate)
 
 This command helps to maintain the integrity of the mirror by scanning each file in the archive and comparing it with a list of checksums that validate that the files are not corrupted or missing. Because the archive contains images that may not be accessed for some time images, sometimes months, even years, these image can go missing or get corrupted without you knowing for some time. This can be done by accident or maliciously. However the damage is done and the longer left untreated the more likely that the repair will be harder as the backup may be harder to find. The process of validating the archive may take some time to scan the entire archive so this command allows you to be selective of what is to be scanned.
    
@@ -67,9 +67,9 @@ This command helps to maintain the integrity of the mirror by scanning each file
 --view
 --mirror
 
-Backup commands (--backup)
+##Backup commands (--backup)
 
-Global Commands
+##Global Commands
 
 Quiet
 -q –Quiet
