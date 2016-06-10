@@ -63,8 +63,11 @@ These commands control the image mirroring functions. The default configuration 
 This command helps to maintain the integrity of the mirror by scanning each file in the archive and comparing it with a list of checksums that validate that the files are not corrupted or missing. Because the archive contains images that may not be accessed for some time images, sometimes months, even years, these image can go missing or get corrupted without you knowing for some time. This can be done by accident or maliciously. However the damage is done and the longer left untreated the more likely that the repair will be harder as the backup may be harder to find. The process of validating the archive may take some time to scan the entire archive so this command allows you to be selective of what is to be scanned.
    
 `--all`
+
 `--archive`
+
 `--view`
+
 `--mirror`
 
 ##Backup commands (--backup)
@@ -73,20 +76,26 @@ This command helps to maintain the integrity of the mirror by scanning each file
 Version Command (version)
 This command displays the current version and build of the siaadmin software. This is useful if you wish to make sure the software you are using is the most up-to-date. 
 
-##Global Arguments
+##Global Arguments``````````````````
 
 ###Quiet
 This stops any output to the terminal
--q -–Quiet
+
+`-q -–Quiet`
 ###Verbose 
-This prints all diagnostic output to the terminal
--v -–Verbose
-Logging Level
--l –logginglevel=<Value> this will temporarily change the logging level for the scope of this command session.
-Dry run
+This prints all diagnostic output to the terminal.
+
+`-v -–Verbose`
+###Logging Level
+this will temporarily change the logging level for the scope of this command session.
+
+`-l –logginglevel=<Value>`
+
+###Dry run
 Goes through the motions of running the subcommand but makes no actual changes ether disk or repository. It does create entries in the log file indicating what would have happened if running normally. This is used for dry running command before committing to doing it for real.
--n --dry-run 
-Archive Folder
+`-n --dry-run` 
+
+###Archive Folder
 This provides SIA with the full path to the root folder of the current archive repository.
 -a –archivefolder=<value>
 <value> is the full path to the root folder of the archive repository that the images are to be archived
@@ -97,7 +106,7 @@ This contains the full path of where the images to be import can be found. By de
 -s –sourcefolder=<value>
 <value> is the full path to the root folder of the source of images to be imported.
 
-config.setHomePath(homePath.c_str());
+`config.setHomePath(homePath.c_str());
 	std::string temp;
 	temp = SAUtils::GetEnvironment("SIA_ARCHIVE");
 	if (temp.empty() == false) {
@@ -111,4 +120,4 @@ config.setHomePath(homePath.c_str());
 	if (temp.empty() == false) {
 		config.setLogLevel(temp.c_str());
 	}
-
+`
