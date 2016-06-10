@@ -69,7 +69,11 @@ This command helps to maintain the integrity of the mirror by scanning each file
 
 ##Backup commands (--backup)
 
-##Global Commands
+##Miscellaneous Commands
+Version Command (version)
+This command displays the current version and build of the siaadmin software. This is useful if you wish to make sure the software you are using is the most up-to-date. 
+
+##Global Arguments
 
 Quiet
 -q –Quiet
