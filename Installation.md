@@ -1,6 +1,6 @@
 #Installation
 Initial installation is simple because SIA consists of two executables called:
-* sia.exe - The main archive management tool
+* simgarc.exe - The main archive management tool
 * siaadim.exe - This supports the archive by providing housekeeping functions.
 
 These can be downloaded and much like any command line tool. However the complication comes in that these tools need an installation environment in which to operate. This environments consisted of a set of configuration file which hold things like the location of the archive and workspace etc.
