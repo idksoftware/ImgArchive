@@ -62,10 +62,10 @@ These commands control the image mirroring functions. The default configuration 
 
 This command helps to maintain the integrity of the mirror by scanning each file in the archive and comparing it with a list of checksums that validate that the files are not corrupted or missing. Because the archive contains images that may not be accessed for some time images, sometimes months, even years, these image can go missing or get corrupted without you knowing for some time. This can be done by accident or maliciously. However the damage is done and the longer left untreated the more likely that the repair will be harder as the backup may be harder to find. The process of validating the archive may take some time to scan the entire archive so this command allows you to be selective of what is to be scanned.
    
---all
---archive
---view
---mirror
+`--all`
+`--archive`
+`--view`
+`--mirror`
 
 ##Backup commands (--backup)
 
@@ -75,10 +75,12 @@ This command displays the current version and build of the siaadmin software. Th
 
 ##Global Arguments
 
-Quiet
--q –Quiet
-Verbose 
--v –Verbose
+###Quiet
+This stops any output to the terminal
+-q -–Quiet
+###Verbose 
+This prints all diagnostic output to the terminal
+-v -–Verbose
 Logging Level
 -l –logginglevel=<Value> this will temporarily change the logging level for the scope of this command session.
 Dry run
