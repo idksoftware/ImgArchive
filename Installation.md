@@ -12,11 +12,13 @@ Under windows, this application uses Microsoft’s redistributable packages for 
 
  https://www.microsoft.com/en-gb/download/details.aspx?id=40784
 
-However a MSI install package “sia.msi” is available, this contains all the required packages and installs the application in the default locations.
+However a MSI install package “sia.msi” is available, this contains all the required packages and installs the application in the default locations. Coming soon.
 ###Apple Mac
-Under the Apple Mac SIA can be installed using Apple Install package sia.pic. This will install SIA into the default locations. 
+Under the Apple Mac SIA can be installed using Apple Install package sia.pic. This will install SIA into the default locations.  Coming soon.
+
 ###Linux
-Under the Apple Mac SIA can be installed using Apple Install package sia.pic. This will install SIA into the default locations.
+Under the Apple Mac SIA can be installed using Apple Install package sia.pic. This will install SIA into the default locations.  Coming soon.
+
 
 ##Using SIA administration tool
 The SIA administration tool siaadmin.exe can be used to install the SIA environments using the initialisation command "init".
