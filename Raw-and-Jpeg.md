@@ -3,7 +3,7 @@ Most cameras now have the ability to shoot RAW images, including point and shoot
 
 You’ve probably heard that you should be shooting in RAW. But do you know why it’s so important? And what it really means for your images.
 
-what is RAW?
+###what is RAW?
 RAW is a file format that captures all image data recorded by the sensor when you take a photo in an almost unprocessed form. When you shoot in RAW you record all of the data from the sensor. Because no information is compressed with RAW you’re able to produce higher quality images, as well as correct problem images that would be unrecoverable if shot in the JPEG format.
 
 When shooting JPEG, image information is compressed and lost as part of generating the JPEG image. when you shoot in JPEG format is that the camera does it’s own processing to convert the RAW information into a JPEG.
