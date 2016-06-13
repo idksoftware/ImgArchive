@@ -9,6 +9,23 @@ RAW is a file format that captures all image data recorded by the sensor when yo
 Shooting RAW.
 When you shoot in RAW you record all of the data from the sensor. Because no information is compressed with RAW you’re able to produce higher quality images, as well as correct problem images that would be unrecoverable if shot in the JPEG format. 
 
+• not an image file per se (it will require special software to view, though this software is easy to get).
+• typically a proprietary format (with the exception of Adobe’s DNG format that isn’t widely used yet).
+• at least 8 bits per color – red, green, and blue (12-bits per X,Y location), though most DSLRs record 12-bit color (36-bits per location).
+• uncompressed (an 8 megapixel camera will produce a 8 MB Raw file).
+• the complete (lossless) data from the camera’s sensor.
+• higher in dynamic range (ability to display highlights and shadows).
+• lower in contrast (flatter, washed out looking).
+• not as sharp.
+• not suitable for printing directly from the camera or without post processing.
+• read only (all changes are saved in an XMP “sidecar” file or to a JPEG or other image format).
+• sometimes admissable in a court as evidence (as opposed to a changeable image format).
+• waiting to be processed by your computer. 
+
+
+
+
+
 
 When shooting JPEG, image information is compressed and lost as part of generating the JPEG image. when you shoot in JPEG format is that the camera does it’s own processing to convert the RAW information into a JPEG.
 
@@ -165,3 +182,4 @@ Wrap It UP!
 Hopefully this look at RAW and it’s benefits has cleared things up a bit! Suggestions that RAW takes too long, or is too much work, don’t really hold water anymore.
 
 These days, it’s super duper easy (and fast!) to process RAW files, and you’ll be able to get the absolute best quality out of those images that you put so much time, effort and love into!
+
