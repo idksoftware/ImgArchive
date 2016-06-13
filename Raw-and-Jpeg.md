@@ -1,15 +1,22 @@
-Shooting in Raw
+Shooting in Raw and Jpeg
 Most cameras now have the ability to shoot RAW images, including point and shoot cameras! So even if you’re using a little camera, you might still be able to take advantage of the RAW file format (just check your camera manual to see!).
 
 You’ve probably heard that you should be shooting in RAW. But do you know why it’s so important? And what it really means for your images.
 
-###what is RAW?
-RAW is a file format that captures all image data recorded by the sensor when you take a photo in an almost unprocessed form. When you shoot in RAW you record all of the data from the sensor. Because no information is compressed with RAW you’re able to produce higher quality images, as well as correct problem images that would be unrecoverable if shot in the JPEG format.
+###What is RAW?
+RAW is a file format that captures all image data recorded by the sensor when you take a photo in an almost unprocessed form.
+
+Shooting RAW.
+When you shoot in RAW you record all of the data from the sensor. Because no information is compressed with RAW you’re able to produce higher quality images, as well as correct problem images that would be unrecoverable if shot in the JPEG format. 
+
 
 When shooting JPEG, image information is compressed and lost as part of generating the JPEG image. when you shoot in JPEG format is that the camera does it’s own processing to convert the RAW information into a JPEG.
 
-DAM goals
-One of the main DAM goals is not to  
+###DAM goals and RAW
+One of the main DAM goals is not to harm the original image. By shooting RAW, you have the original image at the point of the camera trigger being pressed with the minimum of processing before the camera further processes it in to a JPEG. 
+
+###RAW + JPEG
+
 
 1. Get the Highest Level of Quality
 
@@ -36,7 +43,8 @@ Obviously you want to get the best exposure in camera, but sometimes things move
 
 With RAW you have additional information in the file, so it’s much easier to correct the image without a drastic reduction in quality. You can also recover more blown highlights and clipped shadows. Good stuff.
 
-
+###JPEG or RAW for Photo Contests? 
+It's possibly worth mentioning though that although most competition require JPEGs, they may also require that winners supply a RAW shot as evidence that the photo hasn't been manipulated to a degree that's outside of the rules of the competition for example, perhaps a composite image. 
 
 
 
