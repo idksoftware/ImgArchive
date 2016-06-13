@@ -9,12 +9,17 @@ RAW is a file format that captures all image data recorded by the sensor when yo
 Shooting RAW.
 When you shoot in RAW you record all of the data from the sensor. Because no information is compressed with RAW you’re able to produce higher quality images, as well as correct problem images that would be unrecoverable if shot in the JPEG format. 
 
-• not an image file per se (it will require special software to view, though this software is easy to get).
-• typically a proprietary format (with the exception of Adobe’s DNG format that isn’t widely used yet).
-• at least 8 bits per color – red, green, and blue (12-bits per X,Y location), though most DSLRs record 12-bit color (36-bits per location).
-• uncompressed (an 8 megapixel camera will produce a 8 MB Raw file).
-• the complete (lossless) data from the camera’s sensor.
-• higher in dynamic range (ability to display highlights and shadows).
+• Not an image file per se (it will require special software to view, though this software is easy to get).
+
+• Typically a proprietary format.
+
+• At least 8 bits per color – red, green, and blue (12-bits per X,Y location), though most DSLRs record 12-bit color (36-bits per location) this will depend on the sensor.
+
+• Uncompressed (an 24 megapixel camera will produce a 24 MB Raw file).
+
+• The complete (lossless) data from the camera’s sensor.
+
+• Higher in dynamic range (ability to display highlights and shadows).
 • lower in contrast (flatter, washed out looking).
 • not as sharp.
 • not suitable for printing directly from the camera or without post processing.
