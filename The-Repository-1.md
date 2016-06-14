@@ -1,44 +1,57 @@
-The Repository
-Image Storage Structure
-All major computer systems have some form of mass storage normally one or more hard drives. These drives can now have 5T bytes capacity, coupled with the fact that digital cameras can shot a large number of images in one photo shoot means having some formal method of storing images on the disk much more important. In addition have an automated method even more important as there is less chance of the images being stored in the wrong place and possibly losing them.
+#The Repository
+
+All major computer systems have some form of mass storage, this is normally one or more hard drives. These drives can now have 5T bytes or more capacity, coupled with the fact that digital cameras can shot a large number of images in one photo shoot means having some formal method of storing images on the disk much more important. In addition have an automated method even more important as there is less chance of the images being stored in the wrong place and possibly losing them.
+
+##Image Storage Structure
 The storage strategy must be simple but robust independently of content. Using the image content is a popular way of organising an archive. However this in the majority of cases renders the folder management unwieldy. For example, using this approach do you organise the folders by keyword, client, project etc. how is handling images that belong to a number of groups which will translate to folders. The image will end up being duplicated in a lot of folders. This can also result in a lot of work managing which folders belong at the time the image are added to the archive. Addition, backing up will be needlessly complicated. Enter the partition structure.    
-The partition structure
+
+##The partition structure
 Some also call this the bucket system, as each folder contains a bucket of images of unknown content. However data partitions are a common way of organising data within a database. This is done for manageability, performance and possibly availability reasons. This is used in this case for the same reasons, i.e. partitioning of data into manageable units, in this case images. The manageability, performance issue in this case is that locating an image file in large numbers other image files will be time consuming and having large numbers of image in one folder is more difficult to manage.
+
 These partitions are organised by a primary index. SIA uses the image capture date as a primary index for storing images in the archive. The archive uses folders to partition the stored images into the manageable subsets. These subsets are partitioned into years. All images using a date that fall in a particular year will be stored under folder of that year. Within a year folder the year is partitioned further into days, as there are 365 maximum days in the year then this is a manageable number of partitions within a year’s main partition. So for any image with an archive date, can be found a year / day folder in which to place it. This also is a useful scheme in that most photographers will have a rough idea when an image was taken, so to then find images in the archive folders is not too difficult.
+Flickr uses a similar system and calls it a camera roll.
+ 
 The folders are named in a simple but consistent way. The year folder is simply the year, i.e. “2014”. Then the day folder is created using the year, month and day in the form <year>_<month>_<day>, for example: “2014_08_12” will be 12 August 2014. Having the sequence year, month and day allows the folders to be automatically sorted in date order when viewed using a file browser such as File Explorer on windows or finder on the MAC. 
+
 By using the image capture date as the primary index to which to store image also means that the as the archive grows the date index will normally in most cases grow in an orderly sequence.
 The location of images can be found quickly and unambiguously. 
-Sequence Identifiers
-In addition to the partitioning of the images into the day captured, when the image is added to the archive a sequential index identifier is added to it. Each and every image has a sequential index identifier associated with it, and as it is given at the time it was added to the archive which will mean it will be is time order as to the time added to the archive.  As it is a sequence number it will not be associated with the time itself. For example an image added 2015/02/12 may have an index of 983423, two days later 2015/02/14 the next image is added with the index of 983424. It does however allow the management of backups much easier. See Backing up the Archive. 
+
+##Sequence Identifiers
+In addition to the partitioning of the images into the day captured, when the image is added to the archive a sequential index identifier is added to it. Each and every image has a sequential index identifier associated with it, and as it is given at the time it was added to the archive which will mean it will be is time order as to the time added to the archive, not the capture date.  As it is a sequence number it will not be associated with the time itself. For example an image added 2015/02/12 may have an index of 983423, two days later 2015/02/14 the next image is added with the index of 983424. It does however allow the management of backups much easier. See Backing up the Archive. 
+
 Using this sequence number was an alternate to using the capture date as the primary index for the partitions. However this number is completely arbitrary. Using the capture date is much more intuitive to the human reader. In addition in most cases this data/time will be encoded into the EXIF data in the image, the sequence will not. 
-Primary and shadow storage areas
-The archive contains two copies of the image when the image is first added to the archive one copy will be in the primary storage area and the other will be in the shadow area. Users will only normal be able to access the primary storage area. The image in this area initially will be read only. To edit it, it will normally be checked out for editing. This informs the archive that it may be edited. If the edits need to be undone then it can be un-checked out. This results in the copy in the shadow area being copied over the one in the primary storage area thus undoing the changes. If on the other hand the edits need to be made permanent then the image needs to be checked-in in this case the original image in the shadow storage area will be renamed with a version number encoded into the filename and a copy of the edited image will be copied into the shadow storage area. It this way versions the original are built up giving the ability to return to previous images.      
-Archive Date
+
+##Workspace and shadow storage areas
+The archive contains two copies of the image when the image is first added to the archive one copy will be in the workspace storage area and the other will be in the shadow area. Users will only normal be able to access the workspace storage area.
+###Editing an image
+The image in this area initially will be read only. To edit it, it will normally be checked out for editing. This informs the archive that it may be edited. If the edits need to be undone then it can be un-checked out. This results in the copy in the shadow area being copied over the one in the primary storage area thus undoing the changes. If on the other hand the edits need to be made permanent then the image needs to be checked-in in this case the original image in the shadow storage area will be renamed with a version number encoded into the filename and a copy of the edited image will be copied into the shadow storage area. It this way versions the original are built up giving the ability to return to previous images.
+      
+###The Archive Date
 The SIA as explanted above the archive uses a date to place images. The most significant dates are:
 1.	The date the image was captured in the camera
 2.	The file date on the image file
 3.	The archived date
-The date the image was captured in the camera
+####The date the image was captured in the camera
 Out of the three dates the capture date is probably the most useful as it places the image in the archive at the time it was taken. This date may not be found as when the images file is taken from the camera a new create date in the image of the date the image was moved from the camera to the computer storing the image. However where is a way of recovering the capture date but this will only be present in some images that have EXIF data? EXIF data is used by the camera manufactures to store information about an image in the image. One of the values stored is the capture date. By reading this date from the image file then the capture date can be recovered. This relies on the EXIF data being present if not then the capture date is lost.   
-The file date on the image file
+####The file date on the image file
 The file image creation date will always be present as it is a property of the image file that always must exist. This date may be a large period away from the capture date as this is the date you transfer your captured image from the camera. If you do this frequently then the then the date will not be too far from the capture date.
-The archived date
+####The archived date
 The date on which the image was place in the archive is the last significant date. Is date can be even further away in the future from the capture date? However if you add images into the archive at the same time as transferring from the camera then again you will not be too far out  from the capture time.
-Default archive date
+####Default archive date
 By default SIA will try to find the earliest date or a date that is most likely to be the capture date. This is carried out by the following.
 1.	Read EXIF information from all images in the set (in the case of RAW and JPG pairs).
 2.	Find the create date from all image files.
 3.	Use todays date.   
-Reading EXIF information
+####Reading EXIF information
 SIA will read EXIF information in two ways: Using an Internal EXIF reader and (if configured) using an external reader. SIA will try both methods; the internal reader will be tried first then the external reader.  All images in the set will be read for any EXIF and the results stored. This EXIF data will also be used to populate the metadata information for each image and set metadata. This is metadata that is shared across all images in the set and crucially the shared archive date.  If one of the images is missing data, by default the information will be filled in from other images if available. By default in an image set with both a RAW and JPG images the information in the RAW will be the primary information source. However the JPG will most likely contain EXIF data.  
-Find the create date from all image files
-If the capture date cannot be found then the create date will need to be used. In a RAW/JPG image pair, the RAW file create-time will be used.
-Use todays date.   
+####Finding the create date from an image pair
+If the capture date cannot be found then the create date will need to be used. however in an RAW/JPG image pair, the RAW file create-time will be used if the capture date cannot be found in the EXIF data in the JPG image in the pair,
+###Use todays date.   
 As a fall back and no other date can be found todays date will be used. This is normally a last resort. 
-Date checks
-SIA will do a sanity test on the dates. if the dates do not make sense  then the image will not be added to the archive and an error raised to flag there is a possible error in the dates. The Capture dates, the image file dates and todays date must be each be in the future I.e. the capture date must be the earliest date, the image file must be the same or later that the capture date and finally todays date must be the same or later than the image file date.
+##Date checks
+SIA will do a sanity test on the dates. if the dates do not make sense  then the image will not be added to the archive and an error raised to flag there is a possible error in the dates. The Capture dates, the image file dates and todays date must be each be in the future i.e. the capture date must be the earliest date, the image file must be the same or later that the capture date and finally todays date must be the same or later than the image file date.
 Anomalies in the dates can be due to the time and date being incorrectly set on the camera or archive computer. The default archive date can be overridden in these cases. One common problem is that the camera date may not be set from the manufacture’s default.      
-Specifying and controlling the archive date.
+###Specifying and controlling the archive date.
 SIA has a number of options to specify and control the archive date. These can be used to override the default archive date selection. These are as follows:
 Use date options:
 These are used to override the archive date being selected. These are used if the default dates are somehow incorrect and a new date needs to be used. These options are as follows:
