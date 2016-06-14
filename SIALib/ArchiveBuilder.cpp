@@ -346,6 +346,7 @@ namespace simplearchive {
 		return true;
 	}
 
+
 	bool ArchiveBuilder::Import(const char *sourcePath, bool peekImport) {
 		CLogger &logger = CLogger::getLogger();
 		if (SAUtils::DirExists(sourcePath) == false) {
