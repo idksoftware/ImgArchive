@@ -21,3 +21,5 @@ Metadata is the data or information about an image or images. It is this informa
 [Archive Storage](Archive Storage) How the images are stored
 
 [Archive validation](Archive validation) Making sure the archive is intact.
+
+[Backing up and Archiving the Archive](Backing up and Archiving the Archive)
