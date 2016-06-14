@@ -34,6 +34,21 @@ When you shoot in RAW you record all of the data from the sensor. Because no inf
 
 When shooting JPEG, image information is compressed and lost as part of generating the JPEG image. when you shoot in JPEG format is that the camera does it’s own processing to convert the RAW information into a JPEG.
 
+JPEG is…
+
+raw vs jpeg• a standard format readable by any image program on the market or available open source.
+• exactly 8-bits per color (12-bits per location).
+• compressed (by looking for redundancy in the data like a ZIP file or stripping out what human can’t perceive like a MP3).
+• fairly small in file size (an 8 megapixel camera will produce JPEG between 1 and 3 MB’s in size).
+• lower in dynamic range.
+• higher in contrast.
+• sharper.
+• immediately suitable for printing, sharing, or posting on the Web.
+• not in need of correction most of the time (75% in my experience).
+• able to be manipulated, though not without losing data each time an edit is made – even if it’s just to rotate the image (the opposite of lossless).
+• processed by your camera. 
+
+
 ###DAM goals and RAW
 One of the main DAM goals is not to harm the original image. By shooting RAW, you have the original image at the point of the camera trigger being pressed with the minimum of processing before the camera further processes it in to a JPEG. 
 
