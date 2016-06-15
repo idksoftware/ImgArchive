@@ -188,6 +188,9 @@ public:
     */
     ParserResults parse(int _argc, char ** _argv);
 
+	const std::string& getCurrentCommand() {
+		return current_command;
+	}
 
 	unsigned int getCurrentCommandId() {
 		return current_command_id;

@@ -176,6 +176,7 @@ bool CreateArchive::createSystem(bool users, const char *archivePath, const char
 			return false;
 		}
 	}
+	return true;
 }
 
 bool CreateArchive::createAdminSystem(const char *archivePath, const char *workspace, const char *shadow) {
@@ -185,46 +186,52 @@ bool CreateArchive::createAdminSystem(const char *archivePath, const char *works
 		std::string siaPath = "/IDK Software/ImageArchive1.0";
 		std::string path = progPath;
 		path += siaPath;
-		if (SAUtils::FileExists(archivePath) == false) {
+		if (SAUtils::FileExists(path.c_str()) == true) {
 			return false;
 		}
 		if (SAUtils::makePath(progPath.c_str(), siaPath.c_str()) == false) {
 			return false;
 		}
+		
 		m_archivePath = path;
+		std::cout << "Created home path folder: " << m_archivePath << '\n';
 	} else {
-		if (SAUtils::FileExists(archivePath) == false) {
+		if (SAUtils::FileExists(archivePath) == true) {
 			return false;
 		}
 		if (SAUtils::makePath(archivePath) == false) {
 			return false;
 		}
 		m_archivePath = archivePath;
+		std::cout << "Created home path folder: " << m_archivePath << '\n';
 	}
 
 	if (workspace == nullptr || *workspace == '\0') {
 	
 		std::string temp = SAUtils::GetEnvironment("USERPROFILE");
-		std::string path = temp + "/Documents";
+		std::string path = temp;
+		path += "/Documents";
 		if (SAUtils::FileExists(path.c_str()) == false) {
 			return false;
 		}
-		path =+ "/SIA Workspace";
+		path += "/SIA Workspace";
 		if (SAUtils::FileExists(path.c_str()) == false) {
 			if (SAUtils::mkDir(path.c_str()) == false) {
 				return false;
 			}
 		}
 		m_workspace = path;
+		std::cout << "Created workspace path folder: " << m_workspace << '\n';
 	}
 	else {
-		if (SAUtils::FileExists(workspace) == false) {
+		if (SAUtils::FileExists(workspace) == true) {
 			return false;
 		}
 		if (SAUtils::makePath(workspace) == false) {
 			return false;
 		}
 		m_workspace = workspace;
+		std::cout << "Created workspace path folder: " << m_workspace << '\n';
 	}
 	
 
@@ -234,13 +241,14 @@ bool CreateArchive::createAdminSystem(const char *archivePath, const char *works
 		
 		std::string path = progPath;
 		path += siaPath;
-		if (SAUtils::FileExists(path.c_str()) == false) {
+		if (SAUtils::FileExists(path.c_str()) == true) {
 			return false;
 		}
 		if (SAUtils::makePath(progPath.c_str(), siaPath.c_str()) == false) {
 			return false;
 		}
 		m_shadow = path;
+		std::cout << "Created shadow path folder: " << m_shadow << '\n';
 	}
 	else {
 		if (SAUtils::FileExists(shadow) == false) {
@@ -250,6 +258,7 @@ bool CreateArchive::createAdminSystem(const char *archivePath, const char *works
 			return false;
 		}
 		m_shadow = shadow;
+		std::cout << "Created shadow path folder: " << m_shadow << '\n';
 	}
 	
 	return true;

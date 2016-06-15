@@ -207,7 +207,7 @@ bool App::Run()
 			if (CreateArchive(appOptions.getHomePath(), appOptions.getWorkspacePath(), appOptions.getShadowPath(), appOptions.getUsers()) == false) {
 				return false;
 			}
-			printf("\n\nInit Archive\n");
+			printf("\n\Completed initalising the Archive\n");
 			return true;
 		}
 		return false;
@@ -319,7 +319,7 @@ bool App::CreateArchive(const char *archivePath, const char *workspacePath, cons
 	}
 		
 	if (CreateArchive::createSystem(users, archivePath, workspacePath, shadowPath) == false) {
-		std::cout << "Failed creating enviroment variable SIA_HOME" << '\n';
+		std::cout << "Failed creating root folders" << '\n';
 		return false;
 	}
 	if (CreateArchive::createHomeEnvVar(CreateArchive::getArchivePath().c_str(), users) == false) {

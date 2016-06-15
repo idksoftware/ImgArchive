@@ -248,7 +248,8 @@ bool AppOptions::initalise(int argc, char **argv) {
 		printf("%s", argvParser.topicUsageDescription(argvParser.getCurrentCommandId(), 80).c_str());
 		return false;
 	case ArgvParser::ParserCommandNotFound:
-		//printf("%s", argvParser.topicUsageDescription(argvParser.getCurrentCommandId(), 80).c_str());
+		printf("Invalid command: %s\n\n", argvParser.getCurrentCommand().c_str());
+		printf("%s", argvParser.usageDescription(80).c_str());
 		return false;
 	default:
 		return false;
