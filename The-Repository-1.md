@@ -163,8 +163,9 @@ Off-site Backups (indirect backups) are normally not as quickly available.  If t
 These are backups that are not available directly. The archive data is contained on Off-line such as Tapes, DVDs or Blu-ray. The data will need to be copied back on to the on-line system in order to use. This is a third line of backups and slow to recover the data but is used for archiving and the last stop disaster recovery. However this form of backing up the archive may be the most reliable in that the media can be the most robust. For example Blu-ray disks can have a data retention time of tens of years.
 SIA backup support
 SIA supports both direct and in-direct backups as part of the normal workflow of placing an image in the archive. As each image is added to the main archive it is also copied into the direct backup and indirect targets. Off-line media is handled separately
-SIA Online backups
+##SIA Online backups
 SIA provides the facilities for online backup thought the use of data mirrors. A data mirror provides a complete copy of a set of data. Then as the target set of data changes so the changes are reflected in the mirrored data in near real time. The data set changes are synchronised with the mirror.
+
 The Mirror provided by SIA is not a true mirror as a true data mirror is the replication of logical disk volumes onto separate physical hard disks in real time to ensure continuous availability of the data using physical hardware. It is most commonly used in RAID 1 where two physical hard disks mirror each other. The user can be unaware that the data is being mirrored and in the case of a disk failure, the failed disk is replaced with a new one and the mirror is re-established by the good disk copying all the data to the new disk until all the data is back in sync.    
 The type of mirror provided by SIA is known as file shadowing. This type of mirroring operates at the file level and needs no additional hardware. As the files in the target data set changes the changes are reflected in the file mirror. The target date in this case is the Image Archive and the data set is the entire archive. The archive can be then mirrored on another disk so if the main disk becomes faulty the archive is safely contained in the file mirror. Once the faulty disk is repaired or another location is found for the primary archive then the archive can be restored from the mirror by simply copying the files back into position relative to the root archive folder.
 Recovery point object
@@ -172,49 +173,63 @@ Recovery point object or RPO is defined as the maximum tolerable period in which
 Synchronous and Asynchronous Mirrors
 This refers to how the data is written to the mirror. A Synchronous mirror is where as each file is copied into the Archive it is also written to the mirror. This reduces the RPO to the time taken to write the file copy to the mirror. The only better RPO time would be if the primary Archive is located on a mirrored disk where the RPO will be almost zero.  The down side is that the location of the mirror must have fast write times and always available. It the data cannot be written then the archive will stall i.e. the current archive operation will not complete until the mirror is able to write the file. This means a second hard drive is probably the best option for this type of mirror.
 An Asynchronous mirror is updated periodically. The period may be within seconds; however the process that copies the files will not be the process controlling the archive. If the copy process stalls then the archive is unaffected. When the copy process is resumed then the process will needs to catch up the copying operation until the files are back in sync.
-Direct and Indirect Mirrors       
+###Direct and Indirect Mirrors       
 This refers to how the data is written. A direct mirror writes the data directly to the mirror. An indirect mirror will have the data written to a staging folder so the data can be read asynchronously to be then written to the mirror. This method is like a print queue where the print jobs are queued for printing on the printer. The printer is a show device so the queue is there so users can print out a document then carries on working while the printer is printing. Once the print job completes the document can be delivered to the user. SIA supports internet and intranet based mirrors, the internet is not as fast as a hard drive so like the printer files written across the internet need to be queued in a staging area. An Synchronous write from the archive can be used to write the file to be mirrored to the staging area as this is a fast operation. However the process reading it from the staging area to the remote mirror can take as much time as needed. The down side is that the remote mirror cannot be synchronised as quickly as an On-Site local mirror.   
-SIA backup support
+###SIA backup support
 SIA supports both direct and in-direct backups as part of the normal workflow of placing an image in the archive. As each image is added to the main archive it is also copied into the direct backup and indirect targets. Off-line media is handled separately. 
-Direct backups
+###Direct backups
 SIA only needs the destination folder on the hard drive of where the mirror is to be placed. Whenever a new image is added SIA automatically copied the image and associated files to the direct mirrors. This increases the time to archive an image but guarantees the mirror is up-to-date.
-Indirect backups
+###Indirect backups
 Indirect mirrors are slightly different; each indirect mirror is associated with a staging folder. This folder acts as a temporary store for the images. The images are copied by SIA automatically to a staging folder along with information as to the location in the indirect mirror of where the image is located.  A second process then transfers the images and associated files indirectly to the indirect mirror using the location information. This acts as a buffer between the copying from the archive and potently moving over the internet at a much slow speed. In Addison if the internet is not available then the indirect updates can be resumed when the internet 
-Off-line backups
+###Off-line backups
 An off-line backup is here the media containing the backup data is not immediately available. This normally refers to tape backups but can also refer to CD, DVD or Blu-ray and additionally USB hard drives.
-Backup spanning
+###Backup spanning
 The backup media may or may not span the entire archive. for example a large USB  hard drive may easily contain the complete backup of the archive, however a DVD or even a Blu-ray probably not contain the complete backup necessitating a set of media to span the entire backup data set. This set of media is generally called a Volume Set. Each an item of media such as a DVD is called a Volume and labelled sequentially from 1 to the maximum required to contain the backup. SIA provides a method generating a volume set using temporary hard disk space to generating the volumes to then be copied on the target media.
+
 For example, if you have an archive covering 340 Giga Bytes of storage. To create a Blu-ray set of archival disks will require 14 25 Gb Blu-ray Disks or 7 50 Gb Blu-ray Disks.  A hard Disk with at least 340 Gigi bytes is requited to create a staging area for the Volume set.
 From the command line enter the following:
+`
 siasdmin –backup –all –archive=”c::\images” –target=”c:\temp\backups”
-
-Data backed-up
+'
+### Metadata and System Data backed-up
 In order to reliably restore an archive from a backup all key information needs to be backed-up however some data need not be backed up as it is regenerated by the archive as part of the restoration process.
 Data needing to be backed up:
+
 1.	All Images including the version set.
+
 2.	All metadata.
+
 3.	All Image change history.
+
 Optional data such as summary logs can also be backed-up this will include the following:
+
 1.	Summary and details session logs
+
 2.	Application logs.
+
 System Data, This is data that the system needs to operate is the same manner as before the system was backed-up then the backed-up data applied in the restoration process.
 Indexed back-ups
 All the images in the archive are indexed using an incrementing sequence Number. The first image has an index of 0 (zero) the next is 1 (one) etc. These will therefore increment in ascending order over time. This enables backups to backup    
 Backing-up using the  
 
-Verification
+##Verification
 When the files are copied to the mirror SIA can verify that the file was successfully copied to the mirror and that the CRC checksums on both files agree. However, if the coping of files is carried out by a second process then that process must also carry out the verification operation as it has control of the mirroring activity. To help these processes, SIA provides the size, modification date and the CRC as part of the data passed in the staging area.
 Backup Configuration   
 This section details how the backup mirror options can be tailored to your requirements. These options are contained in a configuration file located in the SIA configuration folder. This file is named “mirror.dat”
 The configuration file can contain a number of mirrors each of which is identified by a name. This name is then followed by a list of comer separated options. These are as follows:
+
 1.	Direct or Indirect (direct|indirect)
 This will switch between direct or indirect copying of files.
+
 2.	The path to the mirror or staging area
 This will be where the root folder of the mirrored archive or the root staging folder.
+
 3.	Mirror type (mirror|stage)
 This will switch between a direct mirror of the archive or a staged copy of the archive.
+
 4.	Verify (on|off)
 Whether the files passed to the staging area or mirror are verified that there are copied correctly without error. 
+
 An example mirror will look like the following:
 Secondary=direct,/backup/archive001,mirror,true
 In this case:
@@ -223,16 +238,18 @@ The mode of mirroring is direct writes
 The path is to a backup disk called backup and the root of the archive is Archive001
 The type of mirror is a standard file mirror
 Verification is on.
-Mirror commands
+
+##Mirror commands
 In order to manage the Mirrors a number of commands are available to carry out action on mirrors, these are as follows:
-Initialise Mirror
+###Initialise Mirror
 This command is used to initialise a mirror. When a mirror is defined in the configuration it will be empty. In order to get the Mirror in sync with the Master archive then the Mirror needs to be initialised. This command provides that function.
 sia –mirror_initialise=<mirror name>
-Verify Mirror
+###Verify Mirror
 This command is used to verify that a mirror is in sync with the master archive
 CheckDisk
 History    
-Versioning	
+
+##Versioning	
 One common task to be carried out in digital photography is to edit images. This may be to remove spots on the image or may be to enhance it in some way. There may in the future a need to go back to the original or a version (revision) of an image. This will likely be the case if you have watermarked images in order to safeguard them then putting them up on the web.  In the future you will probably need to go back to the un-watermarked version in order to view these images without the watermark. This is where a version (or revision) control system comes in.
 A Version control system is a system that tracks incremental versions of files, in this case image files. This image is placed in the archive system (added) which will be the original version. When you need to make a change you tell the system you wish to edit an image. You do this by checking the image out of the archiving system. The command is normally “checkout” or “get”; this will mark the images as being edited. If you or someone else tries to check the image out the system again it will report that it’s checked out for editing. This prevents two versions being edited simultaneously from the same image. When you have finished editing you use the command “checkin” or put; this will tell the system that editing is finished and you wish to put the image back into the system.  The system will make the last current image a new version and the newly edited version the current version. If you make a mistake and wish to un-edit the image the command “uncheck” or “unget”; will replace the edited version with the last unedited version thus undoing your edits. To get an old version you can use “chechout” followed by the version number.  
 SIA  Revision Management
