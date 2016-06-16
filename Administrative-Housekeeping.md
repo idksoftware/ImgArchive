@@ -33,23 +33,20 @@ This command takes four arguments. All these commands have OS defaults so if no 
 
 `siaadmin init`
 
-
-
-
- The first specifies the installed user or users. This is common to almost all OS's that an application can install for one user or all uses who can login to the computer running the application.
+ The first specifies the installed user or users. As explained above it is common to almost all OS's that an application can install for one user or all uses who can login to the computer running the application.
 `--users=<Myself|All>`
 
 if the --users option is not present then the installation will default to "all users" and elevated privileges will be required and will fail to install if the privilege are not found    
 
 The other arguments relate to the location of archive components. these components are as follows:
 
-* The archive repository i.e. where the archive are located (--shadow-path).
+* The archive repository i.e. where the shadow archive are located (--shadow-path).
 
 * The system environment i.e. where the system files are located (--archive-path). 
 
 * The workspace i.e. where the working copies of images are located (workspace-path).
 
-#### The archive Location
+#### The shadow archive Location
 The location of the archive can be specified individually and not part of there the configuration is located as the archive can be quite large. Therefore this can be specified as a separate augment on the command line. If these is not supplied then the default will be to add it as a folder in the configuration.
 
 #### The system environment location
@@ -58,6 +55,8 @@ By using the siaadmin tool this environment variable will be managed for you.
 
 #### The workspace location
 This is where all the working copies of images are located. This folder can also become quite large so it is specified as a specified individually. In addition this will need to be a folder that you have permission to modify as the current user.
+
+This command will fail if the a
 
 ###Show configuration command (show)
 This command will display the current configuration settings to the screen. This command helps you view the archives configuration settings as the archive reads them. Any problems with the configuration can hopefully be corrected by inspecting the output from this command.  
