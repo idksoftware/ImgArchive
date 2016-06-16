@@ -1,5 +1,6 @@
 #administrative housekeeping
-
+The administrative housekeeping command are loosely divided into four sets, These are as follows:
+ 
 1. 	Housekeeping Commands
 
 2.	Mirror commands
@@ -21,10 +22,19 @@ SIA will normality exit quickly with an error if it is passed an option that doe
 ###initialise command (init)
 The initialise command (init) initialises the environment in order for SIA to operate correctly. This entails creating required folders in locations accessible to SIA and populating these folders with operational files such as the main configuration file. SIA will locate these files by a environment variable SIA_HOME or default locations specified by the OS.
 
-This command takes four arguments. The first specifies the installed user or users. This is common to almost all OS's that an application can install for one user or all uses who can login to the computer running the application.
-`--users=<Myself|All>`
+This is common to almost all OS's that an application can install for one user or all uses who can login to the computer running the application.
 
 however, to install an application for all uses who can login to the computer normally requires elevated privileges i.e. root privileges under UNIX based systems (Linux and OSX) and administer privileges under windows. The preferred option it install in elevated privileges because normally the application is run under normal user privilege which protects system files against modification by users. Unfortunately sometimes the root or administer passwords are not available so the application as to be installed for the current logged in user.
+
+This command takes four arguments. All these commands have defaults so if no arguments are given then these defaults are used. So the following will install the environment in the default locations for the OS.
+
+`siaadmin init`
+
+
+
+
+ The first specifies the installed user or users. This is common to almost all OS's that an application can install for one user or all uses who can login to the computer running the application.
+`--users=<Myself|All>`
 
 if the --users option is not present then the installation will default to "all users" and elevated privileges will be required and will fail to install if the privilege are not found    
 
