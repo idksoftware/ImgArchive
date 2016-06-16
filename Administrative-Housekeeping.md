@@ -25,8 +25,11 @@ The initialise command (init) initialises the environment in order for SIA to op
 This is common to almost all OS's that an application can install for one user or all uses who can login to the computer running the application.
 
 however, to install an application for all uses who can login to the computer normally requires elevated privileges i.e. root privileges under UNIX based systems (Linux and OSX) and administer privileges under windows. The preferred option it install in elevated privileges because normally the application is run under normal user privilege which protects system files against modification by users. Unfortunately sometimes the root or administer passwords are not available so the application as to be installed for the current logged in user.
+For example, under Windows, to obtain administer privileges you can find cmd.exe in windows explorer and right click on the icon and select run as administrator.
 
-This command takes four arguments. All these commands have defaults so if no arguments are given then these defaults are used. So the following will install the environment in the default locations for the OS.
+see [Command Terminal](Command Terminal)
+
+This command takes four arguments. All these commands have OS defaults so if no arguments are given then these defaults are used. So the following will install the environment in the default locations for the OS. depending on the user type i.e. the current user or administrator.
 
 `siaadmin init`
 
