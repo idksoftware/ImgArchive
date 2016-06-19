@@ -35,7 +35,7 @@
 #ifndef ENVFUNC_H_
 #define ENVFUNC_H_
 
-extern bool GetEnv(const char *szSIAHome, std::string &resultStr, bool all);
+extern bool GetEnv(std::string &resultStr, bool all);
 extern bool SetEnv(const char *szSIAHome, bool all);
 
 #endif /* ENVFUNC_H_ */

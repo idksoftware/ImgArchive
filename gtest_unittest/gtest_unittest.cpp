@@ -116,7 +116,7 @@ bool SIALibTest::initalise() {
 
 
 bool SIALibTest::initTest() {
-	const std::string key = "SA_HOME";
+	const std::string key = "SIA_HOME";
 	std::string temp = SAUtils::GetEnvironment(key);
 	std::string homePath = temp;
 	if (homePath.empty() == true) {

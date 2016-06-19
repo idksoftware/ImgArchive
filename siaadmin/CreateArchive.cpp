@@ -251,7 +251,7 @@ bool CreateArchive::createAdminSystem(const char *archivePath, const char *works
 		std::cout << "Created shadow path folder: " << m_shadow << '\n';
 	}
 	else {
-		if (SAUtils::FileExists(shadow) == false) {
+		if (SAUtils::FileExists(shadow) == true) {
 			return false;
 		}
 		if (SAUtils::makePath(shadow) == false) {

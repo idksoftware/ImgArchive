@@ -277,7 +277,10 @@ bool AppOptions::initalise(int argc, char **argv) {
 		}
 		if (argvParser.foundOption("archive-path") == true) {
 			opt = argvParser.optionValue("archive-path");
+			setHomePath(opt.c_str());
 		}
+		
+
 		/*
 		else {
 			std::string progPath = SAUtils::GetEnvironment("ProgramData");
@@ -292,10 +295,11 @@ bool AppOptions::initalise(int argc, char **argv) {
 			return false;
 		}
 		*/
-		setHomePath(opt.c_str());
+		
 
 		if (argvParser.foundOption("workspace-path") == true) {
-			std::string opt = argvParser.optionValue("workspace-path");
+			opt = argvParser.optionValue("workspace-path");
+			setWorkspacePath(opt.c_str());
 		}
 		/*
 		else {
@@ -316,10 +320,11 @@ bool AppOptions::initalise(int argc, char **argv) {
 		//if (SAUtils::FileExists(opt.c_str()) == false) {
 		//	return false;
 		//}
-		setWorkspacePath(opt.c_str());
+		
 		
 		if (argvParser.foundOption("repository-path") == true) {
-			std::string opt = argvParser.optionValue("repository-path");
+			opt = argvParser.optionValue("repository-path");
+			setShadowPath(opt.c_str());
 		}
 		/*
 		else {
@@ -335,7 +340,7 @@ bool AppOptions::initalise(int argc, char **argv) {
 		//	return false;
 		//}
 		*/
-		setShadowPath(opt.c_str());
+		
 		cmdFound = true;
 	}
 	else {

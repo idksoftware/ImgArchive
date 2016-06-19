@@ -448,15 +448,24 @@ bool SAUtils::makePath(const char *from, const char *to) {
 	while (last != true) {
 		unsigned int start = curPath.length();
 		unsigned int end = 0;
-		if ((end = fullPath.find_first_of("/", start+2)) == std::string::npos) {
+#ifdef _WIN32
+		if ((end = fullPath.find_first_of("\\", start + 2)) == std::string::npos) {
+#else
+		if ((end = fullPath.find_first_of("/", start + 2)) == std::string::npos) {
+#endif
+//		if ((end = fullPath.find_first_of("/", start+2)) == std::string::npos) {
 			node = fullPath.substr(start + 1, (fullPath.length() - start) - 1);
 			last = true;
 		} else {
 			node = fullPath.substr(start + 1, (end - 1) - (start));
 		}
 	
-
+#ifdef _WIN32
+		curPath += '\\';
+#else
 		curPath += '/';
+#endif
+//		curPath += '/';
 		curPath += node;
 		node.clear();
 		if (SAUtils::DirExists(curPath.c_str()) == false) {
@@ -479,15 +488,22 @@ bool SAUtils::makePath(const char *to) {
 	std::string curPath = drive;
 	std::string node;
 	while (last != true) {
-
+#ifdef _WIN32
+		if ((end = fullPath.find_first_of("\\", start + 2)) == std::string::npos) {
+#else
 		if ((end = fullPath.find_first_of("/", start + 2)) == std::string::npos) {
+#endif
 			node = fullPath.substr(start + 1, (fullPath.length() - start + 1));
 			last = true;
 		}
 		else {
 			node = fullPath.substr(start + 1, (end)-(start + 1));
 		}
-		curPath += '//';
+#ifdef _WIN32
+		curPath += '\\';
+#else
+		curPath += '/';
+#endif
 		curPath += node;
 		node.clear();
 		if (DirExists(curPath.c_str()) == false) {
