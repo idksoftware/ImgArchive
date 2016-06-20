@@ -4,7 +4,18 @@ In order to add images to the archive two important pieces of information needs 
 
 In addition, these are defaulted, meaning, If source folder cannot be found in the configuration file the archive will use the current directory, If archive folder cannot be found in the configuration file will use the platform default. for example, on a system running Windows the archive will be placed in the default Folder:
 
-$ProgramData/IDK Software/Simple Image Archive. See platform defaults.  
+$ProgramData/IDK Software/Simple Image Archive. See platform defaults. 
+
+Here are some examples:
+
+1) Using defaults:
+
+`simgarc add`
+
+This will look in the current folder and place any images found in the archive found using the environment variable SIA_HOME or the platform defaults
+
+2) 
+ 
 
 The command line options are as follows:
 
