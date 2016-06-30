@@ -69,14 +69,31 @@ ExifObject *ImageFileReader::externalExifTool(std::string &path) {
 	CLogger &logger = CLogger::getLogger();
 
 	CAppConfig config = CAppConfig::get();
+	
 	ExternalComand externalComand(config.getTempPath());
+	if (config.getExternalExifTool() == nullptr) {
+		//logger.log(LOG_OK, CLogger::ERROR, "Exif command line not found\n");
 
-	const char *externalCommandLine;
-	if (!(externalCommandLine = config.getExternalCommandLine())) {
+		return nullptr;
+	}
+	std::string externalExifTool = config.getExternalExifTool();
+	std::string ExifToolPath = config.getToolsPath();
+	ExifToolPath += '//';
+	ExifToolPath += externalExifTool;
+
+	if (SAUtils::FileExists(ExifToolPath.c_str()) == false) {
+		return false;
+	}
+
+	if (config.getExternalCommandLine() == nullptr) {
 		//logger.log(LOG_OK, CLogger::ERROR, "Exif command line not found\n");
 		
 		return nullptr;
 	}
+	std::string externalCommandLine = ExifToolPath;
+	externalCommandLine += ' ';
+	externalCommandLine += config.getExternalCommandLine();
+
 	const char *exifMapPath;
 	if (!(exifMapPath = config.getExifMapPath())) {
 		//logger.log(LOG_OK, CLogger::ERROR, "Exif map path not found");
@@ -84,7 +101,7 @@ ExifObject *ImageFileReader::externalExifTool(std::string &path) {
 		return nullptr;
 	}
 	logger.log(LOG_OK, CLogger::FINE, "Raw exif command line found \"%s\"", externalCommandLine);
-	if (!externalComand.init(externalCommandLine, exifMapPath)) {
+	if (!externalComand.init(externalCommandLine.c_str(), exifMapPath)) {
 		
 		return nullptr;
 	}

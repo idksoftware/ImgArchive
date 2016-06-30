@@ -65,6 +65,7 @@ namespace simplearchive {
 	std::string CAppConfig::m_homePath;
 	std::string CAppConfig::m_indexPath;
 	std::string CAppConfig::m_historyPath;
+	std::string CAppConfig::m_ExternalExifTool;
 	std::string CAppConfig::m_ExternalCommandLine;
 	std::string CAppConfig::m_ExifMapPath;
 	std::string CAppConfig::m_MetadataTemplatePath;
@@ -165,7 +166,7 @@ namespace simplearchive {
 	const char *CAppConfig::getToolsPath() {
 		if (m_toolsPath.empty() == true) {
 			if (value("ToolsPath", m_toolsPath) == false) {
-				std::string temp = SAUtils::GetEnvironment("HOMEPATH");
+				std::string temp = m_homePath;
 				m_toolsPath = temp + "/tools";
 
 			}
@@ -181,7 +182,7 @@ namespace simplearchive {
 	const char *CAppConfig::getHomePath() {
 		if (m_homePath.empty() == true) {
 			if (value("HomePath", m_homePath) == false) {
-				m_homePath = SAUtils::GetEnvironment("HOMEPATH");
+				m_homePath = SAUtils::GetEnvironment("SIA_HOME");
 				ArchivePath::setPathToHome(m_homePath);
 			}
 		}
@@ -399,9 +400,17 @@ namespace simplearchive {
 		return 	m_configPath.c_str();
 	}
 
+	const char *CAppConfig::getExternalExifTool() {
+		if (value("ExifTool", m_ExternalExifTool) == false) {
+			m_ExternalExifTool = "exiftool.exe";
+			return m_ExternalExifTool.c_str();
+		}
+		return 	m_ExternalCommandLine.c_str();
+	}
+
 	const char *CAppConfig::getExternalCommandLine() {
 		if (value("ExifCommandLine", m_ExternalCommandLine) == false) {
-			m_ExternalCommandLine = "exiftool.exe \"[input]\" > \"[output]\"";
+			m_ExternalCommandLine = "\"[input]\" > \"[output]\"";
 			return m_ExternalCommandLine.c_str();
 		}
 		return 	m_ExternalCommandLine.c_str();

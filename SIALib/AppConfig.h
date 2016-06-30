@@ -83,6 +83,8 @@ namespace simplearchive {
 		/// This is the path the history file are stored. These files are used for
 		/// the history of the changes made to the archive.  
 		static std::string m_historyPath;
+		/// External Exif tool
+		static std::string m_ExternalExifTool;
 		/// External Command line
 		static std::string m_ExternalCommandLine;
 		/// This is path to the Exif Map files. For example the Exiftool map
@@ -151,6 +153,8 @@ namespace simplearchive {
 		/// @brief Gets the path the history file are stored. These files are used for
 		/// @brief the history of the changes made to the archive.
 		const char *getHistoryPath();
+		/// @brief gets external Exif tool
+		const char *getExternalExifTool();
 		/// @brief gets external Command line
 		const char *getExternalCommandLine();
 		/// @brief Gets path to the Exif Map files. For example the Exiftool map

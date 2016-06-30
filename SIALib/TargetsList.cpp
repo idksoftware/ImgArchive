@@ -47,6 +47,8 @@ static char THIS_FILE[] = __FILE__;
 namespace simplearchive {
 
 	void ImageItem::processHook() {
+		CLogger &logger = CLogger::getLogger();
+		logger.log(LOG_OK, CLogger::INFO, "process Hook Item %s\n", m_path.c_str());
 		//printf("process Hook Item %s\n", m_path.c_str());
 		OnFileCmd onFileCmd(m_path.c_str());
 		onFileCmd.process();

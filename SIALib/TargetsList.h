@@ -91,9 +91,11 @@ namespace simplearchive {
 			}
 		}
 		void processHook() {
+			
 			//printf("Hook process %s\n", m_path.c_str());
 			for (std::vector<ImageItem *>::iterator i = this->begin(); i != this->end(); i++) {
 				ImageItem *data = *i;
+				
 				data->processHook();
 			}
 		}
