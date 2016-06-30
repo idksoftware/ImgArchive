@@ -5,7 +5,11 @@ Initial installation is simple because SIA consists of two executables called:
 
 These can be downloaded and much like any command line tool. However the complication comes in that these tools need an installation environment in which to operate. This environments consisted of a set of configuration file which hold things like the location of the archive and workspace etc.
 Install packages are available for the three main operating systems; windows, OSX (Apple Mac) and Linux.
-Alternatively siaadmin.exe can be used to create the runtime environments that sia will need for its operating requirements.  
+Alternatively siaadmin.exe can be used to create the runtime environment.
+
+##Third Party tools
+
+SIA is enhanced when some third party  
 
 ###Windows
 Under windows, this application uses Microsoft’s redistributable packages for Visual Studio 2013. These packages need to be installed before sia.exe can be used. These may already be on you system as a lot of applications also need them. If you do need to install them, these can be downloads from Microsoft for free at:
