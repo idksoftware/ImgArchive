@@ -12,7 +12,6 @@ As digital photography evolves new file formats will be introduced, so in order 
 Importing images into Image Archive is how you put images in to Image Archive  
 The first stage of processing images to be imported into the system is to sorts them into there types and groupings.
 
- * It will handle the case where both a Raw file and a jpg file was produced
- * by the camera at the same time, as well as simgle RAW or JPG image files.
+ * It will handle the case where both a Raw file and a jpg file was produced by the camera at the same time, as well as simgle RAW or JPG image files.
 
 
