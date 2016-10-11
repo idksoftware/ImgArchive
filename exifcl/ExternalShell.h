@@ -44,7 +44,8 @@ public:
 	ExternalShell();
 	virtual ~ExternalShell();
 	bool exec(const char *cmd);
-
+	bool executeBatch(const char *cmd);
+	
 	const std::string& getOutput() const {
 		return m_output;
 	}

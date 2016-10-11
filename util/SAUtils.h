@@ -104,6 +104,7 @@ public:
 	static std::string getYear(const char *path);
 	static std::string getFullRelativePath(const char *path);
 	static void splitpath(const char *path, char *drive, char *dir, char *fname, char *ext);
+	static bool mksymlink(const char *sourcePath, const char *destPath);
 };
 
 

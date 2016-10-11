@@ -47,12 +47,25 @@ static char THIS_FILE[] = __FILE__;
 namespace simplearchive {
 
 	void ImageItem::processHook() {
+		/*
 		CLogger &logger = CLogger::getLogger();
 		logger.log(LOG_OK, CLogger::INFO, "process Hook Item %s\n", m_path.c_str());
 		//printf("process Hook Item %s\n", m_path.c_str());
 		OnFileCmd onFileCmd(m_path.c_str());
 		onFileCmd.process();
+		*/
 	}
+
+	void ImageItem::processFileHook() {
+		CLogger &logger = CLogger::getLogger();
+		logger.log(LOG_OK, CLogger::INFO, "process Hook Item %s\n", m_path.c_str());
+		//printf("process Hook Item %s\n", m_path.c_str());
+		
+		OnFileCmd onFileCmd(m_path.c_str());
+		onFileCmd.process();
+	}
+
+	
 
 	/// This class creates a folder list for
 	class FolderDir : public FolderVisitor {
@@ -88,8 +101,10 @@ namespace simplearchive {
 				logger.log(LOG_OK, CLogger::WARNING, "Not a valid file type \"%s\" rejecting ", filename.c_str());
 				return true;
 			}
+			ImageItem *imageItem = new ImageItem(path);
+			imageItem->processFileHook();
 			m_fileCount++;
-			m_imageSet->insert(m_imageSet->end(), new ImageItem(path));
+			m_imageSet->insert(m_imageSet->end(), imageItem);
 			return true;
 		};
 		virtual bool onDirectory(const char *path) {

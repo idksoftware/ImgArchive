@@ -567,3 +567,7 @@ std::string SAUtils::getFullRelativePath(const char *path) {
 	spath += path;
 	return spath;
 }
+
+bool SAUtils::mksymlink(const char *sourcePath, const char *destPath) {
+	return true;
+}

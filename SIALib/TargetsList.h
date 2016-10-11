@@ -54,6 +54,8 @@ namespace simplearchive {
 			//printf("Hook Item %s\n", m_path.c_str());
 		}
 
+		void processFileHook();
+
 		void processHook();
 
 		const char *getPath() {

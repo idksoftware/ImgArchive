@@ -85,12 +85,30 @@ bool HookCmd::process() {
 	if ((scriptName = getScriptNames()).empty() == true) {
 		return false;
 	}
-	std::string cmd = m_hookPath + '/' + scriptName;
-
+	std::string cmd = "python.exe ";
+	cmd += m_hookPath + '/' + scriptName;
+	// = "g:\\sia\\archive\\tools\\convert dsc_3248.nef -quality 100 dsc_3248.jpg";
 	ExternalShell externalShell;
 	externalShell.exec(cmd.c_str());
 	std::string output = externalShell.getOutput();
-	//printf("Exec output: %s\n", output.c_str());
+	printf("Exec output: %s\n", output.c_str());
+	return true;
+}
+
+bool HookCmd::process(const char *file, const char *ext) {
+	std::string scriptName;
+	if ((scriptName = getScriptNames()).empty() == true) {
+		return false;
+	}
+	std::string cmd = "python.exe ";
+	cmd += m_hookPath + '/' + scriptName;
+	cmd += ' '; cmd += file;
+	cmd += ' '; cmd += ext;
+	// = "g:\\sia\\archive\\tools\\convert dsc_3248.nef -quality 100 dsc_3248.jpg";
+	ExternalShell externalShell;
+	externalShell.exec(cmd.c_str());
+	std::string output = externalShell.getOutput();
+	printf("Exec output: %s\n", output.c_str());
 	return true;
 }
 
@@ -155,15 +173,17 @@ bool HookCmd::readScriptsNames() {
 }
 
 OnFileCmd::OnFileCmd(const char *file) : HookCmd(HookCmd::HC_OnFile) {
-	m_file = file;
+	m_path = file;
 };
 
 bool OnFileCmd::process() {
 	SetEnv setEnv;
+	
 	setEnv.insert(setEnv.end(), EnvItem(IMAGE_PATH, m_file.c_str()));
-
+	std::string ext = SAUtils::getExtention(m_path);
+	std::string file = SAUtils::getFilenameNoExt(m_path);
 	setEnv.process();
-	HookCmd::process();
+	HookCmd::process(file.c_str(), ext.c_str());
 	return true;
 }
 

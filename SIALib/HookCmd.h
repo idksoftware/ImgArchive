@@ -72,6 +72,7 @@ public:
 	HookCmd(HookType type);
 	virtual ~HookCmd();
 	bool process();
+	bool process(const char *file,const char *ext);
 	static void setHookPath(const char *path);
 };
 
@@ -104,7 +105,9 @@ public:
 };
 
 class OnFileCmd : public HookCmd {
+	std::string m_path;
 	std::string m_file;
+	std::string m_ext;
 public:
 	OnFileCmd(const char *file);
 	bool process();
