@@ -147,7 +147,27 @@ bool XMLWriter::writeImage(MetadataObject &container, const char *path) {
 	            << writeTag("SensingMethod", container.getSensingMethod())
 	            << writeTag("DigitalZoom", container.getDigitalZoom())
 	            << "</CameraInformation>\n"
+				<< "<ImageProperties>\n"
+				<< writeTag("Headline", container.getDescription())
+				<< writeTag("Category", container.getDescription())
+				<< writeTag("Description", container.getDescription())
+				<< writeTag("Keywords", container.getDescription())
+				<< writeTag("Source", container.getDescription())
+				<< writeTag("Instructions", container.getDescription())
+				<< writeTag("Scene", container.getDescription())
+				<< writeTag("Creator", container.getDescription())
+				<< writeTag("JobTitle", container.getDescription())
+				<< writeTag("Address", container.getDescription())
+				<< writeTag("City", container.getDescription())
+				<< writeTag("State", container.getDescription())
+				<< writeTag("PostalCode", container.getDescription())
+				<< writeTag("Country", container.getDescription())
+				<< writeTag("Phone", container.getDescription())
+				<< writeTag("Email", container.getDescription())
+				<< writeTag("Website", container.getDescription())
+				<< "</ImageProperties>\n"
 	            << "<GPS>\n"
+				<< writeTag("Location", container.getLatitude())
 	            << writeTag("Latitude", container.getLatitude())
 	            << writeTag("Longitude", container.getLongitude())
 	            << writeTag("GPSTimeStamp", container.getGpsTimeStamp())

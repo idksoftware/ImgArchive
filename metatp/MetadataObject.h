@@ -96,6 +96,7 @@ public:
 			add(MTSchema(MTSchema::Text, DB_COPYRIGHT));
 			add(MTSchema(MTSchema::Text, DB_USAGERIGHTS));
 			add(MTSchema(MTSchema::Text, DB_COPYRIGHTURL));
+			// new 
 			
         }
 };
@@ -140,6 +141,7 @@ class MetadataObject : public MTRow {
 	std::string m_colorSpace;
 	std::string m_compression;
 	std::string m_primaryEncoding;
+
 	/// Camerai Information"
 	std::string m_maker;
 	std::string m_model;
@@ -482,7 +484,7 @@ public:
 	}
 
 	void setPage(const std::string& page) {
-	        columnAt(MD_PAGE_IDX).fromString(page);;
+	        columnAt(MD_PAGE_IDX).fromString(page);
 	}
 
 	const std::string& getPrimaryEncoding() const {
@@ -498,7 +500,7 @@ public:
 	}
 
 	void setRating(const std::string& rating) {
-	        columnAt(MD_RATING_IDX).fromString(rating);;
+	        columnAt(MD_RATING_IDX).fromString(rating);
 	}
 
 	const std::string& getResolution() const {
