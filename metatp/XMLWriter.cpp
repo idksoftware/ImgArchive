@@ -114,7 +114,7 @@ bool XMLWriter::writeImage(MetadataObject &container, const char *path) {
 	            << writeTag("FileSize", container.getFileSize())
 	            << writeTag("DateCreate", container.getDateCreate())
 	            << writeTag("DateModified", container.getDateModified())
-	           << writeTag("DateAdded", container.getDateAdded())
+				<< writeTag("DateAdded", container.getDateAdded())
 	            << "</AssetProperties>\n"
 	            << "<MediaProerties>\n"
 	            << writeTag("Width", container.getWidth())

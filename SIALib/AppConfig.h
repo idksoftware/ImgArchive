@@ -192,6 +192,8 @@ namespace simplearchive {
 		const char *getLogLevel();
 
 		std::string toString();
+
+		std::string toXMLString();
 		
 	public:
  

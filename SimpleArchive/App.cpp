@@ -127,7 +127,7 @@ bool App::Run()
 
 		siaLib.enableServer(appOptions.eventPort());
 	}
-
+	printf("%s", config.toString().c_str());
 	if (siaLib.initalise() < 0) {
 		return false;
 	}

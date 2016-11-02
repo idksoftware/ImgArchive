@@ -478,6 +478,62 @@ namespace simplearchive {
 		/// @brief Gets the archive path.
 		/// user definable
 		std::stringstream str;
+		str << "Configuration" << '\n';
+		str << "Workspace path:          " << getWorkspacePath() << '\n';
+		/// @brief Gets the shadow archive path
+		/// user definable
+		str << "Shadow path:             " << getShadowPath() << '\n';
+		/// @brief Gets the temp file path.
+		/// user definable
+		str << "Temp path:               " << getTempPath() << '\n';
+		/// @brief Gets tools path
+		str << "Tools path:              " << getToolsPath() << '\n';
+		/// @brief Gets the hooks path
+		/// user definable
+		/// 
+		str << "Hook path:               " << getHookPath()  << '\n';
+		/// @brief Gets the path to the metadata template files.
+		str << "Metadata template path:  " << getMetadataTemplatePath() << '\n';
+		/// @brief Gets log file path
+		str << "Log path:                " << getLogPath() << '\n';
+		/// @brief Gets the path to the crc index database.
+		str << "Index path:              " << getIndexPath() << '\n';
+		/// @brief Gets the path the history file are stored. These files are used for
+		/// @brief the history of the changes made to the archive.
+		str << "History path:            " << getHistoryPath() << '\n';
+		/// @brief gets external Command line
+		str << "Exif tool command        " << getExternalCommandLine() << '\n';
+		/// @brief Gets path to the Exif Map files. For example the Exiftool map
+		/// that maps exiftool keywords to Simple Archive keywords.
+		str << "Exif map path:           " << getExifMapPath() << '\n';
+		str << "Config path:             " << getConfigPath() << '\n';
+		/// @brief Gets home path. This is the root path all default paths are made.
+		str << "Home path:               " << getHomePath() << '\n';
+		str << "Master view path:        " << getMasterViewPath() << '\n';
+		str << "Database path:           " << getDatabasePath() << '\n';
+		str << "Backup destination path: " << getBackupDestinationPath() << '\n';
+		str << "Backup media size:       " << getBackupMediaSize() << '\n';
+		if (isFromDateSet() == true) {
+			str << "From date:               " << getFromDate().toString() << '\n';
+		}
+		if (isToDateSet() == true) {
+			str << "To date:                 " << getToDate().toString() << '\n';
+		}
+		str << "Is dryrun:               " << (isDryRun()?"true":"false") << '\n';
+		str << "Is quiet:                " << (isQuiet() ? "true" : "false") << '\n';
+		str << "Is verbose:              " << (isVerbose() ? "true" : "false") << '\n';
+		str << "Log level:               " << getLogLevel() << '\n';
+
+		return str.str();
+	}
+
+	std::string CAppConfig::toXMLString() {
+		/// @brief Gets the source path.
+		///const char *getSourcePath();
+
+		/// @brief Gets the archive path.
+		/// user definable
+		std::stringstream str;
 		str << "<Configuration>" << '\n';
 		str << "<WorkspacePath>" << getWorkspacePath() << "</WorkspacePath>" << '\n';
 		/// @brief Gets the shadow archive path
@@ -519,11 +575,12 @@ namespace simplearchive {
 		if (isToDateSet() == true) {
 			str << "<FromDate>" << getToDate().toString() << "</FromDate>" << '\n';
 		}
-		str << "<IsDryRun>" << (isDryRun()?"true":"false") << "</IsDryRun>" << '\n';
+		str << "<IsDryRun>" << (isDryRun() ? "true" : "false") << "</IsDryRun>" << '\n';
 		str << "<IsQuiet>" << (isQuiet() ? "true" : "false") << "</IsQuiet>" << '\n';
 		str << "<IsVerbose>" << (isVerbose() ? "true" : "false") << "</IsVerbose>" << '\n';
 		str << "<LogLevel>" << getLogLevel() << "</LogLevel>" << '\n';
 		str << "</Configuration>" << '\n';
 		return str.str();
 	}
+
 }

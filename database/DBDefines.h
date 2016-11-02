@@ -39,7 +39,6 @@
 #define TABLE_METADATA			"metadata"
 #define TABLE_ASSETPROPERTIES	"asset_properties"
 
-
 #define DB_SEQUENCEID	   "SequenceId"
 #define DB_MD5	           "Md5"
 #define DB_CRC             "Crc"

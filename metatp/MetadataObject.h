@@ -62,40 +62,57 @@ public:
         	add(MTSchema(MTSchema::Date, DB_DATEMODIFIED));
         	add(MTSchema(MTSchema::Date, DB_DATEADDED));
         	add(MTSchema(MTSchema::Text, DB_DESCRIPTION));
-			add(MTSchema(MTSchema::Text, DB_KEYWORDS));
-			add(MTSchema(MTSchema::Integer, DB_WIDTH));
-			add(MTSchema(MTSchema::Integer, DB_HEIGHT));
-			add(MTSchema(MTSchema::Text, DB_RESOLUTION));
-			add(MTSchema(MTSchema::Text, DB_DEPTH));
-			add(MTSchema(MTSchema::Text, DB_VIEWROTATION));
-			add(MTSchema(MTSchema::Text, DB_SAMPLECOLOR));
-			add(MTSchema(MTSchema::Text, DB_PAGE));
-			add(MTSchema(MTSchema::Text, DB_COLORSPACE));
-			add(MTSchema(MTSchema::Text, DB_COMPRESSION));
-			add(MTSchema(MTSchema::Text, DB_PRIMARYENCODING));
-			add(MTSchema(MTSchema::Text, DB_MAKER));
-			add(MTSchema(MTSchema::Text, DB_MODEL));
-			add(MTSchema(MTSchema::Text, DB_SOFTWARE));
-			add(MTSchema(MTSchema::Text, DB_SOURCEURL));
-			add(MTSchema(MTSchema::Text, DB_EXIFVERSION));
-			add(MTSchema(MTSchema::Date, DB_CAPTUREDATE));
-			add(MTSchema(MTSchema::Text, DB_EXPOSUREPROGRAM));
-			add(MTSchema(MTSchema::Text, DB_ISOSPEEDRATING));
-			add(MTSchema(MTSchema::Text, DB_EXPOSUREBIAS));
-			add(MTSchema(MTSchema::Text, DB_EXPOSURETIME));
-			add(MTSchema(MTSchema::Text, DB_APERTURE));
-			add(MTSchema(MTSchema::Text, DB_METERINGMODE));
-			add(MTSchema(MTSchema::Text, DB_LIGHTSOURCE));
-			add(MTSchema(MTSchema::Text, DB_FLASH));
-			add(MTSchema(MTSchema::Text, DB_FOCALLENGTH));
-			add(MTSchema(MTSchema::Text, DB_SENSINGMETHOD));
-			add(MTSchema(MTSchema::Text, DB_DIGITALZOOM));
-			add(MTSchema(MTSchema::Text, DB_LATITUDE));
-			add(MTSchema(MTSchema::Text, DB_LONGITUDE));
-			add(MTSchema(MTSchema::Text, DB_GPSTIMESTAMP));
-			add(MTSchema(MTSchema::Text, DB_COPYRIGHT));
-			add(MTSchema(MTSchema::Text, DB_USAGERIGHTS));
-			add(MTSchema(MTSchema::Text, DB_COPYRIGHTURL));
+		add(MTSchema(MTSchema::Text, DB_KEYWORDS));
+		add(MTSchema(MTSchema::Integer, DB_WIDTH));
+		add(MTSchema(MTSchema::Integer, DB_HEIGHT));
+		add(MTSchema(MTSchema::Text, DB_RESOLUTION));
+		add(MTSchema(MTSchema::Text, DB_DEPTH));
+		add(MTSchema(MTSchema::Text, DB_VIEWROTATION));
+		add(MTSchema(MTSchema::Text, DB_SAMPLECOLOR));
+		add(MTSchema(MTSchema::Text, DB_PAGE));
+		add(MTSchema(MTSchema::Text, DB_COLORSPACE));
+		add(MTSchema(MTSchema::Text, DB_COMPRESSION));
+		add(MTSchema(MTSchema::Text, DB_PRIMARYENCODING));
+		add(MTSchema(MTSchema::Text, DB_MAKER));
+		add(MTSchema(MTSchema::Text, DB_MODEL));
+		add(MTSchema(MTSchema::Text, DB_SOFTWARE));
+		add(MTSchema(MTSchema::Text, DB_SOURCEURL));
+		add(MTSchema(MTSchema::Text, DB_EXIFVERSION));
+		add(MTSchema(MTSchema::Date, DB_CAPTUREDATE));
+		add(MTSchema(MTSchema::Text, DB_EXPOSUREPROGRAM));
+		add(MTSchema(MTSchema::Text, DB_ISOSPEEDRATING));
+		add(MTSchema(MTSchema::Text, DB_EXPOSUREBIAS));
+		add(MTSchema(MTSchema::Text, DB_EXPOSURETIME));
+		add(MTSchema(MTSchema::Text, DB_APERTURE));
+		add(MTSchema(MTSchema::Text, DB_METERINGMODE));
+		add(MTSchema(MTSchema::Text, DB_LIGHTSOURCE));
+		add(MTSchema(MTSchema::Text, DB_FLASH));
+		add(MTSchema(MTSchema::Text, DB_FOCALLENGTH));
+		add(MTSchema(MTSchema::Text, DB_SENSINGMETHOD));
+		add(MTSchema(MTSchema::Text, DB_DIGITALZOOM));
+		add(MTSchema(MTSchema::Text, DB_LATITUDE));
+		add(MTSchema(MTSchema::Text, DB_LONGITUDE));
+		add(MTSchema(MTSchema::Text, DB_GPSTIMESTAMP));
+		add(MTSchema(MTSchema::Text, DB_COPYRIGHT));
+		add(MTSchema(MTSchema::Text, DB_USAGERIGHTS));
+		add(MTSchema(MTSchema::Text, DB_COPYRIGHTURL));
+		add(MTSchema(MTSchema::Text, DB_HEADLINE));
+		add(MTSchema(MTSchema::Text, DB_CATEGORY));
+		add(MTSchema(MTSchema::Text, DB_DESCRIPTION));
+		add(MTSchema(MTSchema::Text, DB_KEYWORDS));
+		add(MTSchema(MTSchema::Text, DB_SOURCE));
+		add(MTSchema(MTSchema::Text, DB_INSTRUCTIONS));
+		add(MTSchema(MTSchema::Text, DB_SCENE));
+		add(MTSchema(MTSchema::Text, DB_CREATOR));
+		add(MTSchema(MTSchema::Text, DB_JOBTITLE));
+		add(MTSchema(MTSchema::Text, DB_ADDRESS));
+		add(MTSchema(MTSchema::Text, DB_CITY));
+		add(MTSchema(MTSchema::Text, DB_STATE));
+		add(MTSchema(MTSchema::Text, DB_POSTALCODE));
+		add(MTSchema(MTSchema::Text, DB_COUNTRY));
+		add(MTSchema(MTSchema::Text, DB_PHONE));
+		add(MTSchema(MTSchema::Text, DB_EMAIL));
+		add(MTSchema(MTSchema::Text, DB_WEBSITE));
 			// new 
 			
         }
@@ -285,14 +302,6 @@ public:
 
 	void setDepth(const std::string& depth) {
 	        columnAt(MD_DEPTH_IDX).fromString(depth);;
-	}
-
-	const std::string& getDescription() const {
-	        return columnAt(MD_DESCRIPTION_IDX).toString();
-	}
-
-	void setDescription(const std::string& description) {
-	        columnAt(MD_DESCRIPTION_IDX).fromString(description);;
 	}
 
 	const std::string& getDigitalZoom() const {
@@ -586,6 +595,163 @@ public:
 	void setWidth(const std::string& width) {
 		columnAt(MD_WIDTH_IDX).fromString(width);;
 	}
+
+	const std::string& getHeadline() const {
+		return columnAt(MD_HEADLINE_IDX).toString();
+
+	}
+
+	void setHeadline(const std::string& width) {
+		columnAt(MD_HEADLINE_IDX).fromString(width);;
+	}
+
+	const std::string& getCategory() const {
+		return columnAt(MD_CATEGORY_IDX).toString();
+
+	}
+
+	void setCategory(const std::string& width) {
+		columnAt(MD_CATEGORY_IDX).fromString(width);;
+	}
+
+	const std::string& getDescription() const {
+		return columnAt(MD_DESCRIPTION_IDX).toString();
+
+	}
+
+	void setDescription(const std::string& width) {
+		columnAt(MD_DESCRIPTION_IDX).fromString(width);;
+	}
+
+	const std::string& getKeywords() const {
+		return columnAt(MD_KEYWORDS_IDX).toString();
+
+	}
+
+	void setKeywords(const std::string& width) {
+		columnAt(MD_KEYWORDS_IDX).fromString(width);;
+	}
+
+	const std::string& getSource() const {
+		return columnAt(MD_SOURCE_IDX).toString();
+
+	}
+
+	void setSource(const std::string& width) {
+		columnAt(MD_SOURCE_IDX).fromString(width);;
+	}
+
+	const std::string& getInstructions() const {
+		return columnAt(MD_INSTRUCTIONS_IDX).toString();
+
+	}
+
+	void setInstructions(const std::string& width) {
+		columnAt(MD_INSTRUCTIONS_IDX).fromString(width);;
+	}
+
+	const std::string& getScene() const {
+		return columnAt(MD_SCENE_IDX).toString();
+
+	}
+
+	void setScene(const std::string& width) {
+		columnAt(MD_SCENE_IDX).fromString(width);;
+	}
+
+	const std::string& getCreator() const {
+		return columnAt(MD_CREATOR_IDX).toString();
+
+	}
+
+	void setCreator(const std::string& width) {
+		columnAt(MD_CREATOR_IDX).fromString(width);;
+	}
+
+	const std::string& getJobTitle() const {
+		return columnAt(MD_JOBTITLE_IDX).toString();
+
+	}
+
+	void setJobTitle(const std::string& width) {
+		columnAt(MD_JOBTITLE_IDX).fromString(width);;
+	}
+
+	const std::string& getAddress() const {
+		return columnAt(MD_ADDRESS_IDX).toString();
+
+	}
+
+	void setAddress(const std::string& width) {
+		columnAt(MD_ADDRESS_IDX).fromString(width);;
+	}
+
+	const std::string& getCity() const {
+		return columnAt(MD_CITY_IDX).toString();
+
+	}
+
+	void setCity(const std::string& width) {
+		columnAt(MD_CITY_IDX).fromString(width);;
+	}
+
+	const std::string& getState() const {
+		return columnAt(MD_STATE_IDX).toString();
+
+	}
+
+	void setState(const std::string& width) {
+		columnAt(MD_STATE_IDX).fromString(width);;
+	}
+
+	const std::string& getPostalCode() const {
+		return columnAt(MD_POSTALCODE_IDX).toString();
+
+	}
+
+	void setPostalCode(const std::string& width) {
+		columnAt(MD_POSTALCODE_IDX).fromString(width);;
+	}
+
+	const std::string& getCountry() const {
+		return columnAt(MD_COUNTRY_IDX).toString();
+
+	}
+
+	void setCountry(const std::string& width) {
+		columnAt(MD_COUNTRY_IDX).fromString(width);;
+	}
+
+	const std::string& getPhone() const {
+		return columnAt(MD_PHONE_IDX).toString();
+
+	}
+
+	void setPhone(const std::string& width) {
+		columnAt(MD_PHONE_IDX).fromString(width);;
+	}
+
+	const std::string& getEmail() const {
+		return columnAt(MD_EMAIL_IDX).toString();
+
+	}
+
+	void setEmail(const std::string& width) {
+		columnAt(MD_EMAIL_IDX).fromString(width);;
+	}
+
+	const std::string& getWebsite() const {
+		return columnAt(MD_WEBSITE_IDX).toString();
+
+	}
+
+	void setWebsite(const std::string& width) {
+		columnAt(MD_WEBSITE_IDX).fromString(width);;
+	}
+
+	
+
+	
 };
 
 } /* namespace simplearchive */

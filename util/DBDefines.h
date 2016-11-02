@@ -138,46 +138,61 @@
 #define MD_DATE_CREATE_IDX      11
 #define MD_DATE_MODIFIED_IDX    12
 #define MD_DATE_ADDED_IDX       13
-#define MD_DESCRIPTION_IDX      14
-#define MD_KEYWORDS_IDX			15
 	/// Media Properties
-#define MD_WIDTH_IDX            16
-#define MD_HEIGHT_IDX           17
-#define MD_RESOLUTION_IDX       18
-#define MD_DEPTH_IDX            19
-#define MD_VIEW_ROTATION_IDX    20
-#define MD_SAMPLE_COLOR_IDX     21
-#define MD_PAGE_IDX             22
-#define MD_COLOR_SPACE_IDX      23
-#define MD_COMPRESSION_IDX      24
-#define MD_PRIMARY_ENCODING_IDX 25
+#define MD_WIDTH_IDX            14
+#define MD_HEIGHT_IDX           15
+#define MD_RESOLUTION_IDX       16
+#define MD_DEPTH_IDX            17
+#define MD_VIEW_ROTATION_IDX    18
+#define MD_SAMPLE_COLOR_IDX     19
+#define MD_PAGE_IDX             20
+#define MD_COLOR_SPACE_IDX      21
+#define MD_COMPRESSION_IDX      22
+#define MD_PRIMARY_ENCODING_IDX 23
 	/// Camerai Information"
-#define MD_MAKER_IDX            26
-#define MD_MODEL_IDX            27
-#define MD_SOFTWARE_IDX         28
-#define MD_SOURCE_URL_IDX       29
-#define MD_EXIF_VERSION_IDX     30
-#define MD_CAPTURE_DATE_IDX     31
-#define MD_EXPOSURE_PROGRAM_IDX 32
-#define MD_ISO_SPEED_RATING_IDX 33
-#define MD_EXPOSURE_BIAS_IDX    34
-#define MD_EXPOSURE_TIME_IDX    35
-#define MD_APERTURE_IDX         36
-#define MD_METERING_MODE_IDX    37
-#define MD_LIGHT_SOURCE_IDX     38
-#define MD_FLASH_IDX            39
-#define MD_FOCAL_LENGTH_IDX     40
-#define MD_SENSING_METHOD_IDX   41
-#define MD_DIGITAL_ZOOM_IDX     42
+#define MD_MAKER_IDX            24
+#define MD_MODEL_IDX            25
+#define MD_SOFTWARE_IDX         26
+#define MD_SOURCE_URL_IDX       27
+#define MD_EXIF_VERSION_IDX     28
+#define MD_CAPTURE_DATE_IDX     29
+#define MD_EXPOSURE_PROGRAM_IDX 30
+#define MD_ISO_SPEED_RATING_IDX 31
+#define MD_EXPOSURE_BIAS_IDX    32
+#define MD_EXPOSURE_TIME_IDX    33
+#define MD_APERTURE_IDX         34
+#define MD_METERING_MODE_IDX    35
+#define MD_LIGHT_SOURCE_IDX     36
+#define MD_FLASH_IDX            37
+#define MD_FOCAL_LENGTH_IDX     38
+#define MD_SENSING_METHOD_IDX   39
+#define MD_DIGITAL_ZOOM_IDX     40
 	/// GPS
-#define MD_LATITUDE_IDX         43
-#define MD_LONGITUDE_IDX        44
-#define MD_GPS_TIMESTAMP_IDX    45
+#define MD_LATITUDE_IDX         41
+#define MD_LONGITUDE_IDX        42
+#define MD_GPS_TIMESTAMP_IDX    43
 	//Copyright Properties
-#define MD_COPYRIGHT_IDX        46
-#define MD_USAGE_RIGHTS_IDX     47
-#define MD_COPYRIGHT_URL_IDX    48
-
+#define MD_COPYRIGHT_IDX        44
+#define MD_USAGE_RIGHTS_IDX     45
+#define MD_COPYRIGHT_URL_IDX    46
+	// Image Properties
+#define MD_HEADLINE_IDX			47
+#define MD_CATEGORY_IDX			48
+#define MD_DESCRIPTION_IDX		49
+#define MD_KEYWORDS_IDX			50
+#define MD_SOURCE_IDX			51
+#define MD_INSTRUCTIONS_IDX		52
+#define MD_SCENE_IDX			53
+#define MD_CREATOR_IDX			54
+#define MD_JOBTITLE_IDX			55
+#define MD_ADDRESS_IDX			56
+#define MD_CITY_IDX				57
+#define MD_STATE_IDX			58
+#define MD_POSTALCODE_IDX		59
+#define MD_COUNTRY_IDX			60
+#define MD_PHONE_IDX			62
+#define MD_EMAIL_IDX			63
+#define MD_WEBSITE_IDX			64
 
 // CSV Database Defines
 	/// Asset Properties
@@ -195,7 +210,6 @@
 #define DB_DATE_CREATE_IDX      11
 #define DB_DATE_MODIFIED_IDX    12
 #define DB_DATE_ADDED_IDX       13
-#define DB_DESCRIPTION_IDX      14
 	/// Media Properties
 #define DB_SEQUENCE_ID_IDX      0
 #define DB_WIDTH_IDX            1
@@ -237,6 +251,25 @@
 #define DB_COPYRIGHT_IDX        1
 #define DB_USAGE_RIGHTS_IDX     2
 #define DB_COPYRIGHT_URL_IDX    3
+	// Image Properties
+#define DB_HEADLINE_IDX			0
+#define DB_CATEGORY_IDX			1
+#define DB_DESCRIPTION_IDX		2
+#define DB_KEYWORDS_IDX			3
+#define DB_SOURCE_IDX			4
+#define DB_INSTRUCTIONS_IDX		5
+#define DB_SCENE_IDX			6
+#define DB_CREATOR_IDX			7
+#define DB_JOBTITLE_IDX			8
+#define DB_ADDRESS_IDX			9
+#define DB_CITY_IDX				10
+#define DB_STATE_IDX			11
+#define DB_POSTALCODE_IDX		12
+#define DB_COUNTRY_IDX			13
+#define DB_PHONE_IDX			14
+#define DB_EMAIL_IDX			15
+#define DB_WEBSITE_IDX			16
+
 
 //namespace simplearchive {
 #define DB_SEQUENCEID	   "SequenceId"
@@ -287,8 +320,25 @@
 #define DB_USAGERIGHTS     "UsageRights"
 #define DB_VIEWROTATION    "ViewRotation"
 #define DB_WIDTH           "Width"
-#define	DB_KEYWORDS		   "Keywords"
-#define	DB_Tags			   "Tags"
+#define	DB_KEYWORDS        "Keywords"
+#define	DB_Tags            "Tags"
+#define DB_HEADLINE        "Headline"
+#define DB_CATEGORY        "Category"
+#define DB_DESCRIPTION     "Description"
+#define DB_KEYWORDS        "Keywords"
+#define DB_SOURCE          "Source"
+#define DB_INSTRUCTIONS    "Instructions"
+#define DB_SCENE           "Scene"
+#define DB_CREATOR         "Creator"
+#define DB_JOBTITLE        "JobTitle"
+#define DB_ADDRESS         "Address"
+#define DB_CITY            "City"
+#define DB_STATE           "State"
+#define DB_POSTALCODE      "PostalCode"
+#define DB_COUNTRY         "Country"
+#define DB_PHONE           "Phone"
+#define DB_EMAIL           "Email"
+#define DB_WEBSITE         "Website"
 /*
 keywords are used to find things via search engines; tags are used to find things within your own Archive.
 So, you would use keywords to help label your article so when people search on Google, they hopefully use
