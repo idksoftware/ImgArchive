@@ -121,7 +121,7 @@ bool UDPOut::enableUDPOutput(int port, const char *address) {
 }
 
 bool UDPOut::printf(const char *format, ...) {
-	if (!m_udpEnabled == false) return true;
+	if (m_udpEnabled == false) return true;
 	char message[512];
 	va_list args;
 	va_start(args, format);
@@ -138,6 +138,7 @@ bool UDPOut::printf(const char *format, ...) {
 }
 
 bool UDPOut::out(const char *out) {
+	if (m_udpEnabled == false) return true;
 //send the message
 	if (sendto(m_socketId, out, strlen(out), 0, (struct sockaddr *) &m_si_other, m_socketLength) == SOCKET_ERROR)
 	{

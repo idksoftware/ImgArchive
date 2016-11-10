@@ -42,13 +42,14 @@ namespace simplearchive {
 class CLogger {
 public:
 	typedef enum {
-		TRACE	= 0,
-		FINE	= 1,
-		INFO	= 2,
+		TRACE = 0,
+		FINE = 1,
+		INFO = 2,
 		SUMMARY = 3,
 		WARNING = 4,
-		ERR	= 5,
-		FATAL	= 6,
+		ERR = 5,
+		FATAL = 6,
+		UNKNOWN = -1
 	} Level;
 	
 
@@ -87,6 +88,8 @@ public:
 		m_level = level;
 	}
 
+	static bool setLevel(const std::string &level);
+
 	static void setLogPath(const char *logpath) {
 		m_logpath = logpath;
 	}
@@ -104,7 +107,9 @@ private:
 	CLogger(const CLogger&) {};
 	CLogger& operator = (const CLogger& ) { return *this; }
 	bool IsPrintable(Level level);
+	static void makeFile();
 	const char *levelStr(Level level);
+	static bool m_isQuiet;
 	static bool m_isSilent;
 	static std::string m_filename;
 	static const std::string m_Path;
@@ -113,6 +118,7 @@ private:
 	static Level m_level;
 	static std::string m_logpath;
 	static int m_size;
+	static int m_cursize;
 	static int m_lastCode;
 	static std::string m_lastMessage;
 	virtual ~CLogger();

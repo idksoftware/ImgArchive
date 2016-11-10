@@ -96,6 +96,7 @@ bool AppOptions::initalise(int argc, char **argv) {
 	m_dry_run = false;
 	*/
 	CAppConfig &config = CAppConfig::get();
+	config.init();
 	/*
 	const std::string key = "SIA_HOME";
 	std::string temp = SAUtils::GetEnvironment(key);
@@ -112,7 +113,7 @@ bool AppOptions::initalise(int argc, char **argv) {
 		found = true;
 	} else {
 		bool found = false;
-		homePath = SAUtils::GetEnvironment("USERPROFILE");
+		homePath = SAUtils::GetEnvironment("ProgramData"); 
 		if (homePath.empty() == true || homePath.length() == 0) {
 			printf("SIA Unable to start? Cannot read user profile.");
 			return false;
@@ -125,7 +126,7 @@ bool AppOptions::initalise(int argc, char **argv) {
 			}
 		}
 		if (found == false) {
-			homePath = SAUtils::GetEnvironment("ProgramData");
+			homePath = SAUtils::GetEnvironment("USERPROFILE");
 			if (homePath.empty() == true || homePath.length() == 0) {
 				printf("SIA Unable to start? Cannot read all users profile.");
 				return false;
@@ -525,12 +526,20 @@ bool AppOptions::initalise(int argc, char **argv) {
 		m_eventsOn = true;
 	}
 
-	if (m_argvParser->foundOption("logging-level") == true) {
+	if (m_argvParser->foundOption("quiet") == true) {
 		
+		
+		printf("quiet=On\n");
+		config.setQuiet(true);
+	}
+
+	if (m_argvParser->foundOption("logging-level") == true) {
+
 		std::string opt = m_argvParser->optionValue("logging-level");
 		printf(opt.c_str()); printf("\n");
 		config.setLogLevel(opt.c_str());
 	}
+
 	if (m_argvParser->foundOption("dry-run") == true) {
 		
 		std::string opt = m_argvParser->optionValue("dry-run");

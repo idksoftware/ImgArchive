@@ -47,12 +47,20 @@ static char THIS_FILE[] = __FILE__;
 namespace simplearchive {
 
 	CAppConfig *CAppConfig::m_this = NULL;
-
+	
 	bool CAppConfig::m_verbose = false;
 	bool CAppConfig::m_quiet = false;
-	std::string CAppConfig::m_logLevel = "INFO";
+	bool CAppConfig::m_silent = false;
+	std::string CAppConfig::m_logLevel = "SUMMARY";
 	bool CAppConfig::m_dry_run = false;
 	bool CAppConfig::m_useDatabase = true;
+
+	bool CAppConfig::m_eventsOn = false; // UDP events
+	bool CAppConfig::m_serverOn = false;
+
+	int CAppConfig::m_tcpPortNum = 11000;
+	int CAppConfig::m_udpPortNum = 11001;
+	std::string CAppConfig::m_udpAddress = "127.0.0.1";
 
 	std::string CAppConfig::m_hookPath;
 	std::string CAppConfig::m_toolsPath;
@@ -152,7 +160,7 @@ namespace simplearchive {
 		if (m_workspacePath.empty() == true) {
 			if (value("WorkspacePath", m_workspacePath) == false) {
 				std::string temp = SAUtils::GetEnvironment("USERPROFILE");
-				m_workspacePath = temp + "/SIA Workspace";
+				m_workspacePath = temp + "/Documents/SIA Workspace";
 
 			}
 		}
@@ -449,6 +457,14 @@ namespace simplearchive {
 		m_quiet = quiet;
 	}
 
+	bool CAppConfig::isSilent() const {
+		return m_silent;
+	}
+
+	void CAppConfig::setSilent(bool silent) {
+		m_silent = silent;
+	}
+
 	bool CAppConfig::isVerbose() const {
 		return m_verbose;
 	}
@@ -457,7 +473,48 @@ namespace simplearchive {
 		m_verbose = verbose;
 	}
 
-	
+	bool CAppConfig::isEventsOn() {
+		return m_eventsOn;
+	}
+
+	int CAppConfig::eventPort() {
+		return m_udpPortNum;
+
+	}
+	const char *CAppConfig::eventAddress() {
+		return m_udpAddress.c_str();
+	}
+
+	bool CAppConfig::isServerOn() {
+		return m_serverOn;
+	}
+
+	int CAppConfig::serverPort() {
+		return m_tcpPortNum;
+
+	}
+
+	void CAppConfig::setEventsOn(bool evt) {
+		m_eventsOn = evt;
+	}
+
+	void CAppConfig::setEventPort(int port) {
+		m_eventsOn = true;
+		m_udpPortNum = port;
+	}
+
+	void CAppConfig::setEventAddress(const char *address) {
+		m_eventsOn = true;
+		m_udpAddress = address;
+	}
+
+	void CAppConfig::isServerOn(bool on) {
+		m_serverOn = on;
+	}
+
+	void CAppConfig::setServerPort(int port) {
+		m_tcpPortNum = port;
+	}
 
 	//void setSourcePath(const char *sourcePath);
 

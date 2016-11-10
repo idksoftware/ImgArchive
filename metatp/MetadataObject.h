@@ -98,7 +98,6 @@ public:
 		add(MTSchema(MTSchema::Text, DB_COPYRIGHTURL));
 		add(MTSchema(MTSchema::Text, DB_HEADLINE));
 		add(MTSchema(MTSchema::Text, DB_CATEGORY));
-		add(MTSchema(MTSchema::Text, DB_DESCRIPTION));
 		add(MTSchema(MTSchema::Text, DB_KEYWORDS));
 		add(MTSchema(MTSchema::Text, DB_SOURCE));
 		add(MTSchema(MTSchema::Text, DB_INSTRUCTIONS));
@@ -130,63 +129,7 @@ class MetadataObject : public MTRow {
 
 
 	friend class MetadataTemplate;
-	/// Asset Properties
-	/*
-	std::string m_sequenceId;
-	std::string m_filename;
-	std::string m_filepath;
-	std::string m_orginalName;
-	std::string m_uniqueId;
-	std::string m_label;
-	std::string m_rating;
-	std::string m_mediaType;
-	std::string m_md5;
-	std::string m_crc;
-	std::string m_fileSize;
-	std::string m_dateCreate;
-	std::string m_dateModified;
-	std::string m_dateAdded;
-	std::string m_description;
-	/// Media Properties
-	std::string m_width;
-	std::string m_height;
-	std::string m_resolution;
-	std::string m_depth;
-	std::string m_viewRotation;
-	std::string m_sampleColor;
-	std::string m_page;
-	std::string m_colorSpace;
-	std::string m_compression;
-	std::string m_primaryEncoding;
-
-	/// Camerai Information"
-	std::string m_maker;
-	std::string m_model;
-	std::string m_software;
-	std::string m_sourceURL;
-	std::string m_exifVersion;
-	std::string m_captureDate;
-	std::string m_exposureProgram;
-	std::string m_isoSpeedRating;
-	std::string m_exposureBias;
-	std::string m_exposureTime;
-	std::string m_aperture;
-	std::string m_meteringMode;
-	std::string m_lightSource;
-	std::string m_flash;
-	std::string m_focalLength;
-	std::string m_sensingMethod;
-	std::string m_digitalZoom;
-	/// GPS
-	std::string m_latitude;
-	std::string m_longitude;
-	std::string m_gpsTimeStamp;
-	//Copyright Properties
-	std::string m_copyright;
-	std::string m_usageRights;
-	std::string m_copyrightURL;
-	*/
-
+	
 
 
 

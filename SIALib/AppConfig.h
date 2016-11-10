@@ -72,6 +72,7 @@ namespace simplearchive {
 		static CAppConfig *m_this;
 		static bool m_verbose; //< -v --Verbose
 		static bool m_quiet;
+		static bool m_silent;
 		static std::string m_logLevel;
 		static bool m_dry_run;
 		/// Log file path
@@ -120,6 +121,15 @@ namespace simplearchive {
 		static std::string m_backup2;
 		static bool m_backup1Enabled;
 		static bool m_backup2Enabled;
+
+		static bool m_eventsOn; // UDP events
+		static bool m_serverOn;
+
+		static int m_tcpPortNum;
+		static int m_udpPortNum;
+		static std::string m_udpAddress;
+
+
 		CAppConfig();
 	public:
 		static CAppConfig &get();
@@ -187,12 +197,18 @@ namespace simplearchive {
 		void setToDate(const char *dateStr);
 
 		bool isDryRun() const;
+		bool isSilent() const;
 		bool isQuiet() const;
 		bool isVerbose() const;
 		const char *getLogLevel();
 
-		std::string toString();
+		bool isEventsOn();
+		int eventPort();
+		const char *eventAddress();
+		bool isServerOn();
+		int serverPort();
 
+		std::string toString();
 		std::string toXMLString();
 		
 	public:
@@ -201,6 +217,7 @@ namespace simplearchive {
 
 		void setDryRun(bool dryRun);
 		void setQuiet(bool quiet);
+		void setSilent(bool silent);
 		void setVerbose(bool verbose);
 		void setWorkspacePath(const char *homePath);
 		void setShadowPath(const char *homePath);
@@ -209,6 +226,13 @@ namespace simplearchive {
 		void setBackup2(const char *backupPath);
 		void setSourcePath(const char *sourcePath);
 		void setLogLevel(const char *logLevel);
+
+		void setEventsOn(bool evt);
+		void setEventPort(int port);
+		void setEventAddress(const char *address);
+
+		void isServerOn(bool on);
+		void setServerPort(int port);
 		/// Sets tools path
 		void setToolsPath(const char *toolsPath);
 		/// Sets home path. This is the root path all default paths are made. 

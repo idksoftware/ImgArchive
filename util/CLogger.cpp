@@ -57,6 +57,8 @@ std::ofstream CLogger::m_logfile;
 CLogger::Level CLogger::m_level;
 std::string CLogger::m_logpath;
 int CLogger::m_size = 10;
+int CLogger::m_cursize = 0;
+bool CLogger::m_isQuiet = false;
 bool CLogger::m_isSilent = false;
 int CLogger::m_lastCode;
 std::string CLogger::m_lastMessage;
@@ -73,12 +75,7 @@ CLogger &CLogger::getLogger() {
 		//LogFilename logFilename(m_logpath.c_str());
 		//logFilename.setMaxSize(m_size);
 		//m_filename = logFilename.filename();
-		LogName logName;
-		m_filename = logName.makeName(m_logpath.c_str(), "", "log", 256);
-		m_logfile.open(m_filename.c_str(), ios::out | ios::app);
-		if (m_logfile.is_open() == false) {
-			throw std::exception("Cannot open log file");
-		}
+		makeFile();
 	}
 	return *m_this;
 }
@@ -87,10 +84,21 @@ CLogger::~CLogger() {
 	m_logfile.close();
 }
 
-
+void CLogger::makeFile() {
+	LogName logName;
+	m_filename = logName.makeName(m_logpath.c_str(), "", "log", 256);
+	m_logfile.open(m_filename.c_str(), ios::out | ios::app);
+	if (m_logfile.is_open() == false) {
+		throw std::exception("Cannot open log file");
+	}
+}
 
 void CLogger::log(int code, Level level, const char *format, ...) {
-
+	if (m_size < m_cursize) {
+		m_logfile.close();
+		makeFile();
+		m_cursize = 0;
+	}
 	if (!IsPrintable(level)) {
 		return;
 	}
@@ -106,13 +114,16 @@ void CLogger::log(int code, Level level, const char *format, ...) {
 #endif
 	m_lastMessage = message;
 	m_lastCode = code;
-	if (code < 99) {
-		m_logfile << "\n" << date.Print() << ":\t";
-		m_logfile << levelStr(level) << ":\t";
-		m_logfile << message;
-		if (!m_isSilent) {
-			//std::cout << "\n" << date.Print() << ":\t";
-			//std::cout << levelStr(level) << ":\t";
+	m_logfile << "\n" << date.Print() << ":\t";
+	m_logfile << levelStr(level) << ":\t";
+	m_logfile << message;
+	m_cursize++;
+
+	if (m_isSilent == false) {
+		if (m_isQuiet == true && level >= Level::SUMMARY) {
+			std::cout << message << '\n';
+		}
+		else {
 			std::cout << message << '\n';
 		}
 	}
@@ -173,6 +184,37 @@ const char *CLogger::levelStr(Level level) {
 	case FATAL: return "FATAL";
 	}
 	return "FATAL";
+}
+
+bool CLogger::setLevel(const std::string &s) {
+
+	CLogger::Level level = Level::UNKNOWN;
+	if (s.compare("TRACE")) {
+		level = Level::TRACE;
+	}
+	else if (s.compare("FINE")) {
+		level = Level::FINE;
+	}
+	else if (s.compare("INFO")) {
+		level = Level::INFO;
+	}
+	else if (s.compare("SUMMARY")) {
+		level = Level::SUMMARY;
+	}
+	else if (s.compare("WARNING")) {
+		level = Level::WARNING;
+	}
+	else if (s.compare("ERROR")) {
+		level = Level::ERR;
+	}
+	else if (s.compare("FATAL")) {
+		level = Level::FATAL;
+	}
+	if (level == Level::UNKNOWN) {
+		return false;
+	}
+	m_level = level;
+	return true;
 }
 
 } /* namespace simplearchive */

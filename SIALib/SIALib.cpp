@@ -174,9 +174,10 @@ namespace simplearchive {
 		config.init();
 		//AppOptions &appOptions = AppOptions::get();
 
-		//CLogger::setLevel(CLogger::INFO);
-		CLogger::setLevel(CLogger::FINE);
+		CLogger::setLevel(config.getLogLevel());
 		CLogger::setLogPath(config.getLogPath());
+		CLogger::setSilent(config.isQuiet());
+		
 		//ChangeLog::setLogPath(config.getHistoryPath());
 
 		CLogger &logger = CLogger::getLogger();
@@ -195,14 +196,19 @@ namespace simplearchive {
 			}
 		}
 
+		config.setEventsOn(true); // debug only
 
-
+		m_enableEvents = config.isEventsOn();
 		if (m_enableEvents == true && m_socklibStarted == true) {
+			m_udpPortNum = config.eventPort();
+			m_udpAddress = config.eventAddress();
 			if (UDPOut::enableUDPOutput(m_udpPortNum, m_udpAddress.c_str()) == false) {
 				return false;
 			}
 		}
 
+
+		m_enableServer = config.isServerOn();
 		if (m_enableServer == true && m_socklibStarted == true) {
 			if (UDPOut::enableUDPOutput(m_udpPortNum, m_udpAddress.c_str()) == false) {
 				return false;
