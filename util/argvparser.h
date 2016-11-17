@@ -71,7 +71,7 @@ namespace CommandLineProcessing
 * \author Michael Hanke
 */
 
-
+#define AVAILABLE_COMMANDS "These are common SIA Archive commands used in various situations"
 
 class ArgvParser
 {
@@ -220,7 +220,11 @@ public:
     std::string parseErrorDescription(ParserResults _error_code) const;
     /** Returns a string with the usage descriptions for all options. The
      * description string is formated to fit into a terminal of width _width.*/
+	std::string commandUsage(unsigned int _width = 80) const;
+
     std::string usageDescription(unsigned int _width = 80) const;
+
+	std::string generalHelp(unsigned int _width) const;
 
 	std::string topicUsageDescription(unsigned int topic, unsigned int _width = 80) const;
 
@@ -361,7 +365,8 @@ std::string trimmedString(const std::string& _str);
 */
 std::string formatString(const std::string& _string,
                          unsigned int _width,
-                         unsigned int _indent = 0);
+                         unsigned int _indent = 0,
+						 unsigned int _endPadding = 0);
 
 }
 ; // namespace CommandLineProcessing

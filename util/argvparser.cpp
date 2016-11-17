@@ -455,6 +455,176 @@ string ArgvParser::usageDescription(unsigned int _width) const
 }
 */
 
+string ArgvParser::commandUsage(unsigned int width) const
+{
+	string usage; // the usage description text
+	usage = formatString("usage: siaarc[--version][--help] <command>[<args>]\n", width);
+	usage += '\n';
+	
+	return usage;
+}
+
+string ArgvParser::generalHelp(unsigned int _width) const
+{
+	string usage; // the usage description text
+	usage = commandUsage(_width);
+	/*
+	if (intro_description.length())
+		usage += formatString(intro_description, _width) + "\n";
+
+	if (max_key <= 1) {// if we have some options
+
+		usage += formatString("No options available\n", _width) + "\n\n";
+		return(usage);
+	}
+
+	*/
+	usage += '\n';
+	/*
+	usage += "usage: sia subcommand [options] [args]\n\n";
+	usage += "Image archive command line client, version 1.0.0.1\n";
+	usage += "Type 'sia help <subcommand>' for help on a specific subcommand.\n\n";
+	*/
+	string tmp = "The command siaarc is the primary command-line interface to Simple Image Archive. This interface is used to manage the control of images going in and out of the archive software. ";
+	tmp += "It has a rich set of subcommands that \"add/import\" images to the archive and \"export\" images out of the archive, In addition manages the controlled modification of images";
+	tmp += " using the \"check-in/check-out\" command set";
+	usage += '\n';
+	usage += formatString(tmp, _width);
+	usage += '\n';
+	
+	usage += "Note:\n";
+	usage += formatString("The administration of the archive is carried out by the siaadmin command-line interface.", _width) + "\n";
+	
+	usage += formatString(command_header, _width) + "\n";
+	usage += '\n';
+	usage += AVAILABLE_COMMANDS;
+	usage += ":\n";
+	usage += "\n";
+	for (Key2AttributeMap::const_iterator it = option2attribute.begin();
+		it != option2attribute.end();
+		++it)
+	{
+		string _os; // temp string for the option
+		if (option2attribute.find(it->first)->second != MasterOption) {
+			continue;
+		}
+		string _longOpt;
+		string _shortOpt;
+		list<string> alternatives = getAllOptionAlternatives(it->first);
+		for (list<string>::const_iterator alt = alternatives.begin();
+			alt != alternatives.end();
+			++alt)
+		{
+			if (option2attribute.find(it->first)->second == MasterOption) {
+				int option = option2attribute.find(it->first)->second;
+				_os.clear();
+				if (alt->length() > 1) {
+					_longOpt += *alt;
+				}
+				else {
+					_shortOpt += *alt;
+				}
+
+
+			}
+		}
+
+		if (!_longOpt.empty()) {
+			_os += ' ';
+			_os += _longOpt;
+		}
+		if (!_shortOpt.empty()) {
+			_os += " (";
+			_os += _shortOpt;
+			_os += ')';
+		}
+		//_os += " : ";
+		usage += formatString(_os, _width); // +"\n";
+		_os.clear();
+		_longOpt.clear();
+		_shortOpt.clear();
+		if (option2descr.find(it->first) != option2descr.end())
+			usage += formatString(option2descr.find(it->first)->second, _width, 4) + "\n";
+		else
+			usage += formatString("(no description)", _width, 4) + "\n";
+
+	}
+	usage += "\n";
+	/*
+	//printf("%s\n", usage.c_str());
+	// loop over all option attribute entries (which equals looping over all
+	// different options (not option names)
+	for (Key2AttributeMap::const_iterator it = option2attribute.begin();
+	it != option2attribute.end();
+	++it)
+	{
+	string os; // temp string for the option
+
+	// get the list of alternative names for this option
+	list<string> alternatives = getAllOptionAlternatives(it->first);
+
+	unsigned int count = 0;
+	for( list<string>::const_iterator alt = alternatives.begin();
+	alt != alternatives.end();
+	++alt )
+	{
+	++count;
+	if (option2attribute.find(it->first)->second == MasterOption) {
+	continue;
+	}
+	// additional '-' for long options
+	if (alt->length() > 1)
+	os += "-";
+
+	os += "-" + *alt;
+
+	// note if the option requires a value
+	if (option2attribute.find(it->first)->second & OptionRequiresValue)
+	os += " <value>";
+
+	// alternatives to come?
+	if (count < alternatives.size())
+	os += ", "; // add separator
+	}
+
+	// note if the option is required
+	if (option2attribute.find(it->first)->second & OptionRequired)
+	os += " [required]";
+
+	usage += formatString(os, _width) + "\n";
+
+	if (option2descr.find(it->first) != option2descr.end())
+	usage += formatString(option2descr.find(it->first)->second, _width, 4);
+	else
+	usage += formatString("(no description)", _width, 4);
+
+	// finally a little gap
+	usage += "\n\n";
+	}
+	*/
+	if (!errorcode2descr.size()) // if have no errorcodes
+		return(usage);
+
+	usage += formatString("Return codes:\n", _width) + "\n";
+
+	//   map<int, string>::const_iterator eit;
+	for (std::map<int, std::string>::const_iterator alt = errorcode2descr.begin();
+		alt != errorcode2descr.end();
+		++alt)
+	{
+		ostringstream code;
+		code << alt->first;
+		string label = formatString(code.str(), _width, 4);
+		string descr = formatString(alt->second, _width, 10);
+		usage += label + descr.substr(label.length()) + "\n";
+	}
+	usage += '\n';
+	usage += "Image Archive is a tool for image archiving and version control system.\n";
+	usage += "For additional information, see \"http://www.imgarchive.com/\"";
+	usage += '\n';
+	return(usage);
+}
+
 
 string ArgvParser::usageDescription(unsigned int _width) const
 {
@@ -488,7 +658,8 @@ string ArgvParser::usageDescription(unsigned int _width) const
 	*/
 	usage = formatString(command_header, _width) + "\n";
 	usage += '\n';
-	usage += "Available subcommands:\n";
+	usage += AVAILABLE_COMMANDS;
+	usage += ":\n";
 
 	for (Key2AttributeMap::const_iterator it = option2attribute.begin();
 		it != option2attribute.end();
@@ -1053,7 +1224,8 @@ bool CommandLineProcessing::expandRangeStringToUInt( const std::string & _string
 
 std::string CommandLineProcessing::formatString(const std::string& _string,
         unsigned int _width,
-        unsigned int _indent)
+        unsigned int _indent,
+		unsigned int _padend)
 {
     // if insane parameters do nothing
     if (_indent >= _width)
@@ -1126,7 +1298,8 @@ std::string CommandLineProcessing::formatString(const std::string& _string,
     string formated;
     bool first = true;
     // for all lines
-    for (list<string>::iterator it = lines.begin(); it != lines.end(); ++it)
+	list<string>::iterator it = lines.begin();
+    for (; it != lines.end(); ++it)
     {
         // prefix with newline if not first
         if (!first)
@@ -1136,6 +1309,17 @@ std::string CommandLineProcessing::formatString(const std::string& _string,
 
         formated += *it;
     }
+	
+	if (_padend != 0) {
+		if (it->length() < _padend) {
+			int psize = _padend - it->length();
+			for (int i = 0;i < psize; i++) {
+				formated += ' ';
+			}
+		}
+
+	}
+
     return(formated);
 }
 

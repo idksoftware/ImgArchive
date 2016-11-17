@@ -291,7 +291,7 @@ bool AppOptions::initalise(int argc, char **argv) {
 		printf("%s", errStr.c_str());
 		return false;
 	case ArgvParser::GeneralHelpRequested:
-		printf("%s", m_argvParser->usageDescription(80).c_str());
+		printf("%s", m_argvParser->generalHelp(80).c_str());
 		return false;
 	case ArgvParser::TopicHelpRequested:
 		printf("%s", m_argvParser->topicUsageDescription(m_argvParser->getCurrentCommandId(), 80).c_str());
