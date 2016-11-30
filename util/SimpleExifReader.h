@@ -106,6 +106,15 @@ class EXIFInfo {
                                     // 5: multi-segment
   unsigned ImageWidth;              // Image width reported in EXIF data
   unsigned ImageHeight;             // Image height reported in EXIF data
+
+  /*
+  0x9c9b 40091 Image Exif.Image.XPTitle Byte Title tag used by Windows, encoded in UCS2
+	  0x9c9c 40092 Image Exif.Image.XPComment Byte Comment tag used by Windows, encoded in UCS2
+	  0x9c9d 40093 Image Exif.Image.XPAuthor Byte Author tag used by Windows, encoded in UCS2
+	  0x9c9e 40094 Image Exif.Image.XPKeywords Byte Keywords tag used by Windows, encoded in UCS2
+	  0x9c9f 40095 Image Exif.Image.XPSubject
+*/
+
   struct Geolocation_t {            // GPS information embedded in file
     double Latitude;                  // Image latitude expressed as decimal
     double Longitude;                 // Image longitude expressed as decimal

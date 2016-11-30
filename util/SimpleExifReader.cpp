@@ -50,6 +50,7 @@ namespace {
 		unsigned val_32;
 		double val_rational;
 		unsigned char val_byte;
+		unsigned char val_bytes[80];
 	};
 
 	// Helper functions
@@ -87,6 +88,35 @@ namespace {
 		return value;
 	}
 
+	string parseUCS2String(const unsigned char *buf,
+		const unsigned num_components,
+		const unsigned data,
+		const unsigned base,
+		const unsigned len) {
+		string value;
+
+		if (num_components <= 4) {
+			value.assign((const char*)&data, num_components);
+
+		}
+		else {
+			int j = 0;
+			char *outBuf = new char[num_components];
+			for (int i = 0; i < num_components; i++) {
+				unsigned char c = (unsigned char)*(buf + base + data + i);
+				if (c == 0) {
+					continue;
+				}
+				outBuf[j++] = c;
+			}
+			outBuf[j] = '\0';
+			value = outBuf;
+		}
+
+		return value;
+	}
+
+
 	double parseEXIFRational(const unsigned char *buf, bool intel) {
 		double numerator = 0;
 		double denominator = 1;
@@ -111,34 +141,47 @@ namespace {
 		// 4 bytes: number of components
 		// 4 bytes: data value or offset to data value
 		result.tag = parse16(buf + offs, alignIntel);
+
+
 		result.format = parse16(buf + offs + 2, alignIntel);
 		result.length = parse32(buf + offs + 4, alignIntel);
 		result.data = parse32(buf + offs + 8, alignIntel);
 
-		// Parse value in specified format
-		switch (result.format) {
-		case 1:
-			result.val_byte = (unsigned char)*(buf + offs + 8);
-			break;
-		case 2:
-			result.val_string = parseEXIFString(buf, result.length, result.data, base, len);
-			break;
-		case 3:
-			result.val_16 = parse16((const unsigned char *)buf + offs + 8, alignIntel);
-			break;
-		case 4:
-			result.val_32 = result.data;
-			break;
-		case 5:
-			if (base + result.data + 8 <= len)
-				result.val_rational = parseEXIFRational(buf + base + result.data, alignIntel);
-			break;
-		case 7:
-		case 9:
-		case 10:
-			break;
-		default:
-			result.tag = 0xFF;
+		if (result.tag == 0x9c9b || //Image Exif.Image.XPTitle Byte Title tag used by Windows, encoded in UCS2
+			result.tag == 0x9c9c || // Image Exif.Image.XPComment Byte Comment tag used by Windows, encoded in UCS2
+			result.tag == 0x9c9d || // Image Exif.Image.XPAuthor Byte Author tag used by Windows, encoded in UCS2
+			result.tag == 0x9c9e || // Image Exif.Image.XPKeywords Byte Keywords tag used by Windows, encoded in UCS2
+			result.tag == 0x9c9f) { // Image Exif.Image.XPSubject
+			
+			result.val_string = parseUCS2String(buf, result.length, result.data, base, len);
+			result.format = 6;
+		}
+		else {
+			// Parse value in specified format
+			switch (result.format) {
+			case 1:
+				result.val_byte = (unsigned char)*(buf + offs + 8);
+				break;
+			case 2:
+				result.val_string = parseEXIFString(buf, result.length, result.data, base, len);
+				break;
+			case 3:
+				result.val_16 = parse16((const unsigned char *)buf + offs + 8, alignIntel);
+				break;
+			case 4:
+				result.val_32 = result.data;
+				break;
+			case 5:
+				if (base + result.data + 8 <= len)
+					result.val_rational = parseEXIFRational(buf + base + result.data, alignIntel);
+				break;
+			case 7:
+			case 9:
+			case 10:
+				break;
+			default:
+				result.tag = 0xFF;
+			}
 		}
 		return result;
 	}
@@ -301,6 +344,22 @@ int EXIFInfo::parseFromEXIFSegment(const unsigned char *buf, unsigned len) {
           this->DateTime = result.val_string;
         break;
 
+	  case 0x9c9b:
+		// EXIF/TIFF date/time of image modification
+		if (result.format == 6)
+			printf("%s", result.val_string);
+		break;
+	  case 0x4746:
+		  // Image Exif.Image.Rating Short Rating tag used by Windows
+		  if (result.format == 6)
+			  printf("%s", result.val_string);
+		  break;
+	  case 0x4749:
+		  // Image Exif.Image.RatingPercent Short Rating tag used by Windows, value in percent
+		  if (result.format == 6)
+			printf("%s", result.val_string);
+			
+		  break;
       case 0x8298:
         // Copyright information
         if (result.format == 2)
