@@ -344,21 +344,40 @@ int EXIFInfo::parseFromEXIFSegment(const unsigned char *buf, unsigned len) {
         if (result.format == 2)
           this->DateTime = result.val_string;
         break;
-
 	  case 0x9c9b:
-		// EXIF/TIFF date/time of image modification
+		  // Image Exif.Image.XPTitle Byte Title tag used by Windows, encoded in UCS2
 		if (result.format == 6)
 			printf("%s", result.val_string);
 		break;
-	  case 0x4746:
-		  // Image Exif.Image.Rating Short Rating tag used by Windows
+	  case 0x9c9c:
+		  // Image Exif.Image.XPComment Byte Comment tag used by Windows, encoded in UCS2
 		  if (result.format == 6)
 			  printf("%s", result.val_string);
 		  break;
+	  case 0x9c9d:
+		  // Image Exif.Image.XPAuthor Byte Author tag used by Windows, encoded in UCS2
+		  if (result.format == 6)
+			  printf("%s", result.val_string);
+		  break;
+	  case 0x9c9e:
+		  // Image Exif.Image.XPKeywords Byte Keywords tag used by Windows, encoded in UCS2
+		  if (result.format == 6)
+			  printf("%s", result.val_string);
+		  break;
+	  case 0x9c9f:
+		  // Image Exif.Image.XPSubject
+		  if (result.format == 6)
+			  printf("%s", result.val_string);
+		  break;
+	  case 0x4746:
+		  // Image Exif.Image.Rating Short Rating tag used by Windows
+		  if (result.format == 3)
+			  this->rating = result.val_16;
+		  break;
 	  case 0x4749:
 		  // Image Exif.Image.RatingPercent Short Rating tag used by Windows, value in percent
-		  if (result.format == 6)
-			printf("%s", result.val_string);
+		  if (result.format == 3)
+			  this->ratingPercent = result.val_16;
 			
 		  break;
       case 0x8298:

@@ -89,6 +89,13 @@ class EXIFInfo {
   std::string DateTimeDigitized;    // Digitization date and time (may not exist)
   std::string SubSecTimeOriginal;   // Sub-second time that original picture was taken
   std::string copyright;            // File copyright information
+  std::string title;				// XP Title
+  std::string comment;				// XP Comment Byte Comment tag used by Windows, encoded in UCS2
+  std::string author;				// XP Author Byte Author tag used by Windows, encoded in UCS2
+  std::string keywords;				// XP Keywords Byte Keywords tag used by Windows, encoded in UCS2
+  std::string subject;				// XP Subject
+  unsigned short rating;			// Short Rating tag used by Windows
+  unsigned short ratingPercent;		// Rating tag used by Windows, value in percent
   double ExposureTime;              // Exposure time in seconds
   double FNumber;                   // F/stop
   unsigned short ISOSpeedRatings;   // ISO speed
@@ -107,13 +114,18 @@ class EXIFInfo {
   unsigned ImageWidth;              // Image width reported in EXIF data
   unsigned ImageHeight;             // Image height reported in EXIF data
 
-  /*
-  0x9c9b 40091 Image Exif.Image.XPTitle Byte Title tag used by Windows, encoded in UCS2
-	  0x9c9c 40092 Image Exif.Image.XPComment Byte Comment tag used by Windows, encoded in UCS2
-	  0x9c9d 40093 Image Exif.Image.XPAuthor Byte Author tag used by Windows, encoded in UCS2
-	  0x9c9e 40094 Image Exif.Image.XPKeywords Byte Keywords tag used by Windows, encoded in UCS2
-	  0x9c9f 40095 Image Exif.Image.XPSubject
-*/
+ // Resolution
+ // Depth
+  // ColorSpace
+  // Compression 
+  // PrimaryEncoding
+  // ExposureProgram
+  // ExposureTime
+  // Aperture
+  // LightSource
+  // SensingMethod
+  // DigitalZoom
+
 
   struct Geolocation_t {            // GPS information embedded in file
     double Latitude;                  // Image latitude expressed as decimal
