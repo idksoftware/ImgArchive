@@ -422,7 +422,12 @@ int EXIFInfo::parseFromEXIFSegment(const unsigned char *buf, unsigned len) {
           if (result.format == 5)
             this->FNumber = result.val_rational;
           break;
-
+		case 0x8822: 
+		  // Exposure Program
+			// Flash used
+			if (result.format == 3)
+				this->exposureProgram = result.data ? 1 : 0;
+			break;
         case 0x8827:
           // ISO Speed Rating
           if (result.format == 3)
@@ -477,6 +482,12 @@ int EXIFInfo::parseFromEXIFSegment(const unsigned char *buf, unsigned len) {
             this->MeteringMode = result.val_16;
           break;
 
+		case 0x9208:
+		  //LightSource Short The kind of light source.
+		  if (result.format == 3)
+			this->lightSource = result.val_16;
+		  break;
+		 
         case 0x9291:
           // Subsecond original time
           if (result.format == 2)
@@ -499,11 +510,58 @@ int EXIFInfo::parseFromEXIFSegment(const unsigned char *buf, unsigned len) {
             this->ImageHeight = result.val_16;
           break;
 
+		case 0xa403:
+			// WhiteBalance
+			if (result.format == 3)
+				this->whiteBalance = result.val_16;
+			break;
+
+		case 0xa404:
+			// DigitalZoomRatio
+			if (result.format == 5)
+				this->DigitalZoomRatio = result.val_rational;
+			break;
+
         case 0xa405:
           // Focal length in 35mm film
           if (result.format == 3)
             this->FocalLengthIn35mm = result.val_16;
           break;
+		case 0xa406:
+			// SceneCaptureType
+			if (result.format == 3)
+				this->SceneCaptureType = result.val_16;
+			break;
+		case 0xa408:
+			// Contrast
+			if (result.format == 3)
+				this->Contrast = result.val_16;
+			break;
+		case 0xa409:
+			// Saturation
+			if (result.format == 3)
+				this->Saturation = result.val_16;
+			break;
+		case 0xa40a:
+			// Sharpness
+			if (result.format == 3)
+				this->Sharpness = result.val_16;
+			break;
+
+		case 0xa40c:
+			// SubjectDistanceRange
+			if (result.format == 3)
+				this->SubjectDistanceRange = result.val_16;
+			break;
+			/*
+			0xa430 42032 Photo Exif.Photo.CameraOwnerName Ascii This tag records the owner of a camera used in photography as an ASCII string.
+			0xa431 42033 Photo Exif.Photo.BodySerialNumber Ascii This tag records the serial number of the body of the camera that was used in photography as an ASCII string.
+			
+			0xa433 42035 Photo Exif.Photo.LensMake Ascii This tag records the lens manufactor as an ASCII string.
+			0xa434 42036 Photo Exif.Photo.LensModel Ascii This tag records the lens's model name and model number as an ASCII string.
+			0xa435 42037 Photo Exif.Photo.LensSerialNumber Ascii This tag records the serial number of the interchangeable lens that was used in photography as an ASCII string.
+
+			*/
       }
       offs += 12;
     }
