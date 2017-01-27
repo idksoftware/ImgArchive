@@ -35,6 +35,7 @@
 #include <stdio.h>
 #include <iostream>
 #include "AdminApp.h"
+#include "AdminArgvParser.h"
 #include "SAUtils.h"
 #include "CDate.h"
 #include "AppConfig.h"
@@ -77,7 +78,7 @@ Java HotSpot(TM) 64-Bit Server VM (build 24.51-b03, mixed mode)
 */
 namespace simplearchive {
 	
-bool App::Show() {
+bool AdminApp::Show() {
 	/*
 	m_error = false;
 	m_verbose = false;
@@ -174,26 +175,95 @@ bool App::Show() {
 	CreateArchive::checkFolders(homePath.c_str());
 }
 
+bool AppOptions::initaliseConfig() {
+
+	CAppConfig &config = CAppConfig::get();
+	const std::string key = "SIA_HOME";
+	std::string temp = SAUtils::GetEnvironment(key);
+	std::string homePath = temp;
+	//printf("%s", homePath.c_str());
+	int i = homePath.length();
+	if (homePath.empty() == true || homePath.length() == 0) {
+		homePath = SAUtils::GetEnvironment("ProgramData");
+		//C:\ProgramData\IDK Software\ImageArchive1.0
+		homePath += "/IDK Software/ImageArchive1.0";
+
+	}
+	std::string configfile = homePath + "/config/" + "config.dat";
+	std::string configPath = homePath + "/config";
+	if (SAUtils::DirExists(homePath.c_str()) == false) {
+		//printf("SIA Unable to start?\nArchive not found at default location and the environment variable SA_HOME not set.\n"
+		//	"Use siaadmin -i to create an empty archive at the default location (see documentation).\n");
+		//m_error = true;
+		//return false;
+		m_configured = false;
+	}
+	else {
+
+		if (SAUtils::FileExists(configfile.c_str()) == true) {
+			setConfigPath(configPath.c_str());
+			ConfigReader configReader;
+			configReader.setNoLogging();
+			configReader.read(configfile.c_str(), config);
+			// This is usfull to print the config
+			//config.printAll();
+			/*
+			if (config.value("SourcePath", temp) == true) {
+			m_sourcePath = temp;
+			}
+			if (config.value("ArchivePath", temp) == true) {
+			m_archivePath = temp;
+			}
+			if (config.value("LogLevel", temp) == true) {
+			m_logLevel = temp;
+			}
+			*/
+			config.setHomePath(homePath.c_str());
+			temp = SAUtils::GetEnvironment("SIA_WORKSPACE");
+			if (temp.empty() == false) {
+				config.setWorkspacePath(temp.c_str());
+			}
+			temp = SAUtils::GetEnvironment("SIA_SOURCE");
+			if (temp.empty() == false) {
+				config.setSourcePath(temp.c_str());
+			}
+			temp = SAUtils::GetEnvironment("SIA_LOGLEVEL");
+			if (temp.empty() == false) {
+				config.setLogLevel(temp.c_str());
+			}
+		}
+		else {
+			m_configured = false;
+		}
+	}
+	return true;
+}
 
 int test(const std::string key) {
 	return 0;
 }
 
-App::App() {
-}
 
-bool App::initalise(int argc, char **argv) {
-	
-	AppOptions &appOptions = AppOptions::get();	
+
+
+
+bool AdminApp::doInitalise(int argc, char **argv) {
+	/*
+	AppOptions &appOptions = AppOptions::get();
 	if (appOptions.initalise(argc, argv) == false) {
-		
+
 		return false;
 	}
-	
-	return true;
-};
+	*/
+	AdminArgvParser adminArgvParser;
+	if (adminArgvParser.initalise(argc, argv) == false) {
 
-bool App::Run()
+		return false;
+	}
+	return true;
+}
+
+bool AdminApp::Run()
 {
 	// Find if the archive exists
 	AppOptions &appOptions = AppOptions::get();
@@ -293,7 +363,7 @@ bool App::Run()
 	return true;
 }
 
-App::~App() {
+AdminApp::~AdminApp() {
 	CLogger::Close();
 }
 
@@ -309,7 +379,7 @@ bool failed()
 	return(false);
 }
 
-bool App::CreateArchive(const char *archivePath, const char *workspacePath, const char *shadowPath, bool users) {
+bool AdminApp::CreateArchive(const char *archivePath, const char *workspacePath, const char *shadowPath, bool users) {
 
 	if (users == true) {
 		if (CreateArchive::IsAdmin() == false) {
@@ -344,9 +414,71 @@ bool App::CreateArchive(const char *archivePath, const char *workspacePath, cons
 	return true;
 }
 
+bool AdminApp::initaliseConfig() {
+
+	CAppConfig &config = CAppConfig::get();
+	const std::string key = "SIA_HOME";
+	std::string temp = SAUtils::GetEnvironment(key);
+	std::string homePath = temp;
+	//printf("%s", homePath.c_str());
+	int i = homePath.length();
+	if (homePath.empty() == true || homePath.length() == 0) {
+		homePath = SAUtils::GetEnvironment("ProgramData");
+		//C:\ProgramData\IDK Software\ImageArchive1.0
+		homePath += "/IDK Software/ImageArchive1.0";
+
+	}
+	std::string configfile = homePath + "/config/" + "config.dat";
+	std::string configPath = homePath + "/config";
+	if (SAUtils::DirExists(homePath.c_str()) == false) {
+		//printf("SIA Unable to start?\nArchive not found at default location and the environment variable SA_HOME not set.\n"
+		//	"Use siaadmin -i to create an empty archive at the default location (see documentation).\n");
+		//m_error = true;
+		//return false;
+		m_configured = false;
+	}
+	else {
+
+		if (SAUtils::FileExists(configfile.c_str()) == true) {
+			setConfigPath(configPath.c_str());
+			ConfigReader configReader;
+			configReader.setNoLogging();
+			configReader.read(configfile.c_str(), config);
+			// This is usfull to print the config
+			//config.printAll();
+			/*
+			if (config.value("SourcePath", temp) == true) {
+			m_sourcePath = temp;
+			}
+			if (config.value("ArchivePath", temp) == true) {
+			m_archivePath = temp;
+			}
+			if (config.value("LogLevel", temp) == true) {
+			m_logLevel = temp;
+			}
+			*/
+			config.setHomePath(homePath.c_str());
+			temp = SAUtils::GetEnvironment("SIA_WORKSPACE");
+			if (temp.empty() == false) {
+				config.setWorkspacePath(temp.c_str());
+			}
+			temp = SAUtils::GetEnvironment("SIA_SOURCE");
+			if (temp.empty() == false) {
+				config.setSourcePath(temp.c_str());
+			}
+			temp = SAUtils::GetEnvironment("SIA_LOGLEVEL");
+			if (temp.empty() == false) {
+				config.setLogLevel(temp.c_str());
+			}
+		}
+		else {
+			m_configured = false;
+		}
+	}
+	return true;
+}
+
 } // simplearchive
-
-
 /**
  *
  *
@@ -354,7 +486,7 @@ bool App::CreateArchive(const char *archivePath, const char *workspacePath, cons
 
 int main(int argc, char **argv)
 {
-	simplearchive::App app;
+	simplearchive::AdminApp app;
 	if (app.initalise(argc, argv) == false) {
 		return false;
 	}

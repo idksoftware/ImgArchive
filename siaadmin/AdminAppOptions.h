@@ -59,7 +59,7 @@ public:
 	} Scope;
 
 private:
-	static AppOptions *m_this;
+	static AppOptions *AppOptions::m_this;
 	static CommandMode m_commandMode;
 	static std::string m_name;
 	static std::string m_comment;
@@ -75,6 +75,8 @@ private:
 	/**
 		@brief Set to true if no archive configuration found. 
 	*/
+	friend class AdminArgvParser;
+
 	bool m_configured;
 	void setCommandMode(const AppOptions::CommandMode mode);
 	bool setCommandMode(const char *modeString);
@@ -87,8 +89,8 @@ private:
 	AppOptions();
 public:
 	
+	
 	static AppOptions &get();
-
 	virtual ~AppOptions();
 	bool initaliseConfig();
 	bool initalise(int argc, char **argv);

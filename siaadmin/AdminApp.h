@@ -56,15 +56,16 @@
 #ifndef APP_H_
 #define APP_H_
 #include "ArchiveBuilder.h"
-//#include "SIALib.h"
+#include "AppBase.h"
 
+using namespace CommandLineProcessing;
 namespace simplearchive {
 
 
 /**
 * @brief This is the main application class. This class is the first object main() will execute.
 */
-class App {
+	class AdminApp : public AppBase {
 private:
 	std::string m_HomePath;
 	/**
@@ -79,15 +80,19 @@ private:
 	
 public:
 	/// Constructor
-	App();
+	AdminApp();
 	/// Destructor
-	virtual ~App();
-
-	bool initalise(int argc, char **argv);
+	virtual ~AdminApp();
+	
+	bool initaliseConfig();
 	/// @brief This is the main application run function. All application processing starts here.
 	bool Run();
 	/// @brief Shows the configuration of the archive. All application processing starts here.
 	bool Show();
+protected:
+	virtual bool doInitalise(int argc, char **argv);
+	bool doRun() { return true; };
+
 };
 
 }

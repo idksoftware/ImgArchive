@@ -111,10 +111,15 @@ namespace simplearchive {
 		return *m_this;
 	}
 
+	/*
+		Default paths based on UserDrive and UserHome
+
+	*/
 	void CAppConfig::init() {
 		if (m_homePath.empty() == true) {
 			if (value("HomePath", m_homePath) == false) {
-				m_homePath = SAUtils::GetEnvironment("HOMEPATH");
+				m_homePath = SAUtils::GetEnvironment("HOMEDRIVE");
+				m_homePath += SAUtils::GetEnvironment("HOMEPATH");
 			}
 		}
 		ArchivePath::setPathToHome(m_homePath);

@@ -27,7 +27,7 @@
     <ClInclude Include="AdminAppOptions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="EnvFunc.h">
+    <ClInclude Include="AdminArgvParser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -41,7 +41,7 @@
     <ClCompile Include="AdminAppOptions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="EnvFunc.cpp">
+    <ClCompile Include="AdminArgvParser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

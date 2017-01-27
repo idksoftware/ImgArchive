@@ -71,7 +71,7 @@ namespace CommandLineProcessing
 * \author Michael Hanke
 */
 
-
+#define AVAILABLE_COMMANDS "These are common SIA Archive commands used in various situations"
 
 class ArgvParser
 {
@@ -106,7 +106,8 @@ public:
         ParserRequiredOptionMissing = 16,
         ParserHelpRequested = 32,
 		GeneralHelpRequested = 64,
-		TopicHelpRequested = 128
+		TopicHelpRequested = 128,
+		ParserCommandNotFound = 256
 
     };
 	
@@ -187,12 +188,16 @@ public:
     */
     ParserResults parse(int _argc, char ** _argv);
 
+	const std::string& getCurrentCommand() {
+		return current_command;
+	}
 
 	unsigned int getCurrentCommandId() {
 		return current_command_id;
 	}
-	std::string &command() {
-		return current_command;
+
+	bool command(const std::string& _command) {
+		return (!current_command.compare(_command));
 	}
     /** Return the value of an option.
     * \return Value of a commandline options given by the name of the option or
@@ -215,9 +220,15 @@ public:
     std::string parseErrorDescription(ParserResults _error_code) const;
     /** Returns a string with the usage descriptions for all options. The
      * description string is formated to fit into a terminal of width _width.*/
+	std::string commandUsage(unsigned int _width = 80) const;
+
     std::string usageDescription(unsigned int _width = 80) const;
 
+	std::string generalHelp(unsigned int _width) const;
+
 	std::string topicUsageDescription(unsigned int topic, unsigned int _width = 80) const;
+
+	void setHeader(const std::string& _option);
 
 private:
     /** Returns the key of a defined option with name _name or -1 if such option
@@ -251,6 +262,9 @@ private:
     /** General description to be returned as first part of the generated help page. */
     std::string intro_description;
 
+	/** Command header. */
+	std::string command_header;
+
 	/** General description to be returned as first part of the generated help page. */
 	std::string masteroption_description;
 
@@ -259,7 +273,6 @@ private:
 	unsigned int current_command_id;
 
 	std::string current_command;
-
     /** Holds the key for the help option. */
     unsigned int help_option;
 
@@ -352,7 +365,8 @@ std::string trimmedString(const std::string& _str);
 */
 std::string formatString(const std::string& _string,
                          unsigned int _width,
-                         unsigned int _indent = 0);
+                         unsigned int _indent = 0,
+						 unsigned int _endPadding = 0);
 
 }
 ; // namespace CommandLineProcessing
