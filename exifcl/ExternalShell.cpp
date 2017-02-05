@@ -164,8 +164,11 @@ std::string ExecuteExternalFile(std::string csExeNameAndArgs)
 	sInfo.hStdError = wPipe;
 
 	//Create the process here.
-
+#ifdef _WIN64
+	CreateProcess(0, (LPWSTR)csExecute.c_str(), 0, 0, TRUE, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, 0, 0, &sInfo, &pInfo);
+#else
 	CreateProcess(0, (LPSTR)csExecute.c_str(), 0, 0, TRUE, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, 0, 0, &sInfo, &pInfo);
+#endif
 	CloseHandle(wPipe);
 
 	//now read the output pipe here.
