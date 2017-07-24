@@ -32,8 +32,8 @@
 **
 ** #$$@@$$# */
 
-#ifndef VERSIONCONTROL_H_
-#define VERSIONCONTROL_H_
+#pragma once
+#ifdef THIS_CODE_IS_NOT_USED
 #include <memory>
 namespace simplearchive {
 
@@ -43,7 +43,7 @@ class VersionControl {
 
 	/// @brief Path to the root folder of the archive
 	static std::string m_pathToArchive;
-	static std::string m_pathToShadow;
+	static std::string m_pathToMaster;
 
 	/// @brief Path to the root folder of the source of the images.
 	std::string m_pathToSourceRoot;
@@ -60,19 +60,19 @@ public:
 
 	/// @brief Processes the images to be checked out
 
-	/// @param filepath     Relative path to the impage to be checked out.
+	/// @param filepath     Relative path to the image to be checked out.
 	/// @param comment     Comment to be added into the history.
 	bool checkout(const char *filepath, const char *comment);
 
 	/// @brief Processes the images to be checked out
 
-	/// @param filepath     Relative path to the impage to be checked in.
+	/// @param filepath     Relative path to the image to be checked in.
 	/// @param comment     Comment to be added into the history.
 	bool checkin(const char *filepath, const char *comment);
 
 	/// @brief Processes the images to be checked out
 
-	/// @param filepath     Relative path to the impage to be un-checked out.
+	/// @param filepath     Relative path to the image to be un-checked out.
 	/// @param comment     Comment to be added into the history.
 	bool uncheckout(const char *filepath, const char *comment);
 
@@ -89,9 +89,9 @@ public:
 		return m_pathToArchive;
 	}
 
-	static void setPathToArchives(const char *pathToArchive, const char *pathToShadow) {
+	static void setPathToArchives(const char *pathToArchive, const char *pathToMaster) {
 		m_pathToArchive = pathToArchive;
-		m_pathToShadow = pathToShadow;
+		m_pathToMaster = pathToMaster;
 	}
 
 	const std::string& getPathToSourceRoot() const {
@@ -109,4 +109,4 @@ public:
 };
 
 } /* namespace simplearchive */
-#endif /* VERSIONCONTROL_H_ */
+#endif

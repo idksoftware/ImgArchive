@@ -5,9 +5,9 @@ namespace simplearchive {
 
 	class ContentsLister
 	{
-		std::string m_shadowPath;
+		std::string m_MasterPath;
 	public:
-		ContentsLister(const char *shadowPath);
+		ContentsLister(const char *MasterPath);
 		~ContentsLister();
 
 		bool List();

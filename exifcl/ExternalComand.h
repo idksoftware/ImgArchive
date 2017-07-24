@@ -56,6 +56,8 @@ public:
 	ExifObject *process(const char *imageFile);
 	std::string getDate();
 	std::string replace(std::string &commandLine, std::string &in, std::string &out);
+	std::string replace(std::string &commandLine, std::string &in);
+	bool findToken(std::string &str, const char *toklabel);
 };
 
 } /* namespace simplearchive */

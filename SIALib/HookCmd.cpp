@@ -65,7 +65,7 @@ void HookCmd::init(ImagePath &imagePath) {
 	setEnv.insert(setEnv.end(), EnvItem(YYYYMMDD, imagePath.getYyyymmddStr().c_str()));
 	setEnv.insert(setEnv.end(), EnvItem(PATH_TO_ARCHIVE, imagePath.getPathToWorkspace().c_str()));
 	setEnv.insert(setEnv.end(), EnvItem(DATA_PATH, imagePath.getRelativePath().c_str()));
-	setEnv.insert(setEnv.end(), EnvItem(METADATA_PATH, imagePath.getLocalShadowMetadataPath().c_str()));
+	setEnv.insert(setEnv.end(), EnvItem(METADATA_PATH_LABLE, imagePath.getLocalMasterMetadataPath().c_str()));
 	setEnv.insert(setEnv.end(), EnvItem(MAIN_METADATA_PATH, imagePath.getMainMetadataPath().c_str()));
 	setEnv.process();
 }
@@ -114,11 +114,14 @@ bool HookCmd::process(const char *file, const char *ext) {
 
 std::string HookCmd::getScriptNames()
 {
+	std::string empty;
+	// Replace with exception 
 	if (readScriptsNames() == false) {
-		return false;
+		return empty;
 	}
+	// Replace with exception 
 	if (SAUtils::DirExists(m_hookPath.c_str()) == false) {
-		return false;
+		return empty;
 	}
 	FileList_Ptr filelist = SAUtils::getFiles_(m_hookPath.c_str());
 
@@ -137,7 +140,7 @@ std::string HookCmd::getScriptNames()
 		}
 
 	}
-	std::string empty;
+	
 	return empty;
 }
 

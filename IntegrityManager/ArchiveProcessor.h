@@ -21,15 +21,15 @@ namespace simplearchive {
 		virtual bool doWork(const char *targetdir, const char *checkFilePath, const char *address, VisitingObject *visitingObject) = 0;
 	};
 
-	class ShadowFolderVistor : public ArchiveFolderVistor {
+	class MasterFolderVistor : public ArchiveFolderVistor {
 
 	protected:
 		virtual VisitingObject *getVisitingObject() { return m_visitingObject; };
 	public:
-		ShadowFolderVistor(const char *archivePath) : ArchiveFolderVistor(archivePath) {};
-		ShadowFolderVistor(const char *archivePath, const char *workspacePath)
+		MasterFolderVistor(const char *archivePath) : ArchiveFolderVistor(archivePath) {};
+		MasterFolderVistor(const char *archivePath, const char *workspacePath)
 			: ArchiveFolderVistor(archivePath, workspacePath) {};
-		virtual ~ShadowFolderVistor() {};
+		virtual ~MasterFolderVistor() {};
 		bool process(const char *addressScope);
 		virtual bool doWork(const char *targetdir, const char *checkFilePath, const char *address, VisitingObject *visitingObject) = 0;
 	};
@@ -48,7 +48,7 @@ namespace simplearchive {
 	};
 
 	class ValidateReportingObject;
-	class ValidateWorkspace : public ShadowFolderVistor {
+	class ValidateWorkspace : public MasterFolderVistor {
 		ValidateReportingObject *m_validateReportingObject;
 	public:
 		ValidateWorkspace(const char *archivePath, const char *workspacePath);

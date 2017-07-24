@@ -41,6 +41,7 @@
 #include <string>
 #ifndef _WIN32
 #include <dirent.h>
+#include <string.h>
 #endif
 
 class CIDKFileFind  
@@ -49,14 +50,15 @@ public:
 	CIDKFileFind(std::string inFilePattern)
 	{
 		m_szFilePattern = inFilePattern;
-		int i;
+
 		const char* ptr = m_szFilePattern.c_str();
 		const char *l_ResPtr = 0;
 		//i=strrchr(ptr, '/')-ptr;
-		if (l_ResPtr = strrchr(ptr, '/'))
+		l_ResPtr = strrchr(ptr, '/');
+		if (l_ResPtr != nullptr)
 		{
 			// The File Pattern also contains the path
-			i = l_ResPtr - ptr;
+
 			m_szPath = m_szFilePattern.substr(m_szFilePattern.find_last_of("/"));
 			m_szFile = m_szFilePattern.substr(m_szFilePattern.find_last_of("/"), m_szFilePattern.length());
 		}

@@ -41,8 +41,10 @@
 #include <iostream>
 #include <fstream>
 #include "SQLBuilder.h"
+#include "MetaType.h"
 
-//namespace simplearchive {
+
+using namespace simplearchive;
 
 
 #ifdef _DEBUG
@@ -65,6 +67,31 @@ static int callback(void *notUsed, int argc, char **argv, char **colName) {
 	return 0;
 }
 
+bool ImageTable::createFromSchema(MTTableSchema &mtSchema) {
+
+	std::string name = mtSchema.getName().c_str();
+	SQLCreatBulder createBulder(name.c_str());
+	createBulder.addfield("autoIncrement", "integer", "primary key", "autoincrement");
+	//for (int i = 0; i < mtSchema. i++) {
+	//	mtSchema.
+	//	createBulder.addfield(, "text");
+	//}
+	for (auto i = mtSchema.begin(); i != mtSchema.end(); i++) {
+		MTSchema& columnInfo = *i;
+		createBulder.addfield(columnInfo.getName().c_str(), columnInfo.getTypeString());
+	}
+	createBulder.addfield(DB_UUID, "text");
+	createBulder.addfield(DB_FILENAME, "text");
+	
+
+	printf("creating table metadata");
+	if (!m_database->execute(createBulder.toString().c_str())) {
+		return false;
+	}
+	return true;
+}
+
+
 bool ImageTable::create() {
 
 
@@ -84,7 +111,7 @@ bool ImageTable::create() {
 	createBulder.addfield(DB_DATEADDED, "text");
 	createBulder.addfield(DB_DATECREATE, "text");
 	createBulder.addfield(DB_DATEMODIFIED, "text");
-	createBulder.addfield(DB_DEPTH, "text");
+	//createBulder.addfield(DB_DEPTH, "text");
 	createBulder.addfield(DB_DIGITALZOOM, "text");
 	createBulder.addfield(DB_EXIFVERSION, "text");
 	createBulder.addfield(DB_EXPOSUREBIAS, "text");
@@ -105,8 +132,8 @@ bool ImageTable::create() {
 	createBulder.addfield(DB_MEDIATYPE, "text");
 	createBulder.addfield(DB_METERINGMODE, "text");
 	createBulder.addfield(DB_MODEL, "text");
-	createBulder.addfield(DB_PAGE, "text");
-	createBulder.addfield(DB_PRINARYENCODING, "text");
+//	createBulder.addfield(DB_PAGE, "text");
+//	createBulder.addfield(DB_PRIMARYENCODING, "text");
 	createBulder.addfield(DB_RATING, "text");
 	createBulder.addfield(DB_RESOLUTION, "text");
 	createBulder.addfield(DB_SAMPLECOLOR, "text");
@@ -144,7 +171,7 @@ bool ImageTable::insert(ImageTableItem &imageTableItem) {
 	insertBulder.addfield(DB_DATECREATE, imageTableItem.getDateCreate());
 	insertBulder.addfield(DB_DATEMODIFIED, imageTableItem.getDateModified());
 
-	insertBulder.addfield(DB_DEPTH, imageTableItem.getDepth());
+	//insertBulder.addfield(DB_DEPTH, imageTableItem.getDepth());
 	insertBulder.addfield(DB_DIGITALZOOM, imageTableItem.getDigitalZoom());
 	insertBulder.addfield(DB_EXIFVERSION, imageTableItem.getExifVersion());
 	insertBulder.addfield(DB_EXPOSUREBIAS, imageTableItem.getExposureBias());
@@ -166,8 +193,8 @@ bool ImageTable::insert(ImageTableItem &imageTableItem) {
 	insertBulder.addfield(DB_MEDIATYPE, imageTableItem.getMediaType());
 	insertBulder.addfield(DB_METERINGMODE, imageTableItem.getMeteringMode());
 	insertBulder.addfield(DB_MODEL, imageTableItem.getModel());
-	insertBulder.addfield(DB_PAGE, imageTableItem.getPage());
-	insertBulder.addfield(DB_PRINARYENCODING, imageTableItem.getPrimaryEncoding());
+//	insertBulder.addfield(DB_PAGE, imageTableItem.getPage());
+//	insertBulder.addfield(DB_PRIMARYENCODING, imageTableItem.getPrimaryEncoding());
 	insertBulder.addfield(DB_RATING, imageTableItem.getRating());
 	insertBulder.addfield(DB_RESOLUTION, imageTableItem.getResolution());
 	insertBulder.addfield(DB_SAMPLECOLOR, imageTableItem.getSampleColor());
@@ -208,7 +235,7 @@ bool ImageTable::update(ImageTableItem &imageTableItem) {
 	updateBuilder.addfield(DB_DATECREATE, imageTableItem.getDateCreate());
 	updateBuilder.addfield(DB_DATEMODIFIED, imageTableItem.getDateModified());
 
-	updateBuilder.addfield(DB_DEPTH, imageTableItem.getDepth());
+//	updateBuilder.addfield(DB_DEPTH, imageTableItem.getDepth());
 	updateBuilder.addfield(DB_DIGITALZOOM, imageTableItem.getDigitalZoom());
 	updateBuilder.addfield(DB_EXIFVERSION, imageTableItem.getExifVersion());
 	updateBuilder.addfield(DB_EXPOSUREBIAS, imageTableItem.getExposureBias());
@@ -230,8 +257,8 @@ bool ImageTable::update(ImageTableItem &imageTableItem) {
 	updateBuilder.addfield(DB_MEDIATYPE, imageTableItem.getMediaType());
 	updateBuilder.addfield(DB_METERINGMODE, imageTableItem.getMeteringMode());
 	updateBuilder.addfield(DB_MODEL, imageTableItem.getModel());
-	updateBuilder.addfield(DB_PAGE, imageTableItem.getPage());
-	updateBuilder.addfield(DB_PRINARYENCODING, imageTableItem.getPrimaryEncoding());
+//	updateBuilder.addfield(DB_PAGE, imageTableItem.getPage());
+//	updateBuilder.addfield(DB_PRIMARYENCODING, imageTableItem.getPrimaryEncoding());
 	updateBuilder.addfield(DB_RATING, imageTableItem.getRating());
 	updateBuilder.addfield(DB_RESOLUTION, imageTableItem.getResolution());
 	updateBuilder.addfield(DB_SAMPLECOLOR, imageTableItem.getSampleColor());
@@ -397,3 +424,5 @@ bool ImageTable::insert(ImageTableItem &imageTableItem) {
 	}
 }
 */
+
+//}; //Namespace

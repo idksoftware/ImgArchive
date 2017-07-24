@@ -207,7 +207,7 @@ bool CreateArchive::makeFolders(const char *root) {
 	if (makeFolder(root, BACKUP_PATH) == false) {
 		return false;
 	}
-	if (makeFolder(root, SHADOW_PATH) == false) {
+	if (makeFolder(root, MASTER_PATH) == false) {
 		return false;
 	}
 	if (makeFolder(root, TOOLS_PATH) == false) {
@@ -296,6 +296,7 @@ bool CreateArchive::makeFolder(const char *root, const char *folder) {
 	return true;
 }
 
+/*
 bool CreateArchive::checkFolder(const char *root, const char *folder) {
 	std::string folderPath = root;
 	folderPath += folder;
@@ -304,5 +305,5 @@ bool CreateArchive::checkFolder(const char *root, const char *folder) {
 	}
 	return true;
 }
-
+*/
 } /* namespace simplearchive */

@@ -37,7 +37,8 @@
 
 #include <string>
 #include <memory>
-#include "../util/ExifDateTime.h"
+#include "ExifDate.h"
+#include "ExifDateTime.h"
 /*
 */
 namespace simplearchive {
@@ -50,7 +51,7 @@ namespace simplearchive {
 	public:
 		typedef enum {
 			Workspace,		//* Initalise an archive with the default 
-			Shadow,			//* Show
+			Master,			//* Show
 			Both			//* show version
 		} Scope;
 	private:

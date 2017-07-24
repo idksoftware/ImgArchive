@@ -62,13 +62,16 @@ public:
 
 
 
-typedef std::vector<std::string> FileList;
-typedef std::unique_ptr<FileList> FileList_Ptr;
+using FileList = std::vector<std::string>;
+using FileList_Ptr = std::unique_ptr<FileList>;
+
+
+
 class SAUtils {
 public:
 	SAUtils();
 	virtual ~SAUtils();
-	static std::string GetEnvironment(const std::string &key);
+	
 	static bool FileExists(const char *filename);
 	static bool DirExists(const char *path);
 	static bool IsFile(const char *path);
@@ -96,7 +99,8 @@ public:
 	static bool delFile(const char *file);
 	static bool delDir(const char *file);
 	static std::string to_string(int i);
-	static void sprintf(std::string &s, const std::string &fmt, ...);
+	static void chartohex(char *buffer, unsigned char x);
+	static std::string SAUtils::sprintf(const char *fmt, ...);
 	static bool makePath(const char *from, const char *to);
 	static bool makePath(const char *to);
 	static bool makeLink(const char *file, const char *link);
@@ -105,6 +109,9 @@ public:
 	static std::string getFullRelativePath(const char *path);
 	static void splitpath(const char *path, char *drive, char *dir, char *fname, char *ext);
 	static bool mksymlink(const char *sourcePath, const char *destPath);
+	static std::string GetEnv(const std::string &key, bool all = true);
+	static std::string GetPOSIXEnv(const std::string &key);
+	static bool SetEnv(const std::string &key, const std::string &value, bool all = true);
 };
 
 

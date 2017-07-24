@@ -121,13 +121,13 @@ namespace simplearchive {
 			add(MTSchema(MTSchema::Integer, DB_WIDTH));
 			add(MTSchema(MTSchema::Integer, DB_HEIGHT));
 			add(MTSchema(MTSchema::Text, DB_RESOLUTION));
-			add(MTSchema(MTSchema::Text, DB_DEPTH));
+//			add(MTSchema(MTSchema::Text, DB_DEPTH));
 			add(MTSchema(MTSchema::Text, DB_VIEWROTATION));
 			add(MTSchema(MTSchema::Text, DB_SAMPLECOLOR));
-			add(MTSchema(MTSchema::Text, DB_PAGE));
+//			add(MTSchema(MTSchema::Text, DB_PAGE));
 			add(MTSchema(MTSchema::Text, DB_COLORSPACE));
 			add(MTSchema(MTSchema::Text, DB_COMPRESSION));
-			add(MTSchema(MTSchema::Text, DB_PRIMARYENCODING));
+//			add(MTSchema(MTSchema::Text, DB_PRIMARYENCODING));
 			add(MTSchema(MTSchema::Text, DB_MAKER));
 			add(MTSchema(MTSchema::Text, DB_MODEL));
 			add(MTSchema(MTSchema::Text, DB_SOFTWARE));
@@ -160,7 +160,7 @@ namespace simplearchive {
  * @brief This class contains the EXIF data for an image.
  */
 class ExifObject : public MTRow {
-		
+	static ExifObjectSchema m_exifObjectSchema;
 	friend class ExternalExifMapper;
 	/*
 	std::string m_compression;

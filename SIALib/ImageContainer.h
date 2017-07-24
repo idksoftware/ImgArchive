@@ -39,12 +39,12 @@
 #include <string>
 #include <memory>
 #include "ImageExtentions.h"
-#include "BasicExif.h"
+#include "BasicMetadata.h"
 
 namespace simplearchive {
 
-class BasicExif;
-class BasicExifFactory;
+class BasicMetadata;
+class BasicMetadataFactory;
 class MetadataObject;
 
 /// 
@@ -54,16 +54,16 @@ class ImageNode
 	ImageType m_type;
 	/// This contains the path to the Image file.
 	std::string m_file;
-	/// This contains a pointer to the BasicExifFactory.
-	std::unique_ptr<BasicExif> m_basicExif;
+	/// This contains a pointer to the BasicMetadataFactory.
+	std::unique_ptr<BasicMetadata> m_BasicMetadata;
 	/// This contains a pointer to the MetadataObject.
 	std::unique_ptr<MetadataObject> m_metadataObject;
 
-	//void setImageID2Metadata(const BasicExif &basicExif, MetadataObject &metadataObject);
+	//void setImageID2Metadata(const BasicMetadata &BasicMetadata, MetadataObject &metadataObject);
 public:
-	ImageNode(ImageType &type, std::unique_ptr<BasicExif>& basicExif, std::unique_ptr<MetadataObject>& metadataObject) : m_basicExif(move(basicExif)), m_metadataObject(move(metadataObject)) {
+	ImageNode(ImageType &type, std::unique_ptr<BasicMetadata>& BasicMetadata, std::unique_ptr<MetadataObject>& metadataObject) : m_BasicMetadata(move(BasicMetadata)), m_metadataObject(move(metadataObject)) {
 		m_type = type;
-		m_file = m_basicExif->columnAt(DB_FILENAME).toString();
+		m_file = m_BasicMetadata->columnAt(DB_FILENAME).toString();
 	}
 
 	~ImageNode() {
@@ -71,10 +71,10 @@ public:
 	}
 
 	const std::string& getFile() const;
-	const BasicExif &getBasicExif() {
-		return *m_basicExif.get();
+	const BasicMetadata &getBasicMetadata() {
+		return *m_BasicMetadata.get();
 	}
-	void setImageId(const BasicExifFactory*& imageId, const MetadataObject *metadataObject = nullptr);
+	void setImageId(const BasicMetadataFactory*& imageId, const MetadataObject *metadataObject = nullptr);
 
 	const MetadataObject& getMetadataObject() {
 		return *m_metadataObject.get();
@@ -91,7 +91,7 @@ class ImageContainer {
 	std::string m_MetadataFile;
 	std::string m_imageRootPath;
 	std::string m_comment;
-	const BasicExif *m_basicExif;
+	const BasicMetadata *m_BasicMetadata;
 	ImageNode *m_PictureNode;
 	ImageNode *m_RawNode;
 	time_t m_Time;
@@ -101,7 +101,7 @@ class ImageContainer {
 public:
 	
 	ImageContainer(const char *path, const char *imageName);
-	bool add(std::unique_ptr<BasicExif>& basicExif, std::unique_ptr<MetadataObject>& metadataObject);
+	bool add(std::unique_ptr<BasicMetadata>& BasicMetadata, std::unique_ptr<MetadataObject>& metadataObject);
 	bool add(const char *xmlfile) {
 		return true; // to be added
 	}
@@ -145,19 +145,19 @@ public:
 	}
 
 	/// Get Picture image id 
-	const BasicExif &getPictureId() const {
+	const BasicMetadata &getPictureId() const {
 		//if (m_PictureNode == nullptr) {
 		//	return nullptr;
 		//}
-		return m_PictureNode->getBasicExif();
+		return m_PictureNode->getBasicMetadata();
 	}
 
 	/// Get RAW Image id
-	const BasicExif &getRawId() const {
+	const BasicMetadata &getRawId() const {
 		//if (m_RawNode == nullptr) {
 		//	return nullptr;
 		//}
-		return m_RawNode->getBasicExif();
+		return m_RawNode->getBasicMetadata();
 	}
 	/// Get Image path in the archive
 	const std::string& getPath() const {

@@ -56,8 +56,5 @@
     <ClInclude Include="SQLBuilder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DBDefines.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

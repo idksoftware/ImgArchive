@@ -40,9 +40,9 @@
 
 namespace simplearchive {
 
-	class ShowCheckedOut : public ShadowFolderVistor {
+	class ShowCheckedOut : public MasterFolderVistor {
 	public:
-		ShowCheckedOut(const char *archivePath) : ShadowFolderVistor(archivePath) {};
+		ShowCheckedOut(const char *archivePath) : MasterFolderVistor(archivePath) {};
 		virtual bool doWork(const char *targetdir, const char *checkFilePath, const char *address, VisitingObject *visitingObject);
 	};
 
@@ -65,7 +65,7 @@ namespace simplearchive {
 	class FolderList {
 	public:
 		typedef enum {
-			READING_SHADOW,
+			READING_Master,
 			READING_WORKSPACE,
 			READING_BOTH,
 			UNKNOWN
@@ -74,16 +74,16 @@ namespace simplearchive {
 		std::string m_archivePath;
 		std::string m_workspacePath;
 		std::string m_workspaceJournalName;
-		std::string m_shadowJournalName;
+		std::string m_MasterJournalName;
 		bool makeXML();
 
-		bool validateAndRepairShadow();
-		bool validateOnlyShadow();
+		bool validateAndRepairMaster();
+		bool validateOnlyMaster();
 
 		bool validateAndRepairWorkspace();
 		bool validateOnlyWorkspace();
 
-		bool validateShadow(ValidateReportingObject &validateReportingObject);
+		bool validateMaster(ValidateReportingObject &validateReportingObject);
 		bool validateWorkspace(ValidateReportingObject &validateReportingObject);
 
 		bool fixWorkspace(const char *jouralFile);

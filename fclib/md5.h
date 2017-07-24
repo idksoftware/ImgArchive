@@ -33,6 +33,7 @@ documentation and/or software.
 #ifndef BZF_MD5_H
 #define BZF_MD5_H
 
+#include <cstdint>
 #include <cstring>
 #include <iostream>
 
@@ -66,7 +67,8 @@ public:
 
 private:
   void init();
-  typedef unsigned char uint1; //  8bit
+  typedef unsigned char  uint1; //  8bit
+  //using uint = std:uint8_t;
   typedef unsigned int uint4;  // 32bit
   enum {blocksize = 64}; // VC6 won't eat a const static int here
 

@@ -35,14 +35,23 @@
 #include <string>
 #include <vector>
 #include <fstream>
+
 #include <streambuf>
+#include <cstdlib>
+#include <fstream>
 #include <iostream>
+#include <cstdarg>
 #include "ImageHistory.h"
-#include "HistoryEvent.h"
 #include "LogName.h"
-#include "CIDKDate.h"
+#include "ExifDateTime.h"
+#include "SAUtils.h"
+#include "HistoryLog.h"
 #include "CSVArgs.h"
+#include "SystemHistory.h"
 #include "ArchivePath.h"
+#include "ErrorCode.h"
+#include "PathController.h"
+
 #ifdef _DEBUG
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
@@ -51,135 +60,183 @@ static char THIS_FILE[] = __FILE__;
 
 namespace simplearchive {
 
-class ImageHistoryItem {
+class HistoryItem {
 	std::string m_comment;
 	std::string m_date;
+	std::string m_filepath;
 	std::string m_event;
-	std::string m_fileShortPath;
 	std::string m_data;
 	std::string m_version;
-
-
 public:
-	ImageHistoryItem();
+	HistoryItem();
 	/*
 	 * 14.06.12.12.16.12:56:first checkin:checkin
 	 */
-	ImageHistoryItem(const char *dataString) {
+	HistoryItem(const char *dataString) {
 		m_data = dataString;
 		CSVArgs csvArgs(':');
 		csvArgs.process(dataString);
-
-	
 		m_date = csvArgs.at(0);
-		m_fileShortPath = csvArgs.at(1);
-		m_version = csvArgs.at(2);
+		m_version = csvArgs.at(1);
+		m_filepath = csvArgs.at(2);
 		m_comment = csvArgs.at(3);
 		m_event = csvArgs.at(4);
+		
 
 	}
 
-	ImageHistoryItem(const char *date, const char *fileShortPath, const char *version, const char *comment, const char *event) {
+	HistoryItem(const char *date, const char *version, const char *filepath, const char *comment, const char *event) {
 		m_date = date;
 		m_version = version;
+		m_filepath = filepath;
 		m_comment = comment;
-		m_fileShortPath = fileShortPath;
 		m_event = event;
 	}
 
 	//bool add(const char *date, const char *version, int comment, const char *event);
 
 	std::string &toString() {
-		m_data = m_date + ":" + m_fileShortPath + ":" + m_version + ":" + m_comment + ":" + m_event;
+		m_data = m_date + ":" + m_version + ":" + m_filepath +":" + m_comment +":" + m_event;
 		return m_data;
 	}
 
 };
 
-ImageHistory *ImageHistory::m_this = nullptr;
-std::ofstream ImageHistory::m_hstfile;
-std::string ImageHistory::m_filename;
-std::string ImageHistory::m_primary;
-std::string ImageHistory::m_backup1;
-std::string ImageHistory::m_backup2;
-std::string ImageHistory::m_shadow;
 
-ImageHistory::ImageHistory() {}
-
-ImageHistory::~ImageHistory() {
-	m_hstfile.close();
+ImageHistory::ImageHistory() {
 }
 
-ImageHistory &ImageHistory::getImageHistory() {
-	if (m_this == NULL) {
-		m_this = new ImageHistory();
-		
-		std::string primary = ArchivePath::getMainHistory();
-		LogName logName;
-		m_primary = logName.makeName(primary.c_str(), "", "hst", 256);
-		if (ArchivePath::isShadowEnabled() == true) {
-			m_shadow = ArchivePath::getShadow().getLogHistory();
-			m_shadow += '/'; m_shadow += logName.getFilename();
-		}
-		if (ArchivePath::isBackup1Enabled() == true) {
-			m_backup1 = ArchivePath::getBackup1().getLogHistory();
-			m_backup1 += '/'; m_backup1 += logName.getFilename();
-		}
-		if (ArchivePath::isBackup2Enabled() == true) {
-			m_backup2 = ArchivePath::getBackup2().getLogHistory();
-			m_backup2 += '/'; m_backup2 += logName.getFilename();
-		}
-		
-		
+ImageHistory::~ImageHistory() {
+}
+
+std::string ImageHistory::m_workspace;
+std::string ImageHistory::m_index;
+
+bool ImageHistory::init() {
+
+	if (ArchivePath::isBackup1Enabled() == true) {
+		SystemHistory::setBackup1Path(ArchivePath::getBackup1().getHistory().c_str());
 	}
-	return *m_this;
+	if (ArchivePath::isBackup2Enabled() == true) {
+		SystemHistory::setBackup2Path(ArchivePath::getBackup2().getHistory().c_str());
+	}
+	/*
+	m_workspacePath = workspacePath;
+	m_backup1Path = backup1Path;
+	m_backup1Path = backup1Path;
+	m_backup1Path = backup1Path;
+	*/
+	return true;
+}
+
+bool ImageHistory::add(const char *filename, const char *comment) {
+	return add(filename, "0000", comment, HistoryEvent::ADDED);
 }
 /**
  * This function adds history to an image.
  */
 bool ImageHistory::add(const char *filepath, int version, const char *comment, const HistoryEvent &he) {
-	char buff[50];
-	sprintf_s(buff, 50, "%.4d", version);
-	add(filepath, buff, comment, he);
+	std::string buff = SAUtils::sprintf("%.4d", version);
+	add(filepath, buff.c_str(), comment, he);
 	return true;
 }
-
+/**
+	filepath i.e 2015-11-10/DSC1236.jpg
+*/
 bool ImageHistory::add(const char *filepath, const char *version, const char *comment, const HistoryEvent &he) {
-	CIDKDate date;
-	date.Now();
+	
+	ExifDateTime date;
+	date.now();
+	std::string dateStr = date.current();
 	const char *event = he.getString();
-	ImageHistoryItem historyItem(date.Print().c_str(), filepath, version, comment, event);
-	if (add(historyItem, m_primary.c_str()) == false) {
+
+	HistoryItem historyItem(dateStr.c_str(), version, filepath, comment, event);
+
+	
+	PathController workspaceController;
+	workspaceController.setRoot(m_workspace.c_str());
+	workspaceController.splitLong(filepath);
+	workspaceController.makePath();
+	std::string workspacePath = workspaceController.getFullPath();
+	workspacePath += "/.sia/"; workspacePath += workspaceController.getImage();
+	workspacePath += ".hst";
+
+	if (writeLog(historyItem, workspacePath.c_str()) == false) {
+		return false;
+	}
+
+	//PathController pathController;
+	
+	PathController indexController;
+	indexController.setRoot(m_index.c_str());
+	indexController.splitLong(filepath);
+	indexController.makeImagePath();
+	
+	std::string indexPath = indexController.getFullPath();;
+	/*
+	indexPath += "/history";
+	
+	if (SAUtils::DirExists(indexPath.c_str()) == false) {
+		if (SAUtils::mkDir(indexPath.c_str()) == false) {
+			return false;
+		}
+	}
+	
+	indexPath += '/';
+	indexPath += indexController.getFilename();
+	*/
+	indexPath += ".hst";
+
+	if (writeLog(historyItem, indexPath.c_str()) == false) {
 		return false;
 	}
 	
-	if (ArchivePath::isShadowEnabled() == true) {
-		if (add(historyItem, m_shadow.c_str()) == false) {
+	/*
+	if (ArchivePath::isBackup1Enabled()) {
+		std::string backup1Path = ArchivePath::getBackup1().getRepositoryPath();
+		backup1Path += '/'; backup1Path += m_localPath.substr(0, 4);
+		backup1Path += '/'; backup1Path += m_localPath;
+		backup1Path += "/history/"; backup1Path += filename;
+		backup1Path += ".hst";
+
+		if (writeLog(historyItem, backup1Path.c_str()) == false) {
 			return false;
 		}
 	}
-	if (ArchivePath::isBackup1Enabled() == true) {
-		if (add(historyItem, m_backup1.c_str()) == false) {
+	if (ArchivePath::isBackup2Enabled()) {
+		std::string backup2Path = ArchivePath::getBackup2().getRepositoryPath();
+		backup2Path += '/'; backup2Path += m_localPath.substr(0, 4);
+		backup2Path += '/'; backup2Path += m_localPath;
+		backup2Path += "/history/"; backup2Path += filename;
+		backup2Path += ".hst";
+
+		if (writeLog(historyItem, backup2Path.c_str()) == false) {
 			return false;
 		}
 	}
-	if (ArchivePath::isBackup2Enabled() == true) {
-		if (add(historyItem, m_backup2.c_str()) == false) {
-			return false;
-		}
-	}
+	*/
 	return true;
+	/*
+	std::ofstream file;
+	file.open(filepathstr.c_str(), std::ios::out | std::ios::app);
+	if (file.is_open() == false) {
+		return false;
+	}
+	file << historyItem.toString().c_str() << '\n';
+	file.close();
+	return true;
+	*/
 }
 
-bool ImageHistory::add(ImageHistoryItem &historyItem, const char *historyFile) {
-	
-	m_hstfile.open(historyFile, std::ios::out | std::ios::app);
-	if (m_hstfile.is_open() == false) {
+bool ImageHistory::writeLog(HistoryItem &item, const char *path) {
+	std::ofstream file;
+	file.open(path, std::ios::out | std::ios::app);
+	if (file.is_open() == false) {
+		ErrorCode::setErrorCode(SIA_ERROR::INVALID_PATH);
 		return false;
 	}
-	m_hstfile << historyItem.toString() << '\n';
-	m_hstfile.close();
-
+	file << item.toString().c_str() << '\n';
+	file.close();
 	return true;
 }
 
@@ -192,81 +249,71 @@ bool ImageHistory::read(const char *filepath) {
 	}
 
 	while (file.getline(text, 100)) {
-		m_eventList->push_back(ImageHistoryItem(text));
+		m_eventList->push_back(HistoryItem(text));
 	}
 	file.close();
 
 	return true;
 }
-bool ImageHistory::write(const char *datafile) {
-	std::ofstream file(datafile);
-	if (file.is_open() == false) {
+*/
+/*
+std::string History::getHistory(CDate from, CDate to) {
+	std::string str;
+	return str;
+}
+*/
+/*
+std::auto_ptr<HistoryLog>  History::getEntries(int daysAgo) {
+	CDate date = CDate::daysAgo(daysAgo);
+
+	std::vector<std::string> fileList;
+	std::string filepath = "X";
+	FileList_Ptr filelist = SAUtils::getFiles_(m_folder.c_str());
+	std::string dateString = LogName::dateString(date);
+	std::auto_ptr<HistoryLog> historyLog(new HistoryLog);
+	for (std::vector<std::string>::iterator i = filelist->begin(); i != filelist->end(); i++) {
+		std::string logFile = *i;
+
+		if (logFile.at(0) == '.') {
+			continue;
+		}
+		std::string logFileNoExt = SAUtils::getFilenameNoExt(logFile.c_str());
+		std::string datePart = logFileNoExt.substr(4,8);
+		//printf("datePart: %s dateString: %s\n", datePart.c_str(), dateString.c_str());
+		if (dateString.compare(datePart) == 0) {
+			//printf("%s\n", logFile->c_str());
+			readLog(logFile.c_str(), *historyLog);
+
+		}
+	}
+	return historyLog;
+}
+*/
+/*
+bool History::readLog(const char *logFile, HistoryLog &historyLog) {
+	std::string path = m_folder;
+	path += '/';
+	path += logFile;
+	std::ifstream file(path.c_str());
+	//file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+	if (!file.is_open()) {
 		return false;
 	}
-	for (std::vector<ImageHistoryItem>::iterator i = m_eventList->begin(); i != m_eventList->end(); i++) {
-		ImageHistoryItem item = *i;
-		std::string &line = item.toString();
-		//printf("%s\n", line.c_str());
-		file << line << '\n';
-
+	std::string line;
+	while(getline(file, line)) {
+		//std::cout << line << '\n';
+		historyLog.push_back(line);
 	}
-	file.close();
+	//HistoryLog
 	return true;
 }
 */
-
 /*
-std::auto_ptr<ImageHistoryLog>  ImageHistory::get() {
+std::string History::getHistory(int entrys) {
 	std::string str;
-	std::auto_ptr<ImageHistoryLog> imageHistoryLog(new ImageHistoryLog);
-	if (read(mpath.c_str()) == false) {
-		return imageHistoryLog;
-	}
-
-	for (std::vector<ImageHistoryItem>::iterator i = m_eventList->begin(); i != m_eventList->end(); i++) {
-		ImageHistoryItem item = *i;
-		std::string &line = item.toString();
-		imageHistoryLog->push_back(line);
-	}
-	return imageHistoryLog;
+	return str;
 }
 */
-/*
-const char *ImageHistory::getEventString(HistoryEvent he) {
-	switch (he) {
-	case IMPORT:
-		return "added";
-	case CHECKOUT:
-		return "checkout";
-	case CHECKIN:
-		return "checkin";
-	case EXPORT:
-		return "export";
-	case ERROR:
-		return "error";
-	case UNCHECKOUT:
-		return "uncheckout";
-	}
-	return "error";
-}
-*/
-
-/*
-HistoryEvent ImageHistory::getEvent(const char *he) {
-	std::string eventstr = he;
-	if (eventstr.compare("add") == 0) {
-		return IMPORT;
-	} else if(eventstr.compare("checkout") == 0) {
-		return CHECKOUT;
-	} else if(eventstr.compare("checkin") == 0) {
-		return CHECKIN;
-	} else if(eventstr.compare("export") == 0) {
-		return EXPORT;
-	}
-	return ERROR;
-}
-*/
-
 
 
 } /* namespace simplearchive */

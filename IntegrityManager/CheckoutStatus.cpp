@@ -2,14 +2,17 @@
 #include "CheckoutStatus.h"
 #include "CheckDisk.h"
 #include "FolderList.h"
+#include "pathcontroller.h"
+#include "FileInfo.h"
 
 namespace simplearchive {
 
-	std::string CheckoutStatus::m_shadow;
+	std::string CheckoutStatus::m_Master;
 	std::string CheckoutStatus::m_workspace;
 
 	CheckoutStatus::CheckoutStatus()
 	{
+		m_LastError = Status::Ok;
 	}
 
 
@@ -17,8 +20,8 @@ namespace simplearchive {
 	{
 	}
 
-	bool CheckoutStatus::Init(const char *shadow, const char *workspace) {
-		m_shadow = shadow;
+	bool CheckoutStatus::Init(const char *Master, const char *workspace) {
+		m_Master = Master;
 		m_workspace = workspace;
 		return true;
 	}
@@ -26,48 +29,84 @@ namespace simplearchive {
 	bool CheckoutStatus::checkout(const char *img) {
 		std::string imagePath = img;
 
-		std::string year = imagePath.substr(0, 4);
-		std::string archiveImagePath = m_shadow;
-		archiveImagePath += '/'; archiveImagePath += year;
-		std::string yearday = imagePath.substr(0, 10);
-		archiveImagePath += '/'; archiveImagePath += yearday;
-		archiveImagePath += "/chdsk/fdata.csv";
-
-		std::string image = imagePath.substr(11, imagePath.length() - 11);
-
-		CheckDisk checkDisk;
-		if (checkDisk.checkout(archiveImagePath.c_str(), image.c_str()) == false) {
+		PathController pathController(m_Master.c_str());
+		pathController.splitShort(img);
+		if (pathController.makePath(false) == false) {
+			ErrorCode::setErrorCode(SIA_ERROR::INVALID_PATH);
 			return false;
 		}
-			/*
-			std::string workspaceImagePath = m_workspacePath;
-			workspaceImagePath += '/'; workspaceImagePath += year;
-			workspaceImagePath += '/'; workspaceImagePath += imagePath;
-			*/
+		
+		std::string path = pathController.getFullPath();
+		path += "/chdsk/fdata.csv";
+
+		CheckDisk checkDisk;
+		if (checkDisk.ischeckedOut(path.c_str(), pathController.getImage().c_str()) == false) {
+			if (ErrorCode::getErrorCode() == SIA_ERROR::IMAGE_NOT_FOUND) {
+				return false; // error code set
+			}
+			// returned false meaning it is not already checked out and is not an error. 
+		}
+		else {
+			ErrorCode::setErrorCode(SIA_ERROR::ALREADY_CHECKED_OUT);
+			return false;
+		}
+
+		
+		unsigned int acrc = checkDisk.getCrc(path.c_str(), pathController.getImage().c_str());
+		pathController.makeRelativeImagePath(img);
+		std::string workspace = m_workspace;
+		
+		workspace += pathController.getShortRelativePath();
+
+		PathController workspacePath(workspace.c_str(), false);
+		workspacePath.split();
+		workspacePath.makePath(false);
+		if (PathController::doValidate(workspacePath.getFullPath().c_str()) == false) {
+			ErrorCode::setErrorCode(SIA_ERROR::TARGET_INVALID_PATH);
+			return false;
+		}
+		
+		if (PathController::doValidate(workspace.c_str()) == false) {
+			ErrorCode::setErrorCode(SIA_ERROR::TARGET_NOT_FOUND);
+			return false;
+		}
+		
+		FileInfo fileInfo(workspace);
+		
+		if (fileInfo.getCrc() != acrc) {
+			ErrorCode::setErrorCode(SIA_ERROR::WILL_OVERWRITE_CHANGES);
+			return false;
+		}
+		
+		if (checkDisk.checkout(path.c_str(), pathController.getImage().c_str()) == false) {
+			ErrorCode::setErrorCode(SIA_ERROR::INVALID_PATH);
+			return false;
+		}
+			
 		return true;
 	}
 
 	bool CheckoutStatus::checkin(const char *img) {
 		std::string imagePath = img;
 
-		std::string year = imagePath.substr(0, 4);
-		std::string archiveImagePath = m_shadow;
-		archiveImagePath += '/'; archiveImagePath += year;
-		std::string yearday = imagePath.substr(0, 10);
-		archiveImagePath += '/'; archiveImagePath += yearday;
-		archiveImagePath += "/chdsk/fdata.csv";
-
-		std::string image = imagePath.substr(11, imagePath.length() - 11);
-
-		CheckDisk checkDisk;
-		if (checkDisk.checkin(archiveImagePath.c_str(), image.c_str()) == false) {
+		PathController pathController(m_Master.c_str());
+		pathController.splitShort(img);
+		if (pathController.makePath(false) == false) {
 			return false;
 		}
-		/*
-		std::string workspaceImagePath = m_workspacePath;
-		workspaceImagePath += '/'; workspaceImagePath += year;
-		workspaceImagePath += '/'; workspaceImagePath += imagePath;
-		*/
+
+		std::string path = pathController.getFullPath();
+		path += "/chdsk/fdata.csv";
+
+		CheckDisk checkDisk;
+		if (checkDisk.checkin(path.c_str(), pathController.getImage().c_str()) == false) {
+			if (ErrorCode::getErrorCode() == SIA_ERROR::IMAGE_NOT_FOUND) {
+				return false; // error code set
+			}
+			// returned false meaning it is not already checked out and is not an error.
+			ErrorCode::setErrorCode(SIA_ERROR::ALREADY_CHECKED_IN);
+			return false;
+		}
 		return true;
 	}
 
@@ -76,7 +115,7 @@ namespace simplearchive {
 			// All images
 
 		}
-		FolderList folderList(m_shadow.c_str());
+		FolderList folderList(m_Master.c_str());
 		folderList.showCheckedOut(addressScope);
 
 		return true;
@@ -87,7 +126,7 @@ namespace simplearchive {
 			// All images
 
 		}
-		FolderList folderList(m_shadow.c_str(), m_workspace.c_str());
+		FolderList folderList(m_Master.c_str(), m_workspace.c_str());
 		folderList.showUncheckedOutChanges(addressScope);
 
 		return true;

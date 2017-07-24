@@ -54,7 +54,7 @@ namespace simplearchive {
 class CatalogManager {
 	static std::auto_ptr<CatalogManager> m_this;
 	static std::string m_catalogPath;
-	static std::string m_shadowPath;
+	static std::string m_MasterPath;
 	bool addDayFolder(const char *folderName);
 public:
 	CatalogManager();
@@ -66,14 +66,14 @@ public:
 	/// @param fileName contains the image file name.
 	///
 	bool addFile(const char *folderPath, const char *fileName);
-	/// Reads the shadow archive and creates a catalog of the shadow archive
+	/// Reads the Master archive and creates a catalog of the Master archive
 	/// This may be changed so views can be cataloged
 	bool makeList();
 
 	static CatalogManager &get();
-	static void setPaths(const char* catalogPath, const char *shadowPath) {
+	static void setPaths(const char* catalogPath, const char *MasterPath) {
 		m_catalogPath = catalogPath;
-		m_shadowPath = shadowPath;
+		m_MasterPath = MasterPath;
 	}
 };
 

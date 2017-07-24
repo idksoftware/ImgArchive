@@ -38,7 +38,7 @@
 #include <ctime>
 #include <sstream>
 #include <iomanip>
-
+#include <stdlib.h>
 
 namespace simplearchive {
 
@@ -60,7 +60,7 @@ namespace simplearchive {
 		int delim3 = data.find_first_of(".", delim2 + 1);
 		int delim4 = data.find_first_of(".", delim3 + 1);
 		int delim5 = data.find_first_of(".", delim4 + 1);
-		int delim6 = data.find_first_of(".", delim5 + 1);
+
 		time_t rawtime;
 		time(&rawtime);
 		localtime_p(m_timePtr, &rawtime);

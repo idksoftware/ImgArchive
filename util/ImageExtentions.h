@@ -53,7 +53,6 @@ public:
 	ExtentionItem() {
 		m_ext = "";
 		m_type = ImageType::Type::UNKNOWN_EXT;
-		m_mimeType;
 	}
 
 	ExtentionItem(const char *row) {

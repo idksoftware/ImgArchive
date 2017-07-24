@@ -44,13 +44,11 @@ static char THIS_FILE[] = __FILE__;
 
 namespace simplearchive {
 
-ExifObject::ExifObject() : MTRow(new ExifObjectSchema) {
-	// TODO Auto-generated constructor stub
-}
+ExifObjectSchema ExifObject::m_exifObjectSchema;
 
-ExifObject::~ExifObject() {
-	// TODO Auto-generated destructor stub
-}
+ExifObject::ExifObject() : MTRow(m_exifObjectSchema) {}
+
+ExifObject::~ExifObject() {}
 
 
 /*
@@ -272,8 +270,9 @@ void ExifObject::setYResolution(const std::string& yResolution) {
 }
 */
 void ExifObject::print() {
-	CLogger &logger = CLogger::getLogger();
 	/*
+	CLogger &logger = CLogger::getLogger();
+
 	logger.log(LOG_OK, CLogger::FINE, "Using Exif Color Space: \"%s\"", m_colorSpace.c_str());
 	logger.log(LOG_OK, CLogger::FINE, "Using Exif Image Width: \"%s\"", m_imageWidth.c_str());
 	logger.log(LOG_OK, CLogger::FINE, "Using Exif Image Height: \"%s\"", m_imageHeight.c_str());

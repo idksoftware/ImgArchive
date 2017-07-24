@@ -54,7 +54,7 @@ public:
 
 	typedef enum {
 		Workspace,		//* Initalise an archive with the default 
-		Shadow,			//* Show
+		Master,			//* Show
 		Both			//* show version
 	} Scope;
 
@@ -66,7 +66,7 @@ private:
 	static std::string m_imageAddress;
 	static std::string m_homePath;
 	static std::string m_workspacePath;
-	static std::string m_shadowPath;
+	static std::string m_masterPath;
 	static std::string m_configPath;
 	static Scope m_scope;
 	static bool m_repair;
@@ -83,7 +83,7 @@ private:
 	void setName(const char *name);
 	void setHomePath(const char *homePath);
 	void setWorkspacePath(const char *workspacePath);
-	void setShadowPath(const char *shadowPath);
+	void setMasterPath(const char *masterPath);
 	void setConfigPath(const char *configPath);
 	void setAllUsers(bool allUsers);
 	AppOptions();
@@ -101,7 +101,7 @@ public:
 	const char *getImageAddress();
 	const char *getHomePath();
 	const char *getWorkspacePath();
-	const char *getShadowPath();
+	const char *getMasterPath();
 	const char *getConfigPath();
 	bool isAllUsers();
 

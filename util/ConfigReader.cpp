@@ -38,6 +38,7 @@
 #include <iostream>
 #include <fstream>
 #include <streambuf>
+#include <sstream>
 #include <algorithm>
 #include <string>
 #include <map>
@@ -124,14 +125,14 @@ bool ConfigReader::read(const char *datafile, Config &config) {
 			m_includeCnt++;
 			if (m_includeCnt >= 10) {
 				if (m_logging) {
-					CLogger::getLogger().log(LOG_OK, CLogger::ERR, "include files more than ten deep \"%s\"", m_path.c_str());
+					CLogger::getLogger().log(LOG_OK, CLogger::Level::ERR, "include files more than ten deep \"%s\"", m_path.c_str());
 				}
 				return false;
 			}
 			if (read(m_path.c_str(), config) == false) {
 				m_includeCnt--;
 				if (m_logging) {
-					CLogger::getLogger().log(LOG_OK, CLogger::WARNING, "Cannot include file \"%s\"", m_path.c_str());
+					CLogger::getLogger().log(LOG_OK, CLogger::Level::WARNING, "Cannot include file \"%s\"", m_path.c_str());
 				}
 				return false;
 			}
@@ -140,7 +141,7 @@ bool ConfigReader::read(const char *datafile, Config &config) {
 			return false;
 		default:
 			if (m_logging) {
-				CLogger::getLogger().log(LOG_OK, CLogger::WARNING, "Cannot read token in config file \"%s\"", m_path.c_str());
+				CLogger::getLogger().log(LOG_OK, CLogger::Level::WARNING, "Cannot read token in config file \"%s\"", m_path.c_str());
 			}
 			return false;
 		}
@@ -151,7 +152,53 @@ bool ConfigReader::read(const char *datafile, Config &config) {
 	return true;
 }
 
-#ifdef _WIN32
+
+bool ConfigReader::read(const std::string &str, Config &config) {
+
+	std::stringstream ss(str);
+	std::string text;
+
+
+	//while (ss.getline(text, 2 * 1024)) {
+	while (std::getline(ss, text, '\n')){
+
+		//m_dataContainer->push_back(*(new std::string(text)));
+		switch (parse(text.c_str(), config)) {
+		case KeyValue:
+			continue;
+		case Comment:
+			continue;
+		case Include:
+			m_includeCnt++;
+			if (m_includeCnt >= 10) {
+				if (m_logging) {
+					CLogger::getLogger().log(LOG_OK, CLogger::Level::ERR, "include files more than ten deep \"%s\"", m_path.c_str());
+				}
+				return false;
+			}
+			if (read(m_path.c_str(), config) == false) {
+				m_includeCnt--;
+				if (m_logging) {
+					CLogger::getLogger().log(LOG_OK, CLogger::Level::WARNING, "Cannot include file \"%s\"", m_path.c_str());
+				}
+				return false;
+			}
+			continue;
+		case Error:
+			return false;
+		default:
+			if (m_logging) {
+				CLogger::getLogger().log(LOG_OK, CLogger::Level::WARNING, "Cannot read token in config file \"%s\"", m_path.c_str());
+			}
+			return false;
+		}
+	}
+	
+
+	return true;
+}
+
+
 static std::string trim(std::string const& str)
 {
 	std::size_t first = str.find_first_not_of(' ');
@@ -163,10 +210,13 @@ static std::string trim(std::string const& str)
 		return "";
 
 	std::size_t last = str.find_last_not_of(' ');
-
+	std::size_t lastcr = str.find_last_not_of('\r');
+	if (lastcr < last) {
+		return str.substr(first, lastcr - first + 1);
+	}
 	return str.substr(first, last - first + 1);
 }
-#else
+/*
 static inline std::string &ltrim(std::string &s) {
 	s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
 	return s;
@@ -176,7 +226,7 @@ static inline std::string &rtrim(std::string &s) {
 	s.erase(std::find_if(s.rbegin(), s.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
 	return s;
 }
-#endif
+*/
 
 /*
 Error = -1,
@@ -211,7 +261,7 @@ ConfigReader::Token ConfigReader::parse(const char *text, Config &config) {
 			return Include;
 		} else {
 			if (m_logging) {
-				CLogger::getLogger().log(LOG_OK, CLogger::WARNING, "Cannot read \"%s\" in config file \"%s\"", line.c_str(), m_path.c_str());
+				CLogger::getLogger().log(LOG_OK, CLogger::Level::WARNING, "Cannot read \"%s\" in config file \"%s\"", line.c_str(), m_path.c_str());
 			}
 			return Error;
 		}

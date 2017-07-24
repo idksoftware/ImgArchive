@@ -136,182 +136,209 @@ ArgvParser::parse(int _argc, char ** _argv)
 		if (option2attribute.find(key)->second != MasterOption) {
 			return(ParserHelpRequested);
 		}
-		
 	}
 	else {
 		return(ParserHelpRequested);
 	}
 	
+	// This is used to test if the arguments are valid for this command
+	CommandSet::iterator ii = command_set.find(key);
+	bool commandListFound = false;
+	ArgumentContainer *commandList = nullptr;
+	if (ii != command_set.end()) {
+		commandListFound = true;	
+	}
 
-    while( i< _argc )
-    {
-        string argument = _argv[i];
-        unsigned int key = 0;
-        string option; // option name
-        string value;  // option value
+	unsigned int commandKey = key;
 
-        // if argument is an option
-        if (!isValidOptionString(argument))
-        {
-            // string is a real argument since values are processed elsewhere
-            finished_options=true;
-            argument_container.push_back(argument);
-        }
-        else // can be a long or multiple short options at this point
-        {
-            // check whether we already found an argument
-            if (finished_options)
-            {
-                error_option = argument;
-                return(ParserOptionAfterArgument); // return error code
-            }
-            // check for long options
-            if (isValidLongOptionString(argument))
-            {
-                // handle long options
+	while (i < _argc)
+	{
+		string argument = _argv[i];
+		unsigned int key = 0;
+		string option; // option name
+		string value;  // option value
 
-                // remove trailing '--'
-                argument = argument.substr(2);
-                // check for option value assignment 'option=value'
-                splitOptionAndValue(argument, option, value);
+		// if argument is an option
+		if (!isValidOptionString(argument))
+		{
+			// string is a real argument since values are processed elsewhere
+			finished_options = true;
+			argument_container.push_back(argument);
+		}
+		else // can be a long or multiple short options at this point
+		{
+			// check whether we already found an argument
+			if (finished_options)
+			{
+				error_option = argument;
+				return(ParserOptionAfterArgument); // return error code
+			}
 
-                if (!isDefinedOption(option)) // is this a known option
-                {
-                    error_option = option; // store the option that caused the error
-                    return(ParserUnknownOption); // return error code if not
-                }
 
-                // get the key of this option - now that we know that it is defined
-                key = option2key.find(option)->second;
-                if (key == help_option) // if help is requested return error code
-                    return(ParserHelpRequested);
+			// check for long options
+			if (isValidLongOptionString(argument))
+			{
+				// handle long options
 
-                // do we need to extract a value
-                // AND a value is not already assigned from the previous step
-                if ((option2attribute.find(key)->second & OptionRequiresValue) && value.empty())
-                {
-                    if (i+1 >= _argc) // are there arguments left?
-                    {
-                        error_option = option; // store the option that caused the error
-                        return(ParserMissingValue); // the was no argument left although we need a value
-                    }
+				// remove trailing '--'
+				argument = argument.substr(2);
+				// check for option value assignment 'option=value'
+				splitOptionAndValue(argument, option, value);
 
-                    string temp = _argv[i+1]; // get the next element
-                    ++i; // increase counter now that we moved forward
+				if (!isDefinedOption(option)) // is this a known option
+				{
+					error_option = option; // store the option that caused the error
+					return(ParserUnknownOption); // return error code if not
+				}
 
-                    if (isValidOptionString(temp))
-                    {
-                        error_option = option; // store the option that caused the error
-                        return(ParserMissingValue);  // missing option value
-                    }
-                    value = temp; // assign value
-                }
-                // add option-value map entry
-                option2value[key] = value;
-            }
-            else // handle short options
-            {
-                argument = argument.substr(1);   // remove trailing '-'
+				// get the key of this option - now that we know that it is defined
+				key = option2key.find(option)->second;
+				if (key == help_option) // if help is requested return error code
+					return(ParserHelpRequested);
 
-                // check for option value assignment 'option=value'
-                if (splitOptionAndValue(argument, option, value))
-                {
-                    // there was an option <- value assignment
-                    if (option.length() > 1)
-                    {
-                        error_option = option; // store the option that caused the error
-                        return(ParserMalformedMultipleShortOption); // return error code if option has more than one character
-                    }
+				// do we need to extract a value
+				// AND a value is not already assigned from the previous step
+				if ((option2attribute.find(key)->second & OptionRequiresValue) && value.empty())
+				{
+					if (i + 1 >= _argc) // are there arguments left?
+					{
+						error_option = option; // store the option that caused the error
+						return(ParserMissingValue); // the was no argument left although we need a value
+					}
 
-                    if (!isDefinedOption(option)) // is this a known option
-                    {
-                        error_option = option; // store the option that caused the error
-                        return(ParserUnknownOption); // return error code if not
-                    }
-                    key = option2key.find(option)->second; // get the key for the extracted option name
+					string temp = _argv[i + 1]; // get the next element
+					++i; // increase counter now that we moved forward
 
-                    if (key == help_option) // if help is requested return error code
-                        return(ParserHelpRequested);
+					if (isValidOptionString(temp))
+					{
+						error_option = option; // store the option that caused the error
+						return(ParserMissingValue);  // missing option value
+					}
+					value = temp; // assign value
+				}
+				// add option-value map entry
+				option2value[key] = value;
+			}
+			else // handle short options
+			{
+				argument = argument.substr(1);   // remove trailing '-'
 
-                    // if value is still empty for some reason: we have an error
-                    if ((option2attribute.find(key)->second & OptionRequiresValue) && value.empty())
-                    {
-                        error_option = option; // store the option that caused the error
-                        return(ParserMissingValue);   // missing option value
-                    }
-                    else
-                        // add option-value map entry
-                        option2value[key] = value;
-                }
-                else // no '=' assignment: can be either multiple short options or
-                    // something like '-s 4'
-                {
-                    // handle short options with value like '-s 4'
-                    option.clear();
-                    value.clear();
+				// check for option value assignment 'option=value'
+				if (splitOptionAndValue(argument, option, value))
+				{
+					// there was an option <- value assignment
+					if (option.length() > 1)
+					{
+						error_option = option; // store the option that caused the error
+						return(ParserMalformedMultipleShortOption); // return error code if option has more than one character
+					}
 
-                    if (argument.length() == 1) // if a single short option
-                    {
-                        if (!isDefinedOption(argument)) // is this a known option
-                        {
-                            error_option = argument; // store the option that caused the error
-                            return(ParserUnknownOption); // return error code if not
-                        }
-                        key = option2key.find(argument)->second; // get the key for the extracted option name
+					if (!isDefinedOption(option)) // is this a known option
+					{
+						error_option = option; // store the option that caused the error
+						return(ParserUnknownOption); // return error code if not
+					}
+					key = option2key.find(option)->second; // get the key for the extracted option name
 
-                        if (key == help_option) // if help is requested return error code
-                            return(ParserHelpRequested);
+					if (key == help_option) // if help is requested return error code
+						return(ParserHelpRequested);
 
-                        // check if option needs a value and next arg is not an option
-                        if ((option2attribute.find(key)->second & OptionRequiresValue))
-                        {
-                            if (i+1 >= _argc) // are there arguments left?
-                            {
-                                error_option = argument; // store the option that caused the error
-                                return(ParserMissingValue); // the was no argument left although we need a value
-                            }
-                            string temp = _argv[i+1]; // get the next element
-                            ++i; // increase counter now that we moved forward
+					// if value is still empty for some reason: we have an error
+					if ((option2attribute.find(key)->second & OptionRequiresValue) && value.empty())
+					{
+						error_option = option; // store the option that caused the error
+						return(ParserMissingValue);   // missing option value
+					}
+					else
+						// add option-value map entry
+						option2value[key] = value;
+				}
+				else // no '=' assignment: can be either multiple short options or
+					// something like '-s 4'
+				{
+					// handle short options with value like '-s 4'
+					option.clear();
+					value.clear();
 
-                            if (isValidOptionString(temp))
-                            {
-                                error_option = argument; // store the option that caused the error
-                                return(ParserMissingValue);  // missing option value
-                            }
-                            // add option-value map entry
-                            option2value[key] = temp;
+					if (argument.length() == 1) // if a single short option
+					{
+						if (!isDefinedOption(argument)) // is this a known option
+						{
+							error_option = argument; // store the option that caused the error
+							return(ParserUnknownOption); // return error code if not
+						}
+						key = option2key.find(argument)->second; // get the key for the extracted option name
 
-                        }
-                        else // no value needed
-                        {
-                            option2value[key] = ""; // assign value
-                        }
-                    }
-                    else // handle multiple short option like '-svxgh'
-                    {
-                        unsigned int short_option_counter = 0; // position in the multiple short option string
-                        while( short_option_counter < argument.length() ) // parse the whole string
-                        {
-                            option = argument[short_option_counter]; // get the option character
+						if (key == help_option) // if help is requested return error code
+							return(ParserHelpRequested);
 
-                            if (!isDefinedOption(option)) // is this a known option
-                            {
-                                error_option = option; // store the option that caused the error
-                                return(ParserUnknownOption); // return error code if not
-                            }
-                            key = option2key.find(option)->second; // get the key for the extracted option name
+						// check if option needs a value and next arg is not an option
+						if ((option2attribute.find(key)->second & OptionRequiresValue))
+						{
+							if (i + 1 >= _argc) // are there arguments left?
+							{
+								error_option = argument; // store the option that caused the error
+								return(ParserMissingValue); // the was no argument left although we need a value
+							}
+							string temp = _argv[i + 1]; // get the next element
+							++i; // increase counter now that we moved forward
 
-                            if (key == help_option) // if help is requested return error code
-                                return(ParserHelpRequested);
+							if (isValidOptionString(temp))
+							{
+								error_option = argument; // store the option that caused the error
+								return(ParserMissingValue);  // missing option value
+							}
+							// add option-value map entry
+							option2value[key] = temp;
 
-                            option2value[key] = value;
+						}
+						else // no value needed
+						{
+							option2value[key] = ""; // assign value
+						}
+					}
+					else // handle multiple short option like '-svxgh'
+					{
+						unsigned int short_option_counter = 0; // position in the multiple short option string
+						while (short_option_counter < argument.length()) // parse the whole string
+						{
+							option = argument[short_option_counter]; // get the option character
 
-                            ++short_option_counter; // advance one character forward
-                        }
-                    }
-                }
-            }
-        }
+							if (!isDefinedOption(option)) // is this a known option
+							{
+								error_option = option; // store the option that caused the error
+								return(ParserUnknownOption); // return error code if not
+							}
+							key = option2key.find(option)->second; // get the key for the extracted option name
+
+							if (key == help_option) // if help is requested return error code
+								return(ParserHelpRequested);
+
+							option2value[key] = value;
+
+							++short_option_counter; // advance one character forward
+						}
+					}
+				}
+			}
+		}
+		if (option.length() == 0) {
+			// Is a file
+			defaultArgumentsContainer.push_back(argument);
+		}
+		else {
+
+			if (matchOption(commandKey, option.c_str()) == false) {
+				return(ParserHelpRequested);
+			}
+			if (commandListFound) {
+				for (vector<string>::const_iterator opt = ii->second.begin(); opt != ii->second.end(); opt++) {
+					std::string s = *opt;
+					printf("%s", s.c_str());
+				}
+
+			}
+		}
         ++i;
     }
 
@@ -539,7 +566,7 @@ string ArgvParser::generalHelp(unsigned int _width) const
 			_os += ')';
 		}
 		//_os += " : ";
-		usage += formatString(_os, _width); // +"\n";
+		usage += formatLine(_os, _width, 0, 20);
 		_os.clear();
 		_longOpt.clear();
 		_shortOpt.clear();
@@ -620,10 +647,11 @@ string ArgvParser::generalHelp(unsigned int _width) const
 	}
 	usage += '\n';
 	usage += "Image Archive is a tool for image archiving and version control system.\n";
-	usage += "For additional information, see \"http://www.imgarchive.com/\"";
+	usage += "For additional information, see \"http:/www.idk-software.com/\"";
 	usage += '\n';
 	return(usage);
 }
+
 
 
 string ArgvParser::usageDescription(unsigned int _width) const
@@ -641,25 +669,13 @@ string ArgvParser::usageDescription(unsigned int _width) const
 
 	
 	usage += '\n';
-	/*
-	usage += "usage: sia subcommand [options] [args]\n\n";
-	usage += "Image archive command line client, version 1.0.0.1\n";
-	usage += "Type 'sia help <subcommand>' for help on a specific subcommand.\n\n";
 
-	string tmp = "sia is the primary command-line interface to Simple Image Archive. This interface is used to manage the control of images going in and out of the archive software. ";
-	tmp += "It has a rich set of subcommands that \"add/import\" images to the archive and \"export\" images out of the archive, In addition manages the controlled modification of images";
-	tmp += " using the \"check-in/check-out\" command set";
-	usage += '\n';
-	usage += formatString(tmp, _width);
-	usage += '\n';
-	usage += '\n';
-	usage += "Note:\n";
-	usage += formatString("The administration of the archive is carried out by the siaadmin command-line interface.", _width) + "\n";
-	*/
-	usage = formatString(command_header, _width) + "\n";
+	usage += usageDescriptionHeader(_width);
+	
+	usage += formatString(command_header, _width) + "\n";
 	usage += '\n';
 	usage += AVAILABLE_COMMANDS;
-	usage += ":\n";
+	usage += ":\n\n";
 
 	for (Key2AttributeMap::const_iterator it = option2attribute.begin();
 		it != option2attribute.end();
@@ -700,73 +716,23 @@ string ArgvParser::usageDescription(unsigned int _width) const
 			_os += ')';
 		}
 		_os += " : ";
-		usage += formatString(_os, _width) + "\n";
+		usage += formatLine(_os, _width, 0, 20);
 		_os.clear();
 		_longOpt.clear();
 		_shortOpt.clear();
 		if (option2descr.find(it->first) != option2descr.end())
-		usage += formatString(option2descr.find(it->first)->second, _width, 4) + "\n\n";
+		//usage += formatString(option2descr.find(it->first)->second, _width, _os.length() + 2) + "\n";
+		usage += formatString(option2descr.find(it->first)->second, _width) + "\n";
 		else
-		usage += formatString("(no description)", _width, 4) + "\n\n";
+		usage += formatString("(no description)", _width, 4) + "\n";
 		
 	}
 	
-	/*
-	//printf("%s\n", usage.c_str());
-    // loop over all option attribute entries (which equals looping over all
-    // different options (not option names)
-    for (Key2AttributeMap::const_iterator it = option2attribute.begin();
-            it != option2attribute.end();
-            ++it)
-    {
-        string os; // temp string for the option
-
-        // get the list of alternative names for this option
-        list<string> alternatives = getAllOptionAlternatives(it->first);
-
-        unsigned int count = 0;
-        for( list<string>::const_iterator alt = alternatives.begin();
-                alt != alternatives.end();
-                ++alt )
-        {
-            ++count;
-			if (option2attribute.find(it->first)->second == MasterOption) {
-				continue;
-			}
-            // additional '-' for long options
-            if (alt->length() > 1)
-                os += "-";
-
-            os += "-" + *alt;
-
-            // note if the option requires a value
-            if (option2attribute.find(it->first)->second & OptionRequiresValue)
-                os += " <value>";
-
-            // alternatives to come?
-            if (count < alternatives.size())
-                os += ", "; // add separator
-        }
-
-        // note if the option is required
-        if (option2attribute.find(it->first)->second & OptionRequired)
-            os += " [required]";
-
-        usage += formatString(os, _width) + "\n";
-
-        if (option2descr.find(it->first) != option2descr.end())
-            usage += formatString(option2descr.find(it->first)->second, _width, 4);
-        else
-            usage += formatString("(no description)", _width, 4);
-
-        // finally a little gap
-        usage += "\n\n";
-    }
-	*/
+	
     if (!errorcode2descr.size()) // if have no errorcodes
         return(usage);
 
-    usage += formatString("Return codes:\n", _width) + "\n";
+    usage += formatString("\nReturn codes:\n", _width) + "\n";
 
     //   map<int, string>::const_iterator eit;
     for( std::map<int, std::string>::const_iterator alt = errorcode2descr.begin();
@@ -781,7 +747,7 @@ string ArgvParser::usageDescription(unsigned int _width) const
     }
 	usage += '\n';
 	usage += "Image Archive is a tool for image archiving and version control system.\n";
-	usage += "For additional information, see \"http://www.imgarchive.com/\"";
+	usage += "For additional information, see \"http://www.idk-software.com/\"";
 	usage += '\n';
     return(usage);
 }
@@ -890,6 +856,53 @@ string ArgvParser::topicUsageDescription(unsigned int topic, unsigned int _width
 	return(usage);
 }
 
+bool ArgvParser::matchOption(unsigned int topic, const char *option) const
+{
+	string _longOpt;
+	string _shortOpt;
+
+	auto topicObj = command_set.find(topic);
+	if (topicObj == command_set.end()) {
+		return false;
+	}
+	ArgumentContainer ac = topicObj->second;
+
+	for (vector<string>::const_iterator opt = ac.begin(); opt != ac.end(); opt++) {
+		//printf("%s\n", opt->c_str());
+		unsigned int key = option2key.find(opt->c_str())->second;
+		list<string> alternatives = getAllOptionAlternatives(key);
+		for (list<string>::const_iterator alt = alternatives.begin();
+			alt != alternatives.end();
+			++alt)
+		{
+			int option = option2attribute.find(key)->second;
+			
+			if (alt->length() > 1) {
+
+				_longOpt += *alt;
+			}
+			else {
+				_shortOpt += *alt;
+			}
+		}
+
+		if (!_longOpt.empty()) {
+			if (_longOpt.compare(option) == 0) {
+				return true;
+			}
+		}
+		if (!_shortOpt.empty()) {
+			if (_shortOpt.compare(option) == 0) {
+				return true;
+			}
+		}
+		_longOpt.clear();
+		_shortOpt.clear();
+
+		
+	}
+	return false;
+}
 
 const string& ArgvParser::errorOption( ) const
 {
@@ -978,10 +991,18 @@ bool ArgvParser::defineCommandOption(const string & _command,
 		ArgumentContainer ac;
 		ac.push_back(_attrs);
 		command_set[key] = ac;
+		/*
+		for (vector<string>::iterator opt = ac.begin(); opt != ac.end(); opt++) {
+			std::string s = *opt;
+			printf("%s", s.c_str());
+		}
+		*/
 	}
 	else {
 		ii->second.push_back(_attrs);
+		
 	}
+	
 	return false;
 }
 
@@ -1321,5 +1342,45 @@ std::string CommandLineProcessing::formatString(const std::string& _string,
 	}
 
     return(formated);
+}
+
+std::string CommandLineProcessing::formatLine(const std::string& _string,
+	unsigned int _width,
+	unsigned int _indent,
+	unsigned int _padend)
+{
+	// if insane parameters do nothing
+	if (_indent >= _width)
+		return(_string);
+
+	
+
+	// current position in the string
+	unsigned int pos = 0;
+
+	// till the end of the string
+	
+	std::string line = _string;
+
+	// remove unecessary whitespace at front and back
+	line = trimmedString(line);
+	
+	if (!line.empty())
+	{
+		if (_indent)
+			line.insert(0, _indent, ' ');
+	}
+	
+	if (_padend != 0) {
+		if (line.length() < _padend) {
+			int psize = _padend - line.length();
+			for (int i = 0; i < psize; i++) {
+				line += ' ';
+			}
+		}
+
+	}
+
+	return line;
 }
 

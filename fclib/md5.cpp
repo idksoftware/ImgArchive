@@ -340,7 +340,11 @@ std::string MD5::hexdigest() const
 
   char buf[34];
   for (int i=0; i<16; i++)
+#ifdef _WIN32
     sprintf_s(buf+i*2, 34-i*2, "%02x", digest[i]);
+#else
+  sprintf(buf+i*2, "%02x", digest[i]);
+#endif
   buf[32]=0;
 
   return std::string(buf);

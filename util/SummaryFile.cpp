@@ -41,8 +41,9 @@
 #include <iostream>
 #include <sstream>
 #include <cstdarg>
+#include "SAUtils.h"
 #include "SummaryFile.h"
-#include "EXifDateTime.h"
+#include "ExifDateTime.h"
 #include "UDPOut.h";
 
 #ifdef _DEBUG
@@ -122,20 +123,20 @@ void SummaryFile::doMessage(Level level, Action action, const char *message) {
 }
 
 void SummaryFile::doSummary() {
-	char message[256];
+	std::string message;
 
-	sprintf_s(message, 256, "Added: %d", m_added);
-	doMessage(SF_BRIEF, SF_TOTAL, message);
-	sprintf_s(message, 256, "Rejected: %d", m_rejected);
-	doMessage(SF_BRIEF, SF_TOTAL, message);
-	sprintf_s(message, 256, "Duplicates: %d", m_duplicates);
-	doMessage(SF_BRIEF, SF_TOTAL, message);
-	sprintf_s(message, 256, "Exported: %d", m_exported);
-	doMessage(SF_BRIEF, SF_TOTAL, message);
-	sprintf_s(message, 256, "Checked in: %d", m_checkedIn);
-	doMessage(SF_BRIEF, SF_TOTAL, message);
-	sprintf_s(message, 256, "Checked out: %d", m_chectedOut);
-	doMessage(SF_BRIEF, SF_TOTAL, message);
+	message = SAUtils::sprintf("Added: %d", m_added);
+	doMessage(SF_BRIEF, SF_TOTAL, message.c_str());
+	message = SAUtils::sprintf("Rejected: %d", m_rejected);
+	doMessage(SF_BRIEF, SF_TOTAL, message.c_str());
+	message = SAUtils::sprintf("Duplicates: %d", m_duplicates);
+	doMessage(SF_BRIEF, SF_TOTAL, message.c_str());
+	message = SAUtils::sprintf("Exported: %d", m_exported);
+	doMessage(SF_BRIEF, SF_TOTAL, message.c_str());
+	message = SAUtils::sprintf("Checked in: %d", m_checkedIn);
+	doMessage(SF_BRIEF, SF_TOTAL, message.c_str());
+	message = SAUtils::sprintf("Checked out: %d", m_chectedOut);
+	doMessage(SF_BRIEF, SF_TOTAL, message.c_str());
 
 }
 
@@ -146,7 +147,7 @@ void SummaryFile::log(Level level, Action action, const char *format, ...) {
 	char message[256];
 	va_list args;
 	va_start(args, format);
-	vsprintf_s(message, 256, format, args);
+	vsnprintf(message, 256, format, args);
 	doMessage(level, action, message);
 	va_end(args);
 

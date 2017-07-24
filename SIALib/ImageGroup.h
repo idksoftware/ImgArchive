@@ -39,8 +39,8 @@
 #include "ImageContainer.h"
 
 namespace simplearchive {
-class BasicExif;
-class BasicExifFactory;
+class BasicMetadata;
+class BasicMetadataFactory;
 /// This is a group of images. This Images them self are groups within a Image
 /// Container, i.e a jpg/RAW pair.
 /// A list is normally a folder of images.
@@ -49,7 +49,7 @@ class ImageGroup : public std::vector<ImageContainer *> {
 	std::string m_path;
 public:
 	ImageGroup(const char *path);
-	ImageContainer &add(std::unique_ptr<BasicExif>& basicExif, std::unique_ptr<MetadataObject>& metadataObject);
+	ImageContainer &add(std::unique_ptr<BasicMetadata>& BasicMetadata, std::unique_ptr<MetadataObject>& metadataObject);
 	bool addMetadata(const char *filename);
 	virtual ~ImageGroup();
 	void print() {

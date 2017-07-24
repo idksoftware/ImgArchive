@@ -27,11 +27,11 @@ namespace simplearchive {
 		virtual bool process(const char *file, ReportStatus &status, const char *orginal = nullptr);
 	};
 
-	class ValidateAndRepairingShadowObject : public ValidateReportingObject {
+	class ValidateAndRepairingMasterObject : public ValidateReportingObject {
 		std::string m_archivePath;
 		std::string m_workspacePath;
 	public:
-		ValidateAndRepairingShadowObject(const char *archivePath, const char *workspacePath);
+		ValidateAndRepairingMasterObject(const char *archivePath, const char *workspacePath);
 		virtual bool process(const char *file, ReportStatus &status, const char *orginal = nullptr);
 	};
 

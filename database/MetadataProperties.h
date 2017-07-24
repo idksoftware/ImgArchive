@@ -5,8 +5,8 @@
  *      Author: wzw7yn
  */
 
-#ifndef DBDEFINES_H_
-#define DBDEFINES_H_
+#ifndef METADATA_PROPERTIES_H_
+#define METADATA_PROPERTIES_H_
 
 //namespace simplearchive {
 #define TABLE_METADATA			"metadata"
@@ -61,4 +61,4 @@
 #define DB_USAGERIGHTS     "UsageRights"
 #define DB_VIEWROTATION    "ViewRotation"
 #define DB_WIDTH           "Width"
-#endif /* DBDEFINES_H_ */
+#endif /* METADATA_PROPERTIES_H_ */

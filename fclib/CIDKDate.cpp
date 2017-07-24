@@ -77,7 +77,8 @@ void CIDKDate::Print(FILE *fp)
 	
 	char szDate[16];
 	CIDKLocalTime lt;
-	strftime (szDate, 16, "%Y%m%d", lt.GetTime((const time_t *)&m_nTime));
+	struct tm tmp = lt.GetTime((const time_t *)&m_nTime);
+	strftime (szDate, 16, "%Y%m%d", &tmp);
 
 	fwrite(szDate, 1, 16, fp);
 }
@@ -467,7 +468,8 @@ std::string CIDKDate::Format(const char *szFormat)
 {
 	char szDate[161];
 	CIDKLocalTime lt;
-	strftime (szDate, 160, szFormat, lt.GetTime((const time_t *)&m_nTime));
+	struct tm tmp = lt.GetTime((const time_t *)&m_nTime);
+	strftime (szDate, 160, szFormat, &tmp);
 	std::string l_Str = szDate;
 	return l_Str;
 }

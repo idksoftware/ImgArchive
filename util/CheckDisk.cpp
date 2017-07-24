@@ -47,6 +47,7 @@
 #include "CLogger.h"
 #include "ExifDateTime.h"
 #include "CSVArgs.h"
+#include "ErrorCode.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -196,17 +197,17 @@ public:
 		
 		std::string md5Str;
 
-		logger.log(LOG_OK, CLogger::INFO, "Image: %s", filepath);
+		logger.log(LOG_OK, CLogger::Level::INFO, "Image: %s", filepath);
 		std::string buf;
 		SAUtils::getFileContents(filepath, buf);
 		MD5 md5(buf);
 		md5Str = md5.hexdigest();
-		logger.log(LOG_OK, CLogger::INFO, "MD5 of image: %s is %s", filepath, md5Str.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "MD5 of image: %s is %s", filepath, md5Str.c_str());
 
 		CIDKCrc Crc;
-		logger.log(LOG_OK, CLogger::INFO, "Size of image: %s is %d", filepath, size);
+		logger.log(LOG_OK, CLogger::Level::INFO, "Size of image: %s is %d", filepath, size);
 		crc = Crc.crc((unsigned char *)buf.c_str(), size);
-		logger.log(LOG_OK, CLogger::INFO, "CRC from image: %s is %x", filepath, crc);
+		logger.log(LOG_OK, CLogger::Level::INFO, "CRC from image: %s is %x", filepath, crc);
 
 		time_t created = SAUtils::createTime(filepath);
 		//logger.log(LOG_OK, CLogger::INFO, "Create time of image: %s", created.toLogString().c_str());
@@ -383,15 +384,11 @@ public:
 class CkdskDataContainer : public std::vector<CkdskData> {};
 
 class CkdskManifestFile {
-	CkdskDataContainer *m_data;
+	std::unique_ptr<CkdskDataContainer> m_data;
 	void insert(int crc, std::string);
 public:
-	CkdskManifestFile() {
-		m_data = new CkdskDataContainer;
-	};
-	virtual ~CkdskManifestFile() {
-		delete m_data;
-	};
+	CkdskManifestFile() : m_data(std::make_unique<CkdskDataContainer>()) {};
+	virtual ~CkdskManifestFile() {};
 
 	bool read(const char *datafile);
 	/// Write the manifest file
@@ -401,40 +398,44 @@ public:
 	//bool add(const char *name, int crc, const char *md5);
 	int find(int crc, const char *md5, const char *datafile);
 	CkdskData *findFile(const char *filename);
+	//std::shared_ptr<CkdskData> findFile(const char *filename);
+	bool isFileFound(const char *filename);
 	bool add(const char *filepath, const char *name);
 
-	CkdskDataContainer*& getData() {
-		return m_data;
+	CkdskDataContainer& getData() {
+		return *m_data;
 	}
 
 };
 
 bool CkdskManifestFile::add(const char *filepath, const char *name) {
-	CkdskData *ckdskData = 0;
-	if ((ckdskData = findFile(name)) == 0) {
+	
+	if (!isFileFound(name)) {
 		CLogger &logger = CLogger::getLogger();
 
-		logger.log(LOG_OK, CLogger::INFO, "Image: %s", name);
+		logger.log(LOG_OK, CLogger::Level::INFO, "Image: %s", name);
 		unsigned long size;
 		if (SAUtils::fileSize(filepath, &size) == false) {
 			// Log error
 		}
-		logger.log(LOG_OK, CLogger::INFO, "Size of image: %s is %d", filepath, size);
+		logger.log(LOG_OK, CLogger::Level::INFO, "Size of image: %s is %d", filepath, size);
 		CIDKCrc Crc;
-		logger.log(LOG_OK, CLogger::INFO, "Image: %s", filepath);
+		logger.log(LOG_OK, CLogger::Level::INFO, "Image: %s", filepath);
 		std::string buf;
 		SAUtils::getFileContents(filepath, buf);
 		MD5 md5(buf);
 		std::string md5Str = md5.hexdigest();
-		logger.log(LOG_OK, CLogger::INFO, "MD5 of image: %s is %s", filepath, md5Str.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "MD5 of image: %s is %s", filepath, md5Str.c_str());
 		unsigned int crc = Crc.crc((unsigned char *)buf.c_str(), size);
-		logger.log(LOG_OK, CLogger::INFO, "CRC from image: %s is %x", filepath, crc);
+		logger.log(LOG_OK, CLogger::Level::INFO, "CRC from image: %s is %x", filepath, crc);
 		
 		time_t created = SAUtils::createTime(filepath);
 		//logger.log(LOG_OK, CLogger::INFO, "Create time of image: %s", m_createTime.toLogString().c_str());
 		time_t modified = SAUtils::modTime(filepath);
-		ckdskData = new CkdskData(name, size, crc, md5Str.c_str(), created, modified);
-		m_data->insert(m_data->end(), *ckdskData);
+		
+		// old m_data->insert(m_data->end(), *ckdskData);
+		// new
+		m_data->emplace(m_data->end(), name, size, crc, md5Str.c_str(), created, modified);
 		return true;
 	}
 	return false;
@@ -499,6 +500,18 @@ int CkdskManifestFile::find(int crc, const char *md5, const char *datafile) {
 	return false;
 }
 
+bool CkdskManifestFile::isFileFound(const char *filename) {
+	int n = 0;
+	for (std::vector<CkdskData>::iterator i = m_data->begin(); i != m_data->end(); i++, n++) {
+		CkdskData &data = *i;
+		if (data.getName().compare(filename) == 0) {
+			return true;
+		}
+	}
+	return false;
+}
+
+
 CkdskData *CkdskManifestFile::findFile(const char *filename) {
 	int n = 0;
 	for (std::vector<CkdskData>::iterator i = m_data->begin(); i != m_data->end(); i++, n++) {
@@ -510,6 +523,23 @@ CkdskData *CkdskManifestFile::findFile(const char *filename) {
 	return 0;
 }
 
+
+/*
+std::shared_ptr<CkdskData> CkdskManifestFile::findFile(const char *filename) {
+	int n = 0;
+	for (std::vector<CkdskData>::iterator i = m_data->begin(); i != m_data->end(); i++, n++) {
+		CkdskData &data = *i;
+		
+		if (data.getName().compare(filename) == 0) {
+			//CkdskData *ptr = &data;
+			std::shared_ptr<CkdskData> datap;
+			datap.reset(&data);
+			return datap;
+		}
+	}
+	return nullptr;
+}
+*/
 
 /*
  * This class puts the Ckhdsk data into a map to
@@ -589,21 +619,21 @@ bool CkdskDiffFile::add(const char *filepath, const char *name) {
 	if ((ckdskData = findFile(name)) == 0) {
 		CLogger &logger = CLogger::getLogger();
 		
-		logger.log(LOG_OK, CLogger::INFO, "Image: %s", filepath);
+		logger.log(LOG_OK, CLogger::Level::INFO, "Image: %s", filepath);
 		unsigned long size;
 		if (SAUtils::fileSize(filepath, &size) == false) {
 			// Log error
 		}
-		logger.log(LOG_OK, CLogger::INFO, "Size of image: %s is %d", filepath, size);
+		logger.log(LOG_OK, CLogger::Level::INFO, "Size of image: %s is %d", filepath, size);
 		CIDKCrc Crc;
-		logger.log(LOG_OK, CLogger::INFO, "Image: %s", filepath);
+		logger.log(LOG_OK, CLogger::Level::INFO, "Image: %s", filepath);
 		std::string buf;
 		SAUtils::getFileContents(filepath, buf);
 		MD5 md5(buf);
 		std::string md5Str = md5.hexdigest();
-		logger.log(LOG_OK, CLogger::INFO, "MD5 of image: %s is %s", filepath, md5Str.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "MD5 of image: %s is %s", filepath, md5Str.c_str());
 		unsigned int crc = Crc.crc((unsigned char *)buf.c_str(), size);
-		logger.log(LOG_OK, CLogger::INFO, "CRC from image: %s is %x", filepath, crc);
+		logger.log(LOG_OK, CLogger::Level::INFO, "CRC from image: %s is %x", filepath, crc);
 		
 		time_t created = SAUtils::createTime(filepath);
 		//logger.log(LOG_OK, CLogger::INFO, "Create time of image: %s", m_createTime.toLogString().c_str());
@@ -652,6 +682,7 @@ CkdskData::Status CkdskDiffFile::find(unsigned int crc, const char *md5, const c
 
 void CheckDisk::setArchivePath(const char *archivePath) {
 	m_archivePath = archivePath;
+	
 }
 
 
@@ -782,8 +813,8 @@ bool CheckDisk::makeXML(const char *targetdir) {
 					<<	"<FileList>\n";
 
 
-	CkdskDataContainer*& list = ckdskDataFile.getData();
-	for (std::vector<CkdskData>::iterator i = list->begin(); i != list->end(); i++) {
+	CkdskDataContainer& list = ckdskDataFile.getData();
+	for (std::vector<CkdskData>::iterator i = list.begin(); i != list.end(); i++) {
 		CkdskData &data = *i;
 		std::string filepath = targetdirStr + "/" + data.getName();
 		std::string checkedOut = (data.getCheckedOut()) ? "True" : "";
@@ -908,7 +939,7 @@ bool CheckDisk::check(const char *targetdir, const char *checkFilePath, const ch
 				// Log error
 			}
 			CIDKCrc Crc;	
-			logger.log(LOG_OK, CLogger::INFO, "Image: %s", filepath.c_str());
+			logger.log(LOG_OK, CLogger::Level::INFO, "Image: %s", filepath.c_str());
 			
 			
 			std::string buf;
@@ -987,8 +1018,8 @@ bool CheckDisk::showCheckedOut(const char *filePath, SimpleImageList &imageList)
 	if (ckdskManifestFile.read(fpath.c_str()) == false) {
 		return false;
 	}
-	CkdskDataContainer *datacontainer = ckdskManifestFile.getData();
-	for (std::vector<CkdskData>::iterator i = datacontainer->begin(); i != datacontainer->end(); i++) {
+	CkdskDataContainer& datacontainer = ckdskManifestFile.getData();
+	for (auto i = datacontainer.begin(); i != datacontainer.end(); i++) {
 		CkdskData &data = *i;
 		if (data.getCheckedOut() == true) {
 			imageList.push_back(data.getName());
@@ -998,16 +1029,55 @@ bool CheckDisk::showCheckedOut(const char *filePath, SimpleImageList &imageList)
 	return true;
 }
 
+bool CheckDisk::ischeckedOut(const char *filePath, const char *image) {
+	CkdskManifestFile ckdskManifestFile;
+	// read the manifest file
+	if (ckdskManifestFile.read(filePath) == false) {
+		ErrorCode::setErrorCode(SIA_ERROR::IMAGE_NOT_FOUND);
+		return false;
+	}
+	CkdskData* data = ckdskManifestFile.findFile(image);
+	if (data == nullptr) {
+		ErrorCode::setErrorCode(SIA_ERROR::IMAGE_NOT_FOUND);
+		return false;
+	}
+	if (data->getCheckedOut() == true) {
+		return true; // already checked out
+	}
+	return false;
+}
 
+
+unsigned int CheckDisk::getCrc(const char *filePath, const char *image) {
+	CkdskManifestFile ckdskManifestFile;
+	// read the manifest file
+	if (ckdskManifestFile.read(filePath) == false) {
+		ErrorCode::setErrorCode(SIA_ERROR::READ_ERROR);
+		return 0;
+	}
+	CkdskData* data = ckdskManifestFile.findFile(image);
+	if (data == nullptr) {
+		ErrorCode::setErrorCode(SIA_ERROR::IMAGE_NOT_FOUND);
+		return 0;
+	}
+	unsigned int crc = data->getCrc();	
+	return crc;
+}
 
 bool CheckDisk::checkout(const char *filePath, const char *image) {
 	CkdskManifestFile ckdskManifestFile;
 	// read the manifest file
 	if (ckdskManifestFile.read(filePath) == false) {
+		ErrorCode::setErrorCode(SIA_ERROR::READ_ERROR);
 		return false;
 	}
-	CkdskData *data = ckdskManifestFile.findFile(image);
+	CkdskData* data = ckdskManifestFile.findFile(image);
+	if (data == nullptr) {
+		ErrorCode::setErrorCode(SIA_ERROR::IMAGE_NOT_FOUND);
+		return false;
+	}
 	if (data->getCheckedOut() == true) {
+		ErrorCode::setErrorCode(SIA_ERROR::ALREADY_CHECKED_OUT);
 		return false; // already checked out
 	}
 	data->setCheckedOut(true);
@@ -1016,6 +1086,7 @@ bool CheckDisk::checkout(const char *filePath, const char *image) {
 	int pos = path.find_last_of('/');
 	path = path.substr(0, pos);
 	if (makeXML(path.c_str()) == false) {
+		ErrorCode::setErrorCode(SIA_ERROR::XML_WRITE_ERROR);
 		return false;
 	}
 	return true;
@@ -1025,7 +1096,11 @@ bool CheckDisk::checkin(const char *filePath, const char *image) {
 	CkdskManifestFile ckdskManifestFile;
 	// read the manifest file
 	ckdskManifestFile.read(filePath);
-	CkdskData *data = ckdskManifestFile.findFile(image);
+	CkdskData* data = ckdskManifestFile.findFile(image);
+	if (data == nullptr) {
+		ErrorCode::setErrorCode(SIA_ERROR::IMAGE_NOT_FOUND);
+		return false;
+	}
 	if (data->getCheckedOut() == false) {
 		return false; // already checked in
 	}

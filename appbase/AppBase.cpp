@@ -1,5 +1,7 @@
 #include "stdio.h"
+#include <iostream>
 #include "AppBase.h"
+
 
 namespace CommandLineProcessing {
 	
@@ -9,35 +11,31 @@ namespace CommandLineProcessing {
 	{
 	}
 
-	bool AppBase::initaliseArgs(int argc, char **argv) {
-		return doInitalise(argc, argv);
+	bool AppBase::initalise(int argc, char **argv) {
+
+		
+
+		if (initaliseConfig() == false) {
+			return false;
+		}
+		if (initaliseArgs(argc, argv) == false) {
+			return false;
+		}
+		return true;
 	};
 
 	
 
 	bool AppBase::Run()
 	{
-		// Find if the archive exists
-		/*
-		AppOptions &appOptions = AppOptions::get();
-		if (appOptions.isConfiguratedOk() == false) {
-			if (appOptions.getCommandMode() == AppOptions::CM_Show) {
-				Show();
-				return false;
-			}
-			if (appOptions.getCommandMode() == AppOptions::CM_InitArchive) {
-
-				if (CreateArchive(appOptions.getHomePath(), appOptions.getWorkspacePath(), appOptions.getShadowPath(), appOptions.getUsers()) == false) {
-					return false;
-				}
-				printf("\n\Completed initalising the Archive\n");
-				return true;
-			}
-			return false;
+		bool ret = doRun();
+		if (ret == false) {
+			std::cout << getFullErrorString() << '\n';
 		}
-		*/
-		return true;
+		return ret;
 	}
 
-	
+	int AppBase::m_error;
+	std::string AppBase::m_errorstring;
+
 }

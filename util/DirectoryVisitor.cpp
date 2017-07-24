@@ -76,13 +76,13 @@ class DirNode {
 	FolderVisitor *m_folderVisitor;
 	bool m_deleteFolderVisitor;
 public:
-	DirNode(DirNode *dirNode, const char *dirpath, bool deleteFolderVisitor) {
+	DirNode(DirNode *dirNode, const char *dirpath, bool deleteFolderVisitor = false) {
 		m_dirNode = dirNode;
 		m_dirpath = dirpath;
 		m_deleteFolderVisitor = deleteFolderVisitor;
 		m_folderVisitor = 0;
 	}
-	DirNode(DirNode *dirNode, const char *dirpath, FolderVisitor *folderVisitor, bool deleteFolderVisitor) {
+	DirNode(DirNode *dirNode, const char *dirpath, FolderVisitor *folderVisitor, bool deleteFolderVisitor = false) {
 		m_dirNode = dirNode;
 		m_dirpath = dirpath;
 		m_deleteFolderVisitor = deleteFolderVisitor;

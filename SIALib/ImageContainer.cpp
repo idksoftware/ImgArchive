@@ -42,8 +42,8 @@
 #include "SAUtils.h"
 #include "CDate.h"
 #include "CLogger.h"
-#include "BasicExifFactory.h"
-#include "BasicExif.h"
+#include "BasicMetadataFactory.h"
+#include "BasicMetadata.h"
 
 namespace simplearchive {
 
@@ -60,7 +60,7 @@ ImageContainer::ImageContainer(const char *path, const char *imageName) {
 	m_RawNode = nullptr;
 	m_Path = path;
 	m_Name = imageName;
-	m_basicExif = nullptr;
+	m_BasicMetadata = nullptr;
 	m_Time = -1;
 	m_error = 0;
 }
@@ -83,29 +83,29 @@ ImageContainer::~ImageContainer() {
 
 
 
-bool ImageContainer::add(std::unique_ptr<BasicExif> &basicExif, std::unique_ptr<MetadataObject>& metadataObject) {
+bool ImageContainer::add(std::unique_ptr<BasicMetadata> &BasicMetadata, std::unique_ptr<MetadataObject>& metadataObject) {
 	CLogger &logger = CLogger::getLogger();
 
 	//
-	const char *imagefile = basicExif->getName().c_str();
+	const char *imagefile = BasicMetadata->getName().c_str();
 	ImageExtentions &imageExtentions = ImageExtentions::get();
 	ImageType type = imageExtentions.getType(imagefile);
 	switch (type.getType()) {
 	// Found Picture Image
 	case ImageType::PICTURE_EXT:
-		logger.log(LOG_OK, CLogger::INFO, "found pic: %s", imagefile);
+		logger.log(LOG_OK, CLogger::Level::INFO, "found pic: %s", imagefile);
 		if (m_PictureNode == nullptr) {
 			/* not sure needed
-			if (basicExif->isExifFound()) {
-				const ExifDateTime &dateTime = basicExif->getDateTimeDigitized();
+			if (BasicMetadata->isExifFound()) {
+				const ExifDateTime &dateTime = BasicMetadata->getDateTimeDigitized();
 				logger.log(LOG_OK, CLogger::INFO, "Using Exif date: %d ", ((ExifDateTime&)dateTime).toString().c_str());
 				m_Time = dateTime.getTime();
 			}
 			*/
-			logger.log(LOG_OK, CLogger::SUMMARY, "Associating: %s with %s", imagefile, m_Name.c_str());
-			m_PictureNode = new ImageNode(type, basicExif, metadataObject);
+			logger.log(LOG_OK, CLogger::Level::SUMMARY, "Associating: %s with %s", imagefile, m_Name.c_str());
+			m_PictureNode = new ImageNode(type, BasicMetadata, metadataObject);
 		}
-		//m_PictureNode->setImageId(basicExif, metadataObject);
+		//m_PictureNode->setImageId(BasicMetadata, metadataObject);
 		
 		
 
@@ -113,7 +113,7 @@ bool ImageContainer::add(std::unique_ptr<BasicExif> &basicExif, std::unique_ptr<
 		else {
 			struct stat info;
 
-			if (stat(((BasicExifFactory *)imageId)->getPath().c_str(), &info) != 0) {
+			if (stat(((BasicMetadataFactory *)imageId)->getPath().c_str(), &info) != 0) {
 				return false;
 			}
 		}
@@ -123,10 +123,10 @@ bool ImageContainer::add(std::unique_ptr<BasicExif> &basicExif, std::unique_ptr<
 	// Found RAW Image
 	case ImageType::RAW_EXT:
 	
-		logger.log(LOG_OK, CLogger::INFO, "found raw: %s", imagefile);
+		logger.log(LOG_OK, CLogger::Level::INFO, "found raw: %s", imagefile);
 		if (m_RawNode == nullptr) {
-			logger.log(LOG_OK, CLogger::SUMMARY, "Associating: %s with %s", imagefile, m_Name.c_str());
-			m_RawNode = new ImageNode(type, basicExif, metadataObject);
+			logger.log(LOG_OK, CLogger::Level::SUMMARY, "Associating: %s with %s", imagefile, m_Name.c_str());
+			m_RawNode = new ImageNode(type, BasicMetadata, metadataObject);
 		}
 		//m_RawNode->setImageId(imageId, metadataObject);
 		
@@ -134,7 +134,7 @@ bool ImageContainer::add(std::unique_ptr<BasicExif> &basicExif, std::unique_ptr<
 		break;
 	case ImageType::UNKNOWN_EXT:
 	default:
-		logger.log(LOG_OK, CLogger::ERR, "No extention found for this file type %s", imagefile);
+		logger.log(LOG_OK, CLogger::Level::ERR, "No extention found for this file type %s", imagefile);
 		m_error = -1;
 		return false;
 	}
@@ -146,9 +146,9 @@ void ImageContainer::PostProcess() {
 	
 	
 	if (m_PictureNode != nullptr) {
-		m_basicExif = &(m_PictureNode->getBasicExif());
+		m_BasicMetadata = &(m_PictureNode->getBasicMetadata());
 	} else if (m_RawNode != nullptr) {
-		m_basicExif = &(m_RawNode->getBasicExif());
+		m_BasicMetadata = &(m_RawNode->getBasicMetadata());
 	}
 	else {
 		// Error
@@ -224,19 +224,19 @@ void ImageContainer::PostProcess() {
 void ImageContainer::print() {
 	CLogger &logger = CLogger::getLogger();
 	
-	logger.log(LOG_OK, CLogger::FINE, "Item Name: %s\n", m_Name.c_str());
+	logger.log(LOG_OK, CLogger::Level::FINE, "Item Name: %s\n", m_Name.c_str());
 	if (hasPictureFile()) {
-		logger.log(LOG_OK, CLogger::FINE, "PictureFile: %s\n", m_PictureNode->getFile());
+		logger.log(LOG_OK, CLogger::Level::FINE, "PictureFile: %s\n", m_PictureNode->getFile());
 	}
 	else
 	{
-		logger.log(LOG_OK, CLogger::FINE, "No Picture File");
+		logger.log(LOG_OK, CLogger::Level::FINE, "No Picture File");
 	}
 	if (hasRawFile()) {
-		logger.log(LOG_OK, CLogger::FINE, "Has RAW File: %s\n", m_RawNode->getFile());
+		logger.log(LOG_OK, CLogger::Level::FINE, "Has RAW File: %s\n", m_RawNode->getFile());
 	}
 	else {
-		logger.log(LOG_OK, CLogger::FINE, "No RAW File");
+		logger.log(LOG_OK, CLogger::Level::FINE, "No RAW File");
 	}
 }
 
@@ -248,19 +248,19 @@ void ImageNode::setMetadataObject(const MetadataObject& metadataObject) {
 	m_metadataObject->update(metadataObject);
 }
 /*
-void ImageNode::setImageId(const BasicExifFactory*& imageId, const MetadataObject *metadataObject) {
+void ImageNode::setImageId(const BasicMetadataFactory*& imageId, const MetadataObject *metadataObject) {
 	m_imageId = imageId;
 	m_metadataObject = metadataObject;
 	if (m_metadataObject != nullptr) {
 		MetadataObject &mo = (MetadataObject &)*metadataObject;
-		BasicExifFactory *id = (BasicExifFactory *)imageId;
+		BasicMetadataFactory *id = (BasicMetadataFactory *)imageId;
 		setImageID2Metadata(id, mo);
 	}
 }
 */
 
 /*
-void ImageNode::setImageID2Metadata(BasicExifFactory *imageIdData, MetadataObject &metadataObject) {
+void ImageNode::setImageID2Metadata(BasicMetadataFactory *imageIdData, MetadataObject &metadataObject) {
 	
 	
 	imageIdData->setMetadataObject(metadataObject);
@@ -273,8 +273,8 @@ void ImageNode::setMetadataObject(
 	m_metadataObject = metadataObject;
 	if (m_metadataObject != nullptr) {
 		MetadataObject &mo = (MetadataObject &)*metadataObject;
-		//BasicExifFactory *id = (BasicExifFactory *)m_basicExif;
-		//setImageID2Metadata(m_basicExif, mo);
+		//BasicMetadataFactory *id = (BasicMetadataFactory *)m_BasicMetadata;
+		//setImageID2Metadata(m_BasicMetadata, mo);
 	}
 }
 */

@@ -4,9 +4,13 @@
 #include <cstdarg>
 #include <iostream>
 #include "UDPOut.h"
-#include <Ws2tcpip.h>
 #include <stdio.h>
+#ifdef _WIN32
+#include <Ws2tcpip.h>
 #include <winsock2.h>
+#else
+#define SOCKET_ERROR -1
+#endif
 
 #pragma comment(lib,"ws2_32.lib") //Winsock Library
 
@@ -102,7 +106,11 @@ bool UDPOut::init() {
 	memset((char *)&m_si_other, 0, sizeof(m_si_other));
 	m_si_other.sin_family = AF_INET;
 	m_si_other.sin_port = htons(m_port);
+#ifdef _WIN32
 	m_si_other.sin_addr.S_un.S_addr = inet_addr(m_address);
+#else
+	m_si_other.sin_addr.s_addr = inet_addr(m_address);
+#endif
 	int recv_len;
 	//start communication
 	return true;
@@ -151,6 +159,9 @@ bool UDPOut::out(const char *out) {
 
 UDPOut::~UDPOut()
 {
+#ifdef _WIN32
 	closesocket(m_socketId);
-	
+#else
+	close(m_socketId);
+#endif
 }

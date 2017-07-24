@@ -32,57 +32,56 @@
 **
 ** #$$@@$$# */
 
-#ifndef IMAGEHISTORY_H_
-#define IMAGEHISTORY_H_
+#pragma once
+
+#include <string>
 #include <vector>
 #include <memory>
-#include "ImageHistoryLog.h"
+#include "HistoryEvent.h"
+#include "CDate.h"
 
 namespace simplearchive {
 
-class ImageHistoryItem;
-class HistoryEvent;
+#define HISTORY_FILE "history.dat"
 class EventList;
+class CDate;
+class HistoryLog;
+
 /**
-This is the rolling system history log.
+	This is the Image only log for one image.
+	The history normaly will end in <imagename>.<ext>.hst
 */
+class HistoryItem;
+class ArchivePath;
 class ImageHistory {
-public:
 
 private:
-
-	bool read(const char *filepath);
-	bool write(const char *filepath);
-	EventList *m_eventList;
+	static std::string m_workspace;
+	static std::string m_index;
 	
-	static ImageHistory *m_this;
-	static std::ofstream m_hstfile;
-	static std::string m_primary;
-	static std::string m_backup1;
-	static std::string m_backup2;
-	static std::string m_shadow;
-	static std::string m_filename;
 	ImageHistory(const ImageHistory&);
-	ImageHistory& operator = (const ImageHistory&) { return *this; }
-	ImageHistory();
-	bool add(ImageHistoryItem &historyItem, const char *historyFile);
+	ImageHistory& operator = (const ImageHistory&) { return *this; };
+	
+	bool writeLog(HistoryItem &item, const char *path);
+	bool readLog(const char *logFile, HistoryLog &historyLog);
 public:
+
+	ImageHistory();
 	virtual ~ImageHistory();
-	bool add(const char *filepath, int version, const char *comment, const HistoryEvent &he);
-	bool add(const char *filepath, const char *version, const char *comment, const HistoryEvent &he);
-	std::auto_ptr<ImageHistoryLog> get();
-	static ImageHistory &getImageHistory();
-	static void setPath(const char *primaryPath, const char *shadowPath) {
-		m_primary = primaryPath;
-		m_shadow = shadowPath;
+	static void setPath(const char *workspacePath, const char *indexPath) {
+		m_workspace = workspacePath;
+		m_index = indexPath;
 	}
-	static void setBackup1Path(const char *path) {
-		m_backup1 = path;
-	}
-	static void setBackup2Path(const char *path) {
-		m_backup2 = path;
-	}
+	bool init();
+	
+	bool add(const char *filename, const char *comment);
+	bool add(const char *filename, int version, const char *comment, const HistoryEvent &he);
+	
+	bool add(const char *filename, const char *version, const char *comment, const HistoryEvent &he);
+	
+	std::shared_ptr<HistoryLog> getEntries(int daysAgo);
+	
 };
 
 } /* namespace simplearchive */
-#endif /* IMAGEHISTORY_H_ */
+

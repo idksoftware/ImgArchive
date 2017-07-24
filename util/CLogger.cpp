@@ -38,6 +38,7 @@
 #include <iomanip>
 #include <sstream>
 #include <cstdarg>
+#include "SAUtils.h"
 #include "CLogger.h"
 #include "CIDKDate.h"
 #include "UDPOut.h"
@@ -59,13 +60,13 @@ std::string CLogger::m_logpath;
 int CLogger::m_size = 10;
 int CLogger::m_cursize = 0;
 bool CLogger::m_isQuiet = false;
-bool CLogger::m_isSilent = false;
+bool CLogger::m_isSilent = true;
 int CLogger::m_lastCode;
 std::string CLogger::m_lastMessage;
 
 CLogger::CLogger() {
 	//m_level = FINE;
-	m_level = SUMMARY;
+	m_level = Level::SUMMARY;
 }
 
 CLogger &CLogger::getLogger() {
@@ -89,7 +90,7 @@ void CLogger::makeFile() {
 	m_filename = logName.makeName(m_logpath.c_str(), "", "log", 256);
 	m_logfile.open(m_filename.c_str(), ios::out | ios::app);
 	if (m_logfile.is_open() == false) {
-		throw std::exception("Cannot open log file");
+		throw SIAAppException("Cannot open log file");
 	}
 }
 
@@ -173,15 +174,16 @@ inline bool CLogger::IsPrintable(Level level) {
 	return false;
 }
 
-const char *CLogger::levelStr(Level level) {
+const char *CLogger::levelStr(CLogger::Level level) {
 	switch (level) {
-	case CLogger::TRACE: return "TRACE";
-	case CLogger::FINE: return "FINE";
-	case CLogger::INFO: return "INFO";
-	case CLogger::SUMMARY: return "SUMMARY";
-	case CLogger::WARNING: return "WARNING";
-	case CLogger::ERR: return "ERROR";
-	case FATAL: return "FATAL";
+	case CLogger::Level::TRACE: return "TRACE";
+	case CLogger::Level::FINE: return "FINE";
+	case CLogger::Level::INFO: return "INFO";
+	case CLogger::Level::SUMMARY: return "SUMMARY";
+	case CLogger::Level::WARNING: return "WARNING";
+	case CLogger::Level::ERR: return "ERROR";
+	case CLogger::Level::FATAL: return "FATAL";
+	case CLogger::Level::UNKNOWN: return "FATAL";
 	}
 	return "FATAL";
 }

@@ -825,16 +825,19 @@ CIPComms::EErrorCode CChildConnection::talk()
 	{
 		// client has performed an orderly shutdown
 		status = ORDERLY_SHUTDOWN;
+#ifdef _WIN32
 		if (closesocket(m_ConnectSocket) == SOCKET_ERROR)
 		{
-#ifdef _WIN32
 			m_LastError = WSAGetLastError();
 			Sleep(1000);
-#else
-			m_LastError = errno;
-			sleep(1);
-#endif
 		}
+#else
+		if (close(m_ConnectSocket) == SOCKET_ERROR)
+		{
+					m_LastError = errno;
+					sleep(1);
+		}
+#endif
 	}
 	else
 	{

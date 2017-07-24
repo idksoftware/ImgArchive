@@ -6,7 +6,7 @@ imageContainer * MetadataObject.cpp
  */
 #include "DBDefines.h"
 #include "MetadataObject.h"
-
+#include "BasicMetadata.h"
 #ifdef _DEBUG
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
@@ -15,7 +15,8 @@ static char THIS_FILE[] = __FILE__;
 
 namespace simplearchive {
 
-MetadataObject::MetadataObject() : MTRow(new MetadataSchema){
+MetadataSchema MetadataObject::m_tableSchema;
+MetadataObject::MetadataObject() : MTRow(m_tableSchema){
 
 }
 

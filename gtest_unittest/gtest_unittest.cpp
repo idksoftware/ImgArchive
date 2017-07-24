@@ -91,7 +91,7 @@ TEST_F(SIALibTest, uncheckout) {
 TEST_F(SIALibTest, catalogMakeList) {
 
 	CAppConfig &config = CAppConfig::get();
-	CatalogManager::setPaths("C:/Users/Iain/SIAImages/Catalog", config.getShadowPath());
+	CatalogManager::setPaths("C:/Users/Iain/SIAImages/Catalog", config.getMasterPath());
 	CatalogManager catalogManager = CatalogManager::get();
 	catalogManager.makeList();
 }
@@ -99,7 +99,7 @@ TEST_F(SIALibTest, catalogMakeList) {
 TEST_F(SIALibTest, catalogAddFile) {
 
 	CAppConfig &config = CAppConfig::get();
-	CatalogManager::setPaths("C:/Users/Iain/SIAImages/Catalog", config.getShadowPath());
+	CatalogManager::setPaths("C:/Users/Iain/SIAImages/Catalog", config.getMasterPath());
 	CatalogManager catalogManager = CatalogManager::get();
 	catalogManager.addFile("2013-10-11", "15atest1.jpg");
 }
@@ -117,7 +117,7 @@ bool SIALibTest::initalise() {
 
 bool SIALibTest::initTest() {
 	const std::string key = "SIA_HOME";
-	std::string temp = SAUtils::GetEnvironment(key);
+	std::string temp = SAUtils::GetPOSIXEnv(key);
 	std::string homePath = temp;
 	if (homePath.empty() == true) {
 		return false;

@@ -56,7 +56,7 @@ std::string AppOptions::m_comment;
 std::string AppOptions::m_imageAddress;
 std::string AppOptions::m_homePath;
 std::string AppOptions::m_workspacePath;
-std::string AppOptions::m_shadowPath;
+std::string AppOptions::m_masterPath;
 std::string AppOptions::m_configPath;
 AppOptions::Scope AppOptions::m_scope = AppOptions::Both;
 bool AppOptions::m_repair = false;
@@ -78,12 +78,12 @@ bool AppOptions::initaliseConfig() {
 
 	CAppConfig &config = CAppConfig::get();
 	const std::string key = "SIA_HOME";
-	std::string temp = SAUtils::GetEnvironment(key);
+	std::string temp = SAUtils::GetPOSIXEnv(key);
 	std::string homePath = temp;
 	//printf("%s", homePath.c_str());
 	int i = homePath.length();
 	if (homePath.empty() == true || homePath.length() == 0) {
-		homePath = SAUtils::GetEnvironment("ProgramData");
+		homePath = SAUtils::GetPOSIXEnv("ProgramData");
 		//C:\ProgramData\IDK Software\ImageArchive1.0
 		homePath += "/IDK Software/ImageArchive1.0";
 
@@ -118,15 +118,15 @@ bool AppOptions::initaliseConfig() {
 			}
 			*/
 			config.setHomePath(homePath.c_str());
-			temp = SAUtils::GetEnvironment("SIA_WORKSPACE");
+			temp = SAUtils::GetPOSIXEnv("SIA_WORKSPACE");
 			if (temp.empty() == false) {
 				config.setWorkspacePath(temp.c_str());
 			}
-			temp = SAUtils::GetEnvironment("SIA_SOURCE");
+			temp = SAUtils::GetPOSIXEnv("SIA_SOURCE");
 			if (temp.empty() == false) {
 				config.setSourcePath(temp.c_str());
 			}
-			temp = SAUtils::GetEnvironment("SIA_LOGLEVEL");
+			temp = SAUtils::GetPOSIXEnv("SIA_LOGLEVEL");
 			if (temp.empty() == false) {
 				config.setLogLevel(temp.c_str());
 			}
@@ -205,8 +205,8 @@ void AppOptions::setHomePath(const char *homePath) {
 void AppOptions::setWorkspacePath(const char *workspacePath) {
 	m_workspacePath = workspacePath;
 }
-void AppOptions::setShadowPath(const char *shadowPath) {
-	m_shadowPath = shadowPath;
+void AppOptions::setMasterPath(const char *masterPath) {
+	m_masterPath = masterPath;
 }
 
 void AppOptions::setConfigPath(const char *configPath) {
@@ -227,8 +227,8 @@ const char *AppOptions::getHomePath() {
 const char *AppOptions::getWorkspacePath() {
 	return m_workspacePath.c_str();
 }
-const char *AppOptions::getShadowPath() {
-	return m_shadowPath.c_str();
+const char *AppOptions::getMasterPath() {
+	return m_masterPath.c_str();
 }
 const char *AppOptions::getConfigPath() {
 	return m_configPath.c_str();

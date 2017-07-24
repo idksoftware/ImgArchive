@@ -37,7 +37,7 @@
 #include <time.h>
 #include <string>
 #include "ExifDateTime.h"
-#include "../fclib/cport.h"
+#include "cport.h"
 
 namespace simplearchive {
 
@@ -129,6 +129,7 @@ public:
 
 	std::string toString();
 	std::string toFileString();
+	std::string toShortRelativePath();
 	void now();
 
 	int getDay() const {

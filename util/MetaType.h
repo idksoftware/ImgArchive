@@ -5,18 +5,22 @@
  *      Author: wzw7yn
  */
 
-#ifndef METATYPE_H_
-#define METATYPE_H_
+#pragma once
 
 #include <stdio.h>
 #include <iostream>
 #include <string>
+#include <map>
 #include <vector>
 #include <memory>
 #include <stdexcept>
 #include <map>
 #include "ExifDateTime.h"
 #include "CSVArgs.h"
+#include "MetaType.h"
+#include "ErrorCode.h"
+
+#define DELIM ','
 
 namespace simplearchive {
 
@@ -56,6 +60,12 @@ public:
     	   m_name  = name;
        }
 
+	   MTSchema(const MTSchema &c) {
+		   m_type = c.m_type;
+		   m_name = c.m_name;
+	   }
+	
+
 	const std::string& getName() const {
 		return m_name;
 	}
@@ -76,6 +86,17 @@ public:
 	MTTableSchema(const char *name) {
 		m_tablename = name;
 		m_count = 0;
+	}
+	MTTableSchema(MTTableSchema &ts) {
+		m_tablename = ts.m_tablename;
+		m_count = ts.m_count;
+		int count = 0;
+		for (auto i = ts.begin(); i != ts.end(); i++) {
+			MTSchema& item = *i;
+			push_back(item);
+			m_index.insert(std::make_pair(item.getName(), count++));
+		}
+
 	}
 	virtual ~MTTableSchema() {
 		m_index.clear();
@@ -131,20 +152,22 @@ public:
 
 class MetaTypeObject;
 class MTColumn {
-	MTSchema *m_info;
+	static const char *nullStr;
+	std::shared_ptr<MTSchema> m_info;
 	MetaTypeObject *m_object;
 	std::string *m_boundValue;
 	std::unique_ptr<std::string> m_unboundValue;
-	MTColumn() {
-		m_info = 0;
-		m_object = 0;
-		m_boundValue = 0;
+	MTColumn() : m_info(nullptr) {
+		//m_info = nullptr;
+		m_object = nullptr;
+		m_boundValue = nullptr;
 	};
 //	void boundUpdate();
 	bool isBound() {
 		return (m_boundValue != 0);
 	}
 public:
+	
 	MTColumn(MTSchema &info);
 	virtual ~MTColumn();
 	bool isNull() {
@@ -156,6 +179,7 @@ public:
 	std::string &toString();
 	bool fromString(const char *str);
 	bool fromString(const std::string &str);
+	std::string token(int *pos, std::string &str);
 	void set(int i);
 	void set(long i);
 	void set(unsigned int i);
@@ -166,6 +190,10 @@ public:
 	void set(double d);
 	void set(float f);
 	void set(MTColumn &c);
+
+	MTSchema &getInfo() {
+		return *m_info;
+	}
 
 	void operator=(const int i) {
 		set(i);
@@ -195,7 +223,9 @@ public:
 		set(f);
     }
 
-
+	std::shared_ptr<MTSchema> getMTSchemaItem() {
+		return m_info;
+	}
 
 	const int getInt() const;
 	const long getLong();
@@ -255,22 +285,24 @@ public:
 
 
 class MTRow : public std::vector<MTColumn *> {
-	MTTableSchema *m_schema;	// change to shared_ptr
+	MTTableSchema &m_schema;
 	std::string m_text;
+	char m_delim;
 protected:
 	//MTTableSchema& getSchema() {
 	//	return *m_schema;
 	//}
-
+	friend class MTTable;
+	
 public:
-	MTRow(MTTableSchema *pSchemaTable);
-
+	
+	MTRow(MTTableSchema &ts);
 	MTRow(const MTRow &row);
 	MTRow &operator=(const MTRow &row);
 	virtual ~MTRow();
 
 	const std::string& getName() const {
-		return m_schema->getName();
+		return m_schema.getName();
 	}
 
 	MTColumn& columnAt(int i) const {
@@ -280,7 +312,7 @@ public:
 	MTColumn& columnAt(const char *name) const {
 
 		try {
-			int idx = m_schema->getIndex(name);
+			int idx = m_schema.getIndex(name);
 			return *(at(idx));
 		} catch (std::exception /*&e */) {
 			throw std::invalid_argument("Column name invalid");
@@ -298,18 +330,25 @@ public:
 	}
 	*/
 	void debugPrint() {
-		bool first = true;
-		int j = 0;
 		for (std::vector<MTColumn *>::iterator i = this->begin(); i != this->end(); i++) {
 			MTColumn *column = *i;
 			std::cout << column->toString() << "\n";
 		}
 	}
-	std::string &toString() {
+
+	std::string &toDebugString() {
 		m_text.clear();
 		bool first = true;
 		for (std::vector<MTColumn *>::iterator i = this->begin(); i != this->end(); i++) {
 			MTColumn *column = *i;
+			std::shared_ptr<MTSchema> mtSchema = column->getMTSchemaItem();
+			m_text += mtSchema->getName();
+			if (mtSchema == nullptr) {
+				continue;
+			}
+			m_text += ',';
+			m_text += column->toString();
+			/*
 			if (first) {
 				first = false;
 				m_text = column->toString();
@@ -318,23 +357,61 @@ public:
 				m_text += ',';
 				m_text += column->toString();
 			}
-
+			*/
+			m_text += '\n';
 		}
 		return m_text;
 	}
 
-	bool fromString(std::string &str) {
-		return fromString(str.c_str());
+	std::string escapeString(std::string &s) {
+		if (s.find_first_of(m_delim) == std::string::npos) {
+			return s;
+		}
+		return ('\"' + s + '\"');
 	}
-	bool fromString(const char *str) {
-		CSVArgs csvArgs(',');
-		csvArgs.process(str);
 
-		if (m_schema->size() != csvArgs.size()) {
+	std::string &toString() {
+		m_text.clear();
+		bool first = true;
+		for (std::vector<MTColumn *>::iterator i = this->begin(); i != this->end(); i++) {
+			MTColumn *column = *i;
+			std::shared_ptr<MTSchema> mtSchema = column->getMTSchemaItem();
+			if (mtSchema == nullptr) {
+				continue;
+			}
+			
+			if (first) {
+			first = false;
+			m_text = escapeString(column->toString());
+			}
+			else {
+			m_text += m_delim;
+			m_text += escapeString(column->toString());
+			}
+		}
+		return m_text;
+	}
+
+	bool fromString(const char *s) {
+		std::string str = s;
+		return fromString(str);
+	}
+
+	bool fromString(const std::string &str) {
+		CSVArgs csvArgs(m_delim);
+		csvArgs.process(str);
+		printf("Row size = %d\n", csvArgs.size());
+		if (m_schema.size() != csvArgs.size() && m_schema.size() < (csvArgs.size() - 1)) {
+			// Note if the last item is null then csvArgs will be one less then m_schema size
+			ErrorCode::setErrorCode(SIA_ERROR::ROW_SCHEMA_MISMATCH);
 			return false;
 		}
 		std::vector<std::string>::iterator arg = csvArgs.begin();
 		for (std::vector<MTColumn *>::iterator i = this->begin(); i != this->end(); i++, arg++) {
+			
+			if (arg == csvArgs.end()) {
+				break;
+			}
 			std::string argStr = *arg;
 			MTColumn *column = *i;
 			column->fromString(argStr.c_str());
@@ -342,15 +419,57 @@ public:
 
 		return true;
 	}
+
 	bool join(MTRow &row);
-	const MTTableSchema& getSchema() const {
-		return *m_schema;
-	}
 
 	bool join(const MTRow &row);
+
+	const MTTableSchema& getSchema() const {
+		return m_schema;
+	}
+
+	
 	
 };
 
+using SharedMTRow = std::shared_ptr<MTRow>;
+class MTTable : public std::vector<SharedMTRow> {
+	std::unique_ptr<MTTableSchema> m_TableSchema;
+public:
+	MTTable(MTTableSchema *pSchemaTable) {
+		m_TableSchema.reset(pSchemaTable);
+	};
+	virtual ~MTTable() {};
+	MTTableSchema &getSchema() const {
+		return *m_TableSchema;
+	}
+	
+	SharedMTRow makeRow();
+	bool addRow(const MTRow &r);
+	bool fromString(const std::string &r);
+	/// reads a csv GPSProperties file
+	bool read(const char *path, const char *filename);
+
+	/// writes a csv GPSProperties file
+	bool write(const char *path, const char *filename);
+
+	bool truncate() {
+		clear();
+		return true;
+	}
+};
+
+
+class MTDatabase : public std::map<std::string, std::unique_ptr<MTTable>> {
+	
+public:
+	MTDatabase() {		
+	};
+	virtual ~MTDatabase() {};
+	bool addTable(MTTableSchema *pSchemaTable);
+
+	MTTable& getTable(std::string name);
+};
 
 // int
 inline MTColumn& MTColumn::operator<<(int& val) {
@@ -505,4 +624,4 @@ inline void operator<<(float& val, MTColumn& col) {
 }
 
 } /* namespace simplearchive */
-#endif /* METATYPE_H_ */
+

@@ -1,38 +1,38 @@
 nef:Raw:nikon-raw:Nikon RAW
 nrw:Raw:nikon-raw:Nikon RAW
-dng:Raw:nikon-raw:Adobe RAW
-raw:Raw:nikon-raw:Panasonic RAW
-raf:Raw:nikon-raw:Fuji RAW
-orf:Raw:nikon-raw:Olympus RAW
-srf:Raw:nikon-raw:Sony RAW
-sr2:Raw:nikon-raw:Sony RAW
-arw:Raw:nikon-raw:Sony RAW
-k25:Raw:nikon-raw:Kodak RAW
-kdc:Raw:nikon-raw:Kodak RAW
-dcr:Raw:nikon-raw:Kodak RAW
-dcs:Raw:nikon-raw:Kodak RAW
-drf:Raw:nikon-raw:Kodak RAW
-mos:Raw:nikon-raw:Leaf RAW
-pxn:Raw:nikon-raw:Logitech RAW
-crw:Raw:nikon-raw:Canon RAW
-cr2:Raw:nikon-raw:Canon RAW
-mrw:Raw:nikon-raw:Minolta RAW
-pef:Raw:nikon-raw:Pentax RAW
-ptx:Raw:nikon-raw:Pentax RAW
-mef:Raw:nikon-raw:Mamiya RAW
-3fr:Raw:nikon-raw:Hasselblad RAW
-fff:Raw:nikon-raw:Hasselblad RAW
-ari:Raw:nikon-raw:Arriflex RAW
-bay:Raw:nikon-raw:Casio RAW
-erf:Raw:nikon-raw:Epsom RAW
-cap:Raw:nikon-raw:Phase One RAW
-iiq:Raw:nikon-raw:Phase One RAW
-eip:Raw:nikon-raw:Phase One RAW
-rwl:Raw:nikon-raw:Leica RAW
-rwz:Raw:nikon-raw:Rawzor RAW
-srw:Raw:nikon-raw:Samsung RAW
-x3f:Raw:nikon-raw:Sigma RAW
-R3D:Raw:nikon-raw:RED RAW
+dng:Raw:Adobe-raw:Adobe RAW
+raw:Raw:Panasonic-raw:Panasonic RAW
+raf:Raw:Fuji-raw:Fuji RAW
+orf:Raw:Olympus-raw:Olympus RAW
+srf:Raw:Sony-raw:Sony RAW
+sr2:Raw:Sony-raw:Sony RAW
+arw:Raw:Sony-raw:Sony RAW
+k25:Raw:Kodak-raw:Kodak RAW
+kdc:Raw:Kodak-raw:Kodak RAW
+dcr:Raw:Kodak-raw:Kodak RAW
+dcs:Raw:Kodak-raw:Kodak RAW
+drf:Raw:Kodak-raw:Kodak RAW
+mos:Raw:Leaf-raw:Leaf RAW
+pxn:Raw:Logitech-raw:Logitech RAW
+crw:Raw:Canon-raw:Canon RAW
+cr2:Raw:Canon-raw:Canon RAW
+mrw:Raw:Minolta-raw:Minolta RAW
+pef:Raw:Pentax-raw:Pentax RAW
+ptx:Raw:Pentax-raw:Pentax RAW
+mef:Raw:Mamiya-raw:Mamiya RAW
+3fr:Raw:Hasselblad-raw:Hasselblad RAW
+fff:Raw:Hasselblad-raw:Hasselblad RAW
+ari:Raw:Arriflex-raw:Arriflex RAW
+bay:Raw:Casio-raw:Casio RAW
+erf:Raw:Epsom-raw:Epsom RAW
+cap:Raw:PhaseOne-raw:Phase One RAW
+iiq:Raw:PhaseOne-raw:Phase One RAW
+eip:Raw:PhaseOne-raw:Phase One RAW
+rwl:Raw:Leica-raw:Leica RAW
+rwz:Raw:Rawzor-raw:Rawzor RAW
+srw:Raw:Samsung-raw:Samsung RAW
+x3f:Raw:Sigma-raw:Sigma RAW
+R3D:Raw:RED-raw:RED RAW
 jpg:Picture:jpg:JPG
 png:Picture:png:PNG
 bmp:Picture:bmp:bmp

@@ -44,7 +44,7 @@ namespace simplearchive {
 #define LOG_PATH "/logs"
 #define HISTORY_PATH "/history"
 #define BACKUP_PATH "/backup"
-#define SHADOW_PATH "/shadow"
+#define MASTER_PATH "/master"
 #define TOOLS_PATH "/tools"
 #define HOOKS_PATH "/hooks"
 
@@ -64,16 +64,16 @@ namespace simplearchive {
 
 		static bool CreateArchive::createFile(const char *root, const char *folder, const char *filename, std::string &str);
 
-		static std::string  makeConfigFile(const char *root, const char *workspace, const char *shadow);
-		static bool createAdminSystem(const char *archivePath, const char *workspace, const char *shadow);
-		static bool createUserSystem(const char *archivePath, const char *workspace, const char *shadow);
+		static std::string  makeConfigFile(const char *root, const char *workspace, const char *master);
+		static bool createAdminSystem(const char *archivePath, const char *workspace, const char *master);
+		static bool createUserSystem(const char *archivePath, const char *workspace, const char *master);
 		static std::string  m_archivePath;
 		static std::string  m_workspace;
-		static std::string  m_shadow;
+		static std::string  m_master;
 	public:
 		CreateArchive();
 		virtual ~CreateArchive();
-		static bool createSystem(bool users, const char *archivePath, const char *workspace, const char *shadow);
+		static bool createSystem(bool users, const char *archivePath, const char *workspace, const char *master);
 		/**
 		/* @brief Creates the configuration folders.
 		*/
@@ -81,7 +81,7 @@ namespace simplearchive {
 		/**
 		/* @brief Creates the default configuration files.
 		*/
-		static bool createConfigFiles(const char *root, const char *folder, const char *workspace, const char *shadow);
+		static bool createConfigFiles(const char *root, const char *folder, const char *workspace, const char *master);
 		/**
 		/* @brief Creates the default hook files.
 		*/
@@ -103,8 +103,8 @@ namespace simplearchive {
 			return m_workspace;
 		}
 
-		static std::string  getShadow() {
-			return m_shadow;
+		static std::string  getMaster() {
+			return m_master;
 		}
 	
 };

@@ -65,7 +65,7 @@ namespace simplearchive {
 		defineOption("repair", "Validate and repair.", ArgvParser::NoOptionAttribute);
 		//defineOptionAlternative("r", "repair");
 
-		defineOption("scope", "Scope validate. i.e. Workspace/Shadow or both", ArgvParser::OptionRequiresValue);
+		defineOption("scope", "Scope validate. i.e. Workspace/Master or both", ArgvParser::OptionRequiresValue);
 		//defineOptionAlternative("s", "scope");
 
 		defineOption("users", "Make archive available to you only or everyone with a logon to this computer (Myself/All).", ArgvParser::OptionRequiresValue);
@@ -166,7 +166,7 @@ namespace simplearchive {
 
 			/*
 			else {
-			std::string progPath = SAUtils::GetEnvironment("ProgramData");
+			std::string progPath = SAUtils::GetPOSIXEnv("ProgramData");
 			std::string siaPath = "/IDK Software/ImageArchive1.0";
 			//if (SAUtils::makePath(progPath.c_str(), siaPath.c_str()) == false) {
 			//	return false;
@@ -186,7 +186,7 @@ namespace simplearchive {
 			}
 			/*
 			else {
-			std::string temp = SAUtils::GetEnvironment("USERPROFILE");
+			std::string temp = SAUtils::GetPOSIXEnv("USERPROFILE");
 			opt = temp + "/Documents";
 			if (SAUtils::FileExists(temp.c_str()) == false) {
 			return false;
@@ -207,12 +207,12 @@ namespace simplearchive {
 
 			if (foundOption("repository-path") == true) {
 				opt = optionValue("repository-path");
-				appOptions.setShadowPath(opt.c_str());
+				appOptions.setMasterPath(opt.c_str());
 			}
 			/*
 			else {
-			std::string progPath = SAUtils::GetEnvironment("ProgramData");
-			std::string siaPath = "/IDK Software/ImageArchive1.0/shadow";
+			std::string progPath = SAUtils::GetPOSIXEnv("ProgramData");
+			std::string siaPath = "/IDK Software/ImageArchive1.0/Master";
 			//if (SAUtils::makePath(progPath.c_str(), siaPath.c_str()) == false) {
 			//	return false;
 			//}
@@ -260,8 +260,8 @@ namespace simplearchive {
 					if (opt.compare("Workspace") == 0) {
 						appOptions.m_scope = appOptions.Workspace;
 					}
-					else if (opt.compare("Shadow") == 0) {
-						appOptions.m_scope = appOptions.Shadow;
+					else if (opt.compare("Master") == 0) {
+						appOptions.m_scope = appOptions.Master;
 					}
 					else {
 						appOptions.m_scope = appOptions.Both;

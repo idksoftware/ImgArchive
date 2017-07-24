@@ -7,7 +7,7 @@
 #define MyAppURL "http://www.idk-software.com/"
 #define MyAppExeName "siaarc.exe"
 #define AppConfig "{commonappdata}\IDK-Software\SIA\config"
-#define AppHome "{commonappdata}\IDK-Software\SIA\"
+#define AppHome "{commonappdata}\IDK-Software\SIA"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
@@ -64,11 +64,12 @@ Name: "{#AppHome}\hooks"
 Name: "{#AppHome}\sqldb"
 Name: "{#AppHome}\tools"
 Name: "{#AppHome}\backup"
+Name: "{#AppHome}\templates" 
 Name: "{#AppConfig}"
 
 [Registry]
 Root: "HKLM"; Subkey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"; ValueType: expandsz; ValueName: "Path"; ValueData: "{olddata};{app}"
-
+Root: "HKLM"; Subkey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"; ValueType: string; ValueName: "SIA_HOME"; ValueData: "{#AppHome}"; Flags: createvalueifdoesntexist preservestringtype
 [CustomMessages]
 AppAddPath=Add application directory to your environmental path (required)
 

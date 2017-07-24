@@ -58,7 +58,7 @@ namespace simplearchive {
 
 	void ImageItem::processFileHook() {
 		CLogger &logger = CLogger::getLogger();
-		logger.log(LOG_OK, CLogger::INFO, "process Hook Item %s\n", m_path.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "process Hook Item %s\n", m_path.c_str());
 		//printf("process Hook Item %s\n", m_path.c_str());
 		
 		OnFileCmd onFileCmd(m_path.c_str());
@@ -85,7 +85,7 @@ namespace simplearchive {
 			m_imageSet = new ImageSet(path);
 
 			m_imageSets->insert(m_imageSets->end(), m_imageSet);
-			logger.log(LOG_OK, CLogger::INFO, "Starting reading folder \"%s\"", path);
+			logger.log(LOG_OK, CLogger::Level::INFO, "Starting reading folder \"%s\"", path);
 			//printf("==== Start ==== %d \n", m_folderCount++);
 			return true;
 		};
@@ -93,12 +93,12 @@ namespace simplearchive {
 		virtual bool onFile(const char *path) {
 			
 			CLogger &logger = CLogger::getLogger();
-			logger.log(LOG_OK, CLogger::INFO, "Reading file: %s", path);
+			logger.log(LOG_OK, CLogger::Level::INFO, "Reading file: %s", path);
 			ImageExtentions& ie = ImageExtentions::get();
 			std::string tmp = path;
 			std::string filename = SAUtils::getFilename(tmp);
 			if (ie.IsValid(filename.c_str()) == false) {
-				logger.log(LOG_OK, CLogger::WARNING, "Not a valid file type \"%s\" rejecting ", filename.c_str());
+				logger.log(LOG_OK, CLogger::Level::WARNING, "Not a valid file type \"%s\" rejecting ", filename.c_str());
 				return true;
 			}
 			ImageItem *imageItem = new ImageItem(path);
@@ -111,12 +111,12 @@ namespace simplearchive {
 			m_path = path;
 			m_folderCount++;
 			CLogger &logger = CLogger::getLogger();
-			logger.log(LOG_OK, CLogger::INFO, "Now reading folder:  %s", m_path.c_str());
+			logger.log(LOG_OK, CLogger::Level::INFO, "Now reading folder:  %s", m_path.c_str());
 			return true;
 		};
 		virtual bool onEnd() {
 			CLogger &logger = CLogger::getLogger();
-			logger.log(LOG_OK, CLogger::INFO, "Ending reader folder %s", m_path.c_str());
+			logger.log(LOG_OK, CLogger::Level::INFO, "Ending reader folder %s", m_path.c_str());
 			return true;
 		};
 		virtual FolderVisitor *make() {

@@ -36,6 +36,7 @@
 #define ADMINAPPOPTIONS_H_
 #include <string>
 #include <memory>
+#include "AppOptions.h"
 #include "argvparser.h"
 #include "ExifDate.h"
 
@@ -148,10 +149,11 @@ namespace simplearchive {
  
 */
 
+typedef std::vector<std::string> DefaultArgumentsContainer;
 
-class SIAArcAppOptions {
+class SIAArcAppOptions : public CommandLineProcessing::AppOptions{
 public:
-	typedef enum {
+	enum class CommandMode {
 		CM_Import,      //< Import(add) one or more images into the archve.
 		CM_Export,      //< Export one or more images out of the archive.
 		CM_Checkout,    //< Check-out one or more images out of the archive.
@@ -171,13 +173,14 @@ public:
 		CM_History,		// Show image change hisory for an image or images
 		CM_Prop,        // Show images properties.
 		CM_Unknown
-	} CommandMode;
+	};
 
-	typedef enum {
+	enum class ShowCommandOption {
 		SC_ShowCheckedOut,
 		SC_ShowUncheckedOutChanges,
 		SC_Unknown
-	} ShowCommandOption;
+	};
+
 private:
 	friend class SIAArcArgvParser;
 	static SIAArcAppOptions *m_this;
@@ -204,6 +207,9 @@ private:
 	static std::string m_distinationPath;
 	static std::string m_filePath;
 	ShowCommandOption m_showCommandOption;
+
+	static DefaultArgumentsContainer defaultArgumentsContainer;
+
 	bool m_error;
 	void setCommandMode(const SIAArcAppOptions::CommandMode mode);
 	bool setCommandMode(const char *modeString);
@@ -247,6 +253,9 @@ public:
 	ExifDate &getArchiveDate();
     //* Ge The Show Command Option (only if the show command active).
 	ShowCommandOption getShowCommandOption() { return m_showCommandOption; };
+
+	void setDefaultArguments(std::string);
+	DefaultArgumentsContainer& getDefaultArguments();
 };
 
 } /* namespace simplearchive */

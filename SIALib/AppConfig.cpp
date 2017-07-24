@@ -49,7 +49,7 @@ namespace simplearchive {
 	CAppConfig *CAppConfig::m_this = NULL;
 	
 	bool CAppConfig::m_verbose = false;
-	bool CAppConfig::m_quiet = false;
+	bool CAppConfig::m_quiet = true;
 	bool CAppConfig::m_silent = false;
 	std::string CAppConfig::m_logLevel = "SUMMARY";
 	bool CAppConfig::m_dry_run = false;
@@ -65,12 +65,14 @@ namespace simplearchive {
 	std::string CAppConfig::m_hookPath;
 	std::string CAppConfig::m_toolsPath;
 	std::string CAppConfig::m_workspacePath;
-	std::string CAppConfig::m_shadowArchivePath;
+	std::string CAppConfig::m_derivativePath;
+	std::string CAppConfig::m_masterPath;
 	std::string CAppConfig::m_sourcePath;
 	std::string CAppConfig::m_configPath;
 	std::string CAppConfig::m_tempPath;
 	std::string CAppConfig::m_logPath;
 	std::string CAppConfig::m_homePath;
+	std::string CAppConfig::m_systemPath;
 	std::string CAppConfig::m_indexPath;
 	std::string CAppConfig::m_historyPath;
 	std::string CAppConfig::m_ExternalExifTool;
@@ -115,15 +117,29 @@ namespace simplearchive {
 		Default paths based on UserDrive and UserHome
 
 	*/
-	void CAppConfig::init() {
-		if (m_homePath.empty() == true) {
+	void CAppConfig::init(const char *homePath) {
+
+		// Home Path 
+		if (homePath != nullptr) {
+			m_homePath = homePath;
+		} else if (m_homePath.empty() == true) {
 			if (value("HomePath", m_homePath) == false) {
-				m_homePath = SAUtils::GetEnvironment("HOMEDRIVE");
-				m_homePath += SAUtils::GetEnvironment("HOMEPATH");
+				m_homePath = SAUtils::GetPOSIXEnv("SIA_HOME");
+				
+			}
+			else {
+				std::string tempProgramData = SAUtils::GetPOSIXEnv("ProgramData");
+				m_homePath = tempProgramData + DEFAULT_HOME_PATH;
+				if (SAUtils::DirExists(m_homePath.c_str()) == false) {
+					m_homePath = SAUtils::GetPOSIXEnv("HOMEDRIVE");
+					m_homePath += SAUtils::GetPOSIXEnv("HOMEPATH");
+					m_homePath += DEFAULT_HOME_PATH;
+				}
 			}
 		}
 		ArchivePath::setPathToHome(m_homePath);
 
+		// Backup 1
 		if (m_backup1.empty() == true) {
 			if (value("BackupOne", m_backup1) == true) {
 				ArchivePath::setBackup1Path(m_backup1);
@@ -134,6 +150,7 @@ namespace simplearchive {
 			ArchivePath::setBackup1Path(m_backup1);
 		}
 		
+		// Backup 2
 		if (m_backup2.empty() == true) {
 			if (value("BackupTwo", m_backup2) == true) {
 				ArchivePath::setBackup2Path(m_backup2);
@@ -144,35 +161,93 @@ namespace simplearchive {
 			ArchivePath::setBackup2Path(m_backup2);
 		}
 
-		if (m_shadowArchivePath.empty() == true) {
-			if (value("ShadowPath", m_shadowArchivePath) == false) {
+		// Repository Archive Path
+		if (m_masterPath.empty() == true) {
+			if (value("RepositoryPath", m_masterPath) == false) {
 				std::string temp = m_homePath;
-				m_shadowArchivePath = temp + "/shadow";
-				ArchivePath::setPathToShadow(m_shadowArchivePath);
+				m_masterPath = temp + MASTER_PATH;
+				ArchivePath::setMasterPath(m_masterPath);
 			}
 		}
-		ArchivePath::setPathToShadow(m_shadowArchivePath);
+		ArchivePath::setMasterPath(m_masterPath);
 
+		// History Path
 		if (m_historyPath.empty() == true) {
 			if (value("HistoryPath", m_logPath) == false) {
-				std::string temp = SAUtils::GetEnvironment("HOMEPATH");
-				m_historyPath = m_homePath + "/history";
+				std::string temp = SAUtils::GetPOSIXEnv("HOMEPATH");
+				m_historyPath = m_homePath + HISTORY_PATH;
 				
 			}
 		}
 		ArchivePath::setMainHistory(m_historyPath);
 
+		// Workspace Path
 		if (m_workspacePath.empty() == true) {
+			// read from config file
 			if (value("WorkspacePath", m_workspacePath) == false) {
-				std::string temp = SAUtils::GetEnvironment("USERPROFILE");
-				m_workspacePath = temp + "/Documents/SIA Workspace";
-
+				// if not found read from SIA_WORKSPACE environment variable
+				std::string temp = SAUtils::GetPOSIXEnv("SIA_WORKSPACE");
+				if (temp.empty() == false) {
+					m_workspacePath = temp;
+				}
+				else {
+					std::string tempHomeDrive = SAUtils::GetPOSIXEnv("HOMEDRIVE");
+					std::string tempHomePath = SAUtils::GetPOSIXEnv("HOMEPATH");
+					m_workspacePath = tempHomeDrive + tempHomePath + DEFAULT_WORKSPACE_PATH;
+				}
 			}
 		}
 		ArchivePath::setPathToWorkspace(m_workspacePath);
+
+		
+		std::string temp = SAUtils::GetPOSIXEnv("SIA_SOURCE");
+		if (temp.empty() == false) {
+			setSourcePath(temp.c_str());
+		}
+		temp = SAUtils::GetPOSIXEnv("SIA_LOGLEVEL");
+		if (temp.empty() == false) {
+			setLogLevel(temp.c_str());
+		}
 		
 	}
-	
+
+	/*
+		File values override the default and envroment 
+	*/
+	void CAppConfig::fileBasedValues() {
+
+		// Home Path (The path to this file will be based on the home path)
+		
+		// Backup 1
+		if (value("BackupOne", m_backup1) == true) {
+			ArchivePath::setBackup1Path(m_backup1);
+			m_backup1Enabled = true;
+		}
+		// Backup 2
+		if (value("BackupTwo", m_backup2) == true) {
+			ArchivePath::setBackup2Path(m_backup2);
+			m_backup2Enabled = true;
+		}
+		
+
+		// Master Archive Path
+		if (value("MasterPath", m_masterPath) == true) {
+			ArchivePath::setMasterPath(m_masterPath);
+		}
+		
+
+		// History Path
+		if (value("HistoryPath", m_logPath) == true) {
+			ArchivePath::setMainHistory(m_logPath);
+		}
+		
+		// Workspace Path	
+		if (value("WorkspacePath", m_workspacePath) == true) {
+				ArchivePath::setPathToWorkspace(m_workspacePath);
+		}
+		
+	}
+
 	void CAppConfig::setToolsPath(const char *toolsPath) {
 		m_toolsPath = toolsPath;
 	}
@@ -180,7 +255,7 @@ namespace simplearchive {
 		if (m_toolsPath.empty() == true) {
 			if (value("ToolsPath", m_toolsPath) == false) {
 				std::string temp = m_homePath;
-				m_toolsPath = temp + "/tools";
+				m_toolsPath = temp + TOOLS_PATH;
 
 			}
 		}
@@ -190,15 +265,12 @@ namespace simplearchive {
 	void CAppConfig::setHomePath(const char *homePath) {
 		m_homePath = homePath;
 		ArchivePath::setPathToHome(m_homePath);
+		m_configPath = homePath;
+		m_configPath += CONFIG_PATH;
 	}
 	
 	const char *CAppConfig::getHomePath() {
-		if (m_homePath.empty() == true) {
-			if (value("HomePath", m_homePath) == false) {
-				m_homePath = SAUtils::GetEnvironment("SIA_HOME");
-				ArchivePath::setPathToHome(m_homePath);
-			}
-		}
+		
 		return m_homePath.c_str();
 
 	}
@@ -223,36 +295,61 @@ namespace simplearchive {
 		return m_backup2.c_str();
 	}
 
+	
+
+
 	/// Gets the archive path.
 	const char *CAppConfig::getWorkspacePath() {
-		if (m_workspacePath.empty() == true) {
-			if (value("WorkspacePath", m_workspacePath) == false) {
-				std::string temp = SAUtils::GetEnvironment("USERPROFILE");
-				m_workspacePath = temp + "/SIA Workspace";
-					
-			}
-		}
+		
 		return m_workspacePath.c_str();
 
 	}
 	/// Gets the archive path.
-	const char *CAppConfig::getShadowPath() {
-		if (m_shadowArchivePath.empty() == true) {
-			if (value("ShadowPath", m_shadowArchivePath) == false) {
-				std::string temp = m_homePath;
-				m_shadowArchivePath = temp + "/shadow";
-				ArchivePath::setPathToShadow(m_shadowArchivePath);
+	const char *CAppConfig::getMasterPath() {
+		if (m_masterPath.empty() == true) {
+			if (value("MasterPath", m_masterPath) == false) {
+				// if not found read from SIA_WORKSPACE environment variable
+				std::string temp = SAUtils::GetPOSIXEnv("SIA_MASTER");
+				if (temp.empty() == false) {
+					m_masterPath = temp;
+				}
+				else {
+					std::string tempProgramData = SAUtils::GetPOSIXEnv("ProgramData");
+					m_masterPath = tempProgramData + DEFAULT_MASTER_PATH;
+					ArchivePath::setMasterPath(m_masterPath);
+				}
 			}
 		}
-		return m_shadowArchivePath.c_str();
+		return m_masterPath.c_str();
 
 	}
+	
+	const char *CAppConfig::getDerivativePath() {
+		if (m_derivativePath.empty() == true) {
+			if (value("DerivativePath", m_derivativePath) == false) {
+				// if not found read from SIA_WORKSPACE environment variable
+				std::string temp = SAUtils::GetPOSIXEnv("SIA_Master");
+				if (temp.empty() == false) {
+					m_derivativePath = temp;
+				}
+				else {
+					std::string tempProgramData = SAUtils::GetPOSIXEnv("ProgramData");
+					m_derivativePath = tempProgramData + DEFAULT_DERIVATIVE_PATH;
+					ArchivePath::setDerivativePath(m_derivativePath);
+				}
+			}
+		}
+		return m_derivativePath.c_str();
+
+	}
+
 	
 	const char *CAppConfig::getSourcePath() {
 		if (m_sourcePath.empty() == true) {
 			if (value("SourcePath", m_sourcePath) == false) {
-				std::string temp = SAUtils::GetEnvironment("HOMEPATH");
-				m_sourcePath = temp + "/Pictures";
+				std::string tempHomeDrive = SAUtils::GetPOSIXEnv("HOMEDRIVE");
+				std::string tempHomePath = SAUtils::GetPOSIXEnv("HOMEPATH");
+				m_sourcePath = tempHomeDrive + tempHomePath + DEFAULT_SOURCE_PATH;
 			}
 		}
 		return m_sourcePath.c_str();
@@ -262,8 +359,8 @@ namespace simplearchive {
 	const char *CAppConfig::getHookPath() {
 		if (m_hookPath.empty() == true) {
 			if (value("HookPath", m_hookPath) == false) {
-				std::string temp = SAUtils::GetEnvironment("HOMEPATH");
-				m_hookPath = m_homePath + "/hooks";
+				std::string temp = SAUtils::GetPOSIXEnv("HOMEPATH");
+				m_hookPath = m_homePath + HOOKS_PATH;
 			}
 		}
 		return m_hookPath.c_str();
@@ -279,9 +376,14 @@ namespace simplearchive {
 		ArchivePath::setPathToWorkspace(m_workspacePath);
 	}
 
-	void CAppConfig::setShadowPath(const char *path) {
-		m_shadowArchivePath = path;
-		ArchivePath::setPathToShadow(m_shadowArchivePath);
+	void CAppConfig::setMasterPath(const char *path) {
+		m_masterPath = path;
+		ArchivePath::setMasterPath(m_masterPath);
+	}
+
+
+	void CAppConfig::setDerivativePath(const char *path) {
+		m_derivativePath = path;
 	}
 
 	void CAppConfig::setSourcePath(const char *path) {
@@ -291,8 +393,8 @@ namespace simplearchive {
 	const char *CAppConfig::getBackupDestinationPath() {
 		if (m_backupDestinationPath.empty() == true) {
 			if (value("BackupDestinationPath", m_backupDestinationPath) == false) {
-				std::string temp = SAUtils::GetEnvironment("HOMEPATH");
-				m_backupDestinationPath = temp + "/Image Backups";
+				std::string temp = SAUtils::GetPOSIXEnv("HOMEPATH");
+				m_backupDestinationPath = temp + BACKUPS_PATH;
 			}
 		}
 		return m_backupDestinationPath.c_str();
@@ -302,8 +404,8 @@ namespace simplearchive {
 	const char *CAppConfig::getMasterViewPath() {
 		if (m_masterViewPath.empty() == true) {
 			if (value("BackupDestinationPath", m_masterViewPath) == false) {
-				std::string temp = SAUtils::GetEnvironment("USERPROFILE");
-				m_masterViewPath = temp + "/SIA Pictures";
+				std::string temp = SAUtils::GetPOSIXEnv("USERPROFILE");
+				m_masterViewPath = temp + MASTER_VIEW_PATH;
 			}
 		}
 		return m_masterViewPath.c_str();
@@ -360,8 +462,8 @@ namespace simplearchive {
 	
 	const char *CAppConfig::getDatabasePath() {
 		if (value("DatabasePath", m_DatabasePath) == false) {
-			std::string temp = SAUtils::GetEnvironment("HOMEPATH");
-			m_DatabasePath = m_homePath + "/db";
+			std::string temp = SAUtils::GetPOSIXEnv("HOMEPATH");
+			m_DatabasePath = m_homePath + DATABASE_PATH;
 		}
 		return m_DatabasePath.c_str();
 	}
@@ -388,18 +490,23 @@ namespace simplearchive {
 		m_logLevel = logLevel;
 	}
 	
-	const char *CAppConfig::getIndexPath() {
-		if (value("IndexPath", m_indexPath) == false) {
-			m_indexPath = m_shadowArchivePath + "/system/index";
+	const char *CAppConfig::getSystemPath() {
+		if (value("SystemPath", m_systemPath) == false) {
+			m_systemPath = m_masterPath + MASTER_SYSTEM_FOLDER;
 		}
+		return m_systemPath.c_str();
+	}
+
+	const char *CAppConfig::getIndexPath() {	
+		m_indexPath = m_systemPath + "/index";
 		return m_indexPath.c_str();
 	}
 
 	const char *CAppConfig::getHistoryPath() {
 		if (m_historyPath.empty() == true) {
 			if (value("HistoryPath", m_logPath) == false) {
-				std::string temp = SAUtils::GetEnvironment("HOMEPATH");
-				m_historyPath = m_homePath + "/history";
+				std::string temp = SAUtils::GetEnv("HOMEPATH");
+				m_historyPath = m_homePath + HISTORY_PATH;
 				ArchivePath::setMainHistory(m_historyPath);
 			}
 		}
@@ -423,7 +530,7 @@ namespace simplearchive {
 
 	const char *CAppConfig::getExternalCommandLine() {
 		if (value("ExifCommandLine", m_ExternalCommandLine) == false) {
-			m_ExternalCommandLine = "\"[input]\" > \"[output]\"";
+			m_ExternalCommandLine = EXTERAL_EXIF_COMMAND_LINE;
 			return m_ExternalCommandLine.c_str();
 		}
 		return 	m_ExternalCommandLine.c_str();
@@ -431,7 +538,7 @@ namespace simplearchive {
 
 	const char *CAppConfig::getExifMapPath() {
 		if (value("ExifMapPath", m_ExternalCommandLine) == false) {
-			m_ExifMapPath = m_homePath + "/config";
+			m_ExifMapPath = m_homePath + CONFIG_PATH;
 			return m_ExifMapPath.c_str();
 		}
 		return 	m_ExifMapPath.c_str();
@@ -439,7 +546,7 @@ namespace simplearchive {
 
 	const char *CAppConfig::getMetadataTemplatePath() {
 		if (value("MetadataTemplatePath", m_MetadataTemplatePath) == false) {
-			m_MetadataTemplatePath = m_homePath + "/template";
+			m_MetadataTemplatePath = m_homePath + "/templates";
 			return m_MetadataTemplatePath.c_str();
 		}
 		return 	m_MetadataTemplatePath.c_str();
@@ -541,10 +648,13 @@ namespace simplearchive {
 		/// user definable
 		std::stringstream str;
 		str << "Configuration" << '\n';
+		str << "=============" << '\n';
 		str << "Workspace path:          " << getWorkspacePath() << '\n';
-		/// @brief Gets the shadow archive path
+		/// @brief Gets the Master archive path
 		/// user definable
-		str << "Shadow path:             " << getShadowPath() << '\n';
+		str << "Master path:             " << getMasterPath() << '\n';
+		/// @brief Gets the temp file path.
+		str << "Derivative path:         " << getDerivativePath() << '\n';
 		/// @brief Gets the temp file path.
 		/// user definable
 		str << "Temp path:               " << getTempPath() << '\n';
@@ -598,9 +708,12 @@ namespace simplearchive {
 		std::stringstream str;
 		str << "<Configuration>" << '\n';
 		str << "<WorkspacePath>" << getWorkspacePath() << "</WorkspacePath>" << '\n';
-		/// @brief Gets the shadow archive path
+		/// @brief Gets the Master archive path
 		/// user definable
-		str << "<ShadowPath>" << getShadowPath() << "</ShadowPath>" << '\n';
+		str << "<MasterPath>" << getMasterPath() << "</MasterPath>" << '\n';
+		/// @brief Gets the Master archive path
+		/// user definable
+		str << "<DerivativePath>" << this->getDerivativePath() << "</DerivativePath>" << '\n';
 		/// @brief Gets the temp file path.
 		/// user definable
 		str << "<TempPath>" << getTempPath() << "</TempPath>" << '\n';

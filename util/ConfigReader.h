@@ -114,6 +114,11 @@ public:
 	/// @param    config		Config class to be filled out.
 	/// @return	returns true if read correctly.
 	bool read(const char *datafile, Config &config);
+	/// @brief This function attempts to read a configuration file.
+	/// @param    str	string to read.
+	/// @param    config		Config class to be filled out.
+	/// @return	returns true if read correctly.
+	bool read(const std::string &str, Config &config);
 
 	virtual bool process() {
 		return true;

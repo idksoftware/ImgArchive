@@ -136,7 +136,7 @@ namespace simplearchive {
 		}
 		for (std::vector<CDJournalItem>::iterator i = m_list->begin(); i != m_list->end(); i++) {
 			CDJournalItem item = *i;
-			std::string &line = item.toString();
+			std::string line = item.toString();
 			//printf("%s\n", line.c_str());
 			file << line << '\n';
 

@@ -17,7 +17,7 @@ namespace simplearchive {
 #define LOG_PATH "/logs"
 #define HISTORY_PATH "/history"
 #define BACKUP_PATH "/backup"
-#define SHADOW_PATH "/SIAShadow"
+#define MASTER_PATH "/master"
 #define TOOLS_PATH "/tools"
 #define HOOKS_PATH "/hooks"
 #define TEMPLATE_PATH "/template"

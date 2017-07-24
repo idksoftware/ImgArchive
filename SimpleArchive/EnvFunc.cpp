@@ -2,7 +2,9 @@
 //
 
 //#include "stdafx.h"
+#ifdef _WIN32
 #include <windows.h>
+#endif
 #include <string>
 #include <stdio.h>
 #include "EnvFunc.h"
@@ -100,6 +102,7 @@ bool GetEnv(std::string& value, bool all) {
 #else
 bool SetEnv(const char *szSIAHome)
 {
+	return true;
 }
 #endif
 

@@ -1,93 +1,44 @@
-/* **************************************************
-**
-**    III                DDD  KKK
-**    III                DDD  KKK
-**                       DDD  KKK
-**    III   DDDDDDDDDDD  DDD  KKK            KKK
-**    III  DDD           DDD  KKK            KKK
-**    III  DDD           DDD  KKK           KKK
-**    III  DDD           DDD  KKK        KKKKKK
-**    III  DDD           DDD  KKK   KKKKKKKKK
-**    III  DDD           DDD  KKK        KKKKKK
-**    III  DDD           DDD  KKK           KKK
-**    III  DDD           DDD  KKK            KKK
-**    III   DDDDDDDDDDDDDDDD  KKK            KKK
-**
-**
-**     SSS         FF
-**    S           F   T
-**     SSS   OO   FF  TTT W   W  AAA  R RR   EEE
-**        S O  O  F   T   W W W  AAAA RR  R EEEEE
-**    S   S O  O  F   T   W W W A   A R     E
-**     SSS   OO  FFF   TT  W W   AAAA R      EEE
-**
-**    Copyright: (c) 2015 IDK Software Ltd
-**
-****************************************************
-**
-**	Filename	: CRegString.cpp
-**	Author		: I.Ferguson
-**	Version		: 1.000
-**	Date		: 26-05-2015
-**
-** #$$@@$$# */
+#pragma once
 
-#ifndef HISTORY_H_
-#define HISTORY_H_
-#include <string>
-#include <vector>
 #include <memory>
-#include "HistoryEvent.h"
-#include "CDate.h"
+#include <string>
+#include <mutex>
+
 
 namespace simplearchive {
 
-#define HISTORY_FILE "history.dat"
-class EventList;
-class CDate;
-class HistoryLog;
+	class SystemHistory;
+	class ImageHistory;
+	class ChangeLog;
 
-/**
-	This is the Image only log for one image.
-	The history normaly will end in <imagename>.<ext>.hst
-*/
-class HistoryItem;
-class ArchivePath;
-class History {
+	class History
+	{
+		static std::unique_ptr<History> m_this;
+		static std::once_flag m_onceFlag;
 
-private:
-	static std::string m_localPath;
-	static std::string m_archivePath;
-	History();
-	History(const History&);
-	History& operator = (const History&) { return *this; };
-	static std::auto_ptr<History> m_this;
-	bool writeLog(HistoryItem &item, const char *path);
-	bool readLog(const char *logFile, HistoryLog &historyLog);
-public:
 
-	static bool newImage(const char *filename, const char *shortPath, const char *comment);
+		static std::string m_indexPath;
+		static std::string m_workspacePath;
+		static std::string m_systemHisteryPath;
+		static std::string History::m_changeLogPath;
+		std::unique_ptr<SystemHistory> systemHistory;
+		std::unique_ptr<ImageHistory> imageHistory;
+		std::unique_ptr<ChangeLog> changeLog;
+	public:
+		History();
+		~History();
 
-	static void init();
-	static History &getHistory(const char *localPath);
-	virtual ~History();
-	bool add(const char *filename, const char *comment);
-	bool add(const char *filename, int version, const char *comment, const HistoryEvent &he);
-	
-	bool add(const char *filename, const char *version, const char *comment, const HistoryEvent &he);
-	/*
-	bool add(const HistoryEvent &he) {
-		return true;
-	}
-	*/
-	bool add() {
-		return true;
-	}
+		History(History const&) = delete;
+		void operator=(History const&) = delete;
 
-	//int getHistory(CDate &from, CDate &to);
-	std::auto_ptr<HistoryLog> getEntries(int daysAgo);
-	//std::string getHistory(int from, int to);
-};
+		static void setPaths(const char *index, const char *workspace, const char *system);
+		bool init();
+		bool newImage(const char *filepath, const char *comment);
+		bool checkinImage(const char *filepath, int version, const char *comment);
+		bool checkoutImage(const char *filepath, int version, const char *comment);
+		bool uncheckoutImage(const char *filepath, int version, const char *comment);
+		bool exportImage(const char *filepath, int version, const char *comment);
+		static History &getHistory();
+	};
 
-} /* namespace simplearchive */
-#endif /* HISTORY_H_ */
+} // namespace simplearchive

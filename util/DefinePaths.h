@@ -7,6 +7,6 @@
 #define LOG_PATH "/log"
 #define HISTORY_PATH "/history"
 #define BACKUP_PATH "/backup"
-#define SHADOW_PATH "/shadow"
+#define Master_PATH "/Master"
 #define TOOLS_PATH "/tools"
 #define HOOKS_PATH "/hooks"

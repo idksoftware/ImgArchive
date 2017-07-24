@@ -32,8 +32,8 @@
 **
 ** #$$@@$$# */
 
-#ifndef CLOGGER_H_
-#define CLOGGER_H_
+#pragma once
+
 #include <fstream>
 #include <iostream>
 
@@ -41,7 +41,7 @@ namespace simplearchive {
 
 class CLogger {
 public:
-	typedef enum {
+	enum class Level {
 		TRACE = 0,
 		FINE = 1,
 		INFO = 2,
@@ -50,7 +50,7 @@ public:
 		ERR = 5,
 		FATAL = 6,
 		UNKNOWN = -1
-	} Level;
+	};
 	
 
 	void log(int code, Level level, const std::string &message);
@@ -71,9 +71,22 @@ public:
 	}
 
 	static const int getLastCode() {
+		/*
+		if (m_lastCode == 0) {
+			// check logger for errors
+			if (CLogger::getLastCode() != 0) {
+				m_lastCode = CLogger::getLastCode();
+			}
+		}
+		*/
 		return m_lastCode;
 	}
 	static const char *getLastMessage() {
+		/*
+		if (CLogger::getLastCode() != 0) {
+			m_lastCode = CLogger::
+		}
+		*/
 		return m_lastMessage.c_str();
 	}
 	static void setMaxSize(int size) {
@@ -125,4 +138,4 @@ private:
 };
 
 } /* namespace simplearchive */
-#endif /* CLOGGER_H_ */
+

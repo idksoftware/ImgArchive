@@ -109,7 +109,7 @@ namespace simplearchive {
 				if (SAUtils::FileExists(workspacePath.c_str()) == false) {
 					return false;
 				}
-				// Delete the file as the orginal will be copied from the shadow folder.
+				// Delete the file as the orginal will be copied from the Master folder.
 				if (SAUtils::delFile(workspacePath.c_str()) == false) {
 					return false;
 				}
@@ -187,12 +187,12 @@ namespace simplearchive {
 		return true;
 	}
 
-	ValidateAndRepairingShadowObject::ValidateAndRepairingShadowObject(const char *archivePath, const char *workspacePath) {
+	ValidateAndRepairingMasterObject::ValidateAndRepairingMasterObject(const char *archivePath, const char *workspacePath) {
 		m_archivePath = archivePath;
 		m_workspacePath = workspacePath;
 	}
 
-	bool ValidateAndRepairingShadowObject::process(const char *file, ReportStatus &status, const char *orginal) {
+	bool ValidateAndRepairingMasterObject::process(const char *file, ReportStatus &status, const char *orginal) {
 		if (status.get() == ReportStatus::Unchanged) {
 			return true;
 		}

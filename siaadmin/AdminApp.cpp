@@ -89,7 +89,7 @@ bool AdminApp::Show() {
 	CAppConfig &config = CAppConfig::get();
 	/*
 	const std::string key = "SIA_HOME";
-	std::string temp = SAUtils::GetEnvironment(key);
+	std::string temp = SAUtils::GetPOSIXEnv(key);
 	std::string homePath = temp;
 	*/
 	bool found = false;
@@ -105,7 +105,7 @@ bool AdminApp::Show() {
 	}
 	else {
 		bool found = false;
-		homePath = SAUtils::GetEnvironment("USERPROFILE");
+		homePath = SAUtils::GetPOSIXEnv("USERPROFILE");
 		if (homePath.empty() == true || homePath.length() == 0) {
 			printf("SIA Unable to start? Cannot read user profile.");
 			return false;
@@ -160,15 +160,15 @@ bool AdminApp::Show() {
 	*/
 	config.setHomePath(homePath.c_str());
 	std::string temp;
-	temp = SAUtils::GetEnvironment("SIA_ARCHIVE");
+	temp = SAUtils::GetPOSIXEnv("SIA_ARCHIVE");
 	if (temp.empty() == false) {
 		config.setWorkspacePath(temp.c_str());
 	}
-	temp = SAUtils::GetEnvironment("SIA_SOURCE");
+	temp = SAUtils::GetPOSIXEnv("SIA_SOURCE");
 	if (temp.empty() == false) {
 		config.setSourcePath(temp.c_str());
 	}
-	temp = SAUtils::GetEnvironment("SIA_LOGLEVEL");
+	temp = SAUtils::GetPOSIXEnv("SIA_LOGLEVEL");
 	if (temp.empty() == false) {
 		config.setLogLevel(temp.c_str());
 	}
@@ -179,12 +179,12 @@ bool AppOptions::initaliseConfig() {
 
 	CAppConfig &config = CAppConfig::get();
 	const std::string key = "SIA_HOME";
-	std::string temp = SAUtils::GetEnvironment(key);
+	std::string temp = SAUtils::GetPOSIXEnv(key);
 	std::string homePath = temp;
 	//printf("%s", homePath.c_str());
 	int i = homePath.length();
 	if (homePath.empty() == true || homePath.length() == 0) {
-		homePath = SAUtils::GetEnvironment("ProgramData");
+		homePath = SAUtils::GetPOSIXEnv("ProgramData");
 		//C:\ProgramData\IDK Software\ImageArchive1.0
 		homePath += "/IDK Software/ImageArchive1.0";
 
@@ -219,15 +219,15 @@ bool AppOptions::initaliseConfig() {
 			}
 			*/
 			config.setHomePath(homePath.c_str());
-			temp = SAUtils::GetEnvironment("SIA_WORKSPACE");
+			temp = SAUtils::GetPOSIXEnv("SIA_WORKSPACE");
 			if (temp.empty() == false) {
 				config.setWorkspacePath(temp.c_str());
 			}
-			temp = SAUtils::GetEnvironment("SIA_SOURCE");
+			temp = SAUtils::GetPOSIXEnv("SIA_SOURCE");
 			if (temp.empty() == false) {
 				config.setSourcePath(temp.c_str());
 			}
-			temp = SAUtils::GetEnvironment("SIA_LOGLEVEL");
+			temp = SAUtils::GetPOSIXEnv("SIA_LOGLEVEL");
 			if (temp.empty() == false) {
 				config.setLogLevel(temp.c_str());
 			}
@@ -274,7 +274,7 @@ bool AdminApp::Run()
 		}
 		if (appOptions.getCommandMode() == AppOptions::CM_InitArchive) {
 
-			if (CreateArchive(appOptions.getHomePath(), appOptions.getWorkspacePath(), appOptions.getShadowPath(), appOptions.getUsers()) == false) {
+			if (CreateArchive(appOptions.getHomePath(), appOptions.getWorkspacePath(), appOptions.getMasterPath(), appOptions.getUsers()) == false) {
 				return false;
 			}
 			printf("\n\Completed initalising the Archive\n");
@@ -332,16 +332,16 @@ bool AdminApp::Run()
 		
 		switch (appOptions.getScope()) {
 		case AppOptions::Workspace:
-			if (siaLib.validate(config.getShadowPath(), config.getWorkspacePath(), config.getHomePath(), SIALib::Workspace, appOptions.repair()) == false) {
+			if (siaLib.validate(config.getMasterPath(), config.getWorkspacePath(), config.getHomePath(), SIALib::Workspace, appOptions.repair()) == false) {
 				return false;
 			}
 
-		case AppOptions::Shadow:			//* Show
-			if (siaLib.validate(config.getShadowPath(), config.getWorkspacePath(), config.getHomePath(), SIALib::Shadow, appOptions.repair()) == false) {
+		case AppOptions::Master:			//* Show
+			if (siaLib.validate(config.getMasterPath(), config.getWorkspacePath(), config.getHomePath(), SIALib::Master, appOptions.repair()) == false) {
 				return false;
 			}
 		default:
-			if (siaLib.validate(config.getShadowPath(), config.getWorkspacePath(), config.getHomePath(), SIALib::Both, appOptions.repair()) == false) {
+			if (siaLib.validate(config.getMasterPath(), config.getWorkspacePath(), config.getHomePath(), SIALib::Both, appOptions.repair()) == false) {
 				return false;
 			}
 		}
@@ -379,7 +379,7 @@ bool failed()
 	return(false);
 }
 
-bool AdminApp::CreateArchive(const char *archivePath, const char *workspacePath, const char *shadowPath, bool users) {
+bool AdminApp::CreateArchive(const char *archivePath, const char *workspacePath, const char *masterPath, bool users) {
 
 	if (users == true) {
 		if (CreateArchive::IsAdmin() == false) {
@@ -388,7 +388,7 @@ bool AdminApp::CreateArchive(const char *archivePath, const char *workspacePath,
 		}
 	}
 		
-	if (CreateArchive::createSystem(users, archivePath, workspacePath, shadowPath) == false) {
+	if (CreateArchive::createSystem(users, archivePath, workspacePath, masterPath) == false) {
 		std::cout << "Failed creating root folders" << '\n';
 		return false;
 	}
@@ -407,7 +407,7 @@ bool AdminApp::CreateArchive(const char *archivePath, const char *workspacePath,
 		return false;
 	}
 
-	if (CreateArchive::createConfigFiles(CreateArchive::getArchivePath().c_str(), CONFIG_PATH, CreateArchive::getWorkspace().c_str(), CreateArchive::getShadow().c_str()) == false) {
+	if (CreateArchive::createConfigFiles(CreateArchive::getArchivePath().c_str(), CONFIG_PATH, CreateArchive::getWorkspace().c_str(), CreateArchive::getMaster().c_str()) == false) {
 		std::cout << "Failed creating configuration files" << '\n';
 		return false;
 	}
@@ -418,12 +418,12 @@ bool AdminApp::initaliseConfig() {
 
 	CAppConfig &config = CAppConfig::get();
 	const std::string key = "SIA_HOME";
-	std::string temp = SAUtils::GetEnvironment(key);
+	std::string temp = SAUtils::GetPOSIXEnv(key);
 	std::string homePath = temp;
 	//printf("%s", homePath.c_str());
 	int i = homePath.length();
 	if (homePath.empty() == true || homePath.length() == 0) {
-		homePath = SAUtils::GetEnvironment("ProgramData");
+		homePath = SAUtils::GetPOSIXEnv("ProgramData");
 		//C:\ProgramData\IDK Software\ImageArchive1.0
 		homePath += "/IDK Software/ImageArchive1.0";
 
@@ -458,15 +458,15 @@ bool AdminApp::initaliseConfig() {
 			}
 			*/
 			config.setHomePath(homePath.c_str());
-			temp = SAUtils::GetEnvironment("SIA_WORKSPACE");
+			temp = SAUtils::GetPOSIXEnv("SIA_WORKSPACE");
 			if (temp.empty() == false) {
 				config.setWorkspacePath(temp.c_str());
 			}
-			temp = SAUtils::GetEnvironment("SIA_SOURCE");
+			temp = SAUtils::GetPOSIXEnv("SIA_SOURCE");
 			if (temp.empty() == false) {
 				config.setSourcePath(temp.c_str());
 			}
-			temp = SAUtils::GetEnvironment("SIA_LOGLEVEL");
+			temp = SAUtils::GetPOSIXEnv("SIA_LOGLEVEL");
 			if (temp.empty() == false) {
 				config.setLogLevel(temp.c_str());
 			}

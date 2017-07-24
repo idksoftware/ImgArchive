@@ -2,10 +2,8 @@
 
 #ifndef SYSDEP_H
 #define SYSDEP_H  
-  /* remove the following define if you aren't running WIN32 */
-  #define WININC 0
 
-  #ifdef WININC
+  #ifdef _WIN32
   #include <windows.h>
   #else
   #include <sys/types.h>
@@ -15,7 +13,7 @@
 
   /* change to point to where MD5 .h's live */
   /* get MD5 sample implementation from RFC 1321 */
-  #include "global.h"
+  #include "GLOBAL.H"
   #include "md5.h"
 
   /* set the following to the number of 100ns ticks of the actual

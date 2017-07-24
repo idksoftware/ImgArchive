@@ -37,7 +37,23 @@
 #include <string>
 #include <cstdlib>
 #include "ExifDateTime.h"
+/*
 
+Media Pro
+-<AssetProperties>
+<Filename>P1160039.JPG</Filename>
+<Filepath>D:\tmp\La Grave\P1160039.JPG</Filepath>
+<UniqueID>1</UniqueID>
+<Label>0</Label>
+<Rating>0</Rating>
+<MediaType>JPEG</MediaType>
+<FileSize unit="Bytes">3240511</FileSize>
+<Created>2017:03:09 17:02:59</Created>
+<Modified>2017:01:16 09:18:16</Modified>
+<Added>2017:03:19 22:41:36</Added>
+<ThumbnailSource>Thumbnails_(Catalog2)\P1160039.jpg</ThumbnailSource>
+
+*/
 namespace simplearchive {
 
 	class FileInfo

@@ -61,10 +61,10 @@ class ImageInfo {
 	unsigned long m_size;
 	int m_version;
 	ExifDate m_dateArchived;
-
+	int m_dbidx;
 public:
 	ImageInfo(int idx, const char *imagePath, const char *name, unsigned long size, unsigned long crc,
-			const char *md5, const char *uuid, int version, ExifDate &date);
+		const char *md5, const char *uuid, int version, ExifDate &date, int m_dbidx);
 	~ImageInfo();
 	unsigned long getCrc() const;
 	const ExifDate& getDate() const;
@@ -79,26 +79,32 @@ public:
 };
 
 
-class MirrorIdxDB;
+//class MirrorIdxDB;
 class CSVDBFile {
 	std::string m_dbpath;
-	std::unique_ptr<MirrorIdxDB> m_mirrorIdxDB;
+//	std::unique_ptr<MirrorIdxDB> m_mirrorIdxDB;
 	unsigned int m_data[3];
 	int getMaxDirIndex(std::string &path);
 	bool insert(int idx, const char *imagePath, const char *name, unsigned long size, unsigned long crc,
-		const char *md5, const char *uuid, int version, ExifDate &date, const char*rootPath);
+		const char *md5, const char *uuid, int version, ExifDate &date, const char*rootPath, int dbidx);
+	CSVDBFile(const CSVDBFile &) = delete;
+	
 public:
-	CSVDBFile(const char *path);
+	CSVDBFile();
+
 	virtual ~CSVDBFile();
+
 	bool insert(int idx, const char *imagePath, const char *name, unsigned long size, unsigned long crc,
-						const char *md5, const char *uuid, int version, ExifDate &date);
+						const char *md5, const char *uuid, int version, ExifDate &date, int dbidx = -1);
+
+	void setPath(const char *s);
 	bool backupPaths(const char *path);
 	const char* findPath(unsigned int idx);
 	unsigned long findSize(unsigned int idx);
 	int getNextIndex();
 	int getNextIndex(int current);
 	int getMaxIndex();
-	const std::unique_ptr<ImageInfo> getItemAt(int idx);
+	std::unique_ptr<ImageInfo> getItemAt(int idx);
 	static std::string getYear(const char *path);
 };
 

@@ -35,7 +35,7 @@
 #include "CIDKFile.h"
 #include "CIDKFileFind.h"
 #include "SAUtils.h"
-#include <stdlib.h>
+#include <cstdlib>
 #include <istream>
 #include <fstream>
 #include <sys/types.h>
@@ -46,18 +46,22 @@
 #include <vector>
 #include <string.h>
 #include <sstream>
+#include <stdarg.h>  // For va_start, etc.
+#include <memory>    // For std::unique_ptr
 //#include <unistd.h>
 #ifdef _WIN32
 #include <windows.h>
 #include <direct.h>
 #include <stdarg.h>
 #else
-	#include <sys/stat.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <stdarg.h>
 #endif
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <cstdio>
-#include <memory>
+#include <errno.h>
 #include "cport.h"
 
 #ifdef _DEBUG
@@ -83,17 +87,6 @@ SAUtils::SAUtils() {
 
 SAUtils::~SAUtils() {
 	// TODO Auto-generated destructor stub
-}
-
-std::string SAUtils::GetEnvironment(const std::string &key)
-{
-	char * var = getenv(key.c_str());
-	std::string retval = "";
-	if (var != NULL) {
-		retval = var;
-		return retval;
-	}
-	return retval;
 }
 
 bool SAUtils::FileExists(const char *filename)
@@ -340,7 +333,7 @@ bool SAUtils::fileCompare(const char *filePath1, const char *filePath2) {
 			flag = false;
 			break;
 		}
-		if (memcmp(buffer1, buffer2, file1.gcount()) != 0) {
+		if (memcmp(buffer1, buffer2, (size_t)file1.gcount()) != 0) {
 			flag = false;
 			break;
 		}
@@ -380,6 +373,7 @@ bool SAUtils::copy(const char *from, const char *to) {
 	FILE *dest = nullptr;
 	fopen_p(dest, to, "wb");
 	if (dest == nullptr) {
+		printf("%s", strerror(errno));
 		return false;
 	}
 	while ((size = fread(buf, 1, BUFSIZ, source)) > 0) {
@@ -395,20 +389,38 @@ bool SAUtils::verify(const char *from, const char *to) {
 	return fileCompare(from, to);
 }
 
-void SAUtils::sprintf(std::string &s, const std::string &fmt, ...)
+
+#define TO_HEX(i) (i <= 9 ? '0' + i : 'a' - 10 + i)
+
+void SAUtils::chartohex(char *buffer, unsigned char x) {
+	buffer[0] = TO_HEX(((x & 0x00F0) >> 4));
+	buffer[1] = TO_HEX((x & 0x000F));
+	buffer[2] = '\0';
+}
+
+// Note this MUST be a const char *format not std::string
+std::string SAUtils::sprintf(const char *fmt, ...)
 {
-	int n, size = 100;
-	bool b = false;
-	va_list marker;
-	char buff[2014];
-	while (!b)
-	{
-		s.resize(size);
-		va_start(marker, fmt);
-		n = vsnprintf(buff, 2014, fmt.c_str(), marker);
-		va_end(marker);
-		if ((n>0) && ((b = (n<size)) == true)) s.resize(n); else size *= 2;
+	
+	
+	
+	int final_n, n = (strlen(fmt) * 2); // Reserve two times as much as the length of the fmt_str //
+	std::string str;
+	std::unique_ptr<char[]> formatted;
+	va_list ap;
+	while (1) {
+		formatted.reset(new char[n]); // Wrap the plain char array into the unique_ptr
+		strcpy(&formatted[0], fmt);
+		va_start(ap, fmt);
+		final_n = vsnprintf(&formatted[0], n, fmt, ap);
+		va_end(ap);
+		if (final_n < 0 || final_n >= n)
+			n += abs(final_n - n + 1);
+		else
+			break;
 	}
+	return std::string(formatted.get());
+	
 }
 
 
@@ -534,10 +546,18 @@ bool SAUtils::makeLink(const char *file, const char *link) {
 
 void SAUtils::splitpath(const char *path, char *drive, char *dir, char *fname, char *ext) {
 #ifdef _WIN32
-	_splitpath(path, drive, dir, fname, ext);
+	_splitpath_s(path, drive, 10, dir, 256, fname, 64, ext, 20);
 #endif
 }
-
+/*
+size_t driveNumberOfElements,
+char * dir,
+size_t dirNumberOfElements,
+char * fname,
+size_t nameNumberOfElements,
+char * ext,
+size_t extNumberOfElements
+*/
 
 int SAUtils::getFileContents(const char *filename, std::string &contents)
 {
@@ -571,3 +591,145 @@ std::string SAUtils::getFullRelativePath(const char *path) {
 bool SAUtils::mksymlink(const char *sourcePath, const char *destPath) {
 	return true;
 }
+
+
+
+
+#ifdef _WIN32
+bool SetEnv(const std::string& key, const std::string& value, bool all)
+{
+	HKEY   hkey;
+	DWORD  dwDisposition;
+	DWORD dwType, dwSize;
+	LONG result;
+	if (all) {
+		char *regPath = "SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment";
+		result = RegCreateKeyEx(HKEY_LOCAL_MACHINE, regPath,
+			0, NULL, 0, KEY_WRITE, NULL, &hkey, &dwDisposition);
+	}
+	else {
+		char *regPath = "Environment";
+		result = RegCreateKeyEx(HKEY_CURRENT_USER, regPath,
+			0, NULL, 0, KEY_WRITE, NULL, &hkey, &dwDisposition);
+	}
+
+	if (result == ERROR_SUCCESS)
+	{
+		dwType = REG_SZ;
+		dwSize = value.length() + 1;
+		LONG setResult = RegSetValueEx(hkey, TEXT(key.c_str()), 0, dwType,
+			(PBYTE)value.c_str(), dwSize);
+		RegCloseKey(hkey);
+		return setResult == ERROR_SUCCESS;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+#ifdef XXXXXX
+bool GetEnv(const char *szSIAHome, std::string &resultStr, bool all)
+{
+	HKEY   hkey;
+	DWORD  dwDisposition;
+	DWORD dwType, dwSize;
+	LONG result;
+	/*
+	if (all) {
+		char *regPath = "SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment";
+		result = RegCreateKeyEx(HKEY_LOCAL_MACHINE, regPath,
+			0, NULL, 0, KEY_WRITE, NULL, &hkey, &dwDisposition);
+	}
+	else {
+		char *regPath = "Environment";
+		result = RegCreateKeyEx(HKEY_CURRENT_USER, regPath,
+			0, NULL, 0, KEY_WRITE, NULL, &hkey, &dwDisposition);
+	}
+	*/
+	char *regPath = "Environment";
+	char path[MAX_PATH + 1];
+	DWORD size = MAX_PATH;
+	result = RegQueryValueEx(HKEY_CURRENT_USER, regPath, nullptr, nullptr, (LPBYTE)path, &size);
+	resultStr = path;
+	return true;
+}
+#endif
+
+std::string SAUtils::GetPOSIXEnv(const std::string &key)
+{
+	char *var = nullptr;
+#ifdef _WIN32
+	size_t pReturnValue = 0;
+	char buffer[2 * 1024];
+	size_t numberOfElements = 2 * 1024;
+	int errno_t = getenv_s(&pReturnValue, buffer, numberOfElements, key.c_str());
+	if (errno_t == 0) {
+		var = buffer;
+	}
+
+#else
+	var = getenv(key.c_str());
+#endif
+	std::string retval;
+	if (var != nullptr) {
+		retval = var;
+		return retval;
+	}
+	return retval;
+}
+
+
+std::string SAUtils::GetEnv(const std::string& value, bool all) {
+	HKEY hKey = 0;
+	char buf[MAX_PATH];
+	DWORD dwType = 0;
+	DWORD dwBufSize = MAX_PATH;
+	std::string res;
+	if (all) {
+		const char* subkey = "SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment";
+		if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, subkey, 0, KEY_QUERY_VALUE, &hKey) != ERROR_SUCCESS) {
+			return false;
+		}
+	}
+	else {
+		const char* subkey = "Environment";
+		if (RegOpenKeyEx(HKEY_CURRENT_USER, subkey, 0, KEY_QUERY_VALUE, &hKey) != ERROR_SUCCESS) {
+			return false;
+		}
+	}
+	if (RegQueryValueEx(hKey, value.c_str(), NULL, NULL, (BYTE*)buf, &dwBufSize) != ERROR_SUCCESS)
+	//if (RegQueryValueEx(hKey, "SIA_HOME", NULL, NULL, (BYTE*)buf, &dwBufSize) != ERROR_SUCCESS)
+	{
+		RegCloseKey(hKey);
+		return res;
+	}
+	res = buf;
+	RegCloseKey(hKey);
+	return res;
+}
+
+
+
+#else
+
+std::string SAUtils::GetEnv(const std::string &key, bool all)
+{
+	char * var = getenv(key.c_str());
+	std::string retval;
+	if (var != NULL) {
+		retval = var;
+		return retval;
+	}
+	return retval;
+}
+
+bool SAUtils::SetEnv(const char *name, const char *value, bool all)
+{
+	if (setenv(name, value, 1) != 0) {
+		return false;
+	}
+	return true;
+}
+#endif
+

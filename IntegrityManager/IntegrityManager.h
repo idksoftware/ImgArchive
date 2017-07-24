@@ -50,8 +50,8 @@ public:
 	bool addDayFolder(const char *folderName);
 	bool addFile(const char *folderPath, const char *fileName);
 	bool makeList();
-	bool validate(bool workspace, bool shadow);
-	bool repair(bool workspace, bool shadow);
+	bool validate(bool workspace, bool Master);
+	bool repair(bool workspace, bool Master);
 	static IntegrityManager &get(const char *archivePath, const char* workspacePath, const char* homePath);
 	static IntegrityManager &get();
 	void setPaths(const char* archivePath, const char* workspacePath, const char* homePath);

@@ -50,7 +50,7 @@ namespace simplearchive {
 			USING_CAPTURE_RAWDATE,
 			USING_CAPTURE_PICDATE,
 			USING_DIGITIZED_RAWDATE,
-			USING_DIGITIZED_PICDATE,
+			USING_DIGITIZED_PICDATE
 		};
 		static bool m_useEXIFDate;
 		static bool m_useFileDate;
@@ -86,7 +86,7 @@ namespace simplearchive {
 		static bool getUseDateToday();
 		static void setUseDateToday(bool b);
 
-		static bool ArchiveDate::getDefaultDateSet();
+		static bool getDefaultDateSet();
 		static void setDefaultDateSet(bool b);
 
 

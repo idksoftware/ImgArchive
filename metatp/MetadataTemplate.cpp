@@ -63,13 +63,13 @@ MetadataTemplate& MetadataTemplate::GetInstance()
 
 MetadataTemplate::~MetadataTemplate() {}
 
-static std::string default = "";
+static std::string defaultStr = "";
 
 std::string& MetadataTemplate::getValue(const char *key) {
 	std::map<std::string, std::string>::iterator it;
 
 	if ((it = m_templateFile->find(key)) == m_templateFile->end()) {
-		return default;
+		return defaultStr;
 	}
 	return it->second;
 }
@@ -92,6 +92,7 @@ bool MetadataTemplate::read(const char *datafile) {
 }
 MetadataObject_ptr MetadataTemplate::getMetadataObject() {
 	MetadataObject* metadataObject = new MetadataObject;
+	
 	for (std::map<std::string, std::string>::iterator ii = m_templateFile->begin(); ii != m_templateFile->end(); ++ii) {
 		std::string &value = getValue((*ii).first.c_str());
 		//printf("\"%s\" opt:\"%s\"\n", (*ii).first.c_str(), (*ii).second.c_str());

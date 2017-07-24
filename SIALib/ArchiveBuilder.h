@@ -41,14 +41,8 @@ namespace simplearchive {
 class ImageIndex;
 class ImageSets;
 class MetadataObject;
-class BasicExif;
+class BasicMetadata;
 class ExifObject;
-class ImagePath;
-class CSVDBFile;
-class ImageContainer;
-class HistoryEvent;
-class ArchiveDate;
-class ViewManager;
 class ImportJournal;
 /**
  * @brief This class is the archive builder class. It contains the top level
@@ -62,22 +56,18 @@ class ArchiveObject;
 class ArchiveBuilder {
 	bool m_Error;
 	
-	std::string m_shadowPath;
+	std::string m_MasterPath;
 	std::string m_indexPath;
 	std::string m_workspacePath;
 	std::string m_metatemplatePath;
-	//ImageIndex *m_imageIndex;
-	//ArchiveDate *m_archiveDate;
+	
 	ArchiveObject &m_archiveObject;
 	bool m_useExternalExifTool;
-	void copyBasicExit(MetadataObject& metadataObject, const BasicExif &eb);
+	void copyBasicExit(MetadataObject& metadataObject, const BasicMetadata &eb);
 	void copyExternalExif(MetadataObject& metadataObject, ExifObject &exifObject);
-	//bool CreateMetadataXMLFile(ImagePath &imagePath, CSVDBFile &csvDBFile, MetadataObject &metadataObject);
-	//bool CreateImage(const BasicExif &basicExif, ImagePath &imagePath, CSVDBFile &csvDBFile, MetadataObject &metadataObject);
 	
-	//bool processHistory(ImagePath &imagePath, const char *filepath, const char *comment, const HistoryEvent &he, int ver);
 	void print(ExifObject &eo);
-	void print(const BasicExif &be);
+	void print(const BasicMetadata &be);
 	void print(const MetadataObject& mo);
 	ImageSets *processFiles(const char *sourcePath, ImportJournal& importJournal);
 	bool processImageGroupSets(ImageSets *imageSets, ImportJournal& importJournal);
@@ -91,25 +81,7 @@ public:
 	/// @param sourcePath - source folder were the images to be imported reside.
 	bool Import(const char *sourcePath, bool peekImport = false);
 	bool ImportFile(const char *filePath);
-	//bool exportImages(const char *distPath);
-
 	
-	/// @brief Show checked out files into the Workspace
-	/// @param fileath - distination folder were the images that may be checked out.
-	//bool showCheckedOut(const char *filepath);
-	/// @brief Show un-checked out changes in the Workspace
-	/// @param fileath - distination folder were the images that may be checked out.
-	//bool showUncheckedOutChanges(const char *filepath);
-	/// @brief Checkout
-	/// @param fileath - distination folder were the images to be checked out reside.
-	//bool checkout(const char *filepath, const char *comment);
-	/// @brief Checkin
-	/// @param fileath - distination folder were the images to be checked out reside.
-	//bool checkin(const char *filepath, const char *comment);
-	//bool uncheckout(const char *filepath, const char *comment);
-	//bool uncheckout(const char *filepath);
-
-	//bool listContents(const char *addressScope);
 	/// Distructor
 	virtual ~ArchiveBuilder();
 	/// @brief The 

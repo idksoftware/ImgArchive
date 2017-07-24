@@ -32,8 +32,8 @@
 **
 ** #$$@@$$# */
 
-#ifndef CSVARGS_H_
-#define CSVARGS_H_
+#pragma once 
+
 #include <string>
 #include <vector>
 
@@ -41,24 +41,27 @@
 
 namespace simplearchive {
 
-class CSVArgs : public std::vector<std::string> {
-	char m_delim;
-public:
-	CSVArgs(char delim = '.');
-	virtual ~CSVArgs();
-	bool process(const char *dataString);
-	void print();
-	/// @brief This will get an optional argument empty if no argument
-	/// found.
-	std::string getOptional(int pos) {
-		if ((unsigned int)pos >= size()) {
-			return "";
+	class CSVArgs : public std::vector<std::string> {
+		char m_delim;
+	public:
+		CSVArgs(char delim = '.');
+		virtual ~CSVArgs();
+		bool process(const char *dataString);
+		bool CSVArgs::process(const std::string &data);
+		void print();
+		/// @brief This will get an optional argument empty if no argument
+		/// found.
+		std::string getOptional(int pos) {
+			if ((unsigned int)pos >= size()) {
+				return "";
+			}
+			else {
+				return at(pos);
+			}
 		}
-		else {
-			return at(pos);
-		}
-	}
-};
+
+		std::istream& CSVArgs::nextField(std::istringstream& s, std::string& field);
+	};
 
 } /* namespace simplearchive */
-#endif /* CSVARGS_H_ */
+

@@ -35,10 +35,19 @@
 #ifndef CSVDATABASE_H_
 #define CSVDATABASE_H_
 
+#include <string>
+#include <vector>
+#include <cstdlib>
 #include <memory>
 #include "DBDefines.h"
 #include "MetadataObject.h"
+
 #include "ArchivePath.h"
+
+
+#define MetadataTableName		"Metadata"
+#define MetadataTableFilename	"Metadata.csv"
+
 
 namespace simplearchive {
 /**
@@ -53,36 +62,40 @@ namespace simplearchive {
  * database if the SQL one is not enabled.
  */
 
+	
 
-
-class FolderSetList;
 class MirrorDB;
+//class CSVDatabase : MTDatabase {
 class CSVDatabase {
 	CSVDatabase();
-	static std::auto_ptr<CSVDatabase> m_this;
+	static std::shared_ptr<CSVDatabase> m_this;
 	static std::string m_dbpath;
-	std::unique_ptr<MirrorDB> m_mirrorDB;
+	//std::unique_ptr<MirrorDB> m_mirrorDB;
 	
 public:
-	/// Set the database path for the archive. This will normally under shadow/.root
+	/// Set the database path for the archive. This will normally under Master/.root
 	static void setDBPath(const char *path);
 	/// gets the database instance.
 	static CSVDatabase &get();
 	/// destructor
 	virtual ~CSVDatabase();
-	void addold(MetadataObject &metadataObject, const char *path);
+	
 	void add(MetadataObject &metadataObject, const char *relpath);
 	void update(MetadataObject &metadataObject, unsigned int idx, const char *path);
 	const MetadataObject *get(unsigned int idx, const char *path);
-	std::auto_ptr<MetadataObject> get(const char *name, const char *path);
+	std::shared_ptr<MetadataObject> get(const char *name, const char *path);
 	bool put(const char *name, const char *path, MetadataObject &mo);
 
 	bool copy(const char *path);
 	bool validate(const char *path);
 
-
-
 };
+
+//class MirrorDB;
+
+// Note there two databass need to be combined into one
+
+
 
 } /* namespace simplearchive */
 #endif /* CSVDATABASE_H_ */

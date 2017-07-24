@@ -37,7 +37,7 @@
 #include "AppConfig.h"
 #include "SAUtils.h"
 #include "stdio.h"
-#include "argvparser.h"
+#include "SIAArcArgvParser.h"
 #include "Environment.h"
 #include "EnvFunc.h"
 
@@ -66,7 +66,7 @@ bool SIAArcAppOptions::m_useDateToday = false;
 ExifDate SIAArcAppOptions::m_archiveDate;
 
 std::string SIAArcAppOptions::m_name;
-SIAArcAppOptions::CommandMode SIAArcAppOptions::m_commandMode = SIAArcAppOptions::CM_Unknown;
+SIAArcAppOptions::CommandMode SIAArcAppOptions::m_commandMode = SIAArcAppOptions::CommandMode::CM_Unknown;
 std::string SIAArcAppOptions::m_comment;
 std::string SIAArcAppOptions::m_imageAddress;
 std::string SIAArcAppOptions::m_distinationPath;
@@ -78,7 +78,7 @@ int SIAArcAppOptions::m_tcpPortNum = 64322;
 
 
 SIAArcAppOptions::SIAArcAppOptions() {
-	m_argvParser.reset(new ArgvParser);
+	m_argvParser.reset(new SIAArcArgvParser);
 	m_usingFile = false;
 	m_archiveDate.now();
 };
@@ -114,7 +114,7 @@ bool SIAArcAppOptions::initalise(int argc, char **argv) {
 		found = true;
 	} else {
 		bool found = false;
-		homePath = SAUtils::GetEnvironment("ProgramData"); 
+		homePath = SAUtils::GetPOSIXEnv("ProgramData"); 
 		if (homePath.empty() == true || homePath.length() == 0) {
 			printf("SIA Unable to start? Cannot read user profile.");
 			return false;
@@ -127,7 +127,7 @@ bool SIAArcAppOptions::initalise(int argc, char **argv) {
 			}
 		}
 		if (found == false) {
-			homePath = SAUtils::GetEnvironment("USERPROFILE");
+			homePath = SAUtils::GetPOSIXEnv("USERPROFILE");
 			if (homePath.empty() == true || homePath.length() == 0) {
 				printf("SIA Unable to start? Cannot read all users profile.");
 				return false;
@@ -169,15 +169,15 @@ bool SIAArcAppOptions::initalise(int argc, char **argv) {
 		*/
 	config.setHomePath(homePath.c_str());
 	std::string temp;
-	temp = SAUtils::GetEnvironment("SIA_ARCHIVE");
+	temp = SAUtils::GetPOSIXEnv("SIA_ARCHIVE");
 	if (temp.empty() == false) {
 		config.setWorkspacePath(temp.c_str());
 	}
-	temp = SAUtils::GetEnvironment("SIA_SOURCE");
+	temp = SAUtils::GetPOSIXEnv("SIA_SOURCE");
 	if (temp.empty() == false) {
 		config.setSourcePath(temp.c_str());
 	}
-	temp = SAUtils::GetEnvironment("SIA_LOGLEVEL");
+	temp = SAUtils::GetPOSIXEnv("SIA_LOGLEVEL");
 	if (temp.empty() == false) {
 		config.setLogLevel(temp.c_str());
 	}
@@ -580,6 +580,8 @@ bool SIAArcAppOptions::initalise(int argc, char **argv) {
 }
 #endif
 
+DefaultArgumentsContainer SIAArcAppOptions::defaultArgumentsContainer;
+
 
 SIAArcAppOptions::~SIAArcAppOptions() {
 	// TODO Auto-generated destructor stub
@@ -603,26 +605,27 @@ bool SIAArcAppOptions::setCommandMode(const char *modeString) {
 	std::string mode = modeString;
 
 	if (mode.compare("add") == 0) {
-		m_commandMode = CM_Import;
+		m_commandMode = CommandMode::CM_Import;
 		return true;
 	}
 	else if (mode.compare("add") == 0) {
-		m_commandMode = CM_Export;
+		m_commandMode = CommandMode::CM_Export;
 		return true;
 	}
 	else if (mode.compare("add") == 0) {
-		m_commandMode = CM_Checkout;
+		m_commandMode = CommandMode::CM_Checkout;
 		return true;
 	}
 	else if (mode.compare("add") == 0) {
-		m_commandMode = CM_Checkin;
+		m_commandMode = CommandMode::CM_Checkin;
 		return true;
 	}
 	else if (mode.compare("add") == 0) {
-		m_commandMode = CM_Uncheckin;
+		m_commandMode = CommandMode::CM_Uncheckin;
 		return true;
 	}
-	m_commandMode = CM_Unknown;
+	m_commandMode = CommandMode::CM_Unknown;
+	//CommandLineProcessing::AppOptions::setError(12, "Unable to start, Command unknown .");
 	return false;
 }
 
@@ -686,6 +689,14 @@ bool SIAArcAppOptions::isDataForced() {
 
 ExifDate &SIAArcAppOptions::getArchiveDate() {
 	return m_archiveDate;
+}
+
+void SIAArcAppOptions::setDefaultArguments(std::string s) {
+	defaultArgumentsContainer.push_back(s);
+}
+
+DefaultArgumentsContainer& SIAArcAppOptions::getDefaultArguments() {
+	return defaultArgumentsContainer;
 }
 
 } /* namespace simplearchive */

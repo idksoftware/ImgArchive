@@ -36,16 +36,11 @@
 #include <string>
 #include <stdlib.h>
 #include <stdio.h>
-#include "MediaProperties.h"
 #include "CSVDatabase.h"
-#include "AssetProperties.h"
-#include "CameraInformation.h"
-#include "ArchivePath.h"
-#include "GPSProperties.h"
-#include "CopyrightProperties.h"
+#include "MetaType.h"
 #include "SAUtils.h"
 #include "CSVDBVisitor.h"
-#include "DefineNames.h"
+
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -60,7 +55,7 @@ class MirrorDB {
 	std::string m_primary;
 	std::string m_backup1;
 	std::string m_backup2;
-	std::string m_shadow;
+	std::string m_master;
 	std::string makeFolders(std::string &pasePath, std::string &relPath);
 	bool copy(std::string &from, std::string &to);
 	bool copyDB(std::string &from, std::string &to, const char *name);
@@ -71,56 +66,47 @@ public:
 	bool process(std::string &shortPath);
 };
 
-class FolderSet {
-	AssetProperties m_assetProperties;
-	CameraInformation m_cameraInformation;
-	GPSProperties m_GPSProperties;
-	MediaProperties m_MediaProperties;
-	CopyrightProperties m_copyrightProperties;
-	std::string m_path;
-public:
-	FolderSet(const char *path) {
-		m_path = path;
-	}
-	~FolderSet() {
-
-	}
-	void add(MetadataObject &metadataObject);
-	std::auto_ptr<MetadataObject> get(const char *image);
-	bool put(const char *image, MetadataObject &mo);
+/*
+class MetadataSet {
 	
+	MTTable& m_Metadata;
+	
+	
+	std::string m_path;
+	MTDatabase &m_db;
+public:
+	MetadataSet(MTDatabase db, const char *path) : m_db(db), m_path(path),
+		m_Metadata(db.getTable(MetadataTable)) {}
+	~MetadataSet() {};
+	void add(MetadataObject &metadataObject);
+	std::shared_ptr<MetadataObject> get(const char *image);
+	bool put(const char *image, MetadataObject &mo);
 };
 
 
-void FolderSet::add(MetadataObject &metadataObject) {
+void MetadataSet::add(MetadataObject &metadataObject) {
 
-	m_assetProperties.read(m_path.c_str());
-	m_assetProperties.add(metadataObject);
-	m_assetProperties.write(m_path.c_str());
-	m_cameraInformation.read(m_path.c_str());
-	m_cameraInformation.add(metadataObject);
-	m_cameraInformation.write(m_path.c_str());
-	m_GPSProperties.read(m_path.c_str());
-	m_GPSProperties.add(metadataObject);
-	m_GPSProperties.write(m_path.c_str());
-	m_MediaProperties.read(m_path.c_str());
-	m_MediaProperties.add(metadataObject);
-	m_MediaProperties.write(m_path.c_str());
-	m_copyrightProperties.read(m_path.c_str());
-	m_copyrightProperties.add(metadataObject);
-	m_copyrightProperties.write(m_path.c_str());
+	std::string filename = m_Metadata.getSchema().getName() + ".csv";
+	m_Metadata.read(m_path.c_str(), filename.c_str());
+	m_Metadata.addRow(metadataObject);
+	m_Metadata.write(m_path.c_str(), filename.c_str());
+
+	
+	
 }
 
-std::auto_ptr<MetadataObject> FolderSet::get(const char *image) {
+std::shared_ptr<MetadataObject> MetadataSet::get(const char *image) {
+	std::shared_ptr<MetadataObject> mo(new MetadataObject);
+	
 	m_assetProperties.read(m_path.c_str());
 
-	std::auto_ptr<MetadataObject> mo(new MetadataObject);
+
 	unsigned int row = m_assetProperties.findImage(image, 1);
 	if (row == std::string::npos) {
 		mo.reset();
 		return mo;
 	}
-
+	
 	m_assetProperties.load(row, *mo);
 	m_cameraInformation.read(m_path.c_str());
 	m_cameraInformation.load(row, *mo);
@@ -130,10 +116,12 @@ std::auto_ptr<MetadataObject> FolderSet::get(const char *image) {
 	m_copyrightProperties.load(row, *mo);
 	m_MediaProperties.read(m_path.c_str());
 	m_MediaProperties.load(row, *mo);
+	
 	return mo;
 }
 
-bool FolderSet::put(const char *image, MetadataObject &mo) {
+bool MetadataSet::put(const char *image, MetadataObject &mo) {
+	
 	m_assetProperties.read(m_path.c_str());
 	unsigned int row = m_assetProperties.findImage(image, 1);
 	if (row == std::string::npos) {
@@ -144,15 +132,27 @@ bool FolderSet::put(const char *image, MetadataObject &mo) {
 	m_GPSProperties.save(row, mo);
 	m_copyrightProperties.save(row, mo);
 	m_MediaProperties.save(row, mo);
+	
 	return true;
 }
 
+*/
 
-std::auto_ptr<CSVDatabase> CSVDatabase::m_this(0);
+class MetadataPartition : public MTTable {
+public:
+	MetadataPartition() : MTTable(new MetadataSchema) {};
+	virtual ~MetadataPartition() {};
+};
+
+std::shared_ptr<CSVDatabase> CSVDatabase::m_this(0);
 std::string CSVDatabase::m_dbpath;
 
+//std::shared_ptr<CSVVersionDatabase> CSVVersionDatabase::m_this(0);
+//std::string CSVVersionDatabase::m_dbpath;
+
 CSVDatabase::CSVDatabase() {
-	m_mirrorDB.reset(new MirrorDB(m_dbpath.c_str()));
+	
+	//m_mirrorDB.reset(new MirrorDB(m_dbpath.c_str()));
 }
 
 CSVDatabase::~CSVDatabase() {
@@ -169,11 +169,6 @@ void CSVDatabase::setDBPath(const char *path) {
 	m_dbpath = path;
 }
 
-void CSVDatabase::addold(MetadataObject &metadataObject, const char *path) {
-	// check path exists
-	FolderSet folderSet(path);
-	folderSet.add(metadataObject);
-}
 
 
 void CSVDatabase::add(MetadataObject &metadataObject, const char *relpath) {
@@ -203,16 +198,31 @@ void CSVDatabase::add(MetadataObject &metadataObject, const char *relpath) {
 			throw std::exception();
 		}
 	}
-	FolderSet folderSet(fullPath.c_str());
-	folderSet.add(metadataObject);
-	m_mirrorDB->process(relPath);
+	
+	
+	MetadataPartition metadataPartition;
+	std::string filename = metadataPartition.getSchema().getName() + ".csv";
+	if (metadataPartition.read(fullPath.c_str(), filename.c_str()) == false) {
+		if (ErrorCode::getErrorCode() != SIA_ERROR::OPEN_ERROR) {
+			// file may not exist
+			throw std::exception();
+		}
+	}
+	if (metadataPartition.addRow(metadataObject) == false) {
+		throw std::exception();
+	}
+	if (metadataPartition.write(fullPath.c_str(), filename.c_str()) == false) {
+		throw std::exception();
+	}
+
+	//m_mirrorDB->process(relPath);
 }
 
 const MetadataObject *CSVDatabase::get(unsigned int idx, const char *path) {
 	return 0;
 }
 
-std::auto_ptr<MetadataObject> CSVDatabase::get(const char *name, const char *path) {
+std::shared_ptr<MetadataObject> CSVDatabase::get(const char *name, const char *path) {
 	if (SAUtils::DirExists(m_dbpath.c_str()) == false) {
 		throw std::exception();
 	}
@@ -232,8 +242,10 @@ std::auto_ptr<MetadataObject> CSVDatabase::get(const char *name, const char *pat
 	if (SAUtils::DirExists(fullPath.c_str()) == false) {
 		throw std::exception();
 	}
-	FolderSet folderSet(fullPath.c_str());
-	return folderSet.get(name);
+	//MTDatabase &db = *m_mtDatabase;
+	//MetadataSet metadataSet(db, fullPath.c_str());
+	//return metadataSet.get(name);
+	return std::make_shared<MetadataObject>();
 }
 
 bool CSVDatabase::put(const char *name, const char *path, MetadataObject &mo) {
@@ -253,16 +265,17 @@ bool CSVDatabase::put(const char *name, const char *path, MetadataObject &mo) {
 		throw std::exception();
 	}
 
-	FolderSet folderSet(fullPath.c_str());
-	folderSet.put(name, mo);
+	//MTDatabase &db = *m_mtDatabase;
+	//MetadataSet metadataSet(db, fullPath.c_str());
+	//metadataSet.put(name, mo);
 	return true;
 }
 
 MirrorDB::MirrorDB(const char *rootPath) {
 	m_path = rootPath;
 
-	if (ArchivePath::isShadowEnabled() == true) {
-		m_shadow = ArchivePath::getShadow().getCSVDatabasePath();
+	if (ArchivePath::isMasterEnabled() == true) {
+		m_master = ArchivePath::getMaster().getCSVDatabasePath();
 	}
 	if (ArchivePath::isBackup1Enabled() == true) {
 		m_backup1 = ArchivePath::getBackup1().getCSVDatabasePath();
@@ -286,19 +299,7 @@ bool MirrorDB::copyDB(std::string &from, std::string &to, const char *name) {
 }
 
 bool MirrorDB::copy(std::string &from, std::string &to) {
-	if (copyDB(from, to, AssetPropertiesFilename) == false) {
-		return false;
-	}
-	if (copyDB(from, to, CameraInformationFilename) == false) {
-		return false;
-	}
-	if (copyDB(from, to, CopyrightPropertiesFilename) == false) {
-		return false;
-	}
-	if (copyDB(from, to, GPSPropertiesFilename) == false) {
-		return false;
-	}
-	if (copyDB(from, to, MediaPropertiesFilename) == false) {
+	if (copyDB(from, to, MetadataTableFilename) == false) {
 		return false;
 	}
 	
@@ -338,8 +339,8 @@ bool MirrorDB::process(std::string &relPath) {
 	fromfull += '/'; fromfull += dayStr;
 	
 	
-	if (ArchivePath::isShadowEnabled() == true) {
-		std::string fullPath = makeFolders(m_shadow, relPath);
+	if (ArchivePath::isMasterEnabled() == true) {
+		std::string fullPath = makeFolders(m_master, relPath);
 		if (copy(fromfull, fullPath) == false) {
 			return false;
 		}
@@ -539,8 +540,8 @@ bool CSVDatabase::validate(const char *path) {
 }
 /*
 std::auto_ptr<MetadataObject> CSVDatabase::get(const char *name, const char *path) {
-	FolderSet folderSet(path);
-	return folderSet.get(name);
+	MetadataSet metadataSet(path);
+	return MetadataSet.get(name);
 }
 */
 } /* namespace simplearchive */

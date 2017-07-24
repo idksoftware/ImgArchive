@@ -36,7 +36,7 @@
 #include "ImageContainer.h"
 #include "MetadataObject.h"
 #include "ExifDate.h"
-#include "BasicExifFactory.h"
+#include "BasicMetadataFactory.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -136,15 +136,15 @@ namespace simplearchive {
 		const MetadataObject *picMetadata = ic.getPictureMetadata();
 		const MetadataObject *rawMetadata = ic.getRawMetadata();
 
-		BasicExif *picId = nullptr;
-		BasicExif *rawId = nullptr;
+		BasicMetadata *picId = nullptr;
+		BasicMetadata *rawId = nullptr;
 		if (ic.hasPictureFile()) {
-			picId = (BasicExif *)&(ic.getPictureId());
+			picId = (BasicMetadata *)&(ic.getPictureId());
 			const ExifDateTime& createTime = picId->getCreateTime();
 			m_fileDate.reset(new ExifDate(createTime));
 		}
 		else if (ic.hasRawFile()) {
-			rawId = (BasicExif *)&(ic.getRawId());
+			rawId = (BasicMetadata *)&(ic.getRawId());
 			const ExifDateTime& createTime = rawId->getCreateTime();
 			m_fileDate.reset(new ExifDate(createTime));
 		}
@@ -225,7 +225,7 @@ namespace simplearchive {
 		}
 		else {
 			
-			if (m_exifDate->isOk() == false) {
+			if (m_exifDate == nullptr || m_exifDate->isOk() == false) {
 				if (m_fileDate != nullptr) {
 					m_achiveDate = *m_fileDate;
 				}
@@ -249,8 +249,9 @@ namespace simplearchive {
 			else if (m_useFileDate && m_fileDate != nullptr) {
 				m_achiveDate = *m_fileDate;
 			}
-			return m_achiveDate;
+			
 		}
+		return m_achiveDate;
 	}
 
 	void ArchiveDate::setFalse() {

@@ -50,18 +50,18 @@
 #include "ImageGroup.h"
 #include "TargetsList.h"
 #include "FileInfo.h"
-#include "BasicExifFactory.h"
+#include "BasicMetadataFactory.h"
 #include "XMLWriter.h"
 #include "ImagePath.h"
 #include "ArchiveObject.h"
 #include "CSVDBFile.h"
 #include "HistoryEvent.h"
-#include "History.h"
 #include "ImageHistory.h"
+#include "SystemHistory.h"
 #include "CSVDatabase.h"
 #include "HookCmd.h"
 #include "ViewManager.h"
-#include "VersionControl.h"
+//#include "VersionControl.h"
 #include "SummaryFile.h"
 #include "CIDKDate.h"
 #include "MirrorManager.h"
@@ -84,7 +84,6 @@ static char THIS_FILE[] = __FILE__;
 
 #define VERSION	"1.00"
 #define BUILD	"040115.1749"
-#define DB "c:/temp/test3.db"
 
 
 namespace simplearchive {
@@ -111,7 +110,9 @@ namespace simplearchive {
 	SIALib::~SIALib()
 	{
 		if (m_socklibStarted) {
+#ifdef _WIN32
 			WSACleanup();
+#endif
 		}
 	}
 
@@ -158,10 +159,10 @@ namespace simplearchive {
 	}
 
 	const int SIALib::getLastCode() {
-		return CLogger::getLogger().getLastCode();
+		return CLogger::getLastCode();
 	}
 	const char *SIALib::getLastMessage() {
-		return CLogger::getLogger().getLastMessage();
+		return CLogger::getLastMessage();
 	}
 
 
@@ -171,16 +172,17 @@ namespace simplearchive {
 
 		CAppConfig &config = CAppConfig::get();
 
-		config.init();
+		
 		//AppOptions &appOptions = AppOptions::get();
 
 		CLogger::setLevel(config.getLogLevel());
 		CLogger::setLogPath(config.getLogPath());
 		CLogger::setSilent(config.isQuiet());
 		
-		//ChangeLog::setLogPath(config.getHistoryPath());
+		
 
 		CLogger &logger = CLogger::getLogger();
+#ifdef _WIN32
 		WSADATA wsa;
 		if (m_winsockRequired) {
 			//Initialise winsock
@@ -195,7 +197,7 @@ namespace simplearchive {
 				m_socklibStarted = true;
 			}
 		}
-
+#endif
 		config.setEventsOn(true); // debug only
 
 		m_enableEvents = config.isEventsOn();
@@ -221,105 +223,123 @@ namespace simplearchive {
 		CIDKDate date;
 		date.Now();
 		summaryFile.log(SummaryFile::SF_BRIEF, SummaryFile::SF_COMMENT, "Summary start %s", date.Print().c_str());
-		logger.log(LOG_STARTING, CLogger::SUMMARY, "Application starting at %s", date.Print().c_str());
-		logger.log(LOG_OK, CLogger::INFO, "Home path is \"%s\"", config.getHomePath());
+		logger.log(LOG_STARTING, CLogger::Level::SUMMARY, "Application starting at %s", date.Print().c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "Home path is \"%s\"", config.getHomePath());
 
 		try {
-			std::string temp = config.getWorkspacePath();
+			auto &archiveObject = ArchiveObject::get();
+			if (archiveObject.Initalise() == false) {
+				return -1;
+			}
+			/* This is done by ArchiveObject -> ArchivePath
+			
 
 			if (SAUtils::DirExists(temp.c_str()) == false) {
 
-				logger.log(LOG_OK, CLogger::INFO, "Main repository folder not found at location: \"%s\"", temp.c_str());
+				logger.log(LOG_OK, CLogger::Level::INFO, "Main repository folder not found at location: \"%s\"", temp.c_str());
 
 				if (SAUtils::mkDir(temp.c_str()) == false) {
-					logger.log(LOG_WORKSPACE_NOT_FOUND, CLogger::INFO, "Cannot create Main repository folder at location: \"%s\"", temp.c_str());
+					logger.log(LOG_WORKSPACE_NOT_FOUND, CLogger::Level::INFO, "Cannot create Main repository folder at location: \"%s\"", temp.c_str());
 					return -1;
 				}
-				logger.log(LOG_OK, CLogger::INFO, "Main repository folder created at location: \"%s\"", temp.c_str());
+				logger.log(LOG_OK, CLogger::Level::INFO, "Main repository folder created at location: \"%s\"", temp.c_str());
 			}
+			
 
-			temp = config.getShadowPath();
+			temp = config.getMasterPath();
 			if (SAUtils::DirExists(temp.c_str()) == false) {
 
-				logger.log(LOG_OK, CLogger::INFO, "Shadow Repository folder not found at location: \"%s\"", temp.c_str());
+				logger.log(LOG_OK, CLogger::Level::INFO, "Master Repository folder not found at location: \"%s\"", temp.c_str());
 
 				if (SAUtils::mkDir(temp.c_str()) == false) {
-					logger.log(LOG_OK, CLogger::INFO, "Cannot create Shadow Repository folder at location: \"%s\"", temp.c_str());
+					logger.log(LOG_OK, CLogger::Level::INFO, "Cannot create Master Repository folder at location: \"%s\"", temp.c_str());
 					return -1;
 				}
-				logger.log(LOG_OK, CLogger::INFO, "Shadow repository folder created at location: \"%s\"", temp.c_str());
+				logger.log(LOG_OK, CLogger::Level::INFO, "Master repository folder created at location: \"%s\"", temp.c_str());
 			}
+			*/
 			/* ArchiveObject
-			if (ImagePath::settupMainArchiveFolders(config.getWorkspacePath(), config.getShadowPath(), config.getHomePath()) == false) {
+			if (ImagePath::settupMainArchiveFolders(config.getWorkspacePath(), config.getMasterPath(), config.getHomePath()) == false) {
 
 				return -1;
 			}
-	
-			VersionControl::setPathToArchives(config.getWorkspacePath(), config.getShadowPath());
+			
+			const RepositoryPath &rp = archiveObject.getMasterPath();
+			VersionControl::setPathToArchives(archiveObject.getWorkspacePath().c_str(), rp.getRepositoryPath().c_str());
 			History::setPath(config.getHistoryPath());
 			History &history = History::getHistory();
-			std::string csvdbPath = config.getShadowPath();
+			std::string csvdbPath = rp.getRepositoryPath().c_str();
 			csvdbPath += "/.csvdb";
 			CSVDatabase::setDBPath(csvdbPath.c_str());
 			*/
-			if (ArchiveObject::get().Initalise() == false) {
-				return -1;
-			}
-
+			
 			if (ImageExtentions::setExtentionsFilePath(config.getConfigPath()) == false) {
-				logger.log(LOG_OK, CLogger::INFO, "Unable to find image extensions file path: \"%s\"", config.getConfigPath());
+				logger.log(LOG_OK, CLogger::Level::INFO, "Unable to find image extensions file path: \"%s\"", config.getConfigPath());
 				return -1;
 			}
+			std::string temp = config.getWorkspacePath();
 			if (SAUtils::DirExists(temp.c_str()) == false) {
-				logger.log(LOG_OK, CLogger::INFO, "Hidden .sia folder not found at location: \"%s\"", temp.c_str());
+				logger.log(LOG_OK, CLogger::Level::INFO, "Hidden .sia folder not found at location: \"%s\"", temp.c_str());
 
 				if (SAUtils::mkDir(temp.c_str()) == false) {
-					logger.log(LOG_OK, CLogger::INFO, "Cannot create Hidden .sia folder at location: \"%s\"", temp.c_str());
+					logger.log(LOG_OK, CLogger::Level::FATAL, "Cannot create Hidden .sia folder at location: \"%s\"", temp.c_str());
 					return -1;
 				}
 				if (SAUtils::setHidden(temp.c_str()) == false) {
-					logger.log(LOG_OK, CLogger::INFO, "Cannot set Hidden .sia folder to a hidden folder \"%s\"", temp.c_str());
+					logger.log(LOG_OK, CLogger::Level::INFO, "Cannot set Hidden .sia folder to a hidden folder \"%s\"", temp.c_str());
 					return -1;
 				}
-				logger.log(LOG_OK, CLogger::INFO, "Hidden .sia folder created at location: \"%s\"", temp.c_str());
+				logger.log(LOG_OK, CLogger::Level::INFO, "Hidden .sia folder created at location: \"%s\"", temp.c_str());
 			}
 
-			logger.log(LOG_OK, CLogger::FINE, "Log path \"%s\"", config.getLogPath());
+			logger.log(LOG_OK, CLogger::Level::FINE, "Log path \"%s\"", config.getLogPath());
 			temp = config.getHistoryPath();
 			if (SAUtils::DirExists(temp.c_str()) == false) {
-				logger.log(LOG_OK, CLogger::INFO, "History folder not found at location: \"%s\"", temp.c_str());
+				logger.log(LOG_OK, CLogger::Level::INFO, "History folder not found at location: \"%s\"", temp.c_str());
 
 				if (SAUtils::mkDir(temp.c_str()) == false) {
-					logger.log(LOG_OK, CLogger::INFO, "Cannot create History folder at location: \"%s\"", temp.c_str());
+					logger.log(LOG_OK, CLogger::Level::FATAL, "Cannot create History folder at location: \"%s\"", temp.c_str());
 					return -1;
 				}
-				logger.log(LOG_OK, CLogger::INFO, "History folder created at location: \"%s\"", temp.c_str());
+				logger.log(LOG_OK, CLogger::Level::INFO, "History folder created at location: \"%s\"", temp.c_str());
+			}
+			logger.log(LOG_OK, CLogger::Level::FINE, "System path \"system\"");
+			temp = config.getSystemPath();
+			if (SAUtils::DirExists(temp.c_str()) == false) {
+				logger.log(LOG_OK, CLogger::Level::INFO, "System path not found at location: \"%s\"", temp.c_str());
+
+				if (SAUtils::mkDir(temp.c_str()) == false) {
+					logger.log(LOG_OK, CLogger::Level::FATAL, "Cannot create System path at location: \"%s\"", temp.c_str());
+					return -1;
+				}
+				logger.log(LOG_OK, CLogger::Level::INFO, "System folder created at location: \"%s\"", temp.c_str());
 			}
 			temp = config.getIndexPath();
 			if (SAUtils::DirExists(temp.c_str()) == false) {
-				logger.log(LOG_OK, CLogger::INFO, "Index folder not found at location: \"%s\"", temp.c_str());
+				logger.log(LOG_OK, CLogger::Level::INFO, "Index folder not found at location: \"%s\"", temp.c_str());
 
 				if (SAUtils::mkDir(temp.c_str()) == false) {
-					logger.log(LOG_OK, CLogger::INFO, "Cannot create Index folder at location: \"%s\"", temp.c_str());
+					logger.log(LOG_OK, CLogger::Level::FATAL, "Cannot create Index folder at location: \"%s\"", temp.c_str());
 					return -1;
 				}
-				logger.log(LOG_OK, CLogger::INFO, "Index folder created at location: \"%s\"", temp.c_str());
+				logger.log(LOG_OK, CLogger::Level::INFO, "Index folder created at location: \"%s\"", temp.c_str());
 			}
 			if (ImageExtentions::setExtentionsFilePath(config.getConfigPath()) == false) {
 				return -1;
 			}
 			HookCmd::setHookPath(config.getHookPath());
-			m_ArchiveBuilder->setUseExternalExifTool(true);
+			//m_ArchiveBuilder->setUseExternalExifTool(true);
 
 			if (m_ArchiveBuilder->Init() == false) {
 				return -1;
 			}
 			/* this needs looking at??
-			if (MirrorManager::initalise(config.getShadowPath(), config.getConfigPath()) == false) {
+			if (MirrorManager::initalise(config.getMasterPath(), config.getConfigPath()) == false) {
 				return -1;
 			}
 			*/
-			if (ViewManager::initalise(config.getShadowPath(), config.getConfigPath()) == false) {
+			/*
+			if (ViewManager::initalise(config.getMasterPath(), config.getConfigPath()) == false) {
 				return -1;
 			}
 			Database &db = Database::getInstance();
@@ -327,12 +347,13 @@ namespace simplearchive {
 			if (db.open(DB, "", "") == false) {
 				printf("database open returned %s", db.getError());
 			}
+			*/
 		}
 		catch (SIAAppException e) {
-			logger.log(LOG_OK, CLogger::FATAL, "Failed to complete initalisation %s\n", e.what());
+			logger.log(LOG_OK, CLogger::Level::FATAL, "Failed to complete initalisation %s\n", e.what());
 			return -1;
 		}
-		logger.log(LOG_OK, CLogger::SUMMARY, "Initalisation complete");
+		logger.log(LOG_OK, CLogger::Level::SUMMARY, "Initalisation complete");
 		return 0;
 	}
 
@@ -343,7 +364,7 @@ namespace simplearchive {
 		SummaryFile &summaryFile = SummaryFile::getSummaryFile();
 		CIDKDate date;
 		date.Now();
-		logger.log(LOG_OK, CLogger::SUMMARY, "Application completed successfully at %s", date.Print().c_str());
+		logger.log(LOG_OK, CLogger::Level::SUMMARY, "Application completed successfully at %s", date.Print().c_str());
 		summaryFile.log(SummaryFile::SF_BRIEF, SummaryFile::SF_COMMENT, "Summary start");
 		return 0;
 	}
@@ -516,7 +537,7 @@ namespace simplearchive {
 				if (im.repair(true, false) == false) {
 					return false;
 				}
-			case Shadow:
+			case Master:
 				if (im.repair(false, true) == false) {
 					return false;
 				}
@@ -533,7 +554,7 @@ namespace simplearchive {
 				if (im.validate(true, false) == false) {
 					return false;
 				}
-			case Shadow:
+			case Master:
 				if (im.validate(false, true) == false) {
 					return false;
 				}

@@ -83,6 +83,7 @@ public:
     typedef std::map<unsigned int, std::string> Key2StringMap;
     typedef std::vector<std::string> ArgumentContainer;
 	typedef std::map<unsigned int, ArgumentContainer> CommandSet;
+	typedef std::vector<std::string> DefaultArgumentsContainer;
 
     ArgvParser();
     ~ArgvParser();
@@ -96,7 +97,7 @@ public:
 		MasterOption = 0x03
     };
     /** Return values of the parser. */
-    enum
+	enum
     {
         NoParserError = 00,
         ParserUnknownOption = 1,
@@ -196,6 +197,10 @@ public:
 		return current_command_id;
 	}
 
+	DefaultArgumentsContainer &getDefaultArgumentsContainer() {
+		return defaultArgumentsContainer;
+	}
+
 	bool command(const std::string& _command) {
 		return (!current_command.compare(_command));
 	}
@@ -218,6 +223,9 @@ public:
     * usage description as returned by usageDescription() is printed.
     */
     std::string parseErrorDescription(ParserResults _error_code) const;
+
+	virtual std::string usageDescriptionHeader(unsigned int _width) const = 0;
+
     /** Returns a string with the usage descriptions for all options. The
      * description string is formated to fit into a terminal of width _width.*/
 	std::string commandUsage(unsigned int _width = 80) const;
@@ -229,6 +237,8 @@ public:
 	std::string topicUsageDescription(unsigned int topic, unsigned int _width = 80) const;
 
 	void setHeader(const std::string& _option);
+
+	bool matchOption(unsigned int topic, const char *option) const;
 
 private:
     /** Returns the key of a defined option with name _name or -1 if such option
@@ -273,6 +283,9 @@ private:
 	unsigned int current_command_id;
 
 	std::string current_command;
+
+	/** Holds file or directory names*/
+	DefaultArgumentsContainer defaultArgumentsContainer;
     /** Holds the key for the help option. */
     unsigned int help_option;
 
@@ -368,7 +381,13 @@ std::string formatString(const std::string& _string,
                          unsigned int _indent = 0,
 						 unsigned int _endPadding = 0);
 
+std::string formatLine(const std::string& _string,
+	unsigned int _width,
+	unsigned int _indent = 0,
+	unsigned int _endPadding = 0);
+
 }
+
 ; // namespace CommandLineProcessing
 
 #endif // __CMDLINEPARSER_H

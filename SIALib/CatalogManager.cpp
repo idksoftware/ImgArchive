@@ -53,7 +53,7 @@ static char THIS_FILE[] = __FILE__;
 namespace simplearchive {
 
 std::string CatalogManager::m_catalogPath;
-std::string CatalogManager::m_shadowPath;
+std::string CatalogManager::m_MasterPath;
 
 std::auto_ptr<CatalogManager> CatalogManager::m_this(0);
 
@@ -529,7 +529,7 @@ CatalogManager::CatalogManager() {}
 CatalogManager::~CatalogManager() {}
 
 bool CatalogManager::addDayFolder(const char *folderName) {
-	Catalog catalog(m_catalogPath.c_str(), m_shadowPath.c_str());
+	Catalog catalog(m_catalogPath.c_str(), m_MasterPath.c_str());
 	catalog.addDayFolder(folderName);
 	return true;
 }
@@ -709,7 +709,7 @@ void CatalogAction::onImage(const char *path, const char *name) {
 
 bool CatalogManager::makeList() {
 	ArchiveVisitor archiveVisitor(new CatalogAction(m_catalogPath.c_str()));
-	archiveVisitor.process(m_shadowPath.c_str());
+	archiveVisitor.process(m_MasterPath.c_str());
 	return true;
 }
 

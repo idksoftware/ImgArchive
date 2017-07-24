@@ -1,9 +1,43 @@
 #pragma once
 
 #include <string>
+#include "AppPaths.h"
 
 namespace simplearchive {
 
+class PrimaryIndexPath {
+	std::string m_ImageIndexPath;
+	std::string m_idxDBPath;
+	std::string m_historyPath;
+	std::string m_metadataPath;
+	std::string m_pathToRepository;
+public:
+	void setRepositoryPath(std::string &pathToRepository);
+	bool settup();
+
+	const std::string& getIdxDbPath() const {
+		return m_idxDBPath;
+	}
+
+	const std::string& getImageIndexPath() const {
+		return m_ImageIndexPath;
+	}
+
+	const std::string& getHistoryPath() const {
+		return m_historyPath;
+	}
+
+	const std::string& getMetadataPath() const {
+		return m_metadataPath;
+	}
+
+	const std::string& getPathToRepository() const {
+		return m_pathToRepository;
+	}
+};
+/**
+	class RepositoryPath contains the paths to a Date based repository
+*/
 class RepositoryPath {
 
 	std::string m_relpath;
@@ -11,9 +45,8 @@ class RepositoryPath {
 	std::string m_imageName;
 	std::string m_yearStr;
 	std::string m_yyyymmddStr;
-	std::string m_yearStrPath;				//< i.e. C:\ProgramData\IDK Software\ImageArchive1.0\shadow\2015
-	std::string m_yyyymmddStrPath;			//< i.e. C:\ProgramData\IDK Software\ImageArchive1.0\shadow\2015\2015-11-26
-	
+	std::string m_yearStrPath;				//< i.e. C:\ProgramData\IDK Software\ImageArchive1.0\Master\2015
+	std::string m_yyyymmddStrPath;			//< i.e. C:\ProgramData\IDK Software\ImageArchive1.0\Master\2015\2015-11-26
 
 	std::string m_pathToRepository;
 
@@ -40,7 +73,7 @@ public:
 	const std::string& getImageName() const;
 	const std::string& getRelativePath() const;
 	
-	std::string getRepositoryPath();
+	std::string getRepositoryPath() const;
 	std::string getDataPath();
 	std::string getCatalog() const;
 	void setCatalog(std::string &catalog);
@@ -57,7 +90,9 @@ public:
 	void setIdxDBPath(std::string &idxDBPath);
 	std::string getImageIdxPath() const;
 };
-
+/**
+class ArchivePath contains the set of Repository Paths and the global paths for the Archive.
+*/
 class ArchivePath {
 	static std::string m_pathToHome;
 	static std::string m_pathToWorkspace;
@@ -65,20 +100,21 @@ class ArchivePath {
 	//	static std::string m_userDefinedSequenceNumberPath;
 	static std::string m_mainDupsPath;
 	static std::string m_mainHistory;
-	//static ArchivePath *m_shadow;
-	static std::string m_pathToShadow;
-
+	//static ArchivePath *m_master;
+	static std::string m_pathToMaster;
+	static std::string m_pathToDerivitive;
 	static std::string m_workspaceYyyymmddPath;
 	static std::string m_workspaceMetadataPath;
 
 	static std::string m_backup1;
 	static std::string m_backup2;
-	static RepositoryPath m_shadow;
+	static RepositoryPath m_master;
+	static RepositoryPath m_derivative;
 	static RepositoryPath m_backupPath[2];
+	static PrimaryIndexPath m_primaryIndex;
 public:
 
-	//bool ArchivePath::settup() {
-	static bool settupShadow();
+	
 	bool settupRelative(std::string &yyyymmddStr);
 
 	static std::string getPathToHome();
@@ -89,32 +125,37 @@ public:
 	static void setMainHistory(std::string &mainHistory);
 	static std::string getMainMetadataPath();
 	static void setMainMetadataPath(std::string &mainMetadataPath);
-	static std::string getPathToShadow();
-	static void setPathToShadow(std::string &pathToShadow);
+	static std::string getMasterPath();
+	static void setMasterPath(std::string &pathToMaster);
+	static std::string getDerivativePath();
+	static void setDerivativePath(std::string &path);
 	static std::string getPathToWorkspace();
 	static void setPathToWorkspace(std::string &pathToWorkspace);
 	
 	static std::string getWorkspaceYyyymmddPath();
 	static std::string getWorkspaceMetadataPath();
 
-	static std::string getShadowCatalog();
-	static void setShadowCatalog(std::string &shadowCatalog);
-	static std::string getShadowHistory();
-	static void setShadowHistory(std::string &shadowHistory);
-	static std::string getShadowJournalPath();
-	static void setShadowJournalPath(std::string &shadowJournalPath);
-	static std::string getShadowMetadataPath();
-	static void setShadowMetadataPath(std::string &shadowMetadataPath);
+	static std::string getMasterCatalog();
+	static void setMasterCatalog(std::string &MasterCatalog);
+	static std::string getIndexHistory();
+	//static void setMasterHistory(std::string &MasterHistory);
+	static std::string getMasterJournalPath();
+	static void setMasterJournalPath(std::string &MasterJournalPath);
+	static std::string getMasterMetadataPath();
+	static void setMasterMetadataPath(std::string &MasterMetadataPath);
 	static std::string getIdxDBPath();
 	static void setIdxDBPath(std::string &idxDBPath);
 	static std::string getBackup1Path();
 	static void setBackup1Path(std::string &pathToBackup1);
 	static std::string getBackup2Path();
 	static void setBackup2Path(std::string &pathToBackup2);
-	static RepositoryPath& getShadow();
+	static RepositoryPath& getMaster();
+	static RepositoryPath& getDerivative();
 	static RepositoryPath& getBackup1();
 	static RepositoryPath& getBackup2();
-	static bool isShadowEnabled();
+	static PrimaryIndexPath& getPrimaryIndex();
+	static bool isMasterEnabled();
+	static bool isDerivativeEnabled();
 	static bool isBackup1Enabled();
 	static bool isBackup2Enabled();
 

@@ -90,19 +90,10 @@
     <ClInclude Include="TargetsList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="VersionControl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="XMLReader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="XMLWriter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="MetadataUpdate.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BasicExifFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ImportJournal.h">
@@ -127,6 +118,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CheckFile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicMetadataFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VersionIndex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VersionControl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DerivativeRepository.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -197,19 +200,10 @@
     <ClCompile Include="TargetsList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="VersionControl.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="XMLReader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="XMLWriter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="MetadataUpdate.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="BasicExifFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ImportJournal.cpp">
@@ -234,6 +228,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CheckFile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BasicMetadataFactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VersionIndex.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VersionControl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DerivativeRepository.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

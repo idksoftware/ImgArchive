@@ -164,9 +164,9 @@ const std::string LogFilename::filepath() {
 	tmp << exifDate.getYear() << '-' << exifDate.getMonth() << '-' << exifDate.getDay();
 	std::string filename = tmp.str();
 	std::string lastFilename = lastfile();
-	char buf[10];
+	std::string buf;
 	if (m_ver > 0) {
-		sprintf_s(buf, 10, "%d", m_ver);
+		buf = SAUtils::sprintf("%d", m_ver);
 		std::string path = m_logfilePath + '/' + filename + buf;
 		path = path + ".log";
 		return path;

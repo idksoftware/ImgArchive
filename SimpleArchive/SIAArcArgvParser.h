@@ -24,6 +24,7 @@ namespace simplearchive {
 
 	protected:
 		virtual bool doInitalise(int argc, char **argv);
+		std::string usageDescriptionHeader(unsigned int _width) const;
 	};
 
 } /* namespace */

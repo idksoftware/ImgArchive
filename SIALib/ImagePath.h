@@ -35,7 +35,7 @@
 #ifndef IMAGEPATH_H_
 #define IMAGEPATH_H_
 #include <string>
-#include "IntegrityManager.h"
+//#include "IntegrityManager.h"
 #include "AppPaths.h"
 
 namespace simplearchive {
@@ -47,96 +47,16 @@ namespace simplearchive {
 #define YYYYMMDD                "YearMonthDay"
 #define PATH_TO_ARCHIVE         "ArchivePath"
 #define DATA_PATH               "DataPath"
-#define METADATA_PATH           "MetadataPath"
+#define METADATA_PATH_LABLE           "MetadataPath"
 #define MAIN_METADATA_PATH      "GlobalMetadataPath"
 
 /**
 * This class contains the paths for the archives.
-* The archives consist of a primary Shadow Archive and a number
+* The archives consist of a primary Master Archive and a number
 * of continuously backed-up Backup Archives.
 */
 
-/*
-class ArchiveFolder {
 
-	std::string m_pathToArchive;
-	std::string m_mainMetadataPath;
-	//	static std::string m_userDefinedSequenceNumberPath;
-	std::string m_mainDupsPath;
-	std::string m_mainHistory;
-
-	std::string m_shadowMetadataPath;
-	std::string m_shadowSequenceNumberPath;
-	std::string m_shadowHistory;
-	std::string m_shadowJournalPath;
-	std::string m_shadowCatalog;
-
-	std::string m_shadowYearStrPath;
-	std::string m_shadowYyyymmddStrPath;
-
-	std::string m_localShadowDataPath;
-	std::string m_localShadowMetadataPath;
-	std::string m_localShadowDBPath;
-	// Local shadow history path
-	std::string m_localShadowHistoryPath;
-
-public:
-	ArchiveFolder(const char *root) {
-		m_pathToArchive = root;
-		
-		m_mainMetadataPath;
-		//	static std::string m_userDefinedSequenceNumberPath;
-		m_mainDupsPath;
-		m_mainHistory = "";
-
-		m_shadowMetadataPath = "";
-		m_shadowSequenceNumberPath = "";
-		m_shadowHistory = "";
-		m_shadowJournalPath = "";
-		m_shadowCatalog = "";
-
-		m_shadowYearStrPath = "";
-		m_shadowYyyymmddStrPath = "";
-
-		m_localShadowDataPath = "";
-		m_localShadowMetadataPath = "";
-		m_localShadowDBPath = "";
-		// Local shadow history path
-		m_localShadowHistoryPath = "";
-	}
-
-	bool settup();
-	bool Relative(const char *year, const char *yyyymmdd);
-
-	const std::string& getPathToArchive() const {
-		return m_pathToArchive;
-	}
-
-	const std::string& getMainShadowMetadataPath() {
-		return m_shadowMetadataPath;
-	}
-
-	const std::string& getShadowSequenceNumberPath() {
-		return m_shadowSequenceNumberPath;
-	}
-
-	// Get shadow history path
-	const std::string& getShadowHistoryPath() {
-		return m_shadowHistory;
-	}
-
-	// Get shadow history path
-	const std::string& getShadowCatalogPath() {
-		return m_shadowCatalog;
-	}
-
-	// Get shadow journal path
-	const std::string& getShadowJournalPath() {
-		return m_shadowJournalPath;
-	}
-};
-
-*/
 class ImagePath {
 	std::string m_currentSourcePath;
 
@@ -149,8 +69,8 @@ class ImagePath {
 	std::string m_yyyymmddStrPath;
 	std::string m_workspaceMetadataPath;
 
-	std::string m_shadowYearStrPath;
-	std::string m_shadowYyyymmddStrPath;
+	std::string m_MasterYearStrPath;
+	std::string m_MasterYyyymmddStrPath;
 	
 	
 	std::string m_dataPath;
@@ -158,11 +78,11 @@ class ImagePath {
 	std::string m_metadataPath;
 	std::string m_relMetadataPath;
 
-	std::string m_localShadowDataPath;
-	std::string m_localShadowMetadataPath;
-	std::string m_localShadowDBPath;
-	// Local shadow history path
-	std::string m_localShadowHistoryPath;
+	std::string m_localMasterDataPath;
+	std::string m_localMasterMetadataPath;
+	std::string m_localMasterDBPath;
+	// Local Master history path
+	std::string m_localMasterHistoryPath;
 
 	static std::string m_pathToWorkspace;
 	static std::string m_mainMetadataPath;
@@ -171,13 +91,13 @@ class ImagePath {
 	static std::string m_mainHistory;
 
 
-	//static ArchiveFolder *m_shadow;
-	static std::string m_pathToShadow;
-	static std::string m_shadowMetadataPath;
-	static std::string m_shadowSequenceNumberPath;
-	static std::string m_shadowHistory;
-	static std::string m_shadowJournalPath;
-	static std::string m_shadowCatalog;
+	//static ArchiveFolder *m_Master;
+	static std::string m_pathToMaster;
+	static std::string m_MasterMetadataPath;
+	static std::string m_MasterSequenceNumberPath;
+	static std::string m_MasterHistory;
+	static std::string m_MasterJournalPath;
+	static std::string m_MasterCatalog;
 	
 	void init(std::string &yyyymmddStr);
 public:
@@ -187,6 +107,9 @@ public:
 	bool copyFile(std::string  pathToSourceRoot, std::string file);
 
 	virtual ~ImagePath();
+
+	void createLocalPaths(std::string localPath);
+	void createWorkspaceMetadataPath();
 
 	void setImageName(const char *imageName) {
 		m_imageName = imageName;
@@ -205,7 +128,7 @@ public:
 	}
 
 	const std::string& getDataPath() const {
-		return m_localShadowDataPath;
+		return m_localMasterDataPath;
 	}
 
 	const std::string& getImagePath() {
@@ -215,16 +138,16 @@ public:
 		return m_imagePath;
 	}
 
-	const std::string& getLocalShadowPath() {
-		return m_shadowYyyymmddStrPath;
+	const std::string& getLocalMasterPath() {
+		return m_MasterYyyymmddStrPath;
 	}
 
-	const std::string& getLocalShadowMetadataPath() const {
-		return m_localShadowMetadataPath;
+	const std::string& getLocalMasterMetadataPath() const {
+		return m_localMasterMetadataPath;
 	}
 	
-	const std::string& getLocalShadowHistoryPath() const {
-		return m_localShadowHistoryPath;
+	const std::string& getLocalMasterHistoryPath() const {
+		return m_localMasterHistoryPath;
 	}
 
 	const std::string& getRelMetadataPath() const {
@@ -232,7 +155,7 @@ public:
 	}
 
 	const std::string& getDBPath() const {
-		return m_localShadowDBPath;
+		return m_localMasterDBPath;
 	}
 
 	const std::string& getYearStr() const {
@@ -265,10 +188,10 @@ public:
 		return m_relpath;
 	}
 
-	static bool settupMainArchiveFolders(const char *pathToArchive, const char *pathToShadow, const char *pathToHome);
+	static bool settupMainArchiveFolders(const char *pathToArchive, const char *pathToMaster, const char *pathToHome);
 
 	// main
-	/// @brief The dups path is set in the configuation file (Default is $SHADOW_FOLDER/root/dups)
+	/// @brief The dups path is set in the configuation file (Default is $Master_FOLDER/root/dups)
 	/// 
 	static const std::string& getMainDupsPath() {
 		return m_mainDupsPath;
@@ -282,30 +205,30 @@ public:
 	//	return m_mainSequenceNumberPath;
 	//}
 
-	// shadow
+	// Master
 	
 
-	static const std::string& getMainShadowMetadataPath() {
-		return m_shadowMetadataPath;
+	static const std::string& getMainMasterMetadataPath() {
+		return m_MasterMetadataPath;
 	}
 
-	static const std::string& getShadowSequenceNumberPath() {
-		return m_shadowSequenceNumberPath;
+	static const std::string& getMasterSequenceNumberPath() {
+		return m_MasterSequenceNumberPath;
 	}
 
-	// Get shadow history path
-	static const std::string& getShadowHistoryPath() {
-		return m_shadowHistory;
+	// Get Master history path
+	static const std::string& getMasterHistoryPath() {
+		return m_MasterHistory;
 	}
 
-	// Get shadow history path
-	static const std::string& getShadowCatalogPath() {
-		return m_shadowCatalog;
+	// Get Master history path
+	static const std::string& getMasterCatalogPath() {
+		return m_MasterCatalog;
 	}
 
-	// Get shadow journal path
-	static const std::string& getShadowJournalPath() {
-		return m_shadowJournalPath;
+	// Get Master journal path
+	static const std::string& getMasterJournalPath() {
+		return m_MasterJournalPath;
 	}
 
 	static std::string getYearDay(std::string &dataImage) {

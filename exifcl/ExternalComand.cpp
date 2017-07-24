@@ -103,27 +103,45 @@ bool ExternalComand::init(const char *externalCommandLine, const char *exifMapPa
 // python exif.py [input] [output]
 ExifObject *ExternalComand::process(const char *imagefile) {
 	CLogger &logger = CLogger::getLogger();
-
-
-	std::string out = m_tempPath;
-	out += '/';
-	out += SAUtils::getFilenameNoExt(imagefile);
+	ExifObject *exifObject = nullptr;
 	std::string in = imagefile;
-	out.append(".exf");
-	std::string cmd = replace(m_commandLine, in, out);
-	logger.log(LOG_OK, CLogger::FINE, "Using Exif command: \"%s\"", cmd.c_str());
 	ExternalShell externalShell;
-	externalShell.exec(cmd.c_str());
-	logger.log(LOG_OK, CLogger::FINE, "Exif command output: \"%s\"", externalShell.getOutput().c_str());
 	ExternalExifMapper externalExifMapper;
-	std::string exifMapFile(m_exifMapPath);
-	exifMapFile += "/exif.ini";
-	if (externalExifMapper.init(exifMapFile.c_str()) == false) {
-		logger.log(LOG_OK, CLogger::ERR, "Failed reading Exif map file \"%s\"", exifMapFile.c_str());
-		return nullptr;
+	if (findToken(m_commandLine, "output") == false) {
+		std::string cmd = replace(m_commandLine, in);
+		logger.log(LOG_OK, CLogger::Level::FINE, "Using Exif command: \"%s\"", cmd.c_str());
+		externalShell.exec(cmd.c_str());
+		
+		std::string exifMapFile(m_exifMapPath);
+		exifMapFile += "/exif.ini";
+		logger.log(LOG_OK, CLogger::Level::FINE, "Reading Exif map file \"%s\"", exifMapFile.c_str());
+		if (externalExifMapper.init(exifMapFile.c_str()) == false) {
+			logger.log(LOG_OK, CLogger::Level::ERR, "Failed reading Exif map file \"%s\"", exifMapFile.c_str());
+			return nullptr;
+		}
+		exifObject = externalExifMapper.create(externalShell.getOutput());
 	}
-	logger.log(LOG_OK, CLogger::FINE, "Reading Exif map file \"%s\"", exifMapFile.c_str());
-	ExifObject *exifObject = externalExifMapper.create(out.c_str());
+	else {
+		std::string out = m_tempPath;
+		out += '/';
+		out += SAUtils::getFilenameNoExt(imagefile);
+		
+		out.append(".exf");
+		std::string cmd = replace(m_commandLine, in, out);
+		logger.log(LOG_OK, CLogger::Level::FINE, "Using Exif command: \"%s\"", cmd.c_str());
+		
+		externalShell.exec(cmd.c_str());
+		logger.log(LOG_OK, CLogger::Level::FINE, "Exif command output: \"%s\"", externalShell.getOutput().c_str());
+		
+		std::string exifMapFile(m_exifMapPath);
+		exifMapFile += "/exif.ini";
+		if (externalExifMapper.init(exifMapFile.c_str()) == false) {
+			logger.log(LOG_OK, CLogger::Level::ERR, "Failed reading Exif map file \"%s\"", exifMapFile.c_str());
+			return nullptr;
+		}
+		logger.log(LOG_OK, CLogger::Level::FINE, "Reading Exif map file \"%s\"", exifMapFile.c_str());
+		exifObject = externalExifMapper.create(out.c_str());
+	}
 	return exifObject;
 }
 
@@ -146,8 +164,29 @@ std::string ExternalComand::replace(std::string &commandLine, std::string &in, s
 	std::string command = commandLine;
 	command = replaceToken(command, "[input]", in.c_str());
 	command = replaceToken(command, "[output]", out.c_str());
-	logger.log(LOG_OK, CLogger::FINE, "Exif command line to be executed \"%s\"", command.c_str());
+	logger.log(LOG_OK, CLogger::Level::FINE, "Exif command line to be executed \"%s\"", command.c_str());
 	return command;
+}
+
+std::string ExternalComand::replace(std::string &commandLine, std::string &in) {
+	CLogger &logger = CLogger::getLogger();
+	std::string command = commandLine;
+	command = replaceToken(command, "[input]", in.c_str());
+	logger.log(LOG_OK, CLogger::Level::FINE, "Exif command line to be executed \"%s\"", command.c_str());
+	return command;
+}
+
+bool ExternalComand::findToken(std::string &str, const char *toklabel) {
+	int s = str.find_first_of("[");
+	if (s == -1) {
+		return false;
+	}
+	std::string tok = toklabel;
+	std::string tokstr = str.substr(s, tok.length());
+	if (tokstr.compare(tok) != 0) {
+		return false;
+	}
+	return true;
 }
 
 } /* namespace simplearchive */

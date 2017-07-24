@@ -12,7 +12,7 @@ namespace simplearchive {
 	}
 
 
-	bool ShadowFolderVistor::process(const char *addressScope) {
+	bool MasterFolderVistor::process(const char *addressScope) {
 		m_AddressScope.scope(addressScope);
 
 		std::string path = m_archivePath;
@@ -72,7 +72,7 @@ namespace simplearchive {
 					yearDayPath += dataString;
 					printf("File found %s\n", dataString.c_str());
 					std::string tmp = yearDayPath;
-					// shadow
+					// Master
 					yearDayPath += "/data";
 					tmp += "/chdsk";
 					//if (checkDisk.check(yearDayPath.c_str(), tmp.c_str(), dataString.c_str(), &validateReportingObject) == false) {
@@ -84,7 +84,7 @@ namespace simplearchive {
 
 		}
 		//validateReportingObject.save();
-		//m_shadowJournalName = validateReportingObject.getJournalName();
+		//m_MasterJournalName = validateReportingObject.getJournalName();
 		return true;
 	}
 
@@ -146,7 +146,7 @@ namespace simplearchive {
 
 
 					std::string archivePath = m_archivePath;
-					// shadow
+					// Master
 					archivePath += '/'; archivePath += year;
 					archivePath += '/'; archivePath += dataString;
 					archivePath += "/chdsk";

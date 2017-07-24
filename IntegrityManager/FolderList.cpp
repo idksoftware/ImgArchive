@@ -356,7 +356,7 @@ bool FolderList::validateWorkspace(ValidateReportingObject &validateReportingObj
 				
 
 				std::string archivePath = m_archivePath;
-					// shadow
+					// Master
 				archivePath += '/'; archivePath += year;
 				archivePath += '/'; archivePath += dataString;
 				archivePath += "/chdsk";
@@ -441,7 +441,7 @@ bool ShowUncheckedOutChanges::doWork(const char *targetdir, const char *checkFil
 	return true;
 }
 
-ValidateWorkspace::ValidateWorkspace(const char *archivePath, const char *workspacePath) : ShadowFolderVistor(archivePath, workspacePath) {
+ValidateWorkspace::ValidateWorkspace(const char *archivePath, const char *workspacePath) : MasterFolderVistor(archivePath, workspacePath) {
 	m_validateReportingObject = new ValidateReportingObject;
 }
 
@@ -469,17 +469,17 @@ bool FolderList::showUncheckedOutChanges(const char *addressScope) {
 	return true;
 }
 
-bool FolderList::validateAndRepairShadow() {
-	ValidateAndRepairingShadowObject validateAndRepairingObject(m_archivePath.c_str(), m_workspacePath.c_str());
-	return validateShadow(validateAndRepairingObject);
+bool FolderList::validateAndRepairMaster() {
+	ValidateAndRepairingMasterObject validateAndRepairingObject(m_archivePath.c_str(), m_workspacePath.c_str());
+	return validateMaster(validateAndRepairingObject);
 }
 
-bool FolderList::validateOnlyShadow() {
+bool FolderList::validateOnlyMaster() {
 	ValidateReportingObject validateReportingObject;
-	return validateShadow(validateReportingObject);
+	return validateMaster(validateReportingObject);
 }
 
-bool FolderList::validateShadow(ValidateReportingObject &validateReportingObject) {
+bool FolderList::validateMaster(ValidateReportingObject &validateReportingObject) {
 	
 	std::string path = m_archivePath;
 	path += "/system";
@@ -537,7 +537,7 @@ bool FolderList::validateShadow(ValidateReportingObject &validateReportingObject
 				yearDayPath += dataString;
 				printf("File found %s\n", dataString.c_str());
 				std::string tmp = yearDayPath;
-				// shadow
+				// Master
 				yearDayPath += "/data";
 				tmp += "/chdsk";
 
@@ -550,20 +550,20 @@ bool FolderList::validateShadow(ValidateReportingObject &validateReportingObject
 			
 	}
 	validateReportingObject.save();
-	m_shadowJournalName = validateReportingObject.getJournalName();
+	m_MasterJournalName = validateReportingObject.getJournalName();
 	return true;
 }
 
 
 bool FolderList::validate() {
 	switch (m_action) {
-	case READING_SHADOW:
-		return validateOnlyShadow();
+	case READING_Master:
+		return validateOnlyMaster();
 	case READING_WORKSPACE:
 		return validateOnlyWorkspace();
 	case READING_BOTH:
 	{
-		bool ret = validateOnlyShadow();
+		bool ret = validateOnlyMaster();
 		if (!ret) {
 			return false;
 		}
@@ -582,13 +582,13 @@ bool FolderList::validate() {
 
 bool FolderList::validateAndRepair() {
 	switch (m_action) {
-	case READING_SHADOW:
-		return validateAndRepairShadow();
+	case READING_Master:
+		return validateAndRepairMaster();
 	case READING_WORKSPACE:
 		return validateAndRepairWorkspace();
 	case READING_BOTH:
 	{
-		bool ret = validateAndRepairShadow();
+		bool ret = validateAndRepairMaster();
 		if (!ret) {
 			return false;
 		}

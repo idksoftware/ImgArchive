@@ -87,12 +87,12 @@ namespace simplearchive {
 			//if (!isdigit(atoi(year->c_str()))) {
 			//	continue;
 			//}
-			// read day folders for this year in shadow folder
-			std::string yearShadow = path;
+			// read day folders for this year in Master folder
+			std::string yearMaster = path;
 			m_folderVisitor->onYearFolder(year.c_str());
-			yearShadow += '/';
-			yearShadow += year;
-			FileList_Ptr filelist = SAUtils::getFiles_(yearShadow.c_str());
+			yearMaster += '/';
+			yearMaster += year;
+			FileList_Ptr filelist = SAUtils::getFiles_(yearMaster.c_str());
 			for (std::vector<std::string>::iterator i = filelist->begin(); i != filelist->end(); i++) {
 				std::string dayfolder = *i;
 				char c = (dayfolder)[0];
@@ -101,12 +101,12 @@ namespace simplearchive {
 				}
 
 				m_folderVisitor->onDayFolder(dayfolder.c_str());
-				std::string dayFolderShadow = yearShadow;
-				dayFolderShadow += '/';
-				dayFolderShadow += dayfolder;
-				dayFolderShadow += "/data";
+				std::string dayFolderMaster = yearMaster;
+				dayFolderMaster += '/';
+				dayFolderMaster += dayfolder;
+				dayFolderMaster += "/data";
 
-				FileList_Ptr filelist = SAUtils::getFiles_(dayFolderShadow.c_str());
+				FileList_Ptr filelist = SAUtils::getFiles_(dayFolderMaster.c_str());
 				for (std::vector<std::string>::iterator i = filelist->begin(); i != filelist->end(); i++) {
 					std::string imageFile = *i;
 					char c = (imageFile)[0];
@@ -117,8 +117,8 @@ namespace simplearchive {
 						continue;
 					}
 					//printf("\t\tImage %s: \n", imageFile->c_str());
-					std::string imagePath = dayFolderShadow;
-					m_folderVisitor->onImage(dayFolderShadow.c_str(), imageFile.c_str());
+					std::string imagePath = dayFolderMaster;
+					m_folderVisitor->onImage(dayFolderMaster.c_str(), imageFile.c_str());
 				}
 				m_folderVisitor->onDayEnd();
 			}
@@ -144,16 +144,16 @@ namespace simplearchive {
 			//if (!isdigit(atoi(year->c_str()))) {
 			//	continue;
 			//}
-			// read day folders for this year in shadow folder
-			std::string yearShadow = path;
+			// read day folders for this year in Master folder
+			std::string yearMaster = path;
 			if (year.compare("system") == 0) {
 				continue;
 			}
 			m_folderVisitor->onYearFolder(year.c_str());
 			
-			yearShadow += '/';
-			yearShadow += year;
-			FileList_Ptr filelist = SAUtils::getFiles_(yearShadow.c_str());
+			yearMaster += '/';
+			yearMaster += year;
+			FileList_Ptr filelist = SAUtils::getFiles_(yearMaster.c_str());
 			for (std::vector<std::string>::iterator i = filelist->begin(); i != filelist->end(); i++) {
 				std::string dayfolder = *i;
 				char c = (dayfolder)[0];
@@ -163,12 +163,12 @@ namespace simplearchive {
 
 				m_folderVisitor->onDayFolder(dayfolder.c_str());
 				// Images
-				std::string dayFolderShadow = yearShadow;
-				dayFolderShadow += '/';
-				dayFolderShadow += dayfolder;
-				dayFolderShadow += "/data";
+				std::string dayFolderMaster = yearMaster;
+				dayFolderMaster += '/';
+				dayFolderMaster += dayfolder;
+				dayFolderMaster += "/data";
 
-				FileList_Ptr imageFilelist = SAUtils::getFiles_(dayFolderShadow.c_str());
+				FileList_Ptr imageFilelist = SAUtils::getFiles_(dayFolderMaster.c_str());
 				for (std::vector<std::string>::iterator i = imageFilelist->begin(); i != imageFilelist->end(); i++) {
 					std::string imageFile = *i;
 					char c = (imageFile)[0];
@@ -179,16 +179,16 @@ namespace simplearchive {
 						continue;
 					}
 					//printf("\t\tImage %s: \n", imageFile->c_str());
-					std::string imagePath = dayFolderShadow;
-					m_folderVisitor->onImage(dayFolderShadow.c_str(), imageFile.c_str());
+					std::string imagePath = dayFolderMaster;
+					m_folderVisitor->onImage(dayFolderMaster.c_str(), imageFile.c_str());
 				}
 				/// Metadata
-				dayFolderShadow = yearShadow;
-				dayFolderShadow += '/';
-				dayFolderShadow += dayfolder;
-				dayFolderShadow += "/metadata";
+				dayFolderMaster = yearMaster;
+				dayFolderMaster += '/';
+				dayFolderMaster += dayfolder;
+				dayFolderMaster += "/metadata";
 
-				FileList_Ptr metadataFilelist = SAUtils::getFiles_(dayFolderShadow.c_str());
+				FileList_Ptr metadataFilelist = SAUtils::getFiles_(dayFolderMaster.c_str());
 				for (std::vector<std::string>::iterator i = metadataFilelist->begin(); i != metadataFilelist->end(); i++) {
 					std::string imageFile = *i;
 					char c = (imageFile)[0];
@@ -199,8 +199,8 @@ namespace simplearchive {
 					//	continue;
 					//}
 					//printf("\t\tImage %s: \n", imageFile->c_str());
-					std::string imagePath = dayFolderShadow;
-					m_folderVisitor->onMetadata(dayFolderShadow.c_str(), imageFile.c_str());
+					std::string imagePath = dayFolderMaster;
+					m_folderVisitor->onMetadata(dayFolderMaster.c_str(), imageFile.c_str());
 				}
 				m_folderVisitor->onDayEnd();
 			}
@@ -216,7 +216,7 @@ namespace simplearchive {
 		std::string path = rootFolder;
 
 		m_folderVisitor->onStart();
-		// read years in shadow folder
+		// read years in Master folder
 		FileList_Ptr filelist = SAUtils::getFiles_(path.c_str());
 		for (std::vector<std::string>::iterator i = filelist->begin(); i != filelist->end(); i++) {
 			std::string year = *i;
@@ -227,12 +227,12 @@ namespace simplearchive {
 			//if (!isdigit(atoi(year->c_str()))) {
 			//	continue;
 			//}
-			// read day folders for this year in shadow folder
-			std::string yearShadow = path;
+			// read day folders for this year in Master folder
+			std::string yearMaster = path;
 			m_folderVisitor->onYearFolder(year.c_str());
-			yearShadow += '/';
-			yearShadow += year;
-			FileList_Ptr filelist = SAUtils::getFiles_(yearShadow.c_str());
+			yearMaster += '/';
+			yearMaster += year;
+			FileList_Ptr filelist = SAUtils::getFiles_(yearMaster.c_str());
 			for (std::vector<std::string>::iterator i = filelist->begin(); i != filelist->end(); i++) {
 				std::string dayfolder = *i;
 				char c = (dayfolder)[0];
@@ -241,12 +241,12 @@ namespace simplearchive {
 				}
 
 				m_folderVisitor->onDayFolder(dayfolder.c_str());
-				std::string dayFolderShadow = yearShadow;
-				dayFolderShadow += '/';
-				dayFolderShadow += dayfolder;
-				dayFolderShadow += "/data";
+				std::string dayFolderMaster = yearMaster;
+				dayFolderMaster += '/';
+				dayFolderMaster += dayfolder;
+				dayFolderMaster += "/data";
 
-				FileList_Ptr filelist = SAUtils::getFiles_(dayFolderShadow.c_str());
+				FileList_Ptr filelist = SAUtils::getFiles_(dayFolderMaster.c_str());
 				for (std::vector<std::string>::iterator i = filelist->begin(); i != filelist->end(); i++) {
 					std::string imageFile = *i;
 					char c = (imageFile)[0];
@@ -257,8 +257,8 @@ namespace simplearchive {
 						continue;
 					}
 				//printf("\t\tImage %s: \n", imageFile->c_str());
-				std::string imagePath = dayFolderShadow;
-				m_folderVisitor->onImage(dayFolderShadow.c_str(), imageFile.c_str());
+				std::string imagePath = dayFolderMaster;
+				m_folderVisitor->onImage(dayFolderMaster.c_str(), imageFile.c_str());
 			}
 			m_folderVisitor->onDayEnd();
 		}

@@ -55,8 +55,9 @@ void IntegrityManager::setPaths(const char* archivePath, const char* workspacePa
 	m_archivePath = archivePath;
 	m_workspacePath = workspacePath;
 	m_homePath = homePath;
+	
 	CheckDisk::setArchivePath(archivePath);
-	CheckoutStatus::Init(archivePath, workspacePath);
+	
 }
 
 IntegrityManager::IntegrityManager() {
@@ -82,7 +83,7 @@ bool IntegrityManager::addFile(const char *folderPath, const char *fileName) {
 	return true;
 }
 
-bool IntegrityManager::validate(bool workspace, bool shadow) {
+bool IntegrityManager::validate(bool workspace, bool Master) {
 //	FolderList folderList(m_archivePath.c_str());
 	std::string tmp = m_archivePath;
 	tmp += "/system/journal";
@@ -103,7 +104,7 @@ bool IntegrityManager::validate(bool workspace, bool shadow) {
 	return true;
 }
 
-bool IntegrityManager::repair(bool workspace, bool shadow) {
+bool IntegrityManager::repair(bool workspace, bool Master) {
 	//	FolderList folderList(m_archivePath.c_str());
 	std::string tmp = m_archivePath;
 	tmp += "/system/journal";

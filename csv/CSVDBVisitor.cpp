@@ -66,7 +66,7 @@ bool CSVDBVisitor::process(const char *rootFolder) {
 	std::string path = rootFolder;
 
 	m_folderVisitor->onStart();
-	// read years in shadow folder
+	// read years in Master folder
 	FileList_Ptr filelist = SAUtils::getFiles_(path.c_str());
 	for (std::vector<std::string>::iterator i = filelist->begin(); i != filelist->end(); i++) {
 		std::string year = *i;
@@ -74,12 +74,12 @@ bool CSVDBVisitor::process(const char *rootFolder) {
 		if (c == '.' ) {
 			continue;
 		}
-		// read day folders for this year in shadow folder
-		std::string yearShadow = path;
+		// read day folders for this year in Master folder
+		std::string yearMaster = path;
 		m_folderVisitor->onYearFolder(year.c_str());
-		yearShadow += '/';
-		yearShadow += year;
-		FileList_Ptr filelist = SAUtils::getFiles_(yearShadow.c_str());
+		yearMaster += '/';
+		yearMaster += year;
+		FileList_Ptr filelist = SAUtils::getFiles_(yearMaster.c_str());
 		for (std::vector<std::string>::iterator i = filelist->begin(); i != filelist->end(); i++) {
 			std::string dayfolder = *i;
 			char c = (dayfolder)[0];
@@ -88,11 +88,11 @@ bool CSVDBVisitor::process(const char *rootFolder) {
 			}
 
 			m_folderVisitor->onDayFolder(dayfolder.c_str());
-			std::string dayFolderShadow = yearShadow;
-			dayFolderShadow += '/';
-			dayFolderShadow += dayfolder;
+			std::string dayFolderMaster = yearMaster;
+			dayFolderMaster += '/';
+			dayFolderMaster += dayfolder;
 
-			FileList_Ptr filelist = SAUtils::getFiles_(dayFolderShadow.c_str());
+			FileList_Ptr filelist = SAUtils::getFiles_(dayFolderMaster.c_str());
 			for (std::vector<std::string>::iterator i = filelist->begin(); i != filelist->end(); i++) {
 				std::string imageFile = *i;
 				char c = (imageFile)[0];
@@ -100,8 +100,8 @@ bool CSVDBVisitor::process(const char *rootFolder) {
 					continue;
 				}
 				//printf("\t\tImage %s: \n", imageFile->c_str());
-				std::string imagePath = dayFolderShadow;
-				m_folderVisitor->onDBFile(dayFolderShadow.c_str(), imageFile.c_str());
+				std::string imagePath = dayFolderMaster;
+				m_folderVisitor->onDBFile(dayFolderMaster.c_str(), imageFile.c_str());
 			}
 			m_folderVisitor->onDayEnd();
 		}

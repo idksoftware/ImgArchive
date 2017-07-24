@@ -47,17 +47,16 @@ public:
 	static void setLogPath(const char *logpath) {
 		m_logpath = logpath;
 	}
-	static ChangeLog &getLogger();
+	
 	bool log(const char *filename, const char *version, const char *comment, HistoryEvent &he);
-
+	ChangeLog();
+	
 	virtual ~ChangeLog();
 
+	void ChangeLog::init();
 private:
 
-	ChangeLog();
-
-	static std::unique_ptr<ChangeLog> m_this;
-	static std::once_flag m_onceFlag;
+	
 	
 	ChangeLog(const ChangeLog& src);
 	ChangeLog& operator=(const ChangeLog& rhs);

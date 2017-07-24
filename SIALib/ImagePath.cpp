@@ -53,116 +53,50 @@ std::string ImagePath::m_mainDupsPath;
 std::string ImagePath::m_mainHistory;
 std::string ImagePath::m_pathToWorkspace;
 
-std::string ImagePath::m_pathToShadow;
-std::string ImagePath::m_shadowMetadataPath;
-std::string ImagePath::m_shadowSequenceNumberPath;
+std::string ImagePath::m_pathToMaster;
+std::string ImagePath::m_MasterMetadataPath;
+std::string ImagePath::m_MasterSequenceNumberPath;
 
-std::string ImagePath::m_shadowHistory;
-std::string ImagePath::m_shadowCatalog;
-std::string ImagePath::m_shadowJournalPath;
-
-/*
-ArchiveFolder *ImagePath::m_shadow = nullptr;
-
-bool ArchiveFolder::settup() {
-	
-	if (SAUtils::DirExists(m_pathToArchive.c_str()) == false) {
-		return false;
-	}
-	
-	std::string dataFolder = m_pathToArchive;
-	dataFolder += "/system";
-	if (SAUtils::DirExists(dataFolder.c_str()) == false) {
-		SAUtils::mkDir(dataFolder.c_str());
-
-	}
-	if (m_shadowMetadataPath.empty() == true) {
-		m_shadowMetadataPath = dataFolder + "/metadata";
-		m_shadowSequenceNumberPath = dataFolder + "/imageid";
-		m_shadowJournalPath = dataFolder + "/journal";
-		m_shadowHistory = dataFolder + "/history";
-		if (SAUtils::DirExists(m_shadowMetadataPath.c_str()) == false) {
-			SAUtils::mkDir(m_shadowMetadataPath.c_str());
-		}
-		if (SAUtils::DirExists(m_shadowSequenceNumberPath.c_str()) == false) {
-			SAUtils::mkDir(m_shadowSequenceNumberPath.c_str());
-		}
-
-		if (SAUtils::DirExists(m_shadowHistory.c_str()) == false) {
-			SAUtils::mkDir(m_shadowHistory.c_str());
-		}
-	}
-	return true;
-}
-
-bool ArchiveFolder::Relative(const char *year, const char *yyyymmdd) {
-	// shadow
-	m_shadowYearStrPath = m_pathToArchive + '/' + year;
-	if (SAUtils::DirExists(m_shadowYearStrPath.c_str()) == false) {
-		SAUtils::mkDir(m_shadowYearStrPath.c_str());
-
-	}
-
-	m_shadowYyyymmddStrPath = m_shadowYearStrPath + '/' + yyyymmdd;
-
-	m_localShadowDataPath = m_shadowYyyymmddStrPath + "/data";
-	m_localShadowMetadataPath = m_shadowYyyymmddStrPath + "/metadata";
-	m_localShadowDBPath = m_shadowYyyymmddStrPath + "/db";
-	m_localShadowHistoryPath = m_shadowYyyymmddStrPath + "/history";
-	if (SAUtils::DirExists(m_shadowYyyymmddStrPath.c_str()) == false) {
-		SAUtils::mkDir(m_shadowYyyymmddStrPath.c_str());
-		if (SAUtils::DirExists(m_shadowYyyymmddStrPath.c_str()) == false) {
-			throw std::exception();
-		}
-	}
-	SAUtils::mkDir(m_localShadowDataPath.c_str());
-	SAUtils::mkDir(m_localShadowMetadataPath.c_str());
-	SAUtils::mkDir(m_localShadowDBPath.c_str());
-	SAUtils::mkDir(m_localShadowHistoryPath.c_str());
-	return true;
-}
-*/
+std::string ImagePath::m_MasterHistory;
+std::string ImagePath::m_MasterCatalog;
+std::string ImagePath::m_MasterJournalPath;
 
 
-bool ImagePath::settupMainArchiveFolders(const char *pathToWorkspace, const char *pathToShadow, const char *pathToHome) {
+
+
+bool ImagePath::settupMainArchiveFolders(const char *pathToWorkspace, const char *pathToMaster, const char *pathToHome) {
+
 	if (SAUtils::DirExists(pathToWorkspace) == false) {
 		return false;
 	}
-	if (SAUtils::DirExists(pathToShadow) == false) {
+	if (SAUtils::DirExists(pathToMaster) == false) {
 		return false;
 	}
 	m_pathToWorkspace = pathToWorkspace;
-	m_pathToShadow = pathToShadow;
-	IntegrityManager &integrityManager = IntegrityManager::get(pathToShadow, pathToWorkspace, pathToHome);
+	m_pathToMaster = pathToMaster;
+	IntegrityManager &integrityManager = IntegrityManager::get(pathToMaster, pathToWorkspace, pathToHome);
 
-	
-	
-	//if (m_shadow->settup() == false) {
-	//	return false;
-	//}
-
-
-	// Shadow Archive
-	std::string m_dataFolder = m_pathToShadow;
-	m_dataFolder += "/system";
+	// Master Archive
+	std::string m_dataFolder = m_pathToMaster;
+	m_dataFolder += MASTER_SYSTEM_FOLDER;
 	if (SAUtils::DirExists(m_dataFolder.c_str()) == false) {
 		SAUtils::mkDir(m_dataFolder.c_str());
 
 	}
-	if (m_shadowMetadataPath.empty() == true) {
-		m_shadowMetadataPath = m_dataFolder + "/metadata";
-		m_shadowSequenceNumberPath = m_dataFolder + "/imageid";
-		m_shadowJournalPath = m_dataFolder + "/journal";
-		m_shadowHistory = m_dataFolder + "/history";
-		if (SAUtils::DirExists(m_shadowMetadataPath.c_str()) == false) {
-			SAUtils::mkDir(m_shadowMetadataPath.c_str());
+	if (m_MasterMetadataPath.empty() == true) {
+		m_MasterMetadataPath = m_dataFolder + METADATA_PATH;
+		m_MasterSequenceNumberPath = m_dataFolder + IMAGEID_PATH;
+		m_MasterJournalPath = m_dataFolder + JOURNAL_PATH;
+		m_MasterHistory = m_dataFolder + HISTORY_PATH;
+		if (SAUtils::DirExists(m_MasterMetadataPath.c_str()) == false) {
+			SAUtils::mkDir(m_MasterMetadataPath.c_str());
 		}
-		if (SAUtils::DirExists(m_shadowSequenceNumberPath.c_str()) == false) {
-			SAUtils::mkDir(m_shadowSequenceNumberPath.c_str());
+		if (SAUtils::DirExists(m_MasterSequenceNumberPath.c_str()) == false) {
+			SAUtils::mkDir(m_MasterSequenceNumberPath.c_str());
 		}
 		
-		if (SAUtils::DirExists(m_shadowHistory.c_str()) == false) {
-			SAUtils::mkDir(m_shadowHistory.c_str());
+		if (SAUtils::DirExists(m_MasterHistory.c_str()) == false) {
+			SAUtils::mkDir(m_MasterHistory.c_str());
 		}
 	}
 	return true;
@@ -181,7 +115,8 @@ ImagePath::ImagePath(time_t time) {
 	std::stringstream s;
 	s << year << '-' << std::setw(2) << std::setfill('0') << month
 		<< '-' << std::setw(2) << std::setfill('0') << day;
-	init(s.str());
+	std::string tmp = s.str();
+	init(tmp);
 }
 
 ImagePath::ImagePath(std::string &yyyymmddStr) {
@@ -196,7 +131,7 @@ void ImagePath::init(std::string &yyyymmddStr) {
 	//if (m_yyyymmddStr.find_first_of('/') == std::string::npos) {
 	//	m_yyyymmddStr = m_yearStr + '/' + m_yyyymmddStr;
 	//}
-	IntegrityManager &integrityManager = IntegrityManager::get();
+	
 	m_yearStrPath = m_pathToWorkspace + '/' + m_yearStr;
 	if (SAUtils::DirExists(m_yearStrPath.c_str()) == false) {
 		SAUtils::mkDir(m_yearStrPath.c_str());
@@ -208,35 +143,49 @@ void ImagePath::init(std::string &yyyymmddStr) {
 	if (SAUtils::DirExists(m_yyyymmddStrPath.c_str()) == false) {
 		SAUtils::mkDir(m_yyyymmddStrPath.c_str());
 	}
+
+	createWorkspaceMetadataPath();
+
+	m_relpath = getYearStr() + '/' + getYyyymmddStr();
+
+	// Master
+	m_MasterYearStrPath = m_pathToMaster + '/' + m_yearStr;
+	if (SAUtils::DirExists(m_MasterYearStrPath.c_str()) == false) {
+		SAUtils::mkDir(m_MasterYearStrPath.c_str());
+
+	}
+
+	m_MasterYyyymmddStrPath = m_MasterYearStrPath + '/' + m_yyyymmddStr;
+	std::string localPath = m_MasterYyyymmddStrPath;
+
+	createLocalPaths(localPath);
+}
+
+void ImagePath::createWorkspaceMetadataPath() {
 	m_workspaceMetadataPath = m_yyyymmddStrPath + "/.sia";
 	if (SAUtils::DirExists(m_workspaceMetadataPath.c_str()) == false) {
 		SAUtils::mkDir(m_workspaceMetadataPath.c_str());
 	}
-	m_relpath = getYearStr() + '/' + getYyyymmddStr();
-	
-	// shadow
-	m_shadowYearStrPath = m_pathToShadow + '/' + m_yearStr;
-	if (SAUtils::DirExists(m_shadowYearStrPath.c_str()) == false) {
-		SAUtils::mkDir(m_shadowYearStrPath.c_str());
+}
 
-	}
-	
-	m_shadowYyyymmddStrPath = m_shadowYearStrPath + '/' + m_yyyymmddStr;
 
-	m_localShadowDataPath = m_shadowYyyymmddStrPath + "/data";
-	m_localShadowMetadataPath = m_shadowYyyymmddStrPath + "/metadata";
-	m_localShadowDBPath = m_shadowYyyymmddStrPath + "/db";
-	m_localShadowHistoryPath = m_shadowYyyymmddStrPath + "/history";
-	if (SAUtils::DirExists(m_shadowYyyymmddStrPath.c_str()) == false) {
-		SAUtils::mkDir(m_shadowYyyymmddStrPath.c_str());
-		if (SAUtils::DirExists(m_shadowYyyymmddStrPath.c_str()) == false) {
+void ImagePath::createLocalPaths(std::string localPath)
+{
+	m_localMasterDataPath = localPath + MASTER_DATA_PATH;
+	m_localMasterMetadataPath = localPath + METADATA_PATH;
+	m_localMasterDBPath = localPath + DATABASE_PATH;
+	m_localMasterHistoryPath = localPath + HISTORY_PATH;
+	if (SAUtils::DirExists(localPath.c_str()) == false) {
+		SAUtils::mkDir(localPath.c_str());
+		if (SAUtils::DirExists(localPath.c_str()) == false) {
 			throw std::exception();
 		}
 	}
-	SAUtils::mkDir(m_localShadowDataPath.c_str());
-	SAUtils::mkDir(m_localShadowMetadataPath.c_str());
-	SAUtils::mkDir(m_localShadowDBPath.c_str());
-	SAUtils::mkDir(m_localShadowHistoryPath.c_str());
+	SAUtils::mkDir(m_localMasterDataPath.c_str());
+	SAUtils::mkDir(m_localMasterMetadataPath.c_str());
+	SAUtils::mkDir(m_localMasterDBPath.c_str());
+	SAUtils::mkDir(m_localMasterHistoryPath.c_str());
+	IntegrityManager &integrityManager = IntegrityManager::get();
 	integrityManager.addDayFolder(m_yyyymmddStr.c_str());
 }
 
@@ -271,11 +220,6 @@ bool ImagePath::copyFile(std::string  pathToSourceRoot, std::string file) {
 		return false;
 	}
 
-	// Shadow Archive
-	//to = m_localShadowDataPath + '/' + file;
-	//if (SAUtils::copy(from.c_str(), to.c_str()) == false) {
-	//	return false;
-	//}
 	// this can only be done after the file copy
 	integrityManager.addFile(m_yyyymmddStr.c_str(), file.c_str());
 	return true;
@@ -283,9 +227,7 @@ bool ImagePath::copyFile(std::string  pathToSourceRoot, std::string file) {
 
 
 ImagePath::~ImagePath() {
-//	if (m_shadow != nullptr) {
-//		delete m_shadow;
-//	}
+
 }
 
 

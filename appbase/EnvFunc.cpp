@@ -1,8 +1,9 @@
 // regedit.cpp : Defines the entry point for the console application.
 //
 
-//#include "stdafx.h"
+#ifdef _WIN32
 #include <windows.h>
+#endif
 #include <string>
 #include <stdio.h>
 #include "EnvFunc.h"

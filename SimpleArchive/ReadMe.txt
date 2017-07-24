@@ -38,3 +38,14 @@ AppWizard uses "TODO:" comments to indicate parts of the source code you
 should add to or customize.
 
 /////////////////////////////////////////////////////////////////////////////
+
+add --source-path="D:\tmp_pics"
+
+checkin --image-address="2017-01-16/DSC01278.JPG" --comment "A comment"
+
+
+checkout --image-address="2017-01-19/DSC01544.JPG" --comment "A comment"
+
+checkout --image-address="2017-01-19/DSC01544.JPG" --comment "A comment"
+
+checkout --image-address="2017-01-16/DSC01279.JPG" --comment "A comment"

@@ -46,156 +46,195 @@
 #define TABLE_MEDIA_PROPERTIES		"MediaProperties"
 #define TABLE_COPYRIGHT_PROPERTIES	"CopyrightProperties"
 #define TABLE_GPS_PROPERTIES		"GPSProperties"
-#define ROW_BASIC_EXIF				"BasicExif"
+#define ROW_BASIC_EXIF				"BasicMetadata"
 #define ROW_EXTERNAL_EXIF			"ExternalExif"
 
-#define BE_FILENAME_IDX			0
-#define BE_ORGINALNAME_IDX		1
-#define BE_FILEPATH_IDX			2
-#define BE_CRC_IDX			3
-#define BE_MD5_IDX			4
-#define BE_UUID_IDX			5
-#define BE_LABEL_IDX			6
-#define BE_MEDIATYPE_IDX		7
-#define BE_RATING_IDX			8
-#define BE_FILESIZE_IDX			9
-#define BE_DATEMODIFIED_IDX		10
-#define BE_DATECREATE_IDX		11
+/*
+ * These are used by BasicMetadata
+ */
+enum class BasicMetadataIndex {
+	BM_FILENAME_IDX,
+	BM_ORGINALNAME_IDX,
+	BM_FILEPATH_IDX,
+	BM_CRC_IDX,
+	BM_MD5_IDX,
+	BM_UUID_IDX,
 
-#define BE_DESCRIPTION_IDX		12
-#define BE_WIDTH_IDX			13
-#define BE_HEIGHT_IDX			14
-#define BE_VIEWROTATION_IDX		15
-#define BE_MAKER_IDX			16
-#define BE_MODEL_IDX			17
-#define BE_EXIFVERSION_IDX		18
-#define BE_CAPTUREDATE_IDX		19
-#define BE_ISOSPEEDRATING_IDX	20
-#define BE_EXPOSUREBIAS_IDX		21
-#define BE_EXPOSURETIME_IDX		22
-#define BE_APERTURE_IDX			23
-#define BE_METERINGMODE_IDX		24
-#define BE_FOCALLENGTH_IDX		25
-#define BE_LATITUDE_IDX			26
-#define BE_LONGITUDE_IDX		27
-#define BE_COPYRIGHT_IDX		28
-#define BE_KEYWORDS_IDX			29
+	BM_MEDIATYPE_IDX,
+	BM_FILESIZE_IDX,
+	BM_DATEMODIFIED_IDX,
+	BM_DATECREATE_IDX,
+	BM_DATEADDED_IDX,
 
-#define EE_DESCRIPTION_IDX      0
-/// Media Properties
-#define EE_WIDTH_IDX            1
-#define EE_HEIGHT_IDX           2
-#define EE_RESOLUTION_IDX       3
-#define EE_DEPTH_IDX            4
-#define EE_VIEW_ROTATION_IDX    5
-#define EE_SAMPLE_COLOR_IDX     6
-#define EE_PAGE_IDX             7
-#define EE_COLOR_SPACE_IDX      8
-#define EE_COMPRESSION_IDX      9
-#define EE_PRIMARY_ENCODING_IDX 10
-/// Camerai Information"
-#define EE_MAKER_IDX            11
-#define EE_MODEL_IDX            12
-#define EE_SOFTWARE_IDX         13
-#define EE_SOURCE_URL_IDX       14
-#define EE_EXIF_VERSION_IDX     15
-#define EE_CAPTURE_DATE_IDX     16
-#define EE_EXPOSURE_PROGRAM_IDX 17
-#define EE_ISO_SPEED_RATING_IDX 18
-#define EE_EXPOSURE_BIAS_IDX    19
-#define EE_EXPOSURE_TIME_IDX    20
-#define EE_APERTURE_IDX         21
-#define EE_METERING_MODE_IDX    22
-#define EE_LIGHT_SOURCE_IDX     23
-#define EE_FLASH_IDX            24
-#define EE_FOCAL_LENGTH_IDX     25
-#define EE_SENSING_METHOD_IDX   26
-#define EE_DIGITAL_ZOOM_IDX     27
-/// GPS
-#define EE_LATITUDE_IDX         28
-#define EE_LONGITUDE_IDX        29
-#define EE_GPS_TIMESTAMP_IDX    30
-//Copyright Properties
-#define EE_COPYRIGHT_IDX        31
-#define EE_USAGE_RIGHTS_IDX     32
-#define EE_COPYRIGHT_URL_IDX    33
-#define EE_MEDIATYPE_IDX		34
+	BM_LABEL_IDX,
+	BM_TITLE_IDX,
+	BM_SUBJECT_IDX,
+	BM_RATING_IDX,
+	BM_RATINGPERCENT_IDX,
+	BM_DESCRIPTION_IDX,
+	BM_KEYWORDS_IDX,
+	BM_VERSION_IDX,
+
+	BM_COMMENT_IDX,
+	BM_AUTHOR_IDX,
+	BM_CAPTUREDATE_IDX,
+	BM_SUBSETIMEORIGINAL_IDX,
+	BM_COPYRIGHT_IDX,
+
+	BM_WIDTH_IDX,
+	BM_HEIGHT_IDX,
+	BM_VIEWROTATION_IDX,
+	BM_XRESOLUTION_IDX,
+	BM_YRESOLUTION_IDX,
+	BM_RESOLUTIONUNIT_IDX,
+
+	BM_MAKER_IDX,
+	BM_MODEL_IDX,
+	BM_EXPOSURETIME_IDX,
+	BM_APERTURE_IDX,
+	BM_ISOSPEEDRATING_IDX,
+	BM_EXPOSUREBIAS_IDX,
+	BM_EXPOSUREPROGRAM_IDX,
+	BM_SUBJECTDISTANCE_IDX,
+	BM_FOCALLENGTH_IDX,
+	BM_FOCALLENGTHIN35MM_IDX,
+	BM_FLASH_IDX,
+	BM_METERINGMODE_IDX,
+	BM_DIGITALZOOM_IDX,
+
+	BM_LIGHTSOURCE_IDX,
+	BM_COLORSPACE_IDX,
+	BM_WHITEBALANCE_IDX,
+	BM_SCENECAPTURETYPE_IDX,
+	BM_CONTRAST_IDX,
+	BM_SATURATION_IDX,
+	BM_SHARPNESS_IDX,
+	BM_BRIGHTNESSVALUE_IDX,
+	BM_SUBJECTDISTANCERANGE_IDX,
+	BM_MAXAPERTURE_IDX,
+	BM_COMPRESSION_IDX,
+	BM_BITSPERSAMPLE_IDX,
+	BM_COMPRESSEDBITSPERPIXEL_IDX,
+	BM_FLASHENERGY_IDX,
+	BM_EXIFVERSION_IDX,
+	BM_SOFTWARE_IDX,
+	BM_PHOTOMETRICINTERPRETATION_IDX,
+
+	BM_LATITUDE_IDX,
+	BM_LONGITUDE_IDX,
+	BM_GPSTIMESTAMP_IDX
+};
+
+/*
+ * These are used by MetadataObject
+ */
+
+enum class MetadataObjectIndex {
+	// file
+	MD_SEQUENCEID_IDX,	// *
+	MD_FILENAME_IDX,
+	MD_ORGINALNAME_IDX,
+	MD_FILEPATH_IDX,
+	MD_UUID_IDX,
+
+	MD_MEDIATYPE_IDX,
+	MD_MD5_IDX,
+	MD_CRC_IDX,
+	MD_FILESIZE_IDX,
+	MD_DATECREATE_IDX,
+	MD_DATEMODIFIED_IDX,
+	MD_DATEADDED_IDX,
+		// Description
+	MD_DESCRIPTION_IDX,
+	MD_LABEL_IDX,
+	MD_TITLE_IDX,
+	MD_SUBJECT_IDX,
+	MD_RATING_IDX,
+	MD_RATINGPERCENT_IDX,
+	MD_KEYWORDS_IDX,// template
+	MD_VERSION_IDX,// template
+		// Origin
+	MD_COMMENT_IDX,// template
+	MD_AUTHOR_IDX,
+	MD_CAPTUREDATE_IDX,
+	MD_SUBSETIMEORIGINAL_IDX,
+	MD_COPYRIGHT_IDX,
+		// Image
+	MD_WIDTH_IDX,
+	MD_HEIGHT_IDX,
+	MD_VIEWROTATION_IDX,
+	MD_BITSPERSAMPLE_IDX,
+	MD_XRESOLUTION_IDX,
+	MD_YRESOLUTION_IDX,
+	MD_RESOLUTIONUNIT_IDX,
+	MD_COMPRESSION_IDX,
+		// Camera
+	MD_MAKER_IDX,
+	MD_MODEL_IDX,
+	MD_EXPOSURETIME_IDX,
+	MD_APERTURE_IDX,
+	MD_ISOSPEEDRATING_IDX,
+	MD_EXPOSUREBIAS_IDX,
+	MD_EXPOSUREPROGRAM_IDX,
+	MD_SUBJECTDISTANCE_IDX,
+	MD_FOCALLENGTH_IDX,
+	MD_FOCALLENGTHIN35MM_IDX,
+	MD_FLASH_IDX,
+	MD_METERINGMODE_IDX,
+	MD_DIGITALZOOM_IDX,
+		// Advanced photo
+	MD_LIGHTSOURCE_IDX,
+	MD_COLORSPACE_IDX,
+	MD_WHITEBALANCE_IDX,
+	MD_SCENECAPTURETYPE_IDX,
+	MD_CONTRAST_IDX,
+	MD_SATURATION_IDX,
+	MD_SHARPNESS_IDX,
+	MD_BRIGHTNESSVALUE_IDX,
+	MD_SUBJECTDISTANCERANGE_IDX,
+	MD_MAXAPERTURE_IDX,
+	MD_COMPRESSEDBITSPERPIXEL_IDX,
+	MD_FLASHENERGY_IDX,
+	MD_EXIFVERSION_IDX,
+	MD_SOFTWARE_IDX,
+	MD_PHOTOMETRICINTERPRETATION_IDX,
+	MD_GPSTIMESTAMP_IDX,
 
 
-/// Metadata Defines
-	/// Asset Properties
-#define MD_SEQUENCE_ID_IDX      0
-#define MD_FILENAME_IDX         1
-#define MD_FILEPATH_IDX         2
-#define MD_ORGINAL_NAME_IDX     3
-#define MD_UNIQUE_ID_IDX        4
-#define MD_LABEL_IDX            5
-#define MD_RATING_IDX           6
-#define MD_MEDIA_TYPE_IDX       7
-#define MD_MD5_IDX              8
-#define MD_CRC_IDX              9
-#define MD_FILE_SIZE_IDX        10
-#define MD_DATE_CREATE_IDX      11
-#define MD_DATE_MODIFIED_IDX    12
-#define MD_DATE_ADDED_IDX       13
-	/// Media Properties
-#define MD_WIDTH_IDX            14
-#define MD_HEIGHT_IDX           15
-#define MD_RESOLUTION_IDX       16
-#define MD_DEPTH_IDX            17
-#define MD_VIEW_ROTATION_IDX    18
-#define MD_SAMPLE_COLOR_IDX     19
-#define MD_PAGE_IDX             20
-#define MD_COLOR_SPACE_IDX      21
-#define MD_COMPRESSION_IDX      22
-#define MD_PRIMARY_ENCODING_IDX 23
-	/// Camerai Information"
-#define MD_MAKER_IDX            24
-#define MD_MODEL_IDX            25
-#define MD_SOFTWARE_IDX         26
-#define MD_SOURCE_URL_IDX       27
-#define MD_EXIF_VERSION_IDX     28
-#define MD_CAPTURE_DATE_IDX     29
-#define MD_EXPOSURE_PROGRAM_IDX 30
-#define MD_ISO_SPEED_RATING_IDX 31
-#define MD_EXPOSURE_BIAS_IDX    32
-#define MD_EXPOSURE_TIME_IDX    33
-#define MD_APERTURE_IDX         34
-#define MD_METERING_MODE_IDX    35
-#define MD_LIGHT_SOURCE_IDX     36
-#define MD_FLASH_IDX            37
-#define MD_FOCAL_LENGTH_IDX     38
-#define MD_SENSING_METHOD_IDX   39
-#define MD_DIGITAL_ZOOM_IDX     40
-	/// GPS
-#define MD_LATITUDE_IDX         41
-#define MD_LONGITUDE_IDX        42
-#define MD_GPS_TIMESTAMP_IDX    43
-	//Copyright Properties
-#define MD_COPYRIGHT_IDX        44
-#define MD_USAGE_RIGHTS_IDX     45
-#define MD_COPYRIGHT_URL_IDX    46
-	// Image Properties
-#define MD_HEADLINE_IDX			47
-#define MD_CATEGORY_IDX			48
-#define MD_DESCRIPTION_IDX		49
-#define MD_KEYWORDS_IDX			50
-#define MD_SOURCE_IDX			51
-#define MD_INSTRUCTIONS_IDX		52
-#define MD_SCENE_IDX			53
-#define MD_CREATOR_IDX			54
-#define MD_JOBTITLE_IDX			55
-#define MD_ADDRESS_IDX			56
-#define MD_CITY_IDX				57
-#define MD_STATE_IDX			58
-#define MD_POSTALCODE_IDX		59
-#define MD_COUNTRY_IDX			60
-#define MD_PHONE_IDX			62
-#define MD_EMAIL_IDX			63
-#define MD_WEBSITE_IDX			64
+		//	add(MTSchema(MTSchema::Text, DB_SENSINGMETHOD));
+
+		// Location
+	MD_LATITUDE_IDX,
+	MD_LONGITUDE_IDX,
+	MD_LOCATION_IDX,
+	MD_SCENE_IDX,// template
+
+		// IPTC
+	MD_SOURCEURL_IDX,			// template
+	MD_USAGERIGHTS_IDX,// template
+	MD_COPYRIGHTURL_IDX,// template
+	MD_HEADLINE_IDX,// template
+	MD_CATEGORY_IDX,// template
+	MD_SOURCE_IDX,// template
+	MD_INSTRUCTIONS_IDX,// template
+
+	MD_CREATOR_IDX,// template
+	MD_JOBTITLE_IDX,// template
+	MD_ADDRESS_IDX,// template
+	MD_CITY_IDX,// template
+	MD_STATE_IDX,// template
+	MD_POSTALCODE_IDX,// template
+	MD_COUNTRY_IDX,// template
+	MD_PHONE_IDX,// template
+	MD_EMAIL_IDX,// template
+	MD_WEBSITE_IDX// template
+	
+};
+
 
 // CSV Database Defines
 	/// Asset Properties
+/*
 #define DB_SEQUENCE_ID_IDX      0
 #define DB_FILENAME_IDX         1
 #define DB_FILEPATH_IDX         2
@@ -269,9 +308,116 @@
 #define DB_PHONE_IDX			14
 #define DB_EMAIL_IDX			15
 #define DB_WEBSITE_IDX			16
-
+*/
 
 //namespace simplearchive {
+#define DB_SEQUENCEID	   "SequenceId"	// Sequence ID of this index
+#define DB_DATABASEID	   "DatabaseId" // Sequence ID of linked database
+#define DB_MD5	           "Md5"
+#define DB_CRC             "Crc"
+#define DB_FILENAME        "Filename"
+#define DB_ORGINALNAME     "OrginalName"
+#define DB_UUID            "Uuid"
+#define DB_DESCRIPTION	   "Description"
+#define DB_APERTURE        "Aperture"
+#define DB_CAPTUREDATE     "CaptureDate"
+#define DB_COLORSPACE      "ColorSpace"
+#define DB_COMPRESSION     "Compression"
+#define DB_COPYRIGHT       "Copyright"
+#define DB_COPYRIGHTURL    "CopyrightUrl"
+#define DB_DATEADDED       "DateAdded"
+#define DB_DATECREATE      "DateCreate"
+#define DB_DATEMODIFIED    "DateModified"
+#define DB_WHITEBALANCE    "WhiteBalance"
+#define DB_DIGITALZOOM     "DigitalZoom"
+#define DB_EXIFVERSION     "ExifVersion"
+#define DB_EXPOSUREBIAS    "ExposureBias"
+#define DB_EXPOSUREPROGRAM "ExposureProgram"
+#define DB_EXPOSURETIME    "ExposureTime"
+#define DB_FILEPATH        "Filepath"
+#define DB_FILESIZE        "FileSize"
+#define DB_FLASH           "Flash"
+#define DB_FOCALLENGTH     "FocalLength"
+#define DB_GPSTIMESTAMP    "GpsTimeStamp"
+#define DB_HEIGHT          "Height"
+#define DB_ISOSPEEDRATING  "IsoSpeedRating"
+#define DB_LABEL           "Label"
+#define DB_LATITUDE        "Latitude"
+#define DB_LIGHTSOURCE     "LightSource"
+#define DB_LONGITUDE       "Longitude"
+#define DB_MAKER           "Maker"
+#define DB_MEDIATYPE       "MediaType"
+#define DB_METERINGMODE    "MeteringMode"
+#define DB_MODEL           "Model"
+#define DB_RATING          "Rating"
+#define DB_RESOLUTION      "Resolution"
+#define DB_SAMPLECOLOR     "SampleColor"
+#define DB_SENSINGMETHOD   "SensingMethod"
+#define DB_SOFTWARE        "Software"
+#define DB_SOURCEURL       "SourceUrl"
+#define DB_USAGERIGHTS     "UsageRights"
+#define DB_VIEWROTATION    "ViewRotation"
+#define DB_WIDTH           "Width"
+#define	DB_KEYWORDS        "Keywords"
+#define	DB_Tags            "Tags"
+#define DB_HEADLINE        "Headline"
+#define DB_CATEGORY        "Category"
+#define DB_SOURCE          "Source"
+#define DB_INSTRUCTIONS    "Instructions"
+#define DB_SCENE           "Scene"
+#define DB_CREATOR         "Creator"
+#define DB_JOBTITLE        "JobTitle"
+#define DB_ADDRESS         "Address"
+#define DB_CITY            "City"
+#define DB_STATE           "State"
+#define DB_POSTALCODE      "PostalCode"
+#define DB_COUNTRY         "Country"
+#define DB_PHONE           "Phone"
+#define DB_EMAIL           "Email"
+#define DB_WEBSITE         "Website"
+#define DB_TITLE		   "Title"
+#define DB_SUBJECT		"Subject"
+#define DB_RATINGPERCENT		"RatingPercent"
+#define DB_COMMENT		"Comment"
+#define DB_AUTHOR		"Author"
+#define DB_SUBSETIMEORIGINAL		"SubsetTimeOriginal"
+#define DB_XRESOLUTION		"XResolution"
+#define DB_YRESOLUTION		"YResolution"
+#define DB_RESOLUTIONUNIT		"ResolutionUnit"
+#define DB_SUBJECTDISTANCE		"SubjectDistance"
+#define DB_FOCALLENGTHIN35MM		"FocalLenghtIn35mm"
+#define DB_WHITESBALANCE		"WhitesBalance"
+#define DB_SCENECAPTURETYPE		"SceneCaptureType"
+#define DB_CONTRAST		"Contrast"
+#define DB_SATURATION		"Saturation"
+#define DB_SHARPNESS		"Sharpness"
+#define DB_BRIGHTNESSVALUE		"BrightnessValue"
+#define DB_SUBJECTDISTANCERANGE		"SubjectDistanceRange"
+#define DB_MAXAPERTURE		"MaxAperture"
+#define DB_BITSPERSAMPLE		"BitsPerSample"
+#define DB_COMPRESSEDBITSPERPIXEL		"CompressedBitsPerPixel"
+#define DB_FLASHENERGY		"FlashEnergy"
+#define DB_PHOTOMETRICINTERPRETATION		"PhotometricInterpretation"
+#define DB_LOCATION						"Location"
+#define DB_VERSION						"Version"
+#define DB_EDITOR						"EditorSoftware"
+#define DB_VERSIONPATH						"VersionPath"
+/*
+keywords are used to find things via search engines; tags are used to find things within your own Archive.
+So, you would use keywords to help label your article so when people search on Google, they hopefully use
+the words in your archive(or in your archive keyword Metadata).
+*/
+
+#define TABLE_METADATA			"metadata"
+#define TABLE_ASSETPROPERTIES	"asset_properties"
+
+#endif /* DBDEFINES_H_ */
+
+
+/*
+#define TABLE_METADATA			"metadata"
+#define TABLE_ASSETPROPERTIES	"asset_properties"
+
 #define DB_SEQUENCEID	   "SequenceId"
 #define DB_MD5	           "Md5"
 #define DB_CRC             "Crc"
@@ -310,7 +456,7 @@
 #define DB_METERINGMODE    "MeteringMode"
 #define DB_MODEL           "Model"
 #define DB_PAGE            "Page"
-#define DB_PRIMARYENCODING "PrimaryEncoding"
+#define DB_PRINARYENCODING "PrimaryEncoding"
 #define DB_RATING          "Rating"
 #define DB_RESOLUTION      "Resolution"
 #define DB_SAMPLECOLOR     "SampleColor"
@@ -320,28 +466,4 @@
 #define DB_USAGERIGHTS     "UsageRights"
 #define DB_VIEWROTATION    "ViewRotation"
 #define DB_WIDTH           "Width"
-#define	DB_KEYWORDS        "Keywords"
-#define	DB_Tags            "Tags"
-#define DB_HEADLINE        "Headline"
-#define DB_CATEGORY        "Category"
-#define DB_DESCRIPTION     "Description"
-#define DB_KEYWORDS        "Keywords"
-#define DB_SOURCE          "Source"
-#define DB_INSTRUCTIONS    "Instructions"
-#define DB_SCENE           "Scene"
-#define DB_CREATOR         "Creator"
-#define DB_JOBTITLE        "JobTitle"
-#define DB_ADDRESS         "Address"
-#define DB_CITY            "City"
-#define DB_STATE           "State"
-#define DB_POSTALCODE      "PostalCode"
-#define DB_COUNTRY         "Country"
-#define DB_PHONE           "Phone"
-#define DB_EMAIL           "Email"
-#define DB_WEBSITE         "Website"
-/*
-keywords are used to find things via search engines; tags are used to find things within your own Archive.
-So, you would use keywords to help label your article so when people search on Google, they hopefully use
-the words in your archive(or in your archive keyword Metadata).
-*/
-#endif /* DBDEFINES_H_ */
+ */

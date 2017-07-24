@@ -74,7 +74,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\metatp;..\util;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\metatp;..\util;..\fclib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <BrowseInformation>true</BrowseInformation>
     </ClCompile>
     <Link>
@@ -139,27 +139,19 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AssetProperties.cpp" />
-    <ClCompile Include="CameraInformation.cpp" />
-    <ClCompile Include="CopyrightProperties.cpp" />
     <ClCompile Include="CSVDatabase.cpp" />
     <ClCompile Include="CSVDBFile.cpp" />
     <ClCompile Include="CSVDBVisitor.cpp" />
-    <ClCompile Include="CSVRow.cpp" />
-    <ClCompile Include="GPSProperties.cpp" />
-    <ClCompile Include="MediaProperties.cpp" />
+    <ClCompile Include="CSVMasterDatabase.cpp" />
+    <ClCompile Include="Source.cpp" />
+    <ClCompile Include="CSVDerivativeDatabase.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AssetProperties.h" />
-    <ClInclude Include="CameraInformation.h" />
-    <ClInclude Include="CopyrightProperties.h" />
     <ClInclude Include="CSVDatabase.h" />
     <ClInclude Include="CSVDBFile.h" />
     <ClInclude Include="CSVDBVisitor.h" />
-    <ClInclude Include="CSVRow.h" />
-    <ClInclude Include="DefineNames.h" />
-    <ClInclude Include="GPSProperties.h" />
-    <ClInclude Include="MediaProperties.h" />
+    <ClInclude Include="CSVMasterDatabase.h" />
+    <ClInclude Include="CSVDerivativeDatabase.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="csvmain.dox" />

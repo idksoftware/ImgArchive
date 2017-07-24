@@ -37,6 +37,7 @@
 #include "EnvFunc.h"
 #include "SIAArcApp.h"
 #include "SAUtils.h"
+#include "CLogger.h"
 #include "CDate.h"
 #include "AppConfig.h"
 #include "CLogger.h"
@@ -44,7 +45,7 @@
 #include "TargetsList.h"
 #include "CIDKDate.h"
 #include "ImagePath.h"
-#include "History.h"
+
 #include "argvparser.h"
 #include "HookCmd.h"
 #include "MakeMedia.h"
@@ -67,6 +68,7 @@ using namespace std;
 
 #include <string>
 #include <vector>
+#include "AppOptions.h"
 #include "SIAArcAppOptions.h"
 #include "SIAArcArgvParser.h"
 #include "Threads.h"
@@ -89,17 +91,21 @@ static char THIS_FILE[] = __FILE__;
 
 
 namespace simplearchive {
+
+	using namespace CommandLineProcessing;
+
 	
 	SIAArcApp::SIAArcApp() : AppBase(new SIAArcArgvParser) {};
 
 
 
-bool SIAArcApp::doInitalise(int argc, char **argv) {
+bool SIAArcApp::initaliseArgs(int argc, char **argv) {
+	
 	SIAArcAppOptions &appOptions = SIAArcAppOptions::get();
 	if (m_argvParser->doInitalise(argc, argv) == false) {
 		return false;
 	}
-
+	
 	return true;
 }
 
@@ -107,7 +113,7 @@ bool SIAArcApp::doInitalise(int argc, char **argv) {
 bool SIAArcApp::initaliseHomePath() {
 
 	CAppConfig &config = CAppConfig::get();
-
+	
 	bool found = false;
 	std::string homePath;
 	// Looking the HKEY_LOCAL_MACHINE first
@@ -122,9 +128,10 @@ bool SIAArcApp::initaliseHomePath() {
 	}
 	else {
 		bool found = false;
-		homePath = SAUtils::GetEnvironment("ProgramData");
+		homePath = SAUtils::GetPOSIXEnv("ProgramData");
 		if (homePath.empty() == true || homePath.length() == 0) {
 			printf("SIA Unable to start? Cannot read user profile.");
+			setError(12, "SIA Unable to start? Cannot read user profile.");
 			return false;
 		}
 		else {
@@ -135,9 +142,10 @@ bool SIAArcApp::initaliseHomePath() {
 			}
 		}
 		if (found == false) {
-			homePath = SAUtils::GetEnvironment("USERPROFILE");
+			homePath = SAUtils::GetPOSIXEnv("USERPROFILE");
 			if (homePath.empty() == true || homePath.length() == 0) {
 				printf("SIA Unable to start? Cannot read all users profile.");
+				setError(12, "SIA Unable to start? Cannot read all users profile.");
 				return false;
 			}
 			homePath += "/IDK Software/ImageArchive1.0";
@@ -149,27 +157,27 @@ bool SIAArcApp::initaliseHomePath() {
 	}
 
 	std::string temp;
-	temp = SAUtils::GetEnvironment("SIA_ARCHIVE");
+	temp = SAUtils::GetPOSIXEnv("SIA_ARCHIVE");
 	if (temp.empty() == false) {
 		config.setWorkspacePath(temp.c_str());
 	}
-	temp = SAUtils::GetEnvironment("SIA_SOURCE");
+	temp = SAUtils::GetPOSIXEnv("SIA_SOURCE");
 	if (temp.empty() == false) {
 		config.setSourcePath(temp.c_str());
 	}
-	temp = SAUtils::GetEnvironment("SIA_LOGLEVEL");
+	temp = SAUtils::GetPOSIXEnv("SIA_LOGLEVEL");
 	if (temp.empty() == false) {
 		config.setLogLevel(temp.c_str());
 	}
 
 
 	const std::string key = "SIA_HOME";
-	temp = SAUtils::GetEnvironment(key);
+	temp = SAUtils::GetPOSIXEnv(key);
 	homePath = temp;
 	//printf("%s", homePath.c_str());
 	int i = homePath.length();
 	if (homePath.empty() == true || homePath.length() == 0) {
-		homePath = SAUtils::GetEnvironment("ProgramData");
+		homePath = SAUtils::GetPOSIXEnv("ProgramData");
 		//C:\ProgramData\IDK Software\ImageArchive1.0
 		homePath += "/IDK Software/ImageArchive1.0";
 
@@ -180,11 +188,6 @@ bool SIAArcApp::initaliseHomePath() {
 bool SIAArcApp::initaliseConfig() {
 	
 	CAppConfig &config = CAppConfig::get();
-	config.init();
-	
-	//const std::string key = "SIA_HOME";
-	//std::string temp = SAUtils::GetEnvironment(key);
-	//std::string homePath = temp;
 	
 	bool found = false;
 	std::string homePath;
@@ -198,113 +201,38 @@ bool SIAArcApp::initaliseConfig() {
 		//printf("Found SIA_HOME in user variables: %s", homePath.c_str());
 		found = true;
 	}
+	if (found) {
+		config.init(homePath.c_str());
+	}
 	else {
-		bool found = false;
-		homePath = SAUtils::GetEnvironment("ProgramData");
-		if (homePath.empty() == true || homePath.length() == 0) {
-			printf("SIA Unable to start? Cannot read user profile.");
-			return false;
-		}
-		else {
-			homePath += "/IDK Software/ImageArchive1.0";
-			if (SAUtils::DirExists(homePath.c_str()) == true) {
-				//printf("Found SIA_HOME in user profile: %s", homePath.c_str());
-				found = true;
-			}
-		}
-		if (found == false) {
-			homePath = SAUtils::GetEnvironment("USERPROFILE");
-			if (homePath.empty() == true || homePath.length() == 0) {
-				printf("SIA Unable to start? Cannot read all users profile.");
-				return false;
-			}
-			homePath += "/IDK Software/ImageArchive1.0";
-			if (SAUtils::DirExists(homePath.c_str()) == true) {
-				//printf("Found SIA_HOME in all users profile: %s", homePath.c_str());
-				found = true;
-			}
-		}
+		config.init();
 	}
 	
-
-	config.setHomePath(homePath.c_str());
-	std::string temp;
-	temp = SAUtils::GetEnvironment("SIA_ARCHIVE");
-	if (temp.empty() == false) {
-		config.setWorkspacePath(temp.c_str());
-	}
-	temp = SAUtils::GetEnvironment("SIA_SOURCE");
-	if (temp.empty() == false) {
-		config.setSourcePath(temp.c_str());
-	}
-	temp = SAUtils::GetEnvironment("SIA_LOGLEVEL");
-	if (temp.empty() == false) {
-		config.setLogLevel(temp.c_str());
+	if (SAUtils::DirExists(homePath.c_str()) == false) {
+		setError(12, "SIA Unable to start?\nArchive not found at default location and the environment variable SA_HOME not set.\n"
+			"Use siaadmin -i to create an empty archive at the default location (see documentation).\n");
+		return false;
+		
 	}
 	
-	
-	const std::string key = "SIA_HOME";
-	temp = SAUtils::GetEnvironment(key);
-	homePath = temp;
-	//printf("%s", homePath.c_str());
-	int i = homePath.length();
-	if (homePath.empty() == true || homePath.length() == 0) {
-		homePath = SAUtils::GetEnvironment("ProgramData");
-		//C:\ProgramData\IDK Software\ImageArchive1.0
-		homePath += "/IDK Software/ImageArchive1.0";
-
-	}
 	std::string configfile = homePath + "/config/" + "config.dat";
 	std::string configPath = homePath + "/config";
-	if (SAUtils::DirExists(homePath.c_str()) == false) {
-		//printf("SIA Unable to start?\nArchive not found at default location and the environment variable SA_HOME not set.\n"
-		//	"Use siaadmin -i to create an empty archive at the default location (see documentation).\n");
-		//m_error = true;
-		//return false;
-		m_configured = false;
+	if (SAUtils::FileExists(configfile.c_str()) == true) {
+		setConfigPath(configPath.c_str());
+		ConfigReader configReader;
+		configReader.setNoLogging();
+		configReader.read(configfile.c_str(), config);
+		config.fileBasedValues();
+		
 	}
 	else {
-
-		if (SAUtils::FileExists(configfile.c_str()) == true) {
-			setConfigPath(configPath.c_str());
-			ConfigReader configReader;
-			configReader.setNoLogging();
-			configReader.read(configfile.c_str(), config);
-			// This is usfull to print the config
-			//config.printAll();
-			/*
-			if (config.value("SourcePath", temp) == true) {
-			m_sourcePath = temp;
-			}
-			if (config.value("ArchivePath", temp) == true) {
-			m_archivePath = temp;
-			}
-			if (config.value("LogLevel", temp) == true) {
-			m_logLevel = temp;
-			}
-			*/
-			config.setHomePath(homePath.c_str());
-			temp = SAUtils::GetEnvironment("SIA_WORKSPACE");
-			if (temp.empty() == false) {
-				config.setWorkspacePath(temp.c_str());
-			}
-			temp = SAUtils::GetEnvironment("SIA_SOURCE");
-			if (temp.empty() == false) {
-				config.setSourcePath(temp.c_str());
-			}
-			temp = SAUtils::GetEnvironment("SIA_LOGLEVEL");
-			if (temp.empty() == false) {
-				config.setLogLevel(temp.c_str());
-			}
-		}
-		else {
-			m_configured = false;
-		}
+		m_configured = false;
 	}
+	
 	return true;
 }
 
-bool SIAArcApp::Run()
+bool SIAArcApp::doRun()
 {
 	SIAArcAppOptions &appOptions = SIAArcAppOptions::get();
 	CAppConfig &config = CAppConfig::get();
@@ -324,11 +252,13 @@ bool SIAArcApp::Run()
 	if (siaLib.initalise() < 0) {
 		return false;
 	}
-
+	/*
+		INITALISING COMLETE ????
+	*/
 	switch (appOptions.getCommandMode()) {
 
 		// run sub-comand
-	case SIAArcAppOptions::CM_Import:
+	case SIAArcAppOptions::CommandMode::CM_Import:
 
 		if (appOptions.isDataForced() == true) {
 			siaLib.setForceDate();
@@ -345,82 +275,82 @@ bool SIAArcApp::Run()
 		}
 		else {
 			if (siaLib.Import() == false) {
+				setError(CLogger::getLastCode(), CLogger::getLastMessage());
 				return false;
 			}
 		}
 		break;
-	case SIAArcAppOptions::CM_Export:
+	case SIAArcAppOptions::CommandMode::CM_Export:
 		if (siaLib.exportImage(appOptions.getDistinationPath()) == false) {
+			setError(CLogger::getLastCode(), CLogger::getLastMessage());
 			return false;
 		}
 		break;
-	case SIAArcAppOptions::CM_Show:
+	case SIAArcAppOptions::CommandMode::CM_Show:
 		switch (appOptions.getShowCommandOption()) {
-		case SIAArcAppOptions::SC_ShowCheckedOut:
+		case SIAArcAppOptions::ShowCommandOption::SC_ShowCheckedOut:
 			if (siaLib.showCheckedOut(appOptions.getImageAddress()) == false) {
+				setError(CLogger::getLastCode(), CLogger::getLastMessage());
 				return false;
 			}
 			
-		case SIAArcAppOptions::SC_ShowUncheckedOutChanges:
+		case SIAArcAppOptions::ShowCommandOption::SC_ShowUncheckedOutChanges:
 			if (siaLib.showUncheckedOutChanges(appOptions.getImageAddress()) == false) {
+				setError(CLogger::getLastCode(), CLogger::getLastMessage());
 				return false;
 			}
 			return true;
-		case SIAArcAppOptions::SC_Unknown:
+		case SIAArcAppOptions::ShowCommandOption::SC_Unknown:
 			return false;	
 		}
 		break;
-	case SIAArcAppOptions::CM_Checkout:
+	case SIAArcAppOptions::CommandMode::CM_Checkout:
 		if (siaLib.checkout(appOptions.getImageAddress(), appOptions.getComment()) == false) {
+			setError(CLogger::getLastCode(), CLogger::getLastMessage());
 			return false;
 		}
 		break;
-	case SIAArcAppOptions::CM_Checkin:
+	case SIAArcAppOptions::CommandMode::CM_Checkin:
 		if (siaLib.checkin(appOptions.getImageAddress(), appOptions.getComment()) == false) {
+			setError(CLogger::getLastCode(), CLogger::getLastMessage());
 			return false;
 		}
 		break;
-	case SIAArcAppOptions::CM_UnCheckout:
+	case SIAArcAppOptions::CommandMode::CM_UnCheckout:
 		if (siaLib.uncheckout(appOptions.getImageAddress(), appOptions.getComment()) == false) {
+			setError(CLogger::getLastCode(), CLogger::getLastMessage());
 			return false;
 		}
 		break;
-	case SIAArcAppOptions::CM_View:
+	case SIAArcAppOptions::CommandMode::CM_View:
 	{
 		if (siaLib.view(appOptions.getName()) == false) {
+			setError(CLogger::getLastCode(), CLogger::getLastMessage());
 			return false;
 		}
 		break;
 	}
-	case SIAArcAppOptions::CM_Prop:
+	case SIAArcAppOptions::CommandMode::CM_Prop:
 	{
 		if (siaLib.listContents(appOptions.getImageAddress()) == false) {
+			setError(CLogger::getLastCode(), CLogger::getLastMessage());
 			return false;
 		}
 		break;
 	}
 
-	case SIAArcAppOptions::CM_Uncheckin:
+	case SIAArcAppOptions::CommandMode::CM_Uncheckin:
 		break;
 	
-	case SIAArcAppOptions::CM_Version:
+	case SIAArcAppOptions::CommandMode::CM_Version:
 		printf("\n\nSia version \"%s\" (build %s)\n", VERSION, BUILD);
 		return true;
-	case SIAArcAppOptions::CM_Unknown:
+	case SIAArcAppOptions::CommandMode::CM_Unknown:
+		setError(CLogger::getLastCode(), CLogger::getLastMessage());
 		break;
 	}
-	
-	//m_ArchiveBuilder.checkout("/2014/2014-6-3/_DSC0001.jpg", "Some changes");
-	//m_ArchiveBuilder.checkin("/2014/2014-6-3/GB-wp6.jpg", "Some changes");
 	siaLib.complete();
-	/*
-	int i = 0;
-	while (i < 1000) {
-		SIASleep(500);
-		printf("waiting\n");
-		i++;
-	}
-	*/
+	
 	return true;
 }
 
@@ -453,20 +383,24 @@ bool failed()
 
 int main(int argc, char **argv)
 {
+	bool error = false;
 	simplearchive::SIAArcApp app;
-	if (app.initaliseConfig() == false) {
-		return false;
+	if (app.initalise(argc, argv) == false) {
+
+		error = true;
 	}
-	if (app.initaliseArgs(argc, argv) == false) {
-		return false;
+	else {
+		if (app.Run() == false) {
+			error = true;
+		}
 	}
-	if (app.Run() == false) {
-		int code = simplearchive::SIALib::getLastCode();
+	if (error) {
+		int code = CommandLineProcessing::AppBase::getError();
 		return code;
 	}
-	
-	return 1;
-
+	else {
+		return 0;
+	}
 }
 
 

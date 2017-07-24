@@ -79,6 +79,8 @@ namespace simplearchive {
 		static std::string m_logPath;
 		/// home path. This is the root path all default paths are made. 
 		static std::string m_homePath;
+		/// System Path
+		static std::string m_systemPath;
 		/// This is the path to the crc index database.
 		static std::string m_indexPath;
 		/// This is the path the history file are stored. These files are used for
@@ -97,7 +99,8 @@ namespace simplearchive {
 		static std::string m_tempPath;
 		/// This is the archive repository file path.
 		static std::string m_workspacePath;
-		static std::string m_shadowArchivePath;
+		static std::string m_masterPath;
+		static std::string m_derivativePath;
 		static std::string m_masterViewPath;
 
 		static std::string m_sourcePath;
@@ -131,20 +134,28 @@ namespace simplearchive {
 
 
 		CAppConfig();
+
+		/// @brief Gets the Master archive path
+		/// user definable
+		const char *getMasterPath();
+
 	public:
 		static CAppConfig &get();
 		~CAppConfig();
 
 		/// @brief Initalises the config object
-		void init();
+		void init(const char *homePath = nullptr);
+
+		void fileBasedValues();
 		/// @brief Gets the source path.
 		const char *getSourcePath();
 		/// @brief Gets the archive path.
 		/// user definable
 		const char *getWorkspacePath();
-		/// @brief Gets the shadow archive path
+		
+		/// @brief Gets the Derivative archive path
 		/// user definable
-		const char *getShadowPath();
+		const char *getDerivativePath();
 		/// @brief Gets the temp file path.
 		/// user definable
 		const char *getTempPath();
@@ -153,11 +164,13 @@ namespace simplearchive {
 		/// @brief Gets the hooks path
 		/// user definable
 		/// 
-		const char *CAppConfig::getHookPath();
+		const char *getHookPath();
 		/// @brief Gets the path to the metadata template files.
 		const char *getMetadataTemplatePath();
 		/// @brief Gets log file path
 		const char *getLogPath();
+		/// System path
+		const char *getSystemPath();
 		/// @brief Gets the path to the crc index database.
 		const char *getIndexPath();
 		/// @brief Gets the path the history file are stored. These files are used for
@@ -220,7 +233,8 @@ namespace simplearchive {
 		void setSilent(bool silent);
 		void setVerbose(bool verbose);
 		void setWorkspacePath(const char *homePath);
-		void setShadowPath(const char *homePath);
+		void setMasterPath(const char *homePath);
+		void setDerivativePath(const char *homePath);
 		void setMasterViewPath(const char *viewPath);
 		void setBackup1(const char *backupPath);
 		void setBackup2(const char *backupPath);

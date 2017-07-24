@@ -43,6 +43,7 @@
 #else
 #include <dirent.h>
 #include <limits.h>
+#include <string.h>
 #endif
 
 // #include "sys/syslimits.h"

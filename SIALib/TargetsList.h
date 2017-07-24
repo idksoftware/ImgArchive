@@ -35,6 +35,7 @@
 #pragma once
 #include <iostream>
 #include <stdio.h>
+#include <string.h>
 #include "DirectoryVisitor.h"
 #include "ImportJournal.h"
 

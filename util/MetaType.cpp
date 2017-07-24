@@ -4,6 +4,7 @@
  *  Created on: May 5, 2015
  *      Author: wzw7yn
  */
+#include <fstream>
 #include <sstream>
 #include "MetaType.h"
 
@@ -16,6 +17,9 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #endif
 namespace simplearchive {
+
+const char *MTColumn::nullStr = "";
+
 
 class MetaTypeObject {
 	typedef enum {
@@ -136,12 +140,12 @@ public:
 
 const char *MTSchema::getTypeString() {
 	switch(m_type)  {
-	case Integer: return "Integer";
-	case Text: return "Text";
-	case Date: return "Date";
-	case Float: return "Float";
+	case Integer: return "integer";
+	case Text: return "text";
+	case Date: return "date";
+	case Float: return "float";
 	}
-	return "Unknown";
+	return "unknown";
 }
 
 const char *MTTypeException::what() const throw() {
@@ -153,8 +157,7 @@ const char *MTTypeException::what() const throw() {
 }
 
 
-MTColumn::MTColumn(MTSchema &info) {
-	m_info = &info;
+MTColumn::MTColumn(MTSchema &info) : m_info(new MTSchema(info)) {
 	m_object = 0;
 	m_boundValue = 0;
 }
@@ -181,7 +184,7 @@ std::string &MTColumn::toString() {
 	}
 	MTSchema::EItemType type = m_info->getType();
 	if (m_object == 0) {
-		*returned = "null";
+		*returned = nullStr;
 		return *returned;
 	}
 	switch(type) {
@@ -255,6 +258,15 @@ bool MTColumn::fromString(const std::string &str) {
 	return false;
 }
 
+std::string MTColumn::token(int *pos, std::string &str) {
+	int delim = str.find_first_of(DELIM, *pos);
+	std::string tmp = str.substr(*pos, (delim - *pos));
+	//printf("%s\n",tmp.c_str());
+	*pos = delim;
+	return tmp;
+}
+
+
 void MTColumn::set(int i) {
 	set((unsigned long)i);
 }
@@ -267,7 +279,7 @@ void MTColumn::set(unsigned int i) {
 void MTColumn::set(unsigned long i) {
 	MTSchema::EItemType type = m_info->getType();
 	if (type == MTSchema::Integer) {
-		if (m_object == 0) {
+		if (m_object == nullptr) {
 			 m_object = new MetaTypeObject(i);
 		} else {
 			*m_object = i;
@@ -282,7 +294,7 @@ void MTColumn::set(const char *str) {
 	std::string tmp(str);
 	MTSchema::EItemType type = m_info->getType();
 	if (type == MTSchema::Text) {
-		if (m_object == 0) {
+		if (m_object == nullptr) {
 			 m_object = new MetaTypeObject(tmp.c_str());
 		} else {
 			*m_object = tmp;
@@ -296,7 +308,7 @@ void MTColumn::set(const char *str) {
 void MTColumn::set(const std::string &str) {
 	MTSchema::EItemType type = m_info->getType();
 	if (type == MTSchema::Text) {
-		if (m_object == 0) {
+		if (m_object == nullptr) {
 			 m_object = new MetaTypeObject(str.c_str());
 		} else {
 			*m_object = str.c_str();
@@ -310,7 +322,7 @@ void MTColumn::set(const std::string &str) {
 void MTColumn::set(const ExifDateTime &date) {
 	MTSchema::EItemType type = m_info->getType();
 	if (type == MTSchema::Date) {
-		if (m_object == 0) {
+		if (m_object == nullptr) {
 			 m_object = new MetaTypeObject(date);
 		} else {
 			*m_object = date;
@@ -324,7 +336,7 @@ void MTColumn::set(const ExifDateTime &date) {
 void MTColumn::set(double d) {
 	MTSchema::EItemType type = m_info->getType();
 	if (type == MTSchema::Float) {
-		if (m_object == 0) {
+		if (m_object == nullptr) {
 			m_object = new MetaTypeObject(d);
 		} else {
 			*m_object = d;
@@ -390,6 +402,7 @@ const unsigned int MTColumn::getUInt() {
 		throw MTTypeException("Invalid type");
 	}
 }
+
 const unsigned long MTColumn::getULong() {
 	MTSchema::EItemType type = m_info->getType();
 	if (type == MTSchema::Integer) {
@@ -399,6 +412,7 @@ const unsigned long MTColumn::getULong() {
 		throw MTTypeException("Invalid type");
 	}
 }
+
 const std::string &MTColumn::getString() {
 	MTSchema::EItemType type = m_info->getType();
 	if (type == MTSchema::Text) {
@@ -408,6 +422,7 @@ const std::string &MTColumn::getString() {
 		throw MTTypeException("Invalid type");
 	}
 }
+
 const ExifDateTime &MTColumn::getDate() {
 	MTSchema::EItemType type = m_info->getType();
 	if (type == MTSchema::Date) {
@@ -420,6 +435,7 @@ const ExifDateTime &MTColumn::getDate() {
 		throw MTTypeException("Date Invalid type");
 	}
 }
+
 const double MTColumn::getDouble() {
 	MTSchema::EItemType type = m_info->getType();
 	if (type == MTSchema::Float) {
@@ -429,6 +445,7 @@ const double MTColumn::getDouble() {
 		throw MTTypeException("Invalid type");
 	}
 }
+
 const float MTColumn::getFloat() {
 	MTSchema::EItemType type = m_info->getType();
 	if (type == MTSchema::Float) {
@@ -447,18 +464,17 @@ void MTColumn::boundUpdate() {
 }
 */
 
-MTRow::MTRow(MTTableSchema *pSchemaTable) {
-	m_schema = pSchemaTable;
-
-	for (std::vector<MTSchema>::iterator i = pSchemaTable->begin(); i != pSchemaTable->end(); i++) {
+MTRow::MTRow(MTTableSchema &schemaTable) : m_schema(schemaTable), m_delim(',')
+{
+	for (std::vector<MTSchema>::iterator i = m_schema.begin(); i != m_schema.end(); i++) {
 		MTSchema& columnInfo = *i;
 		push_back(new MTColumn(columnInfo));
 	}
 }
 
-MTRow::MTRow(const MTRow &row) {
+MTRow::MTRow(const MTRow &row) : m_schema(row.m_schema), m_delim(row.m_delim) {
 	m_schema = row.m_schema;
-	for (std::vector<MTSchema>::iterator i = m_schema->begin(); i != m_schema->end(); i++) {
+	for (std::vector<MTSchema>::iterator i = m_schema.begin(); i != m_schema.end(); i++) {
 		MTSchema& columnInfo = *i;
 		push_back(new MTColumn(columnInfo));
 	}
@@ -467,12 +483,14 @@ MTRow::MTRow(const MTRow &row) {
 
 MTRow &MTRow::operator=(const MTRow &row) {
 	m_schema = row.m_schema;
+	m_delim = row.m_delim;
+
 	for (std::vector<MTColumn *>::iterator i = this->begin(); i != this->end(); i++) {
 		MTColumn *column = *i;
 		delete column;
 	}
 	clear();
-	for (std::vector<MTSchema>::iterator i = m_schema->begin(); i != m_schema->end(); i++) {
+	for (std::vector<MTSchema>::iterator i = m_schema.begin(); i != m_schema.end(); i++) {
 		MTSchema& columnInfo = *i;
 		push_back(new MTColumn(columnInfo));
 	}
@@ -486,7 +504,7 @@ MTRow::~MTRow() {
 		delete column;
 	}
 	this->clear();
-	delete m_schema;
+	//delete m_schema;
 };
 bool MTRow::join(MTRow &otherRow) {
 
@@ -523,13 +541,17 @@ bool MTRow::join(const MTRow &otherRow) {
 	try {
 		for (std::vector<MTSchema>::iterator i = thisSchema.begin(); i != thisSchema.end(); i++, thisIndex++) {
 			MTSchema& columnInfo = *i;
-			//printf("%s\n", columnInfo.getName().c_str());
+			printf("%s\n", columnInfo.getName().c_str());
 			otherIndex = otherSchema.getIndex(columnInfo.getName().c_str());
 			if (otherIndex == -1) {
 				continue;
 			}
 			MTColumn& thisColumn = columnAt(thisIndex);
 			MTColumn& otherColumn = otherRow.columnAt(otherIndex);
+			if (thisColumn.getInfo().getType() != otherColumn.getInfo().getType()) {
+				printf("Invalid Types");
+				ErrorCode::setErrorCode(SIA_ERROR::TYPE_MISMATCH);
+			}
 			thisColumn.set(otherColumn);
 
 		}
@@ -539,6 +561,107 @@ bool MTRow::join(const MTRow &otherRow) {
 		printf("%s\n", ex.what());
 	}
 	return true;
+}
+
+
+SharedMTRow MTTable::makeRow() {
+	auto row = std::make_shared<MTRow>(*(m_TableSchema.get()));
+	return row;
+}
+
+bool MTTable::addRow(const MTRow &r) {
+	auto row = std::make_shared<MTRow>(r);
+	push_back(std::move(row));
+	return true;
+}
+
+bool MTTable::fromString(const std::string &r) {
+	auto rowPtr = std::make_shared<MTRow>(*(m_TableSchema.get()));
+	MTRow *row = rowPtr.get();
+	if (!(row->fromString(r))) {
+		return false;
+	}
+	push_back(std::move(rowPtr));
+	return true;
+}
+
+bool MTTable::read(const char *path, const char *filename) {
+	clear(); 
+	std::string fullpath(path);
+	fullpath += '/';
+	fullpath += filename;
+
+	char text[1024 * 2];
+	std::ifstream file(fullpath);
+	if (file.is_open() == false) {
+		ErrorCode::setErrorCode(SIA_ERROR::OPEN_ERROR);
+		return false;
+	}
+
+	for (std::string line; std::getline(file, line);) {
+		if (line.length() > 0) {
+			if (fromString(line) == false) {
+				ErrorCode::setErrorCode(SIA_ERROR::READ_ERROR);
+				return false;
+			}
+		}
+		else {
+			break;
+		}
+	}
+
+	// make this more robust??
+	/*
+	while (file.getline(text, 1024 * 2)) {
+		if (strlen(text) > 0) {
+			if (fromString(text) == false) {
+				ErrorCode::setErrorCode(SIA_ERROR::READ_ERROR);
+				return false;
+			}
+		}
+		else {
+			break;
+		}
+	}
+	*/
+	file.close();
+
+	return true;
+}
+
+bool MTTable::write(const char *path, const char *filename) {
+	std::string fullpath(path);
+	fullpath += '/';
+	fullpath += filename;
+	
+	std::ofstream file(fullpath.c_str(), std::ofstream::trunc);
+	if (file.is_open() == false) {
+		ErrorCode::setErrorCode(SIA_ERROR::OPEN_ERROR);
+		return false;
+	}
+	std::stringstream s;
+	for (auto i = this->begin(); i != this->end(); i++) {
+		s << (*i)->toString() << "\n";
+		printf("%s\n", (*i)->toString().c_str());
+	}
+	this->clear();
+	file << s.str();
+	file.close();
+	return true;
+}
+
+bool MTDatabase::addTable(MTTableSchema *pSchemaTable) {
+	auto table = std::make_unique<MTTable>(pSchemaTable);
+	insert(std::make_pair(pSchemaTable->getName(), std::move(table)));
+	return true;
+}
+
+MTTable& MTDatabase::getTable(std::string name) {
+	auto iter = find(name);
+	if (iter == end()) {
+		throw std::exception();
+	}
+	return *(iter->second);
 }
 
 } /* namespace simplearchive */

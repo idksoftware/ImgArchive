@@ -92,29 +92,19 @@ public:
 
 };
 
-std::unique_ptr<ChangeLog> ChangeLog::m_this;
-std::once_flag ChangeLog::m_onceFlag;
 
 std::string ChangeLog::m_filename;
 std::ofstream ChangeLog::m_logfile;
 std::string ChangeLog::m_logpath;
 
 ChangeLog::ChangeLog() {
-
+	
 }
 
-ChangeLog &ChangeLog::getLogger() {
-
-	std::call_once(m_onceFlag,
-			[] {
-		m_this.reset(new ChangeLog);
-		LogFilename logFilename(m_logpath.c_str());
-		m_filename = logFilename.filepath();
-		m_logfile.open(m_filename.c_str(), ios::out | ios::app);
-	});
-
-	return *m_this.get();
-
+void ChangeLog::init() {
+	LogFilename logFilename(m_logpath.c_str());
+	m_filename = logFilename.filepath();
+	m_logfile.open(m_filename.c_str(), ios::out | ios::app);
 }
 
 ChangeLog::~ChangeLog() {

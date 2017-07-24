@@ -333,7 +333,7 @@ public:
 		}
 	}
 	
-	struct tm *GetTime(const time_t *timer)
+	struct tm GetTime(const time_t *timer)
 	{	
 		time_t l_Now = time(0);
 		if (l_Now > m_UpdateTime)
@@ -356,10 +356,10 @@ public:
 		*/
 
 
-		return &timeptr;
+		return timeptr;
 	}
 
-	struct tm *GetTimeNow()
+	struct tm GetTimeNow()
 	{
 		time_t l_Now = time(0);
 

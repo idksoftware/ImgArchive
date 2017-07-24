@@ -38,8 +38,8 @@
 #include "SAUtils.h"
 #include <vector>
 #include <stdio.h>
-#include "BasicExifFactory.h"
-#include "BasicExif.h"
+#include "BasicMetadataFactory.h"
+#include "BasicMetadata.h"
 #include "CLogger.h"
 
 #ifdef _DEBUG
@@ -70,23 +70,23 @@ ImageContainer *ImageGroup::find(const char *imageFilename) {
 	}
 	return NULL;
 }
-//const BasicExifFactory *imageId
-ImageContainer &ImageGroup::add(std::unique_ptr<BasicExif>& basicExif, std::unique_ptr<MetadataObject>& metadataObject)
+//const BasicMetadataFactory *imageId
+ImageContainer &ImageGroup::add(std::unique_ptr<BasicMetadata>& BasicMetadata, std::unique_ptr<MetadataObject>& metadataObject)
 {
 	CLogger &logger = CLogger::getLogger();
-	const std::string &imageFilename = basicExif->getName();
+	const std::string &imageFilename = BasicMetadata->getName();
 	std::string filenameOnly = SAUtils::getFilenameNoExt(imageFilename);
 	ImageContainer *imageContainer = nullptr;
 	if ((imageContainer = find(filenameOnly.c_str())) != nullptr) {
 		// Second Instance with this name so needs to be assocated.
-		logger.log(LOG_OK, CLogger::INFO, "Found name: %s, Associating: %s with %s", imageFilename.c_str(), imageFilename.c_str(), imageContainer->getName().c_str());
-		imageContainer->add(basicExif, metadataObject);
+		logger.log(LOG_OK, CLogger::Level::INFO, "Found name: %s, Associating: %s with %s", imageFilename.c_str(), imageFilename.c_str(), imageContainer->getName().c_str());
+		imageContainer->add(BasicMetadata, metadataObject);
 	} else {
 		// First Instance with this name.
 		// note all images share the same path in the group.
-		logger.log(LOG_OK, CLogger::INFO, "New image name: %s using %s", filenameOnly.c_str(), basicExif->getName().c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "New image name: %s using %s", filenameOnly.c_str(), BasicMetadata->getName().c_str());
 		imageContainer = new ImageContainer(getPath(), filenameOnly.c_str());
-		imageContainer->add(basicExif, metadataObject);
+		imageContainer->add(BasicMetadata, metadataObject);
 		add(imageContainer);
 	}
 	return *imageContainer;

@@ -2,6 +2,7 @@
 #include <time.h>
 #include <ctime>
 #include <string>
+#include <string.h>
 #include <stdarg.h>
 
 #define MAX_SIZE	256
@@ -12,22 +13,34 @@ errno_t gmtime_p(struct tm &tmTime, const time_t * time) {
 #ifdef _WIN32
 	err = gmtime_s(&tmTime, time); 
 #else
-	err = gmttime_r(time, tmTime);
+	struct tm tmp;
+	struct tm *tmpp;
+	tmpp = gmtime_r(time, &tmp);
+	tmTime = *tmpp;
+	if (tmpp == nullptr) {
+		err = 0;
+	}
 #endif
 	return err;
 }
 
 
-
-
 std::string ctime_p(const time_t *time)
 {
 	char buffer[MAX_SIZE];
+#ifdef _WIN32
 	errno_t err = ctime_s(buffer, MAX_SIZE, time);
 	std::string str = buffer;
+#else
+	std::string str = ctime_r(time, buffer);
+#endif
 	return str; 
 }
 
+/*
+ char *ctime_r(const time_t *timep, char *buf);
+
+ */
 
 errno_t localtime_p(struct tm &tmTime, const time_t * time)
 {
@@ -35,17 +48,29 @@ errno_t localtime_p(struct tm &tmTime, const time_t * time)
 #ifdef _WIN32
 	err = localtime_s(&tmTime, time); 
 #else
-	err = localtime_r(time, tmTime);
+	struct tm tmp;
+	struct tm *tmpp;
+	tmpp = localtime_r(time, &tmp);
+	tmTime = *tmpp;
+	if (tmpp == nullptr) {
+		err = 0;
+	}
 #endif
 	return err;
 }
+
+/*
+ extern struct tm *localtime_r (const time_t *__restrict __timer,
+			       struct tm *__restrict __tp) __THROW;
+ */
 
 errno_t fopen_p(FILE *&streamptr, const char *filename, const char *mode) {
 	errno_t err = 1;
 #ifdef _WIN32
 	err = fopen_s(&streamptr, filename, mode);
 #else
-	err = fopen_s(&streamptr, filename, mode);
+	FILE *fp = fopen(filename, mode);
+	streamptr = fp;
 #endif
 	return err;
 }
@@ -65,7 +90,10 @@ errno_t strncpy_p(char *strDest, size_t numberOfElements, const char *strSource,
 #ifdef _WIN32
 	err = strncpy_s(strDest, numberOfElements, strSource, count);
 #else
-	err = strcpy_p(strDestination, numberOfElements, strSource);
+	strDest = strncpy(strDest, strSource, count);
+	if (strDest == nullptr) {
+		err = 0;
+	}
 #endif
 	return err;
 }

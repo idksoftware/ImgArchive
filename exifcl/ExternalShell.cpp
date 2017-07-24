@@ -58,7 +58,7 @@ static char THIS_FILE[] = __FILE__;
 //#define new DEBUG_NEW
 #endif
 
-std::string ExecuteExternalFile(std::string csExeNameAndArgs);
+std::string ExecuteExternalFile(std::string &csExeNameAndArgs);
 
 namespace simplearchive {
 
@@ -75,7 +75,8 @@ namespace simplearchive {
 	 */
 #define MAX_LINE_LENGTH 255
 	bool ExternalShell::exec(const char *cmd) {
-		m_output = ExecuteExternalFile(cmd);
+		std::string cmdstr = cmd;
+		m_output = ExecuteExternalFile(cmdstr);
 		return true;
 
 #ifdef _WIN32
@@ -126,15 +127,16 @@ namespace simplearchive {
 } /* namespace simplearchive */
 
 #include <iostream>
-
+#ifdef _WIN32
 #define WINDOWS_LEAN_AND_MEAN
 #include <Windows.h>
 #include <strsafe.h>
+#endif
 #include <string>
 #include <stdio.h>
-#include <Windows.h>
 
-std::string ExecuteExternalFile(std::string csExeNameAndArgs)
+#ifdef _WIN32
+std::string ExecuteExternalFile(std::string &csExeNameAndArgs)
 {
 	std::string csExecute;
 	csExecute = csExeNameAndArgs;
@@ -184,9 +186,15 @@ std::string ExecuteExternalFile(std::string csExeNameAndArgs)
 		csTemp = *temp;
 		m_csOutput += csTemp;
 	} while (res);
+	printf("%s", m_csOutput.c_str());
 	return m_csOutput;
 }
-
+#else
+std::string ExecuteExternalFile(std::string &csExeNameAndArgs) {
+	std::string m_csOutput;
+	return m_csOutput;
+}
+#endif
 
 
 

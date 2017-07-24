@@ -31,7 +31,9 @@
 **	Date		: 26-05-2015
 **
 ** #$$@@$$# */
-
+#ifndef _WIN32
+#include <unistd.h>
+#endif
 #include "ImageLock.h"
 #include "SAUtils.h"
 #include <fstream>

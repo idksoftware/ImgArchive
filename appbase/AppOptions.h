@@ -1,8 +1,15 @@
 #pragma once
-class AppOptions
-{
-public:
-	AppOptions();
-	~AppOptions();
-};
 
+
+
+namespace CommandLineProcessing {
+
+	class AppOptions
+	{
+		
+	public:
+		AppOptions();
+		~AppOptions();
+	};
+
+};

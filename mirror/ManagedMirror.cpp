@@ -33,6 +33,7 @@
 ** #$$@@$$# */
 
 #include <stdio.h>
+#include <memory>
 #include "SAUtils.h"
 #include "ManagedMirror.h"
 #include "Mirror.h"
@@ -90,7 +91,8 @@ bool ManagedMirror::process() {
 
 	std::string indexPath = m_rootFolder;
 	indexPath += "/.sia/index";
-	CSVDBFile csvDBFile(indexPath.c_str());
+	CSVDBFile csvDBFile;
+	csvDBFile.setPath(indexPath.c_str());
 	int max = csvDBFile.getMaxIndex();
 	printf("max: %d\n", max);
 	int size = 0;

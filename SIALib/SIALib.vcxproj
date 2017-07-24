@@ -159,6 +159,7 @@
     <ClInclude Include="CatalogManager.h" />
     <ClInclude Include="CFolderStatus.h" />
     <ClInclude Include="CUnqueName.h" />
+    <ClInclude Include="DerivativeRepository.h" />
     <ClInclude Include="Environment.h" />
     <ClInclude Include="ExportImages.h" />
     <ClInclude Include="CheckFile.h" />
@@ -166,7 +167,7 @@
     <ClInclude Include="ImageContainer.h" />
     <ClInclude Include="ImageFileReader.h" />
     <ClInclude Include="ImageGroup.h" />
-    <ClInclude Include="BasicExifFactory.h" />
+    <ClInclude Include="BasicMetadataFactory.h" />
     <ClInclude Include="ImageIndex.h" />
     <ClInclude Include="ImageLock.h" />
     <ClInclude Include="ImagePath.h" />
@@ -175,6 +176,7 @@
     <ClInclude Include="JournalFile.h" />
     <ClInclude Include="MakeMedia.h" />
     <ClInclude Include="MetadataUpdate.h" />
+    <ClInclude Include="VersionIndex.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SACmdArgs.h" />
     <ClInclude Include="SIAApplicationState.h" />
@@ -185,7 +187,6 @@
     <ClInclude Include="VersionControl.h" />
     <ClInclude Include="ViewManager.h" />
     <ClInclude Include="XMLReader.h" />
-    <ClInclude Include="XMLWriter.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppConfig.cpp" />
@@ -198,13 +199,14 @@
     <ClCompile Include="CFolderStatus.cpp" />
     <ClCompile Include="CheckFile.cpp" />
     <ClCompile Include="CUnqueName.cpp" />
+    <ClCompile Include="DerivativeRepository.cpp" />
     <ClCompile Include="Environment.cpp" />
     <ClCompile Include="ExportImages.cpp" />
     <ClCompile Include="HookCmd.cpp" />
     <ClCompile Include="ImageContainer.cpp" />
     <ClCompile Include="ImageFileReader.cpp" />
     <ClCompile Include="ImageGroup.cpp" />
-    <ClCompile Include="BasicExifFactory.cpp" />
+    <ClCompile Include="BasicMetadataFactory.cpp" />
     <ClCompile Include="ImageIndex.cpp" />
     <ClCompile Include="ImageLock.cpp" />
     <ClCompile Include="ImagePath.cpp" />
@@ -213,6 +215,7 @@
     <ClCompile Include="JournalFile.cpp" />
     <ClCompile Include="MakeMedia.cpp" />
     <ClCompile Include="MetadataUpdate.cpp" />
+    <ClCompile Include="VersionIndex.cpp" />
     <ClCompile Include="SACmdArgs.cpp" />
     <ClCompile Include="SIAApplicationState.cpp" />
     <ClCompile Include="SIALib.cpp" />
@@ -222,7 +225,6 @@
     <ClCompile Include="VersionControl.cpp" />
     <ClCompile Include="ViewManager.cpp" />
     <ClCompile Include="XMLReader.cpp" />
-    <ClCompile Include="XMLWriter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="doxygen.dxy" />

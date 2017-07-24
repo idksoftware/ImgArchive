@@ -407,7 +407,8 @@ bool ViewItem::process() {
 bool ViewItem::add(int id) {
 	std::string indexPath = m_archivePath;
 	indexPath += IMAGEID_FOLDER;
-	CSVDBFile csvDBFile(indexPath.c_str());
+	CSVDBFile csvDBFile;
+	csvDBFile.setPath(indexPath.c_str());
 	std::unique_ptr<ImageInfo> ii = csvDBFile.getItemAt(id);
 	switch (getSet()) {
 		/*
@@ -556,7 +557,8 @@ bool ViewItem::processAll() {
 
 	std::string indexPath = m_archivePath;
 	indexPath += IMAGEID_FOLDER;
-	CSVDBFile csvDBFile(indexPath.c_str());
+	CSVDBFile csvDBFile;
+	csvDBFile.setPath(indexPath.c_str());
 	int max = csvDBFile.getMaxIndex();
 	printf("max: %d\n", max);
 	int size = 0;
@@ -633,15 +635,15 @@ bool ViewManager::initalise(const char *archiveRoot, const char *confpath) {
 	ViewManager *viewManager = m_instance.get();
 
 	if (viewManager->readConf() == false) {
-		logger.log(LOG_OK, CLogger::ERR, "Cannot read view config file: \"%s\"", confpath);
+		logger.log(LOG_OK, CLogger::Level::ERR, "Cannot read view config file: \"%s\"", confpath);
 		return false;
 	}
-	logger.log(LOG_OK, CLogger::FINE, "Read view config file: \"%s\"", confpath);
+	logger.log(LOG_OK, CLogger::Level::FINE, "Read view config file: \"%s\"", confpath);
 
 	for (std::vector<ViewItem>::iterator i = m_pContainer->begin(); i != m_pContainer->end(); i++) {
 		ViewItem &data = *i;
 		if (SAUtils::DirExists(data.getPath().c_str()) == false) {
-			logger.log(LOG_OK, CLogger::ERR, "View:%s cannot find path \"%s\"", data.getName().c_str(), data.getPath().c_str());
+			logger.log(LOG_OK, CLogger::Level::ERR, "View:%s cannot find path \"%s\"", data.getName().c_str(), data.getPath().c_str());
 
 			return false;
 		}
@@ -657,7 +659,7 @@ bool ViewManager::process() {
 	for (std::vector<ViewItem>::iterator i = m_pContainer->begin(); i != m_pContainer->end(); i++) {
 		ViewItem &data = *i;
 		if (SAUtils::DirExists(data.getPath().c_str()) == false) {
-			logger.log(LOG_OK, CLogger::ERR, "View:%s cannot find path \"%s\"", data.getName().c_str(), data.getPath().c_str());
+			logger.log(LOG_OK, CLogger::Level::ERR, "View:%s cannot find path \"%s\"", data.getName().c_str(), data.getPath().c_str());
 
 			return false;
 		}
@@ -674,7 +676,7 @@ bool ViewManager::add(int id) {
 	for (std::vector<ViewItem>::iterator i = m_pContainer->begin(); i != m_pContainer->end(); i++) {
 		ViewItem &data = *i;
 		if (SAUtils::DirExists(data.getPath().c_str()) == false) {
-			logger.log(LOG_OK, CLogger::ERR, "View:%s cannot find path \"%s\"", data.getName().c_str(), data.getPath().c_str());
+			logger.log(LOG_OK, CLogger::Level::ERR, "View:%s cannot find path \"%s\"", data.getName().c_str(), data.getPath().c_str());
 
 			return false;
 		}

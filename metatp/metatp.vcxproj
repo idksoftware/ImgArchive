@@ -145,14 +145,22 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ContentsLister.h" />
+    <ClInclude Include="DayIndexer.h" />
+    <ClInclude Include="HTMLWriter.h" />
     <ClInclude Include="ImageSideCar.h" />
+    <ClInclude Include="VersionMetadataObject.h" />
+    <ClInclude Include="JSONWriter.h" />
     <ClInclude Include="MetadataObject.h" />
     <ClInclude Include="MetadataTemplate.h" />
     <ClInclude Include="XMLWriter.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ContentsLister.cpp" />
+    <ClCompile Include="DayIndexer.cpp" />
+    <ClCompile Include="HTMLWriter.cpp" />
     <ClCompile Include="ImageSideCar.cpp" />
+    <ClCompile Include="VersionMetadataObject.cpp" />
+    <ClCompile Include="JSONWriter.cpp" />
     <ClCompile Include="MetadataObject.cpp" />
     <ClCompile Include="MetadataTemplate.cpp" />
     <ClCompile Include="XMLWriter.cpp" />

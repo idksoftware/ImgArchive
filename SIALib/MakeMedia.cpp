@@ -165,7 +165,8 @@ bool MakeMedia::process() {
 	printf("path %s\n", sourcePath.c_str());
 	std::string indexPath = m_archivePath;
 	indexPath += IMAGEID_FOLDER;
-	CSVDBFile csvDBFile(indexPath.c_str());
+	CSVDBFile csvDBFile;
+	csvDBFile.setPath(indexPath.c_str());
 	int max = csvDBFile.getMaxIndex();
 	printf("max: %d\n", max);
 	int size = 0;

@@ -10,7 +10,7 @@ class DataString {
 public:
 	DataString();
 	DataString(std::string &pattern);
-	DataString::DataString(const char *d);
+	DataString(const char *d);
 	int compare(DataString &d);
 };
 

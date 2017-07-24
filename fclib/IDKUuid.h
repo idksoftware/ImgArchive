@@ -82,7 +82,7 @@ public:
 	const char *GetUuid(uuid_t u)
 	{
 		int i;
-		
+#ifdef _WIN32
 		sprintf_s(m_szUuid, 80, "%8.8x-%4.4x-%4.4x-%2.2x%2.2x-", u.time_low, u.time_mid,
 								u.time_hi_and_version, u.clock_seq_hi_and_reserved,
 								u.clock_seq_low);
@@ -92,6 +92,17 @@ public:
 			sprintf_s(tbuffer, 30, "%2.2x", u.node[i]);
 			strcat_s(m_szUuid,tbuffer);
 		}
+#else
+		sprintf(m_szUuid, "%8.8x-%4.4x-%4.4x-%2.2x%2.2x-", u.time_low, u.time_mid,
+										u.time_hi_and_version, u.clock_seq_hi_and_reserved,
+										u.clock_seq_low);
+		for (i = 0; i < 6; i++)
+		{
+			char tbuffer[30];
+			sprintf(tbuffer, "%2.2x", u.node[i]);
+			strcat(m_szUuid,tbuffer);
+		}
+#endif
 		return m_szUuid;
 	};
 

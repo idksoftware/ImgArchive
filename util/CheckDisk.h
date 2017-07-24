@@ -37,6 +37,7 @@
 #include <string>
 #include <vector>
 #include "SAUtils.h"
+#include "ErrorCode.h"
 
 namespace simplearchive {
 
@@ -61,7 +62,7 @@ public:
 	ReportStatus(Status status) { m_status = status; };
 	~ReportStatus() {};
 	void set(Status &status) { m_status = status; };
-	ReportStatus::Status ReportStatus::get() { return m_status; }
+	ReportStatus::Status get() { return m_status; }
 	void set(const char *str);
 	//Status get();
 	const char *toString();
@@ -91,12 +92,7 @@ public:
 class CkdskDiffFile;
 class CheckDisk {
 public:
-	typedef enum {
-		CK_OK = 0,
-		CK_IMAGE_NOT_FOUND = -1,
-		CK_ALREADY_CHECKED_OUT,
-		CK_ALREADY_CHECKED_IN
-	} Error;
+	
 private:
         /// Helper function to print a tag into a XML file.  
 	std::string writeTag(const char *tag, const std::string& value, int tab);
@@ -104,11 +100,12 @@ private:
 	std::string writeTag(const char *tag, const unsigned int value, int tab);
         /// The root archive path
 	static std::string m_archivePath;
+	
         /// Make an XML file manifest in the target directory 
 	bool makeXML(const char *targetdir);
 
 	//std::string m_orginalName;
-	Error m_error;
+	//Error m_error;
 	bool checkMissing(CkdskDiffFile &ckdskDiffFile, FileList_Ptr &filelist, VisitingObject *visitingObject, const char *address);
 public:
         /// Constructor
@@ -116,7 +113,7 @@ public:
 	//CheckDisk(const char *archivePath);
 	static void setArchivePath(const char *archivePath);
 	CheckDisk() {
-		m_error = Error::CK_OK;
+		
 	};
         /// Destructor
 	virtual ~CheckDisk();
@@ -141,12 +138,12 @@ public:
 	//	return m_orginalName.c_str();
 	//}
 	bool checkout(const char *filePath, const char *image);
+	bool ischeckedOut(const char *filePath, const char *image);
+	unsigned int getCrc(const char *filePath, const char *image);
 	bool checkin(const char *filePath, const char *image);
 	/// Thia function takes an empty list fills this list with any checked out images
 	bool showCheckedOut(const char *filePath, SimpleImageList &imageList);
-	Error getLastError() {
-		return m_error;
-	}
+	
 };
 
 } /* namespace simplearchive */

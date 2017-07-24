@@ -32,9 +32,39 @@
 **
 ** #$$@@$$# */
 
-#ifndef APP_PATHS_H_
-#define APP_PATHS_H_
+#pragma once
 
-#define IMAGEID_FOLDER	"/system/imageid"
+#define MASTER_SYSTEM_FOLDER			"/system"
+#define IMAGEID_FOLDER					"/system/imageid"
+#define WORKSPACE_METADATA_PATH			"/.sia"
+#define HOOKS_PATH						"/hooks"
+#define BACKUP_DESTINATION_PATH			"/Image Backups"
+#define MASTER_VIEW_PATH				"/SIA Pictures"
+#define TOOLS_PATH						"/tools"
+#define CONFIG_PATH						"/config"
+#define MASTER_PATH						"/master"
+#define HISTORY_PATH					"/history"
+#define BACKUPS_PATH					"/backups"
+#define METADATA_PATH					"/metadata"
+#define IMAGEID_PATH					"/imageid"		// Sequence number
+#define JOURNAL_PATH					"/journal"
+#define MASTER_DATA_PATH				"/data"
+#define DATABASE_PATH					"/db"
+#define TEMP_PATH						"/tmp"
+#define LOGS_PATH						"/logs"
+#define INDEX_PATH						"/index"		// CRC index
+#define PRIMARY_INDEX_PATH				"/pi"
+#define DEFAULT_WORKSPACE_PATH			"/SIA Workspace"
+#define DEFAULT_HOME_PATH				"/IDK-Software/SIA"
+#define DEFAULT_MASTER_PATH				"/IDK-Software/SIA/master"
+#define DEFAULT_DERIVATIVE_PATH			"/IDK-Software/SIA/derivative"
+#define DEFAULT_SOURCE_PATH				"/Pictures"
+#define EXTERAL_EXIF_COMMAND_LINE		"\"[input]\""
 
-#endif // APP_PATHS_H_
+#define CSVDB_PATH						"/system/csvdb"
+#define SQLITE3_DB						"c:/temp/test3.db"
+
+
+//m_sourcePath = tempHomeDrive + tempHomePath + "/Pictures";
+//m_hookPath = m_homePath + "/hooks";
+

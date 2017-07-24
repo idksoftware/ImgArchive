@@ -35,7 +35,10 @@
 #ifndef IMAGETABLE_H_
 #define IMAGETABLE_H_
 #include <string>
+#include "Metatype.h"
 #include "Database.h"
+
+//namespace simplearchive {
 /*
 #define TABLE_METADATA		"metadata"
 //namespace simplearchive {
@@ -534,6 +537,7 @@ public:
 };
 
 
+
 struct sqlite3;
 class Database;
 class ImageTable {
@@ -547,6 +551,7 @@ public:
 
 	bool create();
 	bool insert(ImageTableItem &imageTableItem);
+	bool createFromSchema(simplearchive::MTTableSchema &MTSchema);
 	bool update(ImageTableItem &imageTableItem);
 	bool writeXmlFile(ImageTableItem &imageTableItem, const char *path);
 };

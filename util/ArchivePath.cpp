@@ -1,6 +1,7 @@
 /*
  * ArchivePath.cpp
  *
+ * The SIA consists of two main archives Master
  *  Created on: 23 Nov 2015
  *      Author: FergusonI
  */
@@ -17,9 +18,6 @@ ArchivePath& ArchivePath::getArchivePath() {
 }
 
 
-bool ArchivePath::settupShadow() {
-	return m_shadow.settup();
-}
 
 bool ArchivePath::settupRelative(std::string &yyyymmddStr) {
 
@@ -34,122 +32,204 @@ bool ArchivePath::settupRelative(std::string &yyyymmddStr) {
 	if (SAUtils::DirExists(m_workspaceYyyymmddPath.c_str()) == false) {
 		SAUtils::mkDir(m_workspaceYyyymmddPath.c_str());
 	}
-	m_workspaceMetadataPath = m_workspaceYyyymmddPath + "/.sia";
+	m_workspaceMetadataPath = m_workspaceYyyymmddPath + WORKSPACE_METADATA_PATH;
 	if (SAUtils::DirExists(m_workspaceMetadataPath.c_str()) == false) {
 		SAUtils::mkDir(m_workspaceMetadataPath.c_str());
 	}
 	return true;
 }
 
+/*
+class PrimaryIndex {
+	std::string m_ImageIndexPath;
+	std::string m_idxDBPath;
+	std::string m_logPath;
+	std::string m_metadataPath;
+public:
+*/
+void PrimaryIndexPath::setRepositoryPath(std::string &pathToRepository) {
+	m_pathToRepository = pathToRepository;
+}
 
-	bool RepositoryPath::settup() {
+bool PrimaryIndexPath::settup() {
+
+	std::string temp = m_pathToRepository;
+	if (SAUtils::DirExists(temp.c_str()) == false) {
+		SAUtils::mkDir(temp.c_str());
+	}
+
+	m_ImageIndexPath = m_pathToRepository + IMAGEID_PATH;
+	m_idxDBPath = m_pathToRepository + INDEX_PATH;
+	m_historyPath = m_pathToRepository + HISTORY_PATH;
+	m_metadataPath = m_pathToRepository + METADATA_PATH;
+
+	if (SAUtils::DirExists(m_ImageIndexPath.c_str()) == false) {
+		if (SAUtils::mkDir(m_ImageIndexPath.c_str()) == false) {
+			return false;
+		}
+	}
+
+	if (SAUtils::DirExists(m_idxDBPath.c_str()) == false) {
+		if (SAUtils::mkDir(m_idxDBPath.c_str()) == false) {
+			return false;
+		}
+	}
+
+	if (SAUtils::DirExists(m_historyPath.c_str()) == false) {
+		if (SAUtils::mkDir(m_historyPath.c_str()) == false) {
+			return false;
+		}
+	}
+
+	if (SAUtils::DirExists(m_metadataPath.c_str()) == false) {
+		if (SAUtils::mkDir(m_metadataPath.c_str()) == false) {
+			return false;
+		}
+	}
+	return true;
+}
+
+bool RepositoryPath::settup() {
 		
-		if (SAUtils::DirExists(m_pathToRepository.c_str()) == false) {
+	
+	// Master Archive
+	std::string dataFolder = m_pathToRepository;
+	if (SAUtils::DirExists(dataFolder.c_str()) == false) {
+		if (SAUtils::mkDir(dataFolder.c_str()) == false) {
+			return false;
+		}
+	}
+
+	std::string systemFolder = m_pathToRepository;
+	systemFolder += MASTER_SYSTEM_FOLDER;
+	if (SAUtils::DirExists(systemFolder.c_str()) == false) {
+		if (SAUtils::mkDir(systemFolder.c_str()) == false) {
 			return false;
 		}
 
-		std::string dataFolder = m_pathToRepository;
-		dataFolder += "/system";
-		if (SAUtils::DirExists(dataFolder.c_str()) == false) {
-			SAUtils::mkDir(dataFolder.c_str());
-
-		}
-		if (m_metadataPath.empty() == true) {
-			m_metadataPath = dataFolder + "/metadata";
-			m_idxDBPath = dataFolder + "/imageid";
-			m_journalPath = dataFolder + "/journal";
-			m_historyLogPath = dataFolder + "/history";
-			m_DBPath = dataFolder + "/db";
-			m_ImageIndexPath = dataFolder + "/imageindex";
-			if (SAUtils::DirExists(m_metadataPath.c_str()) == false) {
-				SAUtils::mkDir(m_metadataPath.c_str());
-			}
-			if (SAUtils::DirExists(m_ImageIndexPath.c_str()) == false) {
-				SAUtils::mkDir(m_ImageIndexPath.c_str());
-			}
-			if (SAUtils::DirExists(m_idxDBPath.c_str()) == false) {
-				SAUtils::mkDir(m_idxDBPath.c_str());
-			}
-
-			if (SAUtils::DirExists(m_historyLogPath.c_str()) == false) {
-				SAUtils::mkDir(m_historyLogPath.c_str());
-			}
-		}
-		return true;
 	}
-
-	
-
-	bool RepositoryPath::settupRelative(std::string &yyyymmddStr) {
-
-		m_yearStr = yyyymmddStr.substr(0, 4);
-		m_yyyymmddStr = yyyymmddStr;
-
-		m_relpath = m_yearStr + '/' + yyyymmddStr;
-
-		
-		m_yearStrPath = m_pathToRepository + '/' + m_yearStr;
-		if (SAUtils::DirExists(m_yearStrPath.c_str()) == false) {
-			SAUtils::mkDir(m_yearStrPath.c_str());
-
-		}
-
-		m_yyyymmddStrPath = m_yearStrPath + '/' + m_yyyymmddStr;
-		if (SAUtils::DirExists(m_yyyymmddStrPath.c_str()) == false) {
-			SAUtils::mkDir(m_yyyymmddStrPath.c_str());
-
-		}
-		m_dataPath = m_yyyymmddStrPath + "/data";
-		m_metadataPath = m_yyyymmddStrPath + "/metadata";
-		m_historyPath = m_yyyymmddStrPath + "/history";
-		
-
-		if (SAUtils::DirExists(m_dataPath.c_str()) == false) {
-			SAUtils::mkDir(m_dataPath.c_str());
-
-		}
+	if (m_metadataPath.empty() == true) {
+		m_metadataPath = systemFolder + METADATA_PATH;
+		m_idxDBPath = systemFolder + IMAGEID_PATH;
+		m_journalPath = systemFolder + JOURNAL_PATH;
+		m_historyLogPath = systemFolder + HISTORY_PATH;
+		m_DBPath = systemFolder + DATABASE_PATH;
+		m_ImageIndexPath = systemFolder + INDEX_PATH;
 		if (SAUtils::DirExists(m_metadataPath.c_str()) == false) {
-			SAUtils::mkDir(m_metadataPath.c_str());
-
+			if (SAUtils::mkDir(m_metadataPath.c_str()) == false) {
+				return false;
+			}
 		}
+		if (SAUtils::DirExists(m_ImageIndexPath.c_str()) == false) {
+			if (SAUtils::mkDir(m_ImageIndexPath.c_str()) == false) {
+				return false;
+			}
+		}
+		if (SAUtils::DirExists(m_idxDBPath.c_str()) == false) {
+			if (SAUtils::mkDir(m_idxDBPath.c_str()) == false) {
+				return false;
+			}
+		}
+
+		if (SAUtils::DirExists(m_historyLogPath.c_str()) == false) {
+			if (SAUtils::mkDir(m_historyLogPath.c_str()) == false) {
+				return false;
+			}
+		}
+
 		if (SAUtils::DirExists(m_DBPath.c_str()) == false) {
-			SAUtils::mkDir(m_DBPath.c_str());
-
+			if (SAUtils::mkDir(m_DBPath.c_str()) == false) {
+				return false;
+			}
 		}
-		if (SAUtils::DirExists(m_historyPath.c_str()) == false) {
-			SAUtils::mkDir(m_historyPath.c_str());
+	}
+	return true;
+}
 
+	
+
+bool RepositoryPath::settupRelative(std::string &yyyymmddStr) {
+
+	m_yearStr = yyyymmddStr.substr(0, 4);
+	m_yyyymmddStr = yyyymmddStr;
+
+	m_relpath = m_yearStr + '/' + yyyymmddStr;
+
+		
+	m_yearStrPath = m_pathToRepository + '/' + m_yearStr;
+	if (SAUtils::DirExists(m_yearStrPath.c_str()) == false) {
+		if (SAUtils::mkDir(m_yearStrPath.c_str()) == false) {
+		return false;
+			}
+
+	}
+
+	m_yyyymmddStrPath = m_yearStrPath + '/' + m_yyyymmddStr;
+	if (SAUtils::DirExists(m_yyyymmddStrPath.c_str()) == false) {
+		if (SAUtils::mkDir(m_yyyymmddStrPath.c_str()) == false) {
+			return false;
 		}
+
+	}
+	m_dataPath = m_yyyymmddStrPath + MASTER_DATA_PATH;
+	m_metadataPath = m_yyyymmddStrPath + METADATA_PATH;
+	m_historyPath = m_yyyymmddStrPath + HISTORY_PATH;
+		
+
+	if (SAUtils::DirExists(m_dataPath.c_str()) == false) {
+		if (SAUtils::mkDir(m_dataPath.c_str()) == false) {
+			return false;
+		}
+
+	}
+	if (SAUtils::DirExists(m_metadataPath.c_str()) == false) {
+		if (SAUtils::mkDir(m_metadataPath.c_str()) == false) {
+			return false;
+		}
+
+	}
+	if (SAUtils::DirExists(m_DBPath.c_str()) == false) {
+		if (SAUtils::mkDir(m_DBPath.c_str()) == false) {
+			return false;
+		}
+
+	}
+	if (SAUtils::DirExists(m_historyPath.c_str()) == false) {
+		if (SAUtils::mkDir(m_historyPath.c_str()) == false) {
+			return false;
+		}
+
+	}
 	
 		
-		//IntegrityManager &integrityManager = IntegrityManager::get();
-		//integrityManager.addDayFolder(m_yyyymmddStr.c_str());
-		return true;
-	}
+	//IntegrityManager &integrityManager = IntegrityManager::get();
+	//integrityManager.addDayFolder(m_yyyymmddStr.c_str());
+	return true;
+}
 
 
 
 
 
-	bool RepositoryPath::isEnabled() {
-		return m_enabled;
-	}
+bool RepositoryPath::isEnabled() {
+	return m_enabled;
+}
 
-	void RepositoryPath::setImageName(const char *imageName) {
-		m_imageName = imageName;
-	}
+void RepositoryPath::setImageName(const char *imageName) {
+	m_imageName = imageName;
+}
 
-	const std::string& RepositoryPath::getImageName() const {
-		return m_imageName;
-	}
+const std::string& RepositoryPath::getImageName() const {
+	return m_imageName;
+}
 
-	const std::string& RepositoryPath::getRelativePath() const {
-		return m_relpath;
-	}
+const std::string& RepositoryPath::getRelativePath() const {
+	return m_relpath;
+}
 
-	std::string RepositoryPath::getDataPath() {
-		return m_dataPath;
-	}
+std::string RepositoryPath::getDataPath() {
+	return m_dataPath;
+}
 
 std::string RepositoryPath::getCatalog() const {
 	return m_catalog;
@@ -203,17 +283,19 @@ std::string RepositoryPath::getImageIdxPath() const {
 	return m_ImageIndexPath;
 }
 
-	void RepositoryPath::setEnabled(bool b) {
-		m_enabled = b;
-	}
-	void RepositoryPath::setRepositoryPath(std::string &pathToBackup) {
-		m_pathToRepository = pathToBackup;
-		m_enabled = true;
-	}
-	std::string  RepositoryPath::getRepositoryPath() {
-		return m_pathToRepository;
-		
-	}
+void RepositoryPath::setEnabled(bool b) {
+	m_enabled = b;
+}
+	
+void RepositoryPath::setRepositoryPath(std::string &pathToRepository) {
+	m_pathToRepository = pathToRepository;
+	m_enabled = true;
+}
+	
+std::string  RepositoryPath::getRepositoryPath() const {
+	return m_pathToRepository;	
+}
+	
 
 std::string ArchivePath::m_pathToHome;
 std::string ArchivePath::m_pathToWorkspace;
@@ -221,14 +303,16 @@ std::string ArchivePath::m_mainMetadataPath;
 //	static std::string m_userDefinedSequenceNumberPath;
 std::string ArchivePath::m_mainDupsPath;
 std::string ArchivePath::m_mainHistory;
-//static ArchivePath *m_shadow;
-std::string ArchivePath::m_pathToShadow;
+//static ArchivePath *m_master;
+std::string ArchivePath::m_pathToMaster;
 
 std::string ArchivePath::m_workspaceYyyymmddPath;
 std::string ArchivePath::m_workspaceMetadataPath;
 
-RepositoryPath ArchivePath::m_shadow;
+RepositoryPath ArchivePath::m_master;
+RepositoryPath ArchivePath::m_derivative;
 RepositoryPath ArchivePath::m_backupPath[2];
+PrimaryIndexPath ArchivePath::m_primaryIndex;
 
 std::string ArchivePath::m_backup1;
 std::string ArchivePath::m_backup2;
@@ -257,10 +341,13 @@ bool ArchivePath::isBackup2Enabled() {
 	return m_backupPath[1].isEnabled();
 }
 
-bool ArchivePath::isShadowEnabled() {
-	return m_shadow.isEnabled();
+bool ArchivePath::isMasterEnabled() {
+	return m_master.isEnabled();
 }
 
+bool ArchivePath::isDerivativeEnabled() {
+	return m_derivative.isEnabled();
+}
 
 RepositoryPath& ArchivePath::getBackup1() {
 	return m_backupPath[0];
@@ -270,8 +357,16 @@ RepositoryPath& ArchivePath::getBackup2() {
 	return m_backupPath[1];
 }
 
-RepositoryPath& ArchivePath::getShadow() {
-	return m_shadow;
+RepositoryPath& ArchivePath::getMaster() {
+	return m_master;
+}
+
+RepositoryPath& ArchivePath::getDerivative() {
+	return m_derivative;
+}
+
+PrimaryIndexPath& ArchivePath::getPrimaryIndex() {
+	return m_primaryIndex;
 }
 
 std::string ArchivePath::getPathToHome() {
@@ -306,13 +401,13 @@ void ArchivePath::setMainMetadataPath(std::string &mainMetadataPath) {
 	m_mainMetadataPath = mainMetadataPath;
 }
 
-std::string ArchivePath::getPathToShadow() {
-	return m_shadow.getRepositoryPath();
+std::string ArchivePath::getMasterPath() {
+	return m_master.getRepositoryPath();
 }
 
-void ArchivePath::setPathToShadow(std::string &pathToShadow) {
-	m_shadow.setRepositoryPath(pathToShadow);
-	m_shadow.setEnabled(true);
+void ArchivePath::setMasterPath(std::string &pathToMaster) {
+	m_master.setRepositoryPath(pathToMaster);
+	m_master.setEnabled(true);
 }
 	
 
@@ -332,54 +427,62 @@ std::string ArchivePath::getWorkspaceMetadataPath() {
 	return m_workspaceMetadataPath;
 }
 
-/*
-static ArchivePath* ArchivePath::getShadow() const {
-	return m_shadow;
+
+std::string ArchivePath::getDerivativePath() {
+	return m_derivative.getRepositoryPath();
 }
 
-void ArchivePath::setShadow(static ArchivePath* shadow) {
-	m_shadow = shadow;
+
+void ArchivePath::setDerivativePath(std::string &path) {
+	m_derivative.setRepositoryPath(path);
+}
+
+
+/*
+static ArchivePath* ArchivePath::getMaster() const {
+	return m_master;
+}
+
+void ArchivePath::setMaster(static ArchivePath* master) {
+	m_master = master;
 }
 */
 
-std::string ArchivePath::getShadowCatalog() {
-	return m_shadow.getCatalog();
+std::string ArchivePath::getMasterCatalog() {
+	return m_master.getCatalog();
 }
 
-void ArchivePath::setShadowCatalog(std::string &shadowCatalog) {
-	m_shadow.setCatalog(shadowCatalog);
+void ArchivePath::setMasterCatalog(std::string &masterCatalog) {
+	m_master.setCatalog(masterCatalog);
 }
 
-std::string ArchivePath::getShadowHistory() {
-	return m_shadow.getHistory();
+std::string ArchivePath::getIndexHistory() {
+	return m_primaryIndex.getHistoryPath();
 }
 
-void ArchivePath::setShadowHistory(std::string &shadowHistory) {
-	m_shadow.setHistory(shadowHistory);
+
+std::string ArchivePath::getMasterJournalPath() {
+	return m_master.getJournalPath();
 }
 
-std::string ArchivePath::getShadowJournalPath() {
-	return m_shadow.getJournalPath();
+void ArchivePath::setMasterJournalPath(std::string &masterJournalPath) {
+	m_master.setJournalPath(masterJournalPath);
 }
 
-void ArchivePath::setShadowJournalPath(std::string &shadowJournalPath) {
-	m_shadow.setJournalPath(shadowJournalPath);
+std::string ArchivePath::getMasterMetadataPath() {
+	return m_master.getMetadataPath();
 }
 
-std::string ArchivePath::getShadowMetadataPath() {
-	return m_shadow.getMetadataPath();
-}
-
-void ArchivePath::setShadowMetadataPath(std::string &shadowMetadataPath) {
-	m_shadow.setMetadataPath(shadowMetadataPath);
+void ArchivePath::setMasterMetadataPath(std::string &masterMetadataPath) {
+	m_master.setMetadataPath(masterMetadataPath);
 }
 
 std::string ArchivePath::getIdxDBPath() {
-	return m_shadow.getIdxDBPath();
+	return m_master.getIdxDBPath();
 }
 
 void ArchivePath::setIdxDBPath(std::string &idxDBPath) {
-	m_shadow.setIdxDBPath(idxDBPath);
+	m_master.setIdxDBPath(idxDBPath);
 }
 
 } // simplearchive

@@ -36,7 +36,10 @@
 
 #include "stdafx.h"
 #include <stdio.h> 
+
+#ifdef _WIN32
 #include <windows.h> 
+#endif
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -44,6 +47,8 @@ static char THIS_FILE[] = __FILE__;
 //#define new DEBUG_NEW
 #endif
 
+
+#ifdef _WIN32
 #define BUFSIZE 4096 
 
 static HANDLE hChildStdinRd, hChildStdinWr, hChildStdinWrDup,
@@ -283,8 +288,28 @@ void ReadFromPipe(void)
 			break;
 	}
 }
+#else
+
+RunExec::RunExec()
+{
+
+}
+
+RunExec::RunExec(const char *workingFolder)
+{
+}
 
 
+RunExec::~RunExec()
+{
+}
+
+bool RunExec::exec(const char *cmdline)
+{
+	return true;
+}
+
+#endif
 /*
 // The code for the child process.
 

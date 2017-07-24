@@ -89,21 +89,21 @@ namespace simplearchive {
 		CIDKCrc Crc;
 		m_path = path;
 		m_name = splitName(m_path);
-		logger.log(LOG_OK, CLogger::INFO, "Image: %s", m_path.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "Image: %s", m_path.c_str());
 		std::string buf = getFileContents(path.c_str());
 		MD5 md5(buf);
 		m_md5 = md5.hexdigest();
-		logger.log(LOG_OK, CLogger::INFO, "MD5 of image: %s is %s", path.c_str(), m_md5.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "MD5 of image: %s is %s", path.c_str(), m_md5.c_str());
 		CIDKUuid uuid;
 		m_uuid = uuid.GetUuid();
-		logger.log(LOG_OK, CLogger::INFO, "UUID of image: %s is %s", path.c_str(), m_uuid.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "UUID of image: %s is %s", path.c_str(), m_uuid.c_str());
 		m_size = buf.length();
-		logger.log(LOG_OK, CLogger::INFO, "Size of image: %s is %d", path.c_str(), m_size);
+		logger.log(LOG_OK, CLogger::Level::INFO, "Size of image: %s is %d", path.c_str(), m_size);
 		m_crc = Crc.crc((unsigned char *)buf.c_str(), m_size);
-		logger.log(LOG_OK, CLogger::INFO, "CRC from image: %s is %x", path.c_str(), m_crc);
+		logger.log(LOG_OK, CLogger::Level::INFO, "CRC from image: %s is %x", path.c_str(), m_crc);
 
 		m_createTime = SAUtils::createTime(path.c_str());
-		logger.log(LOG_OK, CLogger::INFO, "Create time of image: %s", m_createTime.toLogString().c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "Create time of image: %s", m_createTime.toLogString().c_str());
 		m_modTime = SAUtils::modTime(path.c_str());
 	}
 

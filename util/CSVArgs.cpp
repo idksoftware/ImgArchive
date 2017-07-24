@@ -35,6 +35,9 @@
 #include <string>
 #include <fstream>
 #include <iostream>
+#include <cstdlib>
+#include <sstream>
+#include <vector>
 
 #include "CSVArgs.h"
 
@@ -46,40 +49,79 @@ static char THIS_FILE[] = __FILE__;
 
 namespace simplearchive {
 
-CSVArgs::CSVArgs(char delim) {
-	m_delim = delim;
-}
+	CSVArgs::CSVArgs(char delim) {
+		m_delim = delim;
+	}
 
-CSVArgs::~CSVArgs() {
-	clear();
-}
-
-bool CSVArgs::process(const char *dataString) {
-
-	std::string data = dataString;
-	if (empty() == false) {
+	CSVArgs::~CSVArgs() {
 		clear();
 	}
-	resize(1);
-	unsigned int commaCounter = 0;
-	for (unsigned int i = 0; i < data.size(); i++) {
-		char c = data[i];
-		if (c == m_delim) {
-			push_back("");
-			commaCounter++;
-		} else {
-			at(commaCounter) += data[i];
+
+	bool CSVArgs::process(const char *dataString) {
+
+		std::string data = dataString;
+		return process(data);
+	}
+
+	bool CSVArgs::process(const std::string &data) {
+
+		if (empty() == false) {
+			clear();
+		}
+		//	resize(1);
+
+		std::string field;
+
+		std::istringstream ss(data);
+		int i = 0;
+
+		while (nextField(ss, field)) {
+			push_back(field);
 		}
 
-	}
-	return true;
-}
+		/*
+		unsigned int commaCounter = 0;
 
-void CSVArgs::print() {
-	for (std::vector<std::string>::iterator i = begin(); i != end(); i++) {
-		std::string &data = *i;
-		std::cout << "Arg: " << data.c_str() << '\n';
+		for (unsigned int i = 0; i < data.size(); i++) {
+		char c = data[i];
+		if (c == m_delim) {
+		push_back("");
+		commaCounter++;
+		}
+		else {
+		at(commaCounter) += data[i];
+		}
+
+		}
+		*/
+		return true;
 	}
-}
+
+	std::istream& CSVArgs::nextField(std::istringstream& s, std::string& field)
+	{
+
+		if (std::getline(s, field, m_delim)) {
+			while (s && field[0] == '"' && field[field.size() - 1] != '"') {
+				std::string next;
+				std::getline(s, next, m_delim);
+				field += m_delim + next;
+			}
+
+			if (field[0] == '"' && field[field.size() - 1] == '"') {
+				field = field.substr(1, field.size() - 2);
+			}
+		}
+
+		return s;
+	}
+
+
+	void CSVArgs::print() {
+		for (auto i = begin(); i != end(); i++) {
+			std::string &data = *i;
+			std::cout << "Arg: " << data.c_str() << '\n';
+		}
+	}
+
 
 } /* namespace simplearchive */

@@ -101,14 +101,15 @@ public:
 
 
 class DupDataFile;
-class BasicExif;
+class BasicMetadata;
 class MirrorImageIndex;
+class FileInfo;
 
 typedef std::unique_ptr<DupDataFile> DupDataFile_Ptr;
 
 class ImageIndex {
-	
-	std::unique_ptr<MirrorImageIndex> m_mirrorImageIndex;
+
+	//std::unique_ptr<MirrorImageIndex> m_mirrorImageIndex;
 	std::string m_dbpath;
 	unsigned char m_data[4];
 	/** Adds to primary and backups */
@@ -118,9 +119,13 @@ class ImageIndex {
 	DupDataFile_Ptr findDupDataFile(unsigned long crc);
 	DupDataFile_Ptr findDupDataFile(unsigned long crc, const char *root);
 	/**
-	* This function is used to update the path to the image with the addition of the root db folder.
-	*/
-	bool updatePath(unsigned long crc, const char *path, const char *root);
+	 * This function is used to update the path to the image with the addition of the root db folder.
+	 */
+	bool updatePath(unsigned long crc, const char *path, int version, const char *root);
+protected:
+	const char *getRootPath() {
+		return m_dbpath.c_str();
+	}
 public:
 	ImageIndex();
 	virtual ~ImageIndex();
@@ -130,13 +135,14 @@ public:
 	/**
 	*	This function returns true if added, false if dup
 	*/
-	bool add(const BasicExif &basicExif);
+	bool add(const BasicMetadata &BasicMetadata);
+	bool add(const FileInfo& fileInfo);
 	bool IsDup(unsigned long crc);
 	std::string FindDup(unsigned long crc);
 	/**
 	* This function is used to update the path to the image.
 	*/
-	bool updatePath(unsigned long crc, const char *path);
+	bool updatePath(unsigned long crc, const char *path, int version);
 	ImageId findDup(unsigned long crc) {
 		std::string data = FindDup(crc);
 		if (data.empty()) {

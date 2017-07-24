@@ -38,8 +38,9 @@
 ****************************************************/
 
 /** Copyright 1998 IDK Software Ltd **/
-
+#ifdef _WIN32
 #include <windows.h>
+#endif
 #include <stdint.h>
 #include "Threads.h"
 

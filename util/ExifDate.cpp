@@ -141,6 +141,15 @@ std::string ExifDate::toFileString() {
 
 }
 
+std::string ExifDate::toShortRelativePath() {
+	std::stringstream s;
+	s << std::setw(4) << std::setfill('0') << getYear() << '-';
+	s << std::setw(2) << std::setfill('0') << getMonth() << '-';
+	s << std::setw(2) << std::setfill('0') << getDay();
+	return std::string(s.str());
+
+}
+
 /*
 ExifDate& ExifDate::operator=(ExifDate& d) {
 

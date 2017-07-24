@@ -36,7 +36,10 @@
 
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
+
+#ifdef _WIN32
 #include <crtdbg.h>
+#endif
 
 #ifdef _DEBUG
 #ifndef DEBUG_NEW

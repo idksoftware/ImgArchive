@@ -2,9 +2,9 @@
 #include "ArchiveVisitor.h"
 
 namespace simplearchive {
-	ContentsLister::ContentsLister(const char *shadowPath)
+	ContentsLister::ContentsLister(const char *MasterPath)
 	{
-		m_shadowPath = shadowPath;
+		m_MasterPath = MasterPath;
 	}
 
 
@@ -62,7 +62,7 @@ namespace simplearchive {
 
 
 	bool ContentsLister::List() {
-		ArchiveVisitor archiveVisitor(new ListerAction(), m_shadowPath.c_str());
+		ArchiveVisitor archiveVisitor(new ListerAction(), m_MasterPath.c_str());
 		archiveVisitor.archive();
 		return true;
 	}

@@ -75,12 +75,13 @@ public:
 	/// Destructor
 	virtual ~SIAArcApp();
 	/// @brief This is the main application run function. All application processing starts here.
+	
+	
+protected:
 	bool initaliseHomePath();
 	bool initaliseConfig();
-	bool Run();
-protected:
-	bool doInitalise(int argc, char **argv);
-	bool doRun() { return true; };
+	bool initaliseArgs(int argc, char **argv);
+	bool doRun();
 };
 
 }

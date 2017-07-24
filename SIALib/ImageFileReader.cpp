@@ -32,7 +32,7 @@
 **
 ** #$$@@$$# */
 
-#include "BasicExifFactory.h"
+#include "BasicMetadataFactory.h"
 #include "CIDKCrc.h"
 #include "md5.h"
 #include <string>
@@ -82,7 +82,7 @@ ExifObject *ImageFileReader::externalExifTool(std::string &path) {
 	ExifToolPath += externalExifTool;
 
 	if (SAUtils::FileExists(ExifToolPath.c_str()) == false) {
-		return false;
+		return nullptr;
 	}
 
 	if (config.getExternalCommandLine() == nullptr) {
@@ -100,13 +100,14 @@ ExifObject *ImageFileReader::externalExifTool(std::string &path) {
 		
 		return nullptr;
 	}
-	logger.log(LOG_OK, CLogger::FINE, "Raw exif command line found \"%s\"", externalCommandLine);
+	logger.log(LOG_OK, CLogger::Level::FINE, "Raw exif command line found \"%s\"", externalCommandLine);
 	if (!externalComand.init(externalCommandLine.c_str(), exifMapPath)) {
 		
 		return nullptr;
 	}
 	ExifObject *exifObject = externalComand.process(path.c_str());
 	if (exifObject == nullptr) {
+		logger.log(LOG_OK, CLogger::Level::WARNING, "Failed to read map file for \"%s\"", externalCommandLine);
 		return nullptr;
 	}
 	exifObject->print();

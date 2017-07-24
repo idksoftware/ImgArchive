@@ -9,7 +9,7 @@ unaware that the data is being mirrored and in the case of a disk failure, the f
 disk copying all the data to the new disk until all the data is back in sync.
 </p>
 <p>
-The type of mirror provided by Mirror is known as file shadowing. This type of mirroring operates at the file level and needs no additional hardware. As the files in
+The type of mirror provided by Mirror is known as file Mastering. This type of mirroring operates at the file level and needs no additional hardware. As the files in
 the target data set changes the changes are reflected in the file mirror.
 
 <\p>

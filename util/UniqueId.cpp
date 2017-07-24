@@ -6,6 +6,7 @@
 #include <stdarg.h>
 #else
 #include <sys/stat.h>
+#include <algorithm>
 #endif
 
 #include <string>

@@ -5,7 +5,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#ifdef _WIN32
 #include <Winsock2.h>
+#else
+#include <arpa/inet.h>
+#endif
 #include "sysdep.h"
 #include "IDKUuid.h"
 #include "md5.h"
@@ -51,7 +55,11 @@ CIDKUuid::CIDKUuid(const char *uuid)
 	char temp[256];
 	char *buffer;
 	char temp2[256];
+#ifdef _WIN32
+	strcpy_s(temp, 256, uuid);
+#else
 	strcpy(temp,uuid);
+#endif
 	temp[8] = '\0';
 	buffer = temp;
 	m_Uuid->time_low = Str2Hex(buffer);					// 0x6ba7b810,
@@ -63,11 +71,20 @@ CIDKUuid::CIDKUuid(const char *uuid)
 	m_Uuid->time_hi_and_version = (unsigned16)Str2Hex(buffer);		// 0x11d1
 	temp[23] = '\0';
 	buffer = temp+19;
-
+	
+#ifdef _WIN32
+	strncpy_s(temp, 256, uuid, 256);
+#else
 	strncpy(temp2,buffer,2);
+#endif
 	temp2[2] = '\0';
-    m_Uuid->clock_seq_hi_and_reserved = Str2Hex(temp2);	// 0x80
+	m_Uuid->clock_seq_hi_and_reserved = (unsigned8)Str2Hex(temp2);	// 0x80
+	
+#ifdef _WIN32
+	strncpy_s(temp2, 2, buffer + 2, 2);
+#else
 	strncpy(temp2,buffer+2,2);
+#endif
 	temp2[2] = '\0';
     m_Uuid->clock_seq_low = Str2Hex(temp2);				// 0xb4
 

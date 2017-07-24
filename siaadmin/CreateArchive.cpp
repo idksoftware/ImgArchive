@@ -67,7 +67,7 @@ const char *onfiledoc[] = {
 
 std::string  CreateArchive::m_archivePath;
 std::string  CreateArchive::m_workspace;
-std::string  CreateArchive::m_shadow;
+std::string  CreateArchive::m_master;
 
 // Config folder files
 const char *configdoc[] = {
@@ -151,38 +151,38 @@ bool CreateArchive::createHomeEnvVar(const char *root, bool users) {
 	return SetEnv(root, users);
 }
 
-std::string CreateArchive::makeConfigFile(const char *root, const char *workspace, const char *shadow) {
+std::string CreateArchive::makeConfigFile(const char *root, const char *workspace, const char *master) {
 	std::stringstream s;
 	s << "# The main configuration file #\n";
 	s << "HomePath=" << root << '\n';
 	s << "WorkspacePath=" << workspace << '\n';
-	s << "ShadowPath=" << shadow << '\n';
+	s << "MasterPath=" << master << '\n';
 	return s.str();
 }
 
-bool CreateArchive::createSystem(bool users, const char *archivePath, const char *workspace, const char *shadow) {
+bool CreateArchive::createSystem(bool users, const char *archivePath, const char *workspace, const char *master) {
 	if (users == true) {
 		// Admin version
 		if (IsAdmin() == false) {
 			return false;
 		}
-		if (createAdminSystem(archivePath, workspace, shadow) == false) {
+		if (createAdminSystem(archivePath, workspace, master) == false) {
 			return false;
 		}
 	}
 	else {
 		// User version
-		if (createUserSystem(archivePath, workspace, shadow) == false) {
+		if (createUserSystem(archivePath, workspace, master) == false) {
 			return false;
 		}
 	}
 	return true;
 }
 
-bool CreateArchive::createAdminSystem(const char *archivePath, const char *workspace, const char *shadow) {
+bool CreateArchive::createAdminSystem(const char *archivePath, const char *workspace, const char *master) {
 
 	if (archivePath == nullptr || *archivePath == '\0') {
-		std::string progPath = SAUtils::GetEnvironment("ProgramData");
+		std::string progPath = SAUtils::GetPOSIXEnv("ProgramData");
 		std::string siaPath = "/IDK Software/ImageArchive1.0";
 		std::string path = progPath;
 		path += siaPath;
@@ -208,7 +208,7 @@ bool CreateArchive::createAdminSystem(const char *archivePath, const char *works
 
 	if (workspace == nullptr || *workspace == '\0') {
 	
-		std::string temp = SAUtils::GetEnvironment("USERPROFILE");
+		std::string temp = SAUtils::GetPOSIXEnv("USERPROFILE");
 		std::string path = temp;
 		path += "/Documents";
 		if (SAUtils::FileExists(path.c_str()) == false) {
@@ -235,9 +235,9 @@ bool CreateArchive::createAdminSystem(const char *archivePath, const char *works
 	}
 	
 
-	if (shadow == nullptr || *shadow == '\0') {
-		std::string progPath = SAUtils::GetEnvironment("ProgramData");
-		std::string siaPath = "/IDK Software/ImageArchive1.0/shadow";
+	if (master == nullptr || *master == '\0') {
+		std::string progPath = SAUtils::GetPOSIXEnv("ProgramData");
+		std::string siaPath = "/IDK Software/ImageArchive1.0/master";
 		
 		std::string path = progPath;
 		path += siaPath;
@@ -247,27 +247,27 @@ bool CreateArchive::createAdminSystem(const char *archivePath, const char *works
 		if (SAUtils::makePath(progPath.c_str(), siaPath.c_str()) == false) {
 			return false;
 		}
-		m_shadow = path;
-		std::cout << "Created shadow path folder: " << m_shadow << '\n';
+		m_master = path;
+		std::cout << "Created master path folder: " << m_master << '\n';
 	}
 	else {
-		if (SAUtils::FileExists(shadow) == true) {
+		if (SAUtils::FileExists(master) == true) {
 			return false;
 		}
-		if (SAUtils::makePath(shadow) == false) {
+		if (SAUtils::makePath(master) == false) {
 			return false;
 		}
-		m_shadow = shadow;
-		std::cout << "Created shadow path folder: " << m_shadow << '\n';
+		m_master = master;
+		std::cout << "Created master path folder: " << m_master << '\n';
 	}
 	
 	return true;
 }
 
-bool CreateArchive::createUserSystem(const char *archivePath, const char *workspace, const char *shadow) {
+bool CreateArchive::createUserSystem(const char *archivePath, const char *workspace, const char *master) {
 
 	if (archivePath == nullptr || *archivePath == '\0') {
-		std::string progPath = SAUtils::GetEnvironment("USERPROFILE");
+		std::string progPath = SAUtils::GetPOSIXEnv("USERPROFILE");
 		std::string siaPath = "/IDK Software/ImageArchive1.0";
 		std::string path = progPath;
 		path += siaPath;
@@ -292,7 +292,7 @@ bool CreateArchive::createUserSystem(const char *archivePath, const char *worksp
 
 	if (workspace == nullptr || *workspace == '\0') {
 
-		std::string temp = SAUtils::GetEnvironment("USERPROFILE");
+		std::string temp = SAUtils::GetPOSIXEnv("USERPROFILE");
 		std::string path = temp;
 		path += "/Documents";
 		if (SAUtils::FileExists(path.c_str()) == false) {
@@ -317,9 +317,9 @@ bool CreateArchive::createUserSystem(const char *archivePath, const char *worksp
 	}
 
 
-	if (shadow == nullptr || *shadow == '\0') {
-		std::string progPath = SAUtils::GetEnvironment("USERPROFILE");
-		std::string siaPath = "/IDK Software/ImageArchive1.0/shadow";
+	if (master == nullptr || *master == '\0') {
+		std::string progPath = SAUtils::GetPOSIXEnv("USERPROFILE");
+		std::string siaPath = "/IDK Software/ImageArchive1.0/master";
 
 		std::string path = progPath;
 		path += siaPath;
@@ -329,16 +329,16 @@ bool CreateArchive::createUserSystem(const char *archivePath, const char *worksp
 		if (SAUtils::makePath(progPath.c_str(), siaPath.c_str()) == false) {
 			return false;
 		}
-		m_shadow = path;
+		m_master = path;
 	}
 	else {
-		if (SAUtils::FileExists(shadow) == false) {
+		if (SAUtils::FileExists(master) == false) {
 			return false;
 		}
-		if (SAUtils::makePath(shadow) == false) {
+		if (SAUtils::makePath(master) == false) {
 			return false;
 		}
-		m_shadow = shadow;
+		m_master = master;
 	}
 	
 	return true;
@@ -426,9 +426,9 @@ bool CreateArchive::checkFolders(const char *root) {
 	return true;
 }
 
-bool CreateArchive::createConfigFiles(const char *root, const char *folder, const char *workspace, const char *shadow) {
+bool CreateArchive::createConfigFiles(const char *root, const char *folder, const char *workspace, const char *master) {
 	//createFile(const char *root, const char *folder, const char *filename, std::string &str) {
-	std::string configFile = makeConfigFile(root, workspace, shadow);
+	std::string configFile = makeConfigFile(root, workspace, master);
 	
 	if (createFile(root, folder, "config.dat", configFile) == false) {
 		return false;

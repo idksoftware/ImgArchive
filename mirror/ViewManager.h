@@ -47,7 +47,7 @@ class ViewItemContainer;
 /**
  * This class manages the view functionality.
  *
- * This view manager uses image hold in the shadow archive only.
+ * This view manager uses image hold in the Master archive only.
  * The View manager need to be one time initialised.
  */
 class ViewManager {
