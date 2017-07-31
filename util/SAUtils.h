@@ -35,6 +35,11 @@
 #ifndef UTILS_H_
 #define UTILS_H_
 
+#ifdef WIN32
+#define _CRTDBG_MAP_ALLOC  
+#include <stdlib.h>  
+#include <crtdbg.h> 
+#endif
 
 #include <string>
 #include <vector>
@@ -99,7 +104,8 @@ public:
 	static bool delFile(const char *file);
 	static bool delDir(const char *file);
 	static std::string to_string(int i);
-	static void chartohex(char *buffer, unsigned char x);
+	static void chartohex2(char *buffer, unsigned char x);
+	static void chartohex3(char *buffer, unsigned char x);
 	static std::string SAUtils::sprintf(const char *fmt, ...);
 	static bool makePath(const char *from, const char *to);
 	static bool makePath(const char *to);

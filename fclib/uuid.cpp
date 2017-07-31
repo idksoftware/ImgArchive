@@ -86,14 +86,14 @@ CIDKUuid::CIDKUuid(const char *uuid)
 	strncpy(temp2,buffer+2,2);
 #endif
 	temp2[2] = '\0';
-    m_Uuid->clock_seq_low = Str2Hex(temp2);				// 0xb4
+    m_Uuid->clock_seq_low = (unsigned8)Str2Hex(temp2);				// 0xb4
 
 	buffer = temp+24;
 	for (int i = 0; i < 6; i++ )
 	{
 		strncpy(temp2,buffer+(i*2),2);
 		temp2[2] = '\0';		
-		m_Uuid->node[i] = Str2Hex(temp2);
+		m_Uuid->node[i] = (unsigned8)Str2Hex(temp2);
 	}
     //  byte                node[6];
  	printf("%s\n",GetUuid());
@@ -191,7 +191,7 @@ int CIDKUuid::Create(uuid_t * uuid) {
   storage */
   void write_state(unsigned16 clockseq, uuid_time_t timestamp,
   uuid_node_t node) {
-    FILE * fd;
+//    FILE * fd;
     static int inited = 0;
     static uuid_time_t next_save;
 

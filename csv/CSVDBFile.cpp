@@ -32,6 +32,12 @@
 **
 ** #$$@@$$# */
 
+#ifdef WIN32
+#define _CRTDBG_MAP_ALLOC  
+#include <stdlib.h>  
+#include <crtdbg.h> 
+#endif
+
 #include <stdio.h>
 #include <cstdlib>
 #include <string>
@@ -196,7 +202,7 @@ class IdxFile {
 	bool insert(int idx, const char *imagePath, const char *name, unsigned long size,
 			unsigned long crc, const char *md5, const char *uuid, int version, ExifDate &date, int dbIdx);
 
-	IdxFileItem *list[256];
+	std::shared_ptr<IdxFileItem> list[256];
 	int m_last;
 public:
 	IdxFile() {
@@ -205,6 +211,7 @@ public:
 			list[i] = 0;
 		}
 	};
+	/*
 	virtual ~IdxFile() {
 		for (int i = 0; i < 256; i++) {
 			if (list[i] != 0) {
@@ -212,11 +219,12 @@ public:
 			}
 		}
 	};
+	*/
 	bool read(const char *datafile);
 	bool write(const char *datafile);
 	bool update(int idx, const char *imagePath, const char *name, unsigned long size, unsigned long crc,
 			const char *md5, const char *uuid, int version, ExifDate &date, int dbidx);
-	IdxFileItem *find(int idx);
+	std::shared_ptr<IdxFileItem> find(int idx);
 	int findLast();
 
 };
@@ -268,9 +276,9 @@ bool CSVDBFile::insert(int idx, const char *imagePath, const char *name, unsigne
 }
 
 bool CSVDBFile::insert(int idx, const char *imagePath, const char *name, unsigned long size, unsigned long crc,
-	const char *md5, const char *uuid, int version, ExifDate &date, const char*rootPath, int dbIndex = '\0') {
+	const char *md5, const char *uuid, int version, ExifDate &date, const char*rootPath, int dbIndex) {
 
-	char hexStr[3];
+	char hexStr[4];
 	//unsigned int idx = indx - 1;
 	m_data[0] = (unsigned int)idx & 0xFF;
 	m_data[1] = (unsigned int)(idx >> 8) & 0xFFF;
@@ -281,7 +289,7 @@ bool CSVDBFile::insert(int idx, const char *imagePath, const char *name, unsigne
 	}
 	//printf("%x: %x %x %x\n",idx,  m_data[2], m_data[1], m_data[0]);
 
-	SAUtils::chartohex(hexStr, m_data[2]);
+	SAUtils::chartohex3(hexStr, m_data[2]);
 	std::string path = dbpath + '/' + hexStr;
 	//printf("%s\n",path.c_str());
 	if (SAUtils::DirExists(path.c_str()) == false) {
@@ -290,7 +298,7 @@ bool CSVDBFile::insert(int idx, const char *imagePath, const char *name, unsigne
 		}
 	}
 	//SAUtils::sprintf(tmppath, "%.3x.csv", m_data[1]);
-	SAUtils::chartohex(hexStr, m_data[1]);
+	SAUtils::chartohex3(hexStr, m_data[1]);
 	path = path + '/' + hexStr + ".csv";
 	IdxFile idxFile;
 	//printf("%s\n",path.c_str());
@@ -318,21 +326,21 @@ bool CSVDBFile::insert(int idx, const char *imagePath, const char *name, unsigne
 		return false;
 	}
 	if (idxFile.write(path.c_str()) == false) {
-		throw std::exception();
+		return false;
 	}
 	
 	return true;
 }
 
 int CSVDBFile::getMaxIndex() {
-	int m_data[4];
-	char hexStr[3];
+	
+	char hexStr[4];
 	if (SAUtils::DirExists(m_dbpath.c_str()) == false) {
 		return false;
 	}
 	// Folders
 	m_data[3] = getMaxDirIndex(m_dbpath);
-	SAUtils::chartohex(hexStr, m_data[3]);
+	SAUtils::chartohex3(hexStr, m_data[3]);
 	std::string path = m_dbpath + '/' + hexStr;
 	if (SAUtils::DirExists(path.c_str()) == false) {
 		// if empty and getMaxIndex returned zero no sequence numbers. so create
@@ -346,7 +354,7 @@ int CSVDBFile::getMaxIndex() {
 	// files
 	//printf("%s\n", path.c_str());
 	m_data[2] = getMaxDirIndex(path);
-	SAUtils::chartohex(hexStr, m_data[2]);
+	SAUtils::chartohex3(hexStr, m_data[2]);
 	path = path + '/' + hexStr + ".csv";
 	if (SAUtils::FileExists(path.c_str()) == false) {
 		if (m_data[2] != 0) {
@@ -368,12 +376,12 @@ int CSVDBFile::getMaxIndex() {
 }
 
 int CSVDBFile::getNextIndex(int current) {
-	char hexStr[3];
+	char hexStr[4];
 	m_data[0] = (unsigned int)current & 0xFF;
 	m_data[1] = (unsigned int)(current >> 8) & 0xFFF;
 	m_data[2] = (unsigned int)(current >> (12 + 8)) & 0xFFF;
 
-	SAUtils::chartohex(hexStr, m_data[3]);
+	SAUtils::chartohex3(hexStr, m_data[3]);
 	std::string path = m_dbpath + '/' + hexStr;
 	if (SAUtils::DirExists(path.c_str()) == false) {
 		// if empty and getMaxIndex returned zero no sequence numbers. so create
@@ -387,7 +395,7 @@ int CSVDBFile::getNextIndex(int current) {
 	// files
 	//printf("%s\n", path.c_str());
 	m_data[2] = getMaxDirIndex(path);
-	SAUtils::chartohex(hexStr, m_data[2]);
+	SAUtils::chartohex3(hexStr, m_data[2]);
 	path = path + '/' + hexStr + ".csv";
 	if (SAUtils::FileExists(path.c_str()) == false) {
 		if (m_data[2] != 0) {
@@ -433,7 +441,7 @@ int CSVDBFile::getMaxDirIndex(std::string &path) {
 }
 
 std::unique_ptr<ImageInfo> CSVDBFile::getItemAt(int idx) {
-	char hexStr[3];
+	char hexStr[4];
 
 	m_data[0] = (unsigned int)idx & 0xFF;
 	m_data[1] = (unsigned int)(idx >> 8) & 0xFFF;
@@ -443,13 +451,13 @@ std::unique_ptr<ImageInfo> CSVDBFile::getItemAt(int idx) {
 		throw std::exception();
 	}
 	
-	SAUtils::chartohex(hexStr, m_data[2]);
+	SAUtils::chartohex3(hexStr, m_data[2]);
 	std::string path = m_dbpath + '/' + hexStr;
 	//printf("%s\n",path.c_str());
 	if (SAUtils::DirExists(path.c_str()) == false) {
 		throw std::exception();
 	}
-	SAUtils::chartohex(hexStr, m_data[1]);
+	SAUtils::chartohex3(hexStr, m_data[1]);
 	path = path + '/' + hexStr + ".csv";
 	IdxFile idxFile;
 	//printf("%s\n",path.c_str());
@@ -459,7 +467,7 @@ std::unique_ptr<ImageInfo> CSVDBFile::getItemAt(int idx) {
 	if (idxFile.read(path.c_str()) == false) {
 		throw std::exception();
 	}
-	IdxFileItem *item = 0;
+	std::shared_ptr<IdxFileItem> item;
 
 	if ((item = idxFile.find(idx)) == 0) {
 		throw std::exception();
@@ -471,7 +479,7 @@ std::unique_ptr<ImageInfo> CSVDBFile::getItemAt(int idx) {
 }
 
 unsigned long CSVDBFile::findSize(unsigned int idx) {
-	char hexStr[3];
+	char hexStr[4];
 
 	m_data[0] = (unsigned int)idx & 0xFF;
 	m_data[1] = (unsigned int)(idx >> 8) & 0xFFF;
@@ -483,7 +491,7 @@ unsigned long CSVDBFile::findSize(unsigned int idx) {
 	//printf("%x: %x %x %x\n",idx,  m_data[2], m_data[1], m_data[0]);
 
 	
-	SAUtils::chartohex(hexStr, m_data[2]);
+	SAUtils::chartohex3(hexStr, m_data[2]);
 	std::string path = m_dbpath + '/' + hexStr;
 	//printf("%s\n",path.c_str());
 	if (SAUtils::DirExists(path.c_str()) == false) {
@@ -492,7 +500,7 @@ unsigned long CSVDBFile::findSize(unsigned int idx) {
 		}
 	}
 	
-	SAUtils::chartohex(hexStr, m_data[1]);
+	SAUtils::chartohex3(hexStr, m_data[1]);
 	path = path + '/' + hexStr + ".csv";
 	IdxFile idxFile;
 	//printf("%s\n",path.c_str());
@@ -500,7 +508,7 @@ unsigned long CSVDBFile::findSize(unsigned int idx) {
 		if (idxFile.read(path.c_str()) == false) {
 			return 0;
 		}
-		const IdxFileItem *item = 0;
+		std::shared_ptr<IdxFileItem> item;
 
 		if ((item = idxFile.find(idx)) == 0) {
 			return 0;
@@ -512,7 +520,7 @@ unsigned long CSVDBFile::findSize(unsigned int idx) {
 }
 
 const char* CSVDBFile::findPath(unsigned int idx) {
-	char hexStr[3];
+	char hexStr[4];
 
 	m_data[0] = (unsigned int)idx & 0xFF;
 	m_data[1] = (unsigned int)(idx >> 8) & 0xFFF;
@@ -522,7 +530,7 @@ const char* CSVDBFile::findPath(unsigned int idx) {
 		return 0;
 	}
 	//printf("%x: %x %x %x\n",idx,  m_data[2], m_data[1], m_data[0]);
-	SAUtils::chartohex(hexStr, m_data[2]);
+	SAUtils::chartohex3(hexStr, m_data[2]);
 	std::string path = m_dbpath + '/' + hexStr;
 	//printf("%s\n",path.c_str());
 	if (SAUtils::DirExists(path.c_str()) == false) {
@@ -531,7 +539,7 @@ const char* CSVDBFile::findPath(unsigned int idx) {
 		}
 	}
 	
-	SAUtils::chartohex(hexStr, m_data[1]);
+	SAUtils::chartohex3(hexStr, m_data[1]);
 	path = path + '/' + hexStr + ".csv";
 	IdxFile idxFile;
 	//printf("%s\n",path.c_str());
@@ -539,7 +547,7 @@ const char* CSVDBFile::findPath(unsigned int idx) {
 		if (idxFile.read(path.c_str()) == false) {
 			return 0;
 		}
-		const IdxFileItem *item = 0;
+		std::shared_ptr<IdxFileItem> item;
 
 		if ((item = idxFile.find(idx)) == 0) {
 			return 0;
@@ -551,7 +559,7 @@ const char* CSVDBFile::findPath(unsigned int idx) {
 }
 
 MirrorIdxDB::MirrorIdxDB() {
-
+	
 	if (ArchivePath::isMasterEnabled() == true) {
 		m_master = ArchivePath::getMaster().getIdxDBPath();
 	}
@@ -562,13 +570,13 @@ MirrorIdxDB::MirrorIdxDB() {
 	if (ArchivePath::isBackup2Enabled() == true) {
 		m_backup2 = ArchivePath::getBackup2().getIdxDBPath();;
 	}
-
+	
 }
 
 
 
 std::string MirrorIdxDB::makeFolders(std::string &basePath, unsigned int idx) {
-	char hexStr[3];
+	char hexStr[4];
 
 	unsigned int data[3];
 	data[0] = (unsigned int)idx & 0xFF;
@@ -579,7 +587,7 @@ std::string MirrorIdxDB::makeFolders(std::string &basePath, unsigned int idx) {
 		throw std::exception();
 	}
 	//printf("%x: %x %x %x\n",idx,  m_data[2], m_data[1], m_data[0]);
-	SAUtils::chartohex(hexStr, data[2]);
+	SAUtils::chartohex3(hexStr, data[2]);
 	std::string path = dbpath + '/' + hexStr;
 	//printf("%s\n",path.c_str());
 	if (SAUtils::DirExists(path.c_str()) == false) {
@@ -587,7 +595,7 @@ std::string MirrorIdxDB::makeFolders(std::string &basePath, unsigned int idx) {
 			throw std::exception();
 		}
 	}
-	SAUtils::chartohex(hexStr, data[1]);
+	SAUtils::chartohex3(hexStr, data[1]);
 	path = path + '/' + hexStr + ".csv";
 	return path;
 }
@@ -602,6 +610,7 @@ bool MirrorIdxDB::process(unsigned int idx) {
 		}
 	}
 	*/
+	
 	if (ArchivePath::isBackup1Enabled() == true) {
 		std::string fullPath = makeFolders(m_backup1, idx);
 		if (SAUtils::copy(source.c_str(), fullPath.c_str()) == false) {
@@ -614,7 +623,7 @@ bool MirrorIdxDB::process(unsigned int idx) {
 			return false;
 		}
 	}
-
+	
 	return true;
 }
 
@@ -629,7 +638,7 @@ bool IdxFile::read(const char *datafile) {
 	}
 
 	while (file.getline(text, 2 * 1012)) {
-		IdxFileItem *item = new IdxFileItem(text);
+		std::shared_ptr<IdxFileItem> item = std::make_shared<IdxFileItem>(text);
 		int fullidx = item->getIdx();
 		int fileidx = (unsigned int)fullidx & 0xFF;
 
@@ -651,7 +660,7 @@ bool IdxFile::write(const char *datafile) {
 		return false;
 	}
 	for (int i = 0; i < 256; i++) {
-		IdxFileItem *item = list[i];
+		std::shared_ptr<IdxFileItem> item = list[i];
 		if (item == 0) {
 			continue;
 		}
@@ -683,7 +692,7 @@ bool IdxFile::write(const char *datafile) {
 }
 bool IdxFile::update(int idx, const char *imagePath, const char *name, unsigned long size, unsigned long crc,
 		const char *md5, const char *uuid, int version, ExifDate &date, int dbidx = -1) {
-	IdxFileItem *idxItem = 0;
+	std::shared_ptr<IdxFileItem> idxItem = 0;
 	if ((idxItem = find(idx)) != 0) {
 		idxItem->setImagePath(imagePath);
 	}
@@ -695,7 +704,7 @@ bool IdxFile::update(int idx, const char *imagePath, const char *name, unsigned 
 bool IdxFile::insert(int idx, const char *imagePath, const char *name, unsigned long size, unsigned long crc,
 									const char *md5, const char *uuid, int version, ExifDate &date, int dbidx) {
 
-	IdxFileItem *item = new IdxFileItem(idx, imagePath, name, size, crc, md5, uuid, version, date, dbidx);
+	std::shared_ptr<IdxFileItem> item = std::make_shared<IdxFileItem>(idx, imagePath, name, size, crc, md5, uuid, version, date, dbidx);
 	int fullidx = item->getIdx();
 	int posIdx = (unsigned int)fullidx & 0xFF;
 	if (posIdx < 0 || posIdx > 255) {
@@ -709,7 +718,7 @@ bool IdxFile::insert(int idx, const char *imagePath, const char *name, unsigned 
 }
 
 
-IdxFileItem *IdxFile::find(int idx) {
+std::shared_ptr<IdxFileItem> IdxFile::find(int idx) {
 	int fullidx = idx;
 	int posIdx = (unsigned int)fullidx & 0xFF;
 	if (posIdx < 0 || posIdx > 255) {
@@ -723,7 +732,7 @@ int IdxFile::findLast() {
 	if (m_last == -1) {
 		return -1;
 	}
-	IdxFileItem *item = list[m_last];
+	std::shared_ptr<IdxFileItem> item = list[m_last];
 	return item->getIdx();
 }
 

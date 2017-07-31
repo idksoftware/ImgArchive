@@ -318,7 +318,7 @@ std::string MirrorImageIndex::makeFolders(std::string &basePath, unsigned long c
 
 	std::string dbpath = basePath;
 	//printf("%x %x %x %x : ", m_data[3], m_data[2], m_data[1], m_data[0]);
-	SAUtils::chartohex(hexStr, data[3]);
+	SAUtils::chartohex2(hexStr, data[3]);
 	std::string path = dbpath + '/' + hexStr;
 	if (SAUtils::DirExists(path.c_str()) == false) {
 		if (SAUtils::mkDir(path.c_str()) == false) {
@@ -326,7 +326,7 @@ std::string MirrorImageIndex::makeFolders(std::string &basePath, unsigned long c
 		}
 	}
 	
-	SAUtils::chartohex(hexStr, data[2]);
+	SAUtils::chartohex2(hexStr, data[2]);
 	path = path + '/' + hexStr;
 	if (SAUtils::DirExists(path.c_str()) == false) {
 		if (SAUtils::mkDir(path.c_str()) == false) {
@@ -336,7 +336,7 @@ std::string MirrorImageIndex::makeFolders(std::string &basePath, unsigned long c
 
 	
 	
-	SAUtils::chartohex(hexStr, data[1]);
+	SAUtils::chartohex2(hexStr, data[1]);
 	path = path + '/' + hexStr;
 	
 	return path;
@@ -435,7 +435,7 @@ bool ImageIndex::add(const char *name, unsigned long crc, const char *md5, const
 	std::string dbpath = rootPath;
 	//printf("%x %x %x %x : ", m_data[3], m_data[2], m_data[1], m_data[0]);
 	
-	SAUtils::chartohex(hexStr, data[3]);
+	SAUtils::chartohex2(hexStr, data[3]);
 	std::string path = dbpath + '/' + hexStr;
 	if (SAUtils::DirExists(path.c_str()) == false) {
 		if (SAUtils::mkDir(path.c_str()) == false) {
@@ -443,7 +443,7 @@ bool ImageIndex::add(const char *name, unsigned long crc, const char *md5, const
 		}
 	}
 	
-	SAUtils::chartohex(hexStr, data[2]);
+	SAUtils::chartohex2(hexStr, data[2]);
 	path = path + '/' + hexStr;
 	if (SAUtils::DirExists(path.c_str()) == false) {
 		if (SAUtils::mkDir(path.c_str()) == false) {
@@ -453,7 +453,7 @@ bool ImageIndex::add(const char *name, unsigned long crc, const char *md5, const
 
 	DupDataFile dupDataFile;
 	
-	SAUtils::chartohex(hexStr, data[1]);
+	SAUtils::chartohex2(hexStr, data[1]);
 	path = path + '/' + hexStr;
 	if (SAUtils::FileExists(path.c_str()) == true) {
 		if (dupDataFile.read(path.c_str()) == false) {
@@ -484,7 +484,7 @@ DupDataFile_Ptr ImageIndex::findDupDataFile(unsigned long crc, const char *rootP
 	data[3] = (unsigned char)(crc >> 3 * 8) & 0xFF;
 
 	//printf("%x %x %x %x : ", m_data[3], m_data[2], m_data[1], m_data[0]);
-	SAUtils::chartohex(hexStr, data[3]);
+	SAUtils::chartohex2(hexStr, data[3]);
 	
 	std::string dbpath = rootPath;
 	std::string path = dbpath + '/' + hexStr;
@@ -494,7 +494,7 @@ DupDataFile_Ptr ImageIndex::findDupDataFile(unsigned long crc, const char *rootP
 		}
 	}
 	
-	SAUtils::chartohex(hexStr, data[2]);
+	SAUtils::chartohex2(hexStr, data[2]);
 	path = path + '/' + hexStr;
 	if (SAUtils::DirExists(path.c_str()) == false) {
 		if (SAUtils::mkDir(path.c_str()) == false) {
@@ -504,7 +504,7 @@ DupDataFile_Ptr ImageIndex::findDupDataFile(unsigned long crc, const char *rootP
 	
 	DupDataFile_Ptr dupDataFile(new DupDataFile);
 	
-	SAUtils::chartohex(hexStr, data[1]);
+	SAUtils::chartohex2(hexStr, data[1]);
 	path = path + '/' + hexStr;
 	if (SAUtils::FileExists(path.c_str()) == true) {
 		if (dupDataFile->read(path.c_str()) == false) {

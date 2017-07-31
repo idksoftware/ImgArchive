@@ -32,6 +32,12 @@
 **
 ** #$$@@$$# */
 
+#ifdef WIN32
+#define _CRTDBG_MAP_ALLOC  
+#include <stdlib.h>  
+#include <crtdbg.h> 
+#endif
+
 #include "CIDKFile.h"
 #include "CIDKFileFind.h"
 #include "SAUtils.h"
@@ -392,7 +398,14 @@ bool SAUtils::verify(const char *from, const char *to) {
 
 #define TO_HEX(i) (i <= 9 ? '0' + i : 'a' - 10 + i)
 
-void SAUtils::chartohex(char *buffer, unsigned char x) {
+void SAUtils::chartohex3(char *buffer, unsigned char x) {
+	buffer[0] = TO_HEX(((x & 0x0F00) >> 8));
+	buffer[1] = TO_HEX(((x & 0x00F0) >> 4));
+	buffer[2] = TO_HEX( (x & 0x000F));
+	buffer[3] = '\0';
+}
+
+void SAUtils::chartohex2(char *buffer, unsigned char x) {
 	buffer[0] = TO_HEX(((x & 0x00F0) >> 4));
 	buffer[1] = TO_HEX((x & 0x000F));
 	buffer[2] = '\0';

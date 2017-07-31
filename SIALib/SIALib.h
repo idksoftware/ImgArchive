@@ -37,7 +37,7 @@
 
 #include <string>
 #include <memory>
-#include "ExifDate.h"
+//#include "ExifDate.h"
 #include "ExifDateTime.h"
 /*
 */

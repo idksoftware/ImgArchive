@@ -288,11 +288,23 @@ namespace simplearchive {
 		
 		CAppConfig config = CAppConfig::get();
 		m_Error = false;
+		
 		m_MasterPath = m_archiveObject.getMasterPath().getRepositoryPath();
+		if (m_MasterPath.empty()) {
+			return false;
+		}
 		m_indexPath = m_archiveObject.getPrimaryIndexObject().getPrimaryIndexPath().getImageIndexPath();
+		if (m_indexPath.empty()) {
+			return false;
+		}
 		m_workspacePath = config.getWorkspacePath();
+		if (m_workspacePath.empty()) {
+			return false;
+		}
 		m_metatemplatePath = config.getMetadataTemplatePath();
-
+		if (m_metatemplatePath.empty()) {
+			return false;
+		}
 		std::string MasterJournalPath = ImagePath::getMasterJournalPath();
 		ImportJournalManager::setJournalFilePath(MasterJournalPath.c_str());
 

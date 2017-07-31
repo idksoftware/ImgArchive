@@ -180,7 +180,7 @@ bool CIDKDate::GetDate(long& nYear, long& nMonth, long& nDay)
 	// 4 years.  This gives the effective range of a CIDKDate as 
 	// 1 Jan 1970 to 31 Dec 2099.
 
-	unsigned long nCalendarDays = (m_nTime / IDK_DATE_SECONDS_IN_DAY);
+	unsigned long nCalendarDays = (unsigned long)(m_nTime / IDK_DATE_SECONDS_IN_DAY);
 
 	// Determin the number of four year periods
 	long fourYearPeriods = nCalendarDays / ((365 * 4) + 1);
@@ -488,7 +488,7 @@ unsigned long CIDKDate::RoundToYear()
 	// 4 years.  This gives the effective range of a CIDKDate as 
 	// 1 Jan 1970 to 31 Dec 2099.
 
-	unsigned long nTotalSeconds = m_nTime;
+	unsigned long nTotalSeconds = (unsigned long)m_nTime;
 
 	// Determin the number of four year periods
 	long fourYearPeriods = nTotalSeconds / (IDK_DATE_SECONDS_IN_FOUR_YEAR);
@@ -515,7 +515,7 @@ unsigned long CIDKDate::RoundToYear()
 	
 	// nCalendarDays has the number of days "left over"
 
-	unsigned long nRoundedSeconds = (m_nTime - nTotalSeconds);
+	unsigned long nRoundedSeconds = (unsigned long)(m_nTime - nTotalSeconds);
 
 	return nRoundedSeconds;
 }
@@ -540,7 +540,7 @@ unsigned long CIDKDate::RoundToMonth()
 	}
 
 	// The number of seconds elapsed since the start of the year
-	unsigned long nLeftOverSeconds = m_nTime - nYearSeconds;
+	unsigned long nLeftOverSeconds = (unsigned long)(m_nTime - nYearSeconds);
 
 	// Calculate the number of seconds since the start of the month
 
@@ -565,7 +565,7 @@ unsigned long CIDKDate::RoundToDay()
 	long nTotalSeconds = (m_nTime % IDK_DATE_SECONDS_IN_DAY);
 
 	// Subtract this from total seconds
-	unsigned long nRoundedSeconds = (m_nTime - nTotalSeconds);
+	unsigned long nRoundedSeconds = (unsigned long)(m_nTime - nTotalSeconds);
 
 	return nRoundedSeconds;
 }
@@ -577,7 +577,7 @@ unsigned long CIDKDate::RoundToHour()
 	long nTotalSeconds = (m_nTime % IDK_DATE_SECONDS_IN_DAY);
 
 	// Subtract this from total time
-	unsigned long nWholeDaySeconds = (m_nTime - nTotalSeconds);
+	unsigned long nWholeDaySeconds = (unsigned long)(m_nTime - nTotalSeconds);
 
 	// Round time section to the hour 
 	nTotalSeconds = (nTotalSeconds / IDK_DATE_SECONDS_IN_HOUR) * (IDK_DATE_SECONDS_IN_HOUR);

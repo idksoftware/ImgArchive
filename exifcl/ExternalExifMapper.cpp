@@ -157,7 +157,7 @@ ExifObject *ExternalExifMapper::create(Config &exifData) {
 				logger.log(LOG_OK, CLogger::Level::WARNING, "Invalid value. keyword:\"%s\" value:\"%s\"", keyword.c_str(), value.c_str());
 			}
 		}
-		catch (std::exception &e) {
+		catch (std::exception /*&e*/) {
 			logger.log(LOG_OK, CLogger::Level::WARNING, "invalid keyword:\"%s\"", keyword.c_str());
 		}
 

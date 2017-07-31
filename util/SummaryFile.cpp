@@ -44,7 +44,7 @@
 #include "SAUtils.h"
 #include "SummaryFile.h"
 #include "ExifDateTime.h"
-#include "UDPOut.h";
+#include "UDPOut.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
