@@ -105,7 +105,7 @@ public:
 	static bool delDir(const char *file);
 	static std::string to_string(int i);
 	static void chartohex2(char *buffer, unsigned char x);
-	static void chartohex3(char *buffer, unsigned char x);
+	static void chartohex3(char *buffer, unsigned short x);
 	static std::string SAUtils::sprintf(const char *fmt, ...);
 	static bool makePath(const char *from, const char *to);
 	static bool makePath(const char *to);
