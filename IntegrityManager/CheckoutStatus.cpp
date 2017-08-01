@@ -77,12 +77,12 @@ namespace simplearchive {
 			ErrorCode::setErrorCode(SIA_ERROR::WILL_OVERWRITE_CHANGES);
 			return false;
 		}
-		
+#ifdef TESTING		
 		if (checkDisk.checkout(path.c_str(), pathController.getImage().c_str()) == false) {
 			ErrorCode::setErrorCode(SIA_ERROR::INVALID_PATH);
 			return false;
 		}
-			
+#endif			
 		return true;
 	}
 

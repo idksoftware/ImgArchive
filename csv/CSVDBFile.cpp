@@ -339,12 +339,12 @@ int CSVDBFile::getMaxIndex() {
 		return false;
 	}
 	// Folders
-	m_data[3] = getMaxDirIndex(m_dbpath);
-	SAUtils::chartohex3(hexStr, m_data[3]);
+	m_data[2] = getMaxDirIndex(m_dbpath);
+	SAUtils::chartohex3(hexStr, m_data[2]);
 	std::string path = m_dbpath + '/' + hexStr;
 	if (SAUtils::DirExists(path.c_str()) == false) {
 		// if empty and getMaxIndex returned zero no sequence numbers. so create
-		if (m_data[3] == 0) {
+		if (m_data[2] == 0) {
 			SAUtils::mkDir(path.c_str());
 		}
 		else {
@@ -353,11 +353,11 @@ int CSVDBFile::getMaxIndex() {
 	}
 	// files
 	//printf("%s\n", path.c_str());
-	m_data[2] = getMaxDirIndex(path);
-	SAUtils::chartohex3(hexStr, m_data[2]);
+	m_data[1] = getMaxDirIndex(path);
+	SAUtils::chartohex3(hexStr, m_data[1]);
 	path = path + '/' + hexStr + ".csv";
 	if (SAUtils::FileExists(path.c_str()) == false) {
-		if (m_data[2] != 0) {
+		if (m_data[1] != 0) {
 			throw std::exception();
 		}
 	}

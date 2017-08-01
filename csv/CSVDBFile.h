@@ -83,7 +83,7 @@ public:
 class CSVDBFile {
 	std::string m_dbpath;
 //	std::unique_ptr<MirrorIdxDB> m_mirrorIdxDB;
-	unsigned int m_data[3];
+	unsigned int m_data[4];
 	int getMaxDirIndex(std::string &path);
 	bool insert(int idx, const char *imagePath, const char *name, unsigned long size, unsigned long crc,
 		const char *md5, const char *uuid, int version, ExifDate &date, const char*rootPath, int dbidx);
