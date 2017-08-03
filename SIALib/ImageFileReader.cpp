@@ -78,7 +78,7 @@ ExifObject *ImageFileReader::externalExifTool(std::string &path) {
 	}
 	std::string externalExifTool = config.getExternalExifTool();
 	std::string ExifToolPath = config.getToolsPath();
-	ExifToolPath += '//';
+	ExifToolPath += '/';
 	ExifToolPath += externalExifTool;
 
 	if (SAUtils::FileExists(ExifToolPath.c_str()) == false) {

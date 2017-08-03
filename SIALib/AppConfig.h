@@ -145,7 +145,7 @@ namespace simplearchive {
 
 		/// @brief Initalises the config object
 		void init(const char *homePath = nullptr);
-
+		void settup();
 		void fileBasedValues();
 		/// @brief Gets the source path.
 		const char *getSourcePath();
@@ -224,10 +224,6 @@ namespace simplearchive {
 		std::string toString();
 		std::string toXMLString();
 		
-	public:
- 
-//	private:
-
 		void setDryRun(bool dryRun);
 		void setQuiet(bool quiet);
 		void setSilent(bool silent);

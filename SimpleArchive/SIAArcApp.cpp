@@ -248,7 +248,8 @@ bool SIAArcApp::doRun()
 
 		siaLib.enableServer(appOptions.eventPort());
 	}
-	printf("%s", config.toString().c_str());
+	//printf("%s", config.toString().c_str());
+	config.settup();
 	if (siaLib.initalise() < 0) {
 		return false;
 	}
@@ -338,6 +339,16 @@ bool SIAArcApp::doRun()
 		}
 		break;
 	}
+
+	case SIAArcAppOptions::CommandMode::CM_Log:
+	{
+		if (siaLib.log(appOptions.getImageAddress(), appOptions.getFormatType()) == false) {
+			setError(CLogger::getLastCode(), CLogger::getLastMessage());
+			return false;
+		}
+		break;
+	}
+
 
 	case SIAArcAppOptions::CommandMode::CM_Uncheckin:
 		break;

@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <sstream>
+#include <iostream>
 #include <iomanip>
 
 #include "HistoryEvent.h"
@@ -9,6 +10,8 @@
 #include "SystemHistory.h"
 #include "ChangeLog.h"
 #include "ErrorCode.h"
+#include "CSVArgs.h"
+#include "LogDocument.h"
 
 namespace simplearchive {
 
@@ -155,5 +158,117 @@ namespace simplearchive {
 
 		return true;
 	}
+
+	bool History::logImageHistory(const char *filepath, LogDocument::FormatType formatType) {
+		std::shared_ptr<ImageHistoryLog> log;
+		if ((log = imageHistory->getEntries(filepath)) == false) {
+			ErrorCode::setErrorCode(SIA_ERROR::INVALID_PATH);
+			return false;
+		}
+		
+		if (!log->write(formatType)) {
+			ErrorCode::setErrorCode(SIA_ERROR::INVALID_PATH);
+			return false;
+		}
+		return true;
+	}
+
+
+	HistoryLog::HistoryLog() : LogDocument(std::make_shared<ImageHistorySchema>()) {
+		// TODO Auto-generated constructor stub
+
+	}
+
+	HistoryLog::~HistoryLog() {
+		// TODO Auto-generated destructor stub
+	}
+
+	bool HistoryLog::writeHuman() {
+		return true;
+	}
+
+	bool HistoryLog::writeJson() {
+		return true;
+	}
+
+	bool HistoryLog::writeCSV() {
+		for (std::list<std::string>::iterator i = begin(); i != end(); i++) {
+			std::cout << *i << '\n';
+		}
+		return true;
+	}
+
+	bool HistoryLog::writeXML() {
+		std::cout << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+			<< "<History ordering=\"date\" from=\"2015-03-6 12.10.45\" to=\"2015-03-6 12.10.45\">\n";
+
+		for (std::list<std::string>::iterator i = begin(); i != end(); i++) {
+			std::cout << *i << '\n';
+			CSVArgs csvArgs(':');
+			if (csvArgs.process(i->c_str()) == false) {
+				return false;
+			}
+			std::cout << "\t<Event>\n";
+			std::cout << writeTag("DateTime", csvArgs.at(0), 2);
+			std::cout << writeTag("ImagePage", csvArgs.at(1), 2);
+			std::cout << writeTag("Value", csvArgs.at(2), 2);
+			std::cout << writeTag("Comment", csvArgs.at(3), 2);
+			std::cout << writeTag("Event", csvArgs.at(4), 2);
+			std::cout << "\t</Event>\n";
+		}
+		std::cout << "</Catalog>\n";
+		return true;
+	}
+
+	
+	ImageHistoryLog::ImageHistoryLog() : LogDocument(std::make_shared<ImageHistorySchema>()) {
+		// TODO Auto-generated constructor stub
+
+	}
+
+	ImageHistoryLog::~ImageHistoryLog() {
+		// TODO Auto-generated destructor stub
+	}
+
+	bool ImageHistoryLog::writeHuman() {
+		for (std::list<std::string>::iterator i = begin(); i != end(); i++) {
+			std::cout << *i << '\n';
+		}
+		return true;
+	}
+	
+	bool ImageHistoryLog::writeJson() {
+		return true;
+	}
+
+	bool ImageHistoryLog::writeCSV() {
+		for (std::list<std::string>::iterator i = begin(); i != end(); i++) {
+			std::cout << *i << '\n';
+		}
+		return true;
+	}
+
+	bool ImageHistoryLog::writeXML() {
+		std::cout << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+			<< "<History ordering=\"date\" from=\"2015-03-6 12.10.45\" to=\"2015-03-6 12.10.45\">\n";
+
+		for (std::list<std::string>::iterator i = begin(); i != end(); i++) {
+			std::cout << *i << '\n';
+			CSVArgs csvArgs(',');
+			if (csvArgs.process(i->c_str()) == false) {
+				return false;
+			}
+			std::cout << "\t<Event>\n";
+			std::cout << writeTag("DateTime", csvArgs.at(0), 2);
+			std::cout << writeTag("ImagePage", csvArgs.at(1), 2);
+			std::cout << writeTag("Value", csvArgs.at(2), 2);
+			std::cout << writeTag("Comment", csvArgs.at(3), 2);
+			std::cout << writeTag("Event", csvArgs.at(4), 2);
+			std::cout << "\t</Event>\n";
+		}
+		std::cout << "</Catalog>\n";
+		return true;
+	}
+	
 
 } //namespace simplearchive

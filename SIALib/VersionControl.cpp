@@ -44,8 +44,7 @@
 
 #include "ImageContainer.h"
 #include "HistoryEvent.h"
-#include "ImageHistory.h"
-#include "SystemHistory.h"
+#include "History.h"
 #include "CLogger.h"
 #include "Version.h"
 #include "CDate.h"

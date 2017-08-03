@@ -36,6 +36,7 @@
 #include "LogDocument.h"
 #include "CSVArgs.h"
 #include <sstream>
+#include "MetaType.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -45,7 +46,7 @@ static char THIS_FILE[] = __FILE__;
 
 namespace simplearchive {
 
-LogDocument::LogDocument() {
+	LogDocument::LogDocument(std::shared_ptr<MTTableSchema> tableSchema) : m_tableSchema(tableSchema) {
 	// TODO Auto-generated constructor stub
 
 }
@@ -54,14 +55,51 @@ LogDocument::~LogDocument() {
 	// TODO Auto-generated destructor stub
 }
 
-bool LogDocument::write() {
-	for (std::list<std::string>::iterator i = begin(); i != end(); i++) {
-		std::cout << *i << '\n';
+bool LogDocument::write(FormatType formatType) {
+	switch (formatType) {
+	case FormatType::XML:
+		return writeXML();
+	case FormatType::Json:
+		return writeJson();
+	case FormatType::Human:
+		return writeHuman();
+	case FormatType::csv:
+		return writeCSV();
+	case FormatType::unknown:
+	default:
+		break;
 	}
+	return false;
+}
+
+bool iequals(const std::string& a, const std::string& b)
+{
+	unsigned int sz = a.size();
+	if (b.size() != sz)
+		return false;
+	for (unsigned int i = 0; i < sz; ++i)
+		if (tolower(a[i]) != tolower(b[i]))
+			return false;
 	return true;
 }
 
-
+LogDocument::FormatType LogDocument::parse(const char *str) {
+	std::string typeStr = str;
+	
+	if (iequals(typeStr,"XML")) {
+		return FormatType::XML;
+	}
+	else if (iequals(typeStr, "Json")) {
+		return FormatType::Json;
+	}
+	else if (iequals(typeStr, "csv")) {
+		return FormatType::csv;
+	}
+	else if (iequals(typeStr, "human")) {
+		return FormatType::Human;
+	}
+	return FormatType::unknown;
+}
 
 std::string LogDocument::writeTag(const char *tag, const std::string& value, int tab) {
 	std::ostringstream xml;

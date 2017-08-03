@@ -39,6 +39,7 @@
 #include "AppOptions.h"
 #include "argvparser.h"
 #include "ExifDate.h"
+#include "LogDocument.h"
 
 namespace simplearchive {
 
@@ -172,6 +173,7 @@ public:
 		CM_Unlock,      // Unlock working images in the repository so that no other user can commit changes to them.
 		CM_History,		// Show image change hisory for an image or images
 		CM_Prop,        // Show images properties.
+		CM_Log,        // Show images properties.
 		CM_Unknown
 	};
 
@@ -206,6 +208,8 @@ private:
 	static std::string m_imageAddress;
 	static std::string m_distinationPath;
 	static std::string m_filePath;
+	static LogDocument::FormatType m_formatType;
+
 	ShowCommandOption m_showCommandOption;
 
 	static DefaultArgumentsContainer defaultArgumentsContainer;
@@ -251,6 +255,7 @@ public:
 	bool getUseDateToday();
 	bool isDataForced();
 	ExifDate &getArchiveDate();
+	LogDocument::FormatType& getFormatType();
     //* Ge The Show Command Option (only if the show command active).
 	ShowCommandOption getShowCommandOption() { return m_showCommandOption; };
 

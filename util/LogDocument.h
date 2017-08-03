@@ -36,19 +36,41 @@
 #define LOGDOCUMENT_H_
 #include <string>
 #include <list>
+#include <memory>
+
 namespace simplearchive {
 /**
  *
  */
+
+class MTTableSchema;
+
+
+
 class LogDocument : public std::list<std::string> {
+public:
+	enum FormatType {
+		XML,
+		Json,
+		Human,
+		csv,
+		unknown
+	};
 protected:
 	std::string writeTag(const char *tag, const std::string& value, int tab);
 	std::string writeTag(const char *tag, const int value, int tab);
+	std::shared_ptr<MTTableSchema> m_tableSchema;
 public:
-	LogDocument();
+	LogDocument(std::shared_ptr<MTTableSchema> tableSchema);
 	virtual ~LogDocument();
-	virtual bool write();
+	bool write(FormatType formatType);
+
+	virtual bool writeHuman() = 0;
 	virtual bool writeXML() = 0;
+	virtual bool writeCSV() = 0;
+	virtual bool writeJson() = 0;
+
+	static FormatType parse(const char *str);
 };
 
 } /* namespace simplearchive */

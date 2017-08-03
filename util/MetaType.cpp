@@ -610,20 +610,7 @@ bool MTTable::read(const char *path, const char *filename) {
 		}
 	}
 
-	// make this more robust??
-	/*
-	while (file.getline(text, 1024 * 2)) {
-		if (strlen(text) > 0) {
-			if (fromString(text) == false) {
-				ErrorCode::setErrorCode(SIA_ERROR::READ_ERROR);
-				return false;
-			}
-		}
-		else {
-			break;
-		}
-	}
-	*/
+	
 	file.close();
 
 	return true;

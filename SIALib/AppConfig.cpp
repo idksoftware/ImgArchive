@@ -211,6 +211,38 @@ namespace simplearchive {
 		
 	}
 
+	void CAppConfig::settup() {
+		getWorkspacePath();
+		getMasterPath();
+		getDerivativePath();
+		getTempPath();
+		getToolsPath();
+		getHookPath();
+		getMetadataTemplatePath();
+		getLogPath();
+		getIndexPath();
+		getHistoryPath();
+		getExternalCommandLine();
+		getExifMapPath();
+		getConfigPath();
+	    getHomePath();
+		getMasterViewPath();
+		getDatabasePath();
+		getBackupDestinationPath();
+		getBackupMediaSize();
+		if (isFromDateSet() == true) {
+			getFromDate().toString();
+		}
+		if (isToDateSet() == true) {
+			getToDate().toString();
+		}
+		isDryRun();
+		isQuiet();
+		isVerbose();
+		getLogLevel();
+	}
+
+
 	/*
 		File values override the default and envroment 
 	*/

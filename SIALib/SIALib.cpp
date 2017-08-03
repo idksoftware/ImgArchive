@@ -56,8 +56,7 @@
 #include "ArchiveObject.h"
 #include "CSVDBFile.h"
 #include "HistoryEvent.h"
-#include "ImageHistory.h"
-#include "SystemHistory.h"
+#include "History.h"
 #include "CSVDatabase.h"
 #include "HookCmd.h"
 #include "ViewManager.h"
@@ -433,7 +432,13 @@ namespace simplearchive {
 		
 	}
 
-	
+	bool SIALib::log(const char *filepath, LogDocument::FormatType& formatType) {
+		if (ArchiveObject::get().imageHistory(filepath, formatType) == false) {
+			return false;
+		}
+		return true;
+
+	}
 
 	bool SIALib::listContents(const char *addressScope) {
 		if (ArchiveObject::get().listContents(addressScope) == false) {

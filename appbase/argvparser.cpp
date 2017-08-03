@@ -334,7 +334,7 @@ ArgvParser::parse(int _argc, char ** _argv)
 			if (commandListFound) {
 				for (vector<string>::const_iterator opt = ii->second.begin(); opt != ii->second.end(); opt++) {
 					std::string s = *opt;
-					printf("%s", s.c_str());
+					//printf("%s", s.c_str());
 				}
 
 			}

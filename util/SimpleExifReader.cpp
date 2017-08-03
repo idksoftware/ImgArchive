@@ -165,7 +165,7 @@ namespace {
 		else {
 			int j = 0;
 			char *outBuf = new char[num_components];
-			for (int i = 0; i < num_components; i++) {
+			for (unsigned i = 0; i < num_components; i++) {
 				unsigned char c = (unsigned char)*(buf + base + data + i);
 				if (c == 0) {
 					continue;

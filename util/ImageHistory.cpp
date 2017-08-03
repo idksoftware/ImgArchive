@@ -45,12 +45,15 @@
 #include "LogName.h"
 #include "ExifDateTime.h"
 #include "SAUtils.h"
-#include "HistoryLog.h"
+#include "History.h"
 #include "CSVArgs.h"
 #include "SystemHistory.h"
 #include "ArchivePath.h"
 #include "ErrorCode.h"
 #include "PathController.h"
+
+
+
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -59,6 +62,12 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 namespace simplearchive {
+
+	
+
+
+// This class is used to write the log in normal operation. However reading the 
+// log will be done by the MTRow 
 
 class HistoryItem {
 	std::string m_comment;
@@ -69,12 +78,12 @@ class HistoryItem {
 	std::string m_version;
 public:
 	HistoryItem();
-	/*
-	 * 14.06.12.12.16.12:56:first checkin:checkin
-	 */
+	
+	// 14.06.12.12.16.12:56:first checkin:checkin
+	
 	HistoryItem(const char *dataString) {
 		m_data = dataString;
-		CSVArgs csvArgs(':');
+		CSVArgs csvArgs(',');
 		csvArgs.process(dataString);
 		m_date = csvArgs.at(0);
 		m_version = csvArgs.at(1);
@@ -96,7 +105,7 @@ public:
 	//bool add(const char *date, const char *version, int comment, const char *event);
 
 	std::string &toString() {
-		m_data = m_date + ":" + m_version + ":" + m_filepath +":" + m_comment +":" + m_event;
+		m_data = m_date + "," + m_version + "," + m_filepath +"," + m_comment +"," + m_event;
 		return m_data;
 	}
 
@@ -240,61 +249,33 @@ bool ImageHistory::writeLog(HistoryItem &item, const char *path) {
 	return true;
 }
 
-/*
-bool ImageHistory::read(const char *filepath) {
-	char text[256];
-	std::ifstream file(filepath);
-	if (file.is_open() == false) {
-		return false;
-	}
 
-	while (file.getline(text, 100)) {
-		m_eventList->push_back(HistoryItem(text));
-	}
-	file.close();
 
-	return true;
-}
-*/
+
 /*
 std::string History::getHistory(CDate from, CDate to) {
 	std::string str;
 	return str;
 }
 */
-/*
-std::auto_ptr<HistoryLog>  History::getEntries(int daysAgo) {
-	CDate date = CDate::daysAgo(daysAgo);
 
-	std::vector<std::string> fileList;
-	std::string filepath = "X";
-	FileList_Ptr filelist = SAUtils::getFiles_(m_folder.c_str());
-	std::string dateString = LogName::dateString(date);
-	std::auto_ptr<HistoryLog> historyLog(new HistoryLog);
-	for (std::vector<std::string>::iterator i = filelist->begin(); i != filelist->end(); i++) {
-		std::string logFile = *i;
+std::shared_ptr<ImageHistoryLog>  ImageHistory::getEntries(const char *filepath) {
+	
+	PathController indexController;
+	indexController.setRoot(m_index.c_str());
+	indexController.split(filepath);
+	indexController.makeImagePath("hst");
 
-		if (logFile.at(0) == '.') {
-			continue;
-		}
-		std::string logFileNoExt = SAUtils::getFilenameNoExt(logFile.c_str());
-		std::string datePart = logFileNoExt.substr(4,8);
-		//printf("datePart: %s dateString: %s\n", datePart.c_str(), dateString.c_str());
-		if (dateString.compare(datePart) == 0) {
-			//printf("%s\n", logFile->c_str());
-			readLog(logFile.c_str(), *historyLog);
-
-		}
-	}
-	return historyLog;
+	std::string indexPath = indexController.getFullPath();;
+	
+	std::shared_ptr<ImageHistoryLog> log = std::make_shared<ImageHistoryLog>();
+	readLog(indexPath.c_str(), *log);
+	return log;
 }
-*/
-/*
-bool History::readLog(const char *logFile, HistoryLog &historyLog) {
-	std::string path = m_folder;
-	path += '/';
-	path += logFile;
-	std::ifstream file(path.c_str());
+
+bool ImageHistory::readLog(const char *logFile, ImageHistoryLog &historyLog) {
+	
+	std::ifstream file(logFile);
 	//file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 	if (!file.is_open()) {
 		return false;
@@ -307,7 +288,7 @@ bool History::readLog(const char *logFile, HistoryLog &historyLog) {
 	//HistoryLog
 	return true;
 }
-*/
+
 /*
 std::string History::getHistory(int entrys) {
 	std::string str;

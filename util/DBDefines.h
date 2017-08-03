@@ -402,6 +402,8 @@ enum class MetadataObjectIndex {
 #define DB_VERSION						"Version"
 #define DB_EDITOR						"EditorSoftware"
 #define DB_VERSIONPATH						"VersionPath"
+#define DB_EVENT						"Event"
+
 /*
 keywords are used to find things via search engines; tags are used to find things within your own Archive.
 So, you would use keywords to help label your article so when people search on Google, they hopefully use

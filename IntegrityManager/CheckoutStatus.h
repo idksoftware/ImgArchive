@@ -28,6 +28,7 @@ namespace simplearchive {
 		bool showUncheckedOutChanges(const char *path);
 		bool checkout(const char *imagePath);
 		bool checkin(const char *imagePath);
+		//bool uncheckout(const char *imagePath);
 	};
 
 };

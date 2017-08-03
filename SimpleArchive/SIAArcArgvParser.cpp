@@ -55,7 +55,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineOption("view", "View commands", ArgvParser::MasterOption);
 	defineOption("show", "Show details", ArgvParser::MasterOption);
 	defineOption("prop", "Manage image properties", ArgvParser::MasterOption);
-
+	defineOption("log", "Show history log", ArgvParser::MasterOption);
 
 	/*
 	defineOption("b", "Goes through the motions of running the subcommand but makes no\nactual changes ether disk or repository.", ArgvParser::NoOptionAttribute);
@@ -101,6 +101,8 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineOption("r", "location of the archive root folder.", ArgvParser::NoOptionAttribute);
 	defineOptionAlternative("r", "root");
 
+	defineOption("ft", "text output format type. Can be \"Humam\", \"XML\" \"Json\" or \"cvs\" i.e format-type=XML.", ArgvParser::OptionRequiresValue);
+	defineOptionAlternative("l", "format-type");
 
 	defineOption("l", "Temporarily changes the logging level for the scope of this command session.", ArgvParser::OptionRequiresValue);
 	defineOptionAlternative("l", "logging-level");
@@ -128,9 +130,15 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineCommandOption("checkout", "comment");
 	defineCommandOption("checkout", "image-address");
 
+	defineCommandOption("uncheckout", "comment");
+	defineCommandOption("uncheckout", "image-address");
+
 	defineCommandOption("export", "comment");
 	defineCommandOption("export", "logging-level");
 	defineCommandOption("export", "dist-path");
+
+	defineCommandOption("log", "image-address");
+	defineCommandOption("log", "format-type");
 
 	ArgvParser::ParserResults res = parse(argc, argv);
 
@@ -145,13 +153,13 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	case ArgvParser::ParserRequiredOptionMissing:
 	case ArgvParser::ParserHelpRequested:
 		errStr = parseErrorDescription(res);
-		printf("%s", errStr.c_str());
+		//printf("%s", errStr.c_str());
 		return false;
 	case ArgvParser::GeneralHelpRequested:
-		printf("%s", generalHelp(80).c_str());
+		//printf("%s", generalHelp(80).c_str());
 		return false;
 	case ArgvParser::TopicHelpRequested:
-		printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+		//printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 		return false;
 	default:
 		return false;
@@ -240,16 +248,16 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 		if (foundOption("file") == true) {
 			appOptions.m_filePath = optionValue("file");
 			appOptions.m_usingFile = true;
-			printf(appOptions.m_filePath.c_str()); printf("\n");
+			//printf(appOptions.m_filePath.c_str()); printf("\n");
 		}
 
 		if (foundOption("comment") == true) {
 			appOptions.m_comment = optionValue("comment");
-			printf(appOptions.m_comment.c_str()); printf("\n");
+			//printf(appOptions.m_comment.c_str()); printf("\n");
 		}
 		if (foundOption("archive-path") == true) {
 			std::string opt = optionValue("archive-path");
-			printf(opt.c_str()); printf("\n");
+			//printf(opt.c_str()); printf("\n");
 			config.setWorkspacePath(opt.c_str());
 		}
 
@@ -260,21 +268,21 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 
 		if (foundOption("image-address") == true) {
 			appOptions.m_imageAddress = optionValue("image-address");
-			printf(appOptions.m_imageAddress.c_str()); printf("\n");
+			//printf(appOptions.m_imageAddress.c_str()); printf("\n");
 		}
 		if (foundOption("comment") == true) {
 			appOptions.m_comment = optionValue("comment");
-			printf(appOptions.m_comment.c_str()); printf("\n");
+			//printf(appOptions.m_comment.c_str()); printf("\n");
 		}
 		if (foundOption("archive-path") == true) {
 			std::string opt = optionValue("archive-path");
-			printf(opt.c_str()); printf("\n");
+			//printf(opt.c_str()); printf("\n");
 			config.setWorkspacePath(opt.c_str());
 		}
 
 		const auto& args = ArgvParser::getDefaultArgumentsContainer();
 		for (auto i = args.begin(); i != args.end(); i++) {
-			printf("%s\n", i->c_str());
+			//printf("%s\n", i->c_str());
 			appOptions.setDefaultArguments(*i);
 		}
 
@@ -284,15 +292,15 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	else if (command("uncheckout") == true) {
 		if (foundOption("image-address") == true) {
 			appOptions.m_imageAddress = optionValue("image-address");
-			printf(appOptions.m_imageAddress.c_str()); printf("\n");
+			//printf(appOptions.m_imageAddress.c_str()); printf("\n");
 		}
 		if (foundOption("comment") == true) {
 			appOptions.m_comment = optionValue("comment");
-			printf(appOptions.m_comment.c_str()); printf("\n");
+			//printf(appOptions.m_comment.c_str()); printf("\n");
 		}
 		if (foundOption("archive-path") == true) {
 			std::string opt = optionValue("archive-path");
-			printf(opt.c_str()); printf("\n");
+			//printf(opt.c_str()); printf("\n");
 			config.setWorkspacePath(opt.c_str());
 		}
 
@@ -303,12 +311,12 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 		if (foundOption("checked-out") == true) {
 			appOptions.m_showCommandOption = appOptions.ShowCommandOption::SC_ShowCheckedOut;
 			appOptions.m_imageAddress = optionValue("checked-out");
-			printf(appOptions.m_imageAddress.c_str()); printf("\n");
+			//printf(appOptions.m_imageAddress.c_str()); printf("\n");
 		}
 		if (foundOption("unchecked-out") == true) {
 			appOptions.m_showCommandOption = appOptions.ShowCommandOption::SC_ShowUncheckedOutChanges;
 			appOptions.m_imageAddress = optionValue("checked-out");
-			printf(appOptions.m_imageAddress.c_str()); printf("\n");
+			//printf(appOptions.m_imageAddress.c_str()); printf("\n");
 		}
 		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Show);
 		cmdFound = true;
@@ -317,7 +325,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 		if (foundOption("list") == true) {
 			//m_showCommandOption = ShowCommandOption::SC_ShowCheckedOut;
 			appOptions.m_imageAddress = optionValue("list");
-			printf(appOptions.m_imageAddress.c_str()); printf("\n");
+			//printf(appOptions.m_imageAddress.c_str()); printf("\n");
 		}
 		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Prop);
 		cmdFound = true;
@@ -325,7 +333,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	else if (command("export") == true) {
 		if (foundOption("dist-path") == true) {
 			appOptions.m_distinationPath = optionValue("dist-path");
-			printf(appOptions.m_distinationPath.c_str()); printf("\n");
+			//printf(appOptions.m_distinationPath.c_str()); printf("\n");
 		}
 		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Export);
 		cmdFound = true;
@@ -336,44 +344,69 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 		if (foundOption("archive-path") == true) {
 
 			std::string opt = optionValue("archive-path");
-			printf(opt.c_str()); printf("\n");
+			//printf(opt.c_str()); printf("\n");
 			config.setWorkspacePath(opt.c_str());
 		}
 		/*
 		if (foundOption("dist-path") == true) {
 
 		std::string opt = optionValue("dist-path");
-		printf(opt.c_str()); printf("\n");
+		//printf(opt.c_str()); printf("\n");
 		config.setBackupDestinationPath(opt.c_str());
 
 		}
 		if (foundOption("size") == true) {
 
 		std::string opt = optionValue("size");
-		printf(opt.c_str()); printf("\n");
+		//printf(opt.c_str()); printf("\n");
 		config.setBackupMediaSize(opt.c_str());
 
 		}
 		if (foundOption("from-date") == true) {
 
 		std::string opt = optionValue("from-date");
-		printf(opt.c_str()); printf("\n");
+		//printf(opt.c_str()); printf("\n");
 		config.setFromDate(opt.c_str());
 
 		}
 		*/
 		if (foundOption("name") == true) {
 			std::string opt = optionValue("name");
-			printf(opt.c_str()); printf("\n");
+			//printf(opt.c_str()); printf("\n");
 			appOptions.setName(opt.c_str());
 		}
 
 		cmdFound = true;
 	}
 
+	else if (command("log") == true) {
 
+		if (foundOption("image-address") == true) {
+			appOptions.m_imageAddress = optionValue("image-address");
+			//printf(appOptions.m_imageAddress.c_str()); printf("\n");
+		}
+		
+		if (foundOption("archive-path") == true) {
+			std::string opt = optionValue("archive-path");
+			//printf(opt.c_str()); printf("\n");
+			config.setWorkspacePath(opt.c_str());
+		}
 
+		if (foundOption("format-type") == true) {
+			std::string opt = optionValue("format-type");
+			//printf(opt.c_str()); printf("\n");
+			appOptions.m_formatType = LogDocument::parse(opt.c_str());
+		}
 
+		const auto& args = ArgvParser::getDefaultArgumentsContainer();
+		for (auto i = args.begin(); i != args.end(); i++) {
+			//printf("%s\n", i->c_str());
+			appOptions.setDefaultArguments(*i);
+		}
+
+		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Log);
+		cmdFound = true;
+	}
 	else if (command("version") == true) {
 		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Version);
 		cmdFound = true;
@@ -391,21 +424,21 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	if (foundOption("quiet") == true) {
 
 
-		printf("quiet=On\n");
+		//printf("quiet=On\n");
 		config.setQuiet(true);
 	}
 
 	if (foundOption("logging-level") == true) {
 
 		std::string opt = optionValue("logging-level");
-		printf(opt.c_str()); printf("\n");
+		//printf(opt.c_str()); printf("\n");
 		config.setLogLevel(opt.c_str());
 	}
 
 	if (foundOption("dry-run") == true) {
 
 		std::string opt = optionValue("dry-run");
-		printf(opt.c_str()); printf("\n");
+		//printf(opt.c_str()); printf("\n");
 
 		//config.setDryRun(opt.c_str());
 	}
@@ -413,14 +446,14 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	if (foundOption("media-path") == true) {
 
 		std::string opt = optionValue("media-path");
-		printf(opt.c_str()); printf("\n");
+		//printf(opt.c_str()); printf("\n");
 		//config.setDryRun(opt.c_str());
 	}
 
 	if (foundOption("media-size") == true) {
 
 		std::string opt = optionValue("media-size");
-		printf(opt.c_str()); printf("\n");
+		//printf(opt.c_str()); printf("\n");
 		//config.setDryRun(opt.c_str());
 	}
 

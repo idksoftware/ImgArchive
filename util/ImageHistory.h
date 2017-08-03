@@ -45,7 +45,7 @@ namespace simplearchive {
 #define HISTORY_FILE "history.dat"
 class EventList;
 class CDate;
-class HistoryLog;
+class ImageHistoryLog;
 
 /**
 	This is the Image only log for one image.
@@ -63,7 +63,7 @@ private:
 	ImageHistory& operator = (const ImageHistory&) { return *this; };
 	
 	bool writeLog(HistoryItem &item, const char *path);
-	bool readLog(const char *logFile, HistoryLog &historyLog);
+	bool readLog(const char *logFile, ImageHistoryLog &historyLog);
 public:
 
 	ImageHistory();
@@ -76,10 +76,9 @@ public:
 	
 	bool add(const char *filename, const char *comment);
 	bool add(const char *filename, int version, const char *comment, const HistoryEvent &he);
-	
 	bool add(const char *filename, const char *version, const char *comment, const HistoryEvent &he);
 	
-	std::shared_ptr<HistoryLog> getEntries(int daysAgo);
+	std::shared_ptr<ImageHistoryLog> getEntries(const char *imagePath);
 	
 };
 

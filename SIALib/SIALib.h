@@ -37,7 +37,7 @@
 
 #include <string>
 #include <memory>
-//#include "ExifDate.h"
+#include "LogDocument.h"
 #include "ExifDateTime.h"
 /*
 */
@@ -46,6 +46,8 @@ namespace simplearchive {
 
 	class ArchiveBuilder;
 	class ArchiveObject;
+	
+
 	class SIALib
 	{
 	public:
@@ -115,6 +117,9 @@ namespace simplearchive {
 		bool checkDisk();
 
 		bool validate(const char *archivePath, const char *workspacePath, const char *homePath, Scope, bool repair = false);
+
+		bool log(const char *filepath, LogDocument::FormatType& formatType);
+	
 	};
 
 }

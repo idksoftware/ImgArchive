@@ -400,7 +400,7 @@ public:
 	bool fromString(const std::string &str) {
 		CSVArgs csvArgs(m_delim);
 		csvArgs.process(str);
-		printf("Row size = %d\n", csvArgs.size());
+		
 		if (m_schema.size() != csvArgs.size() && m_schema.size() < (csvArgs.size() - 1)) {
 			// Note if the last item is null then csvArgs will be one less then m_schema size
 			ErrorCode::setErrorCode(SIA_ERROR::ROW_SCHEMA_MISMATCH);

@@ -74,7 +74,7 @@ std::string SIAArcAppOptions::m_filePath;
 int SIAArcAppOptions::m_udpPortNum = 64321;
 std::string SIAArcAppOptions::m_udpAddress = "127.0.0.1";
 int SIAArcAppOptions::m_tcpPortNum = 64322;
-
+LogDocument::FormatType SIAArcAppOptions::m_formatType = LogDocument::FormatType::Human;
 
 
 SIAArcAppOptions::SIAArcAppOptions() {
@@ -697,6 +697,10 @@ void SIAArcAppOptions::setDefaultArguments(std::string s) {
 
 DefaultArgumentsContainer& SIAArcAppOptions::getDefaultArguments() {
 	return defaultArgumentsContainer;
+}
+
+LogDocument::FormatType& SIAArcAppOptions::getFormatType() {
+	return m_formatType;
 }
 
 } /* namespace simplearchive */
