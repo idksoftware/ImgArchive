@@ -40,7 +40,9 @@
 #include "MetaType.h"
 #include "SAUtils.h"
 #include "CSVDBVisitor.h"
-
+#include "PathController.h"
+#include "DBDefines.h"
+#include "MetadataObject.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -222,30 +224,41 @@ const MetadataObject *CSVDatabase::get(unsigned int idx, const char *path) {
 	return 0;
 }
 
-std::shared_ptr<MetadataObject> CSVDatabase::get(const char *name, const char *path) {
+SharedMTRow CSVDatabase::get(const char *name, const char *path) {
 	if (SAUtils::DirExists(m_dbpath.c_str()) == false) {
 		throw std::exception();
 	}
 
-	std::string relPath = path;
-	std::string dayStr = relPath.substr(0,10);
-	std::string yearStr = relPath.substr(0,4);
-	std::string imagename = relPath.substr(11,relPath.length() - 11);
-	std::string fullPath = m_dbpath;
-	fullPath += '/';
-	fullPath += yearStr;
-	if (SAUtils::DirExists(fullPath.c_str()) == false) {
-		throw std::exception();
+	PathController pathController(m_dbpath.c_str());
+	if (pathController.isValid() == false) {
+		return false;
 	}
-	fullPath += '/';
-	fullPath += dayStr;
-	if (SAUtils::DirExists(fullPath.c_str()) == false) {
-		throw std::exception();
+	pathController.setRelativePath(path);
+	
+	pathController.makeImagePath();
+	std::string fullPath = pathController.getFullPath();
+	if (pathController.splitPathAndFile(fullPath.c_str()) == false) {
+		return false;
 	}
-	//MTDatabase &db = *m_mtDatabase;
-	//MetadataSet metadataSet(db, fullPath.c_str());
-	//return metadataSet.get(name);
-	return std::make_shared<MetadataObject>();
+	MetadataPartition metadataPartition;
+	std::string filename = metadataPartition.getSchema().getName() + ".csv";
+	std::string rootPath = pathController.getRoot();
+	std::string imagename = pathController.getImage();
+	if (metadataPartition.read(rootPath.c_str(), filename.c_str()) == false) {
+		if (ErrorCode::getErrorCode() != SIA_ERROR::OPEN_ERROR) {
+			// file may not exist
+			throw std::exception();
+		}
+	}
+	const MTSchema& info = metadataPartition.getSchema(static_cast<int>(MetadataObjectIndex::MD_FILENAME_IDX));
+	MTColumn match(info);
+	match.set(name);
+	metadataPartition.find(match);
+	SharedMTRow row = metadataPartition.getCurrentRow();
+	SharedMTRow tmprow = metadataPartition.makeRow();
+	tmprow->join(*row);
+	return tmprow;
+	
 }
 
 bool CSVDatabase::put(const char *name, const char *path, MetadataObject &mo) {

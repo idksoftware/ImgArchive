@@ -135,6 +135,10 @@ public:
 		return at(i).getName();
 	}
 
+	const MTSchema& getColumnSchema(int i) const {
+		return at(i);
+	}
+
 	const unsigned int size() const {
 		return std::vector<MTSchema>::size();
 	}
@@ -168,8 +172,11 @@ class MTColumn {
 	}
 public:
 	
-	MTColumn(MTSchema &info);
+	MTColumn(const MTSchema &info);
 	virtual ~MTColumn();
+	MTColumn(const MTColumn& r);
+	MTColumn& operator=(const MTColumn& r);
+
 	bool isNull() {
 		if (m_object != 0) {
 			return false;
@@ -286,7 +293,7 @@ public:
 
 class MTRow : public std::vector<MTColumn *> {
 	MTTableSchema &m_schema;
-	std::string m_text;
+	//std::string m_text;
 	char m_delim;
 protected:
 	//MTTableSchema& getSchema() {
@@ -336,31 +343,21 @@ public:
 		}
 	}
 
-	std::string &toDebugString() {
-		m_text.clear();
+	std::string toDebugString() {
+		std::string text;
 		bool first = true;
 		for (std::vector<MTColumn *>::iterator i = this->begin(); i != this->end(); i++) {
 			MTColumn *column = *i;
 			std::shared_ptr<MTSchema> mtSchema = column->getMTSchemaItem();
-			m_text += mtSchema->getName();
+			text += mtSchema->getName();
 			if (mtSchema == nullptr) {
 				continue;
 			}
-			m_text += ',';
-			m_text += column->toString();
-			/*
-			if (first) {
-				first = false;
-				m_text = column->toString();
-			}
-			else {
-				m_text += ',';
-				m_text += column->toString();
-			}
-			*/
-			m_text += '\n';
+			text += ',';
+			text += column->toString();
+			text += '\n';
 		}
-		return m_text;
+		return text;
 	}
 
 	std::string escapeString(std::string &s) {
@@ -370,8 +367,8 @@ public:
 		return ('\"' + s + '\"');
 	}
 
-	std::string &toString() {
-		m_text.clear();
+	std::string toString() {
+		std::string text;
 		bool first = true;
 		for (std::vector<MTColumn *>::iterator i = this->begin(); i != this->end(); i++) {
 			MTColumn *column = *i;
@@ -382,14 +379,14 @@ public:
 			
 			if (first) {
 			first = false;
-			m_text = escapeString(column->toString());
+			text = escapeString(column->toString());
 			}
 			else {
-			m_text += m_delim;
-			m_text += escapeString(column->toString());
+			text += m_delim;
+			text += escapeString(column->toString());
 			}
 		}
-		return m_text;
+		return text;
 	}
 
 	bool fromString(const char *s) {
@@ -434,10 +431,14 @@ public:
 
 using SharedMTRow = std::shared_ptr<MTRow>;
 class MTTable : public std::vector<SharedMTRow> {
-	std::unique_ptr<MTTableSchema> m_TableSchema;
+
+	std::shared_ptr<MTTableSchema> m_TableSchema;
+	int rowCursor;
 public:
+	const int NOT_FOUND = -1;
 	MTTable(MTTableSchema *pSchemaTable) {
-		m_TableSchema.reset(pSchemaTable);
+		m_TableSchema = std::make_shared<MTTableSchema>(*pSchemaTable);
+		rowCursor = NOT_FOUND;
 	};
 	virtual ~MTTable() {};
 	MTTableSchema &getSchema() const {
@@ -450,12 +451,35 @@ public:
 	/// reads a csv GPSProperties file
 	bool read(const char *path, const char *filename);
 
+	
+
 	/// writes a csv GPSProperties file
 	bool write(const char *path, const char *filename);
 
 	bool truncate() {
 		clear();
 		return true;
+	}
+
+	void SetRowsetCursorPosition(int pos) {
+		rowCursor = pos;
+		at(rowCursor);
+	}
+
+	const MTSchema& getSchema(int pos) {
+		const MTSchema& s = m_TableSchema->getColumnSchema(pos);
+		return s;
+	}
+	/// create a column that has the column name set and the value to be matched.
+	/// If true the RoCurson will be at the mached row.
+	bool find(MTColumn& column);
+
+	SharedMTRow getCurrentRow() {
+		if (rowCursor == NOT_FOUND) {
+			return nullptr;
+		}
+		SharedMTRow row = at(rowCursor);
+		return row;
 	}
 };
 

@@ -305,20 +305,26 @@ bool SIAArcApp::doRun()
 			return false;	
 		}
 		break;
+	case SIAArcAppOptions::CommandMode::CM_Get:
+		if (siaLib.get(appOptions.getImageAddress(), appOptions.getComment(), appOptions.isForced()) == false) {
+			setError(CLogger::getLastCode(), CLogger::getLastMessage());
+			return false;
+		}
+		break;
 	case SIAArcAppOptions::CommandMode::CM_Checkout:
-		if (siaLib.checkout(appOptions.getImageAddress(), appOptions.getComment()) == false) {
+		if (siaLib.checkout(appOptions.getImageAddress(), appOptions.getComment(), appOptions.isForced()) == false) {
 			setError(CLogger::getLastCode(), CLogger::getLastMessage());
 			return false;
 		}
 		break;
 	case SIAArcAppOptions::CommandMode::CM_Checkin:
-		if (siaLib.checkin(appOptions.getImageAddress(), appOptions.getComment()) == false) {
+		if (siaLib.checkin(appOptions.getImageAddress(), appOptions.getComment(), appOptions.isForced()) == false) {
 			setError(CLogger::getLastCode(), CLogger::getLastMessage());
 			return false;
 		}
 		break;
 	case SIAArcAppOptions::CommandMode::CM_UnCheckout:
-		if (siaLib.uncheckout(appOptions.getImageAddress(), appOptions.getComment()) == false) {
+		if (siaLib.uncheckout(appOptions.getImageAddress(), appOptions.getComment(), appOptions.isForced()) == false) {
 			setError(CLogger::getLastCode(), CLogger::getLastMessage());
 			return false;
 		}

@@ -11,6 +11,8 @@ class PrimaryIndexPath {
 	std::string m_historyPath;
 	std::string m_metadataPath;
 	std::string m_pathToRepository;
+	std::string m_CSVDatabasePath;
+	std::string m_CheckoutStatusPath;
 public:
 	void setRepositoryPath(std::string &pathToRepository);
 	bool settup();
@@ -33,6 +35,14 @@ public:
 
 	const std::string& getPathToRepository() const {
 		return m_pathToRepository;
+	}
+
+	const std::string& getCSVDatabasePath() const {
+		return m_CSVDatabasePath;
+	}
+
+	const std::string& getCheckoutStatusPath() const {
+		return m_CheckoutStatusPath;
 	}
 };
 /**

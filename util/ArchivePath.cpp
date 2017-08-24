@@ -62,6 +62,8 @@ bool PrimaryIndexPath::settup() {
 	m_idxDBPath = m_pathToRepository + INDEX_PATH;
 	m_historyPath = m_pathToRepository + HISTORY_PATH;
 	m_metadataPath = m_pathToRepository + METADATA_PATH;
+	m_CSVDatabasePath = m_pathToRepository + CSVDB_PATH;
+	m_CheckoutStatusPath = m_pathToRepository + CHKSTATUS_PATH;
 
 	if (SAUtils::DirExists(m_ImageIndexPath.c_str()) == false) {
 		if (SAUtils::mkDir(m_ImageIndexPath.c_str()) == false) {
@@ -83,6 +85,17 @@ bool PrimaryIndexPath::settup() {
 
 	if (SAUtils::DirExists(m_metadataPath.c_str()) == false) {
 		if (SAUtils::mkDir(m_metadataPath.c_str()) == false) {
+			return false;
+		}
+	}
+
+	if (SAUtils::DirExists(m_CSVDatabasePath.c_str()) == false) {
+		if (SAUtils::mkDir(m_CSVDatabasePath.c_str()) == false) {
+			return false;
+		}
+	}
+	if (SAUtils::DirExists(m_CheckoutStatusPath.c_str()) == false) {
+		if (SAUtils::mkDir(m_CheckoutStatusPath.c_str()) == false) {
 			return false;
 		}
 	}
@@ -173,8 +186,7 @@ bool RepositoryPath::settupRelative(std::string &yyyymmddStr) {
 	}
 	m_dataPath = m_yyyymmddStrPath + MASTER_DATA_PATH;
 	m_metadataPath = m_yyyymmddStrPath + METADATA_PATH;
-	m_historyPath = m_yyyymmddStrPath + HISTORY_PATH;
-		
+	
 
 	if (SAUtils::DirExists(m_dataPath.c_str()) == false) {
 		if (SAUtils::mkDir(m_dataPath.c_str()) == false) {
@@ -188,18 +200,7 @@ bool RepositoryPath::settupRelative(std::string &yyyymmddStr) {
 		}
 
 	}
-	if (SAUtils::DirExists(m_DBPath.c_str()) == false) {
-		if (SAUtils::mkDir(m_DBPath.c_str()) == false) {
-			return false;
-		}
-
-	}
-	if (SAUtils::DirExists(m_historyPath.c_str()) == false) {
-		if (SAUtils::mkDir(m_historyPath.c_str()) == false) {
-			return false;
-		}
-
-	}
+	
 	
 		
 	//IntegrityManager &integrityManager = IntegrityManager::get();

@@ -39,6 +39,7 @@
 #include <sstream>
 #include <iomanip>
 #include "IntegrityManager.h"
+#include "PathController.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -166,6 +167,10 @@ void ImagePath::createWorkspaceMetadataPath() {
 	if (SAUtils::DirExists(m_workspaceMetadataPath.c_str()) == false) {
 		SAUtils::mkDir(m_workspaceMetadataPath.c_str());
 	}
+	m_workspaceMetadataPath += "/metadata";
+	if (SAUtils::DirExists(m_workspaceMetadataPath.c_str()) == false) {
+		SAUtils::mkDir(m_workspaceMetadataPath.c_str());
+	}
 }
 
 
@@ -173,8 +178,7 @@ void ImagePath::createLocalPaths(std::string localPath)
 {
 	m_localMasterDataPath = localPath + MASTER_DATA_PATH;
 	m_localMasterMetadataPath = localPath + METADATA_PATH;
-	m_localMasterDBPath = localPath + DATABASE_PATH;
-	m_localMasterHistoryPath = localPath + HISTORY_PATH;
+	
 	if (SAUtils::DirExists(localPath.c_str()) == false) {
 		SAUtils::mkDir(localPath.c_str());
 		if (SAUtils::DirExists(localPath.c_str()) == false) {
@@ -183,8 +187,7 @@ void ImagePath::createLocalPaths(std::string localPath)
 	}
 	SAUtils::mkDir(m_localMasterDataPath.c_str());
 	SAUtils::mkDir(m_localMasterMetadataPath.c_str());
-	SAUtils::mkDir(m_localMasterDBPath.c_str());
-	SAUtils::mkDir(m_localMasterHistoryPath.c_str());
+	
 	IntegrityManager &integrityManager = IntegrityManager::get();
 	integrityManager.addDayFolder(m_yyyymmddStr.c_str());
 }
@@ -193,21 +196,10 @@ void ImagePath::createLocalPaths(std::string localPath)
 
 ImagePath::ImagePath(const char *filepath) {
 	IntegrityManager &m_integrityManager = IntegrityManager::get();
-	
-	std::string tmp = filepath;
-	std::string filename;
-	std::string path;
-
-	// This fines the filename from path NEEDS TO BE MOVED INTO UTILS
-	int slashpos = tmp.find_last_of("/");
-	if (slashpos != -1) {
-		filename = tmp.substr(slashpos + 1, tmp.length() - slashpos);
-		setImageName(filename.c_str());
-		path = tmp.substr(0, slashpos);
-	} else {
-		//printf("Path to Image in achive invalid \"%s\"", filepath);
-	}
-	init(path);
+	PathController pathController;
+	pathController.splitShort(filepath);
+	m_imageName = pathController.getImage();
+	init(pathController.getYearday());
 }
 
 bool ImagePath::copyFile(std::string  pathToSourceRoot, std::string file) {

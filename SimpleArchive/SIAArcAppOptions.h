@@ -157,6 +157,7 @@ public:
 	enum class CommandMode {
 		CM_Import,      //< Import(add) one or more images into the archve.
 		CM_Export,      //< Export one or more images out of the archive.
+		CM_Get,         //< Gets images from the archive into the workspace.
 		CM_Checkout,    //< Check-out one or more images out of the archive.
 		CM_Checkin,     //< Check-in one or more images into the archive.
 		CM_UnCheckout,  //< Uncheck out one or more images into the archive, any changes will be lost.
@@ -192,6 +193,7 @@ private:
 	static bool m_eventsOn; // UDP events
 	static bool m_serverOn;
 	static bool m_forceDate; // false;
+	static bool m_force; // false;
 	static bool m_useDate;
 	static bool m_useFileDate;
 	static bool m_useDateToday;
@@ -254,6 +256,8 @@ public:
 	bool getUseFileDate();
 	bool getUseDateToday();
 	bool isDataForced();
+	bool isForced();
+
 	ExifDate &getArchiveDate();
 	LogDocument::FormatType& getFormatType();
     //* Ge The Show Command Option (only if the show command active).

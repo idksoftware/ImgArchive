@@ -161,7 +161,7 @@ namespace simplearchive {
 
 	bool History::logImageHistory(const char *filepath, LogDocument::FormatType formatType) {
 		std::shared_ptr<ImageHistoryLog> log;
-		if ((log = imageHistory->getEntries(filepath)) == false) {
+		if ((log = imageHistory->getEntries(filepath)) == nullptr) {
 			ErrorCode::setErrorCode(SIA_ERROR::INVALID_PATH);
 			return false;
 		}
@@ -231,8 +231,24 @@ namespace simplearchive {
 	}
 
 	bool ImageHistoryLog::writeHuman() {
+		std::cout << "\n---------------------------------------------------\n";
+		std::cout << "Image: " << m_title << '\n';
+		std::cout << "Path : " << m_description << '\n';
+		std::cout << "=====================================================\n";
+		std::cout << "Date Time             version     Event      Comment\n\n";
 		for (std::list<std::string>::iterator i = begin(); i != end(); i++) {
-			std::cout << *i << '\n';
+			//std::cout << *i << '\n';
+			CSVArgs csvArgs(':');
+			if (csvArgs.process(i->c_str()) == false) {
+				return false;
+			}
+
+			std::cout << csvArgs.at(0) << "    ";
+			std::cout << csvArgs.at(1) << "      ";
+			//std::cout << csvArgs.at(2) << "  ";
+			std::cout << csvArgs.at(4) << "  ";
+			std::cout << csvArgs.at(3) << '\n';
+			std::cout << "---------------------------------------------------\n";
 		}
 		return true;
 	}

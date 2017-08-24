@@ -163,6 +163,7 @@
     <ClInclude Include="Environment.h" />
     <ClInclude Include="ExportImages.h" />
     <ClInclude Include="CheckFile.h" />
+    <ClInclude Include="GetImagesManager.h" />
     <ClInclude Include="HookCmd.h" />
     <ClInclude Include="ImageContainer.h" />
     <ClInclude Include="ImageFileReader.h" />
@@ -202,6 +203,7 @@
     <ClCompile Include="DerivativeRepository.cpp" />
     <ClCompile Include="Environment.cpp" />
     <ClCompile Include="ExportImages.cpp" />
+    <ClCompile Include="GetIImagesManager.cpp" />
     <ClCompile Include="HookCmd.cpp" />
     <ClCompile Include="ImageContainer.cpp" />
     <ClCompile Include="ImageFileReader.cpp" />

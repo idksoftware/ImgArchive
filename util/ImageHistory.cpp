@@ -269,7 +269,13 @@ std::shared_ptr<ImageHistoryLog>  ImageHistory::getEntries(const char *filepath)
 	std::string indexPath = indexController.getFullPath();;
 	
 	std::shared_ptr<ImageHistoryLog> log = std::make_shared<ImageHistoryLog>();
-	readLog(indexPath.c_str(), *log);
+
+	if (readLog(indexPath.c_str(), *log) == false) {
+		log = nullptr;
+		return log;
+	}
+	log->setTitle(indexController.getImageName().c_str());
+	log->setDescription(filepath);
 	return log;
 }
 

@@ -32,8 +32,7 @@
 **
 ** #$$@@$$# */
 
-#ifndef DBDEFINES_H_
-#define DBDEFINES_H_
+#pragma once
 /**
  * This file defines the key strings used by the Archiver. This allows consistent
  * key names to be used in the application.
@@ -412,8 +411,6 @@ the words in your archive(or in your archive keyword Metadata).
 
 #define TABLE_METADATA			"metadata"
 #define TABLE_ASSETPROPERTIES	"asset_properties"
-
-#endif /* DBDEFINES_H_ */
 
 
 /*

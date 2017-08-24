@@ -39,6 +39,7 @@
 #include <map>
 #include "DBDefines.h"
 #include "MetaType.h"
+#include "FileInfo.h"
 
 namespace simplearchive {
 
@@ -169,6 +170,15 @@ class MetadataObject : public MTRow {
 	friend class MetadataTemplate;
 public:
 	MetadataObject();
+	MetadataObject(const MTRow &row) : MTRow(m_tableSchema) {
+		
+		for (unsigned int i = 0; i < row.size(); i++) {
+			MTColumn& c1 = *at(i);
+			MTColumn& c2 = *row.at(i);
+			c1 = c2;
+		}
+		
+	}
 	virtual ~MetadataObject();
 
 	//static const char *TableLookup(const char *columnName) const ;
@@ -184,7 +194,7 @@ public:
 		
 	}
 
-	
+	void update(const FileInfo& fileInfo, int seqNo, int version);
 
 	const std::string getApertureString() const {
 		return columnAt(static_cast<int>(MetadataObjectIndex::MD_APERTURE_IDX)).toString();

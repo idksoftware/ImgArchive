@@ -32,6 +32,7 @@ class MetaTypeObject {
 	EType m_type;
 	MetaTypeObject() {
 		m_type = None;
+		
 	};
 	typedef union {
 		double m_double;
@@ -50,6 +51,7 @@ public:
 		m_typeObject.m_string = new std::string(s);
 		m_type = Text;
 	}
+	
 	MetaTypeObject(unsigned long l) {
 		m_typeObject.m_int = l;
 		m_type = Integer;
@@ -57,6 +59,12 @@ public:
 	MetaTypeObject(const ExifDateTime &date) {
 		m_typeObject.m_date = new ExifDateTime(date);
 		m_type = Date;
+	}
+	MetaTypeObject& operator=(const ExifDateTime &date) {
+		delete m_typeObject.m_date;
+		m_typeObject.m_date = new ExifDateTime(date);
+		m_type = Date;
+		return *this;
 	}
 	virtual ~MetaTypeObject() {
 		switch(m_type) {
@@ -157,18 +165,61 @@ const char *MTTypeException::what() const throw() {
 }
 
 
-MTColumn::MTColumn(MTSchema &info) : m_info(new MTSchema(info)) {
+MTColumn::MTColumn(const MTSchema &info) : m_info(new MTSchema(info)) {
 	m_object = 0;
 	m_boundValue = 0;
 }
 
-static int count = 0;
+MTColumn::MTColumn(const MTColumn& r) {
+	m_object = 0;
+	m_boundValue = 0;
+	MTSchema::EItemType type = m_info->getType();
+	if (r.m_object == 0) {
+		m_object = 0;
+	}
+	switch (type) {
+	case MTSchema::Integer:
+		set(r.m_object->getInt());
+		break;
+	case MTSchema::Text:
+		set(r.m_object->getString());
+		break;
+	case MTSchema::Date:
+		set(r.m_object->getDate());
+		break;
+	case  MTSchema::Float:
+		set(r.m_object->getDouble());
+		break;
+	}
+	return;
+}
+
+MTColumn& MTColumn::operator=(const MTColumn& r) {
+	MTSchema::EItemType type = m_info->getType();
+	if (r.m_object == 0) {
+		m_object = 0;
+	}
+	switch (type) {
+	case MTSchema::Integer:
+		set(r.m_object->getInt());
+		break;
+	case MTSchema::Text:
+		set(r.m_object->getString());
+		break;
+	case MTSchema::Date:
+		set(r.m_object->getDate());
+		break;
+	case  MTSchema::Float:
+		set(r.m_object->getDouble());
+		break;
+	}
+	return *this;
+}
+
+
+
 MTColumn::~MTColumn() {
 	if (m_object != 0) {
-		count++;
-		if (count == 33) {
-			int i = 0;
-		}
 		delete m_object;
 	}
 }
@@ -473,7 +524,7 @@ MTRow::MTRow(MTTableSchema &schemaTable) : m_schema(schemaTable), m_delim(',')
 }
 
 MTRow::MTRow(const MTRow &row) : m_schema(row.m_schema), m_delim(row.m_delim) {
-	m_schema = row.m_schema;
+	
 	for (std::vector<MTSchema>::iterator i = m_schema.begin(); i != m_schema.end(); i++) {
 		MTSchema& columnInfo = *i;
 		push_back(new MTColumn(columnInfo));
@@ -576,7 +627,8 @@ bool MTTable::addRow(const MTRow &r) {
 }
 
 bool MTTable::fromString(const std::string &r) {
-	auto rowPtr = std::make_shared<MTRow>(*(m_TableSchema.get()));
+	MTTableSchema& ts = *m_TableSchema;
+	auto rowPtr = std::make_shared<MTRow>(ts);
 	MTRow *row = rowPtr.get();
 	if (!(row->fromString(r))) {
 		return false;
@@ -635,6 +687,64 @@ bool MTTable::write(const char *path, const char *filename) {
 	file << s.str();
 	file.close();
 	return true;
+}
+
+bool MTTable::find(MTColumn& column) {
+	
+	if (rowCursor == NOT_FOUND) {
+		rowCursor = 0;
+	}
+	if (empty()) {
+		return false;
+	}
+	int pos = rowCursor;
+	if (size() <= pos) {
+		return false;
+	}
+	MTSchema& thisSchema = column.getInfo();
+	std::string name = thisSchema.getName();
+	int idx = this->m_TableSchema->getIndex(name.c_str());
+	bool first = true;
+	for (auto i = begin()+pos; i != end(); i++, pos++) {
+		auto row = *i;
+		MTColumn& other = row->columnAt(idx);
+		MTSchema::EItemType type = thisSchema.getType();
+		
+		switch (type) {
+		case MTSchema::Integer:
+			if (other.getULong() == column.getULong()) {
+				rowCursor = pos;
+				return true;
+			}
+			break;
+		case MTSchema::Text:
+			if (other.getString() == column.getString()) {
+				rowCursor = pos;
+				return true;
+			}
+			break;
+		case MTSchema::Date:
+			{
+			ExifDateTime otherDate = other.getDate();
+			ExifDateTime columnDate = column.getDate();
+			if (otherDate == columnDate) {
+				rowCursor = pos;
+				return true;
+			}
+			break;
+			}
+		case  MTSchema::Float:
+			if (other.getDouble() == column.getDouble()) {
+				rowCursor = pos;
+				return true;
+			}
+			break;
+		default:
+			throw MTTypeException("Invalid type");
+		}
+		
+	}
+	return false;
 }
 
 bool MTDatabase::addTable(MTTableSchema *pSchemaTable) {

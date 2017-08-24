@@ -229,7 +229,13 @@ namespace simplearchive {
 			//}
 			// read day folders for this year in Master folder
 			std::string yearMaster = path;
-			m_folderVisitor->onYearFolder(year.c_str());
+			try {
+				m_folderVisitor->onYearFolder(year.c_str());
+			}
+			catch (std::exception /*e*/) {
+				return false;
+			}
+
 			yearMaster += '/';
 			yearMaster += year;
 			FileList_Ptr filelist = SAUtils::getFiles_(yearMaster.c_str());

@@ -60,6 +60,9 @@ protected:
 	std::string writeTag(const char *tag, const std::string& value, int tab);
 	std::string writeTag(const char *tag, const int value, int tab);
 	std::shared_ptr<MTTableSchema> m_tableSchema;
+	std::string m_title;
+	std::string m_description;
+	std::string m_image;
 public:
 	LogDocument(std::shared_ptr<MTTableSchema> tableSchema);
 	virtual ~LogDocument();
@@ -69,6 +72,18 @@ public:
 	virtual bool writeXML() = 0;
 	virtual bool writeCSV() = 0;
 	virtual bool writeJson() = 0;
+
+	void setTitle(const char *t) {
+		m_title = t;
+	}
+
+	void setDescription(const char *d) {
+		m_description = d;
+	}
+
+	void setImage(const char *i) {
+		m_image = i;
+	}
 
 	static FormatType parse(const char *str);
 };

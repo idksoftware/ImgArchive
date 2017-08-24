@@ -47,6 +47,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 
 	// Subcommands
 	defineOption("add", "add new images to the archive.", ArgvParser::MasterOption);
+	defineOption("get", "add new images to the archive.", ArgvParser::MasterOption);
 	defineOption("checkout", "Checkout images from archive.", ArgvParser::MasterOption);
 	defineOption("checkin", "Checkin images to archive.", ArgvParser::MasterOption);
 	defineOption("uncheckout", "Un-checkout images to archive.", ArgvParser::MasterOption);
@@ -92,6 +93,9 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineOption("f", "Specifies a file", ArgvParser::OptionRequiresValue);
 	defineOptionAlternative("f", "file");
 
+	defineOption("F", "no output is sent to the terminal.", ArgvParser::NoOptionAttribute);
+	defineOptionAlternative("F", "force");
+
 	defineOption("td", "to date", ArgvParser::OptionRequiresValue);
 	defineOptionAlternative("td", "to-date");
 
@@ -102,7 +106,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineOptionAlternative("r", "root");
 
 	defineOption("ft", "text output format type. Can be \"Humam\", \"XML\" \"Json\" or \"cvs\" i.e format-type=XML.", ArgvParser::OptionRequiresValue);
-	defineOptionAlternative("l", "format-type");
+	defineOptionAlternative("ft", "format-type");
 
 	defineOption("l", "Temporarily changes the logging level for the scope of this command session.", ArgvParser::OptionRequiresValue);
 	defineOptionAlternative("l", "logging-level");
@@ -124,14 +128,21 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineCommandOption("add", "archive-path");
 	defineCommandOption("add", "source-path");
 
+	defineCommandOption("get", "comment");
+	defineCommandOption("get", "image-address");
+	defineCommandOption("get", "force");
+
 	defineCommandOption("checkin", "comment");
 	defineCommandOption("checkin", "image-address");
+	defineCommandOption("checkin", "force");
 
 	defineCommandOption("checkout", "comment");
 	defineCommandOption("checkout", "image-address");
+	defineCommandOption("checkout", "force");
 
 	defineCommandOption("uncheckout", "comment");
 	defineCommandOption("uncheckout", "image-address");
+	defineCommandOption("uncheckout", "force");
 
 	defineCommandOption("export", "comment");
 	defineCommandOption("export", "logging-level");
@@ -234,6 +245,29 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 		Environment::setEnvironment();
 		cmdFound = true;
 	}
+	else if (command("get") == true) {
+		if (foundOption("image-address") == true) {
+			appOptions.m_imageAddress = optionValue("image-address");
+			//printf(m_imageAddress.c_str()); printf("\n");
+		}
+
+		if (foundOption("comment") == true) {
+			appOptions.m_comment = optionValue("comment");
+			//printf(appOptions.m_comment.c_str()); printf("\n");
+		}
+		if (foundOption("archive-path") == true) {
+			std::string opt = optionValue("archive-path");
+			//printf(opt.c_str()); printf("\n");
+			config.setWorkspacePath(opt.c_str());
+		}
+
+		if (foundOption("force") == true) {
+			appOptions.m_force = true;
+		}
+
+		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Get);
+		cmdFound = true;
+	}
 	else if (command("checkout") == true) {
 		if (foundOption("image-address") == true) {
 			appOptions.m_imageAddress = optionValue("image-address");
@@ -261,6 +295,10 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 			config.setWorkspacePath(opt.c_str());
 		}
 
+		if (foundOption("force") == true) {
+			appOptions.m_force = true;
+		}
+
 		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Checkout);
 		cmdFound = true;
 	}
@@ -278,6 +316,12 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 			std::string opt = optionValue("archive-path");
 			//printf(opt.c_str()); printf("\n");
 			config.setWorkspacePath(opt.c_str());
+		}
+
+		if (foundOption("force") == true) {
+			std::string opt = optionValue("force");
+			//printf(opt.c_str()); printf("\n");
+			appOptions.m_force = true;
 		}
 
 		const auto& args = ArgvParser::getDefaultArgumentsContainer();
@@ -303,6 +347,13 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 			//printf(opt.c_str()); printf("\n");
 			config.setWorkspacePath(opt.c_str());
 		}
+
+		if (foundOption("force") == true) {
+			std::string opt = optionValue("force");
+			//printf(opt.c_str()); printf("\n");
+			appOptions.m_force = true;
+		}
+
 
 		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_UnCheckout);
 		cmdFound = true;

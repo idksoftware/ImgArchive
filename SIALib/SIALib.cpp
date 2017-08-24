@@ -97,7 +97,7 @@ namespace simplearchive {
 
 	SIALib::SIALib()
 	{
-		m_ArchiveBuilder.reset(new ArchiveBuilder(ArchiveObject::get()));
+		m_ArchiveBuilder.reset(new ArchiveBuilder(ArchiveObject::getInstance()));
 		m_winsockRequired = false;
 		m_socklibStarted = false;
 		m_enableEvents = false;
@@ -226,7 +226,7 @@ namespace simplearchive {
 		logger.log(LOG_OK, CLogger::Level::INFO, "Home path is \"%s\"", config.getHomePath());
 
 		try {
-			auto &archiveObject = ArchiveObject::get();
+			auto &archiveObject = ArchiveObject::getInstance();
 			if (archiveObject.Initalise() == false) {
 				return -1;
 			}
@@ -386,7 +386,7 @@ namespace simplearchive {
 	}
 
 	bool SIALib::exportImage(const char *distpath) {
-		if (ArchiveObject::get().exportImages(distpath) == false) {
+		if (ArchiveObject::getInstance().exportImages(distpath) == false) {
 			return false;
 		}
 
@@ -396,36 +396,44 @@ namespace simplearchive {
 
 	bool SIALib::showCheckedOut(const char *filepath) {
 
-		if (ArchiveObject::get().showCheckedOut(filepath) == false) {
+		if (ArchiveObject::getInstance().showCheckedOut(filepath) == false) {
 			return false;
 		}
 		return true;
 	}
 
 	bool SIALib::showUncheckedOutChanges(const char *filepath) {
-		if (ArchiveObject::get().showUncheckedOutChanges(filepath) == false) {
+		if (ArchiveObject::getInstance().showUncheckedOutChanges(filepath) == false) {
 			return false;
 		}
 		return true;
 	}
 
-	bool SIALib::checkout(const char *filepath, const char *comment) {
-		if (ArchiveObject::get().checkout(filepath, comment) == false) {
+	bool SIALib::get(const char *filepath, const char *comment, bool force) {
+		if (ArchiveObject::getInstance().get(filepath, comment, force) == false) {
+			return false;
+		}
+
+		return true;
+	}
+
+	bool SIALib::checkout(const char *filepath, const char *comment, bool force) {
+		if (ArchiveObject::getInstance().checkout(filepath, comment, force) == false) {
 			return false;
 		}
 		
 		return true;
 	}
 
-	bool SIALib::checkin(const char *filepath, const char *comment) {
-		if (ArchiveObject::get().checkin(filepath, comment) == false) {
+	bool SIALib::checkin(const char *filepath, const char *comment, bool force) {
+		if (ArchiveObject::getInstance().checkin(filepath, comment, force) == false) {
 			return false;
 		}
 		return true;
 	}
 
-	bool SIALib::uncheckout(const char *filepath, const char *comment) {
-		if (ArchiveObject::get().uncheckout(filepath, comment) == false) {
+	bool SIALib::uncheckout(const char *filepath, const char *comment, bool force) {
+		if (ArchiveObject::getInstance().uncheckout(filepath, comment, force) == false) {
 			return false;
 		}
 		return true;
@@ -433,7 +441,7 @@ namespace simplearchive {
 	}
 
 	bool SIALib::log(const char *filepath, LogDocument::FormatType& formatType) {
-		if (ArchiveObject::get().imageHistory(filepath, formatType) == false) {
+		if (ArchiveObject::getInstance().imageHistory(filepath, formatType) == false) {
 			return false;
 		}
 		return true;
@@ -441,7 +449,7 @@ namespace simplearchive {
 	}
 
 	bool SIALib::listContents(const char *addressScope) {
-		if (ArchiveObject::get().listContents(addressScope) == false) {
+		if (ArchiveObject::getInstance().listContents(addressScope) == false) {
 			return false;
 		}
 		return true;

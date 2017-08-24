@@ -100,11 +100,13 @@ namespace simplearchive {
 
 		bool listContents(const char *addressScope);
 
-		bool checkout(const char *filepath, const char *comment);
+		bool get(const char *filepath, const char *comment, bool force);
 
-		bool checkin(const char *filepath, const char *comment);
+		bool checkout(const char *filepath, const char *comment, bool force);
+
+		bool checkin(const char *filepath, const char *comment, bool force);
 			
-		bool uncheckout(const char *filepath, const char *comment);
+		bool uncheckout(const char *filepath, const char *comment, bool force);
 
 		bool exportImage(const char *distpath);
 

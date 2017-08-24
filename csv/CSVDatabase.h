@@ -83,7 +83,7 @@ public:
 	void add(MetadataObject &metadataObject, const char *relpath);
 	void update(MetadataObject &metadataObject, unsigned int idx, const char *path);
 	const MetadataObject *get(unsigned int idx, const char *path);
-	std::shared_ptr<MetadataObject> get(const char *name, const char *path);
+	SharedMTRow get(const char *name, const char *path);
 	bool put(const char *name, const char *path, MetadataObject &mo);
 
 	bool copy(const char *path);

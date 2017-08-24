@@ -91,7 +91,11 @@ public:
 	time_t getTime() const {
 		return m_timenum;
 	}
+
+	friend bool operator==(ExifDateTime &d1, ExifDateTime&d2);
 };
+
+bool operator==(ExifDateTime &d1, ExifDateTime&d2);
 
 } /* namespace simplearchive */
 #endif /* EXIFDATETIME_H_ */

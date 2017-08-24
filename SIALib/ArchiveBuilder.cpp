@@ -180,7 +180,7 @@ namespace simplearchive {
 			// using another date
 			ExifDate archiveDate = m_archiveDate->getArchiveDate();
 			m_curImageSet->setTime(archiveDate.getTime());
-			m_imagePath.reset(new ImagePath(archiveDate.getTime()));
+			m_imagePath = std::make_unique<ImagePath>(archiveDate.getTime());
 			
 			if (m_curImageSet->getError() < 0) {
 				logger.log(LOG_OK, CLogger::Level::ERR, "Error processing image not archiving: \"%s\"", m_curImageSet->getName().c_str());
@@ -265,7 +265,7 @@ namespace simplearchive {
 
 		bool processHistory(ImagePath &imagePath, const char *comment) {
 			
-			return ArchiveObject::get().processHistory(imagePath, comment);
+			return ArchiveObject::getInstance().processHistory(imagePath, comment);
 		}
 		
 		ImagePath& getImagePath() {

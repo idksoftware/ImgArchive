@@ -161,4 +161,15 @@ std::string ExifDateTime::toLogString() {
 
 }
 
+bool operator==(ExifDateTime &d1, ExifDateTime&d2)
+{
+	if (d1.m_year != d2.m_year) return false;
+	if (d1.m_month != d2.m_month) return false;
+	if (d1.m_day != d2.m_day) return false;
+	if (d1.m_hour != d2.m_hour) return false;
+	if (d1.m_min != d2.m_min) return false;
+	if (d1.m_sec != d2.m_sec) return false;
+	return true;
+}
+
 } /* namespace simplearchive */
