@@ -174,7 +174,8 @@ public:
 		CM_Unlock,      // Unlock working images in the repository so that no other user can commit changes to them.
 		CM_History,		// Show image change hisory for an image or images
 		CM_Prop,        // Show images properties.
-		CM_Log,        // Show images properties.
+		CM_Log,         // Show images properties.
+		CM_Status,      // Show check in/out status.
 		CM_Unknown
 	};
 

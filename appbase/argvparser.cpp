@@ -879,10 +879,10 @@ bool ArgvParser::matchOption(unsigned int topic, const char *option) const
 			
 			if (alt->length() > 1) {
 
-				_longOpt += *alt;
+				_longOpt = *alt;
 			}
 			else {
-				_shortOpt += *alt;
+				_shortOpt = *alt;
 			}
 		}
 

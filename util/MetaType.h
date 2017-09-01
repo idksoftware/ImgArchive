@@ -290,8 +290,8 @@ public:
 };
 
 
-
-class MTRow : public std::vector<MTColumn *> {
+using SharedMTColumn = std::shared_ptr<MTColumn>;
+class MTRow : public std::vector<SharedMTColumn> {
 	MTTableSchema &m_schema;
 	//std::string m_text;
 	char m_delim;
@@ -337,8 +337,8 @@ public:
 	}
 	*/
 	void debugPrint() {
-		for (std::vector<MTColumn *>::iterator i = this->begin(); i != this->end(); i++) {
-			MTColumn *column = *i;
+		for (auto i = this->begin(); i != this->end(); i++) {
+			SharedMTColumn column = *i;
 			std::cout << column->toString() << "\n";
 		}
 	}
@@ -346,8 +346,8 @@ public:
 	std::string toDebugString() {
 		std::string text;
 		bool first = true;
-		for (std::vector<MTColumn *>::iterator i = this->begin(); i != this->end(); i++) {
-			MTColumn *column = *i;
+		for (auto i = this->begin(); i != this->end(); i++) {
+			SharedMTColumn column = *i;
 			std::shared_ptr<MTSchema> mtSchema = column->getMTSchemaItem();
 			text += mtSchema->getName();
 			if (mtSchema == nullptr) {
@@ -370,8 +370,8 @@ public:
 	std::string toString() {
 		std::string text;
 		bool first = true;
-		for (std::vector<MTColumn *>::iterator i = this->begin(); i != this->end(); i++) {
-			MTColumn *column = *i;
+		for (auto i = this->begin(); i != this->end(); i++) {
+			SharedMTColumn column = *i;
 			std::shared_ptr<MTSchema> mtSchema = column->getMTSchemaItem();
 			if (mtSchema == nullptr) {
 				continue;
@@ -404,13 +404,13 @@ public:
 			return false;
 		}
 		std::vector<std::string>::iterator arg = csvArgs.begin();
-		for (std::vector<MTColumn *>::iterator i = this->begin(); i != this->end(); i++, arg++) {
+		for (auto i = this->begin(); i != this->end(); i++, arg++) {
 			
 			if (arg == csvArgs.end()) {
 				break;
 			}
 			std::string argStr = *arg;
-			MTColumn *column = *i;
+			SharedMTColumn column = *i;
 			column->fromString(argStr.c_str());
 		}
 
@@ -450,12 +450,12 @@ public:
 	bool fromString(const std::string &r);
 	/// reads a csv GPSProperties file
 	bool read(const char *path, const char *filename);
-
+	bool read(const char *path);
 	
 
 	/// writes a csv GPSProperties file
 	bool write(const char *path, const char *filename);
-
+	bool write(const char *path);
 	bool truncate() {
 		clear();
 		return true;

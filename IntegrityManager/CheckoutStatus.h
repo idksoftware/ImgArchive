@@ -1,4 +1,6 @@
 #pragma once
+#include "HistoryEvent.h"
+
 
 namespace simplearchive {
 	/**
@@ -9,24 +11,17 @@ namespace simplearchive {
 	class CheckoutRow;
 	class CheckoutStatus
 	{
-		enum class Status {
-			Ok,
-			InvalidPath,
-			NotCheckedout
-		};
+		
 
 		static std::string m_Master;
 		static std::string m_workspace;
 		static std::string m_primaryIndex;
-
-		Status m_LastError;
 		bool add(CheckoutRow &checkoutRow, const char *relpath);
+		bool checkInOut(const char *img, const HistoryEvent::Event& event);
 	public:
 		CheckoutStatus();
 		~CheckoutStatus();
-		Status getLastError() {
-			return Status::Ok;
-		}
+		
 		static bool Init(const char *Master, const char *workspace, const char *primaryIndex);
 		bool newImage(const char *imagePath);
 		bool showCheckedOut(const char *path);

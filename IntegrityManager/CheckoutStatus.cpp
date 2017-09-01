@@ -6,7 +6,8 @@
 #include "FileInfo.h"
 #include "DBDefines.h"
 #include "MetaType.h"
-
+#include "HistoryEvent.h"
+#include "ErrorCode.h"
 
 
 namespace simplearchive {
@@ -15,8 +16,9 @@ namespace simplearchive {
 	public:
 		CheckoutSchema() : MTTableSchema("CheckoutProperties") {
 			add(MTSchema(MTSchema::Text, DB_FILENAME));
-			add(MTSchema(MTSchema::Text, DB_EVENT));
-			add(MTSchema(MTSchema::Text, DB_VERSION));
+			add(MTSchema(MTSchema::Integer, DB_EVENT));
+			add(MTSchema(MTSchema::Integer, DB_VERSION));
+			add(MTSchema(MTSchema::Date, DB_DATEADDED));
 		}
 	};
 
@@ -24,7 +26,7 @@ namespace simplearchive {
 		static CheckoutSchema m_tableSchema;
 		friend class MetadataTemplate;
 	public:
-		CheckoutRow();
+		CheckoutRow() : MTRow(m_tableSchema) {};
 		CheckoutRow(const MTRow &row) : MTRow(m_tableSchema) {
 
 			for (unsigned int i = 0; i < row.size(); i++) {
@@ -36,23 +38,33 @@ namespace simplearchive {
 		}
 	};
 
+	CheckoutSchema CheckoutRow::m_tableSchema;
+
 	class CheckoutPartition : public MTTable {
 	public:
 		CheckoutPartition() : MTTable(new CheckoutSchema) {};
 		virtual ~CheckoutPartition() {};
+		bool findImage(const char *image);
 	};
+
+	bool CheckoutPartition::findImage(const char *image) {
+		const MTSchema info(MTSchema::Text, DB_FILENAME);
+		MTColumn column(info);
+		column.set(image);
+		if (find(column) == false) {
+			return false;
+		}
+		return true;
+	}
 
 	
 	std::string CheckoutStatus::m_Master;
 	std::string CheckoutStatus::m_workspace;
 	std::string CheckoutStatus::m_primaryIndex;
 
-
 	CheckoutStatus::CheckoutStatus()
 	{
-		m_LastError = Status::Ok;
 	}
-
 
 	CheckoutStatus::~CheckoutStatus()
 	{
@@ -67,6 +79,148 @@ namespace simplearchive {
 
 	bool CheckoutStatus::newImage(const char *img) {
 		std::string imagePath = img;
+		PathController pathController(img);
+		pathController.splitShort(img);
+		CheckoutRow checkoutRow;
+		checkoutRow.columnAt(DB_FILENAME) = pathController.getImage();
+		checkoutRow.columnAt(DB_EVENT) = static_cast<int>(HistoryEvent::ADDED);
+		checkoutRow.columnAt(DB_VERSION) = 0;
+		ExifDateTime dateAdded;
+		dateAdded.now();
+		checkoutRow.columnAt(DB_DATEADDED) = dateAdded;
+
+		std::string pidxPath = m_primaryIndex;
+		pidxPath += '/';
+		pidxPath += pathController.getYear();
+		if (SAUtils::FileExists(pidxPath.c_str()) == false) {
+			if(SAUtils::mkDir(pidxPath.c_str()) == false) {
+				return false;
+			}
+		}
+		std::string workPath = m_workspace;
+		workPath += '/';
+		workPath += pathController.getYear();
+		if (SAUtils::FileExists(workPath.c_str()) == false) {
+			if (SAUtils::mkDir(workPath.c_str()) == false) {
+				return false;
+			}
+		}
+		workPath += '/';
+		workPath += ".sia";
+		if (SAUtils::FileExists(workPath.c_str()) == false) {
+			if (SAUtils::mkDir(workPath.c_str()) == false) {
+				return false;
+			}
+		}
+		CheckoutPartition checkoutPartition;
+		std::string filenameStr = pathController.getYearday();
+		filenameStr += ".csv";
+		pidxPath += "/";
+		pidxPath += filenameStr;
+		
+		if (SAUtils::FileExists(pidxPath.c_str()) == true) {
+			checkoutPartition.read(pidxPath.c_str());
+		}
+		checkoutPartition.addRow(checkoutRow);	
+		checkoutPartition.write(pidxPath.c_str());
+
+		filenameStr = pathController.getYearday();
+		filenameStr += ".csv";
+		workPath += "/";
+		workPath += filenameStr;
+		
+		if (SAUtils::FileExists(workPath.c_str()) == true) {
+			checkoutPartition.read(workPath.c_str());
+		}
+		checkoutPartition.addRow(checkoutRow);
+		checkoutPartition.write(workPath.c_str());
+
+		
+		return true;
+
+
+
+
+
+		
+	}
+
+	bool CheckoutStatus::checkInOut(const char *img, const HistoryEvent::Event& event) {
+		std::string imagePath = img;
+
+		PathController pathController(m_Master.c_str());
+		pathController.splitShort(img);
+		if (pathController.makePath(false) == false) {
+			return false;
+		}
+
+		std::string pidxPath = m_primaryIndex.c_str();
+		pidxPath += '/'; pidxPath += pathController.getYear();
+		if (SAUtils::DirExists(pidxPath.c_str()) == false) {
+			return false;
+		}
+
+
+		std::string workPath = m_workspace.c_str();
+		workPath += '/'; workPath += pathController.getYear();
+		if (SAUtils::FileExists(workPath.c_str()) == false) {
+			return false;
+		}
+
+		CheckoutPartition checkoutPartition;
+		std::string filenameStr = pathController.getYearday();
+		filenameStr += ".csv";
+		pidxPath += "/";
+		pidxPath += filenameStr;
+
+		if (SAUtils::FileExists(pidxPath.c_str()) == false) {
+			return false;
+		}
+		if (checkoutPartition.read(pidxPath.c_str()) == false) {
+			return false;
+		}
+		if (checkoutPartition.findImage(pathController.getImage().c_str()) == false) {
+			return false;
+		}
+		SharedMTRow row = checkoutPartition.getCurrentRow();
+		row->columnAt(DB_EVENT) = static_cast<int>(HistoryEvent::CHECKOUT);
+		int version = row->columnAt(DB_VERSION).getInt();
+		row->columnAt(DB_VERSION) = ++version;
+		ExifDateTime dateAdded;
+		dateAdded.now();
+		row->columnAt(DB_DATEADDED) = dateAdded;
+
+		if (checkoutPartition.write(pidxPath.c_str()) == false) {
+			return false;
+		}
+
+
+		filenameStr = pathController.getYearday();
+		filenameStr += ".csv";
+		workPath += "/.sia/";
+		workPath += filenameStr;
+
+		if (SAUtils::FileExists(workPath.c_str()) == false) {
+			return false;
+		}
+		if (checkoutPartition.read(workPath.c_str()) == false) {
+			return false;
+		}
+		if (checkoutPartition.findImage(pathController.getImage().c_str()) == false) {
+			return false;
+		}
+		row = checkoutPartition.getCurrentRow();
+		row->columnAt(DB_EVENT) = static_cast<int>(event);
+		version = row->columnAt(DB_VERSION).getInt();
+		row->columnAt(DB_VERSION) = ++version;
+
+		dateAdded.now();
+		row->columnAt(DB_DATEADDED) = dateAdded;
+
+		if (checkoutPartition.write(workPath.c_str()) == false) {
+			return false;
+		}
+
 		return true;
 	}
 
@@ -76,7 +230,6 @@ namespace simplearchive {
 		PathController pathController(m_Master.c_str());
 		pathController.splitShort(img);
 		if (pathController.makePath(false) == false) {
-			ErrorCode::setErrorCode(SIA_ERROR::INVALID_PATH);
 			return false;
 		}
 		
@@ -95,46 +248,12 @@ namespace simplearchive {
 			return false;
 		}
 
-		// CheckoutStatusFile
+		return checkInOut(img, HistoryEvent::CHECKOUT);
 		
-		
-		
-
-		/* checks againt the first version only (incorrect)
-		unsigned int acrc = checkDisk.getCrc(path.c_str(), pathController.getImage().c_str());
-		pathController.makeRelativeImagePath(img);
-		std::string workspace = m_workspace;
-		
-		workspace += pathController.getShortRelativePath();
-
-		PathController workspacePath(workspace.c_str(), false);
-		workspacePath.split();
-		workspacePath.makePath(false);
-		if (PathController::doValidate(workspacePath.getFullPath().c_str()) == false) {
-			ErrorCode::setErrorCode(SIA_ERROR::TARGET_INVALID_PATH);
-			return false;
-		}
-		
-		if (PathController::doValidate(workspace.c_str()) == false) {
-			ErrorCode::setErrorCode(SIA_ERROR::TARGET_NOT_FOUND);
-			return false;
-		}
-		
-		FileInfo fileInfo(workspace);
-		
-		if (fileInfo.getCrc() != acrc) {
-			ErrorCode::setErrorCode(SIA_ERROR::WILL_OVERWRITE_CHANGES);
-			return false;
-		}
-		if (checkDisk.checkout(path.c_str(), pathController.getImage().c_str()) == false) {
-			ErrorCode::setErrorCode(SIA_ERROR::INVALID_PATH);
-			return false;
-		}
-		*/
-		return true;
 	}
 
 	bool CheckoutStatus::checkin(const char *img) {
+		/*
 		std::string imagePath = img;
 
 		PathController pathController(m_Master.c_str());
@@ -155,7 +274,8 @@ namespace simplearchive {
 			ErrorCode::setErrorCode(SIA_ERROR::ALREADY_CHECKED_IN);
 			return false;
 		}
-		return true;
+		*/
+		return checkInOut(img, HistoryEvent::CHECKIN);
 	}
 
 	bool CheckoutStatus::showCheckedOut(const char *addressScope) {

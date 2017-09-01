@@ -518,16 +518,16 @@ void MTColumn::boundUpdate() {
 MTRow::MTRow(MTTableSchema &schemaTable) : m_schema(schemaTable), m_delim(',')
 {
 	for (std::vector<MTSchema>::iterator i = m_schema.begin(); i != m_schema.end(); i++) {
-		MTSchema& columnInfo = *i;
-		push_back(new MTColumn(columnInfo));
+		std::shared_ptr<MTColumn> col = std::make_shared<MTColumn>(*i);
+		this->emplace_back(col);
 	}
 }
 
 MTRow::MTRow(const MTRow &row) : m_schema(row.m_schema), m_delim(row.m_delim) {
 	
 	for (std::vector<MTSchema>::iterator i = m_schema.begin(); i != m_schema.end(); i++) {
-		MTSchema& columnInfo = *i;
-		push_back(new MTColumn(columnInfo));
+		std::shared_ptr<MTColumn> col = std::make_shared<MTColumn>(*i);
+		this->emplace_back(col);
 	}
 	join((MTRow&)row);
 }
@@ -536,24 +536,25 @@ MTRow &MTRow::operator=(const MTRow &row) {
 	m_schema = row.m_schema;
 	m_delim = row.m_delim;
 
-	for (std::vector<MTColumn *>::iterator i = this->begin(); i != this->end(); i++) {
-		MTColumn *column = *i;
-		delete column;
-	}
+
+	//for (auto i = this->begin(); i != this->end(); i++) {
+	//	MTColumn *column = *i;
+	//	delete column;
+	//}
 	clear();
 	for (std::vector<MTSchema>::iterator i = m_schema.begin(); i != m_schema.end(); i++) {
-		MTSchema& columnInfo = *i;
-		push_back(new MTColumn(columnInfo));
+		std::shared_ptr<MTColumn> col = std::make_shared<MTColumn>(*i);
+		this->emplace_back(col);
 	}
 	join((MTRow&)row);
 	return *this;
 }
 
 MTRow::~MTRow() {
-	for (std::vector<MTColumn *>::iterator i = this->begin(); i != this->end(); i++) {
-		MTColumn *column = *i;
-		delete column;
-	}
+	//for (std::vector<MTColumn *>::iterator i = this->begin(); i != this->end(); i++) {
+	//	MTColumn *column = *i;
+	//	delete column;
+	//}
 	this->clear();
 	//delete m_schema;
 };
@@ -629,8 +630,8 @@ bool MTTable::addRow(const MTRow &r) {
 bool MTTable::fromString(const std::string &r) {
 	MTTableSchema& ts = *m_TableSchema;
 	auto rowPtr = std::make_shared<MTRow>(ts);
-	MTRow *row = rowPtr.get();
-	if (!(row->fromString(r))) {
+	//MTRow *row = rowPtr.get();
+	if (!(rowPtr->fromString(r))) {
 		return false;
 	}
 	push_back(std::move(rowPtr));
@@ -638,11 +639,17 @@ bool MTTable::fromString(const std::string &r) {
 }
 
 bool MTTable::read(const char *path, const char *filename) {
-	clear(); 
 	std::string fullpath(path);
 	fullpath += '/';
 	fullpath += filename;
+	return read(fullpath.c_str());
+}
 
+
+bool MTTable::read(const char *fullpath) {
+	
+	
+	clear();
 	char text[1024 * 2];
 	std::ifstream file(fullpath);
 	if (file.is_open() == false) {
@@ -672,8 +679,13 @@ bool MTTable::write(const char *path, const char *filename) {
 	std::string fullpath(path);
 	fullpath += '/';
 	fullpath += filename;
+	return write(fullpath.c_str());
+}
+
+bool MTTable::write(const char *fullpath) {
+
 	
-	std::ofstream file(fullpath.c_str(), std::ofstream::trunc);
+	std::ofstream file(fullpath, std::ofstream::trunc);
 	if (file.is_open() == false) {
 		ErrorCode::setErrorCode(SIA_ERROR::OPEN_ERROR);
 		return false;

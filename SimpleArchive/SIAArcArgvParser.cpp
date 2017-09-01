@@ -53,6 +53,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineOption("uncheckout", "Un-checkout images to archive.", ArgvParser::MasterOption);
 	defineOption("export", "Export images from archive.", ArgvParser::MasterOption);
 	defineOption("about", "prints the version information", ArgvParser::MasterOption);
+	defineOption("status", "show check in/out status", ArgvParser::MasterOption);
 	defineOption("view", "View commands", ArgvParser::MasterOption);
 	defineOption("show", "Show details", ArgvParser::MasterOption);
 	defineOption("prop", "Manage image properties", ArgvParser::MasterOption);
@@ -78,10 +79,14 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineOption("s", "source of the images", ArgvParser::OptionRequiresValue);
 	defineOptionAlternative("s", "source-path");
 
+	defineOption("S", "address scope", ArgvParser::OptionRequiresValue);
+	defineOptionAlternative("S", "scope");
+
+
 	defineOption("d", "destination of the images", ArgvParser::OptionRequiresValue);
 	defineOptionAlternative("d", "dist-path");
 
-	defineOption("S", "size of media", ArgvParser::OptionRequiresValue);
+	defineOption("M", "size of media", ArgvParser::OptionRequiresValue);
 	defineOptionAlternative("S", "media-size");
 
 	defineOption("m", "Goes through the motions of running the subcommand but makes no\nactual changes ether disk or repository.", ArgvParser::OptionRequiresValue);
@@ -120,8 +125,8 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineOption("force-date", "Overrides all dates found associated with the images in the selection", ArgvParser::OptionRequiresValue);
 	defineOption("default-date", "Uses this date if none found associated with an image", ArgvParser::OptionRequiresValue);
 
-	defineOption("checked-out", "Show checked out", ArgvParser::OptionRequiresValue); // =all =year{2015}
-	defineOption("unchecked-out", "Show changed images which are not checked out", ArgvParser::OptionRequiresValue);
+	//defineOption("checked-out", "Show checked out", ArgvParser::OptionRequiresValue); // =all =year{2015}
+	//defineOption("unchecked-out", "Show changed images which are not checked out", ArgvParser::OptionRequiresValue);
 
 	defineCommandOption("add", "comment");
 	defineCommandOption("add", "logging-level");
@@ -148,6 +153,9 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineCommandOption("export", "logging-level");
 	defineCommandOption("export", "dist-path");
 
+	defineCommandOption("status", "scope");
+	
+
 	defineCommandOption("log", "image-address");
 	defineCommandOption("log", "format-type");
 
@@ -164,13 +172,13 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	case ArgvParser::ParserRequiredOptionMissing:
 	case ArgvParser::ParserHelpRequested:
 		errStr = parseErrorDescription(res);
-		//printf("%s", errStr.c_str());
+		printf("%s", errStr.c_str());
 		return false;
 	case ArgvParser::GeneralHelpRequested:
-		//printf("%s", generalHelp(80).c_str());
+		printf("%s", generalHelp(80).c_str());
 		return false;
 	case ArgvParser::TopicHelpRequested:
-		//printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+		printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 		return false;
 	default:
 		return false;
@@ -456,6 +464,16 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 		}
 
 		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Log);
+		cmdFound = true;
+	}
+	else if (command("status") == true) {
+
+		if (foundOption("scope") == true) {
+			appOptions.m_imageAddress = optionValue("scope");
+			printf(appOptions.m_imageAddress.c_str()); printf("\n");
+		}
+
+		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Status);
 		cmdFound = true;
 	}
 	else if (command("version") == true) {
