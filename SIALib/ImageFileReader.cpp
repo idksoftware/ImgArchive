@@ -68,7 +68,7 @@ ImageFileReader::~ImageFileReader()
 ExifObject *ImageFileReader::externalExifTool(std::string &path) {
 	CLogger &logger = CLogger::getLogger();
 
-	CAppConfig config = CAppConfig::get();
+	CSIAArcAppConfig config = CSIAArcAppConfig::get();
 	
 	ExternalComand externalComand(config.getTempPath());
 	if (config.getExternalExifTool() == nullptr) {
@@ -86,21 +86,28 @@ ExifObject *ImageFileReader::externalExifTool(std::string &path) {
 	}
 
 	if (config.getExternalCommandLine() == nullptr) {
-		//logger.log(LOG_OK, CLogger::ERROR, "Exif command line not found\n");
-		
+		logger.log(LOG_OK, CLogger::Level::ERR, "Exif command line not found\n");
 		return nullptr;
 	}
 	std::string externalCommandLine = ExifToolPath;
 	externalCommandLine += ' ';
 	externalCommandLine += config.getExternalCommandLine();
-
+	
 	const char *exifMapPath;
 	if (!(exifMapPath = config.getExifMapPath())) {
-		//logger.log(LOG_OK, CLogger::ERROR, "Exif map path not found");
-		
+		logger.log(LOG_OK, CLogger::Level::ERR, "Exif map path not found");
 		return nullptr;
 	}
-	logger.log(LOG_OK, CLogger::Level::FINE, "Raw exif command line found \"%s\"", externalCommandLine);
+	std::string exifMap = exifMapPath;
+	const char *exifMapFile;
+	if (!(exifMapFile = config.getExifMapFile())) {
+		logger.log(LOG_OK, CLogger::Level::ERR, "Exif map path not found");
+		return nullptr;
+	}
+	exifMap += '/';
+	exifMap += exifMapFile;
+
+	logger.log(LOG_OK, CLogger::Level::FINE, "Raw Exif command line found \"%s\"", externalCommandLine);
 	if (!externalComand.init(externalCommandLine.c_str(), exifMapPath)) {
 		
 		return nullptr;

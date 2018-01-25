@@ -44,7 +44,7 @@ class ExifObject;
  * The internal EXIF mapping
  */
 
-class ExifMapConfig : public Config {
+class ExifMapConfig : public ConfigBlock {
 
 public:
 	/// @brief Constructor for class.

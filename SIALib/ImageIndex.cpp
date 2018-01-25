@@ -168,6 +168,7 @@ bool DupDataFile::add(const char *name, unsigned long crc, const char *md5) {
 	std::string md5Str = md5;
 	std::string *row = new std::string(crcStr + ':' + nameStr + ':' + md5Str);
 	if (find(crc) != -1) {
+		delete row;
 		return false; // found
 	}
 	insert(crc, *row);
@@ -244,7 +245,7 @@ int DupDataFile::find(unsigned long crc) {
 	int pos = 0;
 	if (m_dataContainer->size() == 2) {
 		int debug = 2;
-		printf("%d", debug);
+		//DEBUG_PRINT("%d", debug);
 	}
 	if (m_dataContainer->size() == 0) {
 		return -1;
@@ -257,12 +258,19 @@ int DupDataFile::find(unsigned long crc) {
 		std::string crcStr = data.substr(0,delim1);
 		unsigned long newcrc = std::stoul(crcStr.c_str(), NULL, 16);
 		if (newcrc == crc) {
+			CSVArgs csvArgs(':');
+			csvArgs.process(data);
 			/* crc only
 			DupData dupData(data.c_str());
 			if (dupData.getMd5().compare(md5) == 0) {
 				return pos;
 			}
 			*/
+			int i = csvArgs.size();
+			if (csvArgs.size() <= 3) {
+				// Not archived
+				return ((int)-1);
+			}
 			return pos;
 		}
 	}

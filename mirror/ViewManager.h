@@ -73,7 +73,7 @@ private:
 	static ViewItemContainer *m_pContainer;
 	static std::string m_confpath;
 	static std::string m_archiveRoot;
-	static std::string m_masterViewPath;
+	//static std::string m_masterViewPath;
 	bool readConf();
 	static std::string makeOptionString(const char *locationPath, bool mode, bool type, bool access, EViewSet viewSet, bool metadata, const char *setpath);
 public:
@@ -81,11 +81,13 @@ public:
 	virtual ~ViewManager();
 	static ViewManager& GetInstance();
 	static bool initalise(const char *archiveRoot, const char *confpath);
-	bool initaliseMaster(const char *archiveRoot, const char *masterViewPath) {
-		m_archiveRoot = archiveRoot;
-		m_masterViewPath = masterViewPath;
-		return true;
-	}
+
+	//bool initaliseMaster(const char *archiveRoot, const char *masterViewPath) {
+	//	m_archiveRoot = archiveRoot;
+	//	m_masterViewPath = masterViewPath;
+	//	return true;
+	//}
+	
 	//bool processMaster();
 	bool process();
 	bool add(int id);

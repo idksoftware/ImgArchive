@@ -59,7 +59,7 @@ namespace simplearchive {
 class MetadataObject;
 
 typedef std::unique_ptr<MetadataObject> MetadataObject_ptr;
-typedef std::unique_ptr<Config> Config_ptr;
+typedef std::unique_ptr<ConfigBlock> Config_ptr;
 //class Config;
 class MetadataTemplate {
 	//std::map<std::string, std::string *> m_lookup;

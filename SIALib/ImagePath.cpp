@@ -79,7 +79,7 @@ bool ImagePath::settupMainArchiveFolders(const char *pathToWorkspace, const char
 
 	// Master Archive
 	std::string m_dataFolder = m_pathToMaster;
-	m_dataFolder += MASTER_SYSTEM_FOLDER;
+	m_dataFolder += SYSTEM_PATH;
 	if (SAUtils::DirExists(m_dataFolder.c_str()) == false) {
 		SAUtils::mkDir(m_dataFolder.c_str());
 
@@ -176,7 +176,7 @@ void ImagePath::createWorkspaceMetadataPath() {
 
 void ImagePath::createLocalPaths(std::string localPath)
 {
-	m_localMasterDataPath = localPath + MASTER_DATA_PATH;
+	m_localMasterDataPath = localPath + MASTER_IMAGE_PATH;
 	m_localMasterMetadataPath = localPath + METADATA_PATH;
 	
 	if (SAUtils::DirExists(localPath.c_str()) == false) {
@@ -195,7 +195,7 @@ void ImagePath::createLocalPaths(std::string localPath)
 
 
 ImagePath::ImagePath(const char *filepath) {
-	IntegrityManager &m_integrityManager = IntegrityManager::get();
+	//IntegrityManager &m_integrityManager = IntegrityManager::get();
 	PathController pathController;
 	pathController.splitShort(filepath);
 	m_imageName = pathController.getImage();

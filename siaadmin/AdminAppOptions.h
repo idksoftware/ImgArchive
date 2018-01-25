@@ -68,6 +68,9 @@ private:
 	static std::string m_workspacePath;
 	static std::string m_masterPath;
 	static std::string m_configPath;
+	static std::string m_derivativePath;
+	static std::string m_repositoryPath;
+	static std::string m_cataloguePath;
 	static Scope m_scope;
 	static bool m_repair;
 	static bool m_users;
@@ -85,6 +88,9 @@ private:
 	void setWorkspacePath(const char *workspacePath);
 	void setMasterPath(const char *masterPath);
 	void setConfigPath(const char *configPath);
+	void setDerivativePath(const char *derivativePath);
+	void setRepositoryPath(const char *repositoryPath);
+	void setCataloguePath(const char *cataloguePath);
 	void setAllUsers(bool allUsers);
 	AppOptions();
 public:
@@ -103,6 +109,9 @@ public:
 	const char *getWorkspacePath();
 	const char *getMasterPath();
 	const char *getConfigPath();
+	const char *getDerivativePath();
+	const char *getRepositoryPath();
+	const char *getCataloguePath();
 	bool isAllUsers();
 
 	bool isConfiguratedOk() {

@@ -52,6 +52,7 @@
 
 #endif
 
+#define DEBUG_PRINT printf
 
 class SIAAppException : public std::exception {
 	std::string message;
@@ -61,7 +62,7 @@ public:
 	}
 	explicit SIAAppException(std::string msg) : message(msg) {}
 	virtual ~SIAAppException() throw() {}
-	virtual const char *what() const throw();
+	virtual const char *what() throw();
 
 };
 
@@ -115,6 +116,7 @@ public:
 	static std::string getFullRelativePath(const char *path);
 	static void splitpath(const char *path, char *drive, char *dir, char *fname, char *ext);
 	static bool mksymlink(const char *sourcePath, const char *destPath);
+	static int stricmp(const char *a, const char *b);
 	static std::string GetEnv(const std::string &key, bool all = true);
 	static std::string GetPOSIXEnv(const std::string &key);
 	static bool SetEnv(const std::string &key, const std::string &value, bool all = true);

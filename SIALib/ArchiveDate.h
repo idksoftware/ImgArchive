@@ -46,12 +46,21 @@ namespace simplearchive {
 	class ArchiveDate
 	{
 	public: 
-		typedef enum {
-			USING_CAPTURE_RAWDATE,
-			USING_CAPTURE_PICDATE,
-			USING_DIGITIZED_RAWDATE,
-			USING_DIGITIZED_PICDATE
+		enum UsingDate {
+			USING_FORCED_DATE,
+			USING_FORCED_DATE_TODAY,
+			USING_FORCED_FILE_DATE,
+			USING_DATE_TODAY,
+			USING_DEFAULT_DATE,
+			USING_FILE_DATE,
+			USING_EXIF_DATE,
+			USING_CAPTURE_RAW_DATE,
+			USING_CAPTURE_PIC_DATE,
+			USING_FILE_RAW_DATE,
+			USING_FILE_PIC_DATE,
+			UNKNOWN
 		};
+	private:
 		static bool m_useEXIFDate;
 		static bool m_useFileDate;
 		static bool m_useDate;
@@ -65,6 +74,7 @@ namespace simplearchive {
 		static void setFalse();
 		void processExifDate();
 		void processFileDate(const char *path);
+		UsingDate m_usingDate;
 	public:
 		/// Constructor
 		ArchiveDate();
@@ -97,5 +107,7 @@ namespace simplearchive {
 		static void setDate(ExifDate& d);
 
 		ExifDate getArchiveDate();
+
+		std::string getUsingDateString();
 	};
 }

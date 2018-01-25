@@ -34,6 +34,7 @@
 
 #include "SIALib.h"
 #include "AppConfig.h"
+//#include "SIAArcAppOptions.h"
 #include "SACmdArgs.h"
 #include "ArchiveDate.h"
 #include "ArchiveBuilder.h"
@@ -47,7 +48,7 @@
 #include "ImageIndex.h"
 #include "SAUtils.h"
 #include "CLogger.h"
-#include "ImageGroup.h"
+//#include "ImageGroup.h"
 #include "TargetsList.h"
 #include "FileInfo.h"
 #include "BasicMetadataFactory.h"
@@ -71,7 +72,7 @@
 #include "IntegrityManager.h"
 #include "TerminalServer.h"
 #include "ArchivePath.h"
-
+#include "CheckoutStatus.h"
 #include <stdio.h>
 #include <sstream>
 
@@ -166,21 +167,22 @@ namespace simplearchive {
 
 
 	int SIALib::initalise() {
-		CTerminalServerManager &terminalServerManager = CTerminalServerManager::getInstance();
-		terminalServerManager.start();
-
-		CAppConfig &config = CAppConfig::get();
-
 		
-		//AppOptions &appOptions = AppOptions::get();
+		
+		CSIAArcAppConfig &config = CSIAArcAppConfig::get();
 
 		CLogger::setLevel(config.getLogLevel());
+		CLogger::setConsoleLevel(config.getConsoleLevel());
 		CLogger::setLogPath(config.getLogPath());
-		CLogger::setSilent(config.isQuiet());
+		CLogger::setSilent(config.isSilent());
 		
 		
 
 		CLogger &logger = CLogger::getLogger();
+
+		CTerminalServerManager &terminalServerManager = CTerminalServerManager::getInstance();
+		terminalServerManager.start();
+
 #ifdef _WIN32
 		WSADATA wsa;
 		if (m_winsockRequired) {
@@ -327,7 +329,7 @@ namespace simplearchive {
 				return -1;
 			}
 			HookCmd::setHookPath(config.getHookPath());
-			//m_ArchiveBuilder->setUseExternalExifTool(true);
+			m_ArchiveBuilder->setUseExternalExifTool(true);
 
 			if (m_ArchiveBuilder->Init() == false) {
 				return -1;
@@ -352,7 +354,7 @@ namespace simplearchive {
 			logger.log(LOG_OK, CLogger::Level::FATAL, "Failed to complete initalisation %s\n", e.what());
 			return -1;
 		}
-		logger.log(LOG_OK, CLogger::Level::SUMMARY, "Initalisation complete");
+		logger.log(LOG_INITALISATION, CLogger::Level::SUMMARY, "Initalisation complete");
 		return 0;
 	}
 
@@ -363,7 +365,7 @@ namespace simplearchive {
 		SummaryFile &summaryFile = SummaryFile::getSummaryFile();
 		CIDKDate date;
 		date.Now();
-		logger.log(LOG_OK, CLogger::Level::SUMMARY, "Application completed successfully at %s", date.Print().c_str());
+		logger.log(LOG_COMPLETED, CLogger::Level::SUMMARY, "Application completed successfully at %s", date.Print().c_str());
 		summaryFile.log(SummaryFile::SF_BRIEF, SummaryFile::SF_COMMENT, "Summary start");
 		return 0;
 	}
@@ -377,11 +379,22 @@ namespace simplearchive {
 	}
 
 	bool SIALib::Import() {
-		CAppConfig &config = CAppConfig::get();
+		CSIAArcAppConfig &config = CSIAArcAppConfig::get();
 		if (m_ArchiveBuilder->Import(config.getSourcePath()) == false) {
 			return false;
 		}
 		
+		return true;
+	}
+
+	bool SIALib::show() {
+		CSIAArcAppConfig &config = CSIAArcAppConfig::get();
+		config.printAll();
+
+		std::string str = config.toString();
+		std::cout << "Using\n====================\n";
+		std::cout << str;
+
 		return true;
 	}
 
@@ -409,31 +422,31 @@ namespace simplearchive {
 		return true;
 	}
 
-	bool SIALib::get(const char *filepath, const char *comment, bool force) {
-		if (ArchiveObject::getInstance().get(filepath, comment, force) == false) {
+	bool SIALib::get(const char *scope, const char *comment, bool force) {
+		if (ArchiveObject::getInstance().get(scope, comment, force) == false) {
 			return false;
 		}
 
 		return true;
 	}
 
-	bool SIALib::checkout(const char *filepath, const char *comment, bool force) {
-		if (ArchiveObject::getInstance().checkout(filepath, comment, force) == false) {
+	bool SIALib::checkout(const char *scope, const char *comment, bool force) {
+		if (ArchiveObject::getInstance().checkout(scope, comment, force) == false) {
 			return false;
 		}
 		
 		return true;
 	}
 
-	bool SIALib::checkin(const char *filepath, const char *comment, bool force) {
-		if (ArchiveObject::getInstance().checkin(filepath, comment, force) == false) {
+	bool SIALib::checkin(const char *scope, const char *comment, bool force) {
+		if (ArchiveObject::getInstance().checkin(scope, comment, force) == false) {
 			return false;
 		}
 		return true;
 	}
 
-	bool SIALib::uncheckout(const char *filepath, const char *comment, bool force) {
-		if (ArchiveObject::getInstance().uncheckout(filepath, comment, force) == false) {
+	bool SIALib::uncheckout(const char *scope, const char *comment, bool force) {
+		if (ArchiveObject::getInstance().uncheckout(scope, comment, force) == false) {
 			return false;
 		}
 		return true;
@@ -459,7 +472,7 @@ namespace simplearchive {
 	
 		/*
 		if (name.compare("Master") == 0) {
-		viewManager.initaliseMaster(config.getArchivePath(), config.getMasterViewPath());
+		viewManager.initaliseMaster(config.getArchivePath(), config.getMasterCataloguePath());
 		//if (viewManager.processMaster() == false) {
 		//	return false;
 		//}
@@ -473,11 +486,21 @@ namespace simplearchive {
 		return true;
 	}
 
+	bool SIALib::status(const char *scope) {
+
+		
+		CheckoutStatus checkoutStatus;
+		if (checkoutStatus.status(scope) == false) {
+			
+			return false;
+		}
+		return true;
+	}
 	bool SIALib::mirror(const char *name) {
 		
 		/*
 		if (name.compare("Master") == 0) {
-		viewManager.initaliseMaster(config.getArchivePath(), config.getMasterViewPath());
+		viewManager.initaliseMaster(config.getArchivePath(), config.getMasterCataloguePath());
 		//if (viewManager.processMaster() == false) {
 		//	return false;
 		//}
@@ -513,8 +536,8 @@ namespace simplearchive {
 
 		}
 
-		CAppConfig &config = CAppConfig::get();
-		printf("Archive");
+		CSIAArcAppConfig &config = CSIAArcAppConfig::get();
+		//DEBUG_PRINT("Archive");
 		MakeMedia makeMedia;
 		if (config.isToDateSet() || config.isFromDateSet()) {
 			

@@ -59,7 +59,7 @@
 #include "HookCmd.h"
 #include "MetadataObject.h"
 #include "SummaryFile.h"
-#include "VersionControl.h"
+//#include "VersionControl.h"
 
 
 #ifdef _DEBUG

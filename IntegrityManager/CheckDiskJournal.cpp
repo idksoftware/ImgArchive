@@ -90,14 +90,14 @@ namespace simplearchive {
 
 
 	bool CheckDiskJournal::read(const char *filepath) {
-		char text[256];
+	std::string text;
 		std::ifstream file(filepath);
 		if (file.is_open() == false) {
 			return false;
 		}
 
-		while (file.getline(text, 256)) {
-			CDJournalItem cdJournalItem(text);
+		while (std::getline(file, text)) {
+			CDJournalItem cdJournalItem(text.c_str());
 			m_list->push_back(cdJournalItem);
 		}
 		file.close();

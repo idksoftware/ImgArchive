@@ -56,7 +56,7 @@ namespace simplearchive {
 std::string ViewManager::m_confpath;
 
 std::string ViewManager::m_archiveRoot;
-std::string ViewManager::m_masterViewPath;
+//std::string ViewManager::m_masterViewPath;
 ViewItemContainer *ViewManager::m_pContainer = 0;
 
 
@@ -609,7 +609,7 @@ bool ViewManager::readConf() {
 	path += VIEW_CONFIG_FILE;
 	
 	ConfigReader configReader;
-	Config config;
+	ConfigBlock config;
 	if (configReader.read(path.c_str(), config) == false) {
 		return false;
 	}
@@ -638,7 +638,7 @@ bool ViewManager::initalise(const char *archiveRoot, const char *confpath) {
 		logger.log(LOG_OK, CLogger::Level::ERR, "Cannot read view config file: \"%s\"", confpath);
 		return false;
 	}
-	logger.log(LOG_OK, CLogger::Level::FINE, "Read view config file: \"%s\"", confpath);
+	logger.log(LOG_OK, CLogger::Level::FINE, "Reading view config file: \"%s\"", confpath);
 
 	for (std::vector<ViewItem>::iterator i = m_pContainer->begin(); i != m_pContainer->end(); i++) {
 		ViewItem &data = *i;
@@ -717,7 +717,7 @@ bool ViewManager::processMaster() {
 }
 */
 bool ViewManager::remove(const char *name) {
-	Config config;
+	ConfigBlock config;
 	ConfigReader configReader;
 	configReader.read(m_confpath.c_str(), config);
 
@@ -812,7 +812,7 @@ bool ViewManager::edit(const char *name, const char *locationPath, bool mode, bo
 
 	std::string line = makeOptionString(locationPath, mode, type, access, viewSet, metadata, setpath);
 	//std::cout << line << '\n';
-	Config config;
+	ConfigBlock config;
 	ConfigReader configReader;
 	configReader.read(m_confpath.c_str(), config);
 	ConfigWriter configWriter;
@@ -826,7 +826,7 @@ bool ViewManager::create(const char *name, const char *locationPath, bool mode, 
 
 	std::string line = makeOptionString(locationPath, mode, type, access, viewSet, metadata, setpath);
 	//std::cout << line << '\n';
-	Config config;
+	ConfigBlock config;
 	ConfigReader configReader;
 	configReader.read(m_confpath.c_str(), config);
 	ConfigWriter configWriter;

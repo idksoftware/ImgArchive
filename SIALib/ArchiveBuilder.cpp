@@ -82,6 +82,17 @@ static char THIS_FILE[] = __FILE__;
 //#define new DEBUG_NEW
 #endif
 
+
+#define SIA_DEBUG 1
+#if defined( _WIN32 ) && defined (SIA_DEBUG)
+#include <crtdbg.h>
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+_CrtMemState startMemState;
+_CrtMemState endMemState;
+
+#endif
+
 namespace simplearchive {
 	
 	class FilesImport {
@@ -92,7 +103,10 @@ namespace simplearchive {
 		std::string m_path;
 	public:
 		FilesImport() {
-			
+			m_folderCount = 0;
+			m_fileCount = 0;
+			m_imageSets = nullptr;
+			m_imageSet = nullptr;
 		};
 		bool add(const char *filePath) {
 			CLogger &logger = CLogger::getLogger();
@@ -175,10 +189,13 @@ namespace simplearchive {
 
 			m_archiveDate.reset(new ArchiveDate);
 			if (m_archiveDate->process(*m_curImageSet) == false) {
-				logger.log(LOG_OK, CLogger::Level::ERR, "Error processing image capture date, not found: \"%s\"", m_curImageSet->getName().c_str());
+				logger.log(LOG_OK, CLogger::Level::WARNING, "Error processing image capture date, not found: \"%s\" using another date", m_curImageSet->getName().c_str());	
 			}
+			
 			// using another date
 			ExifDate archiveDate = m_archiveDate->getArchiveDate();
+			logger.log(LOG_OK, CLogger::Level::SUMMARY, "Image capture date, not found: \"%s\" so using this date: %s from this source: %s",
+															m_curImageSet->getName().c_str(), archiveDate.toString().c_str(), m_archiveDate->getUsingDateString().c_str());
 			m_curImageSet->setTime(archiveDate.getTime());
 			m_imagePath = std::make_unique<ImagePath>(archiveDate.getTime());
 			
@@ -246,7 +263,7 @@ namespace simplearchive {
 
 			PostArchiveCmd postArchiveCmd(*m_imagePath);
 			postArchiveCmd.process();
-			logger.log(LOG_OK, CLogger::Level::SUMMARY, "Archiving image: \"%s\"", picName.c_str());
+			logger.log(LOG_ARCHIVING_IMAGE, CLogger::Level::SUMMARY, "Archiving image: \"%s\"", picName.c_str());
 	
 			processHistory(*m_imagePath, m_curImageSet->getComment().c_str());
 
@@ -271,13 +288,18 @@ namespace simplearchive {
 		ImagePath& getImagePath() {
 			return *m_imagePath;
 		}
+
+		
 	};
 
 	ArchiveBuilder::ArchiveBuilder(ArchiveObject &archiveObject) : m_archiveObject(archiveObject) {
 		m_Error = false;
-		
 		m_useExternalExifTool = false;
-
+		m_doDryRun = false;
+		m_folders = 0;
+		m_imageFiles = 0;
+		m_imageFilesRejected = 0;
+		m_imageFilesCompleted = 0;
 	}
 
 	ArchiveBuilder::~ArchiveBuilder() {
@@ -286,7 +308,7 @@ namespace simplearchive {
 
 	bool ArchiveBuilder::Init() {
 		
-		CAppConfig config = CAppConfig::get();
+		CSIAArcAppConfig config = CSIAArcAppConfig::get();
 		m_Error = false;
 		
 		m_MasterPath = m_archiveObject.getMasterPath().getRepositoryPath();
@@ -301,18 +323,18 @@ namespace simplearchive {
 		if (m_workspacePath.empty()) {
 			return false;
 		}
-		m_metatemplatePath = config.getMetadataTemplatePath();
-		if (m_metatemplatePath.empty()) {
+		m_templatePath = config.getTemplatePath();
+		if (m_templatePath.empty()) {
 			return false;
 		}
 		std::string MasterJournalPath = ImagePath::getMasterJournalPath();
 		ImportJournalManager::setJournalFilePath(MasterJournalPath.c_str());
 
-		ViewManager::GetInstance().initaliseMaster(config.getWorkspacePath(), config.getMasterViewPath());
+		ViewManager::GetInstance().initaliseMaster(config.getWorkspacePath(), config.getMasterCataloguePath());
 
 		CLogger &logger = CLogger::getLogger();
 
-		logger.log(LOG_OK, CLogger::Level::SUMMARY, "Using Master folder: \"%s\"", m_MasterPath.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "Using Master folder: \"%s\"", m_MasterPath.c_str());
 		if (SAUtils::DirExists(m_MasterPath.c_str()) == false) {
 			logger.log(LOG_OK, CLogger::Level::FATAL, "Archive Repository directory not accessable? \"%s\"", m_MasterPath.c_str());
 			m_Error = true;
@@ -326,7 +348,7 @@ namespace simplearchive {
 		}
 		logger.log(LOG_OK, CLogger::Level::INFO, "Found Archive Index directory \"%s\"", m_indexPath.c_str());
 
-		logger.log(LOG_OK, CLogger::Level::SUMMARY, "Using Workspace folder: \"%s\"", m_MasterPath.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "Using Workspace folder: \"%s\"", m_MasterPath.c_str());
 		if (SAUtils::DirExists(m_workspacePath.c_str()) == false) {
 			logger.log(LOG_OK, CLogger::Level::FATAL, "Workspace directory not accessable? \"%s\"", m_workspacePath.c_str());
 			m_Error = true;
@@ -342,6 +364,7 @@ namespace simplearchive {
 		
 		CheckFile::initalise(config.getWorkspacePath());
 		
+		m_doDryRun = config.isDryRun();
 		return (!m_Error);
 	}
 
@@ -365,7 +388,6 @@ namespace simplearchive {
 		return true;
 	}
 
-
 	bool ArchiveBuilder::Import(const char *sourcePath, bool peekImport) {
 		CLogger &logger = CLogger::getLogger();
 		if (SAUtils::DirExists(sourcePath) == false) {
@@ -387,7 +409,11 @@ namespace simplearchive {
 		if (imageSets != nullptr) {
 			delete imageSets;
 		}
-		//targetsList.destroy();
+		ArchiveObject& archiveObject = ArchiveObject::getInstance();
+		if (archiveObject.OnCompletion() == false) {
+			return false;
+		}
+		
 		return true;
 	}
 
@@ -399,13 +425,16 @@ namespace simplearchive {
 		// ==== Step 1 ====
 		// Read files into folder sets (ImageSets)
 		//
-		logger.log(LOG_ANALISING, CLogger::Level::INFO, "Stage 1: Placing Image files into folder sets");
+		logger.log(LOG_ANALISING, CLogger::Level::SUMMARY, "Stage 1: Reading Image files to be processes");
 		
 		TargetsList targetsList;
 		targetsList.process(sourcePath);
 
-		logger.log(LOG_IMAGE_SUMMARY, CLogger::Level::SUMMARY, "%d files to be processed", TargetsList::getFileCount());
-		logger.log(LOG_FOLDER_SUMMARY, CLogger::Level::SUMMARY, "%d Folders to be processed", TargetsList::getFolderCount());
+		
+		m_folders = TargetsList::getFolderCount();
+		m_folders++;
+		m_imageFiles = TargetsList::getFileCount();
+		logger.log(LOG_INITIAL_SUMMARY, CLogger::Level::SUMMARY, "Found %d image files to be processed in %d Folder(s)", m_imageFiles, m_folders);
 		ImageSets *imageSets = nullptr;
 		if ((imageSets = targetsList.getImageSets()) == nullptr) {
 			// No images to process
@@ -417,8 +446,19 @@ namespace simplearchive {
 
 
 	bool ArchiveBuilder::processImageGroupSets(ImageSets *imageSets, ImportJournal& importJournal) {
-		
 		CLogger &logger = CLogger::getLogger();
+#if defined( _MSC_VER ) && defined( SIA_DEBUG )
+		_CrtMemCheckpoint(&startMemState);
+		// Enable MS Visual C++ debug heap memory leaks dump on exit
+		_CrtSetDbgFlag(_CrtSetDbgFlag(_CRTDBG_REPORT_FLAG) | _CRTDBG_LEAK_CHECK_DF);
+		{
+			int leaksOnStart = _CrtDumpMemoryLeaks();
+			logger.log(LOG_OK, CLogger::Level::INFO, "Number of leaks on start? %d", leaksOnStart);
+		}
+#endif
+
+
+		
 		SACmdArgs &saCmdArgs = SACmdArgs::get();
 		
 		const char *seqPath = ImagePath::getMasterSequenceNumberPath().c_str();
@@ -426,7 +466,7 @@ namespace simplearchive {
 		PrimaryIndexObject& primaryIndexObject = m_archiveObject.getPrimaryIndexObject();
 		ImageIndex& imageIndex = primaryIndexObject.getimageIndex();
 
-		std::string metatemplatePath = m_metatemplatePath;
+		std::string metatemplatePath = m_templatePath;
 		metatemplatePath += "/default.tpl";
 
 		if (MetadataTemplate::read(metatemplatePath.c_str()) == false) {
@@ -451,7 +491,7 @@ namespace simplearchive {
 		//
 		ArchiveRepository &archiveRepository = ArchiveRepository::get();
 		archiveRepository.setPathToArchive(m_MasterPath);
-		logger.log(LOG_IMPORTING, CLogger::Level::ERR, "Stage 2: Processing Image files");
+		logger.log(LOG_IMPORTING, CLogger::Level::SUMMARY, "Stage 2: Processing Image files");
 		archiveRepository.setPathToActiveRoot(this->m_workspacePath);
 		/// Iterate the Image Sets
 		
@@ -462,16 +502,14 @@ namespace simplearchive {
 			ImageGroup *imageGroup = new ImageGroup(imageSet->getPath());
 			/// Insert into Image Group Sets
 			//imageGroups.insert(imageGroups.end(), imageGroup);
-			logger.log(LOG_OK, CLogger::Level::SUMMARY, "Processing Image files in the source location %s", imageSet->getPath());
+			logger.log(LOG_SOURCE_PATH, CLogger::Level::SUMMARY, "Processing Image files in the source location %s", imageSet->getPath());
 			/// Iterate the current image set
 			for (std::vector<ImageItem *>::iterator i = imageSet->begin(); i != imageSet->end(); i++) {
 				/// Image Item
 				SIAApplicationState::RunState state = SIAApplicationState::getState();
 				ImageItem *imageItem = *i;
 				importJournal.setCurrent(imageItem->getPath());
-				logger.log(LOG_CURRENT_IMAGE, CLogger::Level::SUMMARY, "%d image\n", importJournal.getCurrentImageIndex()+1);
-				logger.log(LOG_IMAGE_NAME, CLogger::Level::SUMMARY, "%s", imageItem->getFilename().c_str());
-				logger.log(LOG_OK, CLogger::Level::SUMMARY, "Processing Image file: %s", imageItem->getFilename().c_str());
+				logger.log(LOG_CURRENT_IMAGE, CLogger::Level::SUMMARY, "Processing Image %d file: \"%s\"", importJournal.getCurrentImageIndex() + 1, imageItem->getFilename().c_str());
 				ExifObject *exifObject = nullptr;
 				//data->print();	
 				bool status = false;
@@ -482,6 +520,7 @@ namespace simplearchive {
 				ImageExtentions& ie = ImageExtentions::get();
 				if (ie.IsValid(imageItem->getFilename().c_str()) == false) {
 					logger.log(LOG_INVALID_FILE_TYPE, CLogger::Level::WARNING, "Not a valid file type \"%s\" rejecting ", imageItem->getFilename().c_str());
+					m_imageFilesRejected++;
 					continue;
 				}
 				//logger.log(LOG_OK, CLogger::SUMMARY, ": %s", imageItem->getFilename().c_str());
@@ -493,10 +532,10 @@ namespace simplearchive {
 
 
 				BasicMetadata_Ptr BasicMetadataPtr = BasicMetadataFactory::make(pathstr);
-				BasicMetadataPtr->print();
-				print(*BasicMetadataPtr);
+				//BasicMetadataPtr->print();
+				//print(*BasicMetadataPtr);
 				const BasicMetadata& BasicMetadata = *BasicMetadataPtr;
-				print(BasicMetadata);
+				//print(BasicMetadata);
 				// Add Image to the Index database if not a dup.
 				logger.log(LOG_OK, CLogger::Level::INFO, "Find if dup %s", imageItem->getFilename().c_str());
 				// If Make no changes == true, do not add this image into the dups index
@@ -508,6 +547,7 @@ namespace simplearchive {
 							//m_imageIndex->getData(BasicMetadata.getCrc());
 							logger.log(LOG_OK, CLogger::Level::INFO, "Dup %s", imageItem->getFilename().c_str());
 							// reject image from import
+							m_imageFilesRejected++;
 							continue;
 						}
 					}
@@ -516,7 +556,7 @@ namespace simplearchive {
 						int pos = -1;
 						if (pos = imageIndex.IsDup(BasicMetadata.getCrc())) {
 							//m_imageIndex->getData(imageId->getCrc());
-							logger.log(LOG_DUPLICATE, CLogger::Level::WARNING, "    Image \"%s\" was found to be a duplicate. Rejecting from import", imageItem->getFilename().c_str());
+							logger.log(LOG_DUPLICATE, CLogger::Level::WARNING, "Image \"%s\" was found to be a duplicate. Rejecting from import", imageItem->getFilename().c_str());
 							// reject image from import
 							ImageId imageId = imageIndex.findDup(BasicMetadata.getCrc());
 							if (imageId.getName().empty()) {
@@ -529,12 +569,13 @@ namespace simplearchive {
 									return false;
 								}
 							}
+							m_imageFilesRejected++;
 							continue;
 						}
 						else {
 							// Add To the Image Indexing (used to find duplicates)
 							if (imageIndex.add(BasicMetadata) == false) {
-								logger.log(LOG_DUPLICATE, CLogger::Level::WARNING, "    Image \"%s\" was found to be a duplicate. Rejecting from import", imageItem->getFilename().c_str());
+								logger.log(LOG_DUPLICATE, CLogger::Level::WARNING, "Image \"%s\" was found to be a duplicate. Rejecting from import", imageItem->getFilename().c_str());
 								// reject image from import
 								ImageId imageId = imageIndex.findDup(BasicMetadata.getCrc());
 								if (imageId.getName().empty()) {
@@ -547,6 +588,7 @@ namespace simplearchive {
 										return false;
 									}
 								}
+								m_imageFilesRejected++;
 								continue;
 							}
 							logger.log(LOG_OK, CLogger::Level::INFO, "Adding image to dups index %s", imageItem->getFilename().c_str());
@@ -555,9 +597,9 @@ namespace simplearchive {
 				}
 				// Not a dup so add to group. 
 				if (!BasicMetadata.isExifFound()) {
-					logger.log(LOG_OK, CLogger::Level::INFO, "No EXIF simple EXIF infomation found in \"%s\"", imageItem->getFilename().c_str());
+					logger.log(LOG_OK, CLogger::Level::INFO, "No simple EXIF infomation found in \"%s\"", imageItem->getFilename().c_str());
 				}
-				logger.log(LOG_OK, CLogger::Level::INFO, "EXIF simple EXIF infomation found in \"%s\"", imageItem->getFilename().c_str());
+				logger.log(LOG_OK, CLogger::Level::INFO, "Simple EXIF infomation found in \"%s\"", imageItem->getFilename().c_str());
 				if (!BasicMetadata.isExifFound() && m_useExternalExifTool) {
 					// Try external Exif Tool
 					logger.log(LOG_OK, CLogger::Level::INFO, "Using external EXIF tool on file \"%s\"", imageItem->getFilename().c_str());
@@ -570,7 +612,6 @@ namespace simplearchive {
 					}
 					else {
 						logger.log(LOG_OK, CLogger::Level::INFO, "External EXIF reader completed for image\"%s\"", imageItem->getFilename().c_str());
-						print(*exifObject);
 					}
 				}
 				else {
@@ -592,29 +633,45 @@ namespace simplearchive {
 				}
 				print(metadataObject);
 				imageGroup->add(BasicMetadataPtr, metadataObjectPtr);
+				imageGroup->print();
 				logger.log(LOG_OK, CLogger::Level::INFO, "completed step2 \"%s\"", imageItem->getFilename().c_str());
 				
 				//XMLWriter xmlWriter;
 				//xmlWriter.writeImage(*metadataObject, "c:/temp/image.xml");
 				
 			}
-			for (std::vector<ImageContainer *>::iterator i = imageGroup->begin(); i != imageGroup->end(); i++) {
-				ImageContainer *imageSet = *i;
-				
-				ImageProcessor imageProcessor(imageSet, m_workspacePath, m_archiveObject);
-				if (imageProcessor.Process() == false) {
-					return false;
+			if (!m_doDryRun) {
+				logger.log(LOG_IMPORTING, CLogger::Level::SUMMARY, "Stage 3: Archiving images");
+				for (std::vector<ImageContainer *>::iterator i = imageGroup->begin(); i != imageGroup->end(); i++) {
+					ImageContainer *imageSet = *i;
+
+					ImageProcessor imageProcessor(imageSet, m_workspacePath, m_archiveObject);
+					if (imageProcessor.Process() == false) {
+						return false;
+					}
+					m_imageFilesCompleted++;
 				}
-				
 			}
 		}
 
-		ImportJournalManager::save();
-#ifdef _WIN32
-		_CrtDumpMemoryLeaks();
-#endif
+		logger.log(LOG_COMPLETED_SUMMARY, CLogger::Level::SUMMARY, "Imported %d image files found in %d Folder(s) into the archive, %d image files rejected", m_imageFilesCompleted, m_folders, m_imageFilesRejected);
 		
-		return true;
+		ImportJournalManager::save();
+#if defined( _MSC_VER ) &&  defined( SIA_DEBUG )
+		{
+			_CrtMemCheckpoint(&endMemState);
+
+			_CrtMemState diffMemState;
+			_CrtMemDifference(&diffMemState, &startMemState, &endMemState);
+			_CrtMemDumpStatistics(&diffMemState);
+
+			{
+				int leaksBeforeExit = _CrtDumpMemoryLeaks();
+				logger.log(LOG_OK, CLogger::Level::INFO, "Number of leaks before exit? %d", leaksBeforeExit);
+			}
+		}
+#endif
+				return true;
 	}
 
 
@@ -644,7 +701,7 @@ void ArchiveBuilder::print(ExifObject &eo) {
 
 void ArchiveBuilder::print(const BasicMetadata &be) {
 	CLogger &logger = CLogger::getLogger();
-	printf("%s\n", be.getName().c_str());
+	DEBUG_PRINT("%s\n", be.getName().c_str());
 	logger.log(LOG_OK, CLogger::Level::FINE, "Basic Exif");
 	MTTableSchema& bes = (MTTableSchema&)be.getSchema();
 	for (std::vector<MTSchema>::iterator i = bes.begin(); i != bes.end(); i++) {
@@ -656,13 +713,13 @@ void ArchiveBuilder::print(const BasicMetadata &be) {
 
 void ArchiveBuilder::print(const MetadataObject& mo) {
 	CLogger &logger = CLogger::getLogger();
-	printf("%s\n", mo.getName().c_str());
+	DEBUG_PRINT("%s\n", mo.getName().c_str());
 	logger.log(LOG_OK, CLogger::Level::FINE, "Final metadata");
 	MTTableSchema& mos = (MTTableSchema&)mo.getSchema();
 	for (std::vector<MTSchema>::iterator i = mos.begin(); i != mos.end(); i++) {
 		MTSchema& columnInfo = *i;
-		printf("%-20s %s\n", columnInfo.getName().c_str(), mo.columnAt(columnInfo.getName().c_str()).toString().c_str());
-		logger.log(LOG_OK, CLogger::Level::FINE, "%-20s %s\n", columnInfo.getName().c_str(), mo.columnAt(columnInfo.getName().c_str()).toString().c_str());
+		DEBUG_PRINT("%-20s %s\n", columnInfo.getName().c_str(), mo.columnAt(columnInfo.getName().c_str()).toString().c_str());
+		logger.log(LOG_OK, CLogger::Level::FINE, "%-20s %s", columnInfo.getName().c_str(), mo.columnAt(columnInfo.getName().c_str()).toString().c_str());
 	}
 }
 

@@ -72,10 +72,17 @@ using namespace std;
 #include "SIAArcAppOptions.h"
 #include "SIAArcArgvParser.h"
 #include "Threads.h"
+#include "HookCmd.h"
+#include "ImagePath.h"
 
-#define VERSION	"1.00"
+#define MAJORVERSION 0
+#define MINORVERSION 2
+#define REVISION     93
 #define BUILD	"040115.1749"
+
 #define DB "c:/temp/test3.db"
+
+
 /*
 java version "1.7.0_51"
 Java(TM) SE Runtime Environment (build 1.7.0_51-b13)
@@ -101,19 +108,18 @@ namespace simplearchive {
 
 bool SIAArcApp::initaliseArgs(int argc, char **argv) {
 	
-	SIAArcAppOptions &appOptions = SIAArcAppOptions::get();
 	if (m_argvParser->doInitalise(argc, argv) == false) {
-		return false;
+return false;
 	}
-	
+
 	return true;
 }
 
 
 bool SIAArcApp::initaliseHomePath() {
 
-	CAppConfig &config = CAppConfig::get();
-	
+	CSIAArcAppConfig &config = CSIAArcAppConfig::get();
+
 	bool found = false;
 	std::string homePath;
 	// Looking the HKEY_LOCAL_MACHINE first
@@ -186,9 +192,9 @@ bool SIAArcApp::initaliseHomePath() {
 }
 
 bool SIAArcApp::initaliseConfig() {
-	
-	CAppConfig &config = CAppConfig::get();
-	
+
+	CSIAArcAppConfig &config = CSIAArcAppConfig::get();
+
 	bool found = false;
 	std::string homePath;
 	// Looking the HKEY_LOCAL_MACHINE first
@@ -202,14 +208,21 @@ bool SIAArcApp::initaliseConfig() {
 		found = true;
 	}
 	if (found) {
-		config.init(homePath.c_str());
+		// Initalise without the config file i.e. set defaults.
+		if (config.init(homePath.c_str()) == false) {
+			setError(12, "Cannot find home path? exiting?");
+			return false;
+		}
 	}
 	else {
-		config.init();
+		if (config.init() == false) {
+			setError(12, "Cannot find home path? exiting?");
+			return false;
+		}
 	}
 	
 	if (SAUtils::DirExists(homePath.c_str()) == false) {
-		setError(12, "SIA Unable to start?\nArchive not found at default location and the environment variable SA_HOME not set.\n"
+		setError(12, "SIA Unable to start? Archive not found at default location and the environment variable SA_HOME not set.\n"
 			"Use siaadmin -i to create an empty archive at the default location (see documentation).\n");
 		return false;
 		
@@ -217,13 +230,17 @@ bool SIAArcApp::initaliseConfig() {
 	
 	std::string configfile = homePath + "/config/" + "config.dat";
 	std::string configPath = homePath + "/config";
+	// Now set the file based configuration with the possablity of overrighting defaults set prevously. 
 	if (SAUtils::FileExists(configfile.c_str()) == true) {
 		setConfigPath(configPath.c_str());
-		ConfigReader configReader;
+		AppConfigReader configReader;
 		configReader.setNoLogging();
-		configReader.read(configfile.c_str(), config);
-		config.fileBasedValues();
-		
+		if (configReader.read(configfile.c_str(), config) == false) {
+			setError(13, "Error found at line %d in the configuration file.\n", configReader.getCurrentLineNumber());
+			return false;
+		}
+		config.fileBasedValues(homePath.c_str());
+		m_configured = true;
 	}
 	else {
 		m_configured = false;
@@ -235,7 +252,7 @@ bool SIAArcApp::initaliseConfig() {
 bool SIAArcApp::doRun()
 {
 	SIAArcAppOptions &appOptions = SIAArcAppOptions::get();
-	CAppConfig &config = CAppConfig::get();
+	CSIAArcAppConfig &config = CSIAArcAppConfig::get();
 
 	SIALib siaLib;
 	// Set global options
@@ -248,8 +265,17 @@ bool SIAArcApp::doRun()
 
 		siaLib.enableServer(appOptions.eventPort());
 	}
+	
 	//printf("%s", config.toString().c_str());
 	config.settup();
+	
+	if (isConfiguratedOk() == false) {
+		setError(12, "SIA Unable to start? Archive not found at the specified location \"%s\".\n"
+			"Use siaadmin -i to create an empty archive at the default location (see documentation).\n", config.getHomePath());
+		return false;
+	}
+	
+	
 	if (siaLib.initalise() < 0) {
 		return false;
 	}
@@ -288,23 +314,12 @@ bool SIAArcApp::doRun()
 		}
 		break;
 	case SIAArcAppOptions::CommandMode::CM_Show:
-		switch (appOptions.getShowCommandOption()) {
-		case SIAArcAppOptions::ShowCommandOption::SC_ShowCheckedOut:
-			if (siaLib.showCheckedOut(appOptions.getImageAddress()) == false) {
-				setError(CLogger::getLastCode(), CLogger::getLastMessage());
-				return false;
-			}
-			
-		case SIAArcAppOptions::ShowCommandOption::SC_ShowUncheckedOutChanges:
-			if (siaLib.showUncheckedOutChanges(appOptions.getImageAddress()) == false) {
-				setError(CLogger::getLastCode(), CLogger::getLastMessage());
-				return false;
-			}
-			return true;
-		case SIAArcAppOptions::ShowCommandOption::SC_Unknown:
-			return false;	
+		if (siaLib.show() == false) {
+			setError(CLogger::getLastCode(), CLogger::getLastMessage());
+			return false;
 		}
 		break;
+		
 	case SIAArcAppOptions::CommandMode::CM_Get:
 		if (siaLib.get(appOptions.getImageAddress(), appOptions.getComment(), appOptions.isForced()) == false) {
 			setError(CLogger::getLastCode(), CLogger::getLastMessage());
@@ -329,6 +344,31 @@ bool SIAArcApp::doRun()
 			return false;
 		}
 		break;
+	case SIAArcAppOptions::CommandMode::CM_Status:
+	{
+		if (siaLib.status(appOptions.getImageAddress()) == false) {
+			setError(CLogger::getLastCode(), CLogger::getLastMessage());
+			return false;
+		}
+		switch (appOptions.getShowCommandOption()) {
+		case SIAArcAppOptions::ShowCommandOption::SC_ShowCheckedOut:
+			if (siaLib.showCheckedOut(appOptions.getImageAddress()) == false) {
+				setError(CLogger::getLastCode(), CLogger::getLastMessage());
+				return false;
+			}
+
+		case SIAArcAppOptions::ShowCommandOption::SC_ShowUncheckedOutChanges:
+			if (siaLib.showUncheckedOutChanges(appOptions.getImageAddress()) == false) {
+				setError(CLogger::getLastCode(), CLogger::getLastMessage());
+				return false;
+			}
+			return true;
+		case SIAArcAppOptions::ShowCommandOption::SC_Unknown:
+			return false;
+		}
+
+		break;
+	}
 	case SIAArcAppOptions::CommandMode::CM_View:
 	{
 		if (siaLib.view(appOptions.getName()) == false) {
@@ -360,7 +400,11 @@ bool SIAArcApp::doRun()
 		break;
 	
 	case SIAArcAppOptions::CommandMode::CM_Version:
-		printf("\n\nSia version \"%s\" (build %s)\n", VERSION, BUILD);
+
+		printf("Simple Image Archive tool\n"
+			"siaarc version \"%d.%d.%d\" (build %s)\n"
+			"Copyright@(2010-2016) IDK Sftware Ltd.\n", MAJORVERSION, MINORVERSION, REVISION, BUILD);
+		return true;
 		return true;
 	case SIAArcAppOptions::CommandMode::CM_Unknown:
 		setError(CLogger::getLastCode(), CLogger::getLastMessage());
@@ -393,13 +437,21 @@ bool failed()
 
 
 /**
- *
+ *C:\temp\2017\2017-08-12
  *
  */
 
 
 int main(int argc, char **argv)
 {
+	/*
+	simplearchive::HookCmd::setHookPath("C:\\temp\\cmds");
+
+	simplearchive::OnFolderCmd onFolderCmd("C:\\temp\\2017\\2017-08-12\\pic1.png");
+	onFolderCmd.process();
+	return true;
+	*/
+
 	bool error = false;
 	simplearchive::SIAArcApp app;
 	if (app.initalise(argc, argv) == false) {
@@ -413,6 +465,7 @@ int main(int argc, char **argv)
 	}
 	if (error) {
 		int code = CommandLineProcessing::AppBase::getError();
+		cout << CommandLineProcessing::AppBase::getFullErrorString();
 		return code;
 	}
 	else {

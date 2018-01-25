@@ -57,12 +57,6 @@
     <ClInclude Include="ImageFileReader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ImageGroup.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageIndex.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ImageLock.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -126,13 +120,25 @@
     <ClInclude Include="VersionIndex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="VersionControl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="DerivativeRepository.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GetImagesManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageIndex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PageMaker.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MasterCatalogue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageGroup.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VersionControl_old.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -171,12 +177,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ImageFileReader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageGroup.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageIndex.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ImageLock.cpp">
@@ -246,6 +246,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GetIImagesManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageIndex.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PageMaker.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MasterCatalogue.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageGroup_old.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

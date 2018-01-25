@@ -57,7 +57,7 @@ CUnqueName::CUnqueName() {
 
 CUnqueName::~CUnqueName() {}
 
-const char *CUnqueName::make(const char *name) {
+std::string CUnqueName::make(const char *name) {
 	std::string namestr(name);
 	std::string filename;
 	std::string path;
@@ -99,7 +99,7 @@ const char *CUnqueName::make(const char *name) {
 		filename = ss.str();
 
 	}
-	return filename.c_str();
+	return filename;
 
 }
 } /* namespace simplearchive */

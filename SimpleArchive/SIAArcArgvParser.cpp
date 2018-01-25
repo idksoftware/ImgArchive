@@ -23,7 +23,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	m_logLevel = "INFO";
 	m_dry_run = false;
 	*/
-	CAppConfig &config = CAppConfig::get();
+	CSIAArcAppConfig &config = CSIAArcAppConfig::get();
 		
 		
 
@@ -122,6 +122,9 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineOption("li", "List items", ArgvParser::OptionRequiresValue);
 	defineOptionAlternative("li", "list");
 
+	defineOption("U", "Show setup", ArgvParser::NoOptionAttribute);
+	defineOptionAlternative("U", "setup");
+
 	defineOption("force-date", "Overrides all dates found associated with the images in the selection", ArgvParser::OptionRequiresValue);
 	defineOption("default-date", "Uses this date if none found associated with an image", ArgvParser::OptionRequiresValue);
 
@@ -134,19 +137,19 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineCommandOption("add", "source-path");
 
 	defineCommandOption("get", "comment");
-	defineCommandOption("get", "image-address");
+	defineCommandOption("get", "scope");
 	defineCommandOption("get", "force");
 
 	defineCommandOption("checkin", "comment");
-	defineCommandOption("checkin", "image-address");
+	defineCommandOption("checkin", "scope");
 	defineCommandOption("checkin", "force");
 
 	defineCommandOption("checkout", "comment");
-	defineCommandOption("checkout", "image-address");
+	defineCommandOption("checkout", "scope");
 	defineCommandOption("checkout", "force");
 
 	defineCommandOption("uncheckout", "comment");
-	defineCommandOption("uncheckout", "image-address");
+	defineCommandOption("uncheckout", "scope");
 	defineCommandOption("uncheckout", "force");
 
 	defineCommandOption("export", "comment");
@@ -155,6 +158,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 
 	defineCommandOption("status", "scope");
 	
+	defineCommandOption("show", "setup");
 
 	defineCommandOption("log", "image-address");
 	defineCommandOption("log", "format-type");
@@ -196,28 +200,21 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 
 		if (foundOption("source-path") == true) {
 			std::string opt = optionValue("source-path");
-			//printf(opt.c_str()); printf("\n");
 			config.setSourcePath(opt.c_str());
 		}
 		if (foundOption("archive-path") == true) {
 			std::string opt = optionValue("archive-path");
-			//printf(opt.c_str()); printf("\n");
 			config.setWorkspacePath(opt.c_str());
 		}
 		if (foundOption("file") == true) {
 			appOptions.m_filePath = optionValue("file");
 			appOptions.m_usingFile = true;
-			//printf(m_filePath.c_str()); printf("\n");
-
 		}
 		if (foundOption("peek") == true) {
 			appOptions.m_peekOnly = true;
-			//printf(m_filePath.c_str()); printf("\n");
-
 		}
 		if (foundOption("force-date") == true) {
 			std::string opt = optionValue("force-date");
-			//printf(opt.c_str()); printf("\n");
 			if (opt.compare("FileDate") == 0) {
 				appOptions.m_useFileDate = true;
 			}
@@ -233,7 +230,6 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 		}
 		if (foundOption("default-date") == true) {
 			std::string opt = optionValue("default-date");
-			//printf(opt.c_str()); printf("\n");
 			config.setSourcePath(opt.c_str());
 			if (opt.compare("FileDate") == 0) {
 				appOptions.m_useFileDate = true;
@@ -254,18 +250,15 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 		cmdFound = true;
 	}
 	else if (command("get") == true) {
-		if (foundOption("image-address") == true) {
-			appOptions.m_imageAddress = optionValue("image-address");
-			//printf(m_imageAddress.c_str()); printf("\n");
+		if (foundOption("scope") == true) {
+			appOptions.m_imageAddress = optionValue("scope");
 		}
 
 		if (foundOption("comment") == true) {
 			appOptions.m_comment = optionValue("comment");
-			//printf(appOptions.m_comment.c_str()); printf("\n");
 		}
 		if (foundOption("archive-path") == true) {
 			std::string opt = optionValue("archive-path");
-			//printf(opt.c_str()); printf("\n");
 			config.setWorkspacePath(opt.c_str());
 		}
 
@@ -277,29 +270,24 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 		cmdFound = true;
 	}
 	else if (command("checkout") == true) {
-		if (foundOption("image-address") == true) {
-			appOptions.m_imageAddress = optionValue("image-address");
-			//printf(m_imageAddress.c_str()); printf("\n");
+		if (foundOption("scope") == true) {
+			appOptions.m_imageAddress = optionValue("scope");
 		}
 
 		if (foundOption("list") == true) {
 			appOptions.m_list = true;
-			//printf(m_comment.c_str()); printf("\n");
 		}
 
 		if (foundOption("file") == true) {
 			appOptions.m_filePath = optionValue("file");
 			appOptions.m_usingFile = true;
-			//printf(appOptions.m_filePath.c_str()); printf("\n");
 		}
 
 		if (foundOption("comment") == true) {
 			appOptions.m_comment = optionValue("comment");
-			//printf(appOptions.m_comment.c_str()); printf("\n");
 		}
 		if (foundOption("archive-path") == true) {
 			std::string opt = optionValue("archive-path");
-			//printf(opt.c_str()); printf("\n");
 			config.setWorkspacePath(opt.c_str());
 		}
 
@@ -312,29 +300,24 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	}
 	else if (command("checkin") == true) {
 
-		if (foundOption("image-address") == true) {
-			appOptions.m_imageAddress = optionValue("image-address");
-			//printf(appOptions.m_imageAddress.c_str()); printf("\n");
+		if (foundOption("scope") == true) {
+			appOptions.m_imageAddress = optionValue("scope");
 		}
 		if (foundOption("comment") == true) {
 			appOptions.m_comment = optionValue("comment");
-			//printf(appOptions.m_comment.c_str()); printf("\n");
 		}
 		if (foundOption("archive-path") == true) {
 			std::string opt = optionValue("archive-path");
-			//printf(opt.c_str()); printf("\n");
 			config.setWorkspacePath(opt.c_str());
 		}
 
 		if (foundOption("force") == true) {
 			std::string opt = optionValue("force");
-			//printf(opt.c_str()); printf("\n");
 			appOptions.m_force = true;
 		}
 
 		const auto& args = ArgvParser::getDefaultArgumentsContainer();
 		for (auto i = args.begin(); i != args.end(); i++) {
-			//printf("%s\n", i->c_str());
 			appOptions.setDefaultArguments(*i);
 		}
 
@@ -344,21 +327,17 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	else if (command("uncheckout") == true) {
 		if (foundOption("image-address") == true) {
 			appOptions.m_imageAddress = optionValue("image-address");
-			//printf(appOptions.m_imageAddress.c_str()); printf("\n");
 		}
 		if (foundOption("comment") == true) {
 			appOptions.m_comment = optionValue("comment");
-			//printf(appOptions.m_comment.c_str()); printf("\n");
 		}
 		if (foundOption("archive-path") == true) {
 			std::string opt = optionValue("archive-path");
-			//printf(opt.c_str()); printf("\n");
 			config.setWorkspacePath(opt.c_str());
 		}
 
 		if (foundOption("force") == true) {
 			std::string opt = optionValue("force");
-			//printf(opt.c_str()); printf("\n");
 			appOptions.m_force = true;
 		}
 
@@ -367,24 +346,13 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 		cmdFound = true;
 	}
 	else if (command("show") == true) {
-		if (foundOption("checked-out") == true) {
-			appOptions.m_showCommandOption = appOptions.ShowCommandOption::SC_ShowCheckedOut;
-			appOptions.m_imageAddress = optionValue("checked-out");
-			//printf(appOptions.m_imageAddress.c_str()); printf("\n");
-		}
-		if (foundOption("unchecked-out") == true) {
-			appOptions.m_showCommandOption = appOptions.ShowCommandOption::SC_ShowUncheckedOutChanges;
-			appOptions.m_imageAddress = optionValue("checked-out");
-			//printf(appOptions.m_imageAddress.c_str()); printf("\n");
-		}
+		
 		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Show);
 		cmdFound = true;
 	}
 	else if (command("prop") == true) {
 		if (foundOption("list") == true) {
-			//m_showCommandOption = ShowCommandOption::SC_ShowCheckedOut;
 			appOptions.m_imageAddress = optionValue("list");
-			//printf(appOptions.m_imageAddress.c_str()); printf("\n");
 		}
 		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Prop);
 		cmdFound = true;
@@ -392,7 +360,6 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	else if (command("export") == true) {
 		if (foundOption("dist-path") == true) {
 			appOptions.m_distinationPath = optionValue("dist-path");
-			//printf(appOptions.m_distinationPath.c_str()); printf("\n");
 		}
 		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Export);
 		cmdFound = true;
@@ -403,7 +370,6 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 		if (foundOption("archive-path") == true) {
 
 			std::string opt = optionValue("archive-path");
-			//printf(opt.c_str()); printf("\n");
 			config.setWorkspacePath(opt.c_str());
 		}
 		/*
@@ -431,7 +397,6 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 		*/
 		if (foundOption("name") == true) {
 			std::string opt = optionValue("name");
-			//printf(opt.c_str()); printf("\n");
 			appOptions.setName(opt.c_str());
 		}
 
@@ -442,24 +407,20 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 
 		if (foundOption("image-address") == true) {
 			appOptions.m_imageAddress = optionValue("image-address");
-			//printf(appOptions.m_imageAddress.c_str()); printf("\n");
 		}
 		
 		if (foundOption("archive-path") == true) {
 			std::string opt = optionValue("archive-path");
-			//printf(opt.c_str()); printf("\n");
 			config.setWorkspacePath(opt.c_str());
 		}
 
 		if (foundOption("format-type") == true) {
 			std::string opt = optionValue("format-type");
-			//printf(opt.c_str()); printf("\n");
 			appOptions.m_formatType = LogDocument::parse(opt.c_str());
 		}
 
 		const auto& args = ArgvParser::getDefaultArgumentsContainer();
 		for (auto i = args.begin(); i != args.end(); i++) {
-			//printf("%s\n", i->c_str());
 			appOptions.setDefaultArguments(*i);
 		}
 
@@ -470,9 +431,15 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 
 		if (foundOption("scope") == true) {
 			appOptions.m_imageAddress = optionValue("scope");
-			printf(appOptions.m_imageAddress.c_str()); printf("\n");
 		}
-
+		if (foundOption("checked-out") == true) {
+			appOptions.m_showCommandOption = SIAArcAppOptions::ShowCommandOption::SC_ShowUncheckedOutChanges;
+			appOptions.m_imageAddress = optionValue("checked-out");
+		}
+		if (foundOption("unchecked-out") == true) {
+			appOptions.m_showCommandOption = SIAArcAppOptions::ShowCommandOption::SC_ShowUncheckedOutChanges;
+			appOptions.m_imageAddress = optionValue("checked-out");
+		}
 		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Status);
 		cmdFound = true;
 	}
@@ -491,39 +458,30 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	}
 
 	if (foundOption("quiet") == true) {
-
-
-		//printf("quiet=On\n");
 		config.setQuiet(true);
 	}
 
 	if (foundOption("logging-level") == true) {
 
 		std::string opt = optionValue("logging-level");
-		//printf(opt.c_str()); printf("\n");
 		config.setLogLevel(opt.c_str());
 	}
+	if (foundOption("console-level") == true) {
 
+		std::string opt = optionValue("console-level");
+		printf(opt.c_str()); printf("\n");
+		config.setConsoleLevel(opt.c_str());
+	}
 	if (foundOption("dry-run") == true) {
-
 		std::string opt = optionValue("dry-run");
-		//printf(opt.c_str()); printf("\n");
-
-		//config.setDryRun(opt.c_str());
 	}
 
 	if (foundOption("media-path") == true) {
-
 		std::string opt = optionValue("media-path");
-		//printf(opt.c_str()); printf("\n");
-		//config.setDryRun(opt.c_str());
 	}
 
 	if (foundOption("media-size") == true) {
-
 		std::string opt = optionValue("media-size");
-		//printf(opt.c_str()); printf("\n");
-		//config.setDryRun(opt.c_str());
 	}
 
 	if (res != ArgvParser::NoParserError) {

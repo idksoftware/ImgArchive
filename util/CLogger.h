@@ -36,8 +36,12 @@
 
 #include <fstream>
 #include <iostream>
+#include <memory>
+#include <vector>
 
 namespace simplearchive {
+
+typedef std::vector<std::string> LogBuffer;
 
 class CLogger {
 public:
@@ -57,7 +61,7 @@ public:
 	void log(int code, Level level, const char *format, ...);
 	CLogger& operator << (const std::string& message);
 	static CLogger &getLogger();
-
+	
 	/*
 	static void Log(Level level, const std::string &message) {
 		CLogger &Logger = getLogger();
@@ -93,20 +97,28 @@ public:
 		m_size = size;
 	}
 
-	static void setSilent(bool b = true) {
+	static void setSilent(bool b = false) {
 		m_isSilent = b;
+	}
+
+	static void setConsoleLevel(Level level) {
+		m_isConsoleOut = level;
+	}
+
+	static bool setConsoleLevel(const std::string &level) {
+		return setLevel(m_isConsoleOut, level);
 	}
 
 	static void setLevel(Level level) {
 		m_level = level;
 	}
 
-	static bool setLevel(const std::string &level);
-
-	static void setLogPath(const char *logpath) {
-		m_logpath = logpath;
+	static bool setLevel(const std::string &level) {
+		return setLevel(m_level, level);
 	}
-	
+
+	static void setLogPath(const char *logpath);
+
 	static void Close() {
 		if (m_this != nullptr) {
 			m_this->m_logfile.close();
@@ -120,20 +132,25 @@ private:
 	CLogger(const CLogger&) {};
 	CLogger& operator = (const CLogger& ) { return *this; }
 	bool IsPrintable(Level level);
+	bool CLogger::IsConsoleOut(Level level);
 	static void makeFile();
 	const char *levelStr(Level level);
 	static bool m_isQuiet;
 	static bool m_isSilent;
+	static bool m_isOpen;
 	static std::string m_filename;
 	static const std::string m_Path;
 	static CLogger* m_this;
 	static std::ofstream m_logfile;
 	static Level m_level;
+	static Level m_isConsoleOut;
 	static std::string m_logpath;
 	static int m_size;
 	static int m_cursize;
 	static int m_lastCode;
 	static std::string m_lastMessage;
+	static std::unique_ptr<LogBuffer> m_startUpBuffer;
+	static bool setLevel(CLogger::Level &level, const std::string &s);
 	virtual ~CLogger();
 };
 

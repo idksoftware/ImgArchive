@@ -66,7 +66,7 @@ public:
 	CUnqueName();
 	virtual ~CUnqueName();
 
-	const char *make(const char *name);
+	std::string make(const char *name);
 
 	void setCountPos(int countPos) {
 		m_countPos = countPos;

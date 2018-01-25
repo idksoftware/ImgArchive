@@ -38,17 +38,11 @@ namespace simplearchive {
 
 
 		defineOption("init", "Create Archive enviroment", ArgvParser::MasterOption);
-		//defineOptionAlternative("i", "init");
-
 		defineOption("show", "Show settings", ArgvParser::MasterOption);
-		// Arguments
 		defineOption("version", "prints the version information", ArgvParser::MasterOption);
-
-
 		defineOption("validate", "Validate commands", ArgvParser::MasterOption);
-
-		defineOption("m", "Mirror commands", ArgvParser::MasterOption);
-		defineOptionAlternative("m", "mirror");
+		defineOption("mirror", "Mirror commands", ArgvParser::MasterOption);
+		
 		/*
 		defineOption("image-address", "image address", ArgvParser::NoOptionAttribute);
 
@@ -92,8 +86,14 @@ namespace simplearchive {
 		defineOption("workspace", "location of the workspace folder.", ArgvParser::OptionRequiresValue);
 		//defineOptionAlternative("w", "workspace");
 
-		defineOption("repository-path", "location of the repository folder.", ArgvParser::OptionRequiresValue);
+		defineOption("repository-path", "location of the master repository folder.", ArgvParser::OptionRequiresValue);
+
+		defineOption("master-path", "location of the master repository folder.", ArgvParser::OptionRequiresValue);
 		//defineOptionAlternative("w", "workspace");
+
+		defineOption("derivative-path", "location of the derivative repository folder.", ArgvParser::OptionRequiresValue);
+		//defineOptionAlternative("w", "workspace");
+		defineOption("catalogue-path", "location of the master catalogue folder.", ArgvParser::OptionRequiresValue);
 
 		defineOption("logging-level", "Temporarily changes the logging level for the scope of this command session.", ArgvParser::OptionRequiresValue);
 		//defineOptionAlternative("r", "logging-level");
@@ -140,7 +140,7 @@ namespace simplearchive {
 
 		//testHelpOptionDetection();
 		bool cmdFound = false;
-		CAppConfig &config = CAppConfig::get();
+		CSIAArcAppConfig &config = CSIAArcAppConfig::get();
 
 		if (command("init") == true) {
 			// This command will initalise the configuration.
@@ -163,66 +163,30 @@ namespace simplearchive {
 				appOptions.setHomePath(opt.c_str());
 			}
 
-
-			/*
-			else {
-			std::string progPath = SAUtils::GetPOSIXEnv("ProgramData");
-			std::string siaPath = "/IDK Software/ImageArchive1.0";
-			//if (SAUtils::makePath(progPath.c_str(), siaPath.c_str()) == false) {
-			//	return false;
-			//}
-			opt = progPath;
-			opt += siaPath;
-			}
-			if (SAUtils::FileExists(opt.c_str()) == false) {
-			return false;
-			}
-			*/
-
-
 			if (foundOption("workspace-path") == true) {
 				opt = optionValue("workspace-path");
 				appOptions.setWorkspacePath(opt.c_str());
 			}
-			/*
-			else {
-			std::string temp = SAUtils::GetPOSIXEnv("USERPROFILE");
-			opt = temp + "/Documents";
-			if (SAUtils::FileExists(temp.c_str()) == false) {
-			return false;
-			}
-			opt = opt + "/SIA Workspace";
-			//if (SAUtils::FileExists(opt.c_str()) == false) {
-			//	if (SAUtils::mkDir(opt.c_str()) == false) {
-			//		return false;
-			//	}
-			//}
-
-			}
-			*/
-			//if (SAUtils::FileExists(opt.c_str()) == false) {
-			//	return false;
-			//}
-
-
+			
 			if (foundOption("repository-path") == true) {
-				opt = optionValue("repository-path");
+				opt = optionValue("derivative-path");
+				appOptions.setRepositoryPath(opt.c_str());
+			}
+
+			if (foundOption("master-path") == true) {
+				opt = optionValue("master-path");
 				appOptions.setMasterPath(opt.c_str());
 			}
-			/*
-			else {
-			std::string progPath = SAUtils::GetPOSIXEnv("ProgramData");
-			std::string siaPath = "/IDK Software/ImageArchive1.0/Master";
-			//if (SAUtils::makePath(progPath.c_str(), siaPath.c_str()) == false) {
-			//	return false;
-			//}
-			opt = progPath;
-			opt += siaPath;
+			
+			if (foundOption("derivative-path") == true) {
+				opt = optionValue("derivative-path");
+				appOptions.setDerivativePath(opt.c_str());
 			}
-			//if (SAUtils::FileExists(opt.c_str()) == false) {
-			//	return false;
-			//}
-			*/
+
+			if (foundOption("catalogue-path") == true) {
+				opt = optionValue("catalogue-path");
+				appOptions.setCataloguePath(opt.c_str());
+			}
 
 			cmdFound = true;
 		}
@@ -366,6 +330,12 @@ namespace simplearchive {
 			printf(opt.c_str()); printf("\n");
 			config.setLogLevel(opt.c_str());
 		}
+		if (foundOption("console-level") == true) {
+
+			std::string opt = optionValue("console-level");
+			printf(opt.c_str()); printf("\n");
+			config.setConsoleLevel(opt.c_str());
+		}
 		if (foundOption("dry-run") == true) {
 
 			std::string opt = optionValue("dry-run");
@@ -398,4 +368,26 @@ namespace simplearchive {
 		}
 		return true;
 	}
+
+	std::string AdminArgvParser::usageDescriptionHeader(unsigned int _width) const
+	{
+		std::string usage;
+
+		usage += "usage: siaarc subcommand [options] [args]\n\n";
+		usage += "Image archive command line client, version 1.0.0.1\n";
+		usage += "Type 'sia help <subcommand>' for help on a specific subcommand.\n\n";
+
+		std::string tmp = "siaarc is the primary command-line interface to Simple Image Archive. This interface is used to manage the control of images going in and out of the archive software. ";
+		tmp += "It has a rich set of subcommands that \"add/import\" images to the archive and \"export\" images out of the archive, In addition manages the controlled modification of images";
+		tmp += " using the \"check-in/check-out\" command set";
+		usage += '\n';
+		usage += formatString(tmp, _width);
+		usage += '\n';
+		usage += '\n';
+		usage += "Note:\n";
+		usage += formatString("The administration of the archive is carried out by the siaadmin command-line interface.", _width) + "\n";
+
+		return usage;
+	}
+
 } /* namespace simplearchive */

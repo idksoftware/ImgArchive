@@ -270,17 +270,17 @@ void ExifObject::setYResolution(const std::string& yResolution) {
 }
 */
 void ExifObject::print() {
-	/*
+	
 	CLogger &logger = CLogger::getLogger();
-
-	logger.log(LOG_OK, CLogger::FINE, "Using Exif Color Space: \"%s\"", m_colorSpace.c_str());
-	logger.log(LOG_OK, CLogger::FINE, "Using Exif Image Width: \"%s\"", m_imageWidth.c_str());
-	logger.log(LOG_OK, CLogger::FINE, "Using Exif Image Height: \"%s\"", m_imageHeight.c_str());
-	logger.log(LOG_OK, CLogger::FINE, "Using Exif Date Time: \"%s\"", m_dateTime.c_str());
-	logger.log(LOG_OK, CLogger::FINE, "Using Exif Copyright: \"%s\"", m_copyright.c_str());
-	logger.log(LOG_OK, CLogger::FINE, "Using Exif Artist: \"%s\"", m_artist.c_str());
-	logger.log(LOG_OK, CLogger::FINE, "Using Exif X Resolution: \"%s\"", m_xResolution.c_str());
-	logger.log(LOG_OK, CLogger::FINE, "Using Exif Y Resolution: \"%s\"", m_yResolution.c_str());
+	/*
+	logger.log(LOG_OK, CLogger::Level::FINE, "Using Exif Color Space: \"%s\"", columnAt(static_cast<int>(DB_COLORSPACE)).toString().c_str());
+	logger.log(LOG_OK, CLogger::Level::FINE, "Using Exif Image Width: \"%s\"", m_imageWidth.c_str());
+	logger.log(LOG_OK, CLogger::Level::FINE, "Using Exif Image Height: \"%s\"", m_imageHeight.c_str());
+	logger.log(LOG_OK, CLogger::Level::FINE, "Using Exif Date Time: \"%s\"", m_dateTime.c_str());
+	logger.log(LOG_OK, CLogger::Level::FINE, "Using Exif Copyright: \"%s\"", m_copyright.c_str());
+	logger.log(LOG_OK, CLogger::Level::FINE, "Using Exif Artist: \"%s\"", m_artist.c_str());
+	logger.log(LOG_OK, CLogger::Level::FINE, "Using Exif X Resolution: \"%s\"", m_xResolution.c_str());
+	logger.log(LOG_OK, CLogger::Level::FINE, "Using Exif Y Resolution: \"%s\"", m_yResolution.c_str());
 	*/
 }
 

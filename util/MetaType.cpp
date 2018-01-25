@@ -166,16 +166,14 @@ const char *MTTypeException::what() const throw() {
 
 
 MTColumn::MTColumn(const MTSchema &info) : m_info(new MTSchema(info)) {
-	m_object = 0;
-	m_boundValue = 0;
 }
 
 MTColumn::MTColumn(const MTColumn& r) {
-	m_object = 0;
-	m_boundValue = 0;
+	m_object = nullptr;
+	m_boundValue = nullptr;
 	MTSchema::EItemType type = m_info->getType();
-	if (r.m_object == 0) {
-		m_object = 0;
+	if (r.m_object == nullptr) {
+		m_object = nullptr;
 	}
 	switch (type) {
 	case MTSchema::Integer:
@@ -220,14 +218,14 @@ MTColumn& MTColumn::operator=(const MTColumn& r) {
 
 MTColumn::~MTColumn() {
 	if (m_object != 0) {
-		delete m_object;
+		//delete m_object;
 	}
 }
 std::string &MTColumn::toString() {
 
 	std::string *returned = 0;
 	if (isBound()) {
-		returned = m_boundValue;
+		returned = m_boundValue.get();
 	}
 	else {
 		m_unboundValue.reset(new std::string);
@@ -331,7 +329,7 @@ void MTColumn::set(unsigned long i) {
 	MTSchema::EItemType type = m_info->getType();
 	if (type == MTSchema::Integer) {
 		if (m_object == nullptr) {
-			 m_object = new MetaTypeObject(i);
+			m_object.reset(new MetaTypeObject(i));
 		} else {
 			*m_object = i;
 		}
@@ -346,11 +344,17 @@ void MTColumn::set(const char *str) {
 	MTSchema::EItemType type = m_info->getType();
 	if (type == MTSchema::Text) {
 		if (m_object == nullptr) {
-			 m_object = new MetaTypeObject(tmp.c_str());
+			m_object.reset(new MetaTypeObject(tmp.c_str()));
 		} else {
-			*m_object = tmp;
+			*m_object = str;
 		}
 //		boundUpdate();
+	}
+	else if (type == MTSchema::Date) {
+		if (m_object == nullptr) {
+			ExifDateTime date(str);
+			m_object.reset(new MetaTypeObject(date));
+		}
 	}
 	else {
 		throw MTTypeException("Invalid type");
@@ -360,7 +364,7 @@ void MTColumn::set(const std::string &str) {
 	MTSchema::EItemType type = m_info->getType();
 	if (type == MTSchema::Text) {
 		if (m_object == nullptr) {
-			 m_object = new MetaTypeObject(str.c_str());
+			m_object.reset(new MetaTypeObject(str.c_str()));
 		} else {
 			*m_object = str.c_str();
 		}
@@ -374,7 +378,7 @@ void MTColumn::set(const ExifDateTime &date) {
 	MTSchema::EItemType type = m_info->getType();
 	if (type == MTSchema::Date) {
 		if (m_object == nullptr) {
-			 m_object = new MetaTypeObject(date);
+			m_object.reset(new MetaTypeObject(date));
 		} else {
 			*m_object = date;
 		}
@@ -388,7 +392,7 @@ void MTColumn::set(double d) {
 	MTSchema::EItemType type = m_info->getType();
 	if (type == MTSchema::Float) {
 		if (m_object == nullptr) {
-			m_object = new MetaTypeObject(d);
+			m_object.reset(new MetaTypeObject(d));
 		} else {
 			*m_object = d;
 		}
@@ -593,7 +597,7 @@ bool MTRow::join(const MTRow &otherRow) {
 	try {
 		for (std::vector<MTSchema>::iterator i = thisSchema.begin(); i != thisSchema.end(); i++, thisIndex++) {
 			MTSchema& columnInfo = *i;
-			printf("%s\n", columnInfo.getName().c_str());
+			//printf("%s\n", columnInfo.getName().c_str());
 			otherIndex = otherSchema.getIndex(columnInfo.getName().c_str());
 			if (otherIndex == -1) {
 				continue;
@@ -650,7 +654,7 @@ bool MTTable::read(const char *fullpath) {
 	
 	
 	clear();
-	char text[1024 * 2];
+	
 	std::ifstream file(fullpath);
 	if (file.is_open() == false) {
 		ErrorCode::setErrorCode(SIA_ERROR::OPEN_ERROR);
@@ -693,7 +697,7 @@ bool MTTable::write(const char *fullpath) {
 	std::stringstream s;
 	for (auto i = this->begin(); i != this->end(); i++) {
 		s << (*i)->toString() << "\n";
-		printf("%s\n", (*i)->toString().c_str());
+		
 	}
 	this->clear();
 	file << s.str();
@@ -710,7 +714,7 @@ bool MTTable::find(MTColumn& column) {
 		return false;
 	}
 	int pos = rowCursor;
-	if (size() <= pos) {
+	if (size() <= (size_type)pos) {
 		return false;
 	}
 	MTSchema& thisSchema = column.getInfo();

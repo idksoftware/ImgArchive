@@ -393,7 +393,7 @@ protected:
 	};
 	   /// At the end of each directory found, this function is run.
 	virtual void onEnd() {
-		printf("onEnd\n");
+		DEBUG_PRINT("onEnd\n");
 	};
         /// On finding a file, this function is run.
 	virtual void onYearFolder(const char *name) {
@@ -412,7 +412,7 @@ protected:
 	};
     /// On finding a file, this function is run.
 	virtual void onYearEnd() {
-		printf("onYearEnd\n");
+		DEBUG_PRINT("onYearEnd\n");
 	};
         /// On finding a directory, this function is run.
 	virtual void onDayFolder(const char *name) {

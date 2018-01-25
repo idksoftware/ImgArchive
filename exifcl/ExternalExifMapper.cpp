@@ -51,7 +51,7 @@ struct MapItem {
 	MapItem(const char *name);
 };
 ExternalExifMapper::ExternalExifMapper() {
-	m_exifMap = new Config;
+	m_exifMap = new ConfigBlock;
 
 }
 
@@ -89,7 +89,7 @@ ExifObject *ExternalExifMapper::create(const char *exiffile) {
 	// test
 	
 	ConfigReader configReader;
-	Config exifData;
+	ConfigBlock exifData;
 	exifData.setDelimChar(':');
 	CLogger &logger = CLogger::getLogger();
 	logger.log(LOG_OK, CLogger::Level::FINE, "Reading external Exif data file: \"%s\"", exiffile);
@@ -104,7 +104,7 @@ ExifObject *ExternalExifMapper::create(const std::string &str) {
 	// test
 
 	ConfigReader configReader;
-	Config exifData;
+	ConfigBlock exifData;
 	exifData.setDelimChar(':');
 	CLogger &logger = CLogger::getLogger();
 	
@@ -116,13 +116,13 @@ ExifObject *ExternalExifMapper::create(const std::string &str) {
 }
 
 
-ExifObject *ExternalExifMapper::create(Config &exifData) {
+ExifObject *ExternalExifMapper::create(ConfigBlock &exifData) {
 	ExifObject *exifObject = new ExifObject;
 	//exifData.printAll();
 	CLogger &logger = CLogger::getLogger();
-	logger.log(LOG_OK, CLogger::Level::FINE, "EXIF Data");
-
-	printf("Print the EXIF File generated\n");
+	logger.log(LOG_OK, CLogger::Level::FINE, "Processing EXIF Data from external reader");
+	logger.log(LOG_OK, CLogger::Level::FINE, "Display the EXIF data generated");
+	//printf("Print the EXIF File generated\n");
 	for (auto ii = exifData.begin(); ii != exifData.end(); ++ii) {
 		logger.log(LOG_OK, CLogger::Level::FINE, "Exif data Key: \"%s\" Value: \"%s\"", ii->first.c_str(), ii->second.c_str());
 		//printf("Exif data Key: \"%s\" Value: \"%s\"\n", ii->first.c_str(), ii->second.c_str());
@@ -130,8 +130,8 @@ ExifObject *ExternalExifMapper::create(Config &exifData) {
 	}
 	
 	//m_exifMap->printAll();
-	logger.log(LOG_OK, CLogger::Level::FINE, "EXIF Map");
-	printf("Print the EXIF map\n");
+	logger.log(LOG_OK, CLogger::Level::FINE, "Display EXIF Map");
+	//printf("Print the EXIF map\n");
 	for (auto ii = m_exifMap->begin(); ii != m_exifMap->end(); ++ii) {
 		logger.log(LOG_OK, CLogger::Level::FINE, "Exif map Key: \"%s\" Value: \"%s\"", ii->first.c_str(), ii->second.c_str());
 		//printf("Exif map Key: \"%s\" Value: \"%s\"\n", ii->first.c_str(), ii->second.c_str());

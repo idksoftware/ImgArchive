@@ -6,10 +6,10 @@ class DataString {
 	std::string m_month;
 	std::string m_year;
 	std::string m_image;
-	void init(std::string &s);
+	void init(const std::string &s);
 public:
 	DataString();
-	DataString(std::string &pattern);
+	DataString(const std::string &pattern);
 	DataString(const char *d);
 	int compare(DataString &d);
 };
@@ -21,7 +21,7 @@ DataString::DataString() {
 	m_image = '*';
 }
 
-DataString::DataString(std::string &s) {
+DataString::DataString(const std::string &s) {
 	init(s);
 }
 
@@ -42,7 +42,7 @@ std::string justify(std::string s) {
 	return s;
 }
 
-void DataString::init(std::string &s) {
+void DataString::init(const std::string &s) {
 	std::string delimiter = "/";
 	if (s.find("-") != std::string::npos) {
 		delimiter = "-";
@@ -76,17 +76,18 @@ void DataString::init(std::string &s) {
 
 int DataString::compare(DataString &d) {
 	int res = 0;
-	if (m_year == "*") {
+	if (m_year == "*" || d.m_year == "*" ) {
 		return 0;
 	} else if ((res = m_year.compare(d.m_year)) != 0) {
 		return res;
 	} else {
-		if (m_month == "*") {
+		if (m_month == "*" || d.m_month == "*") {
 			return 0;
-		} else if ((res = m_month.compare(d.m_month)) != 0) {
+		}
+		else if ((res = m_month.compare(d.m_month)) != 0) {
 			return res;
 		} else {
-			if (m_day == "*") {
+			if (m_day == "*" || d.m_day == "*") {
 				return 0;
 			} else if ((res = m_day.compare(d.m_day)) != 0) {
 				return res;
@@ -148,6 +149,7 @@ const bool ScopeItem::isInScope(DataString &d) {
 		if (m_begin.compare(d) <= 0 && m_end.compare(d) >= 0) {
 			return true;
 		}
+		
 		return false;
 	}
 	if (m_begin.compare(d) == 0) {
@@ -202,6 +204,9 @@ std::string removespace(std::string str)
 // Range: 2009-2015, 2009-end, begin-2009, 2009/08/16-2015
 // Item: 2009/08/16, 2009/08/17,
 bool AddressScope::isInScope(const char *d) {
+
+	if (m_matchAll) return true;
+
 	DataString date(d);
 	for( TokenList::iterator iter = m_list->begin();  iter != m_list->end(); iter++) {
 		ScopeItem &item = *iter;
@@ -212,7 +217,13 @@ bool AddressScope::isInScope(const char *d) {
 	return false;
 }
 
+void AddressScope::scopeAll() {
+	m_matchAll = true;
+}
+
+
 bool AddressScope::scope(const char *str) {
+	m_matchAll = false;
 	std::string tmp = str;
 	std::string s = removespace(tmp);
 	std::string delimiter = ",";

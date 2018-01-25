@@ -84,14 +84,14 @@ CExtentionsFile::~CExtentionsFile() {
 }
 
 bool CExtentionsFile::read(const char *datafile) {
-	char text[256];
+	std::string text;
 	std::ifstream file(datafile);
 	if (file.is_open() == false) {
 		return false;
 	}
 
-	while (file.getline(text, 100)) {
-		insert(text);
+	while (std::getline(file, text)) {
+		insert(text.c_str());
 	}
 	file.close();
 
@@ -179,6 +179,8 @@ ImageExtentions &ImageExtentions::get() {
 		std::string path = m_extentionsFilePath + "/ext.dat";
 		if (SAUtils::FileExists(path.c_str()) == false) {
 			m_isError = true;
+			throw std::exception("Cannot read extentions file \"ext.dat\"");
+			
 		}
 		m_extentionsFile = new CExtentionsFile();
 		m_extentionsFile->read(path.c_str());

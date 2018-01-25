@@ -36,6 +36,7 @@
 #include <iostream>
 #include "AdminApp.h"
 #include "AdminArgvParser.h"
+#include "AppPaths.h"
 #include "SAUtils.h"
 #include "CDate.h"
 #include "AppConfig.h"
@@ -67,6 +68,7 @@ using namespace std;
 #include <vector>
 #include "AdminAppOptions.h"
 #include "EnvFunc.h"
+#include "AppConfig.h"
 
 #define VERSION	"1.00"
 #define BUILD	"040115.1749"
@@ -78,6 +80,8 @@ Java HotSpot(TM) 64-Bit Server VM (build 24.51-b03, mixed mode)
 */
 namespace simplearchive {
 	
+	AdminApp::AdminApp() : AppBase(new AdminArgvParser) {};
+
 bool AdminApp::Show() {
 	/*
 	m_error = false;
@@ -86,7 +90,7 @@ bool AdminApp::Show() {
 	m_logLevel = "INFO";
 	m_dry_run = false;
 	*/
-	CAppConfig &config = CAppConfig::get();
+	CSIAArcAppConfig &config = CSIAArcAppConfig::get();
 	/*
 	const std::string key = "SIA_HOME";
 	std::string temp = SAUtils::GetPOSIXEnv(key);
@@ -118,7 +122,7 @@ bool AdminApp::Show() {
 			}
 		}
 		if (found == false) {
-			homePath = SAUtils::GetEnvironment("ProgramData");
+			homePath = SAUtils::GetPOSIXEnv("ProgramData");
 			if (homePath.empty() == true || homePath.length() == 0) {
 				printf("SIA Unable to start? Cannot read all users profile.");
 				return false;
@@ -143,7 +147,7 @@ bool AdminApp::Show() {
 			" the environment variable SIA_HOME not set.\nUse siaadmin to initalise an archive.\n");
 		return false;
 	}
-	ConfigReader configReader;
+	AppConfigReader configReader;
 	configReader.setNoLogging();
 	configReader.read(configfile.c_str(), config);
 	config.printAll();
@@ -172,12 +176,19 @@ bool AdminApp::Show() {
 	if (temp.empty() == false) {
 		config.setLogLevel(temp.c_str());
 	}
+	temp = SAUtils::GetPOSIXEnv("SIA_CONSOLELEVEL");
+	if (temp.empty() == false) {
+		config.setConsoleLevel(temp.c_str());
+	}
 	CreateArchive::checkFolders(homePath.c_str());
+	return true;
 }
 
+
+#ifdef XXXXXXXXXXXXx
 bool AppOptions::initaliseConfig() {
 
-	CAppConfig &config = CAppConfig::get();
+	CSIAArcAppConfig &config = CSIAArcAppConfig::get();
 	const std::string key = "SIA_HOME";
 	std::string temp = SAUtils::GetPOSIXEnv(key);
 	std::string homePath = temp;
@@ -231,6 +242,10 @@ bool AppOptions::initaliseConfig() {
 			if (temp.empty() == false) {
 				config.setLogLevel(temp.c_str());
 			}
+			temp = SAUtils::GetPOSIXEnv("SIA_CONSOLELEVEL");
+			if (temp.empty() == false) {
+				config.setConsoleLevel(temp.c_str());
+			}
 		}
 		else {
 			m_configured = false;
@@ -238,6 +253,8 @@ bool AppOptions::initaliseConfig() {
 	}
 	return true;
 }
+#endif
+
 
 int test(const std::string key) {
 	return 0;
@@ -263,7 +280,7 @@ bool AdminApp::doInitalise(int argc, char **argv) {
 	return true;
 }
 
-bool AdminApp::Run()
+bool AdminApp::doRun()
 {
 	// Find if the archive exists
 	AppOptions &appOptions = AppOptions::get();
@@ -273,11 +290,11 @@ bool AdminApp::Run()
 			return false;
 		}
 		if (appOptions.getCommandMode() == AppOptions::CM_InitArchive) {
-
-			if (CreateArchive(appOptions.getHomePath(), appOptions.getWorkspacePath(), appOptions.getMasterPath(), appOptions.getUsers()) == false) {
+			// const char *archivePath, const char *workspacePath, const char *reposPath, const char *masterPath, const char *derivativePath, bool users
+			if (CreateArchive(appOptions.getHomePath(), appOptions.getWorkspacePath(), appOptions.getRepositoryPath(), appOptions.getMasterPath(), appOptions.getDerivativePath(), appOptions.getCataloguePath(), appOptions.getUsers()) == false) {
 				return false;
 			}
-			printf("\n\Completed initalising the Archive\n");
+			printf("\nCompleted initalising the Archive\n");
 			return true;
 		}
 		return false;
@@ -291,7 +308,7 @@ bool AdminApp::Run()
 		break;
 	case AppOptions::CM_Show:
 	{
-		CAppConfig &config = CAppConfig::get();
+		CSIAArcAppConfig &config = CSIAArcAppConfig::get();
 		config.printAll();
 		break;
 	}
@@ -299,7 +316,7 @@ bool AdminApp::Run()
 	{
 		SIALib siaLib;
 		siaLib.initalise();
-		CAppConfig &config = CAppConfig::get();
+		CSIAArcAppConfig &config = CSIAArcAppConfig::get();
 		if (siaLib.view(appOptions.getName()) == false) {
 			return false;
 		}
@@ -311,7 +328,7 @@ bool AdminApp::Run()
 		// make mirror
 		SIALib siaLib;
 		siaLib.initalise();
-		CAppConfig &config = CAppConfig::get();
+		CSIAArcAppConfig &config = CSIAArcAppConfig::get();
 		if (siaLib.mirror(appOptions.getName()) == false) {
 			return false;
 		}
@@ -324,12 +341,13 @@ bool AdminApp::Run()
 	{
 		SIALib siaLib;
 		siaLib.initalise();
-		CAppConfig &config = CAppConfig::get();
+		CSIAArcAppConfig &config = CSIAArcAppConfig::get();
 		if (appOptions.isConfiguratedOk() == false) {
 			// Do not create a new archive. The old one needs to be deleted?
 			return false;
 		}
-		
+	
+		/*
 		switch (appOptions.getScope()) {
 		case AppOptions::Workspace:
 			if (siaLib.validate(config.getMasterPath(), config.getWorkspacePath(), config.getHomePath(), SIALib::Workspace, appOptions.repair()) == false) {
@@ -346,6 +364,7 @@ bool AdminApp::Run()
 			}
 		}
 		siaLib.complete();
+		*/
 		break;
 	}
 	
@@ -379,7 +398,7 @@ bool failed()
 	return(false);
 }
 
-bool AdminApp::CreateArchive(const char *archivePath, const char *workspacePath, const char *masterPath, bool users) {
+bool AdminApp::CreateArchive(const char *archivePath, const char *workspacePath, const char *reposPath, const char *masterPath, const char *derivativePath, const char *cataloguePath, bool users) {
 
 	if (users == true) {
 		if (CreateArchive::IsAdmin() == false) {
@@ -387,9 +406,72 @@ bool AdminApp::CreateArchive(const char *archivePath, const char *workspacePath,
 			return false;
 		}
 	}
-		
-	if (CreateArchive::createSystem(users, archivePath, workspacePath, masterPath) == false) {
-		std::cout << "Failed creating root folders" << '\n';
+	
+	CSIAArcAppConfig config = CSIAArcAppConfig::get();
+	
+	std::string archivePathStr = archivePath;
+	std::string workspacePathStr = workspacePath;
+	std::string reposPathStr = reposPath;
+	std::string masterPathStr = masterPath;
+	std::string derivativePathStr = derivativePath;
+	std::string cataloguePathStr = cataloguePath;
+
+	std::string masterPathOpt = masterPath;
+	std::string derivativePathOpt = derivativePath;
+	
+	if (archivePathStr.empty()) {
+		archivePathStr = config.getHomePath();
+	}
+	else {
+		// The root has be changed as an option i.e c:/MyPhotoArchive
+		archivePathStr = archivePath;
+	}
+
+	masterPathStr = archivePathStr;
+	masterPathStr += MASTER_PATH;
+	derivativePathStr = archivePathStr;
+	derivativePathStr += DERIVATIVE_PATH;
+
+	
+	if (!reposPathStr.empty()) {
+		masterPathStr = reposPathStr;
+		masterPathStr += MASTER_PATH;
+		derivativePathStr = reposPathStr;
+		derivativePathStr += DERIVATIVE_PATH;
+	}
+	else if (masterPathOpt.empty() && !derivativePathOpt.empty()) {
+		masterPathStr = masterPathOpt;
+		derivativePathStr = derivativePathOpt;
+	}
+
+	if (masterPathStr.empty()) {
+		masterPathStr = config.getMasterPath();
+	}
+	if (derivativePathStr.empty()) {
+		derivativePathStr = config.getDerivativePath();
+	}
+	
+	if (workspacePathStr.empty()) {
+		workspacePathStr = config.getWorkspacePath();
+	}
+
+	if (cataloguePathStr.empty()) {
+		cataloguePathStr = config.getMasterCataloguePath();
+	}
+	std::cout << "Using archive path \"" << archivePathStr << "\"\n";
+	std::cout << "Using workspace path \"" << workspacePathStr << "\"\n";
+	std::cout << "Using master path \"" << masterPathStr << "\"\n";
+	std::cout << "Using derivative path \"" << derivativePathStr << "\"\n";
+	std::cout << "Using catalogue path \"" << cataloguePathStr << "\"\n";
+	
+
+	config.setArchivePath(archivePathStr.c_str());
+	config.setMasterPath(masterPathStr.c_str());
+	config.setDerivativePath(derivativePathStr.c_str());
+	config.setWorkspacePath(workspacePathStr.c_str());
+	config.setMasterCataloguePath(cataloguePathStr.c_str());
+
+	if (CreateArchive::createSystem(users, archivePathStr.c_str(), workspacePathStr.c_str(), masterPathStr.c_str(), derivativePathStr.c_str(), cataloguePathStr.c_str()) == false) {
 		return false;
 	}
 	if (CreateArchive::createHomeEnvVar(CreateArchive::getArchivePath().c_str(), users) == false) {
@@ -401,22 +483,78 @@ bool AdminApp::CreateArchive(const char *archivePath, const char *workspacePath,
 		std::cout << "Failed creating folders" << '\n';
 		return false;
 	}
-
+	
 	if (CreateArchive::createHookFiles(CreateArchive::getArchivePath().c_str(), HOOKS_PATH) == false) {
 		std::cout << "Failed creating hook files" << '\n';
 		return false;
 	}
-
-	if (CreateArchive::createConfigFiles(CreateArchive::getArchivePath().c_str(), CONFIG_PATH, CreateArchive::getWorkspace().c_str(), CreateArchive::getMaster().c_str()) == false) {
+	
+	if (CreateArchive::createConfigFiles(CreateArchive::getArchivePath().c_str(), CONFIG_PATH, CreateArchive::getWorkspace().c_str(), CreateArchive::getMaster().c_str(), derivativePathStr.c_str(), cataloguePathStr.c_str()) == false) {
 		std::cout << "Failed creating configuration files" << '\n';
 		return false;
 	}
 	return true;
 }
 
+
 bool AdminApp::initaliseConfig() {
 
-	CAppConfig &config = CAppConfig::get();
+	CSIAArcAppConfig &config = CSIAArcAppConfig::get();
+
+	bool found = false;
+	std::string homePath;
+	// Looking the HKEY_LOCAL_MACHINE first
+	if (GetEnv(homePath, true) == true) {
+		//printf("Found SIA_HOME in system variables: %s", homePath.c_str());
+		found = true;
+	}
+	// Looking the HKEY_CURRENT_USER
+	else if (GetEnv(homePath, false) == true) {
+		//printf("Found SIA_HOME in user variables: %s", homePath.c_str());
+		found = true;
+	}
+	if (found) {
+		// Initalise without the config file i.e. set defaults.
+		if (config.init(homePath.c_str()) == false) {
+			setError(12, "Cannot find home path? exiting?");
+			return false;
+		}
+	}
+	else {
+		if (config.init() == false) {
+			setError(12, "Cannot find home path? exiting?");
+			return false;
+		}
+	}
+
+	if (SAUtils::DirExists(homePath.c_str()) == false) {
+		setError(12, "SIA Unable to start? Archive not found at default location and the environment variable SA_HOME not set.\n"
+			"Use siaadmin -i to create an empty archive at the default location (see documentation).\n");
+		return false;
+
+	}
+
+	std::string configfile = homePath + "/config/" + "config.dat";
+	std::string configPath = homePath + "/config";
+	if (SAUtils::FileExists(configfile.c_str()) == true) {
+		setConfigPath(configPath.c_str());
+		AppConfigReader configReader;
+		configReader.setNoLogging();
+		if (configReader.read(configfile.c_str(), config) == false) {
+			setError(13, "Error found at line %d in the configuration file.\n", configReader.getCurrentLineNumber());
+			return false;
+		}
+		config.fileBasedValues(homePath.c_str());
+
+	}
+	else {
+		m_configured = false;
+	}
+
+	return true;
+
+	/*
+	CSIAArcAppConfig &config = CSIAArcAppConfig::get();
 	const std::string key = "SIA_HOME";
 	std::string temp = SAUtils::GetPOSIXEnv(key);
 	std::string homePath = temp;
@@ -441,22 +579,12 @@ bool AdminApp::initaliseConfig() {
 
 		if (SAUtils::FileExists(configfile.c_str()) == true) {
 			setConfigPath(configPath.c_str());
-			ConfigReader configReader;
+			AppConfigReader configReader;
 			configReader.setNoLogging();
 			configReader.read(configfile.c_str(), config);
 			// This is usfull to print the config
 			//config.printAll();
-			/*
-			if (config.value("SourcePath", temp) == true) {
-			m_sourcePath = temp;
-			}
-			if (config.value("ArchivePath", temp) == true) {
-			m_archivePath = temp;
-			}
-			if (config.value("LogLevel", temp) == true) {
-			m_logLevel = temp;
-			}
-			*/
+			
 			config.setHomePath(homePath.c_str());
 			temp = SAUtils::GetPOSIXEnv("SIA_WORKSPACE");
 			if (temp.empty() == false) {
@@ -470,11 +598,102 @@ bool AdminApp::initaliseConfig() {
 			if (temp.empty() == false) {
 				config.setLogLevel(temp.c_str());
 			}
+			temp = SAUtils::GetPOSIXEnv("SIA_CONSOLELEVEL");
+			if (temp.empty() == false) {
+				config.setConsoleLevel(temp.c_str());
+			}
 		}
 		else {
 			m_configured = false;
 		}
 	}
+	return true;
+	*/
+}
+
+
+bool AdminApp::initaliseHomePath() {
+
+	CSIAArcAppConfig &config = CSIAArcAppConfig::get();
+
+	bool found = false;
+	std::string homePath;
+	// Looking the HKEY_LOCAL_MACHINE first
+	if (GetEnv(homePath, true) == true) {
+		//printf("Found SIA_HOME in system variables: %s", homePath.c_str());
+		found = true;
+	}
+	// Looking the HKEY_CURRENT_USER
+	else if (GetEnv(homePath, false) == true) {
+		//printf("Found SIA_HOME in user variables: %s", homePath.c_str());
+		found = true;
+	}
+	else {
+		bool found = false;
+		homePath = SAUtils::GetPOSIXEnv("ProgramData");
+		if (homePath.empty() == true || homePath.length() == 0) {
+			printf("SIA Unable to start? Cannot read user profile.");
+			setError(12, "SIA Unable to start? Cannot read user profile.");
+			return false;
+		}
+		else {
+			homePath += "/IDK Software/ImageArchive1.0";
+			if (SAUtils::DirExists(homePath.c_str()) == true) {
+				//printf("Found SIA_HOME in user profile: %s", homePath.c_str());
+				found = true;
+			}
+		}
+		if (found == false) {
+			homePath = SAUtils::GetPOSIXEnv("USERPROFILE");
+			if (homePath.empty() == true || homePath.length() == 0) {
+				printf("SIA Unable to start? Cannot read all users profile.");
+				setError(12, "SIA Unable to start? Cannot read all users profile.");
+				return false;
+			}
+			homePath += "/IDK Software/ImageArchive1.0";
+			if (SAUtils::DirExists(homePath.c_str()) == true) {
+				//printf("Found SIA_HOME in all users profile: %s", homePath.c_str());
+				found = true;
+			}
+		}
+	}
+
+	std::string temp;
+	temp = SAUtils::GetPOSIXEnv("SIA_ARCHIVE");
+	if (temp.empty() == false) {
+		config.setWorkspacePath(temp.c_str());
+	}
+	temp = SAUtils::GetPOSIXEnv("SIA_SOURCE");
+	if (temp.empty() == false) {
+		config.setSourcePath(temp.c_str());
+	}
+	temp = SAUtils::GetPOSIXEnv("SIA_LOGLEVEL");
+	if (temp.empty() == false) {
+		config.setLogLevel(temp.c_str());
+	}
+
+
+	const std::string key = "SIA_HOME";
+	temp = SAUtils::GetPOSIXEnv(key);
+	homePath = temp;
+	//printf("%s", homePath.c_str());
+	int i = homePath.length();
+	if (homePath.empty() == true || homePath.length() == 0) {
+		homePath = SAUtils::GetPOSIXEnv("ProgramData");
+		//C:\ProgramData\IDK Software\ImageArchive1.0
+		homePath += "/IDK Software/ImageArchive1.0";
+
+	}
+	return true;
+}
+
+bool AdminApp::initaliseArgs(int argc, char **argv) {
+
+	
+	if (m_argvParser->doInitalise(argc, argv) == false) {
+		return false;
+	}
+
 	return true;
 }
 
@@ -487,14 +706,7 @@ bool AdminApp::initaliseConfig() {
 int main(int argc, char **argv)
 {
 	simplearchive::AdminApp app;
-	if (app.initalise(argc, argv) == false) {
-		return false;
-	}
-	if (app.Run() == false) {
-		return 0;
-	}
-	return 1;
-
+	return app.RunApp(argc, argv);
 }
 
 

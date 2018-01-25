@@ -35,8 +35,11 @@
 #ifndef CREATEARCHIVE_H_
 #define CREATEARCHIVE_H_
 
+#include "AppPaths.h"
+
 namespace simplearchive {
 
+/*
 #define CONFIG_PATH "/config"
 #define TMP_PATH "/tmp"
 #define DUPS_PATH "/dups"
@@ -47,6 +50,7 @@ namespace simplearchive {
 #define MASTER_PATH "/master"
 #define TOOLS_PATH "/tools"
 #define HOOKS_PATH "/hooks"
+*/
 
 	class CreateArchive {
 		/**
@@ -64,16 +68,18 @@ namespace simplearchive {
 
 		static bool CreateArchive::createFile(const char *root, const char *folder, const char *filename, std::string &str);
 
-		static std::string  makeConfigFile(const char *root, const char *workspace, const char *master);
-		static bool createAdminSystem(const char *archivePath, const char *workspace, const char *master);
-		static bool createUserSystem(const char *archivePath, const char *workspace, const char *master);
+		static std::string  makeConfigFile(const char *root, const char *workspace, const char *master, const char *derivative, const char *catalogue);
+		static bool createAdminSystem(const char *archivePath, const char *workspace, const char *master, const char *derivative, const char *catalogue);
+		static bool createUserSystem(const char *archivePath, const char *workspace, const char *master, const char *derivative, const char *catalogue);
 		static std::string  m_archivePath;
 		static std::string  m_workspace;
 		static std::string  m_master;
+		static std::string  m_derivative;
+		static std::string  m_catalogue;
 	public:
 		CreateArchive();
 		virtual ~CreateArchive();
-		static bool createSystem(bool users, const char *archivePath, const char *workspace, const char *master);
+		static bool createSystem(bool users, const char *archivePath, const char *workspace, const char *master, const char *derivative, const char *catalogue);
 		/**
 		/* @brief Creates the configuration folders.
 		*/
@@ -81,7 +87,7 @@ namespace simplearchive {
 		/**
 		/* @brief Creates the default configuration files.
 		*/
-		static bool createConfigFiles(const char *root, const char *folder, const char *workspace, const char *master);
+		static bool createConfigFiles(const char *root, const char *folder, const char *workspace, const char *master, const char *derivative, const char *catalogue);
 		/**
 		/* @brief Creates the default hook files.
 		*/

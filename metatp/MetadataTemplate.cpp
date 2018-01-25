@@ -46,7 +46,7 @@ static char THIS_FILE[] = __FILE__;
 
 namespace simplearchive {
 	
-std::unique_ptr<Config>	MetadataTemplate::m_templateFile(new Config);
+std::unique_ptr<ConfigBlock>	MetadataTemplate::m_templateFile(new ConfigBlock);
 //Config *MetadataTemplate::m_templateFile = 0;
 
 std::unique_ptr<MetadataTemplate> MetadataTemplate::m_instance;

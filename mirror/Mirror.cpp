@@ -220,7 +220,7 @@ Mirror::~Mirror() {
 
 bool Mirror::readConf() {
 	ConfigReader configReader;
-	Config config;
+	ConfigBlock config;
 	if (configReader.read(m_confpath.c_str(), config) == false) {
 		return false;
 	}

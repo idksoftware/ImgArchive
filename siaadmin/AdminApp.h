@@ -76,7 +76,7 @@ private:
 		@param workspacePath	Workspace location.
 		@param MasterPath		Master archive location.
 	*/
-	bool CreateArchive(const char *archivePath, const char *workspacePath, const char *MasterPath, bool users);
+	bool CreateArchive(const char *archivePath, const char *workspacePath, const char *reposPath, const char *masterPath, const char *derivativePath, const char *cataloguePath, bool users);
 	
 public:
 	/// Constructor
@@ -84,14 +84,20 @@ public:
 	/// Destructor
 	virtual ~AdminApp();
 	
-	bool initaliseConfig();
-	/// @brief This is the main application run function. All application processing starts here.
-	bool Run();
+	
+	
+	
 	/// @brief Shows the configuration of the archive. All application processing starts here.
 	bool Show();
 protected:
+	bool initaliseHomePath();
+	bool initaliseConfig();
+	bool initaliseArgs(int argc, char **argv);
+
 	virtual bool doInitalise(int argc, char **argv);
-	bool doRun() { return true; };
+
+	/// @brief This is the main application run function. All application processing starts here.
+	bool doRun();
 
 };
 

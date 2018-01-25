@@ -54,4 +54,6 @@ uncheckout --image-address="2017-01-16/DSC01279.JPG" --comment "A comment"
 
 checkout --force --image-address="2017-01-16/DSC01278.JPG" 
 
-status --scope 2017
+status --scope="2017/01/16-2017/01/18"
+
+add --source-path="D:\tmp"

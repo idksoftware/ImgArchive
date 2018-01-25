@@ -176,7 +176,9 @@
     <ClInclude Include="ImportJournal.h" />
     <ClInclude Include="JournalFile.h" />
     <ClInclude Include="MakeMedia.h" />
+    <ClInclude Include="MasterCatalogue.h" />
     <ClInclude Include="MetadataUpdate.h" />
+    <ClInclude Include="PageMaker.h" />
     <ClInclude Include="VersionIndex.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SACmdArgs.h" />
@@ -185,7 +187,7 @@
     <ClInclude Include="StandardOut.h" />
     <ClInclude Include="TargetsList.h" />
     <ClInclude Include="TerminalServer.h" />
-    <ClInclude Include="VersionControl.h" />
+    <ClInclude Include="VersionControl_old.h" />
     <ClInclude Include="ViewManager.h" />
     <ClInclude Include="XMLReader.h" />
   </ItemGroup>
@@ -207,7 +209,7 @@
     <ClCompile Include="HookCmd.cpp" />
     <ClCompile Include="ImageContainer.cpp" />
     <ClCompile Include="ImageFileReader.cpp" />
-    <ClCompile Include="ImageGroup.cpp" />
+    <ClCompile Include="ImageGroup_old.cpp" />
     <ClCompile Include="BasicMetadataFactory.cpp" />
     <ClCompile Include="ImageIndex.cpp" />
     <ClCompile Include="ImageLock.cpp" />
@@ -216,7 +218,9 @@
     <ClCompile Include="ImportJournal.cpp" />
     <ClCompile Include="JournalFile.cpp" />
     <ClCompile Include="MakeMedia.cpp" />
+    <ClCompile Include="MasterCatalogue.cpp" />
     <ClCompile Include="MetadataUpdate.cpp" />
+    <ClCompile Include="PageMaker.cpp" />
     <ClCompile Include="VersionIndex.cpp" />
     <ClCompile Include="SACmdArgs.cpp" />
     <ClCompile Include="SIAApplicationState.cpp" />

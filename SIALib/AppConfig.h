@@ -36,6 +36,12 @@
 #include "ConfigReader.h"
 #include "ExifDateTime.h"
 
+
+#define SYSTEM_FOLDERS			"System Folders" /*< Path to hook scripts */
+#define MASTER_ARCHIVE			"Master Archive"	 /*< Main configuration path */ 
+//#define TOOLS_PATH_LABEL           		"ToolsPath"
+
+
 /**
 	@brief These #defines define the labels the hook files will use
 	to reference envronment varibles.
@@ -45,16 +51,21 @@
 #define TOOLS_PATH_LABEL           		"ToolsPath"
 #define TEMP_PATH_LABEL           		"TempPath"
 #define SOURCE_PATH_LABEL         		"SourcePath"
-#define ARCHIVE_PATH_LABEL         		"ArchivePath"
+#define SYSTEM_PATH_LABEL         		"SystemPath"
+#define MASTER_PATH_LABEL         		"MasterPath"
+#define MASTER_VIEW_PATH_LABEL         	"MasterCataloguePath"
+#define DERIVATIVE_PATH_LABEL         	"DerivativePath"
 #define LOG_PATH_LABEL					"LogPath"
 #define HOME_PATH_LABEL					"HomePath"
 #define INDEX_PATH_LABEL				"IndexPath"
 #define HISTORY_PATH_LABEL				"HistoryPath"
 #define EXTERNAL_COMMAND_LINE_LABEL		"ExternalCommandLine"
 #define EXIF_MAP_PATH_LABEL				"ExifMapPath"
-#define METADATA_TEMPLATE_PATH_LABEL	"MetadataTemplatePath"
+#define EXIF_MAP_FILE_LABEL				"ExifMapFile"
+#define TEMPLATE_PATH_LABEL				"TemplatePath"
 #define CATALOG_PATH_LABEL				"CatalogPath"
-
+#define WORKSPACE_PATH_LABEL			"WorkspacePath"
+#define DRY_RUN_LABEL					"DryRun"
 namespace simplearchive {
 
 	class AppOptions;
@@ -63,17 +74,18 @@ namespace simplearchive {
 	* primary configuration options.
 	*
 	*/
-	class CAppConfig : public Config
+	class CSIAArcAppConfig : public AppConfig
 	{
 	
 	private:
 		friend class AppOptions;
 
-		static CAppConfig *m_this;
+		static CSIAArcAppConfig *m_this;
 		static bool m_verbose; //< -v --Verbose
 		static bool m_quiet;
 		static bool m_silent;
 		static std::string m_logLevel;
+		static std::string m_consoleLevel;
 		static bool m_dry_run;
 		/// Log file path
 		static std::string m_logPath;
@@ -88,27 +100,29 @@ namespace simplearchive {
 		static std::string m_historyPath;
 		/// External Exif tool
 		static std::string m_ExternalExifTool;
-		/// External Command line
+		/// External Exif Command line
 		static std::string m_ExternalCommandLine;
 		/// This is path to the Exif Map files. For example the Exiftool map
 		/// that maps exiftool keywords to Simple Archive keywords.
 		static std::string m_ExifMapPath;
-		/// This is the path to the metadata template files.
-		static std::string m_MetadataTemplatePath;
+		static std::string m_ExifMapFile;
+		/// This is the path to the template files.
+		static std::string m_templatePath;
 		/// This is the temp file path.
 		static std::string m_tempPath;
 		/// This is the archive repository file path.
 		static std::string m_workspacePath;
 		static std::string m_masterPath;
 		static std::string m_derivativePath;
-		static std::string m_masterViewPath;
+		static std::string m_masterCataloguePath;
+		static std::string m_masterWWWCataloguePath;
+		static std::string m_catalogPath;
 
 		static std::string m_sourcePath;
 
 		static std::string m_configPath;
-
+		
 		static std::string m_hookPath;
-
 		static std::string m_toolsPath;
 		static std::string m_DatabasePath;
 		static std::string m_backupDestinationPath;
@@ -124,7 +138,10 @@ namespace simplearchive {
 		static std::string m_backup2;
 		static bool m_backup1Enabled;
 		static bool m_backup2Enabled;
-
+		static bool m_masterViewEnabled;
+		static bool m_masterViewFullSizeOn;
+		static bool m_masterViewPreview1On;
+		static bool m_masterViewThumbnailOn;
 		static bool m_eventsOn; // UDP events
 		static bool m_serverOn;
 
@@ -133,20 +150,24 @@ namespace simplearchive {
 		static std::string m_udpAddress;
 
 
-		CAppConfig();
+		CSIAArcAppConfig();
 
-		/// @brief Gets the Master archive path
-		/// user definable
-		const char *getMasterPath();
+		std::shared_ptr<ConfigBlock> getSystemFolders();
+		std::shared_ptr<ConfigBlock> getMasterArchive();
 
+		bool setSystemFolders(const char* name, std::string &value, std::string &defaultValue);
+		bool setExternalExifTool(const char* name, std::string &value, std::string &defaultValue);
+		bool setGeneral(const char* name, std::string &value, std::string &defaultValue);
+			
 	public:
-		static CAppConfig &get();
-		~CAppConfig();
+		
+		~CSIAArcAppConfig();
 
+		static CSIAArcAppConfig &get();
 		/// @brief Initalises the config object
-		void init(const char *homePath = nullptr);
+		bool init(const char *homePath = nullptr);
 		void settup();
-		void fileBasedValues();
+		void fileBasedValues(const char *homePath);
 		/// @brief Gets the source path.
 		const char *getSourcePath();
 		/// @brief Gets the archive path.
@@ -166,7 +187,7 @@ namespace simplearchive {
 		/// 
 		const char *getHookPath();
 		/// @brief Gets the path to the metadata template files.
-		const char *getMetadataTemplatePath();
+		const char *getTemplatePath();
 		/// @brief Gets log file path
 		const char *getLogPath();
 		/// System path
@@ -183,13 +204,19 @@ namespace simplearchive {
 		/// @brief Gets path to the Exif Map files. For example the Exiftool map
 		/// that maps exiftool keywords to Simple Archive keywords.
 		const char *getExifMapPath();
+		const char *getExifMapFile();
 		const char *getConfigPath();
 		/// @brief Gets home path. This is the root path all default paths are made.
 		const char *getHomePath();
-		const char *getMasterViewPath();
+		const char *getMasterCataloguePath();
+		const char *getMasterWWWCataloguePath();
 		const char *getDatabasePath();
 		// This is for media backups
 		const char *getBackupDestinationPath();
+
+		/// @brief Gets the Master archive path
+		/// user definable
+		const char *getMasterPath();
 
 		const char *getBackup1();
 		const char *getBackup2();
@@ -214,6 +241,7 @@ namespace simplearchive {
 		bool isQuiet() const;
 		bool isVerbose() const;
 		const char *getLogLevel();
+		const char *getConsoleLevel();
 
 		bool isEventsOn();
 		int eventPort();
@@ -228,15 +256,16 @@ namespace simplearchive {
 		void setQuiet(bool quiet);
 		void setSilent(bool silent);
 		void setVerbose(bool verbose);
-		void setWorkspacePath(const char *homePath);
-		void setMasterPath(const char *homePath);
-		void setDerivativePath(const char *homePath);
-		void setMasterViewPath(const char *viewPath);
-		void setBackup1(const char *backupPath);
-		void setBackup2(const char *backupPath);
-		void setSourcePath(const char *sourcePath);
+		void setArchivePath(const char *path);
+		void setWorkspacePath(const char *path);
+		void setMasterPath(const char *path);
+		void setDerivativePath(const char *path);
+		void setMasterCataloguePath(const char *path);
+		void setBackup1(const char *path);
+		void setBackup2(const char *path);
+		void setSourcePath(const char *path);
 		void setLogLevel(const char *logLevel);
-
+		void setConsoleLevel(const char *logLevel);
 		void setEventsOn(bool evt);
 		void setEventPort(int port);
 		void setEventAddress(const char *address);

@@ -1,5 +1,6 @@
 #include "ContentsLister.h"
 #include "ArchiveVisitor.h"
+#include "SAUtils.h"
 
 namespace simplearchive {
 	ContentsLister::ContentsLister(const char *MasterPath)
@@ -17,31 +18,31 @@ namespace simplearchive {
 	protected:
 
 		virtual void onStart() {
-			printf("onStart\n");
+			DEBUG_PRINT("onStart\n");
 		};
 		/// At the end of each directory found, this function is run.
 		virtual void onEnd() {
-			printf("onEnd\n");
+			DEBUG_PRINT("onEnd\n");
 		};
 		/// On finding a file, this function is run.
 		virtual void onYearFolder(const char *name) {
-			printf("onYearFolder %s: \n", name);
+			DEBUG_PRINT("onYearFolder %s: \n", name);
 		};
 		/// On finding a file, this function is run.
 		virtual void onYearEnd() {
-			printf("onYearEnd\n");
+			DEBUG_PRINT("onYearEnd\n");
 		};
 		/// On finding a directory, this function is run.
 		virtual void onDayFolder(const char *name) {
-			printf("onDayFolder %s: \n", name);
+			DEBUG_PRINT("onDayFolder %s: \n", name);
 		};
 		/// On finding a directory, this function is run.
 		virtual void onDayEnd() {
-			printf("onDayEnd\n");
+			DEBUG_PRINT("onDayEnd\n");
 		};
 		/// On finding a directory, this function is run.
 		virtual void onImage(const char *path, const char *name) {
-			printf("\t\tonImage %s: \n", path);
+			DEBUG_PRINT("\t\tonImage %s: \n", path);
 		};
 
 		/// This function is a factory function used to create new FolderVisitor objects.

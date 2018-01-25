@@ -150,6 +150,7 @@ enum class MetadataObjectIndex {
 	MD_SUBJECT_IDX,
 	MD_RATING_IDX,
 	MD_RATINGPERCENT_IDX,
+	MD_TAGS_IDX,// template
 	MD_KEYWORDS_IDX,// template
 	MD_VERSION_IDX,// template
 		// Origin
@@ -358,7 +359,7 @@ enum class MetadataObjectIndex {
 #define DB_VIEWROTATION    "ViewRotation"
 #define DB_WIDTH           "Width"
 #define	DB_KEYWORDS        "Keywords"
-#define	DB_Tags            "Tags"
+#define	DB_TAGS            "Tags"
 #define DB_HEADLINE        "Headline"
 #define DB_CATEGORY        "Category"
 #define DB_SOURCE          "Source"

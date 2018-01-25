@@ -2,15 +2,14 @@
 namespace simplearchive {
 
 bool FileDataContainer::read(const char *datafile) {
-	char text[256];
+	std::string text;
 	std::ifstream file(datafile);
 	if (file.is_open() == false) {
 		return false;
 	}
 
-	while (file.getline(text, 100)) {
-		std::string s = text;
-		push_back(FolderFile(s));
+	while (std::getline(file, text)) {
+		push_back(FolderFile(text));
 	}
 	file.close();
 

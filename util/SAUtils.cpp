@@ -78,11 +78,12 @@ static char THIS_FILE[] = __FILE__;
 
 using namespace std;
 
-const char *SIAAppException::what() const throw() {
+const char *SIAAppException::what() throw() {
 	std::stringstream s;
 	s << message << " line:" << __LINE__ << " file:" << __FILE__;
 	std::string tmp = s.str();
-	return tmp.c_str();
+	message = s.str();
+	return message.c_str();
 }
 
 
@@ -133,6 +134,7 @@ std::vector<std::string *> *SAUtils::getFiles(const char *dirpath) {
 	CIDKFileFind fileFind(dirpathstr);
 	fileFind.Open();
 	if (fileFind.GotFile() == false) {
+		delete fileList;
 		return false;
 	}
 	do {
@@ -345,8 +347,8 @@ bool SAUtils::fileCompare(const char *filePath1, const char *filePath2) {
 		}
 	} while (file1.good() || file2.good());
 
-	delete buffer1;
-	delete buffer2;
+	delete []buffer1;
+	delete []buffer2;
 
 	return true;
 }
@@ -605,7 +607,16 @@ bool SAUtils::mksymlink(const char *sourcePath, const char *destPath) {
 	return true;
 }
 
-
+int SAUtils::stricmp(const char *a, const char *b) {
+	int ca, cb;
+	do {
+		ca = (unsigned char)*a++;
+		cb = (unsigned char)*b++;
+		ca = tolower(toupper(ca));
+		cb = tolower(toupper(cb));
+	} while (ca == cb && ca != '\0');
+	return ca - cb;
+}
 
 
 #ifdef _WIN32

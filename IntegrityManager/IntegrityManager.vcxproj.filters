@@ -33,9 +33,6 @@
     <ClCompile Include="CheckDiskJournal.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CheckoutStatus.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ArchiveProcessor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -57,9 +54,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CheckDiskJournal.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CheckoutStatus.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ArchiveProcessor.h">

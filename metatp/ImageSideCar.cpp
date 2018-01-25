@@ -110,15 +110,15 @@ SideCar::~SideCar() {
 }
 
 bool SideCar::read(const char *datafile) {
-	char text[256];
+	std::string text;
 	std::ifstream file(datafile);
 	if (file.is_open() == false) {
 		return false;
 	}
 
-	while (file.getline(text, 100)) {
+	while (std::getline(file, text)) {
 		SideCarItem sideCarItem;
-		sideCarItem.fromString(text);
+		sideCarItem.fromString(text.c_str());
 		push_back(sideCarItem);
 	}
 	file.close();

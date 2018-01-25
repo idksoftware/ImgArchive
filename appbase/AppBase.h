@@ -32,6 +32,7 @@ namespace CommandLineProcessing {
 	public:
 		~AppBase();
 		
+		int RunApp(int argc, char **argv);
 		bool initalise(int argc, char **argv);
 		
 		/// @brief This is the main application run function. All application processing starts here.
@@ -60,6 +61,7 @@ namespace CommandLineProcessing {
 		}
 
 	protected:
+		
 		virtual bool initaliseHomePath() = 0;
 		virtual bool initaliseConfig() = 0;
 		virtual bool initaliseArgs(int argc, char **argv) = 0;
@@ -80,6 +82,7 @@ namespace CommandLineProcessing {
 			vsprintf(message, format, args);
 #endif
 			m_errorstring = message;
+			va_end(args);
 		}
 
 		

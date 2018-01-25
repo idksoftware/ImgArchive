@@ -37,8 +37,9 @@
 
 #include <string>
 #include <memory>
-#include "LogDocument.h"
+
 #include "ExifDateTime.h"
+#include "LogDocument.h"
 /*
 */
 namespace simplearchive {
@@ -111,6 +112,10 @@ namespace simplearchive {
 		bool exportImage(const char *distpath);
 
 		bool view(const char *name);
+
+		bool show();
+
+		bool status(const char *scope);
 
 		bool mirror(const char *name);
 		

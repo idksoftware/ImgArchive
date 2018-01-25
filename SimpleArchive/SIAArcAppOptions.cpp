@@ -77,8 +77,7 @@ int SIAArcAppOptions::m_tcpPortNum = 64322;
 LogDocument::FormatType SIAArcAppOptions::m_formatType = LogDocument::FormatType::Human;
 
 
-SIAArcAppOptions::SIAArcAppOptions() {
-	m_argvParser.reset(new SIAArcArgvParser);
+SIAArcAppOptions::SIAArcAppOptions() : m_argvParser(std::make_unique<SIAArcArgvParser>()) {
 	m_usingFile = false;
 	m_archiveDate.now();
 };

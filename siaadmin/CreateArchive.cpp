@@ -39,6 +39,9 @@
 #include "SAUtils.h"
 #include "CreateArchive.h"
 #include "EnvFunc.h"
+#include "CLogger.h"
+#include "ErrorCode.h"
+#include "AppPaths.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -49,6 +52,42 @@ bool IsElevated();
 namespace simplearchive {
 
 // hook folder
+
+	const char *viewPreview1doc[] = {
+		"#import subprocess",
+		"#print subprocess.check_output([magick convert DSC01277.JPG - resize 250x250 DSC01277_1.JPG])",
+		"import os",
+		"import sys",
+		"",
+		"os.system('magick convert ' + sys.argv[1] + ' -resize 250x250 ' + sys.argv[2])"
+	};
+
+	const char *viewPreview2doc[] = {
+		"#import subprocess",
+		"#print subprocess.check_output([magick convert DSC01277.JPG - resize 650x650 DSC01277_1.JPG])",
+		"import os",
+		"import sys",
+		"",
+		"os.system('magick convert ' + sys.argv[1] + ' -resize 650x650 ' + sys.argv[2])"
+	};
+
+	const char *viewPreview3doc[] = {
+		"#import subprocess",
+		"#print subprocess.check_output([magick convert DSC01277.JPG - resize 1200x1200 DSC01277_1.JPG])",
+		"import os",
+		"import sys",
+		"",
+		"os.system('magick convert ' + sys.argv[1] + ' -resize 1200x1200 ' + sys.argv[2])"
+	};
+
+	const char *viewThumbnaildoc[] = {
+		"#import subprocess",
+		"#print subprocess.check_output([magick convert DSC01277.JPG - resize 100x100 DSC01277_1.JPG])",
+		"import os",
+		"import sys",
+		"",
+		"os.system('magick convert ' + sys.argv[1] + ' -resize 100x100 ' + sys.argv[2])"
+	};
 
 const char *onfiledoc[] = {
 #ifdef _WIN32
@@ -68,6 +107,8 @@ const char *onfiledoc[] = {
 std::string  CreateArchive::m_archivePath;
 std::string  CreateArchive::m_workspace;
 std::string  CreateArchive::m_master;
+std::string  CreateArchive::m_derivative;
+std::string  CreateArchive::m_catalogue;
 
 // Config folder files
 const char *configdoc[] = {
@@ -92,39 +133,39 @@ const char *viewdoc[] = {
 const char *extdoc[] = {
 	"nef:Raw:nikon-raw:Nikon RAW",
 	"nrw:Raw:nikon-raw:Nikon RAW",
-	"dng:Raw:nikon-raw:Adobe RAW",
-	"raw:Raw:nikon-raw:Panasonic RAW",
-	"raf:Raw:nikon-raw:Fuji RAW",
-	"orf:Raw:nikon-raw:Olympus RAW",
-	"srf:Raw:nikon-raw:Sony RAW",
-	"sr2:Raw:nikon-raw:Sony RAW",
-	"arw:Raw:nikon-raw:Sony RAW",
-	"k25:Raw:nikon-raw:Kodak RAW",
-	"kdc:Raw:nikon-raw:Kodak RAW",
-	"dcr:Raw:nikon-raw:Kodak RAW",
-	"dcs:Raw:nikon-raw:Kodak RAW",
-	"drf:Raw:nikon-raw:Kodak RAW",
-	"mos:Raw:nikon-raw:Leaf RAW",
-	"pxn:Raw:nikon-raw:Logitech RAW",
-	"crw:Raw:nikon-raw:Canon RAW",
-	"cr2:Raw:nikon-raw:Canon RAW",
-	"mrw:Raw:nikon-raw:Minolta RAW",
-	"pef:Raw:nikon-raw:Pentax RAW",
-	"ptx:Raw:nikon-raw:Pentax RAW",
-	"mef:Raw:nikon-raw:Mamiya RAW",
-	"3fr:Raw:nikon-raw:Hasselblad RAW",
-	"fff:Raw:nikon-raw:Hasselblad RAW",
-	"ari:Raw:nikon-raw:Arriflex RAW",
-	"bay:Raw:nikon-raw:Casio RAW",
-	"erf:Raw:nikon-raw:Epsom RAW",
-	"cap:Raw:nikon-raw:Phase One RAW",
-	"iiq:Raw:nikon-raw:Phase One RAW",
-	"eip:Raw:nikon-raw:Phase One RAW",
-	"rwl:Raw:nikon-raw:Leica RAW",
-	"rwz:Raw:nikon-raw:Rawzor RAW",
-	"srw:Raw:nikon-raw:Samsung RAW",
-	"x3f:Raw:nikon-raw:Sigma RAW",
-	"R3D:Raw:nikon-raw:RED RAW",
+	"dng:Raw:Adobe-raw:Adobe RAW",
+	"raw:Raw:Panasonic-raw:Panasonic RAW",
+	"raf:Raw:Fuji-raw:Fuji RAW",
+	"orf:Raw:Olympus-raw:Olympus RAW",
+	"srf:Raw:Sony-raw:Sony RAW",
+	"sr2:Raw:Sony-raw:Sony RAW",
+	"arw:Raw:Sony-raw:Sony RAW",
+	"k25:Raw:Kodak-raw:Kodak RAW",
+	"kdc:Raw:Kodak-raw:Kodak RAW",
+	"dcr:Raw:Kodak-raw:Kodak RAW",
+	"dcs:Raw:Kodak-raw:Kodak RAW",
+	"drf:Raw:Kodak-raw:Kodak RAW",
+	"mos:Raw:Leaf-raw:Leaf RAW",
+	"pxn:Raw:Logitech -raw:Logitech RAW",
+	"crw:Raw:Canon-raw:Canon RAW",
+	"cr2:Raw:Canon-raw:Canon RAW",
+	"mrw:Raw:Minolta-raw:Minolta RAW",
+	"pef:Raw:Pentax-raw:Pentax RAW",
+	"ptx:Raw:Pentax-raw:Pentax RAW",
+	"mef:Raw:Mamiya-raw:Mamiya RAW",
+	"3fr:Raw:Hasselblad-raw:Hasselblad RAW",
+	"fff:Raw:Hasselblad-raw:Hasselblad RAW",
+	"ari:Raw:Arriflex-raw:Arriflex RAW",
+	"bay:Raw:Casio-raw:Casio RAW",
+	"erf:Raw:Epsom -raw:Epsom RAW",
+	"cap:Raw:PhaseOne-raw:Phase One RAW",
+	"iiq:Raw:PhaseOne-raw:Phase One RAW",
+	"eip:Raw:PhaseOne-raw:Phase One RAW",
+	"rwl:Raw:Leica-raw:Leica RAW",
+	"rwz:Raw:Rawzor-raw:Rawzor RAW",
+	"srw:Raw:Samsung-raw:Samsung RAW",
+	"x3f:Raw:Sigma-raw:Sigma RAW",
+	"R3D:Raw:RED-raw:RED RAW",
 	"jpg:Picture:jpg:JPG",
 	"png:Picture:png:PNG",
 	"bmp:Picture:bmp:bmp",
@@ -151,120 +192,146 @@ bool CreateArchive::createHomeEnvVar(const char *root, bool users) {
 	return SetEnv(root, users);
 }
 
-std::string CreateArchive::makeConfigFile(const char *root, const char *workspace, const char *master) {
+std::string CreateArchive::makeConfigFile(const char *root, const char *workspace, const char *master, const char *derivative, const char *catalogue) {
 	std::stringstream s;
 	s << "# The main configuration file #\n";
+	s << "[General]\n";
+	s << "[Logging]\n";
+	s << "[Network]\n";
+	s << "[System Folders]\n";
 	s << "HomePath=" << root << '\n';
 	s << "WorkspacePath=" << workspace << '\n';
 	s << "MasterPath=" << master << '\n';
+	s << "DerivativePath=" << derivative << '\n';
+	s << "MasterCataloguePath=" << catalogue << '\n';
+	s << "[Master Archive] # This archive contains the master images.This section controls this archive\n";
+	s << "#BackupOne = \"d:/Backup Test One\" # BackupOne = <path to root backup one folder>\n";
+	s << "#BackupTwo = \"d:/Backup Test Two\" # BackupTwo = <path to root backup two folder>\n";
+	s << "#BackupOneEnabled = true # BackupOneEnabled = <true | false>\n";
+	s << "#BackupTwoEnabled = true # BackupOneEnabled = <true | false>\n";
 	return s.str();
+
+	/*
+	[General]
+
+	[Logging]
+	[Network]
+	[System Folders] # This contains the folder paths that the system uses.
+	RepositoryPath = D:\sia\archive
+	DevPath = D:\sia\archive
+	WorkspacePath = D:\sia\workspace
+	MasterPath = D:\sia\archive
+
+	[Master Archive] # This archive contains the master images. This section controls this archive.
+	BackupOne="d:/Backup Test One" # BackupOne=<path to root backup one folder> #
+	BackupTwo="d:/Backup Test Two" # BackupTwo=<path to root backup two folder>
+	BackupOneEnabled=true # BackupOneEnabled=<true|false>
+	BackupTwoEnabled=true # BackupOneEnabled=<true|false>
+
+	[Derivative Archive]
+	[Archive Backup]
+	[Exif Tool]
+	*/
 }
 
-bool CreateArchive::createSystem(bool users, const char *archivePath, const char *workspace, const char *master) {
+bool CreateArchive::createSystem(bool users, const char *archivePath, const char *workspace, const char *master, const char *derivative, const char *catalogue) {
 	if (users == true) {
 		// Admin version
 		if (IsAdmin() == false) {
 			return false;
 		}
-		if (createAdminSystem(archivePath, workspace, master) == false) {
+		if (createAdminSystem(archivePath, workspace, master, derivative, catalogue) == false) {
 			return false;
 		}
 	}
 	else {
 		// User version
-		if (createUserSystem(archivePath, workspace, master) == false) {
+		if (createUserSystem(archivePath, workspace, master, derivative, catalogue) == false) {
 			return false;
 		}
 	}
 	return true;
 }
 
-bool CreateArchive::createAdminSystem(const char *archivePath, const char *workspace, const char *master) {
+bool CreateArchive::createAdminSystem(const char *archivePath, const char *workspace, const char *master, const char *derivative, const char *catalogue) {
 
-	if (archivePath == nullptr || *archivePath == '\0') {
-		std::string progPath = SAUtils::GetPOSIXEnv("ProgramData");
-		std::string siaPath = "/IDK Software/ImageArchive1.0";
-		std::string path = progPath;
-		path += siaPath;
-		if (SAUtils::FileExists(path.c_str()) == true) {
+	
+	if (SAUtils::FileExists(archivePath) == true) {
+		std::string configPath = archivePath;
+		configPath += CONFIG_PATH;
+		if (SAUtils::FileExists(configPath.c_str()) == true) {
+			std::cout << "Config path folder found: \"" << m_archivePath << "\" so archive exists? exiting\n";
 			return false;
 		}
-		if (SAUtils::makePath(progPath.c_str(), siaPath.c_str()) == false) {
-			return false;
-		}
+	}
 		
-		m_archivePath = path;
-		std::cout << "Created home path folder: " << m_archivePath << '\n';
-	} else {
-		if (SAUtils::FileExists(archivePath) == true) {
-			return false;
-		}
-		if (SAUtils::makePath(archivePath) == false) {
-			return false;
-		}
-		m_archivePath = archivePath;
-		std::cout << "Created home path folder: " << m_archivePath << '\n';
+	m_archivePath = archivePath;
+	std::cout << "home path folder found: " << archivePath << '\n';
+	
+	if (SAUtils::FileExists(workspace) == true) {
+		std::cout << "Config path folder found: \"" << workspace << "\" so archive exists? exiting\n";
+		return false;
 	}
 
-	if (workspace == nullptr || *workspace == '\0') {
-	
+	if (SAUtils::FileExists(master) == true) {
+		std::cout << "Config path folder found: \"" << master << "\" so archive exists? exiting\n";
+		return false;
+	}
+
+	if (SAUtils::FileExists(derivative) == true) {
+		std::cout << "Config path folder found: \"" << derivative << "\" so archive exists? exiting\n";
+		return false;
+	}
+	if (SAUtils::FileExists(catalogue) == true) {
+		std::cout << "catalogue path folder found: \"" << derivative << "\" so archive exists? exiting\n";
+		return false;
+	}
+	if (catalogue == nullptr || *catalogue == '\0') {
+
 		std::string temp = SAUtils::GetPOSIXEnv("USERPROFILE");
 		std::string path = temp;
-		path += "/Documents";
+		path += "/Pictures";
 		if (SAUtils::FileExists(path.c_str()) == false) {
 			return false;
 		}
-		path += "/SIA Workspace";
+		path += "/SIA Pictures";
 		if (SAUtils::FileExists(path.c_str()) == false) {
 			if (SAUtils::mkDir(path.c_str()) == false) {
 				return false;
 			}
 		}
-		m_workspace = path;
-		std::cout << "Created workspace path folder: " << m_workspace << '\n';
+		m_catalogue = path;
 	}
 	else {
-		if (SAUtils::FileExists(workspace) == true) {
-			return false;
-		}
-		if (SAUtils::makePath(workspace) == false) {
-			return false;
-		}
-		m_workspace = workspace;
-		std::cout << "Created workspace path folder: " << m_workspace << '\n';
-	}
-	
-
-	if (master == nullptr || *master == '\0') {
-		std::string progPath = SAUtils::GetPOSIXEnv("ProgramData");
-		std::string siaPath = "/IDK Software/ImageArchive1.0/master";
 		
-		std::string path = progPath;
-		path += siaPath;
-		if (SAUtils::FileExists(path.c_str()) == true) {
+		if (SAUtils::makePath(catalogue) == false) {
 			return false;
 		}
-		if (SAUtils::makePath(progPath.c_str(), siaPath.c_str()) == false) {
-			return false;
-		}
-		m_master = path;
-		std::cout << "Created master path folder: " << m_master << '\n';
+		m_catalogue = catalogue;
 	}
-	else {
-		if (SAUtils::FileExists(master) == true) {
-			return false;
-		}
-		if (SAUtils::makePath(master) == false) {
-			return false;
-		}
-		m_master = master;
-		std::cout << "Created master path folder: " << m_master << '\n';
+
+	if (SAUtils::makePath(workspace) == false) {
+		return false;
 	}
+	m_workspace = workspace;
+	std::cout << "Created workspace path folder: " << m_workspace << '\n';
+
+	if (SAUtils::makePath(master) == false) {
+		return false;
+	}
+	m_master = master;
+	std::cout << "Created master path folder: " << m_master << '\n';
+	
+	if (SAUtils::makePath(derivative) == false) {
+		return false;
+	}
+	m_derivative = derivative;
+	std::cout << "Created derivative path folder: " << derivative << '\n';
 	
 	return true;
 }
 
-bool CreateArchive::createUserSystem(const char *archivePath, const char *workspace, const char *master) {
+bool CreateArchive::createUserSystem(const char *archivePath, const char *workspace, const char *master, const char *derivative, const char *catalogue) {
 
 	if (archivePath == nullptr || *archivePath == '\0') {
 		std::string progPath = SAUtils::GetPOSIXEnv("USERPROFILE");
@@ -288,6 +355,32 @@ bool CreateArchive::createUserSystem(const char *archivePath, const char *worksp
 			return false;
 		}
 		m_archivePath = archivePath;
+	}
+
+	if (catalogue == nullptr || *catalogue == '\0') {
+
+		std::string temp = SAUtils::GetPOSIXEnv("USERPROFILE");
+		std::string path = temp;
+		path += "/Pictures";
+		if (SAUtils::FileExists(path.c_str()) == false) {
+			return false;
+		}
+		path += "/SIA Pictures";
+		if (SAUtils::FileExists(path.c_str()) == false) {
+			if (SAUtils::mkDir(path.c_str()) == false) {
+				return false;
+			}
+		}
+		m_catalogue = path;
+	}
+	else {
+		if (SAUtils::FileExists(catalogue) == false) {
+			return false;
+		}
+		if (SAUtils::makePath(catalogue) == false) {
+			return false;
+		}
+		m_catalogue = catalogue;
 	}
 
 	if (workspace == nullptr || *workspace == '\0') {
@@ -315,7 +408,6 @@ bool CreateArchive::createUserSystem(const char *archivePath, const char *worksp
 		}
 		m_workspace = workspace;
 	}
-
 
 	if (master == nullptr || *master == '\0') {
 		std::string progPath = SAUtils::GetPOSIXEnv("USERPROFILE");
@@ -349,7 +441,7 @@ bool CreateArchive::makeFolders(const char *root) {
 	if (makeFolder(root, CONFIG_PATH) == false) {
 		return false;
 	}
-	if (makeFolder(root, TMP_PATH) == false) {
+	if (makeFolder(root, TEMP_PATH) == false) {
 		return false;
 	}
 	if (makeFolder(root, DUPS_PATH) == false) {
@@ -364,13 +456,20 @@ bool CreateArchive::makeFolders(const char *root) {
 	if (makeFolder(root, HISTORY_PATH) == false) {
 		return false;
 	}
-	if (makeFolder(root, BACKUP_PATH) == false) {
+	if (makeFolder(root, BACKUPS_PATH) == false) {
 		return false;
 	}
 	if (makeFolder(root, TOOLS_PATH) == false) {
 		return false;
 	}
 	if (makeFolder(root, HOOKS_PATH) == false) {
+		return false;
+	}
+	
+	if (makeFolder(root, MASTER_WWW_CATALOGUE_PATH) == false) {
+		return false;
+	}
+	if (makeFolder(root, TEMPLATE_PATH) == false) {
 		return false;
 	}
 	return true;
@@ -383,10 +482,10 @@ bool CreateArchive::checkFolders(const char *root) {
 	//	std::cout << "Failed you need administrator privileges" << '\n';
 	//	return false;
 	//}
-	if (checkFolder(root, TMP_PATH) == false) {
-		std::cout << "Failed to find " << TMP_PATH << " folder : " << root << TMP_PATH << '\n';
+	if (checkFolder(root, TEMP_PATH) == false) {
+		std::cout << "Failed to find " << TEMP_PATH << " folder : " << root << TEMP_PATH << '\n';
 	}
-	std::cout << "Found " << TMP_PATH << " folder: " << root << TMP_PATH << '\n';
+	std::cout << "Found " << TEMP_PATH << " folder: " << root << TEMP_PATH << '\n';
 
 	if (checkFolder(root, DUPS_PATH) == false) {
 		std::cout << "Failed to find " << DUPS_PATH << " folder: " << root << DUPS_PATH << '\n';
@@ -423,12 +522,21 @@ bool CreateArchive::checkFolders(const char *root) {
 	}
 	std::cout << "Found " << HOOKS_PATH << " folder: " << root << HOOKS_PATH << '\n';
 
+	if (checkFolder(root, MASTER_CATALOGUE_PATH) == false) {
+		std::cout << "Failed to find " << MASTER_CATALOGUE_PATH << " folder: " << root << '\\' << MASTER_CATALOGUE_PATH << '\n';
+	}
+	std::cout << "Found " << MASTER_CATALOGUE_PATH << " folder: " << root << MASTER_CATALOGUE_PATH << '\n';
+
+	if (checkFolder(root, MASTER_WWW_CATALOGUE_PATH) == false) {
+		std::cout << "Failed to find " << MASTER_WWW_CATALOGUE_PATH << " folder: " << root << '\\' << MASTER_WWW_CATALOGUE_PATH << '\n';
+	}
+	std::cout << "Found " << MASTER_WWW_CATALOGUE_PATH << " folder: " << root << MASTER_WWW_CATALOGUE_PATH << '\n';
 	return true;
 }
 
-bool CreateArchive::createConfigFiles(const char *root, const char *folder, const char *workspace, const char *master) {
+bool CreateArchive::createConfigFiles(const char *root, const char *folder, const char *workspace, const char *master, const char *derivative, const char *catalogue) {
 	//createFile(const char *root, const char *folder, const char *filename, std::string &str) {
-	std::string configFile = makeConfigFile(root, workspace, master);
+	std::string configFile = makeConfigFile(root, workspace, master, derivative, catalogue);
 	
 	if (createFile(root, folder, "config.dat", configFile) == false) {
 		return false;
@@ -452,6 +560,22 @@ bool CreateArchive::createHookFiles(const char *root, const char *folder) {
 #else
 	if (createFile(root, folder, "on-file-test.sh", (const char **)onfiledoc, (sizeof(onfiledoc)/sizeof(char *))) == false) {
 #endif
+		return false;
+	}
+
+	if (createFile(root, folder, "view-preview1.py", (const char **)viewPreview1doc, (sizeof(viewPreview1doc) / sizeof(char *))) == false) {
+		return false;
+	}
+
+	if (createFile(root, folder, "view-preview2.py", (const char **)viewPreview2doc, (sizeof(viewPreview2doc) / sizeof(char *))) == false) {
+		return false;
+	}
+
+	if (createFile(root, folder, "view-preview3.py", (const char **)viewPreview3doc, (sizeof(viewPreview3doc) / sizeof(char *))) == false) {
+		return false;
+	}
+
+	if (createFile(root, folder, "view-thumbnail.py", (const char **)viewThumbnaildoc, (sizeof(viewThumbnaildoc) / sizeof(char *))) == false) {
 		return false;
 	}
 

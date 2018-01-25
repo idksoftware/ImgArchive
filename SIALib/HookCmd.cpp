@@ -33,6 +33,7 @@
 ** #$$@@$$# */
 
 #include <stdlib.h>
+#include "CLogger.h"
 #include "HookCmd.h"
 #include "ExternalShell.h"
 #include "SAUtils.h"
@@ -48,165 +49,245 @@ static char THIS_FILE[] = __FILE__;
 
 namespace simplearchive {
 
-std::string HookCmd::m_hookPath;
+	std::string HookCmd::m_hookPath;
 
-HookCmd::HookCmd(HookType type) {
-	m_HookType = type;
+	HookCmd::HookCmd(HookType type) {
+		m_HookType = type;
 
-}
-
-
-void HookCmd::init(ImagePath &imagePath) {
-	SetEnv setEnv;
-
-	setEnv.insert(setEnv.end(), EnvItem(RELATIVE_PATH, imagePath.getRelativePath().c_str()));
-	setEnv.insert(setEnv.end(), EnvItem(IMAGE_PATH, imagePath.getImagePath().c_str()));
-	setEnv.insert(setEnv.end(), EnvItem(YEAR, imagePath.getYearStr().c_str()));
-	setEnv.insert(setEnv.end(), EnvItem(YYYYMMDD, imagePath.getYyyymmddStr().c_str()));
-	setEnv.insert(setEnv.end(), EnvItem(PATH_TO_ARCHIVE, imagePath.getPathToWorkspace().c_str()));
-	setEnv.insert(setEnv.end(), EnvItem(DATA_PATH, imagePath.getRelativePath().c_str()));
-	setEnv.insert(setEnv.end(), EnvItem(METADATA_PATH_LABLE, imagePath.getLocalMasterMetadataPath().c_str()));
-	setEnv.insert(setEnv.end(), EnvItem(MAIN_METADATA_PATH, imagePath.getMainMetadataPath().c_str()));
-	setEnv.process();
-}
-
-HookCmd::~HookCmd() {
-}
-
-void HookCmd::setHookPath(const char *path) {
-	m_hookPath = path;
-}
-
-bool HookCmd::process() {
-
-	//std::string out = SAUtils::getFilenameNoExt(imagefile);
-	//std::string in = imagefile;
-	std::string scriptName;
-	if ((scriptName = getScriptNames()).empty() == true) {
-		return false;
 	}
-	std::string cmd = "python.exe ";
-	cmd += m_hookPath + '/' + scriptName;
-	// = "g:\\sia\\archive\\tools\\convert dsc_3248.nef -quality 100 dsc_3248.jpg";
-	ExternalShell externalShell;
-	externalShell.exec(cmd.c_str());
-	std::string output = externalShell.getOutput();
-	printf("Exec output: %s\n", output.c_str());
-	return true;
-}
 
-bool HookCmd::process(const char *file, const char *ext) {
-	std::string scriptName;
-	if ((scriptName = getScriptNames()).empty() == true) {
-		return false;
+
+	void HookCmd::init(ImagePath &imagePath) {
+		SetEnv setEnv;
+
+		setEnv.insert(setEnv.end(), EnvItem(RELATIVE_PATH, imagePath.getRelativePath().c_str()));
+		setEnv.insert(setEnv.end(), EnvItem(IMAGE_PATH, imagePath.getImagePath().c_str()));
+		setEnv.insert(setEnv.end(), EnvItem(YEAR, imagePath.getYearStr().c_str()));
+		setEnv.insert(setEnv.end(), EnvItem(YYYYMMDD, imagePath.getYyyymmddStr().c_str()));
+		setEnv.insert(setEnv.end(), EnvItem(PATH_TO_ARCHIVE, imagePath.getPathToWorkspace().c_str()));
+		setEnv.insert(setEnv.end(), EnvItem(DATA_PATH, imagePath.getRelativePath().c_str()));
+		setEnv.insert(setEnv.end(), EnvItem(METADATA_PATH_LABLE, imagePath.getLocalMasterMetadataPath().c_str()));
+		setEnv.insert(setEnv.end(), EnvItem(MAIN_METADATA_PATH, imagePath.getMainMetadataPath().c_str()));
+		setEnv.process();
 	}
-	std::string cmd = "python.exe ";
-	cmd += m_hookPath + '/' + scriptName;
-	cmd += ' '; cmd += file;
-	cmd += ' '; cmd += ext;
-	// = "g:\\sia\\archive\\tools\\convert dsc_3248.nef -quality 100 dsc_3248.jpg";
-	ExternalShell externalShell;
-	externalShell.exec(cmd.c_str());
-	std::string output = externalShell.getOutput();
-	printf("Exec output: %s\n", output.c_str());
-	return true;
-}
 
-std::string HookCmd::getScriptNames()
-{
-	std::string empty;
-	// Replace with exception 
-	if (readScriptsNames() == false) {
+	HookCmd::~HookCmd() {
+	}
+
+	void HookCmd::setHookPath(const char *path) {
+		m_hookPath = path;
+	}
+
+	bool HookCmd::process() {
+		CLogger &logger = CLogger::getLogger();
+		//std::string out = SAUtils::getFilenameNoExt(imagefile);
+		//std::string in = imagefile;
+		std::string scriptName;
+		if ((scriptName = getScriptNames()).empty() == true) {
+			return false;
+		}
+		std::string cmd = "python.exe ";
+		cmd += m_hookPath + '/' + scriptName;
+		// = "g:\\sia\\archive\\tools\\convert dsc_3248.nef -quality 100 dsc_3248.jpg";
+		ExternalShell externalShell;
+		externalShell.exec(cmd.c_str());
+		std::string output = externalShell.getOutput();
+		logger.log(LOG_OK, CLogger::Level::TRACE, "hook process output: ", output.c_str());
+		return true;
+	}
+
+	bool HookCmd::process(const char *arg1, const char *arg2) {
+		CLogger &logger = CLogger::getLogger();
+		std::string scriptName;
+		if ((scriptName = getScriptNames()).empty() == true) {
+			return false;
+		}
+		std::string cmd = "python.exe ";
+		cmd += m_hookPath + '/' + scriptName;
+		cmd += ' '; cmd += arg1;
+		cmd += ' '; cmd += arg2;
+		// = "g:\\sia\\archive\\tools\\convert dsc_3248.nef -quality 100 dsc_3248.jpg";
+		ExternalShell externalShell;
+		externalShell.exec(cmd.c_str());
+		std::string output = externalShell.getOutput();
+		logger.log(LOG_OK, CLogger::Level::TRACE, "hook process output: ", output.c_str());
+		return true;
+	}
+
+	bool HookCmd::process(const char *arg1, const char *arg2, const char *arg3) {
+		CLogger &logger = CLogger::getLogger();
+		std::string scriptName;
+		if ((scriptName = getScriptNames()).empty() == true) {
+			return false;
+		}
+		std::string cmd = "python.exe ";
+		cmd += m_hookPath + '/' + scriptName;
+		cmd += ' '; cmd += arg1;
+		cmd += ' '; cmd += arg2;
+		cmd += ' '; cmd += arg3;
+		// = "g:\\sia\\archive\\tools\\convert dsc_3248.nef -quality 100 dsc_3248.jpg";
+		ExternalShell externalShell;
+		externalShell.exec(cmd.c_str());
+		std::string output = externalShell.getOutput();
+		logger.log(LOG_OK, CLogger::Level::TRACE, "hook process output: ", output.c_str());
+		return true;
+	}
+
+	std::string HookCmd::getScriptNames()
+	{
+		std::string empty;
+		// Replace with exception 
+		if (readScriptsNames() == false) {
+			return empty;
+		}
+		// Replace with exception 
+		if (SAUtils::DirExists(m_hookPath.c_str()) == false) {
+			return empty;
+		}
+		FileList_Ptr filelist = SAUtils::getFiles_(m_hookPath.c_str());
+
+		for (std::vector<std::string>::iterator i = filelist->begin(); i != filelist->end(); i++) {
+			std::string name = *i;
+			//printf("name %s\n", name->c_str());
+			if (name.compare(".") == 0 || name.compare("..") == 0) {
+				continue;
+			}
+			if (m_name.length() > name.length()) {
+				continue;
+			}
+			std::string match = name.substr(0, m_name.length());
+			if (m_name.compare(match) == 0) {
+				return name;
+			}
+
+		}
+
 		return empty;
 	}
-	// Replace with exception 
-	if (SAUtils::DirExists(m_hookPath.c_str()) == false) {
-		return empty;
+
+	bool HookCmd::readScriptsNames() {
+		switch (m_HookType) {
+		case HC_OnFile:
+			m_name = "on-file";
+			break;
+		case HC_OnFolder:
+			m_name = "on-folder";
+			break;
+		case HC_OnContainer:
+			m_name = "on-image-set";
+			break;
+		case HC_PostArchive:
+			m_name = "post-archive";
+			break;
+		case HC_PreArchive:
+			m_name = "pre-archive";
+			break;
+		case HC_PreProcess:
+			m_name = "post-process";
+			break;
+		case HC_OnFileCopy:
+			m_name = "copy-file";
+			break;
+		case MC_MVPreview1:
+			m_name = "view-preview1";
+			break;
+		case MC_MVPreview2:
+			m_name = "view-preview2";
+			break;
+		case MC_MVPreview3:
+			m_name = "view-preview3";
+			break;
+		case MC_MVThumb:
+			m_name = "view-thumbnail";
+			break;
+		case MC_MVRAW:
+			m_name = "from-RAW";
+			break;
+		case HC_Unknown:
+			return false;
+		default:
+			return false;
+		}
+		return true;
 	}
-	FileList_Ptr filelist = SAUtils::getFiles_(m_hookPath.c_str());
 
-	for (std::vector<std::string>::iterator i = filelist->begin(); i != filelist->end(); i++) {
-		std::string name = *i;
-		//printf("name %s\n", name->c_str());
-		if (name.compare(".") == 0 || name.compare("..") == 0) {
-			continue;
-		}
-		if (m_name.length() > name.length()) {
-			continue;
-		}
-		std::string match = name.substr(0, m_name.length());
-		if (m_name.compare(match) == 0) {
-			return name;
-		}
+	OnFileCmd::OnFileCmd(const char *file) : HookCmd(HookCmd::HC_OnFile) {
+		m_path = file;
+	};
 
+	bool OnFileCmd::process() {
+		SetEnv setEnv;
+
+		setEnv.insert(setEnv.end(), EnvItem(IMAGE_PATH, m_file.c_str()));
+		std::string ext = SAUtils::getExtention(m_path);
+		std::string file = SAUtils::getFilenameNoExt(m_path);
+		setEnv.process();
+		HookCmd::process(file.c_str(), ext.c_str());
+		return true;
+	}
+
+	OnFileCopyCmd::OnFileCopyCmd(const char *path, const char *image) : HookCmd(HookCmd::HC_OnFileCopy) {
+		m_path = path;
+		m_image = image;
+	};
+
+	bool OnFileCopyCmd::process() {
+		SetEnv setEnv;
+		setEnv.insert(setEnv.end(), EnvItem(IMAGE_PATH, m_path.c_str()));
+		setEnv.insert(setEnv.end(), EnvItem(IMAGE_NAME, m_image.c_str()));
+		setEnv.process();
+		HookCmd::process();
+		return true;
+	}
+
+	OnFolderCmd::OnFolderCmd(const char *folder) : HookCmd(HookCmd::HC_OnFolder) {
+		m_folder = folder;
+	};
+
+	OnViewRAWCmd::OnViewRAWCmd(const char *sourceFilePath, const char *distFilePath) : HookCmd(HookCmd::MC_MVRAW) {
+		m_sourceFilePath = sourceFilePath;
+		m_distFilePath = distFilePath;
+	}
+
+	bool OnViewRAWCmd::process() {
+		return HookCmd::process(m_sourceFilePath.c_str(), m_distFilePath.c_str());
+	}
+
+	OnViewThumbnailCmd::OnViewThumbnailCmd(const char *sourceFilePath, const char *distFilePath) : HookCmd(HookCmd::MC_MVPreview1) {
+		m_sourceFilePath = sourceFilePath;
+		m_distFilePath = distFilePath;
+	}
+
+	bool OnViewThumbnailCmd::process() {
+		return HookCmd::process(m_sourceFilePath.c_str(), m_distFilePath.c_str());
 	}
 	
-	return empty;
-}
-
-bool HookCmd::readScriptsNames() {
-	switch(m_HookType) {
-	case HC_OnFile:
-		m_name = "on-file";
-		break;
-	case HC_OnFolder:
-		m_name = "on-folder";
-		break;
-	case HC_OnContainer:
-		m_name = "on-image-set";
-		break;
-	case HC_PostArchive:
-		m_name = "post-archive";
-		break;
-	case HC_PreArchive:
-		m_name = "pre-archive";
-		break;
-	case HC_PreProcess:
-		m_name = "post-process";
-		break;
-	case HC_OnFileCopy:
-		m_name = "copy-file";
-		break;
-	case HC_Unknown:
-		return false;
-	default:
-		return false;
+	OnViewPreview1Cmd::OnViewPreview1Cmd(const char *sourceFilePath, const char *distFilePath) : HookCmd(HookCmd::MC_MVPreview1) {
+		m_sourceFilePath = sourceFilePath;
+		m_distFilePath = distFilePath;
 	}
-	return true;
-}
 
-OnFileCmd::OnFileCmd(const char *file) : HookCmd(HookCmd::HC_OnFile) {
-	m_path = file;
-};
+	bool OnViewPreview1Cmd::process() {
+		return HookCmd::process(m_sourceFilePath.c_str(), m_distFilePath.c_str());
+	}
 
-bool OnFileCmd::process() {
-	SetEnv setEnv;
-	
-	setEnv.insert(setEnv.end(), EnvItem(IMAGE_PATH, m_file.c_str()));
-	std::string ext = SAUtils::getExtention(m_path);
-	std::string file = SAUtils::getFilenameNoExt(m_path);
-	setEnv.process();
-	HookCmd::process(file.c_str(), ext.c_str());
-	return true;
-}
+	OnViewPreview2Cmd::OnViewPreview2Cmd(const char *sourceFilePath, const char *distFilePath) : HookCmd(HookCmd::MC_MVPreview2) {
+		m_sourceFilePath = sourceFilePath;
+		m_distFilePath = distFilePath;
+	}
 
-OnFileCopyCmd::OnFileCopyCmd(const char *path, const char *image) : HookCmd(HookCmd::HC_OnFileCopy) {
-	m_path = path;
-	m_image = image;
-};
+	bool OnViewPreview2Cmd::process() {
+		return HookCmd::process(m_sourceFilePath.c_str(), m_distFilePath.c_str());
+	}
 
-bool OnFileCopyCmd::process() {
-	SetEnv setEnv;
-	setEnv.insert(setEnv.end(), EnvItem(IMAGE_PATH, m_path.c_str()));
-	setEnv.insert(setEnv.end(), EnvItem(IMAGE_NAME, m_image.c_str()));
-	setEnv.process();
-	HookCmd::process();
-	return true;
-}
+	OnViewPreview3Cmd::OnViewPreview3Cmd(const char *sourceFilePath, const char *distFilePath) : HookCmd(HookCmd::MC_MVPreview3) {
+		m_sourceFilePath = sourceFilePath;
+		m_distFilePath = distFilePath;
+	}
 
-OnFolderCmd::OnFolderCmd(const char *folder) : HookCmd(HookCmd::HC_OnFolder) {
-	m_folder = folder;
-};
+	bool OnViewPreview3Cmd::process() {
+		return HookCmd::process(m_sourceFilePath.c_str(), m_distFilePath.c_str());
+	}
 //OnFolderCmd::OnFolderCmd(ImagePath &imagePath) : HookCmd(HookCmd::HC_OnFolder, imagePath) {}
 
 //PostArchiveCmd::PostArchiveCmd() : HookCmd(HookCmd::HC_OnContainer) {};

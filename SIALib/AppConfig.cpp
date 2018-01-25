@@ -37,6 +37,7 @@
 #include "AppConfig.h"
 #include "SAUtils.h"
 #include "ArchivePath.h"
+#include "CLogger.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -46,102 +47,123 @@ static char THIS_FILE[] = __FILE__;
 
 namespace simplearchive {
 
-	CAppConfig *CAppConfig::m_this = NULL;
+	CSIAArcAppConfig *CSIAArcAppConfig::m_this = NULL;
 	
-	bool CAppConfig::m_verbose = false;
-	bool CAppConfig::m_quiet = true;
-	bool CAppConfig::m_silent = false;
-	std::string CAppConfig::m_logLevel = "SUMMARY";
-	bool CAppConfig::m_dry_run = false;
-	bool CAppConfig::m_useDatabase = true;
+	bool CSIAArcAppConfig::m_verbose = false;
+	bool CSIAArcAppConfig::m_quiet = true;
+	bool CSIAArcAppConfig::m_silent = false;
+	std::string CSIAArcAppConfig::m_logLevel = "SUMMARY";
+	bool CSIAArcAppConfig::m_dry_run = false;
+	bool CSIAArcAppConfig::m_useDatabase = true;
 
-	bool CAppConfig::m_eventsOn = false; // UDP events
-	bool CAppConfig::m_serverOn = false;
+	bool CSIAArcAppConfig::m_eventsOn = false; // UDP events
+	bool CSIAArcAppConfig::m_serverOn = false;
 
-	int CAppConfig::m_tcpPortNum = 11000;
-	int CAppConfig::m_udpPortNum = 11001;
-	std::string CAppConfig::m_udpAddress = "127.0.0.1";
+	int CSIAArcAppConfig::m_tcpPortNum = 11000;
+	int CSIAArcAppConfig::m_udpPortNum = 11001;
+	std::string CSIAArcAppConfig::m_udpAddress = "127.0.0.1";
 
-	std::string CAppConfig::m_hookPath;
-	std::string CAppConfig::m_toolsPath;
-	std::string CAppConfig::m_workspacePath;
-	std::string CAppConfig::m_derivativePath;
-	std::string CAppConfig::m_masterPath;
-	std::string CAppConfig::m_sourcePath;
-	std::string CAppConfig::m_configPath;
-	std::string CAppConfig::m_tempPath;
-	std::string CAppConfig::m_logPath;
-	std::string CAppConfig::m_homePath;
-	std::string CAppConfig::m_systemPath;
-	std::string CAppConfig::m_indexPath;
-	std::string CAppConfig::m_historyPath;
-	std::string CAppConfig::m_ExternalExifTool;
-	std::string CAppConfig::m_ExternalCommandLine;
-	std::string CAppConfig::m_ExifMapPath;
-	std::string CAppConfig::m_MetadataTemplatePath;
-	std::string CAppConfig::m_backupDestinationPath;
-	std::string CAppConfig::m_masterViewPath;
-	std::string CAppConfig::m_DatabasePath;
-	std::string CAppConfig::m_backup1;
-	std::string CAppConfig::m_backup2;
+	std::string CSIAArcAppConfig::m_hookPath;
+	std::string CSIAArcAppConfig::m_toolsPath;
+	std::string CSIAArcAppConfig::m_workspacePath;
+	std::string CSIAArcAppConfig::m_derivativePath;
+	std::string CSIAArcAppConfig::m_masterPath;
+	std::string CSIAArcAppConfig::m_sourcePath;
+	std::string CSIAArcAppConfig::m_catalogPath;
+	std::string CSIAArcAppConfig::m_configPath;
+	std::string CSIAArcAppConfig::m_tempPath;
+	std::string CSIAArcAppConfig::m_logPath;
+	std::string CSIAArcAppConfig::m_consoleLevel;
+	std::string CSIAArcAppConfig::m_homePath;
+	std::string CSIAArcAppConfig::m_systemPath;
+	std::string CSIAArcAppConfig::m_indexPath;
+	std::string CSIAArcAppConfig::m_historyPath;
+	std::string CSIAArcAppConfig::m_ExternalExifTool;
+	std::string CSIAArcAppConfig::m_ExternalCommandLine;
+	std::string CSIAArcAppConfig::m_ExifMapPath;
+	std::string CSIAArcAppConfig::m_ExifMapFile;
+	std::string CSIAArcAppConfig::m_templatePath;
+	std::string CSIAArcAppConfig::m_backupDestinationPath;
+	
+	std::string CSIAArcAppConfig::m_DatabasePath;
+	std::string CSIAArcAppConfig::m_backup1;
+	std::string CSIAArcAppConfig::m_backup2;
 
-	bool CAppConfig::m_backup1Enabled = false;
-	bool CAppConfig::m_backup2Enabled = false;
+	std::string CSIAArcAppConfig::m_masterCataloguePath;
+	std::string CSIAArcAppConfig::m_masterWWWCataloguePath;
+	bool CSIAArcAppConfig::m_masterViewEnabled = true;
+	bool CSIAArcAppConfig::m_masterViewFullSizeOn = true;
+	bool CSIAArcAppConfig::m_masterViewPreview1On = true;
+	bool CSIAArcAppConfig::m_masterViewThumbnailOn = true;
 
-	long CAppConfig::m_backupMediaSize;
-	ExifDateTime CAppConfig::m_fromDate;
-	ExifDateTime CAppConfig::m_toDate;
-	bool CAppConfig::m_isFromDate = false;
-	bool CAppConfig::m_isToDate = false;
+	bool CSIAArcAppConfig::m_backup1Enabled = false;
+	bool CSIAArcAppConfig::m_backup2Enabled = false;
+
+	long CSIAArcAppConfig::m_backupMediaSize;
+	ExifDateTime CSIAArcAppConfig::m_fromDate;
+	ExifDateTime CSIAArcAppConfig::m_toDate;
+	bool CSIAArcAppConfig::m_isFromDate = false;
+	bool CSIAArcAppConfig::m_isToDate = false;
 
 	
 
-	CAppConfig::CAppConfig()
+	CSIAArcAppConfig::CSIAArcAppConfig()
 	{
 	
 	}
 
 
-	CAppConfig::~CAppConfig()
+	CSIAArcAppConfig::~CSIAArcAppConfig()
 	{
 	}
 
-	CAppConfig &CAppConfig::get() {
+	CSIAArcAppConfig &CSIAArcAppConfig::get() {
 		if (m_this == NULL) {
-			m_this = new CAppConfig;
+			m_this = new CSIAArcAppConfig;
 		}
 		return *m_this;
+	}
+
+	
+
+	std::shared_ptr<ConfigBlock> CSIAArcAppConfig::getMasterArchive() {
+		return getConfigBlocks(MASTER_ARCHIVE);
+	}
+
+	std::shared_ptr<ConfigBlock> CSIAArcAppConfig::getSystemFolders() {
+		return getConfigBlocks(SYSTEM_FOLDERS);
 	}
 
 	/*
 		Default paths based on UserDrive and UserHome
 
 	*/
-	void CAppConfig::init(const char *homePath) {
-
+	bool CSIAArcAppConfig::init(const char *homePath) {
+		CLogger &logger = CLogger::getLogger();
+		
+		logger.log(LOG_OK, CLogger::Level::INFO, "Initalising configuration");
 		// Home Path 
 		if (homePath != nullptr) {
 			m_homePath = homePath;
-		} else if (m_homePath.empty() == true) {
-			if (value("HomePath", m_homePath) == false) {
-				m_homePath = SAUtils::GetPOSIXEnv("SIA_HOME");
-				
-			}
-			else {
-				std::string tempProgramData = SAUtils::GetPOSIXEnv("ProgramData");
-				m_homePath = tempProgramData + DEFAULT_HOME_PATH;
+		} else if (m_homePath.empty() == true) { // use ProgramData default
+			std::string tempProgramData = SAUtils::GetPOSIXEnv("ProgramData");
+			m_homePath = tempProgramData + DEFAULT_HOME_PATH;
+			if (SAUtils::DirExists(m_homePath.c_str()) == false) {
+				m_homePath = SAUtils::GetPOSIXEnv("HOMEDRIVE");
+				m_homePath += SAUtils::GetPOSIXEnv("HOMEPATH");
+				m_homePath += DEFAULT_HOME_PATH;
 				if (SAUtils::DirExists(m_homePath.c_str()) == false) {
-					m_homePath = SAUtils::GetPOSIXEnv("HOMEDRIVE");
-					m_homePath += SAUtils::GetPOSIXEnv("HOMEPATH");
-					m_homePath += DEFAULT_HOME_PATH;
+					return false;
 				}
 			}
+			
 		}
 		ArchivePath::setPathToHome(m_homePath);
+		logger.log(LOG_OK, CLogger::Level::INFO, "Home path                 \"%s\"", m_homePath.c_str());
 
 		// Backup 1
 		if (m_backup1.empty() == true) {
-			if (value("BackupOne", m_backup1) == true) {
+			if (getRoot().value("BackupOne", m_backup1) == true) {
 				ArchivePath::setBackup1Path(m_backup1);
 				m_backup1Enabled = true;
 			}
@@ -152,7 +174,7 @@ namespace simplearchive {
 		
 		// Backup 2
 		if (m_backup2.empty() == true) {
-			if (value("BackupTwo", m_backup2) == true) {
+			if (getRoot().value("BackupTwo", m_backup2) == true) {
 				ArchivePath::setBackup2Path(m_backup2);
 				m_backup2Enabled = true;
 			}
@@ -163,28 +185,76 @@ namespace simplearchive {
 
 		// Repository Archive Path
 		if (m_masterPath.empty() == true) {
-			if (value("RepositoryPath", m_masterPath) == false) {
+			auto folders = getSystemFolders();
+			if (folders == nullptr || getRoot().value("MasterPath", m_masterPath) == false) {
 				std::string temp = m_homePath;
 				m_masterPath = temp + MASTER_PATH;
-				ArchivePath::setMasterPath(m_masterPath);
+				
 			}
 		}
 		ArchivePath::setMasterPath(m_masterPath);
+		logger.log(LOG_OK, CLogger::Level::INFO, "Master path               \"%s\"", m_masterPath.c_str());
+
+		// Repository Archive Path
+		if (m_derivativePath.empty() == true) {
+			auto folders = getSystemFolders();
+			if (folders == nullptr || getRoot().value("DerivativePath", m_derivativePath) == false) {
+				std::string temp = m_homePath;
+				m_derivativePath = temp + DERIVATIVE_PATH;
+				
+			}
+		}
+		ArchivePath::setDerivativePath(m_derivativePath);
+		logger.log(LOG_OK, CLogger::Level::INFO, "Derivative path           \"%s\"", m_derivativePath.c_str());
 
 		// History Path
 		if (m_historyPath.empty() == true) {
-			if (value("HistoryPath", m_logPath) == false) {
+			auto folders = getSystemFolders();
+			if (folders == nullptr || getRoot().value("HistoryPath", m_historyPath) == false) {
 				std::string temp = SAUtils::GetPOSIXEnv("HOMEPATH");
 				m_historyPath = m_homePath + HISTORY_PATH;
 				
 			}
 		}
 		ArchivePath::setMainHistory(m_historyPath);
+		logger.log(LOG_OK, CLogger::Level::INFO, "History path              \"%s\"", m_historyPath.c_str());
+
+		// m_masterViewPath
+		if (m_masterWWWCataloguePath.empty() == true) {
+			auto folders = getSystemFolders();
+			if (folders == nullptr || getRoot().value("MasterWWWCataloguePath", m_masterWWWCataloguePath) == false) {
+				std::string temp = SAUtils::GetPOSIXEnv("HOMEPATH");
+				m_masterWWWCataloguePath = m_homePath + MASTER_WWW_CATALOGUE_PATH;
+
+			}
+		}
+		logger.log(LOG_OK, CLogger::Level::INFO, "Master Web catalogue path \"%s\"", m_masterWWWCataloguePath.c_str());
+
+		if (m_masterCataloguePath.empty() == true) {
+			// read from config file
+			auto folders = getSystemFolders();
+			if (folders == nullptr || getRoot().value("MasterCataloguePath", m_masterCataloguePath) == false) {
+				// if not found read from SIA_WORKSPACE environment variable
+				std::string temp = SAUtils::GetPOSIXEnv("SIA_MASTER_CATALOGUE");
+				if (temp.empty() == false) {
+					m_masterCataloguePath = temp;
+				}
+				else {
+					std::string tempHomeDrive = SAUtils::GetPOSIXEnv("HOMEDRIVE");
+					std::string tempHomePath = SAUtils::GetPOSIXEnv("HOMEPATH");
+					m_masterCataloguePath = tempHomeDrive + tempHomePath + DEFAULT_MASTER_CATALOGUE_PATH;
+				}
+			}
+		}
+		//ArchivePath::setMasterCataloguePath(m_masterViewPath);
+		logger.log(LOG_OK, CLogger::Level::INFO, "Master catalogue path     \"%s\"", m_masterCataloguePath.c_str());
 
 		// Workspace Path
+		// This is used in siaadm.exe
 		if (m_workspacePath.empty() == true) {
 			// read from config file
-			if (value("WorkspacePath", m_workspacePath) == false) {
+			auto folders = getSystemFolders();
+			if (folders == nullptr || getRoot().value("WorkspacePath", m_workspacePath) == false) {
 				// if not found read from SIA_WORKSPACE environment variable
 				std::string temp = SAUtils::GetPOSIXEnv("SIA_WORKSPACE");
 				if (temp.empty() == false) {
@@ -198,7 +268,7 @@ namespace simplearchive {
 			}
 		}
 		ArchivePath::setPathToWorkspace(m_workspacePath);
-
+		logger.log(LOG_OK, CLogger::Level::INFO, "Workspace path            \"%s\"", m_workspacePath.c_str());
 		
 		std::string temp = SAUtils::GetPOSIXEnv("SIA_SOURCE");
 		if (temp.empty() == false) {
@@ -208,17 +278,17 @@ namespace simplearchive {
 		if (temp.empty() == false) {
 			setLogLevel(temp.c_str());
 		}
-		
+		return true;
 	}
 
-	void CAppConfig::settup() {
+	void CSIAArcAppConfig::settup() {
 		getWorkspacePath();
 		getMasterPath();
 		getDerivativePath();
 		getTempPath();
 		getToolsPath();
 		getHookPath();
-		getMetadataTemplatePath();
+		getTemplatePath();
 		getLogPath();
 		getIndexPath();
 		getHistoryPath();
@@ -226,7 +296,7 @@ namespace simplearchive {
 		getExifMapPath();
 		getConfigPath();
 	    getHomePath();
-		getMasterViewPath();
+		getMasterCataloguePath();
 		getDatabasePath();
 		getBackupDestinationPath();
 		getBackupMediaSize();
@@ -243,49 +313,106 @@ namespace simplearchive {
 	}
 
 
-	/*
-		File values override the default and envroment 
-	*/
-	void CAppConfig::fileBasedValues() {
-
+	
+	void CSIAArcAppConfig::fileBasedValues(const char *home) {
+		CLogger &logger = CLogger::getLogger();
+		logger.log(LOG_OK, CLogger::Level::INFO, "Reading configuration file ");
 		// Home Path (The path to this file will be based on the home path)
-		
+		std::string homePath = home;
 		// Backup 1
-		if (value("BackupOne", m_backup1) == true) {
+		if (getRoot().value("BackupOne", m_backup1) == true) {
 			ArchivePath::setBackup1Path(m_backup1);
 			m_backup1Enabled = true;
 		}
 		// Backup 2
-		if (value("BackupTwo", m_backup2) == true) {
+		if (getRoot().value("BackupTwo", m_backup2) == true) {
 			ArchivePath::setBackup2Path(m_backup2);
 			m_backup2Enabled = true;
 		}
 		
 
 		// Master Archive Path
-		if (value("MasterPath", m_masterPath) == true) {
-			ArchivePath::setMasterPath(m_masterPath);
-		}
+		//std::shared_ptr<ConfigBlock> folders = getSystemFolders();
+		//if (folders == nullptr || getRoot().value("MasterPath", m_masterPath) == true) {
+		//	ArchivePath::setMasterPath(m_masterPath);
+		//}
+		//
+//#define CONFIG_PATH_LABEL				"ConfigPath"	 
+//#define TOOLS_PATH_LABEL           		"ToolsPath"
 		
+		setSystemFolders(TEMP_PATH_LABEL, m_tempPath, homePath + TEMP_PATH);
+//#define SOURCE_PATH_LABEL         		"SourcePath"
+		setSystemFolders(SYSTEM_PATH_LABEL, m_systemPath, homePath + SYSTEM_PATH);
+		setSystemFolders(LOG_PATH_LABEL, m_logPath, homePath + MASTER_PATH);
+		setSystemFolders(MASTER_PATH_LABEL, m_masterPath, homePath + MASTER_PATH);
+		setSystemFolders(DERIVATIVE_PATH_LABEL, m_derivativePath, homePath + DERIVATIVE_PATH);
+		setSystemFolders(TOOLS_PATH_LABEL, m_toolsPath, homePath + TOOLS_PATH);
+		setSystemFolders(HOOK_SCRIPTS_PATH_LABEL, m_hookPath, homePath + HOOKS_PATH);
+//#define HOME_PATH_LABEL					"HomePath"
 
-		// History Path
-		if (value("HistoryPath", m_logPath) == true) {
-			ArchivePath::setMainHistory(m_logPath);
-		}
+		setSystemFolders(HISTORY_PATH_LABEL, m_historyPath, homePath + TOOLS_PATH);	
+		setSystemFolders(TEMPLATE_PATH_LABEL, m_templatePath, homePath + TEMPLATE_PATH);
+		setSystemFolders(CATALOG_PATH_LABEL, m_catalogPath, homePath + TOOLS_PATH);
 		
+		std::string emptyString;
+		setSystemFolders(EXIF_MAP_PATH_LABEL, m_ExifMapPath, homePath + TOOLS_PATH);
+		setConfigBlock(EXIF_MAP_FILE_LABEL, m_ExifMapFile, emptyString, EXIFTOOL_BLOCK);
+
+
 		// Workspace Path	
-		if (value("WorkspacePath", m_workspacePath) == true) {
-				ArchivePath::setPathToWorkspace(m_workspacePath);
+		std::string wtemp = SAUtils::GetPOSIXEnv("SIA_WORKSPACE");
+		if (wtemp.empty() == true) {
+			std::string tempHomeDrive = SAUtils::GetPOSIXEnv("HOMEDRIVE");
+			std::string tempHomePath = SAUtils::GetPOSIXEnv("HOMEPATH");
+			wtemp = tempHomeDrive + tempHomePath + DEFAULT_WORKSPACE_PATH;
 		}
 		
+		setSystemFolders(WORKSPACE_PATH_LABEL, m_workspacePath, wtemp);
+		ArchivePath::setPathToWorkspace(m_workspacePath);
+
+		// Workspace Path	
+		std::string ctemp = SAUtils::GetPOSIXEnv("SIA_MASTER_CATALOGUE");
+		if (ctemp.empty() == true) {
+			std::string tempHomeDrive = SAUtils::GetPOSIXEnv("HOMEDRIVE");
+			std::string tempHomePath = SAUtils::GetPOSIXEnv("HOMEPATH");
+			ctemp = tempHomeDrive + tempHomePath + DEFAULT_MASTER_CATALOGUE_PATH;
+		}
+		setSystemFolders(MASTER_VIEW_PATH_LABEL, m_masterCataloguePath, ctemp);
+		
+		logger.log(LOG_OK, CLogger::Level::INFO, "    System paths");
+		logger.log(LOG_OK, CLogger::Level::INFO, "        System path \"%s\"", m_systemPath.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Log path \"%s\"", m_logPath.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Master path \"%s\"", m_masterPath.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Derivetive path \"%s\"", m_derivativePath.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Tools path \"%s\"", m_toolsPath.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Hook path \"%s\"", m_hookPath.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "        History path \"%s\"", m_historyPath.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Template path \"%s\"", m_templatePath.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Catalog path \"%s\"", m_catalogPath.c_str());
+		
+		logger.log(LOG_OK, CLogger::Level::INFO, "    External Exif Tool");
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Exif map path \"%s\"", m_ExifMapPath.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Exif map file \"%s\"", m_ExifMapFile.c_str());
+
+		std::string dry_run = "false";
+		setGeneral(DRY_RUN_LABEL, dry_run, dry_run);
+		
+		if (stricmp(dry_run.c_str(), "true") == 0)
+		{
+			m_dry_run = true;
+		}
+		else {
+			m_dry_run = false;
+		}
 	}
 
-	void CAppConfig::setToolsPath(const char *toolsPath) {
+	void CSIAArcAppConfig::setToolsPath(const char *toolsPath) {
 		m_toolsPath = toolsPath;
 	}
-	const char *CAppConfig::getToolsPath() {
+	const char *CSIAArcAppConfig::getToolsPath() {
 		if (m_toolsPath.empty() == true) {
-			if (value("ToolsPath", m_toolsPath) == false) {
+			auto folders = getSystemFolders();
+			if (folders == nullptr || getRoot().value("ToolsPath", m_toolsPath) == false) {
 				std::string temp = m_homePath;
 				m_toolsPath = temp + TOOLS_PATH;
 
@@ -294,22 +421,22 @@ namespace simplearchive {
 		return m_toolsPath.c_str();
 
 	}
-	void CAppConfig::setHomePath(const char *homePath) {
+	void CSIAArcAppConfig::setHomePath(const char *homePath) {
 		m_homePath = homePath;
 		ArchivePath::setPathToHome(m_homePath);
 		m_configPath = homePath;
 		m_configPath += CONFIG_PATH;
 	}
 	
-	const char *CAppConfig::getHomePath() {
+	const char *CSIAArcAppConfig::getHomePath() {
 		
 		return m_homePath.c_str();
 
 	}
 
-	const char *CAppConfig::getBackup1() {
+	const char *CSIAArcAppConfig::getBackup1() {
 		if (m_backup1.empty() == true) {
-			if (value("BackupOne", m_backup1) == true) {
+			if (getRoot().value("BackupOne", m_backup1) == true) {
 				ArchivePath::setBackup1Path(m_backup1);
 				m_backup1Enabled = true;
 			}
@@ -317,9 +444,9 @@ namespace simplearchive {
 		return m_backup1.c_str();
 	}
 
-	const char *CAppConfig::getBackup2() {
+	const char *CSIAArcAppConfig::getBackup2() {
 		if (m_backup2.empty() == true) {
-			if (value("BackupTwo", m_backup2) == true) {
+			if (getRoot().value("BackupTwo", m_backup2) == true) {
 				ArchivePath::setBackup2Path(m_backup2);
 				m_backup2Enabled = true;
 			}
@@ -331,15 +458,17 @@ namespace simplearchive {
 
 
 	/// Gets the archive path.
-	const char *CAppConfig::getWorkspacePath() {
+	const char *CSIAArcAppConfig::getWorkspacePath() {
 		
 		return m_workspacePath.c_str();
 
 	}
 	/// Gets the archive path.
-	const char *CAppConfig::getMasterPath() {
+	const char *CSIAArcAppConfig::getMasterPath() {
+		/*
 		if (m_masterPath.empty() == true) {
-			if (value("MasterPath", m_masterPath) == false) {
+			auto folders = getSystemFolders();
+			if (folders == nullptr || getRoot().value("MasterPath", m_masterPath) == false) {
 				// if not found read from SIA_WORKSPACE environment variable
 				std::string temp = SAUtils::GetPOSIXEnv("SIA_MASTER");
 				if (temp.empty() == false) {
@@ -347,18 +476,22 @@ namespace simplearchive {
 				}
 				else {
 					std::string tempProgramData = SAUtils::GetPOSIXEnv("ProgramData");
-					m_masterPath = tempProgramData + DEFAULT_MASTER_PATH;
+					tempProgramData += DEFAULT_HOME_PATH;
+					m_masterPath = tempProgramData + MASTER_PATH;
 					ArchivePath::setMasterPath(m_masterPath);
 				}
 			}
 		}
+		*/
 		return m_masterPath.c_str();
 
 	}
 	
-	const char *CAppConfig::getDerivativePath() {
+	const char *CSIAArcAppConfig::getDerivativePath() {
+		/*
 		if (m_derivativePath.empty() == true) {
-			if (value("DerivativePath", m_derivativePath) == false) {
+			auto folders = getSystemFolders();
+			if (folders == nullptr || getRoot().value("DerivativePath", m_derivativePath) == false) {
 				// if not found read from SIA_WORKSPACE environment variable
 				std::string temp = SAUtils::GetPOSIXEnv("SIA_Master");
 				if (temp.empty() == false) {
@@ -366,177 +499,238 @@ namespace simplearchive {
 				}
 				else {
 					std::string tempProgramData = SAUtils::GetPOSIXEnv("ProgramData");
-					m_derivativePath = tempProgramData + DEFAULT_DERIVATIVE_PATH;
+					tempProgramData += DEFAULT_HOME_PATH;
+					m_derivativePath = tempProgramData + DERIVATIVE_PATH;
 					ArchivePath::setDerivativePath(m_derivativePath);
 				}
 			}
 		}
+		*/
 		return m_derivativePath.c_str();
 
 	}
 
 	
-	const char *CAppConfig::getSourcePath() {
+	const char *CSIAArcAppConfig::getSourcePath() {
+		/*
 		if (m_sourcePath.empty() == true) {
-			if (value("SourcePath", m_sourcePath) == false) {
+			auto folders = getSystemFolders();
+			if (folders == nullptr || getRoot().value("SourcePath", m_sourcePath) == false) {
 				std::string tempHomeDrive = SAUtils::GetPOSIXEnv("HOMEDRIVE");
 				std::string tempHomePath = SAUtils::GetPOSIXEnv("HOMEPATH");
 				m_sourcePath = tempHomeDrive + tempHomePath + DEFAULT_SOURCE_PATH;
 			}
 		}
+		*/
 		return m_sourcePath.c_str();
 
 	}
 
-	const char *CAppConfig::getHookPath() {
-		if (m_hookPath.empty() == true) {
-			if (value("HookPath", m_hookPath) == false) {
+	const char *CSIAArcAppConfig::getHookPath() {
+		/*
+		auto folders = getSystemFolders();
+		if (folders == nullptr || m_hookPath.empty() == true) {
+			if (getRoot().value("HookPath", m_hookPath) == false) {
 				std::string temp = SAUtils::GetPOSIXEnv("HOMEPATH");
 				m_hookPath = m_homePath + HOOKS_PATH;
 			}
 		}
+		*/
 		return m_hookPath.c_str();
 
 	}
-	
-	void CAppConfig::setMasterViewPath(const char *path) {
-		m_masterViewPath = path;
+	void CSIAArcAppConfig::setArchivePath(const char *path) {
+		m_homePath = path;
 	}
 
-	void CAppConfig::setWorkspacePath(const char *path) {
+	void CSIAArcAppConfig::setMasterCataloguePath(const char *path) {
+		m_masterCataloguePath = path;
+	}
+
+	void CSIAArcAppConfig::setWorkspacePath(const char *path) {
 		m_workspacePath = path;
 		ArchivePath::setPathToWorkspace(m_workspacePath);
 	}
 
-	void CAppConfig::setMasterPath(const char *path) {
+	void CSIAArcAppConfig::setMasterPath(const char *path) {
 		m_masterPath = path;
 		ArchivePath::setMasterPath(m_masterPath);
 	}
 
 
-	void CAppConfig::setDerivativePath(const char *path) {
+	void CSIAArcAppConfig::setDerivativePath(const char *path) {
 		m_derivativePath = path;
 	}
 
-	void CAppConfig::setSourcePath(const char *path) {
+	void CSIAArcAppConfig::setSourcePath(const char *path) {
 		m_sourcePath = path;
 	}
 
-	const char *CAppConfig::getBackupDestinationPath() {
+	const char *CSIAArcAppConfig::getBackupDestinationPath() {
+		/*
 		if (m_backupDestinationPath.empty() == true) {
-			if (value("BackupDestinationPath", m_backupDestinationPath) == false) {
+			if (getRoot().value("BackupDestinationPath", m_backupDestinationPath) == false) {
 				std::string temp = SAUtils::GetPOSIXEnv("HOMEPATH");
 				m_backupDestinationPath = temp + BACKUPS_PATH;
 			}
 		}
+		*/
 		return m_backupDestinationPath.c_str();
 
 	}
 
-	const char *CAppConfig::getMasterViewPath() {
+	const char *CSIAArcAppConfig::getMasterCataloguePath() {
+		/*
 		if (m_masterViewPath.empty() == true) {
-			if (value("BackupDestinationPath", m_masterViewPath) == false) {
+		if (getRoot().value("BackupDestinationPath", m_masterViewPath) == false) {
+		std::string temp = SAUtils::GetPOSIXEnv("USERPROFILE");
+		m_masterViewPath = temp + MASTER_VIEW_PATH;
+		}
+		}
+		*/
+		return m_masterCataloguePath.c_str();
+
+	}
+
+	const char *CSIAArcAppConfig::getMasterWWWCataloguePath() {
+		/*
+		if (m_masterViewPath.empty() == true) {
+			if (getRoot().value("BackupDestinationPath", m_masterViewPath) == false) {
 				std::string temp = SAUtils::GetPOSIXEnv("USERPROFILE");
 				m_masterViewPath = temp + MASTER_VIEW_PATH;
 			}
 		}
-		return m_masterViewPath.c_str();
+		*/
+		return m_masterWWWCataloguePath.c_str();
 
 	}
 
-	void CAppConfig::setBackupDestinationPath(const char *path) {
+	void CSIAArcAppConfig::setBackupDestinationPath(const char *path) {
 		m_backupDestinationPath = path;
 	}
 
-	long CAppConfig::getBackupMediaSize() {
+	long CSIAArcAppConfig::getBackupMediaSize() {
+		/*
 		if (m_backupMediaSize == 0) {
 			std::string tmp;
 		
-			if (value("BackupMediaSize", tmp) == false) {
+			if (getRoot().value("BackupMediaSize", tmp) == false) {
 					m_backupMediaSize = 700; // size of a DVD
 			}
 			else {
 				m_backupMediaSize = strtoul(tmp.c_str(), 0, 10);
 			}	
 		}
+		*/
 		return m_backupMediaSize;
 	}
 
-	void CAppConfig::setBackupMediaSize(const char *sizeStr) {
+	void CSIAArcAppConfig::setBackupMediaSize(const char *sizeStr) {
 		m_backupMediaSize = strtoul(sizeStr, 0, 10);
 	}
 
-	ExifDateTime &CAppConfig::getFromDate() {
+	ExifDateTime &CSIAArcAppConfig::getFromDate() {
 		return m_fromDate;
 	}
 
-	void CAppConfig::setFromDate(const char *dateStr) {
+	void CSIAArcAppConfig::setFromDate(const char *dateStr) {
 		ExifDateTime tmp(dateStr);
 		m_fromDate = tmp;
 	}
 
-	ExifDateTime &CAppConfig::getToDate() {
+	ExifDateTime &CSIAArcAppConfig::getToDate() {
 		return m_toDate;
 	}
 
-	void CAppConfig::setToDate(const char *dateStr) {
+	void CSIAArcAppConfig::setToDate(const char *dateStr) {
 		ExifDateTime tmp(dateStr);
 		m_toDate = tmp;
 	}
 
-	bool CAppConfig::isFromDateSet() {
+	bool CSIAArcAppConfig::isFromDateSet() {
 		return m_isFromDate;
 	}
 
-	bool CAppConfig::isToDateSet() {
+	bool CSIAArcAppConfig::isToDateSet() {
 		return m_isToDate;
 	}
 	
-	const char *CAppConfig::getDatabasePath() {
-		if (value("DatabasePath", m_DatabasePath) == false) {
+	const char *CSIAArcAppConfig::getDatabasePath() {
+		if (getRoot().value("DatabasePath", m_DatabasePath) == false) {
 			std::string temp = SAUtils::GetPOSIXEnv("HOMEPATH");
 			m_DatabasePath = m_homePath + DATABASE_PATH;
 		}
 		return m_DatabasePath.c_str();
 	}
 
-	const char *CAppConfig::getTempPath() {
-		if (value("LogPath", m_tempPath) == false) {
+	const char *CSIAArcAppConfig::getTempPath() {
+		/*
+		if (getRoot().value("TempPath", m_tempPath) == false) {
 			m_tempPath = m_homePath + "/tmp";
 		}
+		*/
 		return m_tempPath.c_str();
 	}
 
-	const char *CAppConfig::getLogPath() {
-		if (value("LogPath", m_logPath) == false) {
+	const char *CSIAArcAppConfig::getLogPath() {
+		if (getRoot().value("LogPath", m_logPath) == false) {
 			m_logPath = m_homePath + "/logs";
 		}
 		return m_logPath.c_str();
 	}
 
-	const char *CAppConfig::getLogLevel() {
+	const char *CSIAArcAppConfig::getLogLevel() {
 		return m_logLevel.c_str();
 	}
 
-	void CAppConfig::setLogLevel(const char *logLevel) {
+	void CSIAArcAppConfig::setLogLevel(const char *logLevel) {
 		m_logLevel = logLevel;
 	}
+
+	const char *CSIAArcAppConfig::getConsoleLevel() {
+		return m_consoleLevel.c_str();
+	}
+
+	void CSIAArcAppConfig::setConsoleLevel(const char *logLevel) {
+		m_consoleLevel = logLevel;
+	}
 	
-	const char *CAppConfig::getSystemPath() {
-		if (value("SystemPath", m_systemPath) == false) {
-			m_systemPath = m_masterPath + MASTER_SYSTEM_FOLDER;
+	bool CSIAArcAppConfig::setGeneral(const char* name, std::string &value, std::string &defaultValue) {
+		return setConfigBlock(name, value, defaultValue, GENERAL_BLOCK);
+	}
+
+	bool CSIAArcAppConfig::setSystemFolders(const char* name, std::string &value, std::string &defaultValue) {
+		return setConfigBlock(name, value, defaultValue, FOLDERS_BLOCK);
+	}
+
+	bool CSIAArcAppConfig::setExternalExifTool(const char* name, std::string &value, std::string &defaultValue) {
+		return setConfigBlock(name, value, defaultValue, EXIFTOOL_BLOCK);
+	}
+
+	/*
+	const char *CSIAArcAppConfig::getSystemPath() {
+		std::shared_ptr<ConfigBlock> cb = find(FOLDERS_BLOCK)->second;
+		if (cb == nullptr && cb->value("SystemPath", m_systemPath) == true) {
+			return m_systemPath.c_str();
 		}
+		m_systemPath = m_masterPath + MASTER_SYSTEM_FOLDER;
+		
+	}
+	*/
+	const char *CSIAArcAppConfig::getSystemPath() {
+		setSystemFolders("SystemPath", m_systemPath, m_masterPath + SYSTEM_PATH);
 		return m_systemPath.c_str();
 	}
 
-	const char *CAppConfig::getIndexPath() {	
+
+	const char *CSIAArcAppConfig::getIndexPath() {	
 		m_indexPath = m_systemPath + "/index";
 		return m_indexPath.c_str();
 	}
 
-	const char *CAppConfig::getHistoryPath() {
+	const char *CSIAArcAppConfig::getHistoryPath() {
 		if (m_historyPath.empty() == true) {
-			if (value("HistoryPath", m_logPath) == false) {
+			if (getRoot().value("HistoryPath", m_logPath) == false) {
 				std::string temp = SAUtils::GetEnv("HOMEPATH");
 				m_historyPath = m_homePath + HISTORY_PATH;
 				ArchivePath::setMainHistory(m_historyPath);
@@ -545,134 +739,141 @@ namespace simplearchive {
 		return 	m_historyPath.c_str();
 	}
 
-	const char *CAppConfig::getConfigPath() {
-		if (value("ConfigPath", m_configPath) == false) {
+	const char *CSIAArcAppConfig::getConfigPath() {
+		if (getRoot().value("ConfigPath", m_configPath) == false) {
 			m_configPath = m_homePath + "/config";
 		}
 		return 	m_configPath.c_str();
 	}
 
-	const char *CAppConfig::getExternalExifTool() {
-		if (value("ExifTool", m_ExternalExifTool) == false) {
+	const char *CSIAArcAppConfig::getExternalExifTool() {
+		if (getRoot().value("ExifTool", m_ExternalExifTool) == false) {
 			m_ExternalExifTool = "exiftool.exe";
 			return m_ExternalExifTool.c_str();
 		}
 		return 	m_ExternalCommandLine.c_str();
 	}
 
-	const char *CAppConfig::getExternalCommandLine() {
-		if (value("ExifCommandLine", m_ExternalCommandLine) == false) {
+	const char *CSIAArcAppConfig::getExternalCommandLine() {
+		if (getRoot().value("ExifCommandLine", m_ExternalCommandLine) == false) {
 			m_ExternalCommandLine = EXTERAL_EXIF_COMMAND_LINE;
 			return m_ExternalCommandLine.c_str();
 		}
 		return 	m_ExternalCommandLine.c_str();
 	}
 
-	const char *CAppConfig::getExifMapPath() {
-		if (value("ExifMapPath", m_ExternalCommandLine) == false) {
+	const char *CSIAArcAppConfig::getExifMapPath() {
+		if (getRoot().value("ExifMapPath", m_ExternalCommandLine) == false) {
 			m_ExifMapPath = m_homePath + CONFIG_PATH;
 			return m_ExifMapPath.c_str();
 		}
 		return 	m_ExifMapPath.c_str();
 	}
-
-	const char *CAppConfig::getMetadataTemplatePath() {
-		if (value("MetadataTemplatePath", m_MetadataTemplatePath) == false) {
-			m_MetadataTemplatePath = m_homePath + "/templates";
-			return m_MetadataTemplatePath.c_str();
-		}
-		return 	m_MetadataTemplatePath.c_str();
+	
+	const char *CSIAArcAppConfig::getTemplatePath() {
+		//if (getRoot().value("TemplatePath", m_templatePath) == false) {
+		//	m_templatePath = m_homePath + "/templates";
+		//	return m_templatePath.c_str();
+		//}
+		return 	m_templatePath.c_str();
 	}
 
-	bool CAppConfig::isDryRun() const {
+	const char *CSIAArcAppConfig::getExifMapFile() {
+		if (getRoot().value("ExifMapFile", m_ExifMapFile) == false) {
+			return m_ExifMapFile.c_str();
+		}
+		return 	m_ExifMapPath.c_str();
+	}
+
+	bool CSIAArcAppConfig::isDryRun() const {
 		return m_dry_run;
 	}
 
-	void CAppConfig::setDryRun(bool dryRun) {
+	void CSIAArcAppConfig::setDryRun(bool dryRun) {
 		m_dry_run = dryRun;
 	}
 
 
-	bool CAppConfig::isQuiet() const {
+	bool CSIAArcAppConfig::isQuiet() const {
 		return m_quiet;
 	}
 
-	void CAppConfig::setQuiet(bool quiet) {
+	void CSIAArcAppConfig::setQuiet(bool quiet) {
 		m_quiet = quiet;
 	}
 
-	bool CAppConfig::isSilent() const {
+	bool CSIAArcAppConfig::isSilent() const {
 		return m_silent;
 	}
 
-	void CAppConfig::setSilent(bool silent) {
+	void CSIAArcAppConfig::setSilent(bool silent) {
 		m_silent = silent;
 	}
 
-	bool CAppConfig::isVerbose() const {
+	bool CSIAArcAppConfig::isVerbose() const {
 		return m_verbose;
 	}
 
-	void CAppConfig::setVerbose(bool verbose) {
+	void CSIAArcAppConfig::setVerbose(bool verbose) {
 		m_verbose = verbose;
 	}
 
-	bool CAppConfig::isEventsOn() {
+	bool CSIAArcAppConfig::isEventsOn() {
 		return m_eventsOn;
 	}
 
-	int CAppConfig::eventPort() {
+	int CSIAArcAppConfig::eventPort() {
 		return m_udpPortNum;
 
 	}
-	const char *CAppConfig::eventAddress() {
+	const char *CSIAArcAppConfig::eventAddress() {
 		return m_udpAddress.c_str();
 	}
 
-	bool CAppConfig::isServerOn() {
+	bool CSIAArcAppConfig::isServerOn() {
 		return m_serverOn;
 	}
 
-	int CAppConfig::serverPort() {
+	int CSIAArcAppConfig::serverPort() {
 		return m_tcpPortNum;
 
 	}
 
-	void CAppConfig::setEventsOn(bool evt) {
+	void CSIAArcAppConfig::setEventsOn(bool evt) {
 		m_eventsOn = evt;
 	}
 
-	void CAppConfig::setEventPort(int port) {
+	void CSIAArcAppConfig::setEventPort(int port) {
 		m_eventsOn = true;
 		m_udpPortNum = port;
 	}
 
-	void CAppConfig::setEventAddress(const char *address) {
+	void CSIAArcAppConfig::setEventAddress(const char *address) {
 		m_eventsOn = true;
 		m_udpAddress = address;
 	}
 
-	void CAppConfig::isServerOn(bool on) {
+	void CSIAArcAppConfig::isServerOn(bool on) {
 		m_serverOn = on;
 	}
 
-	void CAppConfig::setServerPort(int port) {
+	void CSIAArcAppConfig::setServerPort(int port) {
 		m_tcpPortNum = port;
 	}
 
 	//void setSourcePath(const char *sourcePath);
 
-	bool CAppConfig::validWorkspacePath() {
+	bool CSIAArcAppConfig::validWorkspacePath() {
 		return true;
 	}
-	bool CAppConfig::validSourcePath() {
+	bool CSIAArcAppConfig::validSourcePath() {
 		return true;
 	}
-	bool CAppConfig::validHomePath() {
+	bool CSIAArcAppConfig::validHomePath() {
 		return true;
 	}
 
-	std::string CAppConfig::toString() {
+	std::string CSIAArcAppConfig::toString() {
 		/// @brief Gets the source path.
 		///const char *getSourcePath();
 
@@ -696,8 +897,8 @@ namespace simplearchive {
 		/// user definable
 		/// 
 		str << "Hook path:               " << getHookPath()  << '\n';
-		/// @brief Gets the path to the metadata template files.
-		str << "Metadata template path:  " << getMetadataTemplatePath() << '\n';
+		/// @brief Gets the path to the template files.
+		str << "Metadata template path:  " << getTemplatePath() << '\n';
 		/// @brief Gets log file path
 		str << "Log path:                " << getLogPath() << '\n';
 		/// @brief Gets the path to the crc index database.
@@ -713,7 +914,7 @@ namespace simplearchive {
 		str << "Config path:             " << getConfigPath() << '\n';
 		/// @brief Gets home path. This is the root path all default paths are made.
 		str << "Home path:               " << getHomePath() << '\n';
-		str << "Master view path:        " << getMasterViewPath() << '\n';
+		str << "Master view path:        " << getMasterCataloguePath() << '\n';
 		str << "Database path:           " << getDatabasePath() << '\n';
 		str << "Backup destination path: " << getBackupDestinationPath() << '\n';
 		str << "Backup media size:       " << getBackupMediaSize() << '\n';
@@ -731,7 +932,7 @@ namespace simplearchive {
 		return str.str();
 	}
 
-	std::string CAppConfig::toXMLString() {
+	std::string CSIAArcAppConfig::toXMLString() {
 		/// @brief Gets the source path.
 		///const char *getSourcePath();
 
@@ -756,7 +957,7 @@ namespace simplearchive {
 		/// 
 		str << "<HookPath>" << getHookPath() << "</HookPath>" << '\n';
 		/// @brief Gets the path to the metadata template files.
-		str << "<MetadataTemplatePath>" << getMetadataTemplatePath() << "</MetadataTemplatePath>" << '\n';
+		str << "<TemplatePath>" << getTemplatePath() << "</TemplatePath>" << '\n';
 		/// @brief Gets log file path
 		str << "<LogPath>" << getLogPath() << "</LogPath>" << '\n';
 		/// @brief Gets the path to the crc index database.
@@ -772,7 +973,7 @@ namespace simplearchive {
 		str << "<ConfigPath>" << getConfigPath() << "</ConfigPath>" << '\n';
 		/// @brief Gets home path. This is the root path all default paths are made.
 		str << "<HomePath>" << getHomePath() << "</HomePath>" << '\n';
-		str << "<MasterViewPath>" << getMasterViewPath() << "</MasterViewPath>" << '\n';
+		str << "<MasterCataloguePath>" << getMasterCataloguePath() << "</MasterCataloguePath>" << '\n';
 		str << "<DatabasePath>" << getDatabasePath() << "</DatabasePath>" << '\n';
 		str << "<BackupDestinationPath>" << getBackupDestinationPath() << "</BackupDestinationPath>" << '\n';
 		str << "<BackupMediaSize>" << getBackupMediaSize() << "</BackupMediaSize>" << '\n';

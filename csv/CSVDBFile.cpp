@@ -630,15 +630,15 @@ bool MirrorIdxDB::process(unsigned int idx) {
 /********************************/
 
 bool IdxFile::read(const char *datafile) {
-	char text[2 * 1012];
+	std::string text;
 	m_last = -1;
 	std::ifstream file(datafile);
 	if (file.is_open() == false) {
 		return false;
 	}
 
-	while (file.getline(text, 2 * 1012)) {
-		std::shared_ptr<IdxFileItem> item = std::make_shared<IdxFileItem>(text);
+	while (std::getline(file, text)) {
+		std::shared_ptr<IdxFileItem> item = std::make_shared<IdxFileItem>(text.c_str());
 		int fullidx = item->getIdx();
 		int fileidx = (unsigned int)fullidx & 0xFF;
 

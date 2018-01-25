@@ -40,7 +40,7 @@
 namespace simplearchive {
 
 class ExifObject;
-class Config;
+class ConfigBlock;
 /**
  *	@brief This class is used to map external EXIF data from tools
  *	such as ExifTool.
@@ -57,8 +57,8 @@ class Config;
  */
 class ExternalExifMapper {
 	/// @brief This contains the external to internal EXIF mappings
-	Config *m_exifMap;
-	ExifObject *create(Config &exifData);
+	ConfigBlock *m_exifMap;
+	ExifObject *create(ConfigBlock &exifData);
 public:
 	ExternalExifMapper();
 	virtual ~ExternalExifMapper();

@@ -59,10 +59,16 @@ class ArchiveBuilder {
 	std::string m_MasterPath;
 	std::string m_indexPath;
 	std::string m_workspacePath;
-	std::string m_metatemplatePath;
-	
+	std::string m_templatePath;
+
+	int m_folders;
+	int m_imageFiles;
+	int m_imageFilesRejected;
+	int m_imageFilesCompleted;
+
 	ArchiveObject &m_archiveObject;
 	bool m_useExternalExifTool;
+	bool m_doDryRun;
 	void copyBasicExit(MetadataObject& metadataObject, const BasicMetadata &eb);
 	void copyExternalExif(MetadataObject& metadataObject, ExifObject &exifObject);
 	

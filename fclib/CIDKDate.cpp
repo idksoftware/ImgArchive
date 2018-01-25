@@ -592,7 +592,7 @@ int CIDKDate::GetElement(time_t inTime, int elementType)
 {
 
 	struct tm		brkTime;
-	int				ret;
+	int				ret = 0;
 
 	errno_t err =  gmtime_p(brkTime, &inTime);
 

@@ -647,7 +647,7 @@ JpegExif_Ptr EXIFInfo::parseFromEXIFSegment(const unsigned char *buf, unsigned l
 				jpegExif->brightnessValue = result.val_rational;
 				//printf("%d/%d\n", result.val_rational.numerator, result.val_rational.denominator);
 			}
-			jpegExif->brightnessValue.numerator = result.val_rational.rational;
+			jpegExif->brightnessValue.rational = result.val_rational.rational;
 			break;
         case 0x9204:
           // Exposure bias value 
@@ -864,7 +864,7 @@ JpegExif_Ptr EXIFInfo::parseFromEXIFSegment(const unsigned char *buf, unsigned l
   }
 
   jpegExif->error = PARSE_EXIF_SUCCESS;
-  jpegExif->print();
+  //jpegExif->print();
 
   return jpegExif;
 }

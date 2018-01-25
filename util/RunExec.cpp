@@ -233,16 +233,32 @@ bool CreateChildProcess(char *cmdline)
 
 	// Create the child process. 
 
-	return CreateProcess(NULL,
+	bool bSuccess = CreateProcess(NULL,
 		cmdline,       // command line 
-		NULL,          // process security attributes 
-		NULL,          // primary thread security attributes 
-		TRUE,          // handles are inherited 
+		nullptr,          // process security attributes 
+		nullptr,          // primary thread security attributes 
+		true,          // handles are inherited 
 		0,             // creation flags 
-		NULL,          // use parent's environment 
-		NULL,          // use parent's current directory 
+		nullptr,          // use parent's environment 
+		nullptr,          // use parent's current directory 
 		&siStartInfo,  // STARTUPINFO pointer 
 		&piProcInfo);  // receives PROCESS_INFORMATION 
+
+	
+	// If an error occurs, exit the application. 
+	if (!bSuccess)
+		return false;
+	else
+	{
+		// Close handles to the child process and its primary thread.
+		// Some applications might keep these handles to monitor the status
+		// of the child process, for example. 
+
+		CloseHandle(piProcInfo.hProcess);
+		CloseHandle(piProcInfo.hThread);
+	}
+	return true;
+
 }
 
 void WriteToPipe(void)

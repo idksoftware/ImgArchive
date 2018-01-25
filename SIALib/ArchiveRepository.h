@@ -34,7 +34,7 @@
 
 #ifndef ARCHIVEREPOSITORY_H_
 #define ARCHIVEREPOSITORY_H_
-#include "ImageGroup.h"
+#include "ImageContainer.h"
 #include "HistoryEvent.h"
 
 namespace simplearchive {

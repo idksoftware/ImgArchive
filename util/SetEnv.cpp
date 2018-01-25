@@ -55,18 +55,21 @@ SetEnv::~SetEnv() {
 	// TODO Auto-generated destructor stub
 }
 
-void SetEnv::process() {
+bool SetEnv::process() {
 	for (std::vector<EnvItem>::iterator i = begin(); i != end(); i++) {
 		EnvItem &data = *i;
 #ifdef _WIN32
 		//::SetEnvironmentVariable(data.getName().c_str(), data.getValue().c_str());
 		std::string tmp = data.getName() + '=' + data.getValue().c_str();
-		_putenv(tmp.c_str());
+		if (_putenv(tmp.c_str()) == false) {
+			return false;
+		}
 
 #else
 		setenv(data.getName().c_str(),data.getValue().c_str(), true);
 #endif
 	}
+	return true;
 }
 
 } /* namespace simplearchive */

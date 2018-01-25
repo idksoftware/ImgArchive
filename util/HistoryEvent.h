@@ -52,6 +52,7 @@ public:
 public:
 
 	const char *getString() const;
+	static const char getChar(HistoryEvent::Event evt);
 	Event get() {
 		return m_event;
 	}

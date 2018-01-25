@@ -77,8 +77,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		documents\sia.eap = documents\sia.eap
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtest_unittest", "gtest_unittest\gtest_unittest.vcxproj", "{C807634C-4B97-44A6-A83C-565ED1A30BB6}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cmdlinetest", "cmdlinetest\cmdlinetest.vcxproj", "{BAF98380-7E01-4B2F-A454-E9C54B227104}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "appbase", "appbase\appbase.vcxproj", "{6712D2A3-305E-4C55-B461-F94EBA993AA0}"
@@ -303,20 +301,6 @@ Global
 		{403AEF6D-0C29-4126-8E37-C3707984F198}.Release|Win32.ActiveCfg = Release|Win32
 		{403AEF6D-0C29-4126-8E37-C3707984F198}.Release|Win32.Build.0 = Release|Win32
 		{403AEF6D-0C29-4126-8E37-C3707984F198}.Release|x64.ActiveCfg = Release|Win32
-		{C807634C-4B97-44A6-A83C-565ED1A30BB6}.Debug|Any CPU.ActiveCfg = Debug|Win32
-		{C807634C-4B97-44A6-A83C-565ED1A30BB6}.Debug|ARM.ActiveCfg = Debug|Win32
-		{C807634C-4B97-44A6-A83C-565ED1A30BB6}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
-		{C807634C-4B97-44A6-A83C-565ED1A30BB6}.Debug|Mixed Platforms.Build.0 = Debug|Win32
-		{C807634C-4B97-44A6-A83C-565ED1A30BB6}.Debug|Win32.ActiveCfg = Debug|Win32
-		{C807634C-4B97-44A6-A83C-565ED1A30BB6}.Debug|Win32.Build.0 = Debug|Win32
-		{C807634C-4B97-44A6-A83C-565ED1A30BB6}.Debug|x64.ActiveCfg = Debug|x64
-		{C807634C-4B97-44A6-A83C-565ED1A30BB6}.Release|Any CPU.ActiveCfg = Release|Win32
-		{C807634C-4B97-44A6-A83C-565ED1A30BB6}.Release|ARM.ActiveCfg = Release|Win32
-		{C807634C-4B97-44A6-A83C-565ED1A30BB6}.Release|Mixed Platforms.ActiveCfg = Release|Win32
-		{C807634C-4B97-44A6-A83C-565ED1A30BB6}.Release|Mixed Platforms.Build.0 = Release|Win32
-		{C807634C-4B97-44A6-A83C-565ED1A30BB6}.Release|Win32.ActiveCfg = Release|Win32
-		{C807634C-4B97-44A6-A83C-565ED1A30BB6}.Release|Win32.Build.0 = Release|Win32
-		{C807634C-4B97-44A6-A83C-565ED1A30BB6}.Release|x64.ActiveCfg = Release|Win32
 		{BAF98380-7E01-4B2F-A454-E9C54B227104}.Debug|Any CPU.ActiveCfg = Debug|Win32
 		{BAF98380-7E01-4B2F-A454-E9C54B227104}.Debug|ARM.ActiveCfg = Debug|Win32
 		{BAF98380-7E01-4B2F-A454-E9C54B227104}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32

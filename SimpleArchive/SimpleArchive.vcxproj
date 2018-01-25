@@ -172,7 +172,6 @@
     <ClCompile Include="SIAArcArgvParser.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="config.ini" />
     <None Include="mainpage.dox" />
     <None Include="doxygen.dxy" />
   </ItemGroup>

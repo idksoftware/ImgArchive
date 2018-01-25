@@ -36,7 +36,7 @@
 #include "ArchiveRepository.h"
 #include "ImageContainer.h"
 #include "History.h"
-#include "ImageGroup.h"
+//#include "ImageGroup.h"
 #include "Version.h"
 #include "CDate.h"
 #include "SAUtils.h"

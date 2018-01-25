@@ -185,8 +185,10 @@ std::string ExecuteExternalFile(std::string &csExeNameAndArgs)
 		std::string *temp = new std::string(buf, reDword);
 		csTemp = *temp;
 		m_csOutput += csTemp;
+		delete temp;
 	} while (res);
-	printf("%s", m_csOutput.c_str());
+	
+	//printf("%s", m_csOutput.c_str());
 	return m_csOutput;
 }
 #else

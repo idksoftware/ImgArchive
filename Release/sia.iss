@@ -7,6 +7,7 @@
 #define MyAppURL "http://www.idk-software.com/"
 #define MyAppExeName "siaarc.exe"
 #define AppConfig "{commonappdata}\IDK-Software\SIA\config"
+#define AppHooks "{commonappdata}\IDK-Software\SIA\hooks"
 #define AppHome "{commonappdata}\IDK-Software\SIA"
 
 [Setup]
@@ -49,6 +50,11 @@ Source: "defaultFiles\config\ext.dat"; DestDir: "{#AppConfig}"; DestName: "ext.d
 Source: "defaultFiles\config\mirror.dat"; DestDir: "{#AppConfig}"; DestName: "mirror.dat"
 Source: "defaultFiles\config\view.dat"; DestDir: "{#AppConfig}"; DestName: "view.dat"
 
+Source: "defaultFiles\hooks\view-preview1.py"; DestDir: "{#AppHooks}"; DestName: "view-preview1.py"
+Source: "defaultFiles\hooks\view-preview2.py"; DestDir: "{#AppHooks}"; DestName: "view-preview2.py"
+Source: "defaultFiles\hooks\view-preview3.py"; DestDir: "{#AppHooks}"; DestName: "view-preview3.py"
+Source: "defaultFiles\hooks\view-thumbnail.py"; DestDir: "{#AppHooks}"; DestName: "view-thumbnail.py"
+
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{commondesktop}\{#MyAppName}"; Filename: "cmd.exe {app}\{#MyAppExeName}"; Tasks: desktopicon
@@ -63,8 +69,13 @@ Name: "{#AppHome}\history"
 Name: "{#AppHome}\hooks"
 Name: "{#AppHome}\sqldb"
 Name: "{#AppHome}\tools"
-Name: "{#AppHome}\backup"
-Name: "{#AppHome}\templates" 
+Name: "{#AppHome}\templates"
+Name: "{#AppHome}\backups" 
+Name: "{#AppHome}\derivative"
+Name: "{#AppHome}\master"
+Name: "{#AppHome}\pi"
+Name: "{#AppHome}\web"
+Name: "{#AppHome}\tmp"
 Name: "{#AppConfig}"
 
 [Registry]

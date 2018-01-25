@@ -45,7 +45,6 @@ class BasicMetadataFactory;
 /// Container, i.e a jpg/RAW pair.
 /// A list is normally a folder of images.
 class ImageGroup : public std::vector<ImageContainer *> {
-	//std::vector<ImageContainer *> *m_list;
 	std::string m_path;
 public:
 	ImageGroup(const char *path);
@@ -53,7 +52,6 @@ public:
 	bool addMetadata(const char *filename);
 	virtual ~ImageGroup();
 	void print() {
-		//printf("Set %s\n", m_path.c_str());
 		for (std::vector<ImageContainer *>::iterator i = this->begin(); i != this->end(); i++) {
 			ImageContainer *data = *i;
 			data->print();

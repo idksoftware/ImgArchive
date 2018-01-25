@@ -52,13 +52,23 @@
 #define LOG_DUPLICATE			10
 #define LOG_INVALID_FILE_TYPE	11
 #define LOG_WORKSPACE_NOT_FOUND	12
+#define LOG_UNABLE_CREATE_WWW_IMAGES	13
+#define LOG_UNABLE_CREATE_FILE_IMAGES	14
+
 
 #define LOG_STARTING			30
 #define LOG_ANALISING			31
 #define LOG_IMPORTING			32
+#define LOG_INITALISATION		33 // Initalisation
+#define LOG_COMPLETED   		34 // Application completed successfully
+#define LOG_SOURCE_PATH   		35 // Application completed successfully
+#define LOG_ASSOCIATING			36	// Associating
+#define LOG_ARCHIVING_IMAGE		37  // Archiving image
 
-#define LOG_IMAGE_SUMMARY		101
-#define LOG_FOLDER_SUMMARY		102
-#define LOG_CURRENT_IMAGE		103
-#define LOG_IMAGE_NAME			104
+#define LOG_INITIAL_SUMMARY		101
+#define LOG_IMAGE_SUMMARY		102
+#define LOG_FOLDER_SUMMARY		103
+#define LOG_CURRENT_IMAGE		104
+#define LOG_IMAGE_NAME			105
+#define LOG_COMPLETED_SUMMARY	106
 

@@ -85,7 +85,7 @@
     /* high resolution performance counter */
     QueryPerformanceCounter(&r.pc);
     /* milliseconds since last boot */
-    r.tc = GetTickCount();
+    r.tc = GetTickCount64();
     r.l = MAX_COMPUTERNAME_LENGTH + 1;
     //GetComputerName(r.hostname, &r.l );
 	/*

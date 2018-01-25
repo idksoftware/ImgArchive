@@ -139,19 +139,22 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CheckoutStatus.cpp" />
     <ClCompile Include="CSVDatabase.cpp" />
     <ClCompile Include="CSVDBFile.cpp" />
     <ClCompile Include="CSVDBVisitor.cpp" />
     <ClCompile Include="CSVMasterDatabase.cpp" />
-    <ClCompile Include="Source.cpp" />
     <ClCompile Include="CSVDerivativeDatabase.cpp" />
+    <ClCompile Include="IndexVisitor.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CheckoutStatus.h" />
     <ClInclude Include="CSVDatabase.h" />
     <ClInclude Include="CSVDBFile.h" />
     <ClInclude Include="CSVDBVisitor.h" />
     <ClInclude Include="CSVMasterDatabase.h" />
     <ClInclude Include="CSVDerivativeDatabase.h" />
+    <ClInclude Include="IndexVisitor.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="csvmain.dox" />

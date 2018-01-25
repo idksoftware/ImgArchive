@@ -158,8 +158,8 @@ class MetaTypeObject;
 class MTColumn {
 	static const char *nullStr;
 	std::shared_ptr<MTSchema> m_info;
-	MetaTypeObject *m_object;
-	std::string *m_boundValue;
+	std::shared_ptr<MetaTypeObject> m_object;
+	std::shared_ptr<std::string> m_boundValue;
 	std::unique_ptr<std::string> m_unboundValue;
 	MTColumn() : m_info(nullptr) {
 		//m_info = nullptr;
@@ -168,7 +168,7 @@ class MTColumn {
 	};
 //	void boundUpdate();
 	bool isBound() {
-		return (m_boundValue != 0);
+		return (m_boundValue != nullptr);
 	}
 public:
 	
@@ -178,7 +178,7 @@ public:
 	MTColumn& operator=(const MTColumn& r);
 
 	bool isNull() {
-		if (m_object != 0) {
+		if (m_object != nullptr) {
 			return false;
 		}
 		return true;
@@ -218,6 +218,9 @@ public:
 		set(str);
     }
 	void operator=(std::string &str) {
+		if (m_info->getType() == MTSchema::EItemType::Date) {
+			set(str);
+		}
 		set(str);
     }
 	void operator=(const ExifDateTime &date) {
@@ -285,7 +288,7 @@ public:
 
 
 	void bind(std::string &str) {
-		m_boundValue = &str;
+		m_boundValue = std::make_shared<std::string>(str);
 	}
 };
 

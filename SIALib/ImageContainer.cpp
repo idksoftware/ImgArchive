@@ -102,7 +102,7 @@ bool ImageContainer::add(std::unique_ptr<BasicMetadata> &BasicMetadata, std::uni
 				m_Time = dateTime.getTime();
 			}
 			*/
-			logger.log(LOG_OK, CLogger::Level::SUMMARY, "Associating: %s with %s", imagefile, m_Name.c_str());
+			logger.log(LOG_ASSOCIATING, CLogger::Level::SUMMARY, "Associating: %s with %s", imagefile, m_Name.c_str());
 			m_PictureNode = new ImageNode(type, BasicMetadata, metadataObject);
 		}
 		//m_PictureNode->setImageId(BasicMetadata, metadataObject);
@@ -158,85 +158,25 @@ void ImageContainer::PostProcess() {
 		const MetadataObject& picMO = m_PictureNode->getMetadataObject();
 		m_RawNode->setMetadataObject(picMO);
 	
-	
-
-		/*
-
-		<Width>6016</Width>
-
-		<Height>4000</Height>
-
-		<Resolution/>
-
-		<Depth/>
-
-		<ViewRotation>6</ViewRotation>
-
-		<SampleColor/>
-
-		<Page/>
-
-		<ColorSpace/>
-
-		<Compression/>
-
-		<PrimaryEncoding/>
-
-		</MediaProerties>
-
-
-		-<CameraInformation>
-
-		<Maker>NIKON CORPORATION</Maker>
-
-		<Model>NIKON D3200</Model>
-
-		<Software/>
-
-		<SourceURL/>
-
-		<ExifVersion/>
-
-		<CaptureDate>2012.04.25.15.56.07</CaptureDate>
-
-		<ExposureProgram/>
-
-		<ISOSpeedRating>400</ISOSpeedRating>
-
-		<ExposureBias>0</ExposureBias>
-
-		<ExposureTime>0.0008</ExposureTime>
-
-		<Aperture>9</Aperture>
-
-		<MeteringMode>3</MeteringMode>
-
-		<LightSource/>
-
-		<Flash/>
-
-		<FocalLength>65</FocalLength>
-		*/
-
 	}
 }
 
 void ImageContainer::print() {
 	CLogger &logger = CLogger::getLogger();
 	
-	logger.log(LOG_OK, CLogger::Level::FINE, "Item Name: %s\n", m_Name.c_str());
+	logger.log(LOG_OK, CLogger::Level::SUMMARY, "Item Name: %s\n", m_Name.c_str());
 	if (hasPictureFile()) {
-		logger.log(LOG_OK, CLogger::Level::FINE, "PictureFile: %s\n", m_PictureNode->getFile());
+		logger.log(LOG_OK, CLogger::Level::SUMMARY, "PictureFile: %s\n", m_PictureNode->getFile());
 	}
 	else
 	{
-		logger.log(LOG_OK, CLogger::Level::FINE, "No Picture File");
+		logger.log(LOG_OK, CLogger::Level::SUMMARY, "No Picture File");
 	}
 	if (hasRawFile()) {
-		logger.log(LOG_OK, CLogger::Level::FINE, "Has RAW File: %s\n", m_RawNode->getFile());
+		logger.log(LOG_OK, CLogger::Level::SUMMARY, "Has RAW File: %s\n", m_RawNode->getFile());
 	}
 	else {
-		logger.log(LOG_OK, CLogger::Level::FINE, "No RAW File");
+		logger.log(LOG_OK, CLogger::Level::SUMMARY, "No RAW File");
 	}
 }
 

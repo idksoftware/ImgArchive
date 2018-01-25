@@ -142,7 +142,6 @@
     <ClCompile Include="ArchiveIntegrity.cpp" />
     <ClCompile Include="ArchiveProcessor.cpp" />
     <ClCompile Include="CheckDiskJournal.cpp" />
-    <ClCompile Include="CheckoutStatus.cpp" />
     <ClCompile Include="FolderData.cpp" />
     <ClCompile Include="FolderList.cpp" />
     <ClCompile Include="IntegrityManager.cpp" />
@@ -152,7 +151,6 @@
     <ClInclude Include="ArchiveIntegrity.h" />
     <ClInclude Include="ArchiveProcessor.h" />
     <ClInclude Include="CheckDiskJournal.h" />
-    <ClInclude Include="CheckoutStatus.h" />
     <ClInclude Include="FolderData.h" />
     <ClInclude Include="FolderList.h" />
     <ClInclude Include="IntegrityManager.h" />

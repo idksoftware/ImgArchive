@@ -69,7 +69,7 @@ class SetEnv : public std::vector<EnvItem> {
 public:
 	SetEnv();
 	virtual ~SetEnv();
-	void process();
+	bool process();
 };
 
 } /* namespace simplearchive */

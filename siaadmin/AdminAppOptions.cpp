@@ -58,6 +58,10 @@ std::string AppOptions::m_homePath;
 std::string AppOptions::m_workspacePath;
 std::string AppOptions::m_masterPath;
 std::string AppOptions::m_configPath;
+std::string AppOptions::m_derivativePath;
+std::string AppOptions::m_repositoryPath;
+std::string AppOptions::m_cataloguePath;
+
 AppOptions::Scope AppOptions::m_scope = AppOptions::Both;
 bool AppOptions::m_repair = false;
 bool AppOptions::m_users = true;
@@ -76,7 +80,7 @@ AppOptions::AppOptions() {
 
 bool AppOptions::initaliseConfig() {
 
-	CAppConfig &config = CAppConfig::get();
+	CSIAArcAppConfig &config = CSIAArcAppConfig::get();
 	const std::string key = "SIA_HOME";
 	std::string temp = SAUtils::GetPOSIXEnv(key);
 	std::string homePath = temp;
@@ -101,7 +105,7 @@ bool AppOptions::initaliseConfig() {
 		
 		if (SAUtils::FileExists(configfile.c_str()) == true) {
 			setConfigPath(configPath.c_str());
-			ConfigReader configReader;
+			AppConfigReader configReader;
 			configReader.setNoLogging();
 			configReader.read(configfile.c_str(), config);
 			// This is usfull to print the config
@@ -129,6 +133,10 @@ bool AppOptions::initaliseConfig() {
 			temp = SAUtils::GetPOSIXEnv("SIA_LOGLEVEL");
 			if (temp.empty() == false) {
 				config.setLogLevel(temp.c_str());
+			}
+			temp = SAUtils::GetPOSIXEnv("SIA_CONSOLELEVEL");
+			if (temp.empty() == false) {
+				config.setConsoleLevel(temp.c_str());
 			}
 		}
 		else {
@@ -205,6 +213,18 @@ void AppOptions::setHomePath(const char *homePath) {
 void AppOptions::setWorkspacePath(const char *workspacePath) {
 	m_workspacePath = workspacePath;
 }
+void AppOptions::setDerivativePath(const char *path) {
+	m_derivativePath = path;
+}
+
+void AppOptions::setCataloguePath(const char *path) {
+	m_cataloguePath = path;
+}
+
+void AppOptions::setRepositoryPath(const char *path) {
+	m_repositoryPath = path;
+}
+
 void AppOptions::setMasterPath(const char *masterPath) {
 	m_masterPath = masterPath;
 }
@@ -227,12 +247,22 @@ const char *AppOptions::getHomePath() {
 const char *AppOptions::getWorkspacePath() {
 	return m_workspacePath.c_str();
 }
+const char *AppOptions::getDerivativePath() {
+	return m_derivativePath.c_str();
+}
+const char *AppOptions::getCataloguePath() {
+	return m_cataloguePath.c_str();
+}
+const char *AppOptions::getRepositoryPath() {
+	return m_repositoryPath.c_str();
+}
 const char *AppOptions::getMasterPath() {
 	return m_masterPath.c_str();
 }
 const char *AppOptions::getConfigPath() {
 	return m_configPath.c_str();
 }
+
 void setConfigPath(const char *configPath);
 
 } /* namespace simplearchive */

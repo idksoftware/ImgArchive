@@ -40,6 +40,8 @@
 #include <stdio.h>
 #include "ExifDateTime.h"
 #include "cport.h"
+#include <cctype>
+
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -49,53 +51,109 @@ static char THIS_FILE[] = __FILE__;
 
 namespace simplearchive {
 
-ExifDateTime::ExifDateTime() {
-	now();
-}
-
-ExifDateTime::ExifDateTime(const char *str) {
-	if (str == nullptr || str[0] == '\0') {
-		m_isOk = false;
+	ExifDateTime::ExifDateTime() {
+		now();
 	}
-	else {
+
+	ExifDateTime::ExifDateTime(const char *str) {
+		if (str == nullptr || str[0] == '\0') {
+			m_isOk = false;
+		}
+		else {
+			std::string datestr = str;
+			int s = 0;
+			int e = datestr.find_first_of(":.");
+			std::string numstr = datestr.substr(s, e);
+			m_year = strtol(numstr.c_str(), NULL, 10);
+			s = e + 1;
+			e = datestr.find_first_of(":.", s);
+			numstr = datestr.substr(s, e - s);
+			m_month = strtol(numstr.c_str(), NULL, 10);
+			s = e + 1;
+			e = datestr.find_first_of(" .", s);
+			numstr = datestr.substr(s, e - s);
+			m_day = strtol(numstr.c_str(), NULL, 10);
+			s = e + 1;
+			e = datestr.find_first_of(":.", s);
+			numstr = datestr.substr(s, e - s);
+			m_hour = strtol(numstr.c_str(), NULL, 10);
+			s = e + 1;
+			e = datestr.find_first_of(":.", s);
+			numstr = datestr.substr(s, e - s);
+			m_min = strtol(numstr.c_str(), NULL, 10);
+			s = e + 1;
+			e = datestr.length();
+			numstr = datestr.substr(s, e - s);
+			m_sec = strtol(numstr.c_str(), NULL, 10);
+			time(&m_timenum);
+			struct tm timeinfo;
+			gmtime_p(timeinfo, &m_timenum);
+			timeinfo.tm_year = m_year - 1900;
+			timeinfo.tm_mon = m_month - 1;
+			timeinfo.tm_mday = m_day;
+			timeinfo.tm_hour = m_hour;
+			timeinfo.tm_min = m_min;
+			timeinfo.tm_sec = m_sec;
+			m_timenum = mktime(&timeinfo);
+			m_isOk = true;
+		}
+	}
+
+	bool is_number(const std::string& s)
+	{
+		std::string::const_iterator it = s.begin();
+		while (it != s.end() && std::isdigit(*it)) ++it;
+		return !s.empty() && it == s.end();
+	}
+
+	bool ExifDateTime::isExifDateTime(const char *str) {
+		if (str == nullptr || str[0] == '\0') {
+			return false;
+		}
+
 		std::string datestr = str;
 		int s = 0;
 		int e = datestr.find_first_of(":.");
 		std::string numstr = datestr.substr(s, e);
-		m_year = strtol(numstr.c_str(), NULL, 10);
+		if (is_number(numstr) == false) {
+			return false;
+		}
 		s = e + 1;
 		e = datestr.find_first_of(":.", s);
 		numstr = datestr.substr(s, e - s);
-		m_month = strtol(numstr.c_str(), NULL, 10);
+		if (is_number(numstr) == false) {
+			return false;
+		}
 		s = e + 1;
 		e = datestr.find_first_of(" .", s);
 		numstr = datestr.substr(s, e - s);
-		m_day = strtol(numstr.c_str(), NULL, 10);
+		if (is_number(numstr) == false) {
+			return false;
+		}
 		s = e + 1;
 		e = datestr.find_first_of(":.", s);
 		numstr = datestr.substr(s, e - s);
-		m_hour = strtol(numstr.c_str(), NULL, 10);
+		if (is_number(numstr) == false) {
+			return false;
+		}
 		s = e + 1;
 		e = datestr.find_first_of(":.", s);
 		numstr = datestr.substr(s, e - s);
-		m_min = strtol(numstr.c_str(), NULL, 10);
+		if (is_number(numstr) == false) {
+			return false;
+		}
 		s = e + 1;
 		e = datestr.length();
 		numstr = datestr.substr(s, e - s);
-		m_sec = strtol(numstr.c_str(), NULL, 10);
-		time(&m_timenum);
-		struct tm timeinfo;
-		gmtime_p(timeinfo, &m_timenum);
-		timeinfo.tm_year = m_year - 1900;
-		timeinfo.tm_mon = m_month - 1;
-		timeinfo.tm_mday = m_day;
-		timeinfo.tm_hour = m_hour;
-		timeinfo.tm_min = m_min;
-		timeinfo.tm_sec = m_sec;
-		m_timenum = mktime(&timeinfo);
+		if (is_number(numstr) == false) {
+			return false;
+		}
+		
 		m_isOk = true;
+		return true;
 	}
-}
+
+
 
 ExifDateTime::~ExifDateTime() {
 	// TODO Auto-generated destructor stub
@@ -125,7 +183,7 @@ void ExifDateTime::setDateTime(time_t time) {
 	m_isOk = true;
 }
 
-std::string ExifDateTime::toString() {
+std::string ExifDateTime::toString() const {
 	std::stringstream tmp;
 	tmp << std::setw(4) << std::setfill('0') << m_year << ':';
 	tmp << std::setw(2) << std::setfill('0') << m_month << ':';

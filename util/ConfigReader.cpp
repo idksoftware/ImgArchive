@@ -56,26 +56,50 @@ static char THIS_FILE[] = __FILE__;
 
 namespace simplearchive {
 
-void Config::printAll() {
+void ConfigBlock::printAll() {
 	int size = this->size();
-	bool empty = true;
+	std::cout << m_name << '\n';
 	// &logger = CLogger::getLogger();
 	for (std::map<std::string, std::string>::iterator ii = begin(); ii != end(); ++ii) {
-		if (empty) {
-			std::cout << "Basic configuation\n";
-		}
+		
 		std::cout << "   " << ii->first << " " << ii->second << '\n';
 			//printf("cmd:\"%s\" opt:\"%s\"\n", (*ii).first.c_str(), (*ii).second.c_str());
-		empty = false;
+		
 	}
-	if (empty) {
-		//std::cout << "Empty" << '\n';
-	} else {
-		std::cout << "\n";
+	
+}
+
+std::shared_ptr<ConfigBlock> AppConfig::getConfigBlocks(const char *name) {
+	std::map<std::string, std::shared_ptr<ConfigBlock>>::iterator it;
+	if ((it = find(name)) != end()) {
+		std::shared_ptr<ConfigBlock> configBlock = it->second;
+		return configBlock;
+	}
+	return nullptr;
+}
+
+
+bool AppConfig::setConfigBlock(const char* name, std::string &value, std::string &defaultValue, const char *configBlock) {
+	iterator tmp = find(configBlock);
+	if (tmp != end()) {
+		std::shared_ptr<ConfigBlock> cb = find(configBlock)->second;
+		if (cb != nullptr && (cb->value(name, value) == true)) {
+			return true;
+		}
+	}
+	value = defaultValue;
+	return false;
+
+}
+
+void AppConfig::printAll() {
+	for (auto ii = begin(); ii != end(); ++ii) {
+		ConfigBlock &configBlock = *ii->second;
+		configBlock.printAll();
 	}
 }
 
-bool Config::value(const char *key, std::string &value) {
+bool ConfigBlock::value(const char *key, std::string &value) {
 	std::map<std::string, std::string>::iterator it;
 
 	if ((it = find(key)) == end()) {
@@ -89,6 +113,7 @@ ConfigReader::ConfigReader() {
 	m_includeCnt = 0;
 	m_delimChar = '=';
 	m_logging = true;
+	m_currentLineNumber = 0;
 }
 
 ConfigReader::~ConfigReader() {
@@ -104,19 +129,19 @@ std::string ConfigReader::includePath(int pos, std::string line) {
 	return m_path;
 }
 
-bool ConfigReader::read(const char *datafile, Config &config) {
+bool ConfigReader::read(const char *datafile, ConfigBlock &config) {
 
 
-	char text[2 * 1024];
+	std::string text;
 	m_path = datafile;
 	std::ifstream file(datafile);
 	if (file.is_open() == false) {
 		return false;
 	}
 
-	while (file.getline(text, 2 * 1024)) {
+	while (std::getline(file, text)) {
 		//m_dataContainer->push_back(*(new std::string(text)));
-		switch(parse(text, config)) {
+		switch(parse(text.c_str(), config)) {
 		case KeyValue:
 			continue;
 		case Comment:
@@ -153,7 +178,7 @@ bool ConfigReader::read(const char *datafile, Config &config) {
 }
 
 
-bool ConfigReader::read(const std::string &str, Config &config) {
+bool ConfigReader::read(const std::string &str, ConfigBlock &config) {
 
 	std::stringstream ss(str);
 	std::string text;
@@ -198,10 +223,66 @@ bool ConfigReader::read(const std::string &str, Config &config) {
 	return true;
 }
 
+bool AppConfigReader::read(const char *datafile, AppConfig &config) {
 
-static std::string trim(std::string const& str)
+
+	std::string text;
+	m_path = datafile;
+	std::ifstream file(datafile);
+
+	if (file.is_open() == false) {
+		return false;
+	}
+
+	m_current = config.find(ROOT_BLOCK)->second;
+	while (std::getline(file, text)) {
+		//m_dataContainer->push_back(*(new std::string(text)));
+		m_currentLineNumber++;
+		switch (parse(text.c_str(), (*m_current))) {
+		case KeyValue:
+			continue;
+		case Comment:
+			continue;
+		case Include:
+			m_includeCnt++;
+			if (m_includeCnt >= 10) {
+				if (m_logging) {
+					CLogger::getLogger().log(LOG_OK, CLogger::Level::ERR, "include files more than ten deep \"%s\"", m_path.c_str());
+				}
+				return false;
+			}
+			if (read(m_path.c_str(), config) == false) {
+				m_includeCnt--;
+				if (m_logging) {
+					CLogger::getLogger().log(LOG_OK, CLogger::Level::WARNING, "Cannot include file \"%s\"", m_path.c_str());
+				}
+				return false;
+			}
+			continue;
+		case NewBlock:
+			m_current = std::make_shared<ConfigBlock>(m_blockName.c_str());
+			config.insert(std::pair<std::string, std::shared_ptr<ConfigBlock>>(m_blockName, m_current));
+			continue;
+		case Error:
+			return false;
+		default:
+			if (m_logging) {
+				CLogger::getLogger().log(LOG_OK, CLogger::Level::WARNING, "Cannot read token in config file \"%s\"", m_path.c_str());
+			}
+			return false;
+		}
+	}
+	//std::cout << config.size() << std::endl;
+	file.close();
+
+	return true;
+}
+
+
+
+static std::string trim(std::string const& str, char c)
 {
-	std::size_t first = str.find_first_not_of(' ');
+	std::size_t first = str.find_first_not_of(c);
 
 	// If there is no non-whitespace character, both first and last will be std::string::npos (-1)
 	// There is no point in checking both, since if either doesn't work, the
@@ -209,12 +290,18 @@ static std::string trim(std::string const& str)
 	if (first == std::string::npos)
 		return "";
 
-	std::size_t last = str.find_last_not_of(' ');
+	std::size_t last = str.find_last_not_of(c);
 	std::size_t lastcr = str.find_last_not_of('\r');
 	if (lastcr < last) {
 		return str.substr(first, lastcr - first + 1);
 	}
 	return str.substr(first, last - first + 1);
+}
+
+static std::string trim(std::string const& str)
+{
+	std::string tmp = trim(str, ' ');
+	return trim(tmp, '\"');
 }
 /*
 static inline std::string &ltrim(std::string &s) {
@@ -237,7 +324,7 @@ Error = -1,
 
 
 
-ConfigReader::Token ConfigReader::parse(const char *text, Config &config) {
+ConfigReader::Token ConfigReader::parse(const char *text, ConfigBlock &config) {
 	std::string line = text;
 	line = trim(line);
 
@@ -249,7 +336,13 @@ ConfigReader::Token ConfigReader::parse(const char *text, Config &config) {
 		//printf("%s\n", line.c_str());
 		return Comment; // comment before command
 	}
-	
+	int blockStartIdx = line.find_first_of('[');
+	if (blockStartIdx == 0) {
+		//printf("%s\n", line.c_str());
+		int blockEndIdx = line.find_last_of(']');
+		m_blockName = line.substr(blockStartIdx+1, blockEndIdx-1);
+		return NewBlock; // comment before command
+	}
 	// config.getDelimChar()
 	int delimIdx = line.find_first_of(config.getDelimChar());
 	if (delimIdx == -1) {
@@ -282,10 +375,64 @@ ConfigReader::Token ConfigReader::parse(const char *text, Config &config) {
 	return KeyValue;
 }
 
+/*
+ConfigReader::Token AppConfigReader::parse(const char *text, AppConfig &config) {
+	std::string line = text;
+	line = trim(line);
+
+	if (line.empty()) {
+		return Comment;
+	}
+	int commentIdx = line.find_first_of('#');
+	if (commentIdx == 0) {
+		//printf("%s\n", line.c_str());
+		return Comment; // comment before command
+	}
+	int blockStartIdx = line.find_first_of('[');
+	if (blockStartIdx == 0) {
+		//printf("%s\n", line.c_str());
+		int blockEndIdx = line.find_last_of(']');
+		m_blockName = line.substr(blockStartIdx, blockEndIdx);
+		return NewBlock; // comment before command
+	}
+	// config.getDelimChar()
+	int delimIdx = line.find_first_of(config.getDelimChar());
+	if (delimIdx == -1) {
+		std::string include("include");
+		std::size_t  includeIdx = line.find("include");
+		if (includeIdx != (std::size_t) - 1) {
+
+			includePath(includeIdx, line);
+			return Include;
+		}
+		else {
+			if (m_logging) {
+				CLogger::getLogger().log(LOG_OK, CLogger::Level::WARNING, "Cannot read \"%s\" in config file \"%s\"", line.c_str(), m_path.c_str());
+			}
+			return Error;
+		}
+	}
+	std::string cmd = line.substr(0, delimIdx);
+	std::string option = line.substr(delimIdx + 1, line.length());
+	if ((commentIdx = option.find_first_of('#')) != -1) {
+		option = option.substr(0, commentIdx);
+	}
+
+	cmd = trim(cmd);
+	option = trim(option);
+	//printf("cmd:\"%s\" opt:\"%s\"\n", cmd.c_str(), option.c_str());
+	std::string cmdp(cmd);
+	std::string optionp(option);
+	config[(cmdp)] = (optionp);
+
+	return KeyValue;
+}
+*/
+
 ConfigWriter::ConfigWriter() {}
 ConfigWriter::~ConfigWriter() {}
 
-bool ConfigWriter::edit(const char *cmd, const char *options, Config &config) {
+bool ConfigWriter::edit(const char *cmd, const char *options, ConfigBlock &config) {
 	for (std::map<std::string, std::string>::iterator ii = config.begin(); ii != config.end(); ++ii) {
 		//std::cout << ii->first << '\n';
 		if (ii->first.compare(cmd) == 0) {
@@ -295,7 +442,7 @@ bool ConfigWriter::edit(const char *cmd, const char *options, Config &config) {
 	return true;
 }
 
-bool ConfigWriter::add(const char *cmd, const char *options, Config &config) {
+bool ConfigWriter::add(const char *cmd, const char *options, ConfigBlock &config) {
 	for (std::map<std::string, std::string>::iterator ii = config.begin(); ii != config.end(); ++ii) {
 		//std::cout << ii->first << '\n';
 		if (ii->first.compare(cmd) == 0) {
@@ -309,7 +456,7 @@ bool ConfigWriter::add(const char *cmd, const char *options, Config &config) {
 	return true;
 }
 
-bool ConfigWriter::remove(const char *cmd, Config &config) {
+bool ConfigWriter::remove(const char *cmd, ConfigBlock &config) {
 	for (std::map<std::string, std::string>::iterator ii = config.begin(); ii != config.end(); ++ii) {
 		//std::cout << ii->first << '\n';
 		if (ii->first.compare(cmd) == 0) {
@@ -320,7 +467,7 @@ bool ConfigWriter::remove(const char *cmd, Config &config) {
 	return false;
 }
 
-bool ConfigWriter::write(const char *datafile, Config &config) {
+bool ConfigWriter::write(const char *datafile, ConfigBlock &config) {
 	std::ofstream file(datafile, std::ifstream::trunc);
 	if (file.is_open() == false) {
 		return false;

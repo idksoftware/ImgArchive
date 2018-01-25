@@ -116,7 +116,7 @@ namespace simplearchive {
 		};
 		virtual bool onEnd() {
 			CLogger &logger = CLogger::getLogger();
-			logger.log(LOG_OK, CLogger::Level::INFO, "Ending reader folder %s", m_path.c_str());
+			logger.log(LOG_OK, CLogger::Level::INFO, "Completed reading folder %s", m_path.c_str());
 			return true;
 		};
 		virtual FolderVisitor *make() {

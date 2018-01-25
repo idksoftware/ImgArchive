@@ -54,7 +54,9 @@ public:
 	virtual ~ExifDateTime();
 	ExifDateTime &operator =(time_t time);
 
-	std::string toString(); 
+	bool isExifDateTime(const char *str);
+
+	std::string toString() const; 
 	std::string current();
 	std::string toLogString();
 	void setDateTime(time_t time);

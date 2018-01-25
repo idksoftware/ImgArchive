@@ -84,4 +84,24 @@ void HistoryEvent::set(const char *he) {
 
 }
 
+const char HistoryEvent::getChar(HistoryEvent::Event evt) {
+	switch (evt) {
+	case ADDED:
+		return 'A';
+	case CHECKOUT:
+		return 'O';
+	case CHECKIN:
+		return 'I';
+	case EXPORT:
+		return 'X';
+	case UNCHECKOUT:
+		return 'U';
+	case ERROR:
+		return 'E';
+	}
+	return 'E';
+}
+
+
+
 } /* namespace simplearchive */

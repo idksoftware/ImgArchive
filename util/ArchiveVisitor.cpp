@@ -43,6 +43,7 @@
 #include "SAUtils.h"
 //#include "CSVArgs.h"
 #include "ArchiveVisitor.h"
+#include "pathcontroller.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -54,18 +55,21 @@ namespace simplearchive {
 
 	ArchiveVisitor::ArchiveVisitor(AVAction *folderVisitor) {
 		m_folderVisitor = folderVisitor;
+		m_dayPostfix = "/data";
 
 	}
 
 	ArchiveVisitor::ArchiveVisitor(AVAction *folderVisitor, const char *archivePath) {
 		m_folderVisitor = folderVisitor;
 		m_archivePath = archivePath;
+		m_dayPostfix = "/data";
 	}
 
 	ArchiveVisitor::ArchiveVisitor(AVAction *folderVisitor, const char *archivePath, const char *workspacePath) {
 		m_folderVisitor = folderVisitor;
 		m_archivePath = archivePath;
 		m_workspacePath = workspacePath;
+		m_dayPostfix = "/data";
 	}
 
 	ArchiveVisitor::~ArchiveVisitor() {
@@ -77,25 +81,26 @@ namespace simplearchive {
 		std::string path = rootFolder;
 
 		m_folderVisitor->onStart();
-		FileList_Ptr filelist = SAUtils::getFiles_(path.c_str());
-		for (std::vector<std::string>::iterator i = filelist->begin(); i != filelist->end(); i++) {
+		FileList_Ptr yearlist = SAUtils::getFiles_(path.c_str());
+		for (std::vector<std::string>::iterator i = yearlist->begin(); i != yearlist->end(); i++) {
 			std::string year = *i;
 			char c = (year)[0];
 			if (c == '.') {
 				continue;
 			}
-			//if (!isdigit(atoi(year->c_str()))) {
-			//	continue;
-			//}
-			// read day folders for this year in Master folder
+			
 			std::string yearMaster = path;
 			m_folderVisitor->onYearFolder(year.c_str());
 			yearMaster += '/';
 			yearMaster += year;
-			FileList_Ptr filelist = SAUtils::getFiles_(yearMaster.c_str());
-			for (std::vector<std::string>::iterator i = filelist->begin(); i != filelist->end(); i++) {
-				std::string dayfolder = *i;
-				char c = (dayfolder)[0];
+			if (workspaceDay(yearMaster) == false) {
+				return false;
+			}
+			/*
+			FileList_Ptr daylist = SAUtils::getFiles_(yearMaster.c_str());
+			for (auto ii = daylist->begin(); ii != daylist->end(); ii++) {
+				std::string dayfolder = *ii;
+				c = (dayfolder)[0];
 				if (c == '.') {
 					continue;
 				}
@@ -106,10 +111,10 @@ namespace simplearchive {
 				dayFolderMaster += dayfolder;
 				dayFolderMaster += "/data";
 
-				FileList_Ptr filelist = SAUtils::getFiles_(dayFolderMaster.c_str());
-				for (std::vector<std::string>::iterator i = filelist->begin(); i != filelist->end(); i++) {
-					std::string imageFile = *i;
-					char c = (imageFile)[0];
+				FileList_Ptr imagelist = SAUtils::getFiles_(dayFolderMaster.c_str());
+				for (auto iii = imagelist->begin(); iii != imagelist->end(); i++) {
+					std::string imageFile = *iii;
+					c = (imageFile)[0];
 					if (c == '.') {
 						continue;
 					}
@@ -121,7 +126,9 @@ namespace simplearchive {
 					m_folderVisitor->onImage(dayFolderMaster.c_str(), imageFile.c_str());
 				}
 				m_folderVisitor->onDayEnd();
+				
 			}
+			*/
 			m_folderVisitor->onYearEnd();
 
 		}
@@ -129,13 +136,102 @@ namespace simplearchive {
 		return true;
 
 	}
+
+	bool ArchiveVisitor::workspaceDay(std::string year) {
+		FileList_Ptr daylist = SAUtils::getFiles_(year.c_str());
+		for (auto ii = daylist->begin(); ii != daylist->end(); ii++) {
+			std::string dayfolder = *ii;
+			char c = (dayfolder)[0];
+			if (c == '.') {
+				continue;
+			}
+
+			m_folderVisitor->onDayFolder(dayfolder.c_str());
+			std::string dayFolderMaster = year;
+			dayFolderMaster += '/';
+			dayFolderMaster += dayfolder;
+			dayFolderMaster += "/data";
+
+			FileList_Ptr imagelist = SAUtils::getFiles_(dayFolderMaster.c_str());
+			for (auto iii = imagelist->begin(); iii != imagelist->end(); iii++) {
+				std::string imageFile = *iii;
+				c = (imageFile)[0];
+				if (c == '.') {
+					continue;
+				}
+				if (SAUtils::getExtention(imageFile).compare("ver") == 0) {
+					continue;
+				}
+				//printf("\t\tImage %s: \n", imageFile->c_str());
+				std::string imagePath = dayFolderMaster;
+				m_folderVisitor->onImage(dayFolderMaster.c_str(), imageFile.c_str());
+			}
+			m_folderVisitor->onDayEnd();
+		}
+		return true;
+	}
 	
+	bool ArchiveVisitor::archiveDay(std::string year) {
+		FileList_Ptr daylist = SAUtils::getFiles_(year.c_str());
+		for (auto ii = daylist->begin(); ii != daylist->end(); ii++) {
+			std::string dayfolder = *ii;
+			char c = (dayfolder)[0];
+			if (PathController::validateYYMMDD(dayfolder.c_str()) == false) {
+				continue; // Html or some other file/folder may be in the year folder
+			}
+
+			m_folderVisitor->onDayFolder(dayfolder.c_str());
+			// Images
+			std::string dayFolderMaster = year;
+			dayFolderMaster += '/';
+			dayFolderMaster += dayfolder;
+			dayFolderMaster += m_dayPostfix;
+
+			FileList_Ptr imageFilelist = SAUtils::getFiles_(dayFolderMaster.c_str());
+			for (auto iii = imageFilelist->begin(); iii != imageFilelist->end(); iii++) {
+				std::string imageFile = *iii;
+				c = (imageFile)[0];
+				if (c == '.') {
+					continue;
+				}
+				if (SAUtils::getExtention(imageFile).compare("ver") == 0) {
+					continue;
+				}
+				//printf("\t\tImage %s: \n", imageFile->c_str());
+				std::string imagePath = dayFolderMaster;
+				m_folderVisitor->onImage(dayFolderMaster.c_str(), imageFile.c_str());
+			}
+			/// Metadata
+			dayFolderMaster = year;
+			dayFolderMaster += '/';
+			dayFolderMaster += dayfolder;
+			dayFolderMaster += "/metadata";
+
+			FileList_Ptr metadataFilelist = SAUtils::getFiles_(dayFolderMaster.c_str());
+			for (auto im = metadataFilelist->begin(); im != metadataFilelist->end(); im++) {
+				std::string imageFile = *im;
+				c = (imageFile)[0];
+				if (c == '.') {
+					continue;
+				}
+				//if (SAUtils::getExtention(imageFile).compare("ver") == 0) {
+				//	continue;
+				//}
+				//printf("\t\tImage %s: \n", imageFile->c_str());
+				std::string imagePath = dayFolderMaster;
+				m_folderVisitor->onMetadata(dayFolderMaster.c_str(), imageFile.c_str());
+			}
+			m_folderVisitor->onDayEnd();
+		}
+		return true;
+	}
+
 	bool ArchiveVisitor::archive() {
 		// make the root folder
 		std::string path = m_archivePath;
 		m_folderVisitor->onStart();
-		FileList_Ptr filelist = SAUtils::getFiles_(path.c_str());
-		for (std::vector<std::string>::iterator i = filelist->begin(); i != filelist->end(); i++) {
+		FileList_Ptr yearlist = SAUtils::getFiles_(path.c_str());
+		for (std::vector<std::string>::iterator i = yearlist->begin(); i != yearlist->end(); i++) {
 			std::string year = *i;
 			char c = (year)[0];
 			if (c == '.') {
@@ -153,9 +249,13 @@ namespace simplearchive {
 			
 			yearMaster += '/';
 			yearMaster += year;
-			FileList_Ptr filelist = SAUtils::getFiles_(yearMaster.c_str());
-			for (std::vector<std::string>::iterator i = filelist->begin(); i != filelist->end(); i++) {
-				std::string dayfolder = *i;
+			if (archiveDay(yearMaster) == false) {
+				return false;
+			}
+			/*
+			FileList_Ptr daylist = SAUtils::getFiles_(yearMaster.c_str());
+			for (auto ii = daylist->begin(); ii != daylist->end(); ii++) {
+				std::string dayfolder = *ii;
 				char c = (dayfolder)[0];
 				if (c == '.') {
 					continue;
@@ -169,9 +269,9 @@ namespace simplearchive {
 				dayFolderMaster += "/data";
 
 				FileList_Ptr imageFilelist = SAUtils::getFiles_(dayFolderMaster.c_str());
-				for (std::vector<std::string>::iterator i = imageFilelist->begin(); i != imageFilelist->end(); i++) {
-					std::string imageFile = *i;
-					char c = (imageFile)[0];
+				for (auto iii = imageFilelist->begin(); iii != imageFilelist->end(); iii++) {
+					std::string imageFile = *iii;
+					c = (imageFile)[0];
 					if (c == '.') {
 						continue;
 					}
@@ -189,9 +289,9 @@ namespace simplearchive {
 				dayFolderMaster += "/metadata";
 
 				FileList_Ptr metadataFilelist = SAUtils::getFiles_(dayFolderMaster.c_str());
-				for (std::vector<std::string>::iterator i = metadataFilelist->begin(); i != metadataFilelist->end(); i++) {
-					std::string imageFile = *i;
-					char c = (imageFile)[0];
+				for (auto im = metadataFilelist->begin(); im != metadataFilelist->end(); im++) {
+					std::string imageFile = *im;
+					c = (imageFile)[0];
 					if (c == '.') {
 						continue;
 					}
@@ -204,10 +304,45 @@ namespace simplearchive {
 				}
 				m_folderVisitor->onDayEnd();
 			}
+			*/
 			m_folderVisitor->onYearEnd();
 
 		}
 		m_folderVisitor->onEnd();
+		return true;
+	}
+
+	bool ArchiveVisitor::processDay(std::string year) {
+		FileList_Ptr dayList = SAUtils::getFiles_(year.c_str());
+		for (auto ii = dayList->begin(); ii != dayList->end(); ii++) {
+			std::string dayfolder = *ii;
+			char c = (dayfolder)[0];
+			if (PathController::validateYYMMDD(dayfolder.c_str()) == false) {
+				continue; // Html or some other file/folder may be in the year folder
+			}
+
+			m_folderVisitor->onDayFolder(dayfolder.c_str());
+			std::string dayFolderMaster = year;
+			dayFolderMaster += '/';
+			dayFolderMaster += dayfolder;
+			dayFolderMaster += m_dayPostfix;
+
+			FileList_Ptr imageList = SAUtils::getFiles_(dayFolderMaster.c_str());
+			for (auto iii = imageList->begin(); iii != imageList->end(); iii++) {
+				std::string imageFile = *iii;
+				c = (imageFile)[0];
+				if (c == '.') {
+					continue;
+				}
+				if (SAUtils::getExtention(imageFile).compare("ver") == 0) {
+					continue;
+				}
+				//printf("\t\tImage %s: \n", imageFile->c_str());
+				std::string imagePath = dayFolderMaster;
+				m_folderVisitor->onImage(dayFolderMaster.c_str(), imageFile.c_str());
+			}
+			m_folderVisitor->onDayEnd();
+		}
 		return true;
 	}
 
@@ -217,16 +352,16 @@ namespace simplearchive {
 
 		m_folderVisitor->onStart();
 		// read years in Master folder
-		FileList_Ptr filelist = SAUtils::getFiles_(path.c_str());
-		for (std::vector<std::string>::iterator i = filelist->begin(); i != filelist->end(); i++) {
+		FileList_Ptr yearList = SAUtils::getFiles_(path.c_str());
+		for (auto i = yearList->begin(); i != yearList->end(); i++) {
 			std::string year = *i;
 			char c = (year)[0];
 			if (c == '.') {
 				continue;
 			}
-			//if (!isdigit(atoi(year->c_str()))) {
-			//	continue;
-			//}
+			if (PathController::validateYYYY(year.c_str()) == false) {
+				continue; // Html or some other file/folder may be in the year folder
+			}
 			// read day folders for this year in Master folder
 			std::string yearMaster = path;
 			try {
@@ -238,10 +373,14 @@ namespace simplearchive {
 
 			yearMaster += '/';
 			yearMaster += year;
-			FileList_Ptr filelist = SAUtils::getFiles_(yearMaster.c_str());
-			for (std::vector<std::string>::iterator i = filelist->begin(); i != filelist->end(); i++) {
-				std::string dayfolder = *i;
-				char c = (dayfolder)[0];
+			if (archiveDay(yearMaster) == false) {
+				return false;
+			}
+			/*
+			FileList_Ptr dayList = SAUtils::getFiles_(yearMaster.c_str());
+			for (auto ii = dayList->begin(); ii != dayList->end(); ii++) {
+				std::string dayfolder = *ii;
+				c = (dayfolder)[0];
 				if (c == '.') {
 					continue;
 				}
@@ -252,10 +391,10 @@ namespace simplearchive {
 				dayFolderMaster += dayfolder;
 				dayFolderMaster += "/data";
 
-				FileList_Ptr filelist = SAUtils::getFiles_(dayFolderMaster.c_str());
-				for (std::vector<std::string>::iterator i = filelist->begin(); i != filelist->end(); i++) {
-					std::string imageFile = *i;
-					char c = (imageFile)[0];
+				FileList_Ptr imageList = SAUtils::getFiles_(dayFolderMaster.c_str());
+				for (auto iii = imageList->begin(); iii != imageList->end(); iii++) {
+					std::string imageFile = *iii;
+					c = (imageFile)[0];
 					if (c == '.') {
 						continue;
 					}
@@ -268,6 +407,7 @@ namespace simplearchive {
 			}
 			m_folderVisitor->onDayEnd();
 		}
+		*/
 		m_folderVisitor->onYearEnd();
 
 	}

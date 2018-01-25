@@ -37,6 +37,7 @@
 #include "MetadataObject.h"
 #include "ExifDate.h"
 #include "BasicMetadataFactory.h"
+#include "CLogger.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -133,38 +134,45 @@ namespace simplearchive {
 	}
 
 	bool ArchiveDate::process(ImageContainer &ic) {
+		CLogger &logger = CLogger::getLogger();
+
 		const MetadataObject *picMetadata = ic.getPictureMetadata();
 		const MetadataObject *rawMetadata = ic.getRawMetadata();
 
 		BasicMetadata *picId = nullptr;
 		BasicMetadata *rawId = nullptr;
 		if (ic.hasPictureFile()) {
+			logger.log(LOG_OK, CLogger::Level::FINE, "Image \"%s\" has picture file: ", ic.getName());
 			picId = (BasicMetadata *)&(ic.getPictureId());
 			const ExifDateTime& createTime = picId->getCreateTime();
 			m_fileDate.reset(new ExifDate(createTime));
+			logger.log(LOG_OK, CLogger::Level::TRACE, "Image \"%s\" will be archived under the date: ", ic.getName(), createTime.toString().c_str());
+			m_usingDate = USING_FILE_PIC_DATE;
 		}
 		else if (ic.hasRawFile()) {
+			logger.log(LOG_OK, CLogger::Level::FINE, "Image \"%s\" has RAW file: ", ic.getName());
 			rawId = (BasicMetadata *)&(ic.getRawId());
 			const ExifDateTime& createTime = rawId->getCreateTime();
 			m_fileDate.reset(new ExifDate(createTime));
+			logger.log(LOG_OK, CLogger::Level::TRACE, "Image \"%s\" will be archived under the date: ", ic.getName(), createTime.toString().c_str());
+			m_usingDate = USING_FILE_RAW_DATE;
 		}
-		/* Add today as default 
-		else {
-			 
-			//const ExifDateTime& createTime = *(new ExifDateTime);
-		}
-		*/
+	
 		if (rawMetadata != nullptr) {
 			try {
 				
 				const ExifDateTime captureDate = rawMetadata->getCaptureDate();
 				m_exifDate.reset(new ExifDate(captureDate));
 				if (m_exifDate->isOk() == true) {
+					logger.log(LOG_OK, CLogger::Level::SUMMARY, "Image \"%s\" will be archived under the date: ", ic.getName(), m_exifDate->toString().c_str());
+					m_usingDate = USING_CAPTURE_RAW_DATE;
 					return true;	// Found date
 				}
+				m_usingDate = UNKNOWN;
 			}
 			catch (MTTypeException e) {
-				printf("No raw capture date\n");
+				logger.log(LOG_OK, CLogger::Level::TRACE, "No picture digitized date?", ic.getName());
+				m_usingDate = UNKNOWN;
 			}
 			
 		} 
@@ -173,11 +181,15 @@ namespace simplearchive {
 				const ExifDateTime& captureDate = rawId->getDateTimeDigitized();
 				m_exifDate.reset(new ExifDate(captureDate));
 				if (m_exifDate->isOk() == true) {
+					logger.log(LOG_OK, CLogger::Level::SUMMARY, "Image \"%s\" will be archived under the date: ", ic.getName(), m_exifDate->toString().c_str());
+					m_usingDate = USING_CAPTURE_RAW_DATE;
 					return true;
 				}
+				m_usingDate = UNKNOWN;
 			}
 			catch (MTTypeException e) {
-				printf("No raw digitized date\n");
+				logger.log(LOG_OK, CLogger::Level::TRACE, "No raw digitized date?", ic.getName());
+				m_usingDate = UNKNOWN;
 			}
 		}
 		if (picMetadata != nullptr) {
@@ -185,11 +197,15 @@ namespace simplearchive {
 				const ExifDateTime captureDate = picMetadata->getCaptureDate();
 				m_exifDate.reset(new ExifDate(captureDate));
 				if (m_exifDate->isOk() == true) {
+					logger.log(LOG_OK, CLogger::Level::SUMMARY, "Image \"%s\" will be archived under the date: ", ic.getName(), m_exifDate->toString().c_str());
+					m_usingDate = USING_CAPTURE_PIC_DATE;
 					return true;
 				}
+				m_usingDate = UNKNOWN;
 			}
 			catch (MTTypeException e) {
-				printf("No picture capture date\n");
+				logger.log(LOG_OK, CLogger::Level::TRACE, "No picture capture date?", ic.getName());
+				m_usingDate = UNKNOWN;
 			}
 		}
 			
@@ -199,11 +215,15 @@ namespace simplearchive {
 				const ExifDateTime& captureDate = picId->getDateTimeDigitized();
 				m_exifDate.reset(new ExifDate(captureDate));
 				if (m_exifDate->isOk() == true) {
+					logger.log(LOG_OK, CLogger::Level::SUMMARY, "Image \"%s\" will be archived under the date: ", ic.getName(), m_exifDate->toString().c_str());
+					m_usingDate = USING_CAPTURE_PIC_DATE;
 					return true;
 				}
+				m_usingDate = UNKNOWN;
 			}
 			catch (MTTypeException e) {
-				printf("No picture digitized date\n");
+				logger.log(LOG_OK, CLogger::Level::TRACE, "Image \"%s\" No picture digitized date?", ic.getName());
+				m_usingDate = UNKNOWN;
 			}
 		}
 		return false;
@@ -213,14 +233,17 @@ namespace simplearchive {
 		if (m_forceDate == true) {
 			if (m_useDate) {
 				m_achiveDate = m_date;
+				m_usingDate = USING_FORCED_DATE;
 				return m_achiveDate;
 			}
 			if (m_useDateToday) {
 				m_date.now();
 				m_achiveDate = m_date;
+				m_usingDate = USING_FORCED_DATE_TODAY;
 			}
 			if (m_useFileDate) {
 				m_achiveDate = *m_fileDate;
+				m_usingDate = USING_FORCED_FILE_DATE;
 			}
 		}
 		else {
@@ -228,23 +251,28 @@ namespace simplearchive {
 			if (m_exifDate == nullptr || m_exifDate->isOk() == false) {
 				if (m_fileDate != nullptr) {
 					m_achiveDate = *m_fileDate;
+					m_usingDate = USING_FILE_DATE;
 				}
 				else {
 					if (getDefaultDateSet() == true) {
 						m_achiveDate = m_date;
+						m_usingDate = USING_DEFAULT_DATE;
 					}
 					else {
 						m_date.now();
 						m_achiveDate = m_date;
+						m_usingDate = USING_DATE_TODAY;
 					}
 				}
 			}
 			if (m_useDateToday) {
 				m_date.now();
 				m_achiveDate = m_date;
+				m_usingDate = USING_DATE_TODAY;
 			}
 			else if (m_useEXIFDate && m_exifDate != nullptr) {
 				m_achiveDate = *m_exifDate;
+				m_usingDate = USING_EXIF_DATE;
 			}
 			else if (m_useFileDate && m_fileDate != nullptr) {
 				m_achiveDate = *m_fileDate;
@@ -269,4 +297,33 @@ namespace simplearchive {
 
 	}
 	
+	std::string ArchiveDate::getUsingDateString() {
+		switch (m_usingDate) {
+		case ArchiveDate::USING_FORCED_DATE:
+			return "Using forced date";
+		case ArchiveDate::USING_FORCED_DATE_TODAY:
+			return "Using forced date today";
+		case ArchiveDate::USING_FORCED_FILE_DATE:
+			return "Using forced file date";
+		case ArchiveDate::USING_DATE_TODAY:
+			return "Using date today";
+		case ArchiveDate::USING_DEFAULT_DATE:
+			return "Using default date";
+		case ArchiveDate::USING_FILE_DATE:
+			return "Using file date";
+		case ArchiveDate::USING_EXIF_DATE:
+			return "Using exif date";
+		case ArchiveDate::USING_CAPTURE_RAW_DATE:
+			return "Using capture raw date";
+		case ArchiveDate::USING_CAPTURE_PIC_DATE:
+			return "Using capture pic date";
+		case ArchiveDate::USING_FILE_RAW_DATE:
+			return "Using file raw date";
+		case ArchiveDate::USING_FILE_PIC_DATE:
+			return "Using file pic date";
+		case ArchiveDate::UNKNOWN:
+			return "UNKNOWN";
+		}
+		return "UNKNOWN";
+	}
 }

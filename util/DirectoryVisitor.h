@@ -32,8 +32,7 @@
 **
 ** #$$@@$$# */
 
-#ifndef DIRECTORYVISITOR_H_
-#define DIRECTORYVISITOR_H_
+#pragma once
 
 #include <string>
 #include <vector>
@@ -83,4 +82,4 @@ public:
 };
 
 } /* namespace simplearchive */
-#endif /* DIRECTORYVISITOR_H_ */
+

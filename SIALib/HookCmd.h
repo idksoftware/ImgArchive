@@ -55,6 +55,11 @@ public:
 		HC_PostArchive,
 		HC_PreArchive,
 		HC_PreProcess,
+		MC_MVPreview1,
+		MC_MVPreview2,
+		MC_MVPreview3,
+		MC_MVThumb,
+		MC_MVRAW,
 		HC_Unknown
 	} HookType;
 
@@ -72,7 +77,9 @@ public:
 	HookCmd(HookType type);
 	virtual ~HookCmd();
 	bool process();
-	bool process(const char *file,const char *ext);
+	
+	bool process(const char *arg1,const char *arg2);
+	bool process(const char *arg1, const char *arg2, const char *arg3);
 	static void setHookPath(const char *path);
 };
 
@@ -128,6 +135,42 @@ class OnFolderCmd : public HookCmd {
 public:
 	OnFolderCmd(const char *folder);
 
+};
+
+class OnViewThumbnailCmd : public HookCmd {
+	std::string m_sourceFilePath;
+	std::string m_distFilePath;
+public:
+	OnViewThumbnailCmd(const char *sourceFilePath, const char *distFilePath);
+	bool process();
+};
+class OnViewPreview1Cmd : public HookCmd {
+	std::string m_sourceFilePath;
+	std::string m_distFilePath;
+public:
+	OnViewPreview1Cmd(const char *sourceFilePath, const char *distFilePath);
+	bool process();
+};
+class OnViewPreview2Cmd : public HookCmd {
+	std::string m_sourceFilePath;
+	std::string m_distFilePath;
+public:
+	OnViewPreview2Cmd(const char *sourceFilePath, const char *distFilePath);
+	bool process();
+};
+class OnViewPreview3Cmd : public HookCmd {
+	std::string m_sourceFilePath;
+	std::string m_distFilePath;
+public:
+	OnViewPreview3Cmd(const char *sourceFilePath, const char *distFilePath);
+	bool process();
+};
+class OnViewRAWCmd : public HookCmd {
+	std::string m_sourceFilePath;
+	std::string m_distFilePath;
+public:
+	OnViewRAWCmd(const char *sourceFilePath, const char *distFilePath);
+	bool process();
 };
 /*
 class OnContainerCmd : public HookCmd {

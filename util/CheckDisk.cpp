@@ -442,15 +442,15 @@ bool CkdskManifestFile::add(const char *filepath, const char *name) {
 }
 
 bool CkdskManifestFile::read(const char *datafile) {
-	char text[256];
+	std::string text;
 	std::ifstream file(datafile);
 	if (file.is_open() == false) {
 		// empty?
 		return false;
 	}
 
-	while (file.getline(text, 100)) {
-		m_data->push_back(CkdskData(text));
+	while (std::getline(file, text)) {
+		m_data->push_back(CkdskData(text.c_str()));
 	}
 	file.close();
 
@@ -580,14 +580,14 @@ public:
 };
 
 bool CkdskDiffFile::read(const char *datafile) {
-	char text[256];
+	std::string text;
 	std::ifstream file(datafile);
 	if (file.is_open() == false) {
 		return false;
 	}
 
-	while (file.getline(text, 100)) {
-		CkdskData data = CkdskData(text);
+	while (std::getline(file, text)) {
+		CkdskData data = CkdskData(text.c_str());
 
 		std::string name = data.getName();
 		push_back(name);

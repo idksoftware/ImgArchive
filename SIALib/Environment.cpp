@@ -54,13 +54,13 @@ namespace simplearchive {
 
 	void Environment::setEnvironment() {
 		SetEnv setEnv;
-		CAppConfig &config = CAppConfig::get();
+		CSIAArcAppConfig &config = CSIAArcAppConfig::get();
 		
 		setEnv.insert(setEnv.end(), EnvItem(HOOK_SCRIPTS_PATH_LABEL, config.getHookPath()));
 		setEnv.insert(setEnv.end(), EnvItem(TOOLS_PATH_LABEL, config.getToolsPath()));
 		setEnv.insert(setEnv.end(), EnvItem(TEMP_PATH_LABEL, config.getTempPath()));
 		setEnv.insert(setEnv.end(), EnvItem(SOURCE_PATH_LABEL, config.getSourcePath()));
-		setEnv.insert(setEnv.end(), EnvItem(ARCHIVE_PATH_LABEL, config.getWorkspacePath()));
+		setEnv.insert(setEnv.end(), EnvItem(WORKSPACE_PATH_LABEL, config.getWorkspacePath()));
 		setEnv.insert(setEnv.end(), EnvItem(CONFIG_PATH_LABEL, config.getConfigPath()));
 		setEnv.insert(setEnv.end(), EnvItem(LOG_PATH_LABEL, config.getLogPath()));
 		setEnv.insert(setEnv.end(), EnvItem(HOME_PATH_LABEL, config.getHomePath()));
@@ -68,7 +68,7 @@ namespace simplearchive {
 		setEnv.insert(setEnv.end(), EnvItem(HISTORY_PATH_LABEL, config.getHistoryPath()));
 		setEnv.insert(setEnv.end(), EnvItem(EXTERNAL_COMMAND_LINE_LABEL, config.getExternalCommandLine()));
 		setEnv.insert(setEnv.end(), EnvItem(EXIF_MAP_PATH_LABEL, config.getExifMapPath()));
-		setEnv.insert(setEnv.end(), EnvItem(METADATA_TEMPLATE_PATH_LABEL, config.getMetadataTemplatePath()));
+		setEnv.insert(setEnv.end(), EnvItem(TEMPLATE_PATH_LABEL, config.getTemplatePath()));
 
 		setEnv.process();
 

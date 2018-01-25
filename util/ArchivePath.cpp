@@ -114,7 +114,7 @@ bool RepositoryPath::settup() {
 	}
 
 	std::string systemFolder = m_pathToRepository;
-	systemFolder += MASTER_SYSTEM_FOLDER;
+	systemFolder += SYSTEM_PATH;
 	if (SAUtils::DirExists(systemFolder.c_str()) == false) {
 		if (SAUtils::mkDir(systemFolder.c_str()) == false) {
 			return false;
@@ -184,7 +184,7 @@ bool RepositoryPath::settupRelative(std::string &yyyymmddStr) {
 		}
 
 	}
-	m_dataPath = m_yyyymmddStrPath + MASTER_DATA_PATH;
+	m_dataPath = m_yyyymmddStrPath + MASTER_IMAGE_PATH;
 	m_metadataPath = m_yyyymmddStrPath + METADATA_PATH;
 	
 
@@ -394,9 +394,6 @@ void ArchivePath::setMainHistory(std::string &mainHistory) {
 	m_mainHistory = mainHistory;
 }
 
-std::string ArchivePath::getMainMetadataPath() {
-	return m_mainMetadataPath;
-}
 
 void ArchivePath::setMainMetadataPath(std::string &mainMetadataPath) {
 	m_mainMetadataPath = mainMetadataPath;

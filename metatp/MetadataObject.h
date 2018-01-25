@@ -69,6 +69,7 @@ public:
 			add(MTSchema(MTSchema::Text, DB_SUBJECT));
 			add(MTSchema(MTSchema::Integer, DB_RATING));
 			add(MTSchema(MTSchema::Integer, DB_RATINGPERCENT));
+			add(MTSchema(MTSchema::Text, DB_TAGS));// template
 		add(MTSchema(MTSchema::Text, DB_KEYWORDS));// template
 		add(MTSchema(MTSchema::Integer, DB_VERSION));// template
 		// Origin
