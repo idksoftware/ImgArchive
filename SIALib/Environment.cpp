@@ -54,7 +54,7 @@ namespace simplearchive {
 
 	void Environment::setEnvironment() {
 		SetEnv setEnv;
-		CSIAArcAppConfig &config = CSIAArcAppConfig::get();
+		AppConfig &config = AppConfig::get();
 		
 		setEnv.insert(setEnv.end(), EnvItem(HOOK_SCRIPTS_PATH_LABEL, config.getHookPath()));
 		setEnv.insert(setEnv.end(), EnvItem(TOOLS_PATH_LABEL, config.getToolsPath()));

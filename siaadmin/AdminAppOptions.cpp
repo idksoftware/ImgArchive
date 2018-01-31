@@ -80,7 +80,7 @@ AppOptions::AppOptions() {
 
 bool AppOptions::initaliseConfig() {
 
-	CSIAArcAppConfig &config = CSIAArcAppConfig::get();
+	AppConfig &config = AppConfig::get();
 	const std::string key = "SIA_HOME";
 	std::string temp = SAUtils::GetPOSIXEnv(key);
 	std::string homePath = temp;

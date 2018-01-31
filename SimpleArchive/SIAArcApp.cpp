@@ -118,7 +118,7 @@ return false;
 
 bool SIAArcApp::initaliseHomePath() {
 
-	CSIAArcAppConfig &config = CSIAArcAppConfig::get();
+	SIAARCConfig config;
 
 	bool found = false;
 	std::string homePath;
@@ -193,7 +193,8 @@ bool SIAArcApp::initaliseHomePath() {
 
 bool SIAArcApp::initaliseConfig() {
 
-	CSIAArcAppConfig &config = CSIAArcAppConfig::get();
+	//AppConfig &config = AppConfig::get();
+	SIAARCConfig config;
 
 	bool found = false;
 	std::string homePath;
@@ -252,7 +253,7 @@ bool SIAArcApp::initaliseConfig() {
 bool SIAArcApp::doRun()
 {
 	SIAArcAppOptions &appOptions = SIAArcAppOptions::get();
-	CSIAArcAppConfig &config = CSIAArcAppConfig::get();
+	AppConfig &config = AppConfig::get();
 
 	SIALib siaLib;
 	// Set global options

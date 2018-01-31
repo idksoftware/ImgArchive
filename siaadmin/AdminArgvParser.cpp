@@ -140,7 +140,7 @@ namespace simplearchive {
 
 		//testHelpOptionDetection();
 		bool cmdFound = false;
-		CSIAArcAppConfig &config = CSIAArcAppConfig::get();
+		AppConfig &config = AppConfig::get();
 
 		if (command("init") == true) {
 			// This command will initalise the configuration.

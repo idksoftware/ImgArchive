@@ -121,7 +121,10 @@ void CLogger::makeFile() {
 ExifDateTime last;
 int count = 0;
 
+
+
 void CLogger::log(int code, Level level, const char *format, ...) {
+	
 	if (m_size < m_cursize) {
 		m_logfile.close();
 		makeFile();
@@ -152,7 +155,7 @@ void CLogger::log(int code, Level level, const char *format, ...) {
 	m_lastMessage = message;
 	m_lastCode = code;
 	std::stringstream logstr;
-	logstr << "\n" << date.toLogString() << '.' << count << "\t";
+	logstr << "\n" << setfill('0') << setw(6) << code << ": " << date.toLogString() << '.' << count << "\t";
 	logstr << '[' << levelStr(level) << "]\t";
 	logstr << message;
 	if (m_isOpen) {
@@ -168,11 +171,11 @@ void CLogger::log(int code, Level level, const char *format, ...) {
 			std::cout << message << '\n';
 		}
 		else {
-			std::cout << setfill('0') << setw(3) << code << ": " << message << '\n';
+			std::cout << setfill('0') << setw(6) << code << ": " << message << '\n';
 		}
 	}
 	std::stringstream strudp;
-	strudp << setfill('0') << setw(3) << code << ":" << message;
+	strudp << setfill('0') << setw(6) << code << ":" << message;
 	std::string udpMessage = strudp.str();
 	UDPOut::out(udpMessage.c_str());
 	va_end(args);
@@ -192,7 +195,7 @@ void CLogger::Log(Level level, const char *format, ...) {
 }
 */
 void CLogger::log(int code, Level level, const std::string &message) {
-
+	
 	if (!IsPrintable(level)) return;
 	ExifDateTime date;
 	date.now();

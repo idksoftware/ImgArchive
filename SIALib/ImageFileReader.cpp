@@ -68,7 +68,7 @@ ImageFileReader::~ImageFileReader()
 ExifObject *ImageFileReader::externalExifTool(std::string &path) {
 	CLogger &logger = CLogger::getLogger();
 
-	CSIAArcAppConfig config = CSIAArcAppConfig::get();
+	AppConfig config = AppConfig::get();
 	
 	ExternalComand externalComand(config.getTempPath());
 	if (config.getExternalExifTool() == nullptr) {

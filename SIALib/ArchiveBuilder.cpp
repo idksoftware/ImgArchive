@@ -308,7 +308,7 @@ namespace simplearchive {
 
 	bool ArchiveBuilder::Init() {
 		
-		CSIAArcAppConfig config = CSIAArcAppConfig::get();
+		AppConfig config = AppConfig::get();
 		m_Error = false;
 		
 		m_MasterPath = m_archiveObject.getMasterPath().getRepositoryPath();

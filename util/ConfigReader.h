@@ -91,60 +91,21 @@ public:
 #define MASTER_BLOCK		"Master Archive" // This archive contains the master images.This section controls this archive.
 #define DERIVATIVE_BLOCK	"Derivative Archive"
 #define BACKUP_BLOCK		"Archive Backup"
-#define EXIFTOOL_BLOCK		"External Exif Tool"
+#define EXIFTOOL_BLOCK		"External Exif Tool" //External Exif Tool
 
 
 
-class AppConfig : public std::map<std::string, std::shared_ptr<ConfigBlock>> {
+class AppConfigBase : public std::map<std::string, std::shared_ptr<ConfigBlock>> {
 public:
 	/// @brief Prints all the values in the Config Object
 	/// used for FINEging
-	AppConfig() {
+	AppConfigBase() {
 		//this->[ROOT_BLOCK] = (std::make_shared<ConfigBlock>(ROOT_BLOCK));
 		insert(std::pair<std::string, std::shared_ptr<ConfigBlock>>(ROOT_BLOCK, std::make_shared<ConfigBlock>(ROOT_BLOCK)));
 
 	}
+
 	void printAll();
-
-	ConfigBlock &getRoot() { // The root will always exist 
-		std::shared_ptr<ConfigBlock> configBlock = find(ROOT_BLOCK)->second;
-		return (*configBlock);
-	}
-
-	std::shared_ptr<ConfigBlock> getLogging() { // The root will always exist 
-		std::shared_ptr<ConfigBlock> configBlock = find(LOGGING_BLOCK)->second;
-		return configBlock;
-	}
-
-	std::shared_ptr<ConfigBlock> getNetwork() { // The root will always exist 
-		std::shared_ptr<ConfigBlock> configBlock = find(NETWORK_BLOCK)->second;
-		return configBlock;
-	}
-
-	std::shared_ptr<ConfigBlock> getFolders() { // The root will always exist 
-		std::shared_ptr<ConfigBlock> configBlock = find(FOLDERS_BLOCK)->second;
-		return configBlock;
-	}
-
-	std::shared_ptr<ConfigBlock> getMaster() { // The root will always exist 
-		std::shared_ptr<ConfigBlock> configBlock = find(MASTER_BLOCK)->second;
-		return configBlock;
-	}
-
-	std::shared_ptr<ConfigBlock> getDerivative() { // The root will always exist 
-		std::shared_ptr<ConfigBlock> configBlock = find(DERIVATIVE_BLOCK)->second;
-		return configBlock;
-	}
-
-	std::shared_ptr<ConfigBlock> getBackup() { // The root will always exist 
-		std::shared_ptr<ConfigBlock> configBlock = find(BACKUP_BLOCK)->second;
-		return configBlock;
-	}
-
-	std::shared_ptr<ConfigBlock> getExifTool() { // The root will always exist 
-		std::shared_ptr<ConfigBlock> configBlock = find(EXIFTOOL_BLOCK)->second;
-		return configBlock;
-	}
 
 	bool setConfigBlock(const char* name, std::string &value, std::string &defaultValue, const char *configBlock);
 
@@ -220,7 +181,7 @@ class AppConfigReader : public ConfigReader {
 	std::shared_ptr<ConfigBlock> m_current;
 	
 public:
-	bool read(const char *datafile, AppConfig &config);
+	bool read(const char *datafile, AppConfigBase &config);
 	//ConfigReader::Token parse(const char *text, AppConfig &config);
 };
 

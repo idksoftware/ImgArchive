@@ -90,7 +90,7 @@ bool AdminApp::Show() {
 	m_logLevel = "INFO";
 	m_dry_run = false;
 	*/
-	CSIAArcAppConfig &config = CSIAArcAppConfig::get();
+	AppConfig &config = AppConfig::get();
 	/*
 	const std::string key = "SIA_HOME";
 	std::string temp = SAUtils::GetPOSIXEnv(key);
@@ -188,7 +188,7 @@ bool AdminApp::Show() {
 #ifdef XXXXXXXXXXXXx
 bool AppOptions::initaliseConfig() {
 
-	CSIAArcAppConfig &config = CSIAArcAppConfig::get();
+	AppConfig &config = AppConfig::get();
 	const std::string key = "SIA_HOME";
 	std::string temp = SAUtils::GetPOSIXEnv(key);
 	std::string homePath = temp;
@@ -308,7 +308,7 @@ bool AdminApp::doRun()
 		break;
 	case AppOptions::CM_Show:
 	{
-		CSIAArcAppConfig &config = CSIAArcAppConfig::get();
+		AppConfig &config = AppConfig::get();
 		config.printAll();
 		break;
 	}
@@ -316,7 +316,7 @@ bool AdminApp::doRun()
 	{
 		SIALib siaLib;
 		siaLib.initalise();
-		CSIAArcAppConfig &config = CSIAArcAppConfig::get();
+		AppConfig &config = AppConfig::get();
 		if (siaLib.view(appOptions.getName()) == false) {
 			return false;
 		}
@@ -328,7 +328,7 @@ bool AdminApp::doRun()
 		// make mirror
 		SIALib siaLib;
 		siaLib.initalise();
-		CSIAArcAppConfig &config = CSIAArcAppConfig::get();
+		AppConfig &config = AppConfig::get();
 		if (siaLib.mirror(appOptions.getName()) == false) {
 			return false;
 		}
@@ -341,7 +341,7 @@ bool AdminApp::doRun()
 	{
 		SIALib siaLib;
 		siaLib.initalise();
-		CSIAArcAppConfig &config = CSIAArcAppConfig::get();
+		AppConfig &config = AppConfig::get();
 		if (appOptions.isConfiguratedOk() == false) {
 			// Do not create a new archive. The old one needs to be deleted?
 			return false;
@@ -407,7 +407,7 @@ bool AdminApp::CreateArchive(const char *archivePath, const char *workspacePath,
 		}
 	}
 	
-	CSIAArcAppConfig config = CSIAArcAppConfig::get();
+	AppConfig config = AppConfig::get();
 	
 	std::string archivePathStr = archivePath;
 	std::string workspacePathStr = workspacePath;
@@ -499,7 +499,8 @@ bool AdminApp::CreateArchive(const char *archivePath, const char *workspacePath,
 
 bool AdminApp::initaliseConfig() {
 
-	CSIAArcAppConfig &config = CSIAArcAppConfig::get();
+	//AppConfig &config = AppConfig::get();
+	SIAARCConfig config;
 
 	bool found = false;
 	std::string homePath;
@@ -554,7 +555,7 @@ bool AdminApp::initaliseConfig() {
 	return true;
 
 	/*
-	CSIAArcAppConfig &config = CSIAArcAppConfig::get();
+	AppConfig &config = AppConfig::get();
 	const std::string key = "SIA_HOME";
 	std::string temp = SAUtils::GetPOSIXEnv(key);
 	std::string homePath = temp;
@@ -614,7 +615,7 @@ bool AdminApp::initaliseConfig() {
 
 bool AdminApp::initaliseHomePath() {
 
-	CSIAArcAppConfig &config = CSIAArcAppConfig::get();
+	AppConfig &config = AppConfig::get();
 
 	bool found = false;
 	std::string homePath;

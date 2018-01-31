@@ -23,8 +23,8 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	m_logLevel = "INFO";
 	m_dry_run = false;
 	*/
-	CSIAArcAppConfig &config = CSIAArcAppConfig::get();
-		
+	//AppConfig &config = AppConfig::get();
+	SIAARCConfig config;
 		
 
 

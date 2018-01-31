@@ -59,6 +59,9 @@
 #define HOME_PATH_LABEL					"HomePath"
 #define INDEX_PATH_LABEL				"IndexPath"
 #define HISTORY_PATH_LABEL				"HistoryPath"
+#define ENABLED_LABEL				"Enabled"
+#define BACKUP_ONE_ENABLED_LABEL			"BackupOneEnabled"
+#define BACKUP_TWO_ENABLED_LABEL			"BackupTwoEnabled"
 #define EXTERNAL_COMMAND_LINE_LABEL		"ExternalCommandLine"
 #define EXIF_MAP_PATH_LABEL				"ExifMapPath"
 #define EXIF_MAP_FILE_LABEL				"ExifMapFile"
@@ -66,6 +69,9 @@
 #define CATALOG_PATH_LABEL				"CatalogPath"
 #define WORKSPACE_PATH_LABEL			"WorkspacePath"
 #define DRY_RUN_LABEL					"DryRun"
+
+
+
 namespace simplearchive {
 
 	class AppOptions;
@@ -74,13 +80,14 @@ namespace simplearchive {
 	* primary configuration options.
 	*
 	*/
-	class CSIAArcAppConfig : public AppConfig
+	class AppConfig 
 	{
 	
 	private:
 		friend class AppOptions;
+		friend class SIAARCConfig;
 
-		static CSIAArcAppConfig *m_this;
+		static AppConfig *m_this;
 		static bool m_verbose; //< -v --Verbose
 		static bool m_quiet;
 		static bool m_silent;
@@ -98,6 +105,7 @@ namespace simplearchive {
 		/// This is the path the history file are stored. These files are used for
 		/// the history of the changes made to the archive.  
 		static std::string m_historyPath;
+		static bool m_externalExifToolEnabled;
 		/// External Exif tool
 		static std::string m_ExternalExifTool;
 		/// External Exif Command line
@@ -149,25 +157,16 @@ namespace simplearchive {
 		static int m_udpPortNum;
 		static std::string m_udpAddress;
 
-
-		CSIAArcAppConfig();
-
-		std::shared_ptr<ConfigBlock> getSystemFolders();
-		std::shared_ptr<ConfigBlock> getMasterArchive();
-
-		bool setSystemFolders(const char* name, std::string &value, std::string &defaultValue);
-		bool setExternalExifTool(const char* name, std::string &value, std::string &defaultValue);
-		bool setGeneral(const char* name, std::string &value, std::string &defaultValue);
-			
-	public:
 		
-		~CSIAArcAppConfig();
 
-		static CSIAArcAppConfig &get();
-		/// @brief Initalises the config object
-		bool init(const char *homePath = nullptr);
+	
+	public:
+		AppConfig::AppConfig()	{}
+		AppConfig::~AppConfig() {}
 		void settup();
-		void fileBasedValues(const char *homePath);
+
+		static AppConfig &get();
+		
 		/// @brief Gets the source path.
 		const char *getSourcePath();
 		/// @brief Gets the archive path.
@@ -252,12 +251,104 @@ namespace simplearchive {
 		std::string toString();
 		std::string toXMLString();
 		
+		
+		void isServerOn(bool on);
+		void setServerPort(int port);
+		/// Sets tools path
+		void setToolsPath(const char *toolsPath);
+		
+		
+		bool validWorkspacePath();
+		bool validSourcePath();
+		bool validHomePath();
+	};
+
+	class SIAARCConfig : public AppConfigBase{
+		
+
+		ConfigBlock &getRoot() { // The root will always exist 
+			std::shared_ptr<ConfigBlock> configBlock = find(ROOT_BLOCK)->second;
+			return (*configBlock);
+		}
+
+		std::shared_ptr<ConfigBlock> getLogging() { // The root will always exist 
+			std::shared_ptr<ConfigBlock> configBlock = find(LOGGING_BLOCK)->second;
+			return configBlock;
+		}
+
+		std::shared_ptr<ConfigBlock> getNetwork() { // The root will always exist 
+			std::shared_ptr<ConfigBlock> configBlock = find(NETWORK_BLOCK)->second;
+			return configBlock;
+		}
+
+		std::shared_ptr<ConfigBlock> getFolders() { // The root will always exist 
+			std::shared_ptr<ConfigBlock> configBlock = find(FOLDERS_BLOCK)->second;
+			return configBlock;
+		}
+
+		std::shared_ptr<ConfigBlock> getMaster() { // The root will always exist 
+			std::shared_ptr<ConfigBlock> configBlock = find(MASTER_BLOCK)->second;
+			return configBlock;
+		}
+
+		std::shared_ptr<ConfigBlock> getDerivative() { // The root will always exist 
+			std::shared_ptr<ConfigBlock> configBlock = find(DERIVATIVE_BLOCK)->second;
+			return configBlock;
+		}
+
+		std::shared_ptr<ConfigBlock> getBackup() { // The root will always exist 
+			std::shared_ptr<ConfigBlock> configBlock = find(BACKUP_BLOCK)->second;
+			return configBlock;
+		}
+
+		std::shared_ptr<ConfigBlock> getExifTool() { // The root will always exist 
+			std::shared_ptr<ConfigBlock> configBlock = find(EXIFTOOL_BLOCK)->second;
+			return configBlock;
+		}
+
+		bool setGeneral(const char* name, std::string &value, std::string &defaultValue) {
+			return setConfigBlock(name, value, defaultValue, GENERAL_BLOCK);
+		}
+
+		bool setSystemFolders(const char* name, std::string &value, std::string &defaultValue) {
+			return setConfigBlock(name, value, defaultValue, FOLDERS_BLOCK);
+		}
+
+		bool setExternalExifTool(const char* name, std::string &value, std::string &defaultValue) {
+			return setConfigBlock(name, value, defaultValue, EXIFTOOL_BLOCK);
+		}
+
+		bool setMaster(const char* name, std::string &value, std::string &defaultValue) {
+			return setConfigBlock(name, value, defaultValue, MASTER_BLOCK);
+		}
+
+		bool setNetwork(const char* name, std::string &value, std::string &defaultValue) {
+			return setConfigBlock(name, value, defaultValue, NETWORK_BLOCK);
+		}
+
+		std::shared_ptr<ConfigBlock> getMasterArchive() {
+			return getConfigBlocks(MASTER_ARCHIVE);
+		}
+
+		std::shared_ptr<ConfigBlock> getSystemFolders() {
+			return getConfigBlocks(SYSTEM_FOLDERS);
+		}
+
+
+	public:
+
+		/// Sets home path. This is the root path all default paths are made. 
+		void setHomePath(const char *homePath);
+		void setWorkspacePath(const char *path);
+
+		//void setMasterPath(const char *path);
+
 		void setDryRun(bool dryRun);
 		void setQuiet(bool quiet);
 		void setSilent(bool silent);
 		void setVerbose(bool verbose);
 		void setArchivePath(const char *path);
-		void setWorkspacePath(const char *path);
+		
 		void setMasterPath(const char *path);
 		void setDerivativePath(const char *path);
 		void setMasterCataloguePath(const char *path);
@@ -269,16 +360,14 @@ namespace simplearchive {
 		void setEventsOn(bool evt);
 		void setEventPort(int port);
 		void setEventAddress(const char *address);
+		
 
-		void isServerOn(bool on);
-		void setServerPort(int port);
-		/// Sets tools path
-		void setToolsPath(const char *toolsPath);
-		/// Sets home path. This is the root path all default paths are made. 
-		void setHomePath(const char *homePath);
-		bool validWorkspacePath();
-		bool validSourcePath();
-		bool validHomePath();
+		SIAARCConfig() {};
+
+		/// @brief Initalises the config object
+		bool init(const char *homePath = nullptr);
+		
+		void fileBasedValues(const char *homePath);
 	};
 
 }

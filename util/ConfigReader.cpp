@@ -69,7 +69,7 @@ void ConfigBlock::printAll() {
 	
 }
 
-std::shared_ptr<ConfigBlock> AppConfig::getConfigBlocks(const char *name) {
+std::shared_ptr<ConfigBlock> AppConfigBase::getConfigBlocks(const char *name) {
 	std::map<std::string, std::shared_ptr<ConfigBlock>>::iterator it;
 	if ((it = find(name)) != end()) {
 		std::shared_ptr<ConfigBlock> configBlock = it->second;
@@ -79,7 +79,7 @@ std::shared_ptr<ConfigBlock> AppConfig::getConfigBlocks(const char *name) {
 }
 
 
-bool AppConfig::setConfigBlock(const char* name, std::string &value, std::string &defaultValue, const char *configBlock) {
+bool AppConfigBase::setConfigBlock(const char* name, std::string &value, std::string &defaultValue, const char *configBlock) {
 	iterator tmp = find(configBlock);
 	if (tmp != end()) {
 		std::shared_ptr<ConfigBlock> cb = find(configBlock)->second;
@@ -92,7 +92,7 @@ bool AppConfig::setConfigBlock(const char* name, std::string &value, std::string
 
 }
 
-void AppConfig::printAll() {
+void AppConfigBase::printAll() {
 	for (auto ii = begin(); ii != end(); ++ii) {
 		ConfigBlock &configBlock = *ii->second;
 		configBlock.printAll();
@@ -223,7 +223,7 @@ bool ConfigReader::read(const std::string &str, ConfigBlock &config) {
 	return true;
 }
 
-bool AppConfigReader::read(const char *datafile, AppConfig &config) {
+bool AppConfigReader::read(const char *datafile, AppConfigBase &config) {
 
 
 	std::string text;

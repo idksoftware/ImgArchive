@@ -85,6 +85,7 @@ static char THIS_FILE[] = __FILE__;
 #define VERSION	"1.00"
 #define BUILD	"040115.1749"
 
+#define FILECODE SIALIB_CPP
 
 namespace simplearchive {
 	
@@ -169,7 +170,7 @@ namespace simplearchive {
 	int SIALib::initalise() {
 		
 		
-		CSIAArcAppConfig &config = CSIAArcAppConfig::get();
+		AppConfig &config = AppConfig::get();
 
 		CLogger::setLevel(config.getLogLevel());
 		CLogger::setConsoleLevel(config.getConsoleLevel());
@@ -199,7 +200,7 @@ namespace simplearchive {
 			}
 		}
 #endif
-		config.setEventsOn(true); // debug only
+		
 
 		m_enableEvents = config.isEventsOn();
 		if (m_enableEvents == true && m_socklibStarted == true) {
@@ -379,7 +380,7 @@ namespace simplearchive {
 	}
 
 	bool SIALib::Import() {
-		CSIAArcAppConfig &config = CSIAArcAppConfig::get();
+		AppConfig &config = AppConfig::get();
 		if (m_ArchiveBuilder->Import(config.getSourcePath()) == false) {
 			return false;
 		}
@@ -388,8 +389,8 @@ namespace simplearchive {
 	}
 
 	bool SIALib::show() {
-		CSIAArcAppConfig &config = CSIAArcAppConfig::get();
-		config.printAll();
+		AppConfig &config = AppConfig::get();
+		//config.setup();
 
 		std::string str = config.toString();
 		std::cout << "Using\n====================\n";
@@ -536,7 +537,7 @@ namespace simplearchive {
 
 		}
 
-		CSIAArcAppConfig &config = CSIAArcAppConfig::get();
+		AppConfig &config = AppConfig::get();
 		//DEBUG_PRINT("Archive");
 		MakeMedia makeMedia;
 		if (config.isToDateSet() || config.isFromDateSet()) {
