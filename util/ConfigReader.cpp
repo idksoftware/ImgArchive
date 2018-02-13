@@ -177,6 +177,29 @@ bool ConfigReader::read(const char *datafile, ConfigBlock &config) {
 	return true;
 }
 
+bool ConfigReader::readExif(const std::string &str, ConfigBlock &config) {
+
+	std::stringstream ss(str);
+	std::string text;
+	while (std::getline(ss, text, '\n')){
+
+		//m_dataContainer->push_back(*(new std::string(text)));
+		switch (parseExif(text.c_str(), config)) {
+		case KeyValue:
+			continue;
+		case Comment:
+			continue;
+		//case Error:
+		//	return false;
+		default:
+			if (m_logging) {
+				CLogger::getLogger().log(LOG_OK, CLogger::Level::WARNING, "Cannot read token in config file \"%s\"", m_path.c_str());
+			}
+			return false;
+		}
+	}
+	return true;
+}
 
 bool ConfigReader::read(const std::string &str, ConfigBlock &config) {
 
@@ -321,7 +344,41 @@ Error = -1,
 		Comment,
 		Include
  */
+ConfigReader::Token ConfigReader::parseExif(const char *text, ConfigBlock &config) {
+	std::string line = text;
+	line = trim(line);
 
+	if (line.empty()) {
+		return Comment;
+	}
+	int commentIdx = line.find_first_of('#');
+	if (commentIdx == 0) {
+		//printf("%s\n", line.c_str());
+		return Comment; // comment before command
+	}
+	
+	int delimIdx = line.find_first_of(config.getDelimChar());
+	if (delimIdx == -1) {
+		if (m_logging) {
+			CLogger::getLogger().log(LOG_OK, CLogger::Level::WARNING, "Cannot read \"%s\" in config file \"%s\"", line.c_str(), m_path.c_str());
+		}
+		return Error;
+	}
+	std::string cmd = line.substr(0, delimIdx);
+	std::string option = line.substr(delimIdx + 1, line.length());
+	if ((commentIdx = option.find_first_of('#')) != -1) {
+		option = option.substr(0, commentIdx);
+	}
+
+	cmd = trim(cmd);
+	option = trim(option);
+	//printf("cmd:\"%s\" opt:\"%s\"\n", cmd.c_str(), option.c_str());
+	std::string cmdp(cmd);
+	std::string optionp(option);
+	config[(cmdp)] = (optionp);
+
+	return KeyValue;
+}
 
 
 ConfigReader::Token ConfigReader::parse(const char *text, ConfigBlock &config) {

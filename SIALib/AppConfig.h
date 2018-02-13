@@ -65,6 +65,8 @@
 #define EXTERNAL_COMMAND_LINE_LABEL		"ExternalCommandLine"
 #define EXIF_MAP_PATH_LABEL				"ExifMapPath"
 #define EXIF_MAP_FILE_LABEL				"ExifMapFile"
+#define EXIF_TOOL_LABEL					"ExifTool"
+#define EXIF_COMMANDLINE_LABEL			"ExifCommandLine"
 #define TEMPLATE_PATH_LABEL				"TemplatePath"
 #define CATALOG_PATH_LABEL				"CatalogPath"
 #define WORKSPACE_PATH_LABEL			"WorkspacePath"
@@ -87,7 +89,7 @@ namespace simplearchive {
 		friend class AppOptions;
 		friend class SIAARCConfig;
 
-		static AppConfig *m_this;
+		static std::unique_ptr<AppConfig> m_this;
 		static bool m_verbose; //< -v --Verbose
 		static bool m_quiet;
 		static bool m_silent;
@@ -114,6 +116,7 @@ namespace simplearchive {
 		/// that maps exiftool keywords to Simple Archive keywords.
 		static std::string m_ExifMapPath;
 		static std::string m_ExifMapFile;
+		static std::string m_ExifFileDelim;
 		/// This is the path to the template files.
 		static std::string m_templatePath;
 		/// This is the temp file path.
@@ -165,7 +168,11 @@ namespace simplearchive {
 		AppConfig::~AppConfig() {}
 		void settup();
 
-		static AppConfig &get();
+		static AppConfig &get() {
+			static AppConfig    instance; // Guaranteed to be destroyed.
+											  // Instantiated on first use.
+			return instance;
+		}
 		
 		/// @brief Gets the source path.
 		const char *getSourcePath();
@@ -204,6 +211,7 @@ namespace simplearchive {
 		/// that maps exiftool keywords to Simple Archive keywords.
 		const char *getExifMapPath();
 		const char *getExifMapFile();
+		const char *getExifFileDelim();
 		const char *getConfigPath();
 		/// @brief Gets home path. This is the root path all default paths are made.
 		const char *getHomePath();

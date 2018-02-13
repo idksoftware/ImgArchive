@@ -114,7 +114,8 @@ DirectoryVisitor::DirectoryVisitor(FolderVisitor *folderVisitor, bool val) {
 }
 
 DirectoryVisitor::~DirectoryVisitor() {
-
+	delete m_folderVisitor;
+	m_folderVisitor = nullptr;
 }
 
 

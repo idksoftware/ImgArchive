@@ -47,7 +47,7 @@
 
 namespace simplearchive {
 
-
+#define FILECODE IMAGECONTAINER_CPP
 #ifdef _DEBUG
 #undef THIS_FILE
 	static char THIS_FILE[] = __FILE__;
@@ -164,16 +164,16 @@ void ImageContainer::PostProcess() {
 void ImageContainer::print() {
 	CLogger &logger = CLogger::getLogger();
 	
-	logger.log(LOG_OK, CLogger::Level::SUMMARY, "Item Name: %s\n", m_Name.c_str());
+	logger.log(LOG_OK, CLogger::Level::SUMMARY, "Item Name: %s", m_Name.c_str());
 	if (hasPictureFile()) {
-		logger.log(LOG_OK, CLogger::Level::SUMMARY, "PictureFile: %s\n", m_PictureNode->getFile());
+		logger.log(LOG_OK, CLogger::Level::SUMMARY, "PictureFile: %s", m_PictureNode->getFile().c_str());
 	}
 	else
 	{
 		logger.log(LOG_OK, CLogger::Level::SUMMARY, "No Picture File");
 	}
 	if (hasRawFile()) {
-		logger.log(LOG_OK, CLogger::Level::SUMMARY, "Has RAW File: %s\n", m_RawNode->getFile());
+		logger.log(LOG_OK, CLogger::Level::SUMMARY, "Has RAW File: %s", m_RawNode->getFile().c_str());
 	}
 	else {
 		logger.log(LOG_OK, CLogger::Level::SUMMARY, "No RAW File");

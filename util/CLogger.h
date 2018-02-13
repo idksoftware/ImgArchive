@@ -128,7 +128,7 @@ public:
 			m_this = nullptr;
 		}
 	}
-
+	virtual ~CLogger();
 private:
 
 	CLogger();
@@ -143,7 +143,7 @@ private:
 	static bool m_isOpen;
 	static std::string m_filename;
 	static const std::string m_Path;
-	static CLogger* m_this;
+	static std::unique_ptr<CLogger> m_this;
 	static std::ofstream m_logfile;
 	static Level m_level;
 	static Level m_isConsoleOut;
@@ -154,7 +154,7 @@ private:
 	static std::string m_lastMessage;
 	static std::unique_ptr<LogBuffer> m_startUpBuffer;
 	static bool setLevel(CLogger::Level &level, const std::string &s);
-	virtual ~CLogger();
+	
 };
 
 } /* namespace simplearchive */

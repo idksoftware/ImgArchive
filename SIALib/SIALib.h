@@ -59,7 +59,7 @@ namespace simplearchive {
 		} Scope;
 	private:
 		std::string m_HomePath;
-		std::auto_ptr<ArchiveBuilder> m_ArchiveBuilder;
+		std::shared_ptr<ArchiveBuilder> m_ArchiveBuilder;
 		
 		bool m_winsockRequired;
 		bool m_socklibStarted;

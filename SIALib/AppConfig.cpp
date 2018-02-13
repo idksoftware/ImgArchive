@@ -51,7 +51,7 @@ static char THIS_FILE[] = __FILE__;
 
 namespace simplearchive {
 
-	AppConfig *AppConfig::m_this = NULL;
+	std::unique_ptr<AppConfig> m_this = nullptr;
 	
 	bool AppConfig::m_verbose = false;
 	bool AppConfig::m_quiet = true;
@@ -86,6 +86,7 @@ namespace simplearchive {
 	std::string AppConfig::m_ExternalCommandLine;
 	std::string AppConfig::m_ExifMapPath;
 	std::string AppConfig::m_ExifMapFile;
+	std::string AppConfig::m_ExifFileDelim = ":";
 	std::string AppConfig::m_templatePath;
 	std::string AppConfig::m_backupDestinationPath;
 	
@@ -114,12 +115,12 @@ namespace simplearchive {
 
 	
 
-	AppConfig &AppConfig::get() {
-		if (m_this == NULL) {
-			m_this = new AppConfig;
-		}
-		return *m_this;
-	}
+	//AppConfig &AppConfig::get() {
+	//	if (m_this == nullptr) {
+	//		m_this = std::make_unique<AppConfig>();
+	//	}
+	//	return *m_this;
+	//}
 
 	
 
@@ -342,7 +343,7 @@ namespace simplearchive {
 		setSystemFolders(TEMP_PATH_LABEL, AppConfig::m_tempPath, homePath + TEMP_PATH);
 //#define SOURCE_PATH_LABEL         		"SourcePath"
 		setSystemFolders(SYSTEM_PATH_LABEL, AppConfig::m_systemPath, homePath + SYSTEM_PATH);
-		setSystemFolders(LOG_PATH_LABEL, AppConfig::m_logPath, homePath + MASTER_PATH);
+		setSystemFolders(LOG_PATH_LABEL, AppConfig::m_logPath, homePath + LOG_PATH);
 		setSystemFolders(MASTER_PATH_LABEL, AppConfig::m_masterPath, homePath + MASTER_PATH);
 		setSystemFolders(DERIVATIVE_PATH_LABEL, AppConfig::m_derivativePath, homePath + DERIVATIVE_PATH);
 		setSystemFolders(TOOLS_PATH_LABEL, AppConfig::m_toolsPath, homePath + TOOLS_PATH);
@@ -372,7 +373,11 @@ namespace simplearchive {
 		emptyString = "False";
 		setExternalExifTool(ENABLED_LABEL, externalExifToolEnabledStr, emptyString);
 		AppConfig::m_externalExifToolEnabled = (stricmp(externalExifToolEnabledStr.c_str(), "true") == 0);
-		
+		AppConfig::m_ExternalExifTool = "None";
+		setExternalExifTool(EXIF_TOOL_LABEL, AppConfig::m_ExternalExifTool, AppConfig::m_ExternalExifTool);
+		AppConfig::m_ExternalCommandLine = "None";
+		setExternalExifTool(EXIF_COMMANDLINE_LABEL, AppConfig::m_ExternalCommandLine, AppConfig::m_ExternalCommandLine);
+		setExternalExifTool(EXIF_COMMANDLINE_LABEL, AppConfig::m_ExifFileDelim, AppConfig::m_ExternalCommandLine);
 	// Master
 		std::string backup1Enabled = "false";
 		setMaster(BACKUP_ONE_ENABLED_LABEL, backup1Enabled, backup1Enabled);
@@ -407,7 +412,7 @@ namespace simplearchive {
 			std::string tempHomePath = SAUtils::GetPOSIXEnv("HOMEPATH");
 			wtemp = tempHomeDrive + tempHomePath + DEFAULT_WORKSPACE_PATH;
 		}
-		setSystemFolders("SystemPath", AppConfig::m_systemPath, AppConfig::m_masterPath + SYSTEM_PATH);
+		
 		setSystemFolders(WORKSPACE_PATH_LABEL, AppConfig::m_workspacePath, wtemp);
 		ArchivePath::setPathToWorkspace(AppConfig::m_workspacePath);
 
@@ -422,6 +427,9 @@ namespace simplearchive {
 		setSystemFolders(MASTER_VIEW_PATH_LABEL, AppConfig::m_masterCataloguePath, ctemp);
 		setWorkspacePath(AppConfig::m_workspacePath.c_str());
 		setMasterPath(AppConfig::m_masterPath.c_str());
+
+		setSystemFolders("SystemPath", AppConfig::m_systemPath, AppConfig::m_masterPath + SYSTEM_PATH);
+		AppConfig::m_indexPath = AppConfig::m_systemPath + "/index";
 
 		logger.log(LOG_OK, CLogger::Level::INFO, "    General");
 		logger.log(LOG_OK, CLogger::Level::INFO, "        Dry run enabled\"%s\"", (AppConfig::m_dry_run) ? "True" : "False");
@@ -440,7 +448,8 @@ namespace simplearchive {
 		logger.log(LOG_OK, CLogger::Level::INFO, "        External Exif tool enabled \"%s\"", (AppConfig::m_externalExifToolEnabled)?"True":"False");
 		logger.log(LOG_OK, CLogger::Level::INFO, "        Exif map path \"%s\"", AppConfig::m_ExifMapPath.c_str());
 		logger.log(LOG_OK, CLogger::Level::INFO, "        Exif map file \"%s\"", AppConfig::m_ExifMapFile.c_str());
-
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Exif Tool \"%s\"", AppConfig::m_ExternalExifTool.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Exif command line \"%s\"", AppConfig::m_ExternalCommandLine.c_str());
 		
 		
 	}
@@ -820,7 +829,17 @@ namespace simplearchive {
 			return m_ExternalExifTool.c_str();
 		}
 		*/
-		return 	m_ExternalCommandLine.c_str();
+		return 	m_ExternalExifTool.c_str();
+	}
+	
+	const char *AppConfig::getExifFileDelim() {
+		/*
+		if (getRoot().value("ExifTool", m_ExternalExifTool) == false) {
+		m_ExternalExifTool = "exiftool.exe";
+		return m_ExternalExifTool.c_str();
+		}
+		*/
+		return 	m_ExifFileDelim.c_str();
 	}
 
 	const char *AppConfig::getExternalCommandLine() {

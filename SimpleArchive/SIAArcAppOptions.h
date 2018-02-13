@@ -227,7 +227,10 @@ private:
 	
 public:
 	
-	static SIAArcAppOptions &get();
+	static SIAArcAppOptions &get() {
+		static SIAArcAppOptions INSTANCE;
+		return INSTANCE;
+	}
 
 	virtual ~SIAArcAppOptions();
 

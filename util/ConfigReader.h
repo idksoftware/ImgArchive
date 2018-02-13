@@ -132,6 +132,7 @@ public:
 protected:
 	/// @brief parses a line of text
 	ConfigReader::Token parse(const char *text, ConfigBlock &config);
+	ConfigReader::Token parseExif(const char *text, ConfigBlock &config);
 	std::string includePath(int pos, std::string line);
 	int m_includeCnt;
 	std::string m_path;
@@ -156,7 +157,7 @@ public:
 	/// @param    config		Config class to be filled out.
 	/// @return	returns true if read correctly.
 	bool read(const std::string &str, ConfigBlock &config);
-
+	bool readExif(const std::string &str, ConfigBlock &config);
 	virtual bool process() {
 		return true;
 	}; 

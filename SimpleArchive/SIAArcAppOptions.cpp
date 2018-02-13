@@ -51,7 +51,7 @@ static char THIS_FILE[] = __FILE__;
 using namespace CommandLineProcessing;
 namespace simplearchive {
 
-	SIAArcAppOptions *SIAArcAppOptions::m_this = nullptr;
+	
 
 	bool SIAArcAppOptions::m_list = false;
 	bool SIAArcAppOptions::m_usingFile = false;
@@ -86,19 +86,9 @@ SIAArcAppOptions::SIAArcAppOptions() : m_argvParser(std::make_unique<SIAArcArgvP
 DefaultArgumentsContainer SIAArcAppOptions::defaultArgumentsContainer;
 
 
-SIAArcAppOptions::~SIAArcAppOptions() {
-	// TODO Auto-generated destructor stub
-	if (m_this != nullptr) {
-		delete m_this;
-	}
-}
+SIAArcAppOptions::~SIAArcAppOptions() {}
 
-SIAArcAppOptions &SIAArcAppOptions::get() {
-	if (m_this == nullptr) {
-		m_this = new SIAArcAppOptions;
-	}
-	return *m_this;
-}
+
 
 SIAArcAppOptions::CommandMode SIAArcAppOptions::getCommandMode() {
 	return m_commandMode;

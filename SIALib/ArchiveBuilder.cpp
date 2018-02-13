@@ -98,8 +98,8 @@ namespace simplearchive {
 	class FilesImport {
 		int m_folderCount;
 		int m_fileCount;
-		ImageSets *m_imageSets;
-		ImageSet *m_imageSet;
+		std::shared_ptr<ImageSets> m_imageSets;
+		std::shared_ptr<ImageSet> m_imageSet;
 		std::string m_path;
 	public:
 		FilesImport() {
@@ -111,7 +111,7 @@ namespace simplearchive {
 		bool add(const char *filePath) {
 			CLogger &logger = CLogger::getLogger();
 			if (m_imageSets == 0) {
-				m_imageSets = new ImageSets;
+				m_imageSets = std::make_shared<ImageSets>();
 			}
 			ImageExtentions& ie = ImageExtentions::get();
 			std::string file = SAUtils::getFilename(filePath);
@@ -120,15 +120,15 @@ namespace simplearchive {
 				return false;
 			}
 			std::string folder = SAUtils::getFolder(filePath);
-			ImageSet *imageSet = m_imageSets->find(folder.c_str());
+			std::shared_ptr<ImageSet>imageSet = m_imageSets->find(folder.c_str());
 			if (imageSet == nullptr) {
-				imageSet = new ImageSet(filePath);
+				imageSet = std::make_shared<ImageSet>(filePath);
 				m_imageSets->insert(m_imageSets->end(), imageSet);
 			}
-			imageSet->insert(imageSet->end(), new ImageItem(filePath));
+			imageSet->insert(imageSet->end(), std::make_shared<ImageItem>(filePath));
 			return true;
 		}
-		ImageSets *getImageSets() { return m_imageSets; };
+		std::shared_ptr<ImageSets> getImageSets() { return m_imageSets; };
 	};
 
 	class ImportList : public std::vector<std::string> {
@@ -396,7 +396,7 @@ namespace simplearchive {
 		}
 		// imageSets are no longer required so can be deleted.
 		ImportJournal& importJournal = ImportJournalManager::GetJournal();
-		ImageSets *imageSets = nullptr;
+		std::shared_ptr<ImageSets> imageSets = nullptr;
 		if ((imageSets = processFiles(sourcePath, importJournal)) == nullptr) {
 			return false;
 		}
@@ -406,9 +406,10 @@ namespace simplearchive {
 		if (processImageGroupSets(imageSets, importJournal) == false) {
 			return false;
 		}
-		if (imageSets != nullptr) {
-			delete imageSets;
-		}
+		TargetsList::destroy();
+		//if (imageSets != nullptr) {
+		//	delete imageSets;
+		//}
 		ArchiveObject& archiveObject = ArchiveObject::getInstance();
 		if (archiveObject.OnCompletion() == false) {
 			return false;
@@ -417,7 +418,7 @@ namespace simplearchive {
 		return true;
 	}
 
-	ImageSets *ArchiveBuilder::processFiles(const char *sourcePath, ImportJournal& importJournal) {
+	std::shared_ptr<ImageSets> ArchiveBuilder::processFiles(const char *sourcePath, ImportJournal& importJournal) {
 		
 		CLogger &logger = CLogger::getLogger();
 
@@ -435,7 +436,7 @@ namespace simplearchive {
 		m_folders++;
 		m_imageFiles = TargetsList::getFileCount();
 		logger.log(LOG_INITIAL_SUMMARY, CLogger::Level::SUMMARY, "Found %d image files to be processed in %d Folder(s)", m_imageFiles, m_folders);
-		ImageSets *imageSets = nullptr;
+		std::shared_ptr<ImageSets> imageSets = nullptr;
 		if ((imageSets = targetsList.getImageSets()) == nullptr) {
 			// No images to process
 			return nullptr;
@@ -445,7 +446,7 @@ namespace simplearchive {
 	}
 
 
-	bool ArchiveBuilder::processImageGroupSets(ImageSets *imageSets, ImportJournal& importJournal) {
+	bool ArchiveBuilder::processImageGroupSets(std::shared_ptr<ImageSets> imageSets, ImportJournal& importJournal) {
 		CLogger &logger = CLogger::getLogger();
 #if defined( _MSC_VER ) && defined( SIA_DEBUG )
 		_CrtMemCheckpoint(&startMemState);
@@ -472,7 +473,7 @@ namespace simplearchive {
 		if (MetadataTemplate::read(metatemplatePath.c_str()) == false) {
 			logger.log(LOG_OK, CLogger::Level::INFO, "Cannot read default template file \"%s\"", metatemplatePath.c_str());
 		}
-		logger.log(LOG_OK, CLogger::Level::INFO, "Read metadata template file \"%s\"", metatemplatePath.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "Completed reading metadata template file \"%s\"", metatemplatePath.c_str());
 		// Creating metadata object with bulk data
 
 		imageSets->processImportJournal(importJournal);
@@ -495,8 +496,8 @@ namespace simplearchive {
 		archiveRepository.setPathToActiveRoot(this->m_workspacePath);
 		/// Iterate the Image Sets
 		
-		for (std::vector<ImageSet *>::iterator i = imageSets->begin(); i != imageSets->end(); i++) {
-			ImageSet *imageSet = *i;
+		for (std::vector<std::shared_ptr<ImageSet>>::iterator i = imageSets->begin(); i != imageSets->end(); i++) {
+			std::shared_ptr<ImageSet> imageSet = *i;
 
 			/// Create a Image Group container
 			ImageGroup *imageGroup = new ImageGroup(imageSet->getPath());
@@ -504,10 +505,10 @@ namespace simplearchive {
 			//imageGroups.insert(imageGroups.end(), imageGroup);
 			logger.log(LOG_SOURCE_PATH, CLogger::Level::SUMMARY, "Processing Image files in the source location %s", imageSet->getPath());
 			/// Iterate the current image set
-			for (std::vector<ImageItem *>::iterator i = imageSet->begin(); i != imageSet->end(); i++) {
+			for (std::vector<std::shared_ptr<ImageItem>>::iterator i = imageSet->begin(); i != imageSet->end(); i++) {
 				/// Image Item
 				SIAApplicationState::RunState state = SIAApplicationState::getState();
-				ImageItem *imageItem = *i;
+				std::shared_ptr<ImageItem> imageItem = *i;
 				importJournal.setCurrent(imageItem->getPath());
 				logger.log(LOG_CURRENT_IMAGE, CLogger::Level::SUMMARY, "Processing Image %d file: \"%s\"", importJournal.getCurrentImageIndex() + 1, imageItem->getFilename().c_str());
 				ExifObject *exifObject = nullptr;
@@ -608,14 +609,14 @@ namespace simplearchive {
 				//exifObject->debugPrint();
 				if (m_useExternalExifTool == true) {
 					if (exifObject == nullptr) {
-						logger.log(LOG_OK, CLogger::Level::INFO, "External EXIF reader failed. No extra EXIF read for image\"%s\"", imageItem->getFilename().c_str());
+						logger.log(LOG_OK, CLogger::Level::INFO, "External EXIF reader failed. No extra EXIF readings for image: \"%s\"", imageItem->getFilename().c_str());
 					}
 					else {
-						logger.log(LOG_OK, CLogger::Level::INFO, "External EXIF reader completed for image\"%s\"", imageItem->getFilename().c_str());
+						logger.log(LOG_OK, CLogger::Level::INFO, "External EXIF reader completed for image \"%s\"", imageItem->getFilename().c_str());
 					}
 				}
 				else {
-					logger.log(LOG_OK, CLogger::Level::INFO, "External EXIF reader not enabled\"%s\"", imageItem->getFilename().c_str());
+					logger.log(LOG_OK, CLogger::Level::INFO, "External EXIF reader not enabled \"%s\"", imageItem->getFilename().c_str());
 				}
 				logger.log(LOG_OK, CLogger::Level::INFO, "Processing bulk metedata %s", imageItem->getFilename().c_str());
 

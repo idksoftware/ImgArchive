@@ -75,8 +75,8 @@ public:
 
 };
 
-CExtentionsFile::CExtentionsFile() {
-	m_extentionsContainer.reset(new CExtentionsContainer);
+CExtentionsFile::CExtentionsFile() : m_extentionsContainer(std::make_unique<CExtentionsContainer>())
+{
 }
 
 CExtentionsFile::~CExtentionsFile() {

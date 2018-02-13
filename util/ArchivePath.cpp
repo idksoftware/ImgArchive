@@ -11,10 +11,11 @@
 
 namespace simplearchive {
 
-static ArchivePath m_this;
+
 
 ArchivePath& ArchivePath::getArchivePath() {
-	return m_this;
+	static ArchivePath INSTANCE;
+	return INSTANCE;
 }
 
 

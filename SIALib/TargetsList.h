@@ -73,39 +73,40 @@ namespace simplearchive {
 		}
 	};
 
-	class ImageSet : public std::vector < ImageItem * > {
+	class ImageSet : public std::vector<std::shared_ptr<ImageItem>> {
 		std::string m_path;
 	public:
 		ImageSet(const char *path) {
 			m_path = path;
 		}
 		virtual ~ImageSet() {
-			for (std::vector<ImageItem *>::iterator i = this->begin(); i != this->end(); i++) {
-				ImageItem *data = *i;
-				delete data;
-			}
+			clear();
+			//for (std::vector<std::shared_ptr<ImageItem>>::iterator i = this->begin(); i != this->end(); i++) {
+			//	std::shared_ptr<ImageItem>data = *i;
+			//	delete data;
+			//}
 			//printf("deleting item %s\n", m_path.c_str());
 		}
 		void print() {
 			//printf("Set %s\n", m_path.c_str());
-			for (std::vector<ImageItem *>::iterator i = this->begin(); i != this->end(); i++) {
-				ImageItem *data = *i;
+			for (std::vector<std::shared_ptr<ImageItem>>::iterator i = this->begin(); i != this->end(); i++) {
+				std::shared_ptr<ImageItem> data = *i;
 				data->print();
 			}
 		}
 		void processHook() {
 			
 			//printf("Hook process %s\n", m_path.c_str());
-			for (std::vector<ImageItem *>::iterator i = this->begin(); i != this->end(); i++) {
-				ImageItem *data = *i;
+			for (std::vector<std::shared_ptr<ImageItem>>::iterator i = this->begin(); i != this->end(); i++) {
+				std::shared_ptr<ImageItem> data = *i;
 				
 				data->processHook();
 			}
 		}
 
 		void processImportJournal(ImportJournal& importJournal) {
-			for (std::vector<ImageItem *>::iterator i = this->begin(); i != this->end(); i++) {
-				ImageItem *data = *i;
+			for (std::vector<std::shared_ptr<ImageItem>>::iterator i = this->begin(); i != this->end(); i++) {
+				std::shared_ptr<ImageItem>data = *i;
 				importJournal.add(data->getPath());
 				
 			}
@@ -115,26 +116,27 @@ namespace simplearchive {
 			return m_path.c_str();
 		}
 	};
-	class ImageSets : public std::vector < ImageSet * > {
+	class ImageSets : public std::vector <std::shared_ptr<ImageSet>> {
 	public:
 		virtual ~ImageSets() {
-			for (std::vector<ImageSet *>::iterator i = this->begin(); i != this->end(); i++) {
-				ImageSet *data = *i;
-				delete data;
-			}
+			clear();
+			//for (auto i = this->begin(); i != this->end(); i++) {
+			//	std::shared_ptr<ImageSet> data = *i;
+			//	delete data;
+			//}
 			//printf("deleting item %s\n", m_path.c_str());
 		}
 		void print() {
 
-			for (std::vector<ImageSet *>::iterator i = this->begin(); i != this->end(); i++) {
-				ImageSet *data = *i;
+			for (std::vector<std::shared_ptr<ImageSet>>::iterator i = this->begin(); i != this->end(); i++) {
+				std::shared_ptr<ImageSet> data = *i;
 				data->print();
 			}
 		}
-		ImageSet *find(const char *folder) {
+		std::shared_ptr<ImageSet> find(const char *folder) {
 
-			for (std::vector<ImageSet *>::iterator i = this->begin(); i != this->end(); i++) {
-				ImageSet *data = *i;
+			for (std::vector<std::shared_ptr<ImageSet>>::iterator i = this->begin(); i != this->end(); i++) {
+				std::shared_ptr<ImageSet> data = *i;
 				if (strcmp(data->getPath(), folder) == 0) {
 					return data;
 				}
@@ -143,14 +145,14 @@ namespace simplearchive {
 		}
 		void processHook() {
 
-			for (std::vector<ImageSet *>::iterator i = this->begin(); i != this->end(); i++) {
-				ImageSet *data = *i;
+			for (std::vector<std::shared_ptr<ImageSet>>::iterator i = this->begin(); i != this->end(); i++) {
+				std::shared_ptr<ImageSet> data = *i;
 				data->processHook();
 			}
 		}
 		void processImportJournal(ImportJournal& importJournal) {
-			for (std::vector<ImageSet *>::iterator i = this->begin(); i != this->end(); i++) {
-				ImageSet *data = *i;
+			for (std::vector<std::shared_ptr<ImageSet>>::iterator i = this->begin(); i != this->end(); i++) {
+				std::shared_ptr<ImageSet> data = *i;
 				data->processImportJournal(importJournal);
 			}
 		}
@@ -174,7 +176,8 @@ public:
 	void process(const char *path);
 
 	/// This returns the resulting Image Sets 
-	static ImageSets *getImageSets();
+	
+	static std::shared_ptr<ImageSets> getImageSets();
 	static void destroy();
 	static int getFileCount();
 	static int getFolderCount();

@@ -38,6 +38,8 @@
 #include "CLogger.h"
 #include "HookCmd.h"
 
+#define FILECODE TARGETSLIST_CPP
+
 #ifdef _DEBUG
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
@@ -58,8 +60,8 @@ namespace simplearchive {
 
 	void ImageItem::processFileHook() {
 		CLogger &logger = CLogger::getLogger();
-		logger.log(LOG_OK, CLogger::Level::INFO, "process Hook Item %s\n", m_path.c_str());
-		//printf("process Hook Item %s\n", m_path.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "process Hook Item: %s", m_path.c_str());
+		
 		
 		OnFileCmd onFileCmd(m_path.c_str());
 		onFileCmd.process();
@@ -72,20 +74,20 @@ namespace simplearchive {
 
 		static int m_folderCount;
 		static int m_fileCount;
-		static ImageSets *m_imageSets;
-		ImageSet *m_imageSet;
+		static std::shared_ptr<ImageSets> m_imageSets;
+		std::shared_ptr<ImageSet> m_imageSet;
 		std::string m_path;
 	protected:
 		virtual bool onStart(const char *path) {
 			CLogger &logger = CLogger::getLogger();
 			
 			if (m_imageSets == 0) {
-				m_imageSets = new ImageSets;
+				m_imageSets = std::make_shared<ImageSets>();
 			}
-			m_imageSet = new ImageSet(path);
+			m_imageSet = std::make_shared<ImageSet>(path);
 
 			m_imageSets->insert(m_imageSets->end(), m_imageSet);
-			logger.log(LOG_OK, CLogger::Level::INFO, "Starting reading folder \"%s\"", path);
+			logger.log(LOG_OK, CLogger::Level::INFO, "Starting reading folder: \"%s\"", path);
 			//printf("==== Start ==== %d \n", m_folderCount++);
 			return true;
 		};
@@ -98,10 +100,10 @@ namespace simplearchive {
 			std::string tmp = path;
 			std::string filename = SAUtils::getFilename(tmp);
 			if (ie.IsValid(filename.c_str()) == false) {
-				logger.log(LOG_OK, CLogger::Level::WARNING, "Not a valid file type \"%s\" rejecting ", filename.c_str());
+				logger.log(LOG_OK, CLogger::Level::WARNING, "Not a valid file type: \"%s\" rejecting ", filename.c_str());
 				return true;
 			}
-			ImageItem *imageItem = new ImageItem(path);
+			std::shared_ptr<ImageItem> imageItem = std::make_shared<ImageItem>(path);
 			imageItem->processFileHook();
 			m_fileCount++;
 			m_imageSet->insert(m_imageSet->end(), imageItem);
@@ -116,7 +118,7 @@ namespace simplearchive {
 		};
 		virtual bool onEnd() {
 			CLogger &logger = CLogger::getLogger();
-			logger.log(LOG_OK, CLogger::Level::INFO, "Completed reading folder %s", m_path.c_str());
+			logger.log(LOG_OK, CLogger::Level::INFO, "Completed reading folder: %s", m_path.c_str());
 			return true;
 		};
 		virtual FolderVisitor *make() {
@@ -125,13 +127,13 @@ namespace simplearchive {
 	public:
 		FolderDir() {};
 		virtual ~FolderDir() {};
-		static ImageSets *getImageSets() {
+		static std::shared_ptr<ImageSets> getImageSets() {
 			return m_imageSets;
 		}
 		static void destroy() {
 			
-			delete m_imageSets;
-			m_imageSets = 0;
+			//delete m_imageSets;
+			m_imageSets = nullptr;
 		}
 
 		static int getFileCount() {
@@ -145,7 +147,7 @@ namespace simplearchive {
 
 	int FolderDir::m_folderCount = 0;
 	int FolderDir::m_fileCount = 0;
-	ImageSets *FolderDir::m_imageSets = 0;
+	std::shared_ptr<ImageSets> FolderDir::m_imageSets = nullptr;
 
 	int TargetsList::getFileCount() {
 		return FolderDir::getFileCount();
@@ -171,7 +173,7 @@ namespace simplearchive {
 
 	
 
-	ImageSets *TargetsList::getImageSets() {
+	std::shared_ptr<ImageSets> TargetsList::getImageSets() {
 		return FolderDir::getImageSets();
 	}
 

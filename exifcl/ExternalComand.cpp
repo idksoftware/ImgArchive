@@ -111,12 +111,9 @@ ExifObject *ExternalComand::process(const char *imagefile) {
 		std::string cmd = replace(m_commandLine, in);
 		logger.log(LOG_OK, CLogger::Level::FINE, "Using Exif command: \"%s\"", cmd.c_str());
 		externalShell.exec(cmd.c_str());
-		
-		std::string exifMapFile(m_exifMapPath);
-		exifMapFile += "/exif.ini";
-		logger.log(LOG_OK, CLogger::Level::FINE, "Reading Exif map file \"%s\"", exifMapFile.c_str());
-		if (externalExifMapper.init(exifMapFile.c_str()) == false) {
-			logger.log(LOG_OK, CLogger::Level::ERR, "Failed reading Exif map file \"%s\"", exifMapFile.c_str());
+		logger.log(LOG_OK, CLogger::Level::FINE, "Reading Exif map file \"%s\"", m_exifMapPath.c_str());
+		if (externalExifMapper.init(m_exifMapPath.c_str()) == false) {
+			logger.log(LOG_OK, CLogger::Level::ERR, "Failed reading Exif map file \"%s\"", m_exifMapPath.c_str());
 			return nullptr;
 		}
 		exifObject = externalExifMapper.create(externalShell.getOutput());

@@ -53,7 +53,7 @@ static char THIS_FILE[] = __FILE__;
 using namespace std;
 namespace simplearchive {
 std::string CLogger::m_filename = "Log.txt";
-CLogger *CLogger::m_this = NULL;
+std::unique_ptr<CLogger> CLogger::m_this(nullptr);
 std::ofstream CLogger::m_logfile;
 CLogger::Level CLogger::m_level;
 CLogger::Level CLogger::m_isConsoleOut;
@@ -80,12 +80,9 @@ CLogger::CLogger() {
 }
 
 CLogger &CLogger::getLogger() {
-
-	if (m_this == NULL) {
-		m_this = new CLogger();
-		//LogFilename logFilename(m_logpath.c_str());
-		//logFilename.setMaxSize(m_size);
-		//m_filename = logFilename.filename();
+	if (m_this.get() == nullptr)
+	{
+		m_this.reset(new CLogger());
 		makeFile();
 	}
 	return *m_this;

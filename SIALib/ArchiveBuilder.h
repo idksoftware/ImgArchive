@@ -75,8 +75,8 @@ class ArchiveBuilder {
 	void print(ExifObject &eo);
 	void print(const BasicMetadata &be);
 	void print(const MetadataObject& mo);
-	ImageSets *processFiles(const char *sourcePath, ImportJournal& importJournal);
-	bool processImageGroupSets(ImageSets *imageSets, ImportJournal& importJournal);
+	std::shared_ptr<ImageSets> processFiles(const char *sourcePath, ImportJournal& importJournal);
+	bool processImageGroupSets(std::shared_ptr<ImageSets> imageSets, ImportJournal& importJournal);
 public:
 	ArchiveBuilder(ArchiveObject &archiveObject);
 	/// @brief This initalises the archive builder

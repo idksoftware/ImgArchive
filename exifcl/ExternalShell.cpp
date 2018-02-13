@@ -37,6 +37,7 @@
 #include <cstdlib>
 #include <string>
 #include <cstring>
+#include <sstream>
 #ifndef _WIN32
 #include <unistd.h>
 #endif
@@ -141,7 +142,7 @@ std::string ExecuteExternalFile(std::string &csExeNameAndArgs)
 	std::string csExecute;
 	csExecute = csExeNameAndArgs;
 
-	std::string envVars = "hookScripts=test\0second=jam\0";
+	//std::string envVars = "hookScripts=test\0second=jam\0";
 
 	SECURITY_ATTRIBUTES secattr;
 	ZeroMemory(&secattr, sizeof(secattr));
@@ -171,24 +172,30 @@ std::string ExecuteExternalFile(std::string &csExeNameAndArgs)
 #else
 	CreateProcess(0, (LPSTR)csExecute.c_str(), 0, 0, TRUE, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, 0, 0, &sInfo, &pInfo);
 #endif
-	CloseHandle(wPipe);
-
+	
 	//now read the output pipe here.
 
-	char buf[100];
+	char buf[100 + 1];
 	DWORD reDword;
 	std::string m_csOutput, csTemp;
 	BOOL res;
+	std::stringstream streamBuf;
+	LPDWORD lpBytesRead = 0;
+	LPDWORD lpTotalBytesAvail = 0;
+	LPDWORD lpBytesLeftThisMessage = 0;
+	CloseHandle(wPipe);
 	do
 	{
-		res = ::ReadFile(rPipe, buf, 100, &reDword, 0);
-		std::string *temp = new std::string(buf, reDword);
-		csTemp = *temp;
-		m_csOutput += csTemp;
-		delete temp;
+		res = ::ReadFile(rPipe, buf, 100, &reDword, 0);	
+		buf[reDword] = '\0';
+		//printf("%s", buf);
+		std::string temp(buf, reDword);
+		streamBuf << temp;
+
 	} while (res);
-	
+	m_csOutput = streamBuf.str();
 	//printf("%s", m_csOutput.c_str());
+	
 	return m_csOutput;
 }
 #else
