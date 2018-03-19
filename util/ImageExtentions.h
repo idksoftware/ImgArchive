@@ -119,8 +119,9 @@ class ImageExtentions {
 
 private:
 	ImageExtentions();
-	static ImageExtentions *m_This;
-	static CExtentionsFile *m_extentionsFile;
+	//static ImageExtentions *m_This;
+	static bool m_once;
+	static std::unique_ptr<CExtentionsFile> m_extentionsFile;
 	static std::string m_extentionsFilePath;
 	static bool m_isError;
 public:

@@ -80,7 +80,7 @@ using namespace std;
 #define REVISION     93
 #define BUILD	"040115.1749"
 
-#define DB "c:/temp/test3.db"
+
 
 
 /*
@@ -442,15 +442,22 @@ bool failed()
  *
  */
 
+#include "HtmlPages.h"
 
 int main(int argc, char **argv)
 {
 	/*
-	simplearchive::HookCmd::setHookPath("C:\\temp\\cmds");
-
-	simplearchive::OnFolderCmd onFolderCmd("C:\\temp\\2017\\2017-08-12\\pic1.png");
-	onFolderCmd.process();
-	return true;
+	HomeHtmlPage homeHtmlPage;
+	homeHtmlPage.make("C:/temp/html/homenav.html");
+	ArchiveHtmlPage archiveHtmlPage;
+	archiveHtmlPage.make("C:/temp/html/archivenav.html");
+	HistoryHtmlPage historyHtmlPage;
+	historyHtmlPage.make("C:/temp/html/historynav.html");
+	MenuHtmlPage menuHtmlPage;
+	menuHtmlPage.make("C:/temp/html/menunav.html");
+	AboutHtmlPage aboutHtmlPage;
+	aboutHtmlPage.make("C:/temp/html/aboutnav.html");
+	return 0;
 	*/
 
 	bool error = false;

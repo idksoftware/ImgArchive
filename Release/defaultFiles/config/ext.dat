@@ -13,7 +13,7 @@ dcr:Raw:Kodak-raw:Kodak RAW
 dcs:Raw:Kodak-raw:Kodak RAW
 drf:Raw:Kodak-raw:Kodak RAW
 mos:Raw:Leaf-raw:Leaf RAW
-pxn:Raw:Logitech-raw:Logitech RAW
+pxn:Raw:Logitech -raw:Logitech RAW
 crw:Raw:Canon-raw:Canon RAW
 cr2:Raw:Canon-raw:Canon RAW
 mrw:Raw:Minolta-raw:Minolta RAW
@@ -24,7 +24,7 @@ mef:Raw:Mamiya-raw:Mamiya RAW
 fff:Raw:Hasselblad-raw:Hasselblad RAW
 ari:Raw:Arriflex-raw:Arriflex RAW
 bay:Raw:Casio-raw:Casio RAW
-erf:Raw:Epsom-raw:Epsom RAW
+erf:Raw:Epsom -raw:Epsom RAW
 cap:Raw:PhaseOne-raw:Phase One RAW
 iiq:Raw:PhaseOne-raw:Phase One RAW
 eip:Raw:PhaseOne-raw:Phase One RAW

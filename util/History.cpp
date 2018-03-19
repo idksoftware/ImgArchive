@@ -15,6 +15,32 @@
 
 namespace simplearchive {
 
+	ImageHistorySchema ImageHistoryRow::m_tableSchema;
+	ImageHistoryRow::ImageHistoryRow() : MTRow(m_tableSchema) {}
+	ImageHistoryRow::ImageHistoryRow(const char *filepath, const char *version, const char *comment, const HistoryEvent &he) : MTRow(m_tableSchema) {
+		ExifDateTime date;
+		date.now();
+		columnAt(static_cast<int>(ImageHistoryIndex::IH_FILEPATH_IDX)).fromString(filepath);;
+		columnAt(static_cast<int>(ImageHistoryIndex::IH_DATEADDED_IDX)).fromString(date.toString());;
+		columnAt(static_cast<int>(ImageHistoryIndex::IH_VERSION_IDX)).fromString(version);;
+		columnAt(static_cast<int>(ImageHistoryIndex::IH_EVENT_IDX)).fromString(he.getString());;
+		columnAt(static_cast<int>(ImageHistoryIndex::IH_COMMENT_IDX)).fromString(comment);;
+	}
+
+
+
+	SystemHistorySchema SystemHistoryRow::m_tableSchema;
+	SystemHistoryRow::SystemHistoryRow() : MTRow(m_tableSchema) {}
+	SystemHistoryRow::SystemHistoryRow(const char *filepath, const char *version, const char *comment, const HistoryEvent &he) : MTRow(m_tableSchema) {
+		ExifDateTime date;
+		date.now();
+		columnAt(static_cast<int>(SystemHistoryIndex::SH_DATEADDED_IDX)).fromString(date.toString());;
+		columnAt(static_cast<int>(SystemHistoryIndex::SH_FILEPATH_IDX)).fromString(filepath);;
+		columnAt(static_cast<int>(SystemHistoryIndex::SH_VERSION_IDX)).fromString(version);;
+		columnAt(static_cast<int>(SystemHistoryIndex::SH_EVENT_IDX)).fromString(he.getString());;
+		columnAt(static_cast<int>(SystemHistoryIndex::SH_COMMENT_IDX)).fromString(comment);;
+	}
+
 	std::unique_ptr<History> History::m_this = nullptr;
 	std::once_flag History::m_onceFlag;
 	std::string History::m_indexPath;
@@ -54,17 +80,7 @@ namespace simplearchive {
 		});
 		return *(m_this);
 
-		/*
-		std::call_once(m_onceFlag,
-		[] {
-		m_this.reset(new ChangeLog);
-		LogFilename logFilename(m_logpath.c_str());
-		m_filename = logFilename.filepath();
-		m_logfile.open(m_filename.c_str(), ios::out | ios::app);
-		});
-
-		return *m_this.get();
-		*/
+		
 	}
 
 	void History::setPaths(const char *index, const char *workspace, const char *system) {

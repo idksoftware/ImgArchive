@@ -107,14 +107,14 @@ ExifObject *ImageFileReader::externalExifTool(std::string &path) {
 	exifMap += '/';
 	exifMap += exifMapFile;
 
-	logger.log(LOG_OK, CLogger::Level::FINE, "Raw Exif command line found \"%s\"", externalCommandLine);
+	logger.log(LOG_OK, CLogger::Level::FINE, "Raw Exif command line found \"%s\"", externalCommandLine.c_str());
 	if (!externalComand.init(externalCommandLine.c_str(), exifMapPath)) {
 		
 		return nullptr;
 	}
 	ExifObject *exifObject = externalComand.process(path.c_str());
 	if (exifObject == nullptr) {
-		logger.log(LOG_OK, CLogger::Level::WARNING, "Failed to read map file for \"%s\"", externalCommandLine);
+		logger.log(LOG_OK, CLogger::Level::WARNING, "Failed to read map file for \"%s\"", externalCommandLine.c_str());
 		return nullptr;
 	}
 	exifObject->print();

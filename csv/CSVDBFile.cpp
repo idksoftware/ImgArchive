@@ -59,6 +59,53 @@ static char THIS_FILE[] = __FILE__;
 
 namespace simplearchive {
 
+
+/*
+IndexRow::IndexRow(MTTableSchema &tableSchema) : MTRow(tableSchema) {}
+IndexRow::IndexRow(int idx, const char *imagePath, const char *name, unsigned long size, unsigned long crc,
+	const char *md5, const char *uuid, int version, ExifDate &date, int m_dbidx, MTTableSchema &tableSchema) : MTRow(tableSchema) {
+	ExifDateTime edt(date.toString().c_str());
+	columnAt(static_cast<int>(PrimaryIndexIndex::PI_SEQUENCEID_IDX)).set(idx);
+	columnAt(static_cast<int>(PrimaryIndexIndex::PI_SHORTIMAGEPATH_IDX)).set(imagePath);
+	columnAt(static_cast<int>(PrimaryIndexIndex::PI_FILENAME_IDX)).set(name);
+	columnAt(static_cast<int>(PrimaryIndexIndex::PI_FILESIZE_IDX)).set(size);
+	columnAt(static_cast<int>(PrimaryIndexIndex::PI_CRC_IDX)).set(crc);
+	columnAt(static_cast<int>(PrimaryIndexIndex::PI_MD5_IDX)).set(md5);
+	columnAt(static_cast<int>(PrimaryIndexIndex::PI_UUID_IDX)).set(uuid);
+	columnAt(static_cast<int>(PrimaryIndexIndex::PI_VERSION_IDX)).set(version);
+	columnAt(static_cast<int>(PrimaryIndexIndex::PI_DATEADDED_IDX)).set(edt);
+	columnAt(static_cast<int>(PrimaryIndexIndex::PI_DATABASEID_IDX)).set(m_dbidx);
+}
+
+
+PrimaryIndexSchema PrimaryIndexRow::m_tableSchema;
+MasterIndexSchema MasterIndexRow::m_tableSchema;
+DerivativeIndexSchema DerivativeIndexRow::m_tableSchema;
+
+PrimaryIndexRow PrimaryIndexTable::m_indexRow;
+MasterIndexRow MasterIndexTable::m_indexRow;
+DerivativeIndexRow DerivativeIndexTable::m_indexRow;
+
+PrimaryIndexRow::PrimaryIndexRow() : IndexRow(m_tableSchema) {}
+PrimaryIndexRow::PrimaryIndexRow(int idx, const char *imagePath, const char *name, unsigned long size, unsigned long crc,
+	const char *md5, const char *uuid, int version, ExifDate &date, int dbidx) : IndexRow(idx, imagePath, name, size, crc,
+		md5, uuid, version, date, dbidx, m_tableSchema) {};
+PrimaryIndexRow::PrimaryIndexRow(const MTRow &row) : IndexRow(row, m_tableSchema) {};
+
+MasterIndexRow::MasterIndexRow() : IndexRow(m_tableSchema) {}
+MasterIndexRow::MasterIndexRow(int idx, const char *imagePath, const char *name, unsigned long size, unsigned long crc,
+	const char *md5, const char *uuid, int version, ExifDate &date, int dbidx) : IndexRow(idx, imagePath, name, size, crc,
+		md5, uuid, version, date, dbidx, m_tableSchema) {};
+MasterIndexRow::MasterIndexRow(const MTRow &row) : IndexRow(row, m_tableSchema) {};
+
+DerivativeIndexRow::DerivativeIndexRow() : IndexRow(m_tableSchema) {}
+DerivativeIndexRow::DerivativeIndexRow(int idx, const char *imagePath, const char *name, unsigned long size, unsigned long crc,
+	const char *md5, const char *uuid, int version, ExifDate &date, int dbidx) : IndexRow(idx, imagePath, name, size, crc,
+		md5, uuid, version, date, dbidx, m_tableSchema) {};
+DerivativeIndexRow::DerivativeIndexRow(const MTRow &row) : IndexRow(row, m_tableSchema) {};
+*/
+
+
 ImageInfo::ImageInfo(int idx, const char *imagePath, const char *name, unsigned long size, unsigned long crc,
 	const char *md5, const char *uuid, int version, ExifDate &date, int dbidx)
 {
@@ -253,8 +300,8 @@ std::string CSVDBFile::getYear(const char *path) {
 	return fpath.substr(0, 4);
 }
 
-CSVDBFile::CSVDBFile() {
-}
+CSVDBFile::CSVDBFile() {};
+	
 
 CSVDBFile::~CSVDBFile()
 {}

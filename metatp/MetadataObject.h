@@ -46,7 +46,7 @@ namespace simplearchive {
 
 class MetadataSchema : public MTTableSchema {
 public:
-	MetadataSchema() : MTTableSchema("MetadataProperties") {
+	MetadataSchema() : MTTableSchema(TABLE_METADATA_PROPERTIES) {
 
 		// Assest 
 		// file

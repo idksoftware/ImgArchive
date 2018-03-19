@@ -9,17 +9,59 @@
 
 namespace simplearchive {
 
+	class HistoryEvent;
+
 	class ImageHistorySchema : public MTTableSchema {
 	public:
-		ImageHistorySchema() : MTTableSchema("ImageHistory") {
-			add(MTSchema(MTSchema::Text, DB_COMMENT));// template
-			add(MTSchema(MTSchema::Date, DB_DATEADDED));
+		ImageHistorySchema() : MTTableSchema(TABLE_IMAGE_HISTORY) {
 			add(MTSchema(MTSchema::Text, DB_FILEPATH));
-			add(MTSchema(MTSchema::Text, DB_EVENT));
+			add(MTSchema(MTSchema::Date, DB_DATEADDED));
 			add(MTSchema(MTSchema::Integer, DB_VERSION));// template
+			add(MTSchema(MTSchema::Text, DB_EVENT));
+			add(MTSchema(MTSchema::Text, DB_COMMENT));// template
 		}
 	};
 
+	class SystemHistorySchema : public MTTableSchema {
+	public:
+		SystemHistorySchema() : MTTableSchema(TABLE_SYSTEM_HISTORY) {
+			add(MTSchema(MTSchema::Date, DB_DATEADDED));
+			add(MTSchema(MTSchema::Text, DB_FILEPATH));	
+			add(MTSchema(MTSchema::Integer, DB_VERSION));// template
+			add(MTSchema(MTSchema::Text, DB_EVENT));
+			add(MTSchema(MTSchema::Text, DB_COMMENT));// template
+		}
+	};
+	
+	class ImageHistoryRow : public MTRow {
+		static ImageHistorySchema m_tableSchema;
+	public:
+		ImageHistoryRow();
+		ImageHistoryRow(const char *filepath, const char *version, const char *comment, const HistoryEvent &he);
+		ImageHistoryRow(const MTRow &row) : MTRow(m_tableSchema) {
+
+			for (unsigned int i = 0; i < row.size(); i++) {
+				MTColumn& c1 = *at(i);
+				MTColumn& c2 = *row.at(i);
+				c1 = c2;
+			}
+		}
+	};
+
+	class SystemHistoryRow : public MTRow {
+		static SystemHistorySchema m_tableSchema;
+	public:
+		SystemHistoryRow();
+		SystemHistoryRow(const char *filepath, const char *version, const char *comment, const HistoryEvent &he);
+		SystemHistoryRow(const MTRow &row) : MTRow(m_tableSchema) {
+
+			for (unsigned int i = 0; i < row.size(); i++) {
+				MTColumn& c1 = *at(i);
+				MTColumn& c2 = *row.at(i);
+				c1 = c2;
+			}
+		}
+	};
 
 
 	class SystemHistory;

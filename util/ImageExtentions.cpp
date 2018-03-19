@@ -161,8 +161,8 @@ ExtentionItem *CExtentionsFile::find(const char *ext) {
 
 std::string ImageExtentions::m_extentionsFilePath;
 
-CExtentionsFile *ImageExtentions::m_extentionsFile = 0;
-ImageExtentions *ImageExtentions::m_This = 0;
+std::unique_ptr<CExtentionsFile> ImageExtentions::m_extentionsFile = 0;
+bool ImageExtentions::m_once = true;
 bool ImageExtentions::m_isError = false;
 static ImageType defaultImageType;
 static ExtentionItem defaultExtentionItem;
@@ -174,23 +174,23 @@ ImageExtentions::ImageExtentions() {
 }
 
 ImageExtentions &ImageExtentions::get() {
-	if (m_This == 0) {
-		m_This = new ImageExtentions();
+	static ImageExtentions INSTANCE;
+	if (m_once) {
 		std::string path = m_extentionsFilePath + "/ext.dat";
 		if (SAUtils::FileExists(path.c_str()) == false) {
 			m_isError = true;
 			throw std::exception("Cannot read extentions file \"ext.dat\"");
 			
 		}
-		m_extentionsFile = new CExtentionsFile();
+		m_extentionsFile = std::make_unique<CExtentionsFile>();
 		m_extentionsFile->read(path.c_str());
-
+		m_once = false;
 	}
-	return *m_This;
+	return INSTANCE;
 }
 
 ImageExtentions::~ImageExtentions() {
-	delete m_extentionsFile;
+	
 }
 
 bool ImageExtentions::setExtentionsFilePath(const char *extentionsFilePath) {

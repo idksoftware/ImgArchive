@@ -69,6 +69,8 @@ namespace simplearchive {
 // This class is used to write the log in normal operation. However reading the 
 // log will be done by the MTRow 
 
+
+
 class HistoryItem {
 	std::string m_comment;
 	std::string m_date;
@@ -109,7 +111,12 @@ public:
 		return m_data;
 	}
 
+
+	HistoryItem::~HistoryItem() {
+		
+	}
 };
+
 
 
 ImageHistory::ImageHistory() {

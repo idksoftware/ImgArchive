@@ -34,6 +34,7 @@
 
 #ifndef ARCHIVEBUILDER_H_
 #define ARCHIVEBUILDER_H_
+#include <memory>
 #include <string>
 
 namespace simplearchive {

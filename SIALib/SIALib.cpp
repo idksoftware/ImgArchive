@@ -172,7 +172,7 @@ namespace simplearchive {
 		
 		AppConfig &config = AppConfig::get();
 
-		CLogger::setLevel(config.getLogLevel());
+		CLogger::setLogLevel(config.getLogLevel());
 		CLogger::setConsoleLevel(config.getConsoleLevel());
 		CLogger::setLogPath(config.getLogPath());
 		CLogger::setSilent(config.isSilent());
@@ -344,12 +344,16 @@ namespace simplearchive {
 			if (ViewManager::initalise(config.getMasterPath(), config.getConfigPath()) == false) {
 				return -1;
 			}
-			Database &db = Database::getInstance();
-
-			if (db.open(DB, "", "") == false) {
-				printf("database open returned %s", db.getError());
-			}
 			*/
+			if (config.isSQL()) {
+				Database &db = Database::getInstance();
+				std::string dbPath = config.getDatabasePath();
+				dbPath += '/';
+				dbPath += SQLITE3_DB;
+				if (db.open(dbPath.c_str(), "", "") == false) {
+					printf("database open returned %s", db.getError());
+				}
+			}
 		}
 		catch (SIAAppException e) {
 			logger.log(LOG_OK, CLogger::Level::FATAL, "Failed to complete initalisation %s\n", e.what());

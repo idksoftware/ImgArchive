@@ -73,6 +73,64 @@ void chartohex(char *buffer, unsigned char x) {
 
 
 
+class CacheItem {
+	unsigned long m_crc;
+	std::string m_md5;
+	std::string m_path;
+public:
+	CacheItem(unsigned long crc, const char *md5, const char *path) {
+		m_crc = crc;
+		m_md5 = md5;
+		m_path = path;
+	}
+	unsigned long getCRC() { return m_crc; };
+	std::string getMD() { return m_md5; };
+	std::string getPath() { return m_path; };
+};
+
+struct IdxCompare
+{
+	const std::vector<CacheItem>& target;
+
+	IdxCompare(const std::vector<CacheItem>& target) : target(target) {}
+
+	bool operator()(CacheItem &a, CacheItem &b) const {
+		//auto ia = target[a];
+		//auto ib = target[b];
+		return a.getCRC() < b.getCRC();
+	}
+};
+
+bool comp(CacheItem a, CacheItem b) { return (a.getCRC() < b.getCRC()); }
+
+class DupCache : public std::vector<CacheItem> {
+	
+public:
+	bool insert(unsigned long crc, const char *md5, const char *path) {
+		CacheItem x(crc, md5, path);
+		push_back(x);
+		std::sort(begin(), end(), IdxCompare(*this));
+
+		std::cout << "\nDupCache" << '\n';
+		for (size_t i = 0; i < size(); ++i)
+			std::cout << (*this)[i].getCRC() << '\n';
+
+		return true;
+	}
+
+	bool isDup(unsigned long crc) {
+		CacheItem x(crc, "", "");
+		if (std::binary_search(begin(), end(), x, comp)) {
+			std::cout << "found!\n";
+			return true;
+		} else {
+			std::cout << "not found.\n";
+			return false;
+		}
+	}
+
+};
+
 class MirrorImageIndex {
 	std::string m_path;
 	std::string m_primary;
@@ -115,14 +173,12 @@ public:
 	bool IsEmpty() {
 		return m_dataContainer->empty();
 	}
-	void insert(unsigned long crc, std::string);
+	void insert(unsigned long crc, std::string &row);
 	std::string& getAt(int pos);
 	void putAt(int pos, std::string item);
 };
 
-DupDataFile::DupDataFile() {
-	m_dataContainer.reset(new DataContainer());
-}
+DupDataFile::DupDataFile() : m_dataContainer(std::make_unique<DataContainer>()) {}
 
 DupDataFile::~DupDataFile() {
 }
@@ -166,12 +222,11 @@ bool DupDataFile::add(const char *name, unsigned long crc, const char *md5) {
 	//std::string crcStr = c_crc;
 	std::string nameStr = name;
 	std::string md5Str = md5;
-	std::string *row = new std::string(crcStr + ':' + nameStr + ':' + md5Str);
+	std::string row(crcStr + ':' + nameStr + ':' + md5Str);
 	if (find(crc) != -1) {
-		delete row;
 		return false; // found
 	}
-	insert(crc, *row);
+	insert(crc, row);
 	return true;
 }
 
@@ -183,7 +238,7 @@ void DupDataFile::putAt(int pos, std::string item) {
 	(*m_dataContainer)[pos] = item;
 }
 
-void DupDataFile::insert(unsigned long crc, std::string row) {
+void DupDataFile::insert(unsigned long crc, std::string& row) {
 	bool found = false;
 	int pos = 0;
 	for (std::vector<std::string>::iterator i = m_dataContainer->begin(); i != m_dataContainer->end(); i++) {
@@ -266,11 +321,13 @@ int DupDataFile::find(unsigned long crc) {
 				return pos;
 			}
 			*/
+			/*
 			int i = csvArgs.size();
 			if (csvArgs.size() <= 3) {
 				// Not archived
 				return ((int)-1);
 			}
+			*/
 			return pos;
 		}
 	}
@@ -278,7 +335,7 @@ int DupDataFile::find(unsigned long crc) {
 	return ((int)-1);
 }
 
-ImageIndex::ImageIndex() 
+ImageIndex::ImageIndex() : m_dupCache(std::make_unique<DupCache>())
 {
 }
 
@@ -419,6 +476,27 @@ bool ImageIndex::add(const FileInfo &fileinfo) {
 	return add(fileinfo.getName().c_str(), fileinfo.getCrc(), fileinfo.getMd5().c_str());
 }
 
+
+bool ImageIndex::add2DupCache(const BasicMetadata &BasicMetadata) {
+
+	std::string pathStr = BasicMetadata.getPath();
+
+
+	unsigned long c = BasicMetadata.getCrc();
+
+	std::string filename = pathStr.substr(pathStr.find_last_of("/") + 1);
+	return m_dupCache->insert(BasicMetadata.getCrc(), BasicMetadata.getMd5().c_str(), filename.c_str());
+}
+
+bool ImageIndex::isDupInCache(unsigned long crc) {
+	return m_dupCache->isDup(crc);
+}
+
+
+
+bool ImageIndex::add2DupCache(const FileInfo &fileinfo) {
+	return m_dupCache->insert(fileinfo.getCrc(), fileinfo.getMd5().c_str(), fileinfo.getName().c_str());
+}
 
 bool ImageIndex::add(const char *name, unsigned long crc, const char *md5) {
 	if (add(name, crc, md5, m_dbpath.c_str()) == false) {

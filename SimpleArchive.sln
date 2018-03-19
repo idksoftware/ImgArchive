@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.26228.4
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimpleArchive", "SimpleArchive\SimpleArchive.vcxproj", "{E6B44F35-CDAB-4487-9CD4-3DC02BBB488E}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -82,6 +82,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "appbase", "appbase\appbase.vcxproj", "{6712D2A3-305E-4C55-B461-F94EBA993AA0}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dbtest", "dbtest\dbtest.vcxproj", "{292E05F4-583C-42EA-AB17-77D8D614021F}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sqlshell", "sqlshell\sqlshell.vcxproj", "{0F585909-ADDC-49D2-BE5D-458244FDDB21}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -343,6 +345,22 @@ Global
 		{292E05F4-583C-42EA-AB17-77D8D614021F}.Release|Win32.ActiveCfg = Release|Win32
 		{292E05F4-583C-42EA-AB17-77D8D614021F}.Release|Win32.Build.0 = Release|Win32
 		{292E05F4-583C-42EA-AB17-77D8D614021F}.Release|x64.ActiveCfg = Release|Win32
+		{0F585909-ADDC-49D2-BE5D-458244FDDB21}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{0F585909-ADDC-49D2-BE5D-458244FDDB21}.Debug|ARM.ActiveCfg = Debug|Win32
+		{0F585909-ADDC-49D2-BE5D-458244FDDB21}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{0F585909-ADDC-49D2-BE5D-458244FDDB21}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{0F585909-ADDC-49D2-BE5D-458244FDDB21}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0F585909-ADDC-49D2-BE5D-458244FDDB21}.Debug|Win32.Build.0 = Debug|Win32
+		{0F585909-ADDC-49D2-BE5D-458244FDDB21}.Debug|x64.ActiveCfg = Debug|x64
+		{0F585909-ADDC-49D2-BE5D-458244FDDB21}.Debug|x64.Build.0 = Debug|x64
+		{0F585909-ADDC-49D2-BE5D-458244FDDB21}.Release|Any CPU.ActiveCfg = Release|Win32
+		{0F585909-ADDC-49D2-BE5D-458244FDDB21}.Release|ARM.ActiveCfg = Release|Win32
+		{0F585909-ADDC-49D2-BE5D-458244FDDB21}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{0F585909-ADDC-49D2-BE5D-458244FDDB21}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{0F585909-ADDC-49D2-BE5D-458244FDDB21}.Release|Win32.ActiveCfg = Release|Win32
+		{0F585909-ADDC-49D2-BE5D-458244FDDB21}.Release|Win32.Build.0 = Release|Win32
+		{0F585909-ADDC-49D2-BE5D-458244FDDB21}.Release|x64.ActiveCfg = Release|x64
+		{0F585909-ADDC-49D2-BE5D-458244FDDB21}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

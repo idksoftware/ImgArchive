@@ -73,8 +73,8 @@ public:
 	static void Log(Level level, const char *format, ...);
 	*/
 
-	Level getLevel() const {
-		return m_level;
+	Level getLogLevel() const {
+		return m_logLevel;
 	}
 
 	static const int getLastCode() {
@@ -112,12 +112,12 @@ public:
 		return setLevel(m_isConsoleOut, level);
 	}
 
-	static void setLevel(Level level) {
-		m_level = level;
+	static void setLogLevel(Level level) {
+		m_logLevel = level;
 	}
 
-	static bool setLevel(const std::string &level) {
-		return setLevel(m_level, level);
+	static bool setLogLevel(const std::string &level) {
+		return setLevel(m_logLevel, level);
 	}
 
 	static void setLogPath(const char *logpath);
@@ -134,7 +134,7 @@ private:
 	CLogger();
 	CLogger(const CLogger&) {};
 	CLogger& operator = (const CLogger& ) { return *this; }
-	bool IsPrintable(Level level);
+	bool IsLogOut(Level level);
 	bool CLogger::IsConsoleOut(Level level);
 	static void makeFile();
 	const char *levelStr(Level level);
@@ -145,7 +145,8 @@ private:
 	static const std::string m_Path;
 	static std::unique_ptr<CLogger> m_this;
 	static std::ofstream m_logfile;
-	static Level m_level;
+	static Level m_logLevel;
+	static Level m_consoleLevel;
 	static Level m_isConsoleOut;
 	static std::string m_logpath;
 	static int m_size;
@@ -154,7 +155,9 @@ private:
 	static std::string m_lastMessage;
 	static std::unique_ptr<LogBuffer> m_startUpBuffer;
 	static bool setLevel(CLogger::Level &level, const std::string &s);
-	
+	static CLogger::Level toLevel(const std::string &s);
+	static const char *toString(CLogger::Level level);
+	static bool messageOk(std::string message);
 };
 
 } /* namespace simplearchive */

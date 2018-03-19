@@ -58,7 +58,7 @@ namespace simplearchive {
 	bool AppConfig::m_silent = false;
 	std::string AppConfig::m_logLevel = "SUMMARY";
 	bool AppConfig::m_dry_run = false;
-	bool AppConfig::m_useDatabase = true;
+	bool AppConfig::m_sql_on = true;
 
 	bool AppConfig::m_eventsOn = false; // UDP events
 	bool AppConfig::m_serverOn = false;
@@ -329,7 +329,18 @@ namespace simplearchive {
 		setGeneral(DRY_RUN_LABEL, dry_run, dry_run);
 		AppConfig::m_dry_run = (stricmp(dry_run.c_str(), "true") == 0);
 
+		std::string logLevel = "SUMMARY";
+		setGeneral(LOG_LEVEL_LABEL, logLevel, logLevel);
+		AppConfig::m_logLevel = logLevel;
 
+		std::string consoleLevel = "SUMMARY";
+		setGeneral(LOG_LEVEL_LABEL, consoleLevel, consoleLevel);
+		AppConfig::m_consoleLevel = consoleLevel;
+
+		std::string sql_on = "false";
+		setGeneral(SQL_LABEL, sql_on, sql_on);
+		AppConfig::m_sql_on = (stricmp(sql_on.c_str(), "true") == 0);
+		
 	// System Folders
 		// Master Archive Path
 		//std::shared_ptr<ConfigBlock> folders = getSystemFolders();
@@ -348,6 +359,8 @@ namespace simplearchive {
 		setSystemFolders(DERIVATIVE_PATH_LABEL, AppConfig::m_derivativePath, homePath + DERIVATIVE_PATH);
 		setSystemFolders(TOOLS_PATH_LABEL, AppConfig::m_toolsPath, homePath + TOOLS_PATH);
 		setSystemFolders(HOOK_SCRIPTS_PATH_LABEL, AppConfig::m_hookPath, homePath + HOOKS_PATH);
+		setSystemFolders(SQL_DATABASE_PATH_LABEL, AppConfig::m_DatabasePath, homePath + SQLITEDB_PATH);
+		
 //#define HOME_PATH_LABEL					"HomePath"
 
 		setSystemFolders(HISTORY_PATH_LABEL, AppConfig::m_historyPath, homePath + HISTORY_PATH);	
@@ -432,7 +445,10 @@ namespace simplearchive {
 		AppConfig::m_indexPath = AppConfig::m_systemPath + "/index";
 
 		logger.log(LOG_OK, CLogger::Level::INFO, "    General");
-		logger.log(LOG_OK, CLogger::Level::INFO, "        Dry run enabled\"%s\"", (AppConfig::m_dry_run) ? "True" : "False");
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Dry run enabled %s", (AppConfig::m_dry_run) ? "True" : "False");
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Log level: %s", AppConfig::m_logLevel.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Console level: %s", AppConfig::m_consoleLevel.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "        SQL database: %s", (AppConfig::m_sql_on) ? "True" : "False");
 		logger.log(LOG_OK, CLogger::Level::INFO, "    System paths");
 		logger.log(LOG_OK, CLogger::Level::INFO, "        System path \"%s\"", AppConfig::m_systemPath.c_str());
 		logger.log(LOG_OK, CLogger::Level::INFO, "        Log path \"%s\"", AppConfig::m_logPath.c_str());
@@ -443,7 +459,8 @@ namespace simplearchive {
 		logger.log(LOG_OK, CLogger::Level::INFO, "        History path \"%s\"", AppConfig::m_historyPath.c_str());
 		logger.log(LOG_OK, CLogger::Level::INFO, "        Template path \"%s\"", AppConfig::m_templatePath.c_str());
 		logger.log(LOG_OK, CLogger::Level::INFO, "        Catalog path \"%s\"", AppConfig::m_catalogPath.c_str());
-		
+		logger.log(LOG_OK, CLogger::Level::INFO, "        SQL Database path \"%s\"", AppConfig::m_DatabasePath.c_str());
+
 		logger.log(LOG_OK, CLogger::Level::INFO, "    External Exif Tool");
 		logger.log(LOG_OK, CLogger::Level::INFO, "        External Exif tool enabled \"%s\"", (AppConfig::m_externalExifToolEnabled)?"True":"False");
 		logger.log(LOG_OK, CLogger::Level::INFO, "        Exif map path \"%s\"", AppConfig::m_ExifMapPath.c_str());
@@ -521,6 +538,11 @@ namespace simplearchive {
 	}
 
 	
+	bool AppConfig::isSQL() {
+
+		return m_sql_on;
+
+	}
 
 
 	/// Gets the archive path.
@@ -752,12 +774,7 @@ namespace simplearchive {
 	}
 	
 	const char *AppConfig::getDatabasePath() {
-		/*
-		if (getRoot().value("DatabasePath", m_DatabasePath) == false) {
-			std::string temp = SAUtils::GetPOSIXEnv("HOMEPATH");
-			m_DatabasePath = m_homePath + DATABASE_PATH;
-		}
-		*/
+		
 		return m_DatabasePath.c_str();
 	}
 

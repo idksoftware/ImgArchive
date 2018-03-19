@@ -138,7 +138,10 @@
     <ClInclude Include="ImageGroup.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="VersionControl_old.h">
+    <ClInclude Include="SQLiteDB.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HtmlPages.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -257,7 +260,13 @@
     <ClCompile Include="MasterCatalogue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SQLiteDB.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="ImageGroup_old.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HtmlPages.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

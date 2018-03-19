@@ -111,7 +111,7 @@ namespace simplearchive {
 	class ExifObjectSchema : public MTTableSchema {
 	public:
 		ExifObjectSchema() : MTTableSchema(ROW_EXTERNAL_EXIF) {
-
+/*
 			add(MTSchema(MTSchema::Text, DB_ORGINALNAME));
 			add(MTSchema(MTSchema::Text, DB_LABEL));
 			add(MTSchema(MTSchema::Integer, DB_RATING));
@@ -152,6 +152,105 @@ namespace simplearchive {
 			add(MTSchema(MTSchema::Text, DB_USAGERIGHTS));
 			add(MTSchema(MTSchema::Text, DB_COPYRIGHTURL));
 			add(MTSchema(MTSchema::Text, DB_MEDIATYPE));
+			*/
+			// Assest 
+			// file
+		
+			add(MTSchema(MTSchema::Text, DB_MEDIATYPE));
+			
+			//add(MTSchema(MTSchema::Date, DB_DATECREATE));
+			//add(MTSchema(MTSchema::Date, DB_DATEMODIFIED));
+			//add(MTSchema(MTSchema::Date, DB_DATEADDED));
+			// Description
+			add(MTSchema(MTSchema::Text, DB_DESCRIPTION));
+			add(MTSchema(MTSchema::Text, DB_LABEL));
+			add(MTSchema(MTSchema::Text, DB_TITLE));
+			add(MTSchema(MTSchema::Text, DB_SUBJECT));
+			add(MTSchema(MTSchema::Integer, DB_RATING));
+			add(MTSchema(MTSchema::Integer, DB_RATINGPERCENT));
+			add(MTSchema(MTSchema::Text, DB_TAGS));// template
+			add(MTSchema(MTSchema::Text, DB_KEYWORDS));// template
+			add(MTSchema(MTSchema::Integer, DB_VERSION));// template
+														 // Origin
+			add(MTSchema(MTSchema::Text, DB_COMMENT));// template
+			add(MTSchema(MTSchema::Text, DB_AUTHOR));
+			add(MTSchema(MTSchema::Date, DB_CAPTUREDATE));
+
+
+			// Cammara
+			// Image
+			add(MTSchema(MTSchema::Date, DB_SUBSETIMEORIGINAL));
+			add(MTSchema(MTSchema::Text, DB_COPYRIGHT));
+
+			add(MTSchema(MTSchema::Integer, DB_WIDTH));
+			add(MTSchema(MTSchema::Integer, DB_HEIGHT));
+			add(MTSchema(MTSchema::Integer, DB_VIEWROTATION));
+			add(MTSchema(MTSchema::Integer, DB_BITSPERSAMPLE));
+			add(MTSchema(MTSchema::Integer, DB_XRESOLUTION));
+			add(MTSchema(MTSchema::Integer, DB_YRESOLUTION));
+			add(MTSchema(MTSchema::Text, DB_RESOLUTIONUNIT));
+			add(MTSchema(MTSchema::Integer, DB_COMPRESSION));
+			// Camera
+			add(MTSchema(MTSchema::Text, DB_MAKER));
+			add(MTSchema(MTSchema::Text, DB_MODEL));
+			add(MTSchema(MTSchema::Text, DB_EXPOSURETIME));
+			add(MTSchema(MTSchema::Float, DB_APERTURE));
+			add(MTSchema(MTSchema::Integer, DB_ISOSPEEDRATING));
+			add(MTSchema(MTSchema::Float, DB_EXPOSUREBIAS));
+			add(MTSchema(MTSchema::Text, DB_EXPOSUREPROGRAM));
+			add(MTSchema(MTSchema::Float, DB_SUBJECTDISTANCE));
+			add(MTSchema(MTSchema::Float, DB_FOCALLENGTH));
+			add(MTSchema(MTSchema::Integer, DB_FOCALLENGTHIN35MM));
+			add(MTSchema(MTSchema::Text, DB_FLASH));
+			add(MTSchema(MTSchema::Text, DB_METERINGMODE));
+			add(MTSchema(MTSchema::Float, DB_DIGITALZOOM));
+			// Advanced photo
+			add(MTSchema(MTSchema::Text, DB_LIGHTSOURCE));
+			add(MTSchema(MTSchema::Text, DB_COLORSPACE));
+			add(MTSchema(MTSchema::Text, DB_WHITEBALANCE));
+			add(MTSchema(MTSchema::Text, DB_SCENECAPTURETYPE));
+			add(MTSchema(MTSchema::Text, DB_CONTRAST));
+			add(MTSchema(MTSchema::Text, DB_SATURATION));
+			add(MTSchema(MTSchema::Text, DB_SHARPNESS));
+			add(MTSchema(MTSchema::Float, DB_BRIGHTNESSVALUE));
+			add(MTSchema(MTSchema::Text, DB_SUBJECTDISTANCERANGE));
+			add(MTSchema(MTSchema::Float, DB_MAXAPERTURE));
+			add(MTSchema(MTSchema::Float, DB_COMPRESSEDBITSPERPIXEL));
+			add(MTSchema(MTSchema::Float, DB_FLASHENERGY));
+			add(MTSchema(MTSchema::Text, DB_EXIFVERSION));
+			add(MTSchema(MTSchema::Text, DB_SOFTWARE));
+			add(MTSchema(MTSchema::Integer, DB_PHOTOMETRICINTERPRETATION));
+			add(MTSchema(MTSchema::Text, DB_GPSTIMESTAMP));
+
+
+			//	add(MTSchema(MTSchema::Text, DB_SENSINGMETHOD));
+
+			// Location
+			add(MTSchema(MTSchema::Text, DB_LATITUDE));
+			add(MTSchema(MTSchema::Text, DB_LONGITUDE));
+			add(MTSchema(MTSchema::Text, DB_LOCATION));
+			add(MTSchema(MTSchema::Text, DB_SCENE));// template
+
+													// IPTC
+			add(MTSchema(MTSchema::Text, DB_SOURCEURL));			// template
+			add(MTSchema(MTSchema::Text, DB_USAGERIGHTS));// template
+			add(MTSchema(MTSchema::Text, DB_COPYRIGHTURL));// template
+			add(MTSchema(MTSchema::Text, DB_HEADLINE));// template
+			add(MTSchema(MTSchema::Text, DB_CATEGORY));// template
+			add(MTSchema(MTSchema::Text, DB_SOURCE));// template
+			add(MTSchema(MTSchema::Text, DB_INSTRUCTIONS));// template
+
+			add(MTSchema(MTSchema::Text, DB_CREATOR));// template
+			add(MTSchema(MTSchema::Text, DB_JOBTITLE));// template
+			add(MTSchema(MTSchema::Text, DB_ADDRESS));// template
+			add(MTSchema(MTSchema::Text, DB_CITY));// template
+			add(MTSchema(MTSchema::Text, DB_STATE));// template
+			add(MTSchema(MTSchema::Text, DB_POSTALCODE));// template
+			add(MTSchema(MTSchema::Text, DB_COUNTRY));// template
+			add(MTSchema(MTSchema::Text, DB_PHONE));// template
+			add(MTSchema(MTSchema::Text, DB_EMAIL));// template
+			add(MTSchema(MTSchema::Text, DB_WEBSITE));// template
+													  // new 
 		}
 	};
 

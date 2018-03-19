@@ -165,6 +165,7 @@
     <ClInclude Include="CheckFile.h" />
     <ClInclude Include="GetImagesManager.h" />
     <ClInclude Include="HookCmd.h" />
+    <ClInclude Include="HtmlPages.h" />
     <ClInclude Include="ImageContainer.h" />
     <ClInclude Include="ImageFileReader.h" />
     <ClInclude Include="ImageGroup.h" />
@@ -179,6 +180,7 @@
     <ClInclude Include="MasterCatalogue.h" />
     <ClInclude Include="MetadataUpdate.h" />
     <ClInclude Include="PageMaker.h" />
+    <ClInclude Include="SQLiteDB.h" />
     <ClInclude Include="VersionIndex.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SACmdArgs.h" />
@@ -187,7 +189,6 @@
     <ClInclude Include="StandardOut.h" />
     <ClInclude Include="TargetsList.h" />
     <ClInclude Include="TerminalServer.h" />
-    <ClInclude Include="VersionControl_old.h" />
     <ClInclude Include="ViewManager.h" />
     <ClInclude Include="XMLReader.h" />
   </ItemGroup>
@@ -207,10 +208,11 @@
     <ClCompile Include="ExportImages.cpp" />
     <ClCompile Include="GetIImagesManager.cpp" />
     <ClCompile Include="HookCmd.cpp" />
+    <ClCompile Include="HtmlPages.cpp" />
     <ClCompile Include="ImageContainer.cpp" />
     <ClCompile Include="ImageFileReader.cpp" />
-    <ClCompile Include="ImageGroup_old.cpp" />
     <ClCompile Include="BasicMetadataFactory.cpp" />
+    <ClCompile Include="ImageGroup_old.cpp" />
     <ClCompile Include="ImageIndex.cpp" />
     <ClCompile Include="ImageLock.cpp" />
     <ClCompile Include="ImagePath.cpp" />
@@ -221,6 +223,7 @@
     <ClCompile Include="MasterCatalogue.cpp" />
     <ClCompile Include="MetadataUpdate.cpp" />
     <ClCompile Include="PageMaker.cpp" />
+    <ClCompile Include="SQLiteDB.cpp" />
     <ClCompile Include="VersionIndex.cpp" />
     <ClCompile Include="SACmdArgs.cpp" />
     <ClCompile Include="SIAApplicationState.cpp" />

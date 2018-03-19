@@ -107,6 +107,10 @@ Database::Database()
 	isOpenDB = false;
 	m_retCode = SQLITE_OK;
 	m_retErrorStr = 0;
+	//if (SQLITE_OK != sqlite3_initialize()) {
+	//	m_retCode = 25;
+	//}
+
 }
 
 Database::Database(Database const &) {
@@ -114,10 +118,23 @@ Database::Database(Database const &) {
 	isOpenDB = false;
 	m_retCode = SQLITE_OK;
 	m_retErrorStr = 0;
+	//if (SQLITE_OK != sqlite3_initialize()) {
+	//	m_retCode = 25;
+	//}
 }
 
 Database::~Database() {
 	close();
+}
+
+bool Database::makeSQLfile(const char *file) {
+	sqlite3* pDb = NULL;
+	int rc = sqlite3_open_v2(file, &pDb, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL);
+	if (SQLITE_OK != rc) {
+		m_retCode = 25;
+		return false;
+	}
+	return true;
 }
 
 bool Database::open(const char *dbpath, const char *username, const char *password)
@@ -127,11 +144,10 @@ bool Database::open(const char *dbpath, const char *username, const char *passwo
 	m_Password = password;
 
 	int res = sqlite3_open(dbpath, &dbfile);
-	if (res == SQLITE_OK) {
-		isOpenDB = true;
-		return true;
+	if (res != SQLITE_OK) {
+		return false;
 	}
-
+	isOpenDB = true;
 	return true;
 }
 
@@ -157,11 +173,11 @@ bool Database::execute(const char *sqlstatement)
 
 bool Database::create(const char *tablename, TableRow &row) {
 	SQLCreatBulder createBulder(tablename);
-	for (std::vector<TableColumn *>::iterator ii = row.begin(); ii != row.end(); ++ii) {
-		TableColumn *item = *ii;
-		createBulder.addfield(item->getName(), item->getDataType(), item->getAttributes());
+	for (auto ii = row.begin(); ii != row.end(); ++ii) {
+		TableColumn &item = *(ii->get());
+		createBulder.addfield(item.getName(), item.getDataType(), item.getAttributes());
 	}
-
+	//cout << createBulder.toString() << endl;
 	if (!execute(createBulder.toString().c_str())) {
 		return false;
 	}
@@ -170,10 +186,10 @@ bool Database::create(const char *tablename, TableRow &row) {
 
 bool Database::insert(const char *tablename, TableRow &row) {
 	SQLInsertBulder insertBulder(tablename);
-	for (std::vector<TableColumn *>::iterator ii = row.begin(); ii != row.end(); ++ii) {
-		TableColumn *item = *ii;
-		if (item->isUpdated()) {
-			insertBulder.addfield(item->getName(), item->getTableField().toString());
+	for (auto ii = row.begin(); ii != row.end(); ++ii) {
+		TableColumn &item = *(ii->get());
+		if (item.isUpdated()) {
+			insertBulder.addfield(item.getName(), item.getTableField().toString());
 		}
 
 	}
@@ -191,7 +207,8 @@ bool Database::insert(const char *tablename, TableRow &row) {
 
 const char *Database::getError()
 {
-	return Database::getError(m_retCode);
+	//return Database::getError(m_retCode);
+	return sqlite3_errmsg((sqlite3 *)dbfile);
 }
 
 const char *Database::getError(int err)

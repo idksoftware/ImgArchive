@@ -1,1 +1,24 @@
 # The main configuration file #
+[General]
+DryRun=true
+LogLevel=INFO
+ConsoleLevel=INFO
+[Logging]
+[Network]
+[System Folders]
+HomePath=E:\archive
+WorkspacePath=C:\Users\fergusoI/SIA Workspace
+MasterPath=E:\archive/master
+DerivativePath=E:\archive/derivative
+MasterCataloguePath=C:\Users\fergusoI/pictures/SIA Pictures
+[Master Archive] # This archive contains the master images.This section controls this archive
+#BackupOne = "d:/Backup Test One" # BackupOne = <path to root backup one folder>
+#BackupTwo = "d:/Backup Test Two" # BackupTwo = <path to root backup two folder>
+#BackupOneEnabled = true # BackupOneEnabled = <true | false>
+#BackupTwoEnabled = true # BackupOneEnabled = <true | false>
+[External Exif Tool] 
+Enabled=true
+ExifMapPath=E:\archive\config\exif.ini
+ExifMapFile=exif.ini
+ExifTool=exiftool.exe
+ExifCommandLine=[input]

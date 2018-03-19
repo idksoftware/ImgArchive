@@ -81,7 +81,7 @@
 
 #define CSVDB_PATH						"/csvdb"
 #define CHKSTATUS_PATH					"/chkout"
-#define SQLITE3_DB						"c:/temp/test3.db"
+#define SQLITE3_DB						"SIASqlite3.db"
 
 
 //m_sourcePath = tempHomeDrive + tempHomePath + "/Pictures";

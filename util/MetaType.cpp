@@ -156,6 +156,11 @@ const char *MTSchema::getTypeString() {
 	return "unknown";
 }
 
+int MTSchema::getSize()
+{
+	return m_size;
+}
+
 const char *MTTypeException::what() const throw() {
 	//std::stringstream s;
 	//s << message << " line:" << __LINE__ << " file:" << __FILE__;
@@ -165,7 +170,7 @@ const char *MTTypeException::what() const throw() {
 }
 
 
-MTColumn::MTColumn(const MTSchema &info) : m_info(new MTSchema(info)) {
+MTColumn::MTColumn(const MTSchema &info) : m_info(std::make_shared<MTSchema>(info)) {
 }
 
 MTColumn::MTColumn(const MTColumn& r) {

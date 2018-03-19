@@ -104,12 +104,17 @@ class DupDataFile;
 class BasicMetadata;
 class MirrorImageIndex;
 class FileInfo;
+class DupCache;
 
 typedef std::unique_ptr<DupDataFile> DupDataFile_Ptr;
+
+
 
 class ImageIndex {
 
 	//std::unique_ptr<MirrorImageIndex> m_mirrorImageIndex;
+	std::unique_ptr<DupCache> m_dupCache;
+	
 	std::string m_dbpath;
 	unsigned char m_data[4];
 	/** Adds to primary and backups */
@@ -138,6 +143,9 @@ public:
 	bool add(const BasicMetadata &BasicMetadata);
 	bool add(const FileInfo& fileInfo);
 	bool IsDup(unsigned long crc);
+	bool add2DupCache(const BasicMetadata &BasicMetadata);
+	bool add2DupCache(const FileInfo& fileInfo);
+	bool isDupInCache(unsigned long crc);
 	std::string FindDup(unsigned long crc);
 	/**
 	* This function is used to update the path to the image.

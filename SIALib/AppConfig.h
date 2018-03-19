@@ -53,8 +53,10 @@
 #define SOURCE_PATH_LABEL         		"SourcePath"
 #define SYSTEM_PATH_LABEL         		"SystemPath"
 #define MASTER_PATH_LABEL         		"MasterPath"
+#define SQL_LABEL         				"SQL"
 #define MASTER_VIEW_PATH_LABEL         	"MasterCataloguePath"
 #define DERIVATIVE_PATH_LABEL         	"DerivativePath"
+#define SQL_DATABASE_PATH_LABEL         "SQLDatabasePath"
 #define LOG_PATH_LABEL					"LogPath"
 #define HOME_PATH_LABEL					"HomePath"
 #define INDEX_PATH_LABEL				"IndexPath"
@@ -71,7 +73,8 @@
 #define CATALOG_PATH_LABEL				"CatalogPath"
 #define WORKSPACE_PATH_LABEL			"WorkspacePath"
 #define DRY_RUN_LABEL					"DryRun"
-
+#define LOG_LEVEL_LABEL					"LogLevel"
+#define CONSOLE_LEVEL_LABEL				"ConsoleLevel"
 
 
 namespace simplearchive {
@@ -93,6 +96,7 @@ namespace simplearchive {
 		static bool m_verbose; //< -v --Verbose
 		static bool m_quiet;
 		static bool m_silent;
+		static bool m_sql_on;
 		static std::string m_logLevel;
 		static std::string m_consoleLevel;
 		static bool m_dry_run;
@@ -137,7 +141,7 @@ namespace simplearchive {
 		static std::string m_toolsPath;
 		static std::string m_DatabasePath;
 		static std::string m_backupDestinationPath;
-		static bool m_useDatabase;
+		
 		static long m_backupMediaSize;
 		
 		static ExifDateTime m_fromDate;
@@ -220,7 +224,7 @@ namespace simplearchive {
 		const char *getDatabasePath();
 		// This is for media backups
 		const char *getBackupDestinationPath();
-
+		bool isSQL();
 		/// @brief Gets the Master archive path
 		/// user definable
 		const char *getMasterPath();

@@ -52,12 +52,11 @@
 #include "BasicMetadataFactory.h"
 #include "XMLWriter.h"
 #include "ImagePath.h"
-#include "CSVDBFile.h"
 #include "SIAApplicationState.h"
 #include "CSVDatabase.h"
 #include "HookCmd.h"
 #include "ViewManager.h"
-//#include "VersionControl.h"
+#include "SQLiteDB.h"
 #include "ImportJournal.h"
 #include "CheckoutStatus.h"
 #include "ContentsLister.h"
@@ -159,7 +158,7 @@ namespace simplearchive {
 
 	class ImageProcessor {
 		
-		//CSVDBFile &m_csvDBFile;
+		
 		CSVDatabase &m_csvDatabase;
 		std::unique_ptr<ImagePath> m_imagePath;
 		ImageContainer *m_curImageSet;
@@ -170,7 +169,7 @@ namespace simplearchive {
 	public:
 	
 		ImageProcessor(ImageContainer *curImageSet, std::string& workspacePath, ArchiveObject& archiveObject) :
-			//m_csvDBFile(csvDBFile),
+			
 			m_curImageSet(curImageSet),
 			m_workspacePath(workspacePath),
 			m_archiveObject(archiveObject),
@@ -260,6 +259,22 @@ namespace simplearchive {
 			ImportJournal& importJournal = ImportJournalManager::GetJournal();
 			std::string from = path + "/" + picName;
 			importJournal.update(from.c_str(), ImportJournal::Imported, shortFilePath.c_str());
+			PrimaryIndexObject& primaryIndexObject = m_archiveObject.getPrimaryIndexObject();
+			ImageIndex& imageIndex = primaryIndexObject.getimageIndex();
+			if (imageIndex.add(BasicMetadata) == false) {
+				
+				logger.log(LOG_DUPLICATE, CLogger::Level::ERR, "Image \"%s\" was found to be a duplicate. Rejecting from import", shortFilePath.c_str());
+				// reject image from import
+				ImageId imageId = imageIndex.findDup(BasicMetadata.getCrc());
+				if (imageId.getName().empty()) {
+					logger.log(LOG_OK, CLogger::Level::FATAL, "Image indexing corrupt %s", shortFilePath.c_str());
+				}
+				return false;
+				
+			}
+			logger.log(LOG_OK, CLogger::Level::INFO, "Adding image to dups index %s", shortFilePath.c_str());
+
+
 
 			PostArchiveCmd postArchiveCmd(*m_imagePath);
 			postArchiveCmd.process();
@@ -271,14 +286,6 @@ namespace simplearchive {
 
 			return true;
 		}
-
-
-		/*
-		bool CreateImage(const BasicMetadata &BasicMetadata, ImagePath &imagePath, CSVDBFile &csvDBFile, MetadataObject &metadataObject) {
-			
-			return ArchiveObject::get().CreateImage(BasicMetadata, imagePath, csvDBFile, metadataObject);
-		}
-		*/
 
 		bool processHistory(ImagePath &imagePath, const char *comment) {
 			
@@ -435,7 +442,7 @@ namespace simplearchive {
 		m_folders = TargetsList::getFolderCount();
 		m_folders++;
 		m_imageFiles = TargetsList::getFileCount();
-		logger.log(LOG_INITIAL_SUMMARY, CLogger::Level::SUMMARY, "Found %d image files to be processed in %d Folder(s)", m_imageFiles, m_folders);
+		logger.log(LOG_INITIAL_SUMMARY, CLogger::Level::SUMMARY, "Completed Stage 1: Found %d image files to be processed in %d Folder(s)", m_imageFiles, m_folders);
 		std::shared_ptr<ImageSets> imageSets = nullptr;
 		if ((imageSets = targetsList.getImageSets()) == nullptr) {
 			// No images to process
@@ -544,7 +551,7 @@ namespace simplearchive {
 					// Force changes i.e the archive is damaged and images are being
 					// added from a backup
 					if (saCmdArgs.IsForceChanges()) {
-						if (imageIndex.IsDup(BasicMetadata.getCrc())) {
+						if (imageIndex.IsDup(BasicMetadata.getCrc()) || imageIndex.isDupInCache(BasicMetadata.getCrc())) {
 							//m_imageIndex->getData(BasicMetadata.getCrc());
 							logger.log(LOG_OK, CLogger::Level::INFO, "Dup %s", imageItem->getFilename().c_str());
 							// reject image from import
@@ -555,7 +562,7 @@ namespace simplearchive {
 					else {
 						// normal operation. dups are rejected
 						int pos = -1;
-						if (pos = imageIndex.IsDup(BasicMetadata.getCrc())) {
+						if ((pos = imageIndex.IsDup(BasicMetadata.getCrc())) || imageIndex.isDupInCache(BasicMetadata.getCrc())) {
 							//m_imageIndex->getData(imageId->getCrc());
 							logger.log(LOG_DUPLICATE, CLogger::Level::WARNING, "Image \"%s\" was found to be a duplicate. Rejecting from import", imageItem->getFilename().c_str());
 							// reject image from import
@@ -572,7 +579,12 @@ namespace simplearchive {
 							}
 							m_imageFilesRejected++;
 							continue;
+						} 
+						else {
+							imageIndex.add2DupCache(BasicMetadata);
+							logger.log(LOG_OK, CLogger::Level::INFO, "Adding image to dups index %s", imageItem->getFilename().c_str());
 						}
+						/*
 						else {
 							// Add To the Image Indexing (used to find duplicates)
 							if (imageIndex.add(BasicMetadata) == false) {
@@ -594,8 +606,13 @@ namespace simplearchive {
 							}
 							logger.log(LOG_OK, CLogger::Level::INFO, "Adding image to dups index %s", imageItem->getFilename().c_str());
 						}
+						*/
 					}
 				}
+				
+				
+				
+				
 				// Not a dup so add to group. 
 				if (!BasicMetadata.isExifFound()) {
 					logger.log(LOG_OK, CLogger::Level::INFO, "No simple EXIF infomation found in \"%s\"", imageItem->getFilename().c_str());
@@ -633,9 +650,10 @@ namespace simplearchive {
 					copyExternalExif(metadataObject, *exifObject);
 				}
 				print(metadataObject);
+				
 				imageGroup->add(BasicMetadataPtr, metadataObjectPtr);
 				imageGroup->print();
-				logger.log(LOG_OK, CLogger::Level::INFO, "completed step2 \"%s\"", imageItem->getFilename().c_str());
+				logger.log(LOG_OK, CLogger::Level::INFO, "completed Stage 2 \"%s\"", imageItem->getFilename().c_str());
 				
 				//XMLWriter xmlWriter;
 				//xmlWriter.writeImage(*metadataObject, "c:/temp/image.xml");
@@ -652,6 +670,7 @@ namespace simplearchive {
 					}
 					m_imageFilesCompleted++;
 				}
+				logger.log(LOG_IMPORTING, CLogger::Level::SUMMARY, "Completed Stage 3: Archiving images");
 			}
 		}
 
@@ -714,12 +733,12 @@ void ArchiveBuilder::print(const BasicMetadata &be) {
 
 void ArchiveBuilder::print(const MetadataObject& mo) {
 	CLogger &logger = CLogger::getLogger();
-	DEBUG_PRINT("%s\n", mo.getName().c_str());
-	logger.log(LOG_OK, CLogger::Level::FINE, "Final metadata");
+	//DEBUG_PRINT("%s\n", mo.getName().c_str());
+	logger.log(LOG_OK, CLogger::Level::FINE, "Final metadata for %s", mo.getName().c_str());
 	MTTableSchema& mos = (MTTableSchema&)mo.getSchema();
 	for (std::vector<MTSchema>::iterator i = mos.begin(); i != mos.end(); i++) {
 		MTSchema& columnInfo = *i;
-		DEBUG_PRINT("%-20s %s\n", columnInfo.getName().c_str(), mo.columnAt(columnInfo.getName().c_str()).toString().c_str());
+		//DEBUG_PRINT("%-20s %s\n", columnInfo.getName().c_str(), mo.columnAt(columnInfo.getName().c_str()).toString().c_str());
 		logger.log(LOG_OK, CLogger::Level::FINE, "%-20s %s", columnInfo.getName().c_str(), mo.columnAt(columnInfo.getName().c_str()).toString().c_str());
 	}
 }

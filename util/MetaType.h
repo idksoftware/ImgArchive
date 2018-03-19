@@ -45,26 +45,51 @@ public:
                 Date,
                 Float
         } EItemType;
+		
 private:
        EItemType m_type;
        std::string m_name;
+	   int m_size;
+	   bool m_primaryKey;
 public:
 
-       MTSchema(EItemType type, const char *name) {
+       MTSchema(EItemType type, const char *name, int size) {
     	   m_type  = type;
     	   m_name  = name;
+		   m_size = size; // used when converted to a SQL database
+		   m_primaryKey = false;
        }
+	   
+	   MTSchema(EItemType type, const char *name) {
+		   m_type = type;
+		   m_name = name;
+		   m_size = 0; // used when converted to a SQL database
+		   m_primaryKey = false;
+	   }
 
-       MTSchema(EItemType type, std::string &name) {
+	   MTSchema(EItemType type, const char *name, bool primaryKey) {
+		   m_type = type;
+		   m_name = name;
+		   m_size = 0; // used when converted to a SQL database
+		   m_primaryKey = primaryKey;
+	   }
+
+       MTSchema(EItemType type, std::string &name, int size = 0) {
     	   m_type  = type;
     	   m_name  = name;
+		   m_primaryKey = false;
        }
 
 	   MTSchema(const MTSchema &c) {
 		   m_type = c.m_type;
 		   m_name = c.m_name;
+		   m_size = c.m_size;
+		   m_primaryKey = c.m_primaryKey;
 	   }
 	
+	   void setPrimaryKey() {
+		   m_primaryKey = true;
+	   }
 
 	const std::string& getName() const {
 		return m_name;
@@ -75,6 +100,8 @@ public:
 	}
 
 	const char *getTypeString();
+
+	int getSize();
 };
 
 class MTTableSchema : private std::vector<MTSchema> {

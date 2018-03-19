@@ -48,6 +48,15 @@
 #define ROW_BASIC_EXIF				"BasicMetadata"
 #define ROW_EXTERNAL_EXIF			"ExternalExif"
 
+
+#define TABLE_METADATA_PROPERTIES		"MetadataProperties"
+#define TABLE_DERIVATIVE_METADATA		"DerivativeMetadata"
+#define TABLE_PRIMARY_INDEX				"PrimaryIndex"
+#define TABLE_DERIVATIVE_INDEX			"DerivativeIndex"
+#define TABLE_MASTER_INDEX				"MasterIndex"
+
+#define TABLE_SYSTEM_HISTORY			"SystemHistory"
+#define TABLE_IMAGE_HISTORY				"ImageHistory"
 /*
  * These are used by BasicMetadata
  */
@@ -231,6 +240,35 @@ enum class MetadataObjectIndex {
 	
 };
 
+enum class PrimaryIndexIndex {
+	PI_SEQUENCEID_IDX,// template
+	PI_SHORTIMAGEPATH_IDX,
+	PI_FILENAME_IDX,
+	PI_FILESIZE_IDX,
+	PI_CRC_IDX,
+	PI_MD5_IDX,
+	PI_UUID_IDX,
+	PI_VERSION_IDX,// template
+	PI_DATEADDED_IDX,
+	PI_DATABASEID_IDX,
+};
+
+enum class ImageHistoryIndex {
+	IH_FILEPATH_IDX,
+	IH_DATEADDED_IDX,
+	IH_VERSION_IDX,
+	IH_EVENT_IDX,
+	IH_COMMENT_IDX
+};
+
+enum class SystemHistoryIndex {
+	SH_DATEADDED_IDX,
+	SH_FILEPATH_IDX,
+	SH_VERSION_IDX,
+	SH_EVENT_IDX,
+	SH_COMMENT_IDX
+};
+
 
 // CSV Database Defines
 	/// Asset Properties
@@ -403,6 +441,8 @@ enum class MetadataObjectIndex {
 #define DB_EDITOR						"EditorSoftware"
 #define DB_VERSIONPATH						"VersionPath"
 #define DB_EVENT						"Event"
+#define DB_SHORTIMAGEPATH				"ShortPath"
+#define DB_INDEXID				"IndexId"
 
 /*
 keywords are used to find things via search engines; tags are used to find things within your own Archive.

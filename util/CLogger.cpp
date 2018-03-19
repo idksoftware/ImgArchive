@@ -38,6 +38,10 @@
 #include <iomanip>
 #include <sstream>
 #include <cstdarg>
+#include <algorithm>
+#include <cctype>
+#include <functional>
+
 #include "SAUtils.h"
 #include "CLogger.h"
 #include "ExifDateTime.h"
@@ -55,7 +59,8 @@ namespace simplearchive {
 std::string CLogger::m_filename = "Log.txt";
 std::unique_ptr<CLogger> CLogger::m_this(nullptr);
 std::ofstream CLogger::m_logfile;
-CLogger::Level CLogger::m_level;
+CLogger::Level CLogger::m_logLevel;
+CLogger::Level CLogger::m_consoleLevel;
 CLogger::Level CLogger::m_isConsoleOut;
 std::string CLogger::m_logpath;
 int CLogger::m_size = 10000;
@@ -73,9 +78,10 @@ class LoggBuffer : public std::vector<std::string> {
 
 CLogger::CLogger() {
 	m_startUpBuffer = make_unique<LogBuffer>();
-	m_level = Level::FINE;
+	m_logLevel = Level::SUMMARY;
 	//m_level = Level::SUMMARY;
 	//m_isConsoleOut = Level::FINE;
+	m_consoleLevel = Level::SUMMARY;
 	m_isConsoleOut = Level::SUMMARY;
 }
 
@@ -94,11 +100,45 @@ CLogger::~CLogger() {
 	
 }
 
+static inline void ltrim(std::string &s) {
+	s.erase(s.begin(), std::find_if(s.begin(), s.end(),
+		std::not1(std::ptr_fun<int, int>(std::isspace))));
+}
+
+// trim from end (in place)
+static inline void rtrim(std::string &s) {
+	s.erase(std::find_if(s.rbegin(), s.rend(),
+		std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
+}
+
+// trim from both ends (in place)
+static inline void trim(std::string &s) {
+	ltrim(s);
+	rtrim(s);
+}
+
+
+
+bool CLogger::messageOk(std::string message) {
+	int spos = message.find("[");
+	int epos = message.find("]", spos + 1);
+	string levelStr = message.substr(spos+1, (epos-spos)-1);
+	trim(levelStr);
+	CLogger::Level level = toLevel(levelStr);
+	if (level >= m_logLevel) {
+		return true;
+	}
+	return false;
+}
+
 void CLogger::setLogPath(const char *logpath) {
 	m_logpath = logpath;
 	m_isOpen = true;
 	makeFile();
 	for (auto i = m_startUpBuffer->begin(); i != m_startUpBuffer->end(); i++) {
+		if (messageOk(*i) == false) {
+			continue;
+		}
 		m_logfile << *i;
 	}
 }
@@ -128,7 +168,7 @@ void CLogger::log(int code, Level level, const char *format, ...) {
 		m_cursize = 0;
 	}
 	// Return if the message is to low leval to be include in the log, UDP or terminal.
-	if (!IsPrintable(level)) {
+	if (!IsLogOut(level) && m_isOpen) {
 		return;
 	}
 
@@ -149,6 +189,7 @@ void CLogger::log(int code, Level level, const char *format, ...) {
 #else
 	vsprintf(message, format, args);
 #endif
+	va_end(args);
 	m_lastMessage = message;
 	m_lastCode = code;
 	std::stringstream logstr;
@@ -171,11 +212,12 @@ void CLogger::log(int code, Level level, const char *format, ...) {
 			std::cout << setfill('0') << setw(6) << code << ": " << message << '\n';
 		}
 	}
+	
 	std::stringstream strudp;
 	strudp << setfill('0') << setw(6) << code << ":" << message;
 	std::string udpMessage = strudp.str();
 	UDPOut::out(udpMessage.c_str());
-	va_end(args);
+	
 	
 }
 
@@ -193,7 +235,7 @@ void CLogger::Log(Level level, const char *format, ...) {
 */
 void CLogger::log(int code, Level level, const std::string &message) {
 	
-	if (!IsPrintable(level)) return;
+	if (!IsLogOut(level)) return;
 	ExifDateTime date;
 	date.now();
 	std::stringstream logMessage;
@@ -217,18 +259,32 @@ CLogger& CLogger::operator << (const std::string& message) {
 	return *this;
 }
 
-inline bool CLogger::IsPrintable(Level level) {
-	if (level >= m_level) {
+inline bool CLogger::IsLogOut(Level level) {
+	if (level >= m_logLevel) {
 		return true;
 	}
 	return false;
 }
 
 inline bool CLogger::IsConsoleOut(Level level) {
-	if (level >= m_level) {
+	if (level >= m_logLevel) {
 		return true;
 	}
 	return false;
+}
+
+const char *CLogger::toString(CLogger::Level level) {
+	switch (level) {
+	case CLogger::Level::TRACE: return    "TRACE";
+	case CLogger::Level::FINE: return     "FINE";
+	case CLogger::Level::INFO: return     "INFO";
+	case CLogger::Level::SUMMARY: return  "SUMMARY";
+	case CLogger::Level::WARNING: return  "WARNING";
+	case CLogger::Level::ERR: return      "ERROR";
+	case CLogger::Level::FATAL: return    "FATAL";
+	case CLogger::Level::UNKNOWN: return  "FATAL";
+	}
+	return "FATAL";
 }
 
 const char *CLogger::levelStr(CLogger::Level level) {
@@ -245,30 +301,38 @@ const char *CLogger::levelStr(CLogger::Level level) {
 	return "FATAL";
 }
 
-bool CLogger::setLevel(CLogger::Level &level, const std::string &s) {
-
-	
-	if (s.compare("TRACE")) {
+CLogger::Level CLogger::toLevel(const std::string &s) {
+	CLogger::Level level;
+	if (s.compare("TRACE") == 0) {
 		level = Level::TRACE;
 	}
-	else if (s.compare("FINE")) {
+	else if (s.compare("FINE") == 0) {
 		level = Level::FINE;
 	}
-	else if (s.compare("INFO")) {
+	else if (s.compare("INFO") == 0) {
 		level = Level::INFO;
 	}
-	else if (s.compare("SUMMARY")) {
+	else if (s.compare("SUMMARY") == 0) {
 		level = Level::SUMMARY;
 	}
-	else if (s.compare("WARNING")) {
+	else if (s.compare("WARNING") == 0) {
 		level = Level::WARNING;
 	}
-	else if (s.compare("ERROR")) {
+	else if (s.compare("ERROR") == 0) {
 		level = Level::ERR;
 	}
-	else if (s.compare("FATAL")) {
+	else if (s.compare("FATAL") == 0) {
 		level = Level::FATAL;
+	} else {
+		level = Level::UNKNOWN;
 	}
+	return level;
+}
+
+
+bool CLogger::setLevel(CLogger::Level &level, const std::string &s) {
+
+	level = toLevel(s);
 	if (level == Level::UNKNOWN) {
 		return false;
 	}

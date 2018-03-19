@@ -40,6 +40,7 @@
 #include <stdio.h>
 #include <cstdlib>
 #include <stdexcept>
+#include <memory>
 
 #ifndef DATABASE_H_
 #define DATABASE_H_
@@ -182,7 +183,7 @@ public:
 
 	const char *getDataTypeString();
 
-	TableField(TableField::DataType dataType) {
+	TableField(const TableField::DataType dataType) {
 			m_type = dataType;
 			m_isUpdated = false;
 		};
@@ -193,6 +194,7 @@ public:
 		stringValue = t.stringValue;
 	};
 
+	
 	TableField() {
 		m_isUpdated = false;
 	};
@@ -203,7 +205,7 @@ class TableRow;
 class TableColumn {
 	friend class TableRow;
 	std::string m_key;
-	TableField *m_tableField;
+	std::shared_ptr<TableField> m_tableField;
 	std::vector<std::string> m_attributes;
 public:
 	/*
@@ -212,9 +214,9 @@ public:
 		m_tableField.setType(dataType);
 	};
 	*/
-	TableColumn(const char *key, TableField &field) {
+	TableColumn(const char *key, const TableField &field) {
 		m_key = key;
-		m_tableField = &field;
+		m_tableField = std::make_shared<TableField>(field);
 	};
 
 
@@ -226,8 +228,8 @@ public:
 	*/
 	TableColumn(const TableColumn &t) {
 		m_key = t.m_key;
-		m_tableField = new TableField(*(t.m_tableField));
-		//m_tableField = t.m_tableField;
+		m_tableField = t.m_tableField;
+		
 	};
 
 	void addAttributes(const char *attr) {
@@ -278,13 +280,13 @@ protected:
  * It uses two containers vector for the column ordering,
  * and map as a lookup for values.
  */
-class TableRow : public std::vector<TableColumn *> {
-	std::map<std::string, TableField *> m_lookup;
-protected:
-	TableRow() {};
+class TableRow : public std::vector<std::shared_ptr<TableColumn>> {
+	std::map<std::string, std::shared_ptr<TableField>> m_lookup;
 
-	void add(TableColumn *tableColumn) {
-		this->push_back(tableColumn);
+public:	
+
+	void add(std::shared_ptr<TableColumn> tableColumn) {
+		push_back(tableColumn);
 		m_lookup.insert(std::make_pair(tableColumn->m_key, tableColumn->m_tableField));
 	}
 	/*
@@ -295,20 +297,20 @@ protected:
 	}
 	*/
 	TableColumn &add(const char *key, TableField &field) {
-		TableColumn *tableColumn = new TableColumn(key, field);
+		std::shared_ptr<TableColumn> tableColumn = std::make_shared<TableColumn>(key, field);
 		add(tableColumn);
 		return *tableColumn;
 	}
 
 	TableField &getTableField(const char *key) {
-		std::map<std::string, TableField *>::iterator iter = m_lookup.find(key);
+		std::map<std::string, std::shared_ptr<TableField>>::iterator iter = m_lookup.find(key);
 		if (iter == m_lookup.end()) {
 			throw std::exception();
 		}
 		return *(iter->second);
 	}
-public:
 
+	TableRow() {};
 	virtual ~TableRow() {};
 
 };
@@ -377,6 +379,8 @@ public:
 
 	/// creates a table from row definition.
 	bool insert(const char *tablename, TableRow &row);
+
+	bool makeSQLfile(const char *file);
 
 };
 //} /* namespace simplearchive */
