@@ -111,9 +111,9 @@ public:
 		push_back(x);
 		std::sort(begin(), end(), IdxCompare(*this));
 
-		std::cout << "\nDupCache" << '\n';
+		//std::cout << "\nDupCache" << '\n';
 		for (size_t i = 0; i < size(); ++i)
-			std::cout << (*this)[i].getCRC() << '\n';
+			//std::cout << (*this)[i].getCRC() << '\n';
 
 		return true;
 	}
@@ -121,10 +121,10 @@ public:
 	bool isDup(unsigned long crc) {
 		CacheItem x(crc, "", "");
 		if (std::binary_search(begin(), end(), x, comp)) {
-			std::cout << "found!\n";
+			//std::cout << "Dup found!\n";
 			return true;
 		} else {
-			std::cout << "not found.\n";
+			//std::cout << "Dup not found.\n";
 			return false;
 		}
 	}

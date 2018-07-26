@@ -88,14 +88,32 @@ namespace simplearchive {
 		}
 		std::string cmd = "python.exe ";
 		cmd += m_hookPath + '/' + scriptName;
-		// = "g:\\sia\\archive\\tools\\convert dsc_3248.nef -quality 100 dsc_3248.jpg";
+		
 		ExternalShell externalShell;
 		externalShell.exec(cmd.c_str());
-		std::string output = externalShell.getOutput();
-		logger.log(LOG_OK, CLogger::Level::TRACE, "hook process output: ", output.c_str());
+		m_output = externalShell.getOutput();
+		logger.log(LOG_OK, CLogger::Level::TRACE, "hook process output: %s", m_output.c_str());
 		return true;
 	}
-
+	
+	bool HookCmd::process(const char *arg1) {
+		CLogger &logger = CLogger::getLogger();
+		//std::string out = SAUtils::getFilenameNoExt(imagefile);
+		//std::string in = imagefile;
+		std::string scriptName;
+		if ((scriptName = getScriptNames()).empty() == true) {
+			return false;
+		}
+		std::string cmd = "python.exe ";
+		cmd += m_hookPath + '/' + scriptName;
+		cmd += ' '; cmd += arg1;
+		ExternalShell externalShell;
+		externalShell.exec(cmd.c_str());
+		m_output = externalShell.getOutput();
+		logger.log(LOG_OK, CLogger::Level::TRACE, "hook process output: %s", m_output.c_str());
+		return true;
+	}
+	
 	bool HookCmd::process(const char *arg1, const char *arg2) {
 		CLogger &logger = CLogger::getLogger();
 		std::string scriptName;
@@ -109,8 +127,8 @@ namespace simplearchive {
 		// = "g:\\sia\\archive\\tools\\convert dsc_3248.nef -quality 100 dsc_3248.jpg";
 		ExternalShell externalShell;
 		externalShell.exec(cmd.c_str());
-		std::string output = externalShell.getOutput();
-		logger.log(LOG_OK, CLogger::Level::TRACE, "hook process output: ", output.c_str());
+		m_output = externalShell.getOutput();
+		logger.log(LOG_OK, CLogger::Level::TRACE, "hook process output: ", m_output.c_str());
 		return true;
 	}
 
@@ -128,8 +146,8 @@ namespace simplearchive {
 		// = "g:\\sia\\archive\\tools\\convert dsc_3248.nef -quality 100 dsc_3248.jpg";
 		ExternalShell externalShell;
 		externalShell.exec(cmd.c_str());
-		std::string output = externalShell.getOutput();
-		logger.log(LOG_OK, CLogger::Level::TRACE, "hook process output: ", output.c_str());
+		m_output = externalShell.getOutput();
+		logger.log(LOG_OK, CLogger::Level::TRACE, "hook process output: %s", m_output.c_str());
 		return true;
 	}
 
@@ -203,6 +221,9 @@ namespace simplearchive {
 		case MC_MVRAW:
 			m_name = "from-RAW";
 			break;
+		case MC_MVImageSize:
+			m_name = "ident-size";
+			break;
 		case HC_Unknown:
 			return false;
 		default:
@@ -242,6 +263,14 @@ namespace simplearchive {
 
 	OnFolderCmd::OnFolderCmd(const char *folder) : HookCmd(HookCmd::HC_OnFolder) {
 		m_folder = folder;
+	};
+
+	OnIndentSizeCmd::OnIndentSizeCmd(const char *imageName) : HookCmd(HookCmd::MC_MVImageSize) {
+		m_imageName = imageName;
+	};
+
+	bool OnIndentSizeCmd::process() {
+		return HookCmd::process(m_imageName.c_str());
 	};
 
 	OnViewRAWCmd::OnViewRAWCmd(const char *sourceFilePath, const char *distFilePath) : HookCmd(HookCmd::MC_MVRAW) {

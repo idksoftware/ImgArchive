@@ -74,7 +74,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../fclib;../util;../exifcl;../metatp;../csv;../mirror;../sqlite3;../database;../IntegrityManager;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../fclib;../util;../exifcl;../metatp;../csv;../mirror;../sqlite3;../database;../IntegrityManager;../web;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -110,7 +110,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../fclib;../util;../exifcl;../metatp;../csv;../mirror;../sqlite3;../database;../IntegrityManager;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../fclib;../util;../exifcl;../metatp;../csv;../mirror;../sqlite3;../database;../IntegrityManager;../web;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -165,7 +165,6 @@
     <ClInclude Include="CheckFile.h" />
     <ClInclude Include="GetImagesManager.h" />
     <ClInclude Include="HookCmd.h" />
-    <ClInclude Include="HtmlPages.h" />
     <ClInclude Include="ImageContainer.h" />
     <ClInclude Include="ImageFileReader.h" />
     <ClInclude Include="ImageGroup.h" />
@@ -179,7 +178,6 @@
     <ClInclude Include="MakeMedia.h" />
     <ClInclude Include="MasterCatalogue.h" />
     <ClInclude Include="MetadataUpdate.h" />
-    <ClInclude Include="PageMaker.h" />
     <ClInclude Include="SQLiteDB.h" />
     <ClInclude Include="VersionIndex.h" />
     <ClInclude Include="resource.h" />
@@ -208,7 +206,6 @@
     <ClCompile Include="ExportImages.cpp" />
     <ClCompile Include="GetIImagesManager.cpp" />
     <ClCompile Include="HookCmd.cpp" />
-    <ClCompile Include="HtmlPages.cpp" />
     <ClCompile Include="ImageContainer.cpp" />
     <ClCompile Include="ImageFileReader.cpp" />
     <ClCompile Include="BasicMetadataFactory.cpp" />
@@ -222,7 +219,6 @@
     <ClCompile Include="MakeMedia.cpp" />
     <ClCompile Include="MasterCatalogue.cpp" />
     <ClCompile Include="MetadataUpdate.cpp" />
-    <ClCompile Include="PageMaker.cpp" />
     <ClCompile Include="SQLiteDB.cpp" />
     <ClCompile Include="VersionIndex.cpp" />
     <ClCompile Include="SACmdArgs.cpp" />

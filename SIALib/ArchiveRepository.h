@@ -43,14 +43,19 @@ class ImagePath;
 class HistoryEvent;
 /// @brief The Main Archive class object.
 class ArchiveRepository {
-	static ArchiveRepository *m_This;
-	ArchiveRepository();
+	
+	ArchiveRepository() noexcept ;
 	bool Import(ImageContainer *imageContainer);
 	std::string m_pathToArchive;
 	std::string m_pathToSourceRoot;
 	std::string m_pathToActiveRoot;
 	
 public:
+	ArchiveRepository(ArchiveRepository const&) = delete;
+	void operator=(ArchiveRepository const&) = delete;
+	ArchiveRepository(ArchiveRepository&&) = delete;                  // Move construct
+	ArchiveRepository& operator=(ArchiveRepository &&) = delete;      // Move assign
+
 
 	virtual ~ArchiveRepository();
 	static ArchiveRepository &get();

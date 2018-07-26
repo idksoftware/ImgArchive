@@ -111,26 +111,11 @@ namespace simplearchive {
 	bool AppConfig::m_isFromDate = false;
 	bool AppConfig::m_isToDate = false;
 
-	
-
-	
-
-	//AppConfig &AppConfig::get() {
-	//	if (m_this == nullptr) {
-	//		m_this = std::make_unique<AppConfig>();
-	//	}
-	//	return *m_this;
-	//}
-
-	
-
-	
-
 	/*
 		Default paths based on UserDrive and UserHome
 
 	*/
-	bool SIAARCConfig::init(const char *homePath) {
+	bool SharedConfig::init(const char *homePath) {
 		CLogger &logger = CLogger::getLogger();
 		
 		logger.log(LOG_OK, CLogger::Level::INFO, "Initalising configuration");
@@ -151,7 +136,8 @@ namespace simplearchive {
 			
 		}
 		ArchivePath::setPathToHome(AppConfig::m_homePath);
-		logger.log(LOG_OK, CLogger::Level::INFO, "Home path                 \"%s\"", AppConfig::m_homePath.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "Inital valves");
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Home path:                 \"%s\"", AppConfig::m_homePath.c_str());
 
 		// Backup 1
 		if (AppConfig::m_backup1.empty() == true) {
@@ -185,7 +171,7 @@ namespace simplearchive {
 			}
 		}
 		ArchivePath::setMasterPath(AppConfig::m_masterPath);
-		logger.log(LOG_OK, CLogger::Level::INFO, "Master path               \"%s\"", AppConfig::m_masterPath.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Master path:               \"%s\"", AppConfig::m_masterPath.c_str());
 
 		// Repository Archive Path
 		if (AppConfig::m_derivativePath.empty() == true) {
@@ -197,7 +183,7 @@ namespace simplearchive {
 			}
 		}
 		ArchivePath::setDerivativePath(AppConfig::m_derivativePath);
-		logger.log(LOG_OK, CLogger::Level::INFO, "Derivative path           \"%s\"", AppConfig::m_derivativePath.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Derivative path:           \"%s\"", AppConfig::m_derivativePath.c_str());
 
 		// History Path
 		if (AppConfig::m_historyPath.empty() == true) {
@@ -209,7 +195,7 @@ namespace simplearchive {
 			}
 		}
 		ArchivePath::setMainHistory(AppConfig::m_historyPath);
-		logger.log(LOG_OK, CLogger::Level::INFO, "History path              \"%s\"", AppConfig::m_historyPath.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "        History path:              \"%s\"", AppConfig::m_historyPath.c_str());
 
 		// AppConfig::m_masterViewPath
 		if (AppConfig::m_masterWWWCataloguePath.empty() == true) {
@@ -220,7 +206,7 @@ namespace simplearchive {
 
 			}
 		}
-		logger.log(LOG_OK, CLogger::Level::INFO, "Master Web catalogue path \"%s\"", AppConfig::m_masterWWWCataloguePath.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Master Web catalogue: path \"%s\"", AppConfig::m_masterWWWCataloguePath.c_str());
 
 		if (AppConfig::m_masterCataloguePath.empty() == true) {
 			// read from config file
@@ -239,7 +225,7 @@ namespace simplearchive {
 			}
 		}
 		//ArchivePath::setMasterCataloguePath(AppConfig::m_masterViewPath);
-		logger.log(LOG_OK, CLogger::Level::INFO, "Master catalogue path     \"%s\"", AppConfig::m_masterCataloguePath.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Master catalogue path:     \"%s\"", AppConfig::m_masterCataloguePath.c_str());
 
 		// Workspace Path
 		// This is used in siaadm.exe
@@ -260,7 +246,7 @@ namespace simplearchive {
 			}
 		}
 		ArchivePath::setPathToWorkspace(AppConfig::m_workspacePath);
-		logger.log(LOG_OK, CLogger::Level::INFO, "Workspace path            \"%s\"", AppConfig::m_workspacePath.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Workspace path:            \"%s\"", AppConfig::m_workspacePath.c_str());
 		
 		std::string temp = SAUtils::GetPOSIXEnv("SIA_SOURCE");
 		if (temp.empty() == false) {
@@ -306,7 +292,7 @@ namespace simplearchive {
 
 
 	
-	void SIAARCConfig::fileBasedValues(const char *home) {
+	void SharedConfig::fileBasedValues(const char *home) {
 		CLogger &logger = CLogger::getLogger();
 		logger.log(LOG_OK, CLogger::Level::INFO, "Reading configuration file ");
 		// Home Path (The path to this file will be based on the home path)
@@ -445,38 +431,38 @@ namespace simplearchive {
 		AppConfig::m_indexPath = AppConfig::m_systemPath + "/index";
 
 		logger.log(LOG_OK, CLogger::Level::INFO, "    General");
-		logger.log(LOG_OK, CLogger::Level::INFO, "        Dry run enabled %s", (AppConfig::m_dry_run) ? "True" : "False");
-		logger.log(LOG_OK, CLogger::Level::INFO, "        Log level: %s", AppConfig::m_logLevel.c_str());
-		logger.log(LOG_OK, CLogger::Level::INFO, "        Console level: %s", AppConfig::m_consoleLevel.c_str());
-		logger.log(LOG_OK, CLogger::Level::INFO, "        SQL database: %s", (AppConfig::m_sql_on) ? "True" : "False");
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Dry run enabled:           %s", (AppConfig::m_dry_run) ? "True" : "False");
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Log level:                 %s", AppConfig::m_logLevel.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Console level:             %s", AppConfig::m_consoleLevel.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "        SQL database:              %s", (AppConfig::m_sql_on) ? "True" : "False");
 		logger.log(LOG_OK, CLogger::Level::INFO, "    System paths");
-		logger.log(LOG_OK, CLogger::Level::INFO, "        System path \"%s\"", AppConfig::m_systemPath.c_str());
-		logger.log(LOG_OK, CLogger::Level::INFO, "        Log path \"%s\"", AppConfig::m_logPath.c_str());
-		logger.log(LOG_OK, CLogger::Level::INFO, "        Master path \"%s\"", AppConfig::m_masterPath.c_str());
-		logger.log(LOG_OK, CLogger::Level::INFO, "        Derivetive path \"%s\"", AppConfig::m_derivativePath.c_str());
-		logger.log(LOG_OK, CLogger::Level::INFO, "        Tools path \"%s\"", AppConfig::m_toolsPath.c_str());
-		logger.log(LOG_OK, CLogger::Level::INFO, "        Hook path \"%s\"", AppConfig::m_hookPath.c_str());
-		logger.log(LOG_OK, CLogger::Level::INFO, "        History path \"%s\"", AppConfig::m_historyPath.c_str());
-		logger.log(LOG_OK, CLogger::Level::INFO, "        Template path \"%s\"", AppConfig::m_templatePath.c_str());
-		logger.log(LOG_OK, CLogger::Level::INFO, "        Catalog path \"%s\"", AppConfig::m_catalogPath.c_str());
-		logger.log(LOG_OK, CLogger::Level::INFO, "        SQL Database path \"%s\"", AppConfig::m_DatabasePath.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "        System path:               \"%s\"", AppConfig::m_systemPath.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Log path:                  \"%s\"", AppConfig::m_logPath.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Master path:               \"%s\"", AppConfig::m_masterPath.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Derivetive path:           \"%s\"", AppConfig::m_derivativePath.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Tools path:                \"%s\"", AppConfig::m_toolsPath.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Hook path:                 \"%s\"", AppConfig::m_hookPath.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "        History path:              \"%s\"", AppConfig::m_historyPath.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Template path:             \"%s\"", AppConfig::m_templatePath.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Catalog path:              \"%s\"", AppConfig::m_catalogPath.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "        SQL Database path:         \"%s\"", AppConfig::m_DatabasePath.c_str());
 
 		logger.log(LOG_OK, CLogger::Level::INFO, "    External Exif Tool");
-		logger.log(LOG_OK, CLogger::Level::INFO, "        External Exif tool enabled \"%s\"", (AppConfig::m_externalExifToolEnabled)?"True":"False");
-		logger.log(LOG_OK, CLogger::Level::INFO, "        Exif map path \"%s\"", AppConfig::m_ExifMapPath.c_str());
-		logger.log(LOG_OK, CLogger::Level::INFO, "        Exif map file \"%s\"", AppConfig::m_ExifMapFile.c_str());
-		logger.log(LOG_OK, CLogger::Level::INFO, "        Exif Tool \"%s\"", AppConfig::m_ExternalExifTool.c_str());
-		logger.log(LOG_OK, CLogger::Level::INFO, "        Exif command line \"%s\"", AppConfig::m_ExternalCommandLine.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "        External Exif tool enabled:\"%s\"", (AppConfig::m_externalExifToolEnabled)?"True":"False");
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Exif map path:             \"%s\"", AppConfig::m_ExifMapPath.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Exif map file:             \"%s\"", AppConfig::m_ExifMapFile.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Exif Tool:                 \"%s\"", AppConfig::m_ExternalExifTool.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Exif command line:         \"%s\"", AppConfig::m_ExternalCommandLine.c_str());
 		
 		
 	}
 
-	void SIAARCConfig::setWorkspacePath(const char *path) {
+	void SharedConfig::setWorkspacePath(const char *path) {
 		AppConfig::m_workspacePath = path;
 		ArchivePath::setPathToWorkspace(AppConfig::m_workspacePath);
 	}
 
-	void SIAARCConfig::setMasterPath(const char *path) {
+	void SharedConfig::setMasterPath(const char *path) {
 		AppConfig::m_masterPath = path;
 		ArchivePath::setMasterPath(AppConfig::m_masterPath);
 	}
@@ -500,7 +486,7 @@ namespace simplearchive {
 		return m_toolsPath.c_str();
 
 	}
-	void SIAARCConfig::setHomePath(const char *homePath) {
+	void SharedConfig::setHomePath(const char *homePath) {
 		AppConfig::m_homePath = homePath;
 		ArchivePath::setPathToHome(AppConfig::m_homePath);
 		AppConfig::m_configPath = homePath;
@@ -627,61 +613,78 @@ namespace simplearchive {
 		return m_hookPath.c_str();
 
 	}
-	void SIAARCConfig::setArchivePath(const char *path) {
+	void SharedConfig::setArchivePath(const char *path) {
 		AppConfig::m_homePath = path;
 	}
 
-	void SIAARCConfig::setMasterCataloguePath(const char *path) {
+	void SharedConfig::setMasterCataloguePath(const char *path) {
 		AppConfig::m_masterCataloguePath = path;
 	}
 
-	void SIAARCConfig::setLogLevel(const char *logLevel) {
+	void SharedConfig::setLogLevel(const char *logLevel) {
 		AppConfig::m_logLevel = logLevel;
 	}
 
-	void SIAARCConfig::setConsoleLevel(const char *logLevel) {
+	void SharedConfig::setConsoleLevel(const char *logLevel) {
 		AppConfig::m_consoleLevel = logLevel;
 	}
 
 
 
-	void SIAARCConfig::setDerivativePath(const char *path) {
+	void SharedConfig::setDerivativePath(const char *path) {
 		AppConfig::m_derivativePath = path;
 	}
 
-	void SIAARCConfig::setSourcePath(const char *path) {
+	void SharedConfig::setSourcePath(const char *path) {
 		AppConfig::m_sourcePath = path;
 	}
 
-	void SIAARCConfig::setDryRun(bool dryRun) {
+	void SharedConfig::setDryRun(bool dryRun) {
 		AppConfig::m_dry_run = dryRun;
 	}
 
-	void SIAARCConfig::setQuiet(bool quiet) {
+	void SharedConfig::setQuiet(bool quiet) {
 		AppConfig::m_quiet = quiet;
 	}
 
 	
 
-	void SIAARCConfig::setSilent(bool silent) {
+	void SharedConfig::setSilent(bool silent) {
 		AppConfig::m_silent = silent;
 	}
-	void SIAARCConfig::setVerbose(bool verbose) {
+	void SharedConfig::setVerbose(bool verbose) {
 		AppConfig::m_verbose = verbose;
 	}
 
-	void SIAARCConfig::setEventsOn(bool evt) {
+	void SharedConfig::setEventsOn(bool evt) {
 		AppConfig::m_eventsOn = evt;
 	}
 
-	void SIAARCConfig::setEventPort(int port) {
+	void SharedConfig::setEventPort(int port) {
 		AppConfig::m_eventsOn = true;
 		AppConfig::m_udpPortNum = port;
 	}
 
-	void SIAARCConfig::setEventAddress(const char *address) {
+	void SharedConfig::setEventAddress(const char *address) {
 		AppConfig::m_eventsOn = true;
 		AppConfig::m_udpAddress = address;
+	}
+
+	void SharedConfig::setBackupDestinationPath(const char * str)
+	{
+		AppConfig::m_backupDestinationPath = str;
+	}
+
+	void SharedConfig::setBackupMediaSize(const char * str)
+	{
+	}
+
+	void SharedConfig::setFromDate(const char * str)
+	{
+	}
+
+	void SharedConfig::setToDate(const char * str)
+	{
 	}
 
 	const char *AppConfig::getBackupDestinationPath() {
@@ -1074,5 +1077,7 @@ namespace simplearchive {
 		str << "</Configuration>" << '\n';
 		return str.str();
 	}
+
+	
 
 }

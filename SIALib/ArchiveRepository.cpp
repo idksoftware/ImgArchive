@@ -63,10 +63,7 @@ static char THIS_FILE[] = __FILE__;
 namespace simplearchive {
 using namespace std;
 
-ArchiveRepository::ArchiveRepository() {
-	// TODO Auto-generated constructor stub
-
-}
+ArchiveRepository::ArchiveRepository() noexcept {}
 
 ArchiveRepository::~ArchiveRepository() {
 	// TODO Auto-generated destructor stub
@@ -231,13 +228,9 @@ bool ArchiveRepository::uncheckout(const char *filepath, const char *comment) {
 
 
 ArchiveRepository &ArchiveRepository::get() {
-	if (m_This == 0) {
-		m_This = new ArchiveRepository();
-	}
-	return *m_This;
+	static ArchiveRepository archiveRepository;
+	return archiveRepository;
 }
-
-ArchiveRepository *ArchiveRepository::m_This = 0;
 
 
 

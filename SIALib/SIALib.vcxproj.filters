@@ -129,9 +129,6 @@
     <ClInclude Include="ImageIndex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PageMaker.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="MasterCatalogue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -139,9 +136,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SQLiteDB.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="HtmlPages.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -254,9 +248,6 @@
     <ClCompile Include="ImageIndex.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PageMaker.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="MasterCatalogue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -264,9 +255,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ImageGroup_old.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="HtmlPages.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

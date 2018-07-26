@@ -75,6 +75,9 @@
 #define DRY_RUN_LABEL					"DryRun"
 #define LOG_LEVEL_LABEL					"LogLevel"
 #define CONSOLE_LEVEL_LABEL				"ConsoleLevel"
+#define FILE_CAT_LABEL				"FileCatalogue"
+#define WWW_CAT_LABEL				"WWWCatalogue"
+
 
 
 namespace simplearchive {
@@ -90,7 +93,7 @@ namespace simplearchive {
 	
 	private:
 		friend class AppOptions;
-		friend class SIAARCConfig;
+		friend class SharedConfig;
 
 		static std::unique_ptr<AppConfig> m_this;
 		static bool m_verbose; //< -v --Verbose
@@ -168,7 +171,7 @@ namespace simplearchive {
 
 	
 	public:
-		AppConfig::AppConfig()	{}
+		AppConfig::AppConfig() noexcept {}
 		AppConfig::~AppConfig() {}
 		void settup();
 
@@ -275,7 +278,9 @@ namespace simplearchive {
 		bool validHomePath();
 	};
 
-	class SIAARCConfig : public AppConfigBase{
+	
+
+	class SharedConfig : public AppConfigBase {
 		
 
 		ConfigBlock &getRoot() { // The root will always exist 
@@ -372,14 +377,30 @@ namespace simplearchive {
 		void setEventsOn(bool evt);
 		void setEventPort(int port);
 		void setEventAddress(const char *address);
-		
+		void setBackupDestinationPath(const char *str);
+		void setBackupMediaSize(const char *str);
+		void setFromDate(const char *str);
+		void setToDate(const char *str);
 
-		SIAARCConfig() {};
+		SharedConfig() noexcept {};
 
 		/// @brief Initalises the config object
 		bool init(const char *homePath = nullptr);
 		
 		void fileBasedValues(const char *homePath);
 	};
+
+	class SIAARCConfig : public SharedConfig {
+	public:
+		SIAARCConfig() = default;
+	};
+
+	class AdminConfig : public SharedConfig {
+
+	public:
+		AdminConfig() = default;
+		
+	};
+
 
 }

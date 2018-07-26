@@ -101,7 +101,7 @@ namespace simplearchive {
 		std::shared_ptr<ImageSet> m_imageSet;
 		std::string m_path;
 	public:
-		FilesImport() {
+		FilesImport() noexcept {
 			m_folderCount = 0;
 			m_fileCount = 0;
 			m_imageSets = nullptr;
@@ -507,7 +507,8 @@ namespace simplearchive {
 			std::shared_ptr<ImageSet> imageSet = *i;
 
 			/// Create a Image Group container
-			ImageGroup *imageGroup = new ImageGroup(imageSet->getPath());
+			std::shared_ptr<ImageGroup> imageGroup = std::make_shared<ImageGroup>(imageSet->getPath());
+
 			/// Insert into Image Group Sets
 			//imageGroups.insert(imageGroups.end(), imageGroup);
 			logger.log(LOG_SOURCE_PATH, CLogger::Level::SUMMARY, "Processing Image files in the source location %s", imageSet->getPath());

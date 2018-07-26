@@ -115,7 +115,7 @@ public:
 		m_imageName = imageName;
 	}
 
-	const std::string& getImageName() const {
+	const std::string& getImageName() const noexcept {
 		return m_imageName;
 	}
 
@@ -123,11 +123,11 @@ public:
 		m_currentSourcePath = currentSourcePath;
 	}
 
-	const std::string& getCurrentSourcePath() const {
+	const std::string& getCurrentSourcePath() const noexcept {
 		return m_currentSourcePath;
 	}
 
-	const std::string& getDataPath() const {
+	const std::string& getDataPath() const noexcept {
 		return m_localMasterDataPath;
 	}
 
@@ -138,19 +138,19 @@ public:
 		return m_imagePath;
 	}
 
-	const std::string& getLocalMasterPath() {
+	const std::string& getLocalMasterPath() noexcept {
 		return m_MasterYyyymmddStrPath;
 	}
 
-	const std::string& getLocalMasterMetadataPath() const {
+	const std::string& getLocalMasterMetadataPath() const noexcept {
 		return m_localMasterMetadataPath;
 	}
 	
-	const std::string& getLocalMasterHistoryPath() const {
+	const std::string& getLocalMasterHistoryPath() const noexcept {
 		return m_localMasterHistoryPath;
 	}
 
-	const std::string& getRelMetadataPath() const {
+	const std::string& getRelMetadataPath() const noexcept {
 		return m_relMetadataPath;
 	}
 

@@ -60,12 +60,13 @@ public:
 		MC_MVPreview3,
 		MC_MVThumb,
 		MC_MVRAW,
+		MC_MVImageSize,
 		HC_Unknown
 	} HookType;
 
 private:
 	HookType m_HookType;
-
+	std::string m_output;
 	bool readScriptsNames();
 	std::string getScriptNames();
 	static std::string m_hookPath;
@@ -77,10 +78,13 @@ public:
 	HookCmd(HookType type);
 	virtual ~HookCmd();
 	bool process();
-	
+	bool process(const char *arg1);
 	bool process(const char *arg1,const char *arg2);
 	bool process(const char *arg1, const char *arg2, const char *arg3);
 	static void setHookPath(const char *path);
+	const char *getOutput() noexcept {
+		return m_output.c_str();
+	}
 };
 
 /** @beief This is thw post archive hook carried out after
@@ -135,6 +139,13 @@ class OnFolderCmd : public HookCmd {
 public:
 	OnFolderCmd(const char *folder);
 
+};
+
+class OnIndentSizeCmd : public HookCmd {
+	std::string m_imageName;
+public:
+	OnIndentSizeCmd(const char *m_imageName);
+	bool process();
 };
 
 class OnViewThumbnailCmd : public HookCmd {
