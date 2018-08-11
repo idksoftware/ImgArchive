@@ -100,6 +100,8 @@ namespace simplearchive {
 		static bool m_quiet;
 		static bool m_silent;
 		static bool m_sql_on;
+		static bool m_file_cat_on;
+		static bool m_www_cat_on;
 		static std::string m_logLevel;
 		static std::string m_consoleLevel;
 		static bool m_dry_run;
@@ -222,6 +224,8 @@ namespace simplearchive {
 		const char *getConfigPath();
 		/// @brief Gets home path. This is the root path all default paths are made.
 		const char *getHomePath();
+		bool isMasterCatalogueEnabled();
+		bool isMasterWWWCatalogueEnabled();
 		const char *getMasterCataloguePath();
 		const char *getMasterWWWCataloguePath();
 		const char *getDatabasePath();
@@ -289,36 +293,66 @@ namespace simplearchive {
 		}
 
 		std::shared_ptr<ConfigBlock> getLogging() { // The root will always exist 
+			
+			auto p = find(LOGGING_BLOCK);
+			if (p == end()) {
+				return nullptr;
+			}
 			std::shared_ptr<ConfigBlock> configBlock = find(LOGGING_BLOCK)->second;
 			return configBlock;
 		}
 
 		std::shared_ptr<ConfigBlock> getNetwork() { // The root will always exist 
+			
+			auto p = find(NETWORK_BLOCK);
+			if (p == end()) {
+				return nullptr;
+			}
 			std::shared_ptr<ConfigBlock> configBlock = find(NETWORK_BLOCK)->second;
 			return configBlock;
 		}
 
 		std::shared_ptr<ConfigBlock> getFolders() { // The root will always exist 
+			auto p = find(FOLDERS_BLOCK);
+			if (p == end()) {
+				return nullptr;
+			}
 			std::shared_ptr<ConfigBlock> configBlock = find(FOLDERS_BLOCK)->second;
 			return configBlock;
 		}
 
 		std::shared_ptr<ConfigBlock> getMaster() { // The root will always exist 
+			auto p = find(BACKUP_BLOCK);
+			if (p == end()) {
+				return nullptr;
+			}
 			std::shared_ptr<ConfigBlock> configBlock = find(MASTER_BLOCK)->second;
 			return configBlock;
 		}
 
-		std::shared_ptr<ConfigBlock> getDerivative() { // The root will always exist 
+		std::shared_ptr<ConfigBlock> getDerivative() { // The root will always exist
+			auto p = find(BACKUP_BLOCK);
+			if (p == end()) {
+				return nullptr;
+			}
 			std::shared_ptr<ConfigBlock> configBlock = find(DERIVATIVE_BLOCK)->second;
 			return configBlock;
 		}
 
-		std::shared_ptr<ConfigBlock> getBackup() { // The root will always exist 
+		std::shared_ptr<ConfigBlock> getBackup() { // The root will always exist
+			auto p = find(BACKUP_BLOCK);
+			if (p == end()) {
+				return nullptr;
+			}
 			std::shared_ptr<ConfigBlock> configBlock = find(BACKUP_BLOCK)->second;
 			return configBlock;
 		}
 
 		std::shared_ptr<ConfigBlock> getExifTool() { // The root will always exist 
+			auto p = find(EXIFTOOL_BLOCK);
+			if (p == end()) {
+				return nullptr;
+			}
 			std::shared_ptr<ConfigBlock> configBlock = find(EXIFTOOL_BLOCK)->second;
 			return configBlock;
 		}

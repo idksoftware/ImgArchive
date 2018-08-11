@@ -52,10 +52,11 @@
 #include "MirrorManager.h"
 #include "ViewManager.h"
 #include "CreateArchive.h"
-
+#include "TestArchive.h"
 #include "SummaryFile.h"
 #include "IntegrityManager.h"
 #include "SIALib.h"
+#include "ShowCommand.h"
 
 #ifdef _WIN32
 #pragma comment(lib, "ws2_32.lib")
@@ -90,7 +91,7 @@ bool AdminApp::Show() {
 	m_logLevel = "INFO";
 	m_dry_run = false;
 	*/
-	AppConfig &config = AppConfig::get();
+	AdminConfig config;
 	/*
 	const std::string key = "SIA_HOME";
 	std::string temp = SAUtils::GetPOSIXEnv(key);
@@ -284,6 +285,7 @@ bool AdminApp::doRun()
 {
 	// Find if the archive exists
 	AppOptions &appOptions = AppOptions::get();
+
 	if (appOptions.isConfiguratedOk() == false) {
 		if (appOptions.getCommandMode() == AppOptions::CM_Show) {
 			Show();
@@ -308,8 +310,10 @@ bool AdminApp::doRun()
 		break;
 	case AppOptions::CM_Show:
 	{
-		AppConfig &config = AppConfig::get();
-		config.printAll();
+		Show();
+		ShowCommand show;
+		if (show.process(appOptions.getName())) {
+		}
 		break;
 	}
 	case AppOptions::CM_View:
@@ -347,24 +351,25 @@ bool AdminApp::doRun()
 			return false;
 		}
 	
-		/*
+		
 		switch (appOptions.getScope()) {
 		case AppOptions::Workspace:
 			if (siaLib.validate(config.getMasterPath(), config.getWorkspacePath(), config.getHomePath(), SIALib::Workspace, appOptions.repair()) == false) {
 				return false;
 			}
-
+			break;
 		case AppOptions::Master:			//* Show
 			if (siaLib.validate(config.getMasterPath(), config.getWorkspacePath(), config.getHomePath(), SIALib::Master, appOptions.repair()) == false) {
 				return false;
 			}
+			break;
 		default:
 			if (siaLib.validate(config.getMasterPath(), config.getWorkspacePath(), config.getHomePath(), SIALib::Both, appOptions.repair()) == false) {
 				return false;
 			}
 		}
 		siaLib.complete();
-		*/
+		
 		break;
 	}
 	
@@ -373,6 +378,14 @@ bool AdminApp::doRun()
 			   "siaadmin version \"%s\" (build %s)\n"
 			   "Copyright@(2010-2016) IDK Sftware Ltd.\n", VERSION, BUILD);
 		return true;
+	case AppOptions::CM_Test:
+	{
+		
+		TestArchive testArchive;
+		testArchive.readingConfigFile();
+		testArchive.testFolders();
+		return true;
+	}
 	case AppOptions::CM_Unknown:
 		break;
 	}
@@ -407,7 +420,7 @@ bool AdminApp::CreateArchive(const char *archivePath, const char *workspacePath,
 		}
 	}
 	
-	AppConfig config = AppConfig::get();
+	AppConfig &config = AppConfig::get();
 	
 	std::string archivePathStr = archivePath;
 	std::string workspacePathStr = workspacePath;
@@ -464,12 +477,12 @@ bool AdminApp::CreateArchive(const char *archivePath, const char *workspacePath,
 	std::cout << "Using derivative path \"" << derivativePathStr << "\"\n";
 	std::cout << "Using catalogue path \"" << cataloguePathStr << "\"\n";
 	
-
-	config.setArchivePath(archivePathStr.c_str());
-	config.setMasterPath(masterPathStr.c_str());
-	config.setDerivativePath(derivativePathStr.c_str());
-	config.setWorkspacePath(workspacePathStr.c_str());
-	config.setMasterCataloguePath(cataloguePathStr.c_str());
+	AdminConfig adminConfig;
+	adminConfig.setArchivePath(archivePathStr.c_str());
+	adminConfig.setMasterPath(masterPathStr.c_str());
+	adminConfig.setDerivativePath(derivativePathStr.c_str());
+	adminConfig.setWorkspacePath(workspacePathStr.c_str());
+	adminConfig.setMasterCataloguePath(cataloguePathStr.c_str());
 
 	if (CreateArchive::createSystem(users, archivePathStr.c_str(), workspacePathStr.c_str(), masterPathStr.c_str(), derivativePathStr.c_str(), cataloguePathStr.c_str()) == false) {
 		return false;
@@ -500,7 +513,7 @@ bool AdminApp::CreateArchive(const char *archivePath, const char *workspacePath,
 bool AdminApp::initaliseConfig() {
 
 	//AppConfig &config = AppConfig::get();
-	SIAARCConfig config;
+	AdminConfig config;
 
 	bool found = false;
 	std::string homePath;
@@ -612,10 +625,10 @@ bool AdminApp::initaliseConfig() {
 	*/
 }
 
-
+// AppConfig &config = AppConfig::get();
 bool AdminApp::initaliseHomePath() {
 
-	AppConfig &config = AppConfig::get();
+	SIAARCConfig config;
 
 	bool found = false;
 	std::string homePath;

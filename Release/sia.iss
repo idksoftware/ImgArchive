@@ -24,7 +24,7 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-DefaultDirName={pf}\SIA
+DefaultDirName={pf}\IDK-Software\SIA
 DefaultGroupName={#MyAppName}
 LicenseFile=C:\development\SIA\SimpleArchive\Release\licence.txt
 OutputDir=C:\temp\2
@@ -32,6 +32,15 @@ OutputBaseFilename=siasetup
 SetupIconFile=C:\development\SIA\SimpleArchive\Release\sia.ico
 Compression=lzma
 SolidCompression=yes
+; "ArchitecturesInstallIn64BitMode=x64" requests that the install be
+; done in "64-bit mode" on x64, meaning it should use the native
+; 64-bit Program Files directory and the 64-bit view of the registry.
+; On all other architectures it will install in "32-bit mode".
+ArchitecturesInstallIn64BitMode=x64
+; Note: We don't set ProcessorsAllowed because we want this
+; installation to run on all architectures (including Itanium,
+; since it's capable of running 32-bit code too).
+
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -44,6 +53,15 @@ Source: "C:\development\SIA\SimpleArchive\Release\siaarc.exe"; DestDir: "{app}";
 Source: "C:\development\SIA\SimpleArchive\Release\siaadmin.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\development\SIA\SimpleArchive\Release\dlls_x86\msvcp120.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\development\SIA\SimpleArchive\Release\dlls_x86\msvcr120.dll"; DestDir: "{app}"; Flags: ignoreversion
+; This is a bit of code to do 64 when ready
+; Install MyProg-x64.exe if running in 64-bit mode (x64; see above),
+; MyProg.exe otherwise.
+;Source: "MyProg-x64.exe"; DestDir: "{app}"; DestName: "MyProg.exe"; Check: Is64BitInstallMode
+;Source: "MyProg.exe"; DestDir: "{app}"; Check: not Is64BitInstallMode
+;Source: "MyProg.chm"; DestDir: "{app}"
+;Source: "Readme.txt"; DestDir: "{app}"; Flags: isreadme
+
+
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 Source: "defaultFiles\config\config.dat"; DestDir: "{#AppConfig}"; DestName: "config.dat"
 Source: "defaultFiles\config\ext.dat"; DestDir: "{#AppConfig}"; DestName: "ext.dat"
@@ -76,11 +94,17 @@ Name: "{#AppHome}\master"
 Name: "{#AppHome}\pi"
 Name: "{#AppHome}\web"
 Name: "{#AppHome}\tmp"
+Name: "{#AppHome}\web"
 Name: "{#AppConfig}"
 
 [Registry]
-Root: "HKLM"; Subkey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"; ValueType: expandsz; ValueName: "Path"; ValueData: "{olddata};{app}"
+Root: "HKLM"; Subkey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"; ValueType: expandsz; ValueName: "Path"; ValueData: "{olddata};{app}"; 
 Root: "HKLM"; Subkey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"; ValueType: string; ValueName: "SIA_HOME"; ValueData: "{#AppHome}"; Flags: createvalueifdoesntexist preservestringtype
+
+
+    
+
+
 [CustomMessages]
 AppAddPath=Add application directory to your environmental path (required)
 

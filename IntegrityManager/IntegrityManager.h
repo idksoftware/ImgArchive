@@ -39,20 +39,25 @@
 namespace simplearchive {
 
 class IntegrityManager {
-	static IntegrityManager *m_this;
+	
 	std::string m_archivePath;
 	std::string m_workspacePath;
 	std::string m_homePath;
-	IntegrityManager();
+	IntegrityManager() = default;
 public:
-	
-	virtual ~IntegrityManager();
+	IntegrityManager(IntegrityManager const&) = delete;
+	void operator=(IntegrityManager const&) = delete;
+	IntegrityManager(IntegrityManager&&) = delete;                  // Move construct
+	IntegrityManager& operator=(IntegrityManager &&) = delete;      // Move assign
+
+
+	virtual ~IntegrityManager() = default;
 	bool addDayFolder(const char *folderName);
 	bool addFile(const char *folderPath, const char *fileName);
 	bool makeList();
 	bool validate(bool workspace, bool Master);
 	bool repair(bool workspace, bool Master);
-	static IntegrityManager &get(const char *archivePath, const char* workspacePath, const char* homePath);
+	//static IntegrityManager &get(const char *archivePath, const char* workspacePath, const char* homePath);
 	static IntegrityManager &get();
 	void setPaths(const char* archivePath, const char* workspacePath, const char* homePath);
 };

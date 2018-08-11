@@ -174,9 +174,9 @@ namespace simplearchive {
 
 		CLogger::setLogLevel(config.getLogLevel());
 		CLogger::setConsoleLevel(config.getConsoleLevel());
-		CLogger::setLogPath(config.getLogPath());
 		CLogger::setSilent(config.isSilent());
-		
+		CLogger::setLogPath(config.getLogPath());
+		CLogger::startLogging();
 		
 
 		CLogger &logger = CLogger::getLogger();
@@ -359,7 +359,7 @@ namespace simplearchive {
 			logger.log(LOG_OK, CLogger::Level::FATAL, "Failed to complete initalisation %s\n", e.what());
 			return -1;
 		}
-		logger.log(LOG_INITALISATION, CLogger::Level::SUMMARY, "Initalisation complete");
+		logger.log(LOG_INITALISATION, CLogger::Level::INFO, "Initalisation complete");
 		return 0;
 	}
 
@@ -570,7 +570,7 @@ namespace simplearchive {
 		return true;
 	}
 
-	bool SIALib::validate(const char *archivePath, const char *workspacePath, const char *homePath, Scope scope, bool repair) {
+	bool SIALib::validate(CompletedSummary& completedSummary, const char *archivePath, const char *workspacePath, const char *homePath, Scope scope, bool repair) {
 		IntegrityManager &im = IntegrityManager::get();
 		if (repair) {
 			switch (scope) {
@@ -578,10 +578,13 @@ namespace simplearchive {
 				if (im.repair(true, false) == false) {
 					return false;
 				}
+				break;
 			case Master:
 				if (im.repair(false, true) == false) {
 					return false;
 				}
+				break;
+			
 			default:
 				if (im.repair(true, true) == false) {
 					return false;
@@ -595,15 +598,18 @@ namespace simplearchive {
 				if (im.validate(true, false) == false) {
 					return false;
 				}
+				break;
 			case Master:
 				if (im.validate(false, true) == false) {
 					return false;
 				}
+				break;
 			default:
 				if (im.validate(true, true) == false) {
 					return false;
 				}
 			}
+			
 			return true;
 		}
 		return true;

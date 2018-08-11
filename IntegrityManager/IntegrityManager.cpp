@@ -40,6 +40,7 @@
 #include "SAUtils.h"
 #include "ValidateReportingObject.h"
 #include "CheckoutStatus.h"
+#include "CheckDiskJournal.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -49,7 +50,7 @@ static char THIS_FILE[] = __FILE__;
 
 namespace simplearchive {
 
-IntegrityManager *IntegrityManager::m_this = 0;
+
 
 void IntegrityManager::setPaths(const char* archivePath, const char* workspacePath, const char* homePath) {
 	m_archivePath = archivePath;
@@ -58,13 +59,6 @@ void IntegrityManager::setPaths(const char* archivePath, const char* workspacePa
 	
 	CheckDisk::setArchivePath(archivePath);
 	
-}
-
-IntegrityManager::IntegrityManager() {
-	
-}
-
-IntegrityManager::~IntegrityManager() {
 }
 
 bool IntegrityManager::addDayFolder(const char *folderName) {
@@ -98,6 +92,18 @@ bool IntegrityManager::validate(bool workspace, bool Master) {
 	}
 	ValidateReportingObject::setPath(tmp.c_str());
 	FolderList folderList(m_archivePath.c_str(), m_workspacePath.c_str());
+	if (workspace && Master) {
+		folderList.SetAction(FolderList::READING_BOTH);
+	}
+	else if (workspace) {
+		folderList.SetAction(FolderList::READING_WORKSPACE);
+	}
+	else if (Master) {
+		folderList.SetAction(FolderList::READING_MASTER);
+	}
+	else {
+		return false;
+	}
 	if (folderList.validate() == false) {
 		return false;
 	}
@@ -174,19 +180,22 @@ bool IntegrityManager::makeList() {
 	return true;
 }
 
+/*
 IntegrityManager &IntegrityManager::get(const char *archivePath, const char *workspacePath, const char *homePath) {
-	if (m_this == 0) {
-		m_this = new IntegrityManager();
+	IntegrityManager integrityManager = IntegrityManager::get();
+	static bool first = true;
+	if (first) {
+		integrityManager.setPaths(archivePath, workspacePath, homePath);
 	}
-	m_this->setPaths(archivePath, workspacePath, homePath);
-	return *m_this;
+	return integrityManager;
 }
+*/
+
 
 IntegrityManager &IntegrityManager::get() {
-	if (m_this == 0) {
-		throw std::exception();
-	}
-	return *m_this;
+	static IntegrityManager integrityManager;
+	
+	return integrityManager;
 }
 
 } /* namespace simplearchive */

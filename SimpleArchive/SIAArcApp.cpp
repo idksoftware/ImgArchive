@@ -193,7 +193,7 @@ bool SIAArcApp::initaliseHomePath() {
 
 bool SIAArcApp::initaliseConfig() {
 
-	//AppConfig &config = AppConfig::get();
+	
 	SIAARCConfig config;
 
 	bool found = false;
@@ -223,8 +223,14 @@ bool SIAArcApp::initaliseConfig() {
 	}
 	
 	if (SAUtils::DirExists(homePath.c_str()) == false) {
-		setError(12, "SIA Unable to start? Archive not found at default location and the environment variable SA_HOME not set.\n"
-			"Use siaadmin -i to create an empty archive at the default location (see documentation).\n");
+		if (found) {
+			setError(12, "SIA Unable to start? The environment variable SIA_HOME set to \"%s\" but can not be located.\n", homePath.c_str());
+		}
+		else {
+			setError(12, "SIA Unable to start? Archive not found at default location and the environment variable SIA_HOME not set.\n"
+				"Use siaadmin -i to create an empty archive at the default location (see documentation).\n");
+		}
+
 		return false;
 		
 	}
@@ -446,19 +452,7 @@ bool failed()
 
 int main(int argc, char **argv)
 {
-	/*
-	HomeHtmlPage homeHtmlPage;
-	homeHtmlPage.make("C:/temp/html/homenav.html");
-	ArchiveHtmlPage archiveHtmlPage;
-	archiveHtmlPage.make("C:/temp/html/archivenav.html");
-	HistoryHtmlPage historyHtmlPage;
-	historyHtmlPage.make("C:/temp/html/historynav.html");
-	MenuHtmlPage menuHtmlPage;
-	menuHtmlPage.make("C:/temp/html/menunav.html");
-	AboutHtmlPage aboutHtmlPage;
-	aboutHtmlPage.make("C:/temp/html/aboutnav.html");
-	return 0;
-	*/
+	
 
 	bool error = false;
 	simplearchive::SIAArcApp app;

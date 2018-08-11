@@ -46,7 +46,7 @@ namespace simplearchive {
 
 class MetadataSchema : public MTTableSchema {
 public:
-	MetadataSchema() : MTTableSchema(TABLE_METADATA_PROPERTIES) {
+	MetadataSchema() noexcept : MTTableSchema(TABLE_METADATA_PROPERTIES) {
 
 		// Assest 
 		// file
@@ -181,15 +181,16 @@ public:
 		
 	}
 	virtual ~MetadataObject();
-
+	bool fromXML(const char *path);
 	//static const char *TableLookup(const char *columnName) const ;
 	
 	void update(const MetadataObject& mo) {
-		
-		if (getHeightString().compare("null") == 0) {
+		std::string tmp = getHeightString();
+		if (tmp.compare("null") == 0) {
 			setHeight(mo.getHeightString());
 		}
-		if (getWidthString().compare("null") == 0) {
+		tmp = getWidthString();
+		if (tmp.compare("null") == 0) {
 			setWidth(mo.getWidthString());
 		}
 		
@@ -197,16 +198,16 @@ public:
 
 	void update(const FileInfo& fileInfo, int seqNo, int version);
 
-	const std::string getApertureString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_APERTURE_IDX)).toString();
+	const char * getApertureString() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_APERTURE_IDX)).toString().c_str();
 	}
 
 	void setAperture(const std::string& aperture) {
 		columnAt(static_cast<int>(MetadataObjectIndex::MD_APERTURE_IDX)).fromString(aperture);
 	}
 
-	const std::string getCaptureDateString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_CAPTUREDATE_IDX)).toString();
+	const char * getCaptureDateString() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_CAPTUREDATE_IDX)).toString().c_str();
 	}
 
 	const ExifDateTime& getCaptureDate() const {
@@ -217,8 +218,8 @@ public:
 		columnAt(static_cast<int>(MetadataObjectIndex::MD_CAPTUREDATE_IDX)).fromString(captureDate);;
 	}
 
-	const std::string& getColorSpaceString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_COLORSPACE_IDX)).toString();
+	const char * getColorSpaceString() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_COLORSPACE_IDX)).toString().c_str();
 
 	}
 
@@ -226,32 +227,32 @@ public:
 	        columnAt(static_cast<int>(MetadataObjectIndex::MD_COLORSPACE_IDX)).fromString(colorSpace);;
 	}
 
-	const std::string& getCompressionString() const {
-	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_COMPRESSION_IDX)).toString();
+	const char * getCompressionString() const {
+	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_COMPRESSION_IDX)).toString().c_str();
 	}
 
 	void setCompression(const std::string& compression) {
 	        columnAt(static_cast<int>(MetadataObjectIndex::MD_COMPRESSION_IDX)).fromString(compression);;
 	}
 
-	const std::string& getCopyrightString() const {
-	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_COPYRIGHT_IDX)).toString();
+	const char * getCopyrightString() const {
+	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_COPYRIGHT_IDX)).toString().c_str();
 	}
 
 	void setCopyright(const std::string& copyright) {
 	        columnAt(static_cast<int>(MetadataObjectIndex::MD_COPYRIGHT_IDX)).fromString(copyright);;
 	}
 
-	const std::string& getCopyrightUrlString() const {
-	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_COPYRIGHTURL_IDX)).toString();
+	const char * getCopyrightUrlString() const {
+	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_COPYRIGHTURL_IDX)).toString().c_str();
 	}
 
 	void setCopyrightUrl(const std::string& copyrightUrl) {
 	        columnAt(static_cast<int>(MetadataObjectIndex::MD_COPYRIGHTURL_IDX)).fromString(copyrightUrl);;
 	}
 
-	const std::string& getCrcString() const {
-	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_CRC_IDX)).toString();
+	const char * getCrcString() const {
+	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_CRC_IDX)).toString().c_str();
 	}
 
 
@@ -260,8 +261,8 @@ public:
 	        columnAt(static_cast<int>(MetadataObjectIndex::MD_CRC_IDX)).fromString(crc);;
 	}
 
-	const std::string& getVersionString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_VERSION_IDX )).toString();
+	const char * getVersionString() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_VERSION_IDX )).toString().c_str();
 	}
 
 	void setVersion(const std::string& crc) {
@@ -269,8 +270,8 @@ public:
 	}
 
 	// MD_DATEADDED_IDX
-	const std::string& getAddedDateString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_DATEADDED_IDX)).toString();
+	const char * getAddedDateString() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_DATEADDED_IDX)).toString().c_str();
 	}
 
 	void setAddedDate(const std::string& dateAdded) {
@@ -278,20 +279,20 @@ public:
 	}
 
 	void setAddedDate(const ExifDateTime& dateAdded) {
-		const std::string s = ((ExifDateTime&)(dateAdded)).toString();
+		const std::string s = ((ExifDateTime&)(dateAdded)).toString().c_str();
 		columnAt(static_cast<int>(MetadataObjectIndex::MD_DATEADDED_IDX)).fromString(s);
 	}
 
-	const std::string& getDateCreateString() const {
-	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_DATECREATE_IDX)).toString();
+	const char * getDateCreateString() const {
+	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_DATECREATE_IDX)).toString().c_str();
 	}
 
 	void setDateCreate(const std::string& dateCreate) {
 	        columnAt(static_cast<int>(MetadataObjectIndex::MD_DATECREATE_IDX)).fromString(dateCreate);;
 	}
 
-	const std::string& getDateModifiedString() const {
-	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_DATEMODIFIED_IDX)).toString();
+	const char * getDateModifiedString() const {
+	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_DATEMODIFIED_IDX)).toString().c_str();
 	}
 
 	void setDateModified(const std::string& dateModified) {
@@ -299,144 +300,144 @@ public:
 	}
 
 
-	const std::string& getDigitalZoomString() const {
-	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_DIGITALZOOM_IDX)).toString();
+	const char * getDigitalZoomString() const {
+	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_DIGITALZOOM_IDX)).toString().c_str();
 	}
 
 	void setDigitalZoom(const std::string& digitalZoom) {
 	        columnAt(static_cast<int>(MetadataObjectIndex::MD_DIGITALZOOM_IDX)).fromString(digitalZoom);;
 	}
 
-	const std::string& getExifVersionString() const {
-	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_SOFTWARE_IDX)).toString();
+	const char * getExifVersionString() const {
+	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_SOFTWARE_IDX)).toString().c_str();
 	}
 
 	void setExifVersion(const std::string& exifVersion) {
 	        columnAt(static_cast<int>(MetadataObjectIndex::MD_SOFTWARE_IDX)).fromString(exifVersion);;
 	}
 
-	const std::string& getExposureBiasString() const {
-	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_EXPOSUREBIAS_IDX)).toString();
+	const char * getExposureBiasString() const {
+	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_EXPOSUREBIAS_IDX)).toString().c_str();
 	}
 
 	void setExposureBias(const std::string& exposureBias) {
 	        columnAt(static_cast<int>(MetadataObjectIndex::MD_EXPOSUREBIAS_IDX)).fromString(exposureBias);;
 	}
 
-	const std::string& getExposureProgramString() const {
-	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_EXPOSUREPROGRAM_IDX)).toString();
+	const char * getExposureProgramString() const {
+	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_EXPOSUREPROGRAM_IDX)).toString().c_str();
 	}
 
 	void setExposureProgram(const std::string& exposureProgram) {
 		columnAt(static_cast<int>(MetadataObjectIndex::MD_EXPOSUREPROGRAM_IDX)).fromString(exposureProgram);;
 	}
 
-	const std::string& getExposureTimeString() const {
-	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_EXPOSURETIME_IDX)).toString();
+	const char * getExposureTimeString() const {
+	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_EXPOSURETIME_IDX)).toString().c_str();
 	}
 
 	void setExposureTime(const std::string& exposureTime) {
 	        columnAt(static_cast<int>(MetadataObjectIndex::MD_EXPOSURETIME_IDX)).fromString(exposureTime);;
 	}
 
-	const std::string& getFilenameString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_FILENAME_IDX)).toString();
+	const char *getFilenameString() {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_FILENAME_IDX)).toString().c_str();
 	}
 
 	void setFilename(const std::string& filename) {
 	        columnAt(static_cast<int>(MetadataObjectIndex::MD_FILENAME_IDX)).fromString(filename);;
 	}
 
-	const std::string& getFilepathString() const {
-	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_FILEPATH_IDX)).toString();
+	const char *getFilepathString() const {
+	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_FILEPATH_IDX)).toString().c_str();
 	}
 
 	void setFilepath(const std::string& filepath) {
 	        columnAt(static_cast<int>(MetadataObjectIndex::MD_FILEPATH_IDX)).fromString(filepath);;
 	}
 
-	const std::string& getFileSizeString() const {
-	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_FILESIZE_IDX)).toString();
+	const char * getFileSizeString() const {
+	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_FILESIZE_IDX)).toString().c_str();
 	}
 
 	void setFileSize(const std::string& fileSize) {
 	        columnAt(static_cast<int>(MetadataObjectIndex::MD_FILESIZE_IDX)).fromString(fileSize);;
 	}
 
-	const std::string& getFlashString() const {
-	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_FLASH_IDX)).toString();
+	const char *getFlashString() const {
+	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_FLASH_IDX)).toString().c_str();
 	}
 
 	void setFlash(const std::string& flash) {
 	        columnAt(static_cast<int>(MetadataObjectIndex::MD_FLASH_IDX)).fromString(flash);;
 	}
 
-	const std::string& getFocalLengthString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_FOCALLENGTH_IDX)).toString();
+	const char *getFocalLengthString() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_FOCALLENGTH_IDX)).toString().c_str();
 	}
 
 	void setFocalLength(const std::string& focalLength) {
 	        columnAt(static_cast<int>(MetadataObjectIndex::MD_FOCALLENGTH_IDX)).fromString(focalLength);;
 	}
 
-	const std::string& getGpsTimeStampString() const {
-	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_GPSTIMESTAMP_IDX)).toString();
+	const char *getGpsTimeStampString() const {
+	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_GPSTIMESTAMP_IDX)).toString().c_str();
 	}
 
 	void setGpsTimeStamp(const std::string& gpsTimeStamp) {
 	        columnAt(static_cast<int>(MetadataObjectIndex::MD_GPSTIMESTAMP_IDX)).fromString(gpsTimeStamp);;
 	}
 
-	const std::string& getHeightString() const {
-	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_HEIGHT_IDX)).toString();
+	const char *getHeightString() const {
+	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_HEIGHT_IDX)).toString().c_str();
 	}
 
 	void setHeight(const std::string& height) {
 	        columnAt(static_cast<int>(MetadataObjectIndex::MD_HEIGHT_IDX)).fromString(height);;
 	}
 
-	const std::string& getIsoSpeedRatingString() const {
-	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_ISOSPEEDRATING_IDX)).toString();
+	const char *getIsoSpeedRatingString() const {
+	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_ISOSPEEDRATING_IDX)).toString().c_str();
 	}
 
 	void setIsoSpeedRating(const std::string& isoSpeedRating) {
 	        columnAt(static_cast<int>(MetadataObjectIndex::MD_ISOSPEEDRATING_IDX)).fromString(isoSpeedRating);
 	}
 
-	const std::string& getLabelString() const {
-	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_LABEL_IDX)).toString();
+	const char *getLabelString() const {
+	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_LABEL_IDX)).toString().c_str();
 	}
 
 	void setLabel(const std::string& label) {
 	        columnAt(static_cast<int>(MetadataObjectIndex::MD_LABEL_IDX)).fromString(label);;
 	}
 
-	const std::string& getLatitudeString() const {
-	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_LATITUDE_IDX)).toString();
+	const char *getLatitudeString() const {
+	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_LATITUDE_IDX)).toString().c_str();
 	}
 
 	void setLatitude(const std::string& latitude) {
 	        columnAt(static_cast<int>(MetadataObjectIndex::MD_LATITUDE_IDX)).fromString(latitude);;
 	}
 
-	const std::string& getLightSourceString() const {
-	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_LIGHTSOURCE_IDX)).toString();
+	const char *getLightSourceString() const {
+	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_LIGHTSOURCE_IDX)).toString().c_str();
 	}
 
 	void setLightSource(const std::string& lightSource) {
 	        columnAt(static_cast<int>(MetadataObjectIndex::MD_LIGHTSOURCE_IDX)).fromString(lightSource);;
 	}
 
-	const std::string& getLongitudeString() const {
-	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_LONGITUDE_IDX)).toString();
+	const char *getLongitudeString() const {
+	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_LONGITUDE_IDX)).toString().c_str();
 	}
 
 	void setLongitude(const std::string& longitude) {
 	        columnAt(static_cast<int>(MetadataObjectIndex::MD_LONGITUDE_IDX)).fromString(longitude);;
 	}
 
-	const std::string& getGPSTimeStampString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_GPSTIMESTAMP_IDX)).toString();
+	const char *getGPSTimeStampString() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_GPSTIMESTAMP_IDX)).toString().c_str();
 	}
 
 	void setGPSTimeStamp(const std::string& gpsTimeStamp) {
@@ -444,64 +445,64 @@ public:
 	}
 
 
-	const std::string& getMakerString() const {
-	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_MAKER_IDX)).toString();
+	const char *getMakerString() const {
+	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_MAKER_IDX)).toString().c_str();
 	}
 
 	void setMaker(const std::string& maker) {
 	        columnAt(static_cast<int>(MetadataObjectIndex::MD_MAKER_IDX)).fromString(maker);;
 	}
 
-	const std::string& getMd5String() const {
-	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_MD5_IDX)).toString();
+	const char *getMd5String() const {
+	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_MD5_IDX)).toString().c_str();
 	}
 
 	void setMd5(const std::string& md5) {
 	        columnAt(static_cast<int>(MetadataObjectIndex::MD_MD5_IDX)).fromString(md5);;
 	}
 
-	const std::string& getMediaTypeString() const {
-	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_CRC_IDX)).toString();
+	const char *getMediaTypeString() const {
+	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_CRC_IDX)).toString().c_str();
 	}
 
 	void setMediaType(const std::string& mediaType) {
 	        columnAt(static_cast<int>(MetadataObjectIndex::MD_CRC_IDX)).fromString(mediaType);;
 	}
 
-	const std::string& getMeteringModeString() const {
-	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_METERINGMODE_IDX)).toString();
+	const char *getMeteringModeString() const {
+	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_METERINGMODE_IDX)).toString().c_str();
 	}
 
 	void setMeteringMode(const std::string& meteringMode) {
 	        columnAt(static_cast<int>(MetadataObjectIndex::MD_METERINGMODE_IDX)).fromString(meteringMode);;
 	}
 
-	const std::string& getModelString() const {
-	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_MODEL_IDX)).toString();
+	const char *getModelString() const {
+	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_MODEL_IDX)).toString().c_str();
 	}
 
 	void setModel(const std::string& model) {
 	        columnAt(static_cast<int>(MetadataObjectIndex::MD_MODEL_IDX)).fromString(model);;
 	}
 
-	const std::string& getOrginalNameString() const {
-	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_ORGINALNAME_IDX)).toString();
+	const char *getOrginalNameString() const {
+	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_ORGINALNAME_IDX)).toString().c_str();
 	}
 
 	void setOrginalName(const std::string& orginalName) {
 	        columnAt(static_cast<int>(MetadataObjectIndex::MD_ORGINALNAME_IDX)).fromString(orginalName);;
 	}
 
-	const std::string& getRatingString() const {
-	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_RATING_IDX)).toString();
+	const char *getRatingString() const {
+	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_RATING_IDX)).toString().c_str();
 	}
 
 	void setRating(const std::string& rating) {
 	        columnAt(static_cast<int>(MetadataObjectIndex::MD_RATING_IDX)).fromString(rating);
 	}
 
-	const std::string& getSequenceIdString() const {
-	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_SEQUENCEID_IDX)).toString();
+	const char *getSequenceIdString() const {
+	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_SEQUENCEID_IDX)).toString().c_str();
 	}
 
 	void setSequenceId(const std::string& sequenceId) {
@@ -511,48 +512,48 @@ public:
 	void setSequenceId(const int sequenceId) {
 		columnAt(static_cast<int>(MetadataObjectIndex::MD_SEQUENCEID_IDX)) = sequenceId;
 	}
-	const std::string& getSoftwareString() const {
-	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_SOFTWARE_IDX)).toString();
+	const char *getSoftwareString() const {
+	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_SOFTWARE_IDX)).toString().c_str();
 	}
 
 	void setSoftware(const std::string& software) {
 	        columnAt(static_cast<int>(MetadataObjectIndex::MD_SOFTWARE_IDX)).fromString(software);;
 	}
 
-	const std::string& getSourceUrlString() const {
-	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_SOURCEURL_IDX)).toString();
+	const char *getSourceUrlString() const {
+	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_SOURCEURL_IDX)).toString().c_str();
 	}
 
 	void setSourceUrl(const std::string& sourceUrl) {
 		columnAt(static_cast<int>(MetadataObjectIndex::MD_SOURCEURL_IDX)).fromString(sourceUrl);;
 	}
 
-	const std::string& getUniqueIdString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_UUID_IDX)).toString();
+	const char *getUniqueIdString() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_UUID_IDX)).toString().c_str();
 	}
 
 	void setUniqueId(const std::string& uniqueId) {
 		columnAt(static_cast<int>(MetadataObjectIndex::MD_UUID_IDX)).fromString(uniqueId);;
 	}
 
-	const std::string& getUsageRightsString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_USAGERIGHTS_IDX)).toString();
+	const char *getUsageRightsString() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_USAGERIGHTS_IDX)).toString().c_str();
 	}
 
 	void setUsageRights(const std::string& usageRights) {
 		columnAt(static_cast<int>(MetadataObjectIndex::MD_USAGERIGHTS_IDX)).fromString(usageRights);;
 	}
 
-	const std::string& getViewRotationString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_VIEWROTATION_IDX)).toString();
+	const char *getViewRotationString() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_VIEWROTATION_IDX)).toString().c_str();
 	}
 
 	void setViewRotation(const std::string& viewRotation) {
 		columnAt(static_cast<int>(MetadataObjectIndex::MD_VIEWROTATION_IDX)).fromString(viewRotation);;
 	}
 
-	const std::string& getWidthString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_WIDTH_IDX)).toString();
+	const char *getWidthString() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_WIDTH_IDX)).toString().c_str();
 
 	}
 
@@ -560,8 +561,8 @@ public:
 		columnAt(static_cast<int>(MetadataObjectIndex::MD_WIDTH_IDX)).fromString(width);;
 	}
 
-	const std::string& getHeadlineString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_HEADLINE_IDX)).toString();
+	const char *getHeadlineString() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_HEADLINE_IDX)).toString().c_str();
 
 	}
 
@@ -569,8 +570,8 @@ public:
 		columnAt(static_cast<int>(MetadataObjectIndex::MD_HEADLINE_IDX)).fromString(width);;
 	}
 
-	const std::string& getCategoryString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_CATEGORY_IDX)).toString();
+	const char *getCategoryString() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_CATEGORY_IDX)).toString().c_str();
 
 	}
 
@@ -578,8 +579,8 @@ public:
 		columnAt(static_cast<int>(MetadataObjectIndex::MD_CATEGORY_IDX)).fromString(width);;
 	}
 
-	const std::string& getDescriptionString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_DESCRIPTION_IDX)).toString();
+	const char *getDescriptionString() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_DESCRIPTION_IDX)).toString().c_str();
 
 	}
 
@@ -587,8 +588,8 @@ public:
 		columnAt(static_cast<int>(MetadataObjectIndex::MD_DESCRIPTION_IDX)).fromString(width);;
 	}
 
-	const std::string& getKeywordsString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_KEYWORDS_IDX)).toString();
+	const char *getKeywordsString() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_KEYWORDS_IDX)).toString().c_str();
 
 	}
 
@@ -596,8 +597,8 @@ public:
 		columnAt(static_cast<int>(MetadataObjectIndex::MD_KEYWORDS_IDX)).fromString(width);;
 	}
 
-	const std::string& getSourceString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_SOURCE_IDX)).toString();
+	const char *getSourceString() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_SOURCE_IDX)).toString().c_str();
 
 	}
 
@@ -605,8 +606,8 @@ public:
 		columnAt(static_cast<int>(MetadataObjectIndex::MD_SOURCE_IDX)).fromString(width);;
 	}
 
-	const std::string& getInstructionsString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_INSTRUCTIONS_IDX)).toString();
+	const char *getInstructionsString() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_INSTRUCTIONS_IDX)).toString().c_str();
 
 	}
 
@@ -614,8 +615,8 @@ public:
 		columnAt(static_cast<int>(MetadataObjectIndex::MD_INSTRUCTIONS_IDX)).fromString(width);;
 	}
 
-	const std::string& getSceneString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_SCENE_IDX)).toString();
+	const char *getSceneString() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_SCENE_IDX)).toString().c_str();
 
 	}
 
@@ -623,13 +624,13 @@ public:
 		columnAt(static_cast<int>(MetadataObjectIndex::MD_SCENE_IDX)).fromString(width);;
 	}
 
-	const std::string& getSceneCaptureTypeString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_SCENECAPTURETYPE_IDX)).toString();
+	const char *getSceneCaptureTypeString() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_SCENECAPTURETYPE_IDX)).toString().c_str();
 
 	}
 
-	const std::string& getCreatorString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_CREATOR_IDX)).toString();
+	const char *getCreatorString() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_CREATOR_IDX)).toString().c_str();
 
 	}
 
@@ -637,8 +638,8 @@ public:
 		columnAt(static_cast<int>(MetadataObjectIndex::MD_CREATOR_IDX)).fromString(width);;
 	}
 
-	const std::string& getJobTitleString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_JOBTITLE_IDX)).toString();
+	const char *getJobTitleString() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_JOBTITLE_IDX)).toString().c_str();
 
 	}
 
@@ -646,8 +647,8 @@ public:
 		columnAt(static_cast<int>(MetadataObjectIndex::MD_JOBTITLE_IDX)).fromString(width);;
 	}
 
-	const std::string& getAddressString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_ADDRESS_IDX)).toString();
+	const char *getAddressString() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_ADDRESS_IDX)).toString().c_str();
 
 	}
 
@@ -655,8 +656,8 @@ public:
 		columnAt(static_cast<int>(MetadataObjectIndex::MD_ADDRESS_IDX)).fromString(width);;
 	}
 
-	const std::string& getCityString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_CITY_IDX)).toString();
+	const char *getCityString() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_CITY_IDX)).toString().c_str();
 
 	}
 
@@ -664,8 +665,8 @@ public:
 		columnAt(static_cast<int>(MetadataObjectIndex::MD_CITY_IDX)).fromString(width);;
 	}
 
-	const std::string& getStateString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_STATE_IDX)).toString();
+	const char *getStateString() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_STATE_IDX)).toString().c_str();
 
 	}
 
@@ -673,8 +674,8 @@ public:
 		columnAt(static_cast<int>(MetadataObjectIndex::MD_STATE_IDX)).fromString(width);;
 	}
 
-	const std::string& getPostalCodeString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_POSTALCODE_IDX)).toString();
+	const char *getPostalCodeString() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_POSTALCODE_IDX)).toString().c_str();
 
 	}
 
@@ -682,8 +683,8 @@ public:
 		columnAt(static_cast<int>(MetadataObjectIndex::MD_POSTALCODE_IDX)).fromString(width);;
 	}
 
-	const std::string& getCountryString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_COUNTRY_IDX)).toString();
+	const char *getCountryString() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_COUNTRY_IDX)).toString().c_str();
 
 	}
 
@@ -691,8 +692,8 @@ public:
 		columnAt(static_cast<int>(MetadataObjectIndex::MD_COUNTRY_IDX)).fromString(width);;
 	}
 
-	const std::string& getPhoneString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_PHONE_IDX)).toString();
+	const char *getPhoneString() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_PHONE_IDX)).toString().c_str();
 
 	}
 
@@ -700,8 +701,8 @@ public:
 		columnAt(static_cast<int>(MetadataObjectIndex::MD_PHONE_IDX)).fromString(width);;
 	}
 
-	const std::string& getEmailString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_EMAIL_IDX)).toString();
+	const char *getEmailString() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_EMAIL_IDX)).toString().c_str();
 
 	}
 
@@ -709,8 +710,8 @@ public:
 		columnAt(static_cast<int>(MetadataObjectIndex::MD_EMAIL_IDX)).fromString(width);;
 	}
 
-	const std::string& getWebsiteString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_WEBSITE_IDX)).toString();
+	const char *getWebsiteString() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_WEBSITE_IDX)).toString().c_str();
 
 	}
 
@@ -718,105 +719,107 @@ public:
 		columnAt(static_cast<int>(MetadataObjectIndex::MD_WEBSITE_IDX)).fromString(width);;
 	}
 
-	const std::string& getTitleString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_TITLE_IDX)).toString();
+	const char *getTitleString() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_TITLE_IDX)).toString().c_str();
 	}
 
-	const std::string& getSubjectString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_SUBJECT_IDX)).toString();
+	const char *getSubjectString() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_SUBJECT_IDX)).toString().c_str();
 	}
 
-	const std::string& getRatingPercentString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_RATINGPERCENT_IDX)).toString();
+	const char *getRatingPercentString() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_RATINGPERCENT_IDX)).toString().c_str();
 	}
 
-	const std::string& getCommentString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_COMMENT_IDX)).toString();
+	const char *getCommentString() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_COMMENT_IDX)).toString().c_str();
 	}
 
-	const std::string& getAuthorString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_AUTHOR_IDX)).toString();
+	const char *getAuthorString() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_AUTHOR_IDX)).toString().c_str();
 	}
 
-	const std::string& getSubsetimeOriginaLString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_SUBSETIMEORIGINAL_IDX)).toString();
+	const char *getSubsetimeOriginaLString() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_SUBSETIMEORIGINAL_IDX)).toString().c_str();
 	}
 
-	const std::string& getBitsPerSampleString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_BITSPERSAMPLE_IDX)).toString();
+	const char *getBitsPerSampleString() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_BITSPERSAMPLE_IDX)).toString().c_str();
 	}
 
-	const std::string& getXResolutionString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_XRESOLUTION_IDX)).toString();
+	const char *getXResolutionString() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_XRESOLUTION_IDX)).toString().c_str();
 	}
 
-	const std::string& getYResolutionString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_YRESOLUTION_IDX)).toString();
+	const char *getYResolutionString() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_YRESOLUTION_IDX)).toString().c_str();
 	}
 
-	const std::string& getResolutionUnitString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_RESOLUTIONUNIT_IDX)).toString();
+	const char *getResolutionUnitString() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_RESOLUTIONUNIT_IDX)).toString().c_str();
 	}
 
-	const std::string& getSubjectDistanceString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_SUBJECTDISTANCE_IDX)).toString();
+	const char *getSubjectDistanceString() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_SUBJECTDISTANCE_IDX)).toString().c_str();
 	}
 
-	const std::string& getFocalLengthIn35mmString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_FOCALLENGTHIN35MM_IDX)).toString();
+	const char *getFocalLengthIn35mmString() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_FOCALLENGTHIN35MM_IDX)).toString().c_str();
 	}
 
-	const std::string& getWhiteBalanceString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_WHITEBALANCE_IDX)).toString();
+	const char *getWhiteBalanceString() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_WHITEBALANCE_IDX)).toString().c_str();
 	}
 
-	const std::string& getContrastString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_CONTRAST_IDX)).toString();
+	const char*getContrastString() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_CONTRAST_IDX)).toString().c_str();
 	}
 
-	const std::string& getSaturationString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_SATURATION_IDX)).toString();
+	const char *getSaturationString() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_SATURATION_IDX)).toString().c_str();
 	}
 
-	const std::string& getSharpnessString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_SHARPNESS_IDX)).toString();
+	const char *getSharpnessString() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_SHARPNESS_IDX)).toString().c_str();
 	}
 
-	const std::string& getBrightnessValueString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_BRIGHTNESSVALUE_IDX)).toString();}
+	const char *getBrightnessValueString() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_BRIGHTNESSVALUE_IDX)).toString().c_str();}
 
-	const std::string& getSubjectDIstanceRangeString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_SUBJECTDISTANCERANGE_IDX)).toString();
+	const char *getSubjectDIstanceRangeString() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_SUBJECTDISTANCERANGE_IDX)).toString().c_str();
 	}
 
-	const std::string& getMaxApertureString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_MAXAPERTURE_IDX)).toString();
+	const char *getMaxApertureString() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_MAXAPERTURE_IDX)).toString().c_str();
 	}
 
-	const std::string& getCompressedBitsPerPixelString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_COMPRESSEDBITSPERPIXEL_IDX)).toString();
+	const char *getCompressedBitsPerPixelString() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_COMPRESSEDBITSPERPIXEL_IDX)).toString().c_str();
 	}
 
-	const std::string& getFlashEnergyString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_FLASHENERGY_IDX)).toString();
-	}
-
-	
-
-	const std::string& getPhotometricInterpretationString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_PHOTOMETRICINTERPRETATION_IDX)).toString();
+	const char *getFlashEnergyString() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_FLASHENERGY_IDX)).toString().c_str();
 	}
 
 	
 
-	const std::string& getLoctionString() const {
-		return columnAt(static_cast<int>(MetadataObjectIndex::MD_LOCATION_IDX)).toString();
+	const char *getPhotometricInterpretationString() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_PHOTOMETRICINTERPRETATION_IDX)).toString().c_str();
+	}
+
+	
+
+	const char *getLoctionString() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_LOCATION_IDX)).toString().c_str();
 	}
 	
 
 	
 	
 };
+
+
 
 } /* namespace simplearchive */
 #endif /* METADATAOBJECT_H_ */

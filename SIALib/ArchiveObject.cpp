@@ -642,15 +642,10 @@ namespace simplearchive {
 	bool ArchiveObject::OnCompletion() {
 		MasterCatalogue& masterView = getMasterCatalogue();
 		
-		if (masterView.processHistoryPages() == false) {
+		if (masterView.processWWWPages() == false) {
 			return false;
 		}
-		if (masterView.processJournalPages() == false) {
-			return false;
-		}
-		if (masterView.makePages() == false) {
-			return false;
-		}
+		
 		return true;
 	}
 

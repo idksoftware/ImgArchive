@@ -293,7 +293,7 @@ namespace {
 JpegExif_Ptr EXIFInfo::parseFrom(const unsigned char *buf, unsigned len) {
 	// Sanity check: all JPEG files start with 0xFFD8 and end with 0xFFD9
 	// This check also ensures that the user has supplied a correct value for len.
-	JpegExif_Ptr jpegExif(new JpegEXIF);
+	JpegExif_Ptr jpegExif = std::make_shared<JpegEXIF> ();
 	jpegExif->clear();
 	unsigned char b1 = buf[0];
 	unsigned char b2 = buf[1];
@@ -355,7 +355,7 @@ JpegExif_Ptr EXIFInfo::parseFrom(const string &data) {
 //
 JpegExif_Ptr EXIFInfo::parseFromEXIFSegment(const unsigned char *buf, unsigned len) {
 
-	JpegExif_Ptr jpegExif(new JpegEXIF);
+	JpegExif_Ptr jpegExif = std::make_shared<JpegEXIF>();
 
 	bool alignIntel = true;     // byte alignment (defined in EXIF header)
 	unsigned offs = 0;        // current offset into buffer

@@ -79,8 +79,7 @@ class LoggBuffer : public std::vector<std::string> {
 CLogger::CLogger() {
 	m_startUpBuffer = make_unique<LogBuffer>();
 	m_logLevel = Level::SUMMARY;
-	//m_level = Level::SUMMARY;
-	//m_isConsoleOut = Level::FINE;
+	
 	m_consoleLevel = Level::SUMMARY;
 	m_isConsoleOut = Level::SUMMARY;
 }
@@ -119,27 +118,42 @@ static inline void trim(std::string &s) {
 
 
 
-bool CLogger::messageOk(std::string message) {
+CLogger::Level CLogger::messageLevel(std::string message) {
 	int spos = message.find("[");
 	int epos = message.find("]", spos + 1);
 	string levelStr = message.substr(spos+1, (epos-spos)-1);
 	trim(levelStr);
-	CLogger::Level level = toLevel(levelStr);
-	if (level >= m_logLevel) {
-		return true;
-	}
-	return false;
+	return toLevel(levelStr);
+	
 }
 
 void CLogger::setLogPath(const char *logpath) {
 	m_logpath = logpath;
+}
+
+void CLogger::startLogging() {
 	m_isOpen = true;
 	makeFile();
+	processBuffer();
+}
+
+void CLogger::processBuffer() {
 	for (auto i = m_startUpBuffer->begin(); i != m_startUpBuffer->end(); i++) {
-		if (messageOk(*i) == false) {
-			continue;
-		}
+		
 		m_logfile << *i;
+	
+		if (m_isSilent == false) {
+			std::string message = *i;
+			CLogger::Level level = messageLevel(*i);
+			if (IsConsoleOut(level)) {
+				if (m_isQuiet) {
+					std::cout << message << '\n';
+				}
+				
+			}
+			UDPOut::out(message.c_str());
+		}
+		
 	}
 }
 
@@ -181,43 +195,52 @@ void CLogger::log(int code, Level level, const char *format, ...) {
 		count = 1;
 	}
 	last.now();
-	char message[512];
-	va_list args;
-	va_start(args, format);
+	try {
+		char message[1024];
+		va_list args;
+		va_start(args, format);
 #ifdef _WIN32
-	vsprintf_s(message, format, args);
+		vsprintf_s(message, format, args);
 #else
-	vsprintf(message, format, args);
+		vsprintf(message, format, args);
 #endif
-	va_end(args);
-	m_lastMessage = message;
-	m_lastCode = code;
-	std::stringstream logstr;
-	logstr << "\n" << setfill('0') << setw(6) << code << ": " << date.toLogString() << '.' << count << "\t";
-	logstr << '[' << levelStr(level) << "]\t";
-	logstr << message;
-	if (m_isOpen) {
-		m_logfile << logstr.str();
-	}
-	else {
-		m_startUpBuffer->push_back(logstr.str());
-	}
-	m_cursize++;
-
-	if (m_isSilent == false) {
-		if (m_isQuiet == true && IsConsoleOut(level)) {
-			std::cout << message << '\n';
+		va_end(args);
+		m_lastMessage = message;
+		m_lastCode = code;
+		std::stringstream logstr;
+		logstr << "\n" << setfill('0') << setw(6) << code << ": " << date.toLogString() << '.' << count << "\t";
+		logstr << '[' << levelStr(level) << "]\t";
+		logstr << message;
+		if (m_isOpen) {
+			if (IsLogOut(level)) {
+				m_logfile << logstr.str();
+			}
 		}
 		else {
-			std::cout << setfill('0') << setw(6) << code << ": " << message << '\n';
+			m_startUpBuffer->push_back(logstr.str());
 		}
+		m_cursize++;
+
+		if (m_isSilent == false) {
+			if (IsConsoleOut(level)) {
+				if (m_isQuiet) {
+					std::cout << message << '\n';
+				}
+				else {
+					std::cout << setfill('0') << setw(6) << code << ": " << message << '\n';
+				}
+			}
+		}
+
+		std::stringstream strudp;
+		strudp << setfill('0') << setw(6) << code << ":" << message;
+		std::string udpMessage = strudp.str();
+		UDPOut::out(udpMessage.c_str());
 	}
-	
-	std::stringstream strudp;
-	strudp << setfill('0') << setw(6) << code << ":" << message;
-	std::string udpMessage = strudp.str();
-	UDPOut::out(udpMessage.c_str());
-	
+	catch (exception e) {
+		printf("logger crashed");
+		exit(-1);
+	}
 	
 }
 
@@ -267,7 +290,7 @@ inline bool CLogger::IsLogOut(Level level) {
 }
 
 inline bool CLogger::IsConsoleOut(Level level) {
-	if (level >= m_logLevel) {
+	if (level >= m_consoleLevel) {
 		return true;
 	}
 	return false;

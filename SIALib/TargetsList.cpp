@@ -121,8 +121,8 @@ namespace simplearchive {
 			logger.log(LOG_OK, CLogger::Level::INFO, "Completed reading folder: %s", m_path.c_str());
 			return true;
 		};
-		virtual FolderVisitor *make() {
-			return new FolderDir;
+		virtual std::shared_ptr<FolderVisitor> make() {
+			return (std::make_shared<FolderDir>());
 		}
 	public:
 		FolderDir() {};
@@ -167,7 +167,8 @@ namespace simplearchive {
 	}
 
 	void TargetsList::process(const char *path) {
-		DirectoryVisitor directoryVisitor(new FolderDir);
+		std::shared_ptr<FolderDir> folderDir_ptr = std::make_shared<FolderDir>();
+		DirectoryVisitor directoryVisitor(folderDir_ptr);
 		directoryVisitor.process(path);
 	}
 

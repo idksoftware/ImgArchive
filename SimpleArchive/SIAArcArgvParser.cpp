@@ -70,14 +70,17 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineOption("n", "name of the view.", ArgvParser::OptionRequiresValue);
 	defineOptionAlternative("n", "name");
 
-	defineOption("q", "no output is sent to the terminal.", ArgvParser::NoOptionAttribute);
+	defineOption("q", "quiet output is sent to the terminal.", ArgvParser::NoOptionAttribute);
 	defineOptionAlternative("q", "quiet");
+
+	defineOption("s", "no output is sent to the terminal.", ArgvParser::NoOptionAttribute);
+	defineOptionAlternative("s", "silent");
 
 	defineOption("e", "Generate progress events.", ArgvParser::NoOptionAttribute);
 	defineOptionAlternative("e", "events");
 
-	defineOption("s", "source of the images", ArgvParser::OptionRequiresValue);
-	defineOptionAlternative("s", "source-path");
+	defineOption("p", "source of the images", ArgvParser::OptionRequiresValue);
+	defineOptionAlternative("p", "source-path");
 
 	defineOption("S", "address scope", ArgvParser::OptionRequiresValue);
 	defineOptionAlternative("S", "scope");
@@ -459,6 +462,10 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 
 	if (foundOption("quiet") == true) {
 		config.setQuiet(true);
+	}
+
+	if (foundOption("silent") == true) {
+		config.setSilent(true);
 	}
 
 	if (foundOption("logging-level") == true) {

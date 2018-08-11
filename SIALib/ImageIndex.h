@@ -48,6 +48,7 @@ class ImageId {
 	unsigned long m_crc;
 	std::string m_md5;
 	std::string m_location;
+	std::string m_version;
 public:
 	ImageId() {};
 	ImageId(const char *dataString) {
@@ -59,13 +60,16 @@ public:
 		m_crc = std::stoul(crcStr.c_str(),NULL,16);
 		m_name = csvArgs.at(1);
 		m_md5 = csvArgs.at(2);
-		m_location = csvArgs.getOptional(3);
+		m_location = csvArgs.at(3);
+		m_version = csvArgs.at(4);
 	}
 
-	ImageId(const char *name, unsigned long crc, const char *md5) {
+	ImageId(const char *name, unsigned long crc, const char *md5, const char *path, int version) {
 		m_name = name;
 		m_crc = crc;
 		m_md5 = md5;
+		m_location = path;
+		m_version = version;
 	}
 
 	//bool add(const char *name, unsigned long crc, const char *md5);
@@ -108,6 +112,8 @@ class DupCache;
 
 typedef std::unique_ptr<DupDataFile> DupDataFile_Ptr;
 
+/**/
+
 
 
 class ImageIndex {
@@ -118,9 +124,9 @@ class ImageIndex {
 	std::string m_dbpath;
 	unsigned char m_data[4];
 	/** Adds to primary and backups */
-	bool add(const char *name, unsigned long crc, const char *md5);
+	bool add(const char *name, unsigned long crc, const char *md5, const char *path, int version);
 	/** Adds to the Image index db using the given path */
-	bool add(const char *name, unsigned long crc, const char *md5, const char *rootPath);
+	bool add(const char *name, unsigned long crc, const char *md5, const char *imagePath, int version, const char *rootPath);
 	DupDataFile_Ptr findDupDataFile(unsigned long crc);
 	DupDataFile_Ptr findDupDataFile(unsigned long crc, const char *root);
 	/**

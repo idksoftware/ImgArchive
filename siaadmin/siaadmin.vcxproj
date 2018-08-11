@@ -90,7 +90,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>C:\development\SIA\SimpleArchive\Debug\fclib.lib;C:\development\SIA\SimpleArchive\Debug\util.lib;C:\development\SIA\SimpleArchive\Debug\exifcl.lib;C:\development\SIA\SimpleArchive\Debug\metatp.lib;C:\development\SIA\SimpleArchive\Debug\csv.lib;C:\development\SIA\SimpleArchive\Debug\sqlite3.lib;C:\development\SIA\SimpleArchive\Debug\SIALib.lib;C:\development\SIA\SimpleArchive\Debug\IntegrityManager.lib;C:\development\SIA\SimpleArchive\Debug\appbase.lib;%(AdditionalDependencies);kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib</AdditionalDependencies>
+      <AdditionalDependencies>C:\development\SIA\SimpleArchive\Debug\fclib.lib;C:\development\SIA\SimpleArchive\Debug\util.lib;C:\development\SIA\SimpleArchive\Debug\exifcl.lib;C:\development\SIA\SimpleArchive\Debug\metatp.lib;C:\development\SIA\SimpleArchive\Debug\csv.lib;C:\development\SIA\SimpleArchive\Debug\sqlite3.lib;C:\development\SIA\SimpleArchive\Debug\SIALib.lib;C:\development\SIA\SimpleArchive\Debug\IntegrityManager.lib;C:\development\SIA\SimpleArchive\Debug\appbase.lib;C:\development\SIA\SimpleArchive\Debug\web.lib;%(AdditionalDependencies);kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -154,12 +154,16 @@
     <ClInclude Include="AdminAppOptions.h" />
     <ClInclude Include="AdminArgvParser.h" />
     <ClInclude Include="CreateArchive.h" />
+    <ClInclude Include="ShowCommand.h" />
+    <ClInclude Include="TestArchive.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AdminApp.cpp" />
     <ClCompile Include="AdminAppOptions.cpp" />
     <ClCompile Include="AdminArgvParser.cpp" />
     <ClCompile Include="CreateArchive.cpp" />
+    <ClCompile Include="ShowCommand.cpp" />
+    <ClCompile Include="TestArchive.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

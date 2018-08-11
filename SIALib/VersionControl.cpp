@@ -59,6 +59,7 @@
 #include "HookCmd.h"
 #include "MetadataObject.h"
 #include "SummaryFile.h"
+#include "CheckDiskJournal.h"
 //#include "VersionControl.h"
 
 

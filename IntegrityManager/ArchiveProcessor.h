@@ -10,9 +10,9 @@ namespace simplearchive {
 	protected:
 		std::string m_archivePath;
 		std::string m_workspacePath;
-		VisitingObject *m_visitingObject;
+		std::shared_ptr<VisitingObject> m_visitingObject;
 		AddressScope m_AddressScope;
-		virtual VisitingObject *getVisitingObject() { return m_visitingObject; };
+		virtual VisitingObject& getVisitingObject() = 0;
 	public:
 		ArchiveFolderVistor(const char *archivePath);
 		ArchiveFolderVistor(const char *archivePath, const char *workspacePath);
@@ -24,7 +24,7 @@ namespace simplearchive {
 	class MasterFolderVistor : public ArchiveFolderVistor {
 
 	protected:
-		virtual VisitingObject *getVisitingObject() { return m_visitingObject; };
+		virtual VisitingObject& getVisitingObject() { return *m_visitingObject; };
 	public:
 		MasterFolderVistor(const char *archivePath) : ArchiveFolderVistor(archivePath) {};
 		MasterFolderVistor(const char *archivePath, const char *workspacePath)
@@ -37,7 +37,7 @@ namespace simplearchive {
 	class WorkspaceFolderVistor : public ArchiveFolderVistor {
 
 	protected:
-		virtual VisitingObject *getVisitingObject() { return m_visitingObject; };
+		virtual VisitingObject& getVisitingObject() { return *m_visitingObject; };
 	public:
 		WorkspaceFolderVistor(const char *archivePath) : ArchiveFolderVistor(archivePath) {};
 		WorkspaceFolderVistor(const char *archivePath, const char *workspacePath)
@@ -48,10 +48,12 @@ namespace simplearchive {
 	};
 
 	class ValidateReportingObject;
-	class ValidateWorkspace : public MasterFolderVistor {
-		ValidateReportingObject *m_validateReportingObject;
+	class ValidateWorkspace : public WorkspaceFolderVistor {
+		std::shared_ptr<ValidateReportingObject> m_validateReportingObject;
 	public:
-		ValidateWorkspace(const char *archivePath, const char *workspacePath);
+		ValidateWorkspace(const char *archivePath, const char *workspacePath) : WorkspaceFolderVistor(archivePath, workspacePath),
+			m_validateReportingObject(std::shared_ptr<ValidateReportingObject>()) {};
+			
 		virtual bool doWork(const char *targetdir, const char *checkFilePath, const char *address, VisitingObject *visitingObject);
 	};
 

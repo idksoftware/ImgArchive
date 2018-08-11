@@ -49,6 +49,7 @@ public:
 		CM_Archive,     //*
 		CM_Validate,    //* Validate the archive.
         CM_Fix,         //* Fix the archive
+		CM_Test,        //* Test the archive
 		CM_Unknown
 	} CommandMode;
 

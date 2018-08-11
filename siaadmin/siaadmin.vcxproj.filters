@@ -30,6 +30,12 @@
     <ClInclude Include="AdminArgvParser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TestArchive.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ShowCommand.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CreateArchive.cpp">
@@ -42,6 +48,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="AdminArgvParser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TestArchive.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ShowCommand.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

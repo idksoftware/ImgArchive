@@ -1,5 +1,7 @@
 #include "ArchiveProcessor.h"
 #include "FolderData.h"
+#include "CheckDiskJournal.h"
+
 namespace simplearchive {
 
 	ArchiveFolderVistor::ArchiveFolderVistor(const char *archivePath) {

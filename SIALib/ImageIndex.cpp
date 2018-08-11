@@ -167,7 +167,7 @@ public:
 	bool read(const char *datafile);
 	bool write();
 	bool write(const char *datafile);
-	bool add(const char *name, unsigned long crc, const char *md5);
+	bool add(const char *name, unsigned long crc, const char *md5, const char *path, const char *version);
 	int find(unsigned long crc);
 	std::string findData(unsigned long crc);
 	bool IsEmpty() {
@@ -215,14 +215,14 @@ bool DupDataFile::write(const char *datafile) {
 	file.close();
 	return true;
 }
-bool DupDataFile::add(const char *name, unsigned long crc, const char *md5) {
+bool DupDataFile::add(const char *name, unsigned long crc, const char *md5, const char *path, const char *version) {
 	//char c_crc[9];
 	std::string crcStr; // = c_crc;
 	sprintf_p(crcStr, "%.8x", crc);
 	//std::string crcStr = c_crc;
 	std::string nameStr = name;
 	std::string md5Str = md5;
-	std::string row(crcStr + ':' + nameStr + ':' + md5Str);
+	std::string row(crcStr + ':' + nameStr + ':' + md5Str + ':' + path + ':' + version);
 	if (find(crc) != -1) {
 		return false; // found
 	}
@@ -445,7 +445,7 @@ std::string get_file_contents(const char *filename)
 	{
 		std::string contents;
 		in.seekg(0, std::ios::end);
-		contents.resize(in.tellg());
+		contents.resize((size_t)in.tellg());
 		in.seekg(0, std::ios::beg);
 		in.read(&contents[0], contents.size());
 		in.close();
@@ -455,25 +455,26 @@ std::string get_file_contents(const char *filename)
 }
 
 
-bool ImageIndex::add(const BasicMetadata &BasicMetadata) {
+bool ImageIndex::add(const BasicMetadata &basicMetadata) {
 	
-	std::string pathStr = BasicMetadata.getPath();
+	std::string pathStr = basicMetadata.getPath();
 	
 #ifdef _WIN32
 #define SEP "\\"
 #else
 #define SEP "/"
 #endif
-	unsigned long c = BasicMetadata.getCrc();
+	unsigned long c = basicMetadata.getCrc();
 
-	std::string filename = pathStr.substr(pathStr.find_last_of("/") + 1);
-	return add(filename.c_str(), BasicMetadata.getCrc(), BasicMetadata.getMd5().c_str());
+	//std::string filename = pathStr.substr(pathStr.find_last_of("/") + 1);
+	std::string filename = basicMetadata.getName();
+	return add(filename.c_str(), basicMetadata.getCrc(), basicMetadata.getMd5().c_str(), basicMetadata.getPath().c_str(), 0);
 }
 
 
 
 bool ImageIndex::add(const FileInfo &fileinfo) {
-	return add(fileinfo.getName().c_str(), fileinfo.getCrc(), fileinfo.getMd5().c_str());
+	return add(fileinfo.getName().c_str(), fileinfo.getCrc(), fileinfo.getMd5().c_str(), fileinfo.getPath().c_str(), 0);
 }
 
 
@@ -498,8 +499,8 @@ bool ImageIndex::add2DupCache(const FileInfo &fileinfo) {
 	return m_dupCache->insert(fileinfo.getCrc(), fileinfo.getMd5().c_str(), fileinfo.getName().c_str());
 }
 
-bool ImageIndex::add(const char *name, unsigned long crc, const char *md5) {
-	if (add(name, crc, md5, m_dbpath.c_str()) == false) {
+bool ImageIndex::add(const char *name, unsigned long crc, const char *md5, const char *path, int version) {
+	if (add(name, crc, md5, path, version, m_dbpath.c_str()) == false) {
 		return false;
 	}
 	/*
@@ -510,7 +511,7 @@ bool ImageIndex::add(const char *name, unsigned long crc, const char *md5) {
 	return true;
 }
 
-bool ImageIndex::add(const char *name, unsigned long crc, const char *md5, const char *rootPath) {
+bool ImageIndex::add(const char *name, unsigned long crc, const char *md5, const char *imagePath, int version, const char *rootPath) {
 	char hexStr[3];
 	unsigned char data[4];
 	data[0] = (unsigned char)crc & 0xFF;
@@ -547,7 +548,8 @@ bool ImageIndex::add(const char *name, unsigned long crc, const char *md5, const
 		}
 
 	}
-	if (dupDataFile.add(name, crc, md5) == false) {
+	std::string ver = std::to_string(version);
+	if (dupDataFile.add(name, crc, md5, imagePath, ver.c_str()) == false) {
 		return false;
 	}
 	if (dupDataFile.write(path.c_str()) == false) {
@@ -588,7 +590,7 @@ DupDataFile_Ptr ImageIndex::findDupDataFile(unsigned long crc, const char *rootP
 		}
 	}
 	
-	DupDataFile_Ptr dupDataFile(new DupDataFile);
+	DupDataFile_Ptr dupDataFile = std::make_unique<DupDataFile>();
 	
 	SAUtils::chartohex2(hexStr, data[1]);
 	path = path + '/' + hexStr;

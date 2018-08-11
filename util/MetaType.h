@@ -37,6 +37,7 @@ public:
 
 };
 
+
 class MTSchema {
 public:
         typedef enum {
@@ -166,7 +167,7 @@ public:
 		return at(i);
 	}
 
-	const unsigned int size() const {
+	const size_t size() const {
 		return std::vector<MTSchema>::size();
 	}
 
@@ -352,7 +353,9 @@ public:
 			int idx = m_schema.getIndex(name);
 			return *(at(idx));
 		} catch (std::exception /*&e */) {
-			throw std::invalid_argument("Column name invalid");
+			std::string err = "Column name invalid: ";
+			err += name;
+			throw std::invalid_argument(err.c_str());
 		}
 	}
 	void print() {

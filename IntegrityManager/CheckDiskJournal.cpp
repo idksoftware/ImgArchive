@@ -62,25 +62,6 @@ namespace simplearchive {
 		return s.str();
 	}
 
-		
-
-	
-
-	
-
-	CheckDiskJournal::CheckDiskJournal()
-	{
-		m_num = 0;
-		m_list = new CDJournalList;
-	}
-
-	
-
-	CheckDiskJournal::~CheckDiskJournal()
-	{
-		delete m_list;
-	}
-
 	void CheckDiskJournal::add(const char *image, ReportStatus &status, const char *orginal) {
 		++m_num;
 		CDJournalItem cdJournalItem(m_num, image, status, orginal);
@@ -106,6 +87,8 @@ namespace simplearchive {
 	}
 	
 	bool CheckDiskJournal::writeXML(const char *path) {
+		CDSummaryItem summaryItem;
+
 		std::ofstream file(path);
 		if (file.is_open() == false) {
 			return false;
@@ -114,18 +97,34 @@ namespace simplearchive {
 		timeCompleted.now();
 		timeCompleted.toString();
 		file << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-			<< "<ImportJournal Completed=\"" << timeCompleted.toString() << "\">\n";
-
+			<< "<CheckJournal Completed=\"" << timeCompleted.toString() << "\">\n";
+		file << "<List>\n";
 		for (std::vector<CDJournalItem>::iterator i = m_list->begin(); i != m_list->end(); i++) {
 			CDJournalItem item = *i;
-			file << "\t<Event>\n";
+			file << "\t<Item>\n";
 
 			file << writeTag("Image", item.getImage(), 2);
 			file << writeTag("Status", item.getStatus().toString(), 2);
 			file << writeTag("Location", item.getOrginal(), 2);
-			file << "\t</Event>\n";
+			file << "\t</Item>\n";
+			ReportStatus reportStatus = item.getStatus();
+			summaryItem.update(reportStatus);
+
 		}
-		file << "</Catalog>\n";
+		file << "</List>\n";
+		file << "<Summary>\n";
+
+		file << "<Unknown>" << summaryItem.m_unknown << "</Unknown>\n";
+		file << "<ContentChanged>" << summaryItem.m_contentChanged << "</ContentChanged>\n";
+		file << "<NameChanged>" << summaryItem.m_nameChanged << "</NameChanged>\n";
+		file << "<Missing>" << summaryItem.m_missing << "</Missing>\n";
+		file << "<Added>" << summaryItem.m_added << "</Added>\n";
+		file << "<CheckedOutNoChange>" << summaryItem.m_checkedOutNoChange << "</CheckedOutNoChange>\n";
+		file << "<CheckedOutChanged>" << summaryItem.m_checkedOutChanged << "</CheckedOutChanged>\n";
+		file << "<Unchanged>" << summaryItem.m_unchanged << "</Unchanged>\n";
+			
+		file << "</Summary>\n";
+		file << "</CheckJournal>\n";
 		return true;
 	}
 
@@ -191,4 +190,150 @@ namespace simplearchive {
 	bool CheckDiskJournal::getCheckedOutState(int i) {
 		return m_list->at(i).getCheckedOutState();
 	}
+
+	std::string CDDaySummary::toString()
+	{
+		std::stringstream s;
+		s << m_summaryItem.m_title << ":" << m_summaryItem.m_unknown << ":" << m_summaryItem.m_contentChanged << ":" << m_summaryItem.m_nameChanged << ":" << m_summaryItem.m_missing << ":" << m_summaryItem.m_added
+			<< ":" << m_summaryItem.m_checkedOutNoChange << ":" << m_summaryItem.m_checkedOutChanged << ":" << m_summaryItem.m_unchanged;
+		return s.str();
+	}
+
+	void CDDaySummary::setStatus(ReportStatus& status)
+	{
+		m_summaryItem.update(status.get());
+	}
+	void CDYearSummary::add(const std::shared_ptr<CDDaySummary> &daySummary)
+	{
+		m_list->push_back(std::move(daySummary));
+	}
+	void CheckDiskSummaryJounal::add(const std::shared_ptr<CDYearSummary> &yearSummary)
+	{
+		m_list->push_back(std::move(yearSummary));
+	}
+	bool CheckDiskSummaryJounal::write(const char * path)
+	{
+		std::ofstream file(path);
+		if (file.is_open() == false) {
+			return false;
+		}
+		for (auto i = m_list->begin(); i != m_list->end(); i++) {
+			std::shared_ptr<CDYearSummary>& yitem = *i;
+			CDDaySummaryList& list = yitem->getList();
+			for (auto j = list.begin(); j != list.end(); j++) {
+				std::shared_ptr<CDDaySummary>& ditem = *j;
+				std::string line = ditem->toString();
+				//printf("%s\n", line.c_str());
+				file << line << '\n';
+			}
+
+		}
+		file.close();
+		return true;
+	}
+	bool CheckDiskSummaryJounal::writeXML(const char * path)
+	{
+		CDSummaryItem totalSummary;
+
+		std::ofstream file(path);
+		if (file.is_open() == false) {
+			return false;
+		}
+		ExifDateTime timeCompleted;
+		timeCompleted.now();
+		timeCompleted.toString();
+		file << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+			<< "<CheckJournal Completed=\"" << timeCompleted.toString() << "\">\n";
+		file << "<List>\n";
+		int unknown = 0;
+		int contentChanged = 0;
+		int nameChanged = 0;
+		int missing = 0;
+		int added = 0;
+		int checkedOutNoChange = 0;
+		int checkedOutChanged = 0;
+		int unchanged = 0;
+		for (auto i = m_list->begin(); i != m_list->end(); i++) {
+			std::shared_ptr<CDYearSummary>& yitem = *i;
+			CDDaySummaryList& list = yitem->getList();
+			file << "\t<Item Year=\"" << yitem->m_year << "\">\n";
+			file << "\t<List>\n";
+			CDSummaryItem summaryItem;
+			for (auto j = list.begin(); j != list.end(); j++) {
+				std::shared_ptr<CDDaySummary>& ditem = *j;
+				file << "\t<Item Day=\"" << ditem->m_summaryItem.m_title << "\">\n";
+
+				file << writeTag("unknown", std::to_string(ditem->m_summaryItem.m_unknown), 2);
+				file << writeTag("contentChanged", std::to_string(ditem->m_summaryItem.m_contentChanged), 2);
+				file << writeTag("nameChanged", std::to_string(ditem->m_summaryItem.m_nameChanged), 2);
+				file << writeTag("missing", std::to_string(ditem->m_summaryItem.m_missing), 2);
+				file << writeTag("added", std::to_string(ditem->m_summaryItem.m_added), 2);
+				file << writeTag("checkedOutNoChange", std::to_string(ditem->m_summaryItem.m_checkedOutNoChange), 2);
+				file << writeTag("checkedOutChanged", std::to_string(ditem->m_summaryItem.m_checkedOutChanged), 2);
+				file << writeTag("unchanged", std::to_string(ditem->m_summaryItem.m_unchanged), 2);
+				file << "\t</Item>\n";
+				
+				summaryItem.updateAll(ditem->m_summaryItem);
+			}
+			file << "</List>\n";
+			file << "<Summary>\n";
+
+			file << "<Unknown>" << summaryItem.m_unknown << "</Unknown>\n";
+			file << "<ContentChanged>" << summaryItem.m_contentChanged << "</ContentChanged>\n";
+			file << "<NameChanged>" << summaryItem.m_nameChanged << "</NameChanged>\n";
+			file << "<Missing>" << summaryItem.m_missing << "</Missing>\n";
+			file << "<Added>" << summaryItem.m_added << "</Added>\n";
+			file << "<CheckedOutNoChange>" << summaryItem.m_checkedOutNoChange << "</CheckedOutNoChange>\n";
+			file << "<CheckedOutChanged>" << summaryItem.m_checkedOutChanged << "</CheckedOutChanged>\n";
+			file << "<Unchanged>" << summaryItem.m_unchanged << "</Unchanged>\n";
+
+			file << "</Summary>\n";
+			file << "\t</Item>\n";
+
+			m_totalSummary.updateAll(summaryItem);
+			
+		}
+		file << "</List>\n";
+		file << "<Summary>\n";
+
+		file << "<Unknown>" << totalSummary.m_unknown << "</Unknown>\n";
+		file << "<ContentChanged>" << totalSummary.m_contentChanged << "</ContentChanged>\n";
+		file << "<NameChanged>" << totalSummary.m_nameChanged << "</NameChanged>\n";
+		file << "<Missing>" << totalSummary.m_missing << "</Missing>\n";
+		file << "<Added>" << totalSummary.m_added << "</Added>\n";
+		file << "<CheckedOutNoChange>" << totalSummary.m_checkedOutNoChange << "</CheckedOutNoChange>\n";
+		file << "<CheckedOutChanged>" << totalSummary.m_checkedOutChanged << "</CheckedOutChanged>\n";
+		file << "<Unchanged>" << totalSummary.m_unchanged << "</Unchanged>\n";
+
+		file << "</Summary>\n";
+		
+		
+		file << "</CheckJournal>\n";
+		file.close();
+		return true;
+	}
+
+	std::string CheckDiskSummaryJounal::writeTag(const char *tag, const std::string& value, int tab) {
+		std::ostringstream xml;
+		for (int i = 0; i < tab; i++) {
+			xml << '\t';
+		}
+		if (!value.empty() && (value.compare("null") != 0)) {
+			xml << "<" << tag << ">" << value << "</" << tag << ">\n";
+		}
+		else {
+			xml << "<" << tag << "/>\n";
+		}
+		return xml.str();
+	}
+
+	std::string CheckDiskSummaryJounal::writeTag(const char *tag, const int value, int tab) {
+		std::ostringstream xml;
+		for (int i = 0; i < tab; i++) {
+			xml << '\t';
+		}
+		xml << "<" << tag << ">" << value << "</" << tag << ">\n";
+		return xml.str();
+	}
+
 }

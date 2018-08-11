@@ -55,7 +55,7 @@ protected:
 	virtual bool onFile(const char *path) { return true; };
 	virtual bool onDirectory(const char *path) { return true; };
 	virtual bool onEnd() { return true; };
-	virtual FolderVisitor *make() { return new FolderVisitor; }
+	virtual std::shared_ptr<FolderVisitor> make() { return (std::make_shared<FolderVisitor>()); }
 public:
 
 	FolderVisitor() {};
@@ -63,13 +63,13 @@ public:
 };
 
 class DirectoryVisitor {
-	DirNode *m_dirNode;
-	FolderVisitor *m_folderVisitor;
+	std::shared_ptr<DirNode> m_dirNode;
+	std::shared_ptr<FolderVisitor> m_folderVisitor;
 	bool m_deleteFolderVisitor;
 public:
 	/// Constructor
 	/// @parm folderVisitor - pointer to FolderVisitor
-	DirectoryVisitor(FolderVisitor *folderVisitor, bool val = true);
+	DirectoryVisitor(std::shared_ptr<FolderVisitor> folderVisitor, bool val = true);
 
 	// Destructor
 	virtual ~DirectoryVisitor();

@@ -76,6 +76,7 @@ public:
 	Level getLogLevel() const {
 		return m_logLevel;
 	}
+	static void processBuffer();
 
 	static const int getLastCode() {
 		/*
@@ -121,6 +122,7 @@ public:
 	}
 
 	static void setLogPath(const char *logpath);
+	static void startLogging();
 
 	static void Close() {
 		if (m_this != nullptr) {
@@ -135,7 +137,7 @@ private:
 	CLogger(const CLogger&) {};
 	CLogger& operator = (const CLogger& ) { return *this; }
 	bool IsLogOut(Level level);
-	bool CLogger::IsConsoleOut(Level level);
+	static bool CLogger::IsConsoleOut(Level level);
 	static void makeFile();
 	const char *levelStr(Level level);
 	static bool m_isQuiet;
@@ -157,7 +159,7 @@ private:
 	static bool setLevel(CLogger::Level &level, const std::string &s);
 	static CLogger::Level toLevel(const std::string &s);
 	static const char *toString(CLogger::Level level);
-	static bool messageOk(std::string message);
+	static CLogger::Level messageLevel(std::string message);
 };
 
 } /* namespace simplearchive */

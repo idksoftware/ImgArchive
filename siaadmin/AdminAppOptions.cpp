@@ -80,7 +80,8 @@ AppOptions::AppOptions() {
 
 bool AppOptions::initaliseConfig() {
 
-	AppConfig &config = AppConfig::get();
+	AdminConfig config;
+
 	const std::string key = "SIA_HOME";
 	std::string temp = SAUtils::GetPOSIXEnv(key);
 	std::string homePath = temp;

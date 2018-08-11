@@ -345,11 +345,10 @@ protected:
 		m_currentDir = m_setPath.back();
 		return true;
 	};
-	virtual FolderVisitor *make() {
-		if (m_this == 0) {
-			m_this = new MirrorList;
-		}
-		return m_this;
+	virtual std::shared_ptr<FolderVisitor> make() {
+		
+		MirrorList& mirrorList = get();
+		return (std::make_shared<FolderVisitor>(mirrorList));
 	}
 
 
@@ -357,10 +356,8 @@ protected:
 public:
 
 	static MirrorList &get() {
-		if (m_this == 0) {
-			m_this = new MirrorList;
-		}
-		return *m_this;
+		static MirrorList INSTANCE;
+		return INSTANCE;
 	}
 
 	virtual ~MirrorList();

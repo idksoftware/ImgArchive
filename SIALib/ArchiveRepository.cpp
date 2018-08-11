@@ -53,7 +53,7 @@
 #include "IntegrityManager.h"
 #include "XMLWriter.h"
 #include "CLogger.h"
-
+#include "CheckDiskJournal.h"
 #ifdef _DEBUG
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;

@@ -67,7 +67,7 @@ public:
 
 	CIDKUuid(const char *uuid);
 	
-	CIDKUuid()
+	CIDKUuid() noexcept
 	{
 		m_Uuid = new struct _uuid_t;
 		int m_Res = Create(m_Uuid);

@@ -191,21 +191,22 @@ public:
 		unsigned long size = 0;
 		CLogger &logger = CLogger::getLogger();
 		if (SAUtils::fileSize(filepath, &size) == false) {
-			// Log error
+			logger.log(LOG_OK, CLogger::Level::ERR, "Failed to read file %s", filepath);
+
 		}
 		unsigned int crc;
 		
 		std::string md5Str;
 
-		logger.log(LOG_OK, CLogger::Level::INFO, "Image: %s", filepath);
+		logger.log(LOG_OK, CLogger::Level::INFO, "Image:          %s", filepath);
 		std::string buf;
 		SAUtils::getFileContents(filepath, buf);
 		MD5 md5(buf);
 		md5Str = md5.hexdigest();
-		logger.log(LOG_OK, CLogger::Level::INFO, "MD5 of image: %s is %s", filepath, md5Str.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "MD5 of image:   %s is %s", filepath, md5Str.c_str());
 
 		CIDKCrc Crc;
-		logger.log(LOG_OK, CLogger::Level::INFO, "Size of image: %s is %d", filepath, size);
+		logger.log(LOG_OK, CLogger::Level::INFO, "Size of image:  %s is %d", filepath, size);
 		crc = Crc.crc((unsigned char *)buf.c_str(), size);
 		logger.log(LOG_OK, CLogger::Level::INFO, "CRC from image: %s is %x", filepath, crc);
 
@@ -416,7 +417,8 @@ bool CkdskManifestFile::add(const char *filepath, const char *name) {
 		logger.log(LOG_OK, CLogger::Level::INFO, "Image: %s", name);
 		unsigned long size;
 		if (SAUtils::fileSize(filepath, &size) == false) {
-			// Log error
+			logger.log(LOG_OK, CLogger::Level::INFO, "Can not read image: %s", filepath);
+			return false;
 		}
 		logger.log(LOG_OK, CLogger::Level::INFO, "Size of image: %s is %d", filepath, size);
 		CIDKCrc Crc;
@@ -450,7 +452,7 @@ bool CkdskManifestFile::read(const char *datafile) {
 	}
 
 	while (std::getline(file, text)) {
-		m_data->push_back(CkdskData(text.c_str()));
+		m_data->emplace_back(std::move(CkdskData(text.c_str())));
 	}
 	file.close();
 
@@ -541,29 +543,28 @@ std::shared_ptr<CkdskData> CkdskManifestFile::findFile(const char *filename) {
 }
 */
 
-/*
- * This class puts the Ckhdsk data into a map to
- * create the chkdsk difference file
- */
+
 
 // make crc in the real version
 //class CkdskDiffContainer : public std::map<unsigned long, CkdskData> {};
-class FilenameDiffContainer : public std::map<std::string, CkdskData> {};
-class CRCDiffContainer : public std::map<unsigned int, CkdskData> {};
+class FilenameDiffContainer : public std::map<std::string, std::shared_ptr<CkdskData>> {};
+class CRCDiffContainer : public std::map<unsigned int, std::shared_ptr<CkdskData>> {};
 
+/**
+	This class puts the Ckhdsk data into a map to
+	create the chkdsk difference file
+
+
+*/
 class CkdskDiffFile : public std::vector<std::string> {
-	FilenameDiffContainer *m_filedata;
-	CRCDiffContainer *m_crcdata;
+	std::unique_ptr<FilenameDiffContainer> m_filedata;
+	std::unique_ptr<CRCDiffContainer> m_crcdata;
 	std::string m_orginalName;
 public:
-	CkdskDiffFile() {
-		m_filedata = new FilenameDiffContainer;
-		m_crcdata = new CRCDiffContainer;
-	};
-	virtual ~CkdskDiffFile() {
-		delete m_filedata;
-		delete m_crcdata;
-	};
+	CkdskDiffFile() : m_filedata(std::make_unique<FilenameDiffContainer>()),
+						m_crcdata(std::make_unique<CRCDiffContainer>()) {};
+
+	virtual ~CkdskDiffFile() = default;
 
 	bool read(const char *datafile);
 	bool write(const char *datafile);
@@ -587,12 +588,12 @@ bool CkdskDiffFile::read(const char *datafile) {
 	}
 
 	while (std::getline(file, text)) {
-		CkdskData data = CkdskData(text.c_str());
+		std::shared_ptr<CkdskData> data = std::make_shared<CkdskData>(text.c_str());
 
-		std::string name = data.getName();
+		std::string name = data->getName();
 		push_back(name);
 		m_filedata->insert(std::make_pair(name, data));
-		m_crcdata->insert(std::make_pair(data.getCrc(), data));
+		m_crcdata->insert(std::make_pair(data->getCrc(), data));
 	}
 	file.close();
 
@@ -605,9 +606,9 @@ bool CkdskDiffFile::write(const char *datafile) {
 		return false;
 	}
 
-	for (std::map<std::string, CkdskData>::iterator ii = m_filedata->begin(); ii != m_filedata->end(); ++ii) {
-		CkdskData &data = ii->second;
-		file << data.diffStatusline() + '\n';
+	for (auto ii = m_filedata->begin(); ii != m_filedata->end(); ++ii) {
+		auto data = ii->second;
+		file << data->diffStatusline() + '\n';
 		//printf("%s", name.c_str());
 	}
 	file.close();
@@ -638,10 +639,10 @@ bool CkdskDiffFile::add(const char *filepath, const char *name) {
 		time_t created = SAUtils::createTime(filepath);
 		//logger.log(LOG_OK, CLogger::INFO, "Create time of image: %s", m_createTime.toLogString().c_str());
 		time_t modified = SAUtils::modTime(filepath);
-		ckdskData = new CkdskData(name, size, crc, md5Str.c_str(), created, modified);
+		std::shared_ptr<CkdskData> ckdskData = std::make_shared<CkdskData>(name, size, crc, md5Str.c_str(), created, modified);
 		push_back(name);
-		m_filedata->insert(std::make_pair(name, *ckdskData));
-		m_crcdata->insert(std::make_pair(crc, *ckdskData));
+		m_filedata->insert(std::make_pair(name, std::move(ckdskData)));
+		m_crcdata->insert(std::make_pair(crc, std::move(ckdskData)));
 		return true;
 	}
 	return false;
@@ -649,34 +650,34 @@ bool CkdskDiffFile::add(const char *filepath, const char *name) {
 
 
 CkdskData *CkdskDiffFile::findFile(const char *filename) {
-	for (std::map<std::string, CkdskData>::iterator ii = m_filedata->begin(); ii != m_filedata->end(); ++ii) {
-		CkdskData &data = ii->second;
-		if (data.getName().compare(filename) == 0) {
-			return &data;
+	for (auto ii = m_filedata->begin(); ii != m_filedata->end(); ++ii) {
+		auto data = ii->second;
+		if (data->getName().compare(filename) == 0) {
+			return data.get();
 		}
 	}
-	return 0;
+	return nullptr;
 }
 
 CkdskData::Status CkdskDiffFile::find(unsigned int crc, const char *md5, const char *datafile) {
-	std::map<std::string, CkdskData>::iterator fit;
-	std::map<unsigned int, CkdskData>::iterator cit;
+	std::map<std::string, std::shared_ptr<CkdskData> >::iterator fit;
+	std::map<unsigned int, std::shared_ptr<CkdskData> >::iterator cit;
 
 	if ((fit = m_filedata->find(datafile)) == m_filedata->end()) {
 		if ((cit = m_crcdata->find(crc)) == m_crcdata->end()) {
 			return CkdskData::Status::Missing;
 		}
 		else {
-			CkdskData value = cit->second;
-			m_orginalName = value.getName();
+			std::shared_ptr<CkdskData> value = cit->second;
+			m_orginalName = value->getName();
 			return CkdskData::Status::NameChanged;
 		}
 	}
-	CkdskData value = fit->second;
-	if (value.match(datafile, crc, md5) == true) {
+	std::shared_ptr<CkdskData> value = fit->second;
+	if (value->match(datafile, crc, md5) == true) {
 		return CkdskData::Status::Unchanged;
 	}
-	return value.getStatus();
+	return value->getStatus();
 }
 
 
@@ -853,7 +854,7 @@ bool CheckDisk::update(const char *targetdir, const char *targetfile) {
 	fullpath += yearStr;
 	fullpath += '/';
 	fullpath += targetStr;
-	fullpath += "/data/";
+	fullpath += "/images/";
 	fullpath += targetfile;
 	if (SAUtils::FileExists(path.c_str()) == false) {
 		throw std::exception();
@@ -903,7 +904,7 @@ bool CheckDisk::checkMissing(CkdskDiffFile &ckdskDiffFile, FileList_Ptr &filelis
 	return true;
 }
 
-bool CheckDisk::check(const char *targetdir, const char *checkFilePath, const char *address, VisitingObject *visitingObject) {
+bool CheckDisk::check(const char *targetdir, const char *checkFilePath, const char *address, VisitingObject& visitingObject) {
 	// Read the target folder
 	FileList_Ptr filelist = SAUtils::getFiles_(targetdir);
 	std::string path = checkFilePath;
@@ -922,7 +923,7 @@ bool CheckDisk::check(const char *targetdir, const char *checkFilePath, const ch
 
 	bool errors = false;
 
-	if (checkMissing(ckdskDiffFile, filelist, visitingObject, address) == false) {
+	if (checkMissing(ckdskDiffFile, filelist, &visitingObject, address) == false) {
 		return false;
 	}
 	// Iterate round the files in the target folder
@@ -971,17 +972,17 @@ bool CheckDisk::check(const char *targetdir, const char *checkFilePath, const ch
 			default:
 				status = ReportStatus::Status::Unknown;
 			}
-			if (visitingObject != nullptr) {
-				if (orginal.length() == 0) {
-					visitingObject->process(fullAddress.c_str(), status);
-				}
-				else {
-					visitingObject->process(fullAddress.c_str(), status, orginal.c_str());
-				}
+			
+			if (orginal.length() == 0) {
+				visitingObject.process(fullAddress.c_str(), status);
 			}
+			else {
+				visitingObject.process(fullAddress.c_str(), status, orginal.c_str());
+			}
+			
 		}
 	}
-	std::string epath = path + std::string("/error");
+	std::string epath = path + std::string("/error.csv");
 	ckdskDiffFile.write(epath.c_str());
 	return !errors;
 

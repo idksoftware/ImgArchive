@@ -361,7 +361,7 @@ bool FolderList::validateWorkspace(ValidateReportingObject &validateReportingObj
 				archivePath += '/'; archivePath += dataString;
 				archivePath += "/chdsk";
 				CheckDisk checkDisk;
-				if (checkDisk.check(yearDayPath.c_str(), archivePath.c_str(), dataString.c_str(), &validateReportingObject) == false) {
+				if (checkDisk.check(yearDayPath.c_str(), archivePath.c_str(), dataString.c_str(), validateReportingObject) == false) {
 					return false;
 				}
 			}
@@ -408,15 +408,13 @@ bool ShowUncheckedOutChanges::doWork(const char *targetdir, const char *checkFil
 		return false;
 	}
 	// report changes in the day folder
-	ValidateReportingObject *visitingObject = (ValidateReportingObject *)getVisitingObject();
-	if (visitingObject == nullptr) {
-		return false;
-	}
+	ValidateReportingObject& visitingObject = (ValidateReportingObject&)getVisitingObject();
+	
 	if (checkDisk.check(targetdir, checkFilePath, address, visitingObject) == false) {
 		return false;
 	}
 
-	CheckDiskJournal &journal = visitingObject->getJounrnal();
+	CheckDiskJournal &journal = visitingObject.getJournal();
 	CDJournalList &list = journal.getList();
 	
 	for (auto i = list.begin(); i != list.end(); i++) {
@@ -441,9 +439,7 @@ bool ShowUncheckedOutChanges::doWork(const char *targetdir, const char *checkFil
 	return true;
 }
 
-ValidateWorkspace::ValidateWorkspace(const char *archivePath, const char *workspacePath) : MasterFolderVistor(archivePath, workspacePath) {
-	m_validateReportingObject = new ValidateReportingObject;
-}
+
 
 //ValidateWorkspace::~ValidateWorkspace() {
 	//delete validateReportingObject;
@@ -451,7 +447,7 @@ ValidateWorkspace::ValidateWorkspace(const char *archivePath, const char *worksp
 
 bool ValidateWorkspace::doWork(const char *targetdir, const char *checkFilePath, const char *address, VisitingObject *visitingObject) {
 	CheckDisk checkDisk;
-	if (checkDisk.check(targetdir, checkFilePath, address, m_validateReportingObject) == false) {
+	if (checkDisk.check(targetdir, checkFilePath, address, *m_validateReportingObject) == false) {
 		return false;
 	}
 	return true;
@@ -511,10 +507,11 @@ bool FolderList::validateMaster(ValidateReportingObject &validateReportingObject
 			
 		std::string year = dataString.substr(0, 4);
 			
-		if (year.compare("system") == 0) {
+		if (year.compare("syst") == 0) {
 			continue;
 		}
-		printf("Year found %s\n", year.c_str());
+//		printf("Year found %s\n", year.c_str());
+		validateReportingObject.startYear(year.c_str());
 		std::string yearPath = dataPath += '/';
 		yearPath += year;
 
@@ -527,7 +524,7 @@ bool FolderList::validateMaster(ValidateReportingObject &validateReportingObject
 			}
 
 			std::string filepath = m_archivePath + "/" + dataString;
-				
+			validateReportingObject.startDay(dataString.c_str());
 			if (fileDataContainer.find(dataString.c_str()) == false) {
 				printf("File not found %s\n", dataString.c_str());
 			}
@@ -535,19 +532,20 @@ bool FolderList::validateMaster(ValidateReportingObject &validateReportingObject
 				std::string yearDayPath = yearPath;
 				yearDayPath += '/';
 				yearDayPath += dataString;
-				printf("File found %s\n", dataString.c_str());
+//				printf("Day found %s\n", dataString.c_str());
 				std::string tmp = yearDayPath;
 				// Master
-				yearDayPath += "/data";
+				yearDayPath += "/images";
 				tmp += "/chdsk";
 
 				CheckDisk checkDisk;
-				if (checkDisk.check(yearDayPath.c_str(), tmp.c_str(), dataString.c_str(), &validateReportingObject) == false) {
+				if (checkDisk.check(yearDayPath.c_str(), tmp.c_str(), dataString.c_str(), validateReportingObject) == false) {
 					return false;
 				}
 			}
+			validateReportingObject.endDay(dataString.c_str());
 		}
-			
+		validateReportingObject.endYear(year.c_str());
 	}
 	validateReportingObject.save();
 	m_MasterJournalName = validateReportingObject.getJournalName();
@@ -557,7 +555,7 @@ bool FolderList::validateMaster(ValidateReportingObject &validateReportingObject
 
 bool FolderList::validate() {
 	switch (m_action) {
-	case READING_Master:
+	case READING_MASTER:
 		return validateOnlyMaster();
 	case READING_WORKSPACE:
 		return validateOnlyWorkspace();
@@ -582,7 +580,7 @@ bool FolderList::validate() {
 
 bool FolderList::validateAndRepair() {
 	switch (m_action) {
-	case READING_Master:
+	case READING_MASTER:
 		return validateAndRepairMaster();
 	case READING_WORKSPACE:
 		return validateAndRepairWorkspace();

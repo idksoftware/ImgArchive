@@ -382,9 +382,10 @@ bool Mirror::mapFileVerify(const char *path) {
 				}
 			}
 			std::string fullTargetPath = m_root + path;
-			if (m_checkDisk.check(fullTargetPath.c_str(), fullSavePath.c_str()) == true) {
-				return false;
-			}
+			// needs working on
+			//if (m_checkDisk.check(fullTargetPath.c_str(), fullSavePath.c_str()) == true) {
+			//	return false;
+			//}
 		}
 	}
 	return true;

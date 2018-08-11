@@ -145,7 +145,7 @@ namespace simplearchive {
 		bool makePages();
 		bool processHistoryPages();
 		bool processJournalPages();
-
+		bool processWWWPages();
 	};
 
 }

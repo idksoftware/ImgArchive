@@ -82,29 +82,45 @@ bool MirrorManager::initalise(const char *rootFolder, const char *configFile) {
 bool MirrorManager::mirror() {
 	MirrorList &mirrorList = MirrorList::get();
 	mirrorList.setFunction(MirrorList::DoMirror);
-	DirectoryVisitor directoryVisitor(&mirrorList, false);
+	/*
+	std::shared_ptr<MirrorList> mirrorList_ptr = 0; // std::make_shared<MirrorList>(mirrorList);
+	DirectoryVisitor directoryVisitor(mirrorList_ptr, false);
 	return directoryVisitor.process(MirrorList::getRootFolder().c_str());
+	*/
+	return true;
 }
 
 bool MirrorManager::SyncMirror() {
 	MirrorList &mirrorList = MirrorList::get();
 	mirrorList.setFunction(MirrorList::DoSyncMirror);
-	DirectoryVisitor directoryVisitor(&mirrorList, false);
+	/*
+	std::shared_ptr<MirrorList> mirrorList_ptr = 0; // std::make_shared<MirrorList>(mirrorList);
+	DirectoryVisitor directoryVisitor(mirrorList_ptr, false);
 	return directoryVisitor.process(MirrorList::getRootFolder().c_str());
+	*/
+	return true;
 }
 
 bool MirrorManager::isMirrorInSync() {
 	MirrorList &mirrorList = MirrorList::get();
 	mirrorList.setFunction(MirrorList::DoIsMirrorInSync);
-	DirectoryVisitor directoryVisitor(&mirrorList, false);
+	/*
+	std::shared_ptr<MirrorList> mirrorList_ptr = 0; // std::make_shared<MirrorList>(mirrorList);
+	DirectoryVisitor directoryVisitor(mirrorList_ptr, false);
 	return directoryVisitor.process(MirrorList::getRootFolder().c_str());
+	*/
+	return true;
 }
 
 bool MirrorManager::isSourceInSync() {
 	MirrorList &mirrorList = MirrorList::get();
 	mirrorList.setFunction(MirrorList::DoIsSourceInSync);
-	DirectoryVisitor directoryVisitor(&mirrorList, false);
+	/*
+	std::shared_ptr<MirrorList> mirrorList_ptr = std::make_shared<MirrorList>(&mirrorList);
+	DirectoryVisitor directoryVisitor(mirrorList_ptr, false);
 	return directoryVisitor.process(MirrorList::getRootFolder().c_str());
+	*/
+	return true;
 }
 
 bool MirrorManager::verifyMirror() {

@@ -50,7 +50,7 @@
 #include <memory>
 #include "JpegEXIF.h"
 
-typedef std::unique_ptr<JpegEXIF> JpegExif_Ptr;
+typedef std::shared_ptr<JpegEXIF> JpegExif_Ptr;
 // 
 // Class responsible for storing and parsing EXIF information from a JPEG blob
 //

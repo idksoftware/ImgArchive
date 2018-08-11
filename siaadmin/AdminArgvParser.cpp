@@ -42,7 +42,7 @@ namespace simplearchive {
 		defineOption("version", "prints the version information", ArgvParser::MasterOption);
 		defineOption("validate", "Validate commands", ArgvParser::MasterOption);
 		defineOption("mirror", "Mirror commands", ArgvParser::MasterOption);
-		
+		defineOption("test", "test commands", ArgvParser::MasterOption);
 		/*
 		defineOption("image-address", "image address", ArgvParser::NoOptionAttribute);
 
@@ -103,11 +103,18 @@ namespace simplearchive {
 
 		defineOption("workspace-path", "Location of the archive Workspace", ArgvParser::OptionRequiresValue);
 		//defineOptionAlternative("w", "workspace-path");
-
+		defineOption("settup", "Show settup", ArgvParser::NoOptionAttribute);
+		
 		/*
 		defineCommandOption("init", "archive-path");
 		defineCommandOption("init", "workspace-path");
 		*/
+		defineCommandOption("show", "settup");
+
+		defineCommandOption("validate", "scope");
+		defineCommandOption("validate", "repair");
+		defineCommandOption("validate", "archive-path");
+		
 
 		ArgvParser::ParserResults res = parse(argc, argv);
 
@@ -140,7 +147,7 @@ namespace simplearchive {
 
 		//testHelpOptionDetection();
 		bool cmdFound = false;
-		AppConfig &config = AppConfig::get();
+		AdminConfig config;
 
 		if (command("init") == true) {
 			// This command will initalise the configuration.
@@ -201,10 +208,9 @@ namespace simplearchive {
 			}
 			else if (command("show") == true) {
 				appOptions.setCommandMode(AppOptions::CM_Show);
-				if (foundOption("name") == true) {
-					std::string opt = optionValue("name");
-					printf(opt.c_str()); printf("\n");
-					appOptions.setName(opt.c_str());
+				if (foundOption("settup") == true) {
+					
+					appOptions.setName("settup");
 				}
 				cmdFound = true;
 			}
@@ -214,21 +220,26 @@ namespace simplearchive {
 				if (foundOption("archive-path") == true) {
 
 					std::string opt = optionValue("archive-path");
-					printf(opt.c_str()); printf("\n");
+//					printf(opt.c_str()); printf("\n");
 					config.setWorkspacePath(opt.c_str());
 				}
 				if (foundOption("scope") == true) {
 
 					std::string opt = optionValue("scope");
-					printf(opt.c_str()); printf("\n");
-					if (opt.compare("Workspace") == 0) {
+//					printf(opt.c_str()); printf("\n");
+					if (opt.compare("workspace") == 0) {
 						appOptions.m_scope = appOptions.Workspace;
 					}
-					else if (opt.compare("Master") == 0) {
+					else if (opt.compare("master") == 0) {
 						appOptions.m_scope = appOptions.Master;
 					}
-					else {
+					else if (opt.compare("both") == 0) {
 						appOptions.m_scope = appOptions.Both;
+					}
+					else {
+						printf("Invalid argument for sub-command: %s \"%s\"\n\n", getCurrentCommand().c_str(), opt.c_str());
+						printf("%s", usageDescription(80).c_str());
+						return false;
 					}
 				}
 				if (foundOption("repair") == true) {
@@ -241,7 +252,7 @@ namespace simplearchive {
 				if (foundOption("archive-path") == true) {
 
 					std::string opt = optionValue("archive-path");
-					printf(opt.c_str()); printf("\n");
+//					printf(opt.c_str()); printf("\n");
 					config.setWorkspacePath(opt.c_str());
 				}
 				/*
@@ -269,10 +280,13 @@ namespace simplearchive {
 				*/
 				if (foundOption("name") == true) {
 					std::string opt = optionValue("name");
-					printf(opt.c_str()); printf("\n");
+//					printf(opt.c_str()); printf("\n");
 					appOptions.setName(opt.c_str());
 				}
 
+				cmdFound = true;
+			} else if (command("test") == true) {
+				appOptions.setCommandMode(AppOptions::CM_Test);
 				cmdFound = true;
 			}
 			else if (foundOption("backup") == true) {
@@ -281,35 +295,35 @@ namespace simplearchive {
 				if (foundOption("archive-path") == true) {
 
 					std::string opt = optionValue("archive-path");
-					printf(opt.c_str()); printf("\n");
+//					printf(opt.c_str()); printf("\n");
 					config.setWorkspacePath(opt.c_str());
 				}
 
 				if (foundOption("dist-path") == true) {
 
 					std::string opt = optionValue("dist-path");
-					printf(opt.c_str()); printf("\n");
+//					printf(opt.c_str()); printf("\n");
 					config.setBackupDestinationPath(opt.c_str());
 
 				}
 				if (foundOption("size") == true) {
 
 					std::string opt = optionValue("size");
-					printf(opt.c_str()); printf("\n");
+//					printf(opt.c_str()); printf("\n");
 					config.setBackupMediaSize(opt.c_str());
 
 				}
 				if (foundOption("from-date") == true) {
 
 					std::string opt = optionValue("from-date");
-					printf(opt.c_str()); printf("\n");
+//					printf(opt.c_str()); printf("\n");
 					config.setFromDate(opt.c_str());
 
 				}
 				if (foundOption("to-date") == true) {
 
 					std::string opt = optionValue("to-date");
-					printf(opt.c_str()); printf("\n");
+//					printf(opt.c_str()); printf("\n");
 					config.setToDate(opt.c_str());
 
 				}
@@ -324,42 +338,43 @@ namespace simplearchive {
 				cmdFound = true;
 			}
 		}
+		
 		if (foundOption("logging-level") == true) {
 
 			std::string opt = optionValue("logging-level");
-			printf(opt.c_str()); printf("\n");
+//			printf(opt.c_str()); printf("\n");
 			config.setLogLevel(opt.c_str());
 		}
 		if (foundOption("console-level") == true) {
 
 			std::string opt = optionValue("console-level");
-			printf(opt.c_str()); printf("\n");
+//			printf(opt.c_str()); printf("\n");
 			config.setConsoleLevel(opt.c_str());
 		}
 		if (foundOption("dry-run") == true) {
 
 			std::string opt = optionValue("dry-run");
-			printf(opt.c_str()); printf("\n");
+//			printf(opt.c_str()); printf("\n");
 			config.setDryRun(opt.c_str());
 		}
 
 		if (foundOption("media-path") == true) {
 
 			std::string opt = optionValue("media-path");
-			printf(opt.c_str()); printf("\n");
+//			printf(opt.c_str()); printf("\n");
 			//config.setDryRun(opt.c_str());
 		}
 
 		if (foundOption("media-size") == true) {
 
 			std::string opt = optionValue("media-size");
-			printf(opt.c_str()); printf("\n");
+//			printf(opt.c_str()); printf("\n");
 			//config.setDryRun(opt.c_str());
 		}
 
 		if (res != ArgvParser::NoParserError) {
 			printf("%s\n", parseErrorDescription(res).c_str());
-			//printf("%s\n", usageDescription().c_str());
+			printf("%s\n", usageDescription().c_str());
 		}
 		if (cmdFound == false) {
 			printf("Main command required?\n\n");

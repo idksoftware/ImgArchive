@@ -59,6 +59,8 @@ namespace simplearchive {
 	std::string AppConfig::m_logLevel = "SUMMARY";
 	bool AppConfig::m_dry_run = false;
 	bool AppConfig::m_sql_on = true;
+	bool AppConfig::m_file_cat_on = true;
+	bool AppConfig::m_www_cat_on = true;
 
 	bool AppConfig::m_eventsOn = false; // UDP events
 	bool AppConfig::m_serverOn = false;
@@ -140,8 +142,9 @@ namespace simplearchive {
 		logger.log(LOG_OK, CLogger::Level::INFO, "        Home path:                 \"%s\"", AppConfig::m_homePath.c_str());
 
 		// Backup 1
+		/*
 		if (AppConfig::m_backup1.empty() == true) {
-			if (getRoot().value("BackupOne", AppConfig::m_backup1) == true) {
+			if (getBackup()->value("BackupOne", AppConfig::m_backup1) == true) {
 				ArchivePath::setBackup1Path(AppConfig::m_backup1);
 				AppConfig::m_backup1Enabled = true;
 			}
@@ -152,7 +155,7 @@ namespace simplearchive {
 		
 		// Backup 2
 		if (AppConfig::m_backup2.empty() == true) {
-			if (getRoot().value("BackupTwo", AppConfig::m_backup2) == true) {
+			if (getBackup()->value("BackupTwo", AppConfig::m_backup2) == true) {
 				ArchivePath::setBackup2Path(AppConfig::m_backup2);
 				AppConfig::m_backup2Enabled = true;
 			}
@@ -160,7 +163,7 @@ namespace simplearchive {
 		else {
 			ArchivePath::setBackup2Path(AppConfig::m_backup2);
 		}
-
+		*/
 		// Repository Archive Path
 		if (AppConfig::m_masterPath.empty() == true) {
 			auto folders = getSystemFolders();
@@ -320,13 +323,19 @@ namespace simplearchive {
 		AppConfig::m_logLevel = logLevel;
 
 		std::string consoleLevel = "SUMMARY";
-		setGeneral(LOG_LEVEL_LABEL, consoleLevel, consoleLevel);
+		setGeneral(CONSOLE_LEVEL_LABEL, consoleLevel, consoleLevel);
 		AppConfig::m_consoleLevel = consoleLevel;
 
 		std::string sql_on = "false";
 		setGeneral(SQL_LABEL, sql_on, sql_on);
 		AppConfig::m_sql_on = (stricmp(sql_on.c_str(), "true") == 0);
 		
+		std::string file_cat_on = "false";
+		setGeneral(SQL_LABEL, file_cat_on, file_cat_on);
+		AppConfig::m_file_cat_on = (stricmp(file_cat_on.c_str(), "true") == 0);
+		std::string www_cat_on = "false";
+		setGeneral(SQL_LABEL, www_cat_on, www_cat_on);
+		AppConfig::m_www_cat_on = (stricmp(www_cat_on.c_str(), "true") == 0);
 	// System Folders
 		// Master Archive Path
 		//std::shared_ptr<ConfigBlock> folders = getSystemFolders();
@@ -499,6 +508,14 @@ namespace simplearchive {
 
 	}
 
+	bool AppConfig::isMasterCatalogueEnabled()
+	{
+		return m_file_cat_on;
+	}
+	bool AppConfig::isMasterWWWCatalogueEnabled()
+	{
+		return m_www_cat_on;
+	}
 	const char *AppConfig::getBackup1() {
 		/*
 		if (m_backup1.empty() == true) {

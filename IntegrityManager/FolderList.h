@@ -49,10 +49,10 @@ namespace simplearchive {
 	class ShowUncheckedOutChanges : public WorkspaceFolderVistor {
 	public:
 		ShowUncheckedOutChanges(const char *archivePath, const char *workspacePath) : WorkspaceFolderVistor(archivePath, workspacePath) {
-			m_visitingObject = new ValidateReportingObject;
+			m_visitingObject = std::make_shared<ValidateReportingObject>();
 		};
 		virtual bool doWork(const char *targetdir, const char *checkFilePath, const char *address, VisitingObject *visitingObject);
-		virtual ~ShowUncheckedOutChanges() { delete m_visitingObject; }
+		virtual ~ShowUncheckedOutChanges() = default;
 	};
 
 
@@ -65,7 +65,7 @@ namespace simplearchive {
 	class FolderList {
 	public:
 		typedef enum {
-			READING_Master,
+			READING_MASTER,
 			READING_WORKSPACE,
 			READING_BOTH,
 			UNKNOWN

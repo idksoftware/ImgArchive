@@ -71,63 +71,51 @@ namespace simplearchive {
  */
 class DirNode {
 	std::string m_dirpath;
-
-	DirNode *m_dirNode;
-	FolderVisitor *m_folderVisitor;
-	bool m_deleteFolderVisitor;
+	std::shared_ptr<DirNode> m_dirNode;
+	std::shared_ptr<FolderVisitor> m_folderVisitor;
+	
 public:
-	DirNode(DirNode *dirNode, const char *dirpath, bool deleteFolderVisitor = false) {
+	DirNode(std::shared_ptr<DirNode> dirNode, const char *dirpath) {
 		m_dirNode = dirNode;
 		m_dirpath = dirpath;
-		m_deleteFolderVisitor = deleteFolderVisitor;
-		m_folderVisitor = 0;
+		m_folderVisitor = nullptr;
 	}
-	DirNode(DirNode *dirNode, const char *dirpath, FolderVisitor *folderVisitor, bool deleteFolderVisitor = false) {
+	
+	DirNode(std::shared_ptr<DirNode> dirNode, const char *dirpath, std::shared_ptr<FolderVisitor> folderVisitor) {
 		m_dirNode = dirNode;
 		m_dirpath = dirpath;
-		m_deleteFolderVisitor = deleteFolderVisitor;
 		m_folderVisitor = folderVisitor;
 		m_folderVisitor->onStart(dirpath);
 	}
-
-	~DirNode() {
-		if (m_folderVisitor != 0) {
-			m_folderVisitor->onEnd();
-			if (m_deleteFolderVisitor) {
-				delete m_folderVisitor;
-			}
-			m_folderVisitor = 0;
-		}
+	DirNode(const DirNode& x) {
 	}
+	
+	~DirNode() {}
 
 	bool process();
 };
 
 
 
-DirectoryVisitor::DirectoryVisitor(FolderVisitor *folderVisitor, bool val) {
+DirectoryVisitor::DirectoryVisitor(std::shared_ptr<FolderVisitor> folderVisitor, bool val) {
 
-	m_dirNode = NULL;
+	m_dirNode = nullptr;
 	m_folderVisitor = folderVisitor;
 	m_deleteFolderVisitor = val;
 
 }
 
-DirectoryVisitor::~DirectoryVisitor() {
-	delete m_folderVisitor;
-	m_folderVisitor = nullptr;
-}
+DirectoryVisitor::~DirectoryVisitor() {}
 
 
 bool DirectoryVisitor::process(const char *rf) {
 	std::string rootFolder = rf;
 	if (m_folderVisitor != 0) {
-		m_dirNode = new DirNode(NULL, rootFolder.c_str(), m_folderVisitor->make(), m_deleteFolderVisitor);
+		m_dirNode = std::make_shared<DirNode>(nullptr, rootFolder.c_str(), m_folderVisitor->make());
 	} else {
-		m_dirNode = new DirNode(NULL, rootFolder.c_str(), m_deleteFolderVisitor);
+		m_dirNode = std::make_shared<DirNode>(nullptr, rootFolder.c_str());
 	}
 	m_dirNode->process();
-	delete m_dirNode;
 	return true;
 }
 
@@ -146,6 +134,7 @@ bool DirNode::process() {
 			continue;
 		}
 		std::string filename = m_dirpath + '/' + ent;
+		
 		if (SAUtils::IsFile(filename.c_str()) == true) {
 			if (m_folderVisitor) {
 				m_folderVisitor->onFile(filename.c_str());
@@ -155,15 +144,14 @@ bool DirNode::process() {
 				m_folderVisitor->onDirectory(filename.c_str());
 			}
 			if (m_folderVisitor != 0) {
-				m_dirNode = new DirNode(NULL, filename.c_str(), m_folderVisitor->make(), m_deleteFolderVisitor);
+				m_dirNode = std::make_shared<DirNode> (nullptr, filename.c_str(), m_folderVisitor->make());
 			}
 			else {
-				m_dirNode = new DirNode(NULL, filename.c_str(), m_deleteFolderVisitor);
+				m_dirNode = std::make_shared<DirNode> (nullptr, filename.c_str());
 			}
 			m_dirNode->process();
-			delete m_dirNode;
-			m_dirNode = 0;
 		}
+		
 	} while (fileFind.GetNext());
 #else
 	DIR *dir;

@@ -54,9 +54,9 @@ class BackupVisitor : public FolderVisitor {
 	//static BackupVisitor *m_this;
 	std::string m_path;
 public:
-	virtual FolderVisitor *make() {
+	virtual std::shared_ptr<FolderVisitor> make() {
 		//if (m_this == 0) {
-		return (new BackupVisitor);
+		return (std::make_shared<BackupVisitor>());
 		//}
 		//return m_this;
 	}
@@ -141,7 +141,8 @@ static std::string getYear(const char *path) {
 bool MakeMedia::clearBackup() {
 	std::string distPath = m_distPath;
 	distPath += "/media";
-	DirectoryVisitor directoryVisitor(new BackupVisitor);
+	std::shared_ptr<BackupVisitor> backupVisitor_ptr = std::make_shared<BackupVisitor>();
+	DirectoryVisitor directoryVisitor(backupVisitor_ptr);
 	directoryVisitor.process(distPath.c_str());
 	return true;
 }

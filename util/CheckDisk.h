@@ -64,7 +64,6 @@ public:
 	void set(Status &status) { m_status = status; };
 	ReportStatus::Status get() { return m_status; }
 	void set(const char *str);
-	//Status get();
 	const char *toString();
 };
 
@@ -79,6 +78,10 @@ public:
 	~VisitingObject() {};
 	//< Process the file depending on file status.
 	virtual bool process(const char *file, ReportStatus &status, const char *orginal = nullptr) = 0;
+	virtual void startYear(const char *year) { printf("Visiting start Year %s", year);  };
+	virtual void endYear(const char *year) { printf("Visiting end Year %s", year); };
+	virtual void startDay(const char *day) { printf("Visiting start Day %s", day); };
+	virtual void endDay(const char *day) { printf("Visiting end Day %s", day); };
 };
 
 /**
@@ -128,7 +131,7 @@ public:
 	/// @param checkFilePath	This is the path to the manifest files
 	/// @param address			This is the address of the images being checked
 	/// @param reportingObject	This is the reorting object used to report the status of the checking
-	bool check(const char *targetdir, const char *checkFilePath, const char *address = nullptr, VisitingObject *visitingObject = nullptr);
+	bool check(const char *targetdir, const char *checkFilePath, const char *address, VisitingObject& visitingObject);
 	/// Write the status file
 	//bool writeStatus(const char *path);
         /// Updates the manifest file with new file data.

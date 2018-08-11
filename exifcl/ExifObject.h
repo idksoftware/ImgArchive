@@ -110,7 +110,7 @@ namespace simplearchive {
 
 	class ExifObjectSchema : public MTTableSchema {
 	public:
-		ExifObjectSchema() : MTTableSchema(ROW_EXTERNAL_EXIF) {
+		ExifObjectSchema() noexcept : MTTableSchema(ROW_EXTERNAL_EXIF) {
 /*
 			add(MTSchema(MTSchema::Text, DB_ORGINALNAME));
 			add(MTSchema(MTSchema::Text, DB_LABEL));

@@ -291,6 +291,22 @@ namespace simplearchive {
 		return true;
 	}
 
+	bool MasterCatalogue::processWWWPages()
+	{
+		if (isWWWEnabled()) {
+			if (processHistoryPages() == false) {
+				return false;
+			}
+			if (processJournalPages() == false) {
+				return false;
+			}
+			if (makePages() == false) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	bool MasterCatalogue::createWWWMetadata(MetadataObject &metadataObject, std::string &imageRelativePath) {
 		// Canon EOS 1D X | Canon EF 600mm f/4.0L IS II USM @840mm | 1/500 | f/5.6 | ISO 1000
 		//metadataObject

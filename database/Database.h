@@ -310,7 +310,7 @@ public:
 		return *(iter->second);
 	}
 
-	TableRow() {};
+	TableRow() noexcept {};
 	virtual ~TableRow() {};
 
 };
@@ -381,6 +381,10 @@ public:
 	bool insert(const char *tablename, TableRow &row);
 
 	bool makeSQLfile(const char *file);
+
+	bool isOpen() {
+		return isOpenDB;
+	}
 
 };
 //} /* namespace simplearchive */

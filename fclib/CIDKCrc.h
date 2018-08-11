@@ -85,7 +85,7 @@ class CIDKCrc
 					FILE *fp);
 public:
 
-	CIDKCrc()
+	CIDKCrc() noexcept
 	{
 		make_crc_table();
 	}

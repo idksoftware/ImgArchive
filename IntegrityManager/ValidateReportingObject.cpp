@@ -6,16 +6,7 @@ namespace simplearchive {
 
 	std::string ValidateReportingObject::m_journalPath;
 
-	ValidateReportingObject::ValidateReportingObject()
-	{
-		m_checkDiskJournal = new CheckDiskJournal;
-	}
-
-
-	ValidateReportingObject::~ValidateReportingObject()
-	{
-		delete m_checkDiskJournal;
-	}
+	
 
 	bool ValidateReportingObject::setPath(const char *path) {
 		m_journalPath = path;
@@ -23,15 +14,15 @@ namespace simplearchive {
 	}
 
 	bool ValidateReportingObject::process(const char *file, ReportStatus &status, const char *orginal) {
-		if (status.get() == ReportStatus::Unchanged) {
-			return true;
-		}
+		CDDaySummary& daySummary = getDaySummary();
+		daySummary.setStatus(status);
+
 		if (orginal == nullptr) {
-			printf("File: %s Status: %s\n", file, status.toString());
+//			printf("File: %s Status: %s\n", file, status.toString());
 			m_checkDiskJournal->add(file, status);
 		}
 		else {
-			printf("File: %s Status: %s: file: %s\n", file, status.toString(), orginal);
+//			printf("File: %s Status: %s: file: %s\n", file, status.toString(), orginal);
 			m_checkDiskJournal->add(file, status, orginal);
 		}
 		return true;
@@ -50,8 +41,37 @@ namespace simplearchive {
 		logNameStr = logName.makeName(m_journalPath.c_str(), "cdj", "xml", LogName::ALWAYS_CREATE);
 		m_checkDiskJournal->writeXML(logNameStr.c_str());
 
+		logNameStr = logName.makeName(m_journalPath.c_str(), "cdsj", "log", LogName::ALWAYS_CREATE);
+		m_checkDiskSummaryJounal->write(logNameStr.c_str());
+		m_journalName = logNameStr;
+		logNameStr = logName.makeName(m_journalPath.c_str(), "cdsj", "xml", LogName::ALWAYS_CREATE);
+		m_checkDiskSummaryJounal->writeXML(logNameStr.c_str());
+
 		return true;
 	}
+
+	void ValidateReportingObject::startYear(const char *year) {
+//		printf("Visiting start Year %s", year);
+		m_checkDiskYearSummary = std::make_shared<CDYearSummary>(year);
+		
+	};
+	void ValidateReportingObject::endYear(const char *year) {
+//		printf("Visiting end Year %s", year);
+		m_checkDiskSummaryJounal->add(m_checkDiskYearSummary);
+	};
+	void ValidateReportingObject::startDay(const char *day) {
+//		printf("Visiting start Day %s", day);
+		m_checkDiskDaySummary = std::make_shared<CDDaySummary>(day);
+		
+		
+	};
+	void ValidateReportingObject::endDay(const char *day) {
+//		printf("Visiting end Day %s", day);		
+		CDYearSummary& yearSummary = getYearSummary();
+		yearSummary.add(m_checkDiskDaySummary);
+	};
+
+
 
 	ValidateAndRepairingWorkspaceObject::ValidateAndRepairingWorkspaceObject(const char *archivePath, const char *workspacePath) {
 		m_archivePath = archivePath;
@@ -63,11 +83,11 @@ namespace simplearchive {
 			return true;
 		}
 		if (orginal == nullptr) {
-			printf("File: %s Status: %s\n", file, status.toString());
+//			printf("File: %s Status: %s\n", file, status.toString());
 			m_checkDiskJournal->add(file, status);
 		}
 		else {
-			printf("File: %s Status: %s: file: %s\n", file, status.toString(), orginal);
+//			printf("File: %s Status: %s: file: %s\n", file, status.toString(), orginal);
 			m_checkDiskJournal->add(file, status, orginal);
 		}
 
@@ -193,11 +213,9 @@ namespace simplearchive {
 	}
 
 	bool ValidateAndRepairingMasterObject::process(const char *file, ReportStatus &status, const char *orginal) {
-		if (status.get() == ReportStatus::Unchanged) {
-			return true;
-		}
+		
 		if (orginal == nullptr) {
-			printf("File: %s Status: %s\n", file, status.toString());
+//			printf("File: %s Status: %s\n", file, status.toString());
 			m_checkDiskJournal->add(file, status);
 		}
 		else {

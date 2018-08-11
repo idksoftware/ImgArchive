@@ -341,7 +341,7 @@ void MTColumn::set(unsigned long i) {
 //		boundUpdate();
 	}
 	else {
-		throw MTTypeException("Invalid type");
+		throw MTTypeException("Invalid type long");
 	}
 }
 void MTColumn::set(const char *str) {
@@ -355,6 +355,12 @@ void MTColumn::set(const char *str) {
 		}
 //		boundUpdate();
 	}
+	else if (type == MTSchema::Integer) {
+		if (m_object == nullptr) {
+			unsigned long tmpLong = std::stol(str);
+			m_object.reset(new MetaTypeObject(tmpLong));
+		}
+	}
 	else if (type == MTSchema::Date) {
 		if (m_object == nullptr) {
 			ExifDateTime date(str);
@@ -362,7 +368,7 @@ void MTColumn::set(const char *str) {
 		}
 	}
 	else {
-		throw MTTypeException("Invalid type");
+		throw MTTypeException("Invalid type date");
 	}
 }
 void MTColumn::set(const std::string &str) {
@@ -376,7 +382,7 @@ void MTColumn::set(const std::string &str) {
 //		boundUpdate();
 	}
 	else {
-		throw MTTypeException("Invalid type");
+		throw MTTypeException("Invalid type string");
 	}
 }
 void MTColumn::set(const ExifDateTime &date) {
@@ -390,7 +396,7 @@ void MTColumn::set(const ExifDateTime &date) {
 //		boundUpdate();
 	}
 	else {
-		throw MTTypeException("Invalid type");
+		throw MTTypeException("Invalid type date");
 	}
 }
 void MTColumn::set(double d) {
@@ -404,7 +410,7 @@ void MTColumn::set(double d) {
 //		boundUpdate();
 	}
 	else {
-		throw MTTypeException("Invalid type");
+		throw MTTypeException("Invalid type double");
 	}
 }
 void MTColumn::set(float f) {
@@ -430,7 +436,7 @@ void MTColumn::set(MTColumn &c) {
 		set(c.getDouble());
 		break;
 	default:
-		throw MTTypeException("Invalid type");
+		throw MTTypeException("Non-standared invalid type.");
 	}
 
 }

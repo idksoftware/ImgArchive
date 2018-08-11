@@ -70,7 +70,7 @@ class MetadataTemplate {
 
 	static std::unique_ptr<MetadataTemplate> m_instance;
 	static std::once_flag m_onceFlag;
-	MetadataTemplate() {};
+	MetadataTemplate() noexcept {};
 	MetadataTemplate(const MetadataTemplate& src);
 	MetadataTemplate& operator=(const MetadataTemplate& rhs);
 

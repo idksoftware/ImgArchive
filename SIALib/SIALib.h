@@ -48,6 +48,14 @@ namespace simplearchive {
 	class ArchiveBuilder;
 	class ArchiveObject;
 	
+	class CompletedSummary {
+		std::string m_summary;
+	public:
+		CompletedSummary() = default;
+		virtual ~CompletedSummary() = default;
+		void set(const char *s) { m_summary = s; };
+		const char *get() { return m_summary.c_str(); };
+	};
 
 	class SIALib
 	{
@@ -123,7 +131,7 @@ namespace simplearchive {
 
 		bool checkDisk();
 
-		bool validate(const char *archivePath, const char *workspacePath, const char *homePath, Scope, bool repair = false);
+		bool validate(CompletedSummary& completedSummary, const char *archivePath, const char *workspacePath, const char *homePath, Scope, bool repair = false);
 
 		bool log(const char *filepath, LogDocument::FormatType& formatType);
 	

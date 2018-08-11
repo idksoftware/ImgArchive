@@ -70,8 +70,7 @@
 #define TARGETSLIST_CPP				21
 #define VERSIONCONTROL_CPP			22
 #define VIEWmANAGER_CPP				23
-
-
+#define ARCHIVEPATH_CPP				24
 
 
 

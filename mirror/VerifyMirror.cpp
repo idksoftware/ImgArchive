@@ -68,11 +68,13 @@ bool VerifyMirror::verifyMirror(const char *mirrorRoot, const char *chkRoot) {
 			chkpath += dirname.c_str();
 			std::string filesPath = mirrorRoot;
 			filesPath += makeFilePath(dirname.c_str());
+			/* Needs working on 
 			if (checkDisk.check(filesPath.c_str(), chkpath.c_str()) == true) {
 				// True == there are errors
 				printf("Errors found in %s", filesPath.c_str());
 				return false;
 			}
+			*/
 	}
 	return true;
 }
@@ -92,11 +94,13 @@ bool VerifyMirror::verifySource(const char *mirrorRoot, const char *chkRoot) {
 			chkpath += dirname.c_str();
 			std::string filesPath = mirrorRoot;
 			filesPath += makeFilePath(dirname.c_str());
+			/* needs working on
 			if (checkDisk.check(filesPath.c_str(), chkpath.c_str()) == false) {
 				// True == there are errors
 				printf("Verify: Errors found in %s\n", filesPath.c_str());
 				errors = true;
 			}
+			*/
 	}
 	return (!errors);
 }

@@ -323,7 +323,7 @@ class CIDKLocalTime
 	}
 
 public:
-	CIDKLocalTime()
+	CIDKLocalTime() noexcept
 	{
 		if (m_Once)
 		{

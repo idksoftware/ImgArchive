@@ -678,6 +678,7 @@ namespace simplearchive {
 		logger.log(LOG_COMPLETED_SUMMARY, CLogger::Level::SUMMARY, "Imported %d image files found in %d Folder(s) into the archive, %d image files rejected", m_imageFilesCompleted, m_folders, m_imageFilesRejected);
 		
 		ImportJournalManager::save();
+		
 #if defined( _MSC_VER ) &&  defined( SIA_DEBUG )
 		{
 			_CrtMemCheckpoint(&endMemState);

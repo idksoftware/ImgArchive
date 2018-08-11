@@ -40,7 +40,7 @@
 #define HOOKS_PATH						"/hooks"
 #define BACKUP_DESTINATION_PATH			"/Image Backups"
 #define MASTER_CATALOGUE_PATH			"/SIA Pictures"
-#define MASTER_WWW_CATALOGUE_PATH		"/SIA Web"
+#define MASTER_WWW_CATALOGUE_PATH		"/web"
 #define TOOLS_PATH						"/tools"
 #define CONFIG_PATH						"/config"
 #define DERIVATIVE_PATH					"/derivative"

@@ -8,10 +8,12 @@
 
 #include "SAUtils.h"
 #include "ArchivePath.h"
+#include "ErrorCode.h"
+#include "CLogger.h"
 
 namespace simplearchive {
 
-
+#define FILECODE ARCHIVEPATH_CPP
 
 ArchivePath& ArchivePath::getArchivePath() {
 	static ArchivePath INSTANCE;
@@ -54,6 +56,8 @@ void PrimaryIndexPath::setRepositoryPath(std::string &pathToRepository) {
 
 bool PrimaryIndexPath::settup() {
 
+	CLogger &logger = CLogger::getLogger();
+
 	std::string temp = m_pathToRepository;
 	if (SAUtils::DirExists(temp.c_str()) == false) {
 		SAUtils::mkDir(temp.c_str());
@@ -74,29 +78,35 @@ bool PrimaryIndexPath::settup() {
 
 	if (SAUtils::DirExists(m_idxDBPath.c_str()) == false) {
 		if (SAUtils::mkDir(m_idxDBPath.c_str()) == false) {
+			logger.log(LOG_OK, CLogger::Level::FATAL, "Invalid index path: \"%s\"?", m_idxDBPath.c_str());
 			return false;
+			
 		}
 	}
 
 	if (SAUtils::DirExists(m_historyPath.c_str()) == false) {
 		if (SAUtils::mkDir(m_historyPath.c_str()) == false) {
+			logger.log(LOG_OK, CLogger::Level::FATAL, "Invalid History path: \"%s\"?", m_historyPath.c_str());
 			return false;
 		}
 	}
 
 	if (SAUtils::DirExists(m_metadataPath.c_str()) == false) {
 		if (SAUtils::mkDir(m_metadataPath.c_str()) == false) {
+			logger.log(LOG_OK, CLogger::Level::FATAL, "Invalid metadata path: \"%s\"?", m_metadataPath.c_str());
 			return false;
 		}
 	}
 
 	if (SAUtils::DirExists(m_CSVDatabasePath.c_str()) == false) {
 		if (SAUtils::mkDir(m_CSVDatabasePath.c_str()) == false) {
+			logger.log(LOG_OK, CLogger::Level::FATAL, "Invalid CSV database path: \"%s\"?", m_CSVDatabasePath.c_str());
 			return false;
 		}
 	}
 	if (SAUtils::DirExists(m_CheckoutStatusPath.c_str()) == false) {
 		if (SAUtils::mkDir(m_CheckoutStatusPath.c_str()) == false) {
+			logger.log(LOG_OK, CLogger::Level::FATAL, "Invalid checkout status path: \"%s\"?", m_CheckoutStatusPath.c_str());
 			return false;
 		}
 	}
@@ -104,12 +114,13 @@ bool PrimaryIndexPath::settup() {
 }
 
 bool RepositoryPath::settup() {
-		
+	CLogger &logger = CLogger::getLogger();
 	
 	// Master Archive
 	std::string dataFolder = m_pathToRepository;
 	if (SAUtils::DirExists(dataFolder.c_str()) == false) {
 		if (SAUtils::mkDir(dataFolder.c_str()) == false) {
+			logger.log(LOG_OK, CLogger::Level::FATAL, "Invalid path to repository: \"%s\"?", m_pathToRepository.c_str());
 			return false;
 		}
 	}
@@ -118,6 +129,7 @@ bool RepositoryPath::settup() {
 	systemFolder += SYSTEM_PATH;
 	if (SAUtils::DirExists(systemFolder.c_str()) == false) {
 		if (SAUtils::mkDir(systemFolder.c_str()) == false) {
+			logger.log(LOG_OK, CLogger::Level::FATAL, "Invalid path to repository system folder: \"%s\"?", systemFolder.c_str());
 			return false;
 		}
 
@@ -131,28 +143,33 @@ bool RepositoryPath::settup() {
 		m_ImageIndexPath = systemFolder + INDEX_PATH;
 		if (SAUtils::DirExists(m_metadataPath.c_str()) == false) {
 			if (SAUtils::mkDir(m_metadataPath.c_str()) == false) {
+				logger.log(LOG_OK, CLogger::Level::FATAL, "Invalid metadata path: \"%s\"?", m_metadataPath.c_str());
 				return false;
 			}
 		}
 		if (SAUtils::DirExists(m_ImageIndexPath.c_str()) == false) {
 			if (SAUtils::mkDir(m_ImageIndexPath.c_str()) == false) {
+				logger.log(LOG_OK, CLogger::Level::FATAL, "Invalid image index path: \"%s\"?", m_ImageIndexPath.c_str());
 				return false;
 			}
 		}
 		if (SAUtils::DirExists(m_idxDBPath.c_str()) == false) {
 			if (SAUtils::mkDir(m_idxDBPath.c_str()) == false) {
+				logger.log(LOG_OK, CLogger::Level::FATAL, "Invalid m_index DB Path: \"%s\"?", m_idxDBPath.c_str());
 				return false;
 			}
 		}
 
 		if (SAUtils::DirExists(m_historyLogPath.c_str()) == false) {
 			if (SAUtils::mkDir(m_historyLogPath.c_str()) == false) {
+				logger.log(LOG_OK, CLogger::Level::FATAL, "Invalid history log path: \"%s\"?", m_historyLogPath.c_str());
 				return false;
 			}
 		}
 
 		if (SAUtils::DirExists(m_DBPath.c_str()) == false) {
 			if (SAUtils::mkDir(m_DBPath.c_str()) == false) {
+				logger.log(LOG_OK, CLogger::Level::FATAL, "Invalid DB Path: \"%s\"?", m_DBPath.c_str());
 				return false;
 			}
 		}
