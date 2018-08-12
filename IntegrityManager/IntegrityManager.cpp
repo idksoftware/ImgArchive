@@ -77,7 +77,7 @@ bool IntegrityManager::addFile(const char *folderPath, const char *fileName) {
 	return true;
 }
 
-bool IntegrityManager::validate(bool workspace, bool Master) {
+bool IntegrityManager::validate(IMCompletedSummary& imCompletedSummary, bool workspace, bool Master) {
 //	FolderList folderList(m_archivePath.c_str());
 	std::string tmp = m_archivePath;
 	tmp += "/system/journal";
@@ -104,13 +104,13 @@ bool IntegrityManager::validate(bool workspace, bool Master) {
 	else {
 		return false;
 	}
-	if (folderList.validate() == false) {
+	if (folderList.validate(imCompletedSummary) == false) {
 		return false;
 	}
 	return true;
 }
 
-bool IntegrityManager::repair(bool workspace, bool Master) {
+bool IntegrityManager::repair(IMCompletedSummary& imCompletedSummary, bool workspace, bool Master) {
 	//	FolderList folderList(m_archivePath.c_str());
 	std::string tmp = m_archivePath;
 	tmp += "/system/journal";
@@ -125,7 +125,7 @@ bool IntegrityManager::repair(bool workspace, bool Master) {
 	}
 	ValidateReportingObject::setPath(tmp.c_str());
 	FolderList folderList(m_archivePath.c_str(), m_workspacePath.c_str());
-	if (folderList.validateAndRepair() == false) {
+	if (folderList.validateAndRepair(imCompletedSummary) == false) {
 		return false;
 	}
 	return true;

@@ -57,6 +57,8 @@ namespace simplearchive {
 
 
 	class FolderFile;
+	class IMCompletedSummary;
+
 	/**
 	 * @Brief This class manages the image folder list in the archive.
 	 * It records changes to the image folder and maintains an XML list
@@ -75,13 +77,14 @@ namespace simplearchive {
 		std::string m_workspacePath;
 		std::string m_workspaceJournalName;
 		std::string m_MasterJournalName;
+		
 		bool makeXML();
 
-		bool validateAndRepairMaster();
-		bool validateOnlyMaster();
+		bool validateAndRepairMaster(IMCompletedSummary& imCompletedSummar);
+		bool validateOnlyMaster(IMCompletedSummary& imCompletedSummar);
 
-		bool validateAndRepairWorkspace();
-		bool validateOnlyWorkspace();
+		bool validateAndRepairWorkspace(IMCompletedSummary& imCompletedSummar);
+		bool validateOnlyWorkspace(IMCompletedSummary& imCompletedSummar);
 
 		bool validateMaster(ValidateReportingObject &validateReportingObject);
 		bool validateWorkspace(ValidateReportingObject &validateReportingObject);
@@ -97,8 +100,8 @@ namespace simplearchive {
 		bool incFolders(const char *folderName);
 		bool incFiles(const char *folderName);
 		bool makeList();
-		bool validate();
-		bool validateAndRepair();
+		bool validate(IMCompletedSummary& imCompletedSummary);
+		bool validateAndRepair(IMCompletedSummary& imCompletedSummar);
 		bool fix();
 		void SetAction(Action action) {
 			m_action = action;

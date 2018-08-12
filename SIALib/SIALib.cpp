@@ -572,21 +572,22 @@ namespace simplearchive {
 
 	bool SIALib::validate(CompletedSummary& completedSummary, const char *archivePath, const char *workspacePath, const char *homePath, Scope scope, bool repair) {
 		IntegrityManager &im = IntegrityManager::get();
+		IMCompletedSummary imCompletedSummary;
 		if (repair) {
 			switch (scope) {
 			case Workspace:
-				if (im.repair(true, false) == false) {
+				if (im.repair(imCompletedSummary, true, false) == false) {
 					return false;
 				}
 				break;
 			case Master:
-				if (im.repair(false, true) == false) {
+				if (im.repair(imCompletedSummary, false, true) == false) {
 					return false;
 				}
 				break;
 			
 			default:
-				if (im.repair(true, true) == false) {
+				if (im.repair(imCompletedSummary, true, true) == false) {
 					return false;
 				}
 			}
@@ -595,17 +596,17 @@ namespace simplearchive {
 		else {
 			switch (scope) {
 			case Workspace:
-				if (im.validate(true, false) == false) {
+				if (im.validate(imCompletedSummary, true, false) == false) {
 					return false;
 				}
 				break;
 			case Master:
-				if (im.validate(false, true) == false) {
+				if (im.validate(imCompletedSummary, false, true) == false) {
 					return false;
 				}
 				break;
 			default:
-				if (im.validate(true, true) == false) {
+				if (im.validate(imCompletedSummary, true, true) == false) {
 					return false;
 				}
 			}

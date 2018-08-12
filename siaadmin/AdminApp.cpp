@@ -351,20 +351,20 @@ bool AdminApp::doRun()
 			return false;
 		}
 	
-		
+		CompletedSummary completedSummary;
 		switch (appOptions.getScope()) {
 		case AppOptions::Workspace:
-			if (siaLib.validate(config.getMasterPath(), config.getWorkspacePath(), config.getHomePath(), SIALib::Workspace, appOptions.repair()) == false) {
+			if (siaLib.validate(completedSummary, config.getMasterPath(), config.getWorkspacePath(), config.getHomePath(), SIALib::Workspace, appOptions.repair()) == false) {
 				return false;
 			}
 			break;
 		case AppOptions::Master:			//* Show
-			if (siaLib.validate(config.getMasterPath(), config.getWorkspacePath(), config.getHomePath(), SIALib::Master, appOptions.repair()) == false) {
+			if (siaLib.validate(completedSummary, config.getMasterPath(), config.getWorkspacePath(), config.getHomePath(), SIALib::Master, appOptions.repair()) == false) {
 				return false;
 			}
 			break;
 		default:
-			if (siaLib.validate(config.getMasterPath(), config.getWorkspacePath(), config.getHomePath(), SIALib::Both, appOptions.repair()) == false) {
+			if (siaLib.validate(completedSummary, config.getMasterPath(), config.getWorkspacePath(), config.getHomePath(), SIALib::Both, appOptions.repair()) == false) {
 				return false;
 			}
 		}

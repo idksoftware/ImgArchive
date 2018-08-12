@@ -38,6 +38,15 @@
 
 namespace simplearchive {
 
+class IMCompletedSummary {
+	std::string m_summary;
+public:
+	IMCompletedSummary() = default;
+	virtual ~IMCompletedSummary() = default;
+	void set(const char *s) { m_summary = s; };
+	const char *get() { return m_summary.c_str(); };
+};
+
 class IntegrityManager {
 	
 	std::string m_archivePath;
@@ -55,8 +64,8 @@ public:
 	bool addDayFolder(const char *folderName);
 	bool addFile(const char *folderPath, const char *fileName);
 	bool makeList();
-	bool validate(bool workspace, bool Master);
-	bool repair(bool workspace, bool Master);
+	bool validate(IMCompletedSummary& imCompletedSummary, bool workspace, bool Master);
+	bool repair(IMCompletedSummary& imCompletedSummary, bool workspace, bool Master);
 	//static IntegrityManager &get(const char *archivePath, const char* workspacePath, const char* homePath);
 	static IntegrityManager &get();
 	void setPaths(const char* archivePath, const char* workspacePath, const char* homePath);

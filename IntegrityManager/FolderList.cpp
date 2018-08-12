@@ -46,7 +46,7 @@
 #include "CheckDisk.h"
 #include "ValidateReportingObject.h"
 #include "CheckDiskJournal.h"
-
+#include "IntegrityManager.h"
 #include "SAUtils.h"
 
 #ifdef _DEBUG
@@ -290,12 +290,12 @@ bool FolderList::makeList() {
 }
 
 
-bool FolderList::validateAndRepairWorkspace() {
+bool FolderList::validateAndRepairWorkspace(IMCompletedSummary& imCompletedSummar) {
 	ValidateAndRepairingWorkspaceObject validateAndRepairingObject(m_archivePath.c_str(), m_workspacePath.c_str());
 	return validateWorkspace(validateAndRepairingObject);
 }
 
-bool FolderList::validateOnlyWorkspace() {
+bool FolderList::validateOnlyWorkspace(IMCompletedSummary& imCompletedSummar) {
 	ValidateReportingObject validateReportingObject;
 	return validateWorkspace(validateReportingObject);
 }
@@ -465,14 +465,17 @@ bool FolderList::showUncheckedOutChanges(const char *addressScope) {
 	return true;
 }
 
-bool FolderList::validateAndRepairMaster() {
+bool FolderList::validateAndRepairMaster(IMCompletedSummary& imCompletedSummar) {
 	ValidateAndRepairingMasterObject validateAndRepairingObject(m_archivePath.c_str(), m_workspacePath.c_str());
 	return validateMaster(validateAndRepairingObject);
 }
 
-bool FolderList::validateOnlyMaster() {
+bool FolderList::validateOnlyMaster(IMCompletedSummary& imCompletedSummar) {
 	ValidateReportingObject validateReportingObject;
-	return validateMaster(validateReportingObject);
+	bool ret = validateMaster(validateReportingObject);
+	CheckDiskSummaryJounal& jounal = validateReportingObject.GetCheckDiskSummaryJounal();
+	imCompletedSummar.set(jounal.getTotalSummary().toConsole().c_str());
+	return ret;
 }
 
 bool FolderList::validateMaster(ValidateReportingObject &validateReportingObject) {
@@ -553,19 +556,19 @@ bool FolderList::validateMaster(ValidateReportingObject &validateReportingObject
 }
 
 
-bool FolderList::validate() {
+bool FolderList::validate(IMCompletedSummary& imCompletedSummary) {
 	switch (m_action) {
 	case READING_MASTER:
-		return validateOnlyMaster();
+		return validateOnlyMaster(imCompletedSummary);
 	case READING_WORKSPACE:
-		return validateOnlyWorkspace();
+		return validateOnlyWorkspace(imCompletedSummary);
 	case READING_BOTH:
 	{
-		bool ret = validateOnlyMaster();
+		bool ret = validateOnlyMaster(imCompletedSummary);
 		if (!ret) {
 			return false;
 		}
-		ret = validateOnlyWorkspace();
+		ret = validateOnlyWorkspace(imCompletedSummary);
 		if (!ret) {
 			return false;
 		}
@@ -578,19 +581,19 @@ bool FolderList::validate() {
 	return false;
 }
 
-bool FolderList::validateAndRepair() {
+bool FolderList::validateAndRepair(IMCompletedSummary& imCompletedSummar) {
 	switch (m_action) {
 	case READING_MASTER:
-		return validateAndRepairMaster();
+		return validateAndRepairMaster(imCompletedSummar);
 	case READING_WORKSPACE:
-		return validateAndRepairWorkspace();
+		return validateAndRepairWorkspace(imCompletedSummar);
 	case READING_BOTH:
 	{
-		bool ret = validateAndRepairMaster();
+		bool ret = validateAndRepairMaster(imCompletedSummar);
 		if (!ret) {
 			return false;
 		}
-		ret = validateAndRepairWorkspace();
+		ret = validateAndRepairWorkspace(imCompletedSummar);
 		if (!ret) {
 			return false;
 		}
