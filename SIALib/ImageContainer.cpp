@@ -47,6 +47,7 @@
 
 namespace simplearchive {
 
+#undef FILECODE
 #define FILECODE IMAGECONTAINER_CPP
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -73,12 +74,7 @@ ImageContainer::ImageContainer() {
 
 
 ImageContainer::~ImageContainer() {
-	if (m_PictureNode) {
-		delete m_PictureNode;
-	}
-	if (m_RawNode) {
-		delete m_RawNode;
-	}
+	
 }
 
 
@@ -103,7 +99,7 @@ bool ImageContainer::add(std::unique_ptr<BasicMetadata> &BasicMetadata, std::uni
 			}
 			*/
 			logger.log(LOG_ASSOCIATING, CLogger::Level::SUMMARY, "Associating: %s with %s", imagefile, m_Name.c_str());
-			m_PictureNode = new ImageNode(type, BasicMetadata, metadataObject);
+			m_PictureNode = std::make_shared<ImageNode>(type, BasicMetadata, metadataObject);
 		}
 		//m_PictureNode->setImageId(BasicMetadata, metadataObject);
 		
@@ -126,7 +122,7 @@ bool ImageContainer::add(std::unique_ptr<BasicMetadata> &BasicMetadata, std::uni
 		logger.log(LOG_OK, CLogger::Level::INFO, "found raw: %s", imagefile);
 		if (m_RawNode == nullptr) {
 			logger.log(LOG_OK, CLogger::Level::SUMMARY, "Associating: %s with %s", imagefile, m_Name.c_str());
-			m_RawNode = new ImageNode(type, BasicMetadata, metadataObject);
+			m_RawNode = std::make_shared<ImageNode>(type, BasicMetadata, metadataObject);
 		}
 		//m_RawNode->setImageId(imageId, metadataObject);
 		

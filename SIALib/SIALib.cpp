@@ -61,7 +61,6 @@
 #include "CSVDatabase.h"
 #include "HookCmd.h"
 #include "ViewManager.h"
-//#include "VersionControl.h"
 #include "SummaryFile.h"
 #include "CIDKDate.h"
 #include "MirrorManager.h"
@@ -73,6 +72,7 @@
 #include "TerminalServer.h"
 #include "ArchivePath.h"
 #include "CheckoutStatus.h"
+#include "IndexVisitor.h"
 #include <stdio.h>
 #include <sstream>
 
@@ -85,6 +85,7 @@ static char THIS_FILE[] = __FILE__;
 #define VERSION	"1.00"
 #define BUILD	"040115.1749"
 
+#undef FILECODE
 #define FILECODE SIALIB_CPP
 
 namespace simplearchive {
@@ -97,15 +98,12 @@ namespace simplearchive {
 /////////////////////////////////////////////////////////
 
 
-	SIALib::SIALib()
-	{
-		m_ArchiveBuilder.reset(new ArchiveBuilder(ArchiveObject::getInstance()));
-		m_winsockRequired = false;
-		m_socklibStarted = false;
-		m_enableEvents = false;
-
-		
-	}
+	SIALib::SIALib() :
+		m_ArchiveBuilder(std::make_shared<ArchiveBuilder>(ArchiveObject::getInstance())),
+		m_winsockRequired(false),
+		m_socklibStarted(false),
+		m_enableEvents(false) 
+	{}
 
 
 	SIALib::~SIALib()
@@ -176,7 +174,13 @@ namespace simplearchive {
 		CLogger::setConsoleLevel(config.getConsoleLevel());
 		CLogger::setSilent(config.isSilent());
 		CLogger::setLogPath(config.getLogPath());
-		CLogger::startLogging();
+		try {
+			CLogger::startLogging();
+		}
+		catch (exception e) {
+			printf("Failed to start logging");
+			return -1;
+		}
 		
 
 		CLogger &logger = CLogger::getLogger();
@@ -316,6 +320,8 @@ namespace simplearchive {
 				}
 				logger.log(LOG_OK, CLogger::Level::INFO, "System folder created at location: \"%s\"", temp.c_str());
 			}
+			
+			/*
 			temp = config.getIndexPath();
 			if (SAUtils::DirExists(temp.c_str()) == false) {
 				logger.log(LOG_OK, CLogger::Level::INFO, "Index folder not found at location: \"%s\"", temp.c_str());
@@ -326,6 +332,8 @@ namespace simplearchive {
 				}
 				logger.log(LOG_OK, CLogger::Level::INFO, "Index folder created at location: \"%s\"", temp.c_str());
 			}
+			*/
+			
 			if (ImageExtentions::setExtentionsFilePath(config.getConfigPath()) == false) {
 				return -1;
 			}
@@ -355,7 +363,7 @@ namespace simplearchive {
 				}
 			}
 		}
-		catch (SIAAppException e) {
+		catch (SIAException e) {
 			logger.log(LOG_OK, CLogger::Level::FATAL, "Failed to complete initalisation %s\n", e.what());
 			return -1;
 		}
@@ -364,13 +372,26 @@ namespace simplearchive {
 	}
 
 	
-
+	/*
 	int SIALib::complete() {
 		CLogger &logger = CLogger::getLogger();
 		SummaryFile &summaryFile = SummaryFile::getSummaryFile();
 		CIDKDate date;
 		date.Now();
 		logger.log(LOG_COMPLETED, CLogger::Level::SUMMARY, "Application completed successfully at %s", date.Print().c_str());
+		//logger.log(LOG_SUMMARY, CLogger::Level::SUMMARY, "Completed Summary\n%s", completedSummary.getSummary());
+		//logger.log(LOG_RESULT, CLogger::Level::SUMMARY, "Result: %s", completedSummary.getResult());
+		summaryFile.log(SummaryFile::SF_BRIEF, SummaryFile::SF_COMMENT, "Summary start");
+		return 0;
+	}
+	*/
+
+	int SIALib::complete() {
+		CLogger &logger = CLogger::getLogger();
+		SummaryFile &summaryFile = SummaryFile::getSummaryFile();
+		CIDKDate date;
+		date.Now();
+		logger.log(LOG_COMPLETED, CLogger::Level::SUMMARY, "Application completed successfully at %s\n", date.Print().c_str());
 		summaryFile.log(SummaryFile::SF_BRIEF, SummaryFile::SF_COMMENT, "Summary start");
 		return 0;
 	}
@@ -398,16 +419,18 @@ namespace simplearchive {
 
 		std::string str = config.toString();
 		std::cout << "Using\n====================\n";
-		std::cout << str;
-
+		
+		//completedSummary.setSummary(str.c_str());
+		//completedSummary.setResult("Completed Successfully");
 		return true;
 	}
 
 	bool SIALib::exportImage(const char *distpath) {
 		if (ArchiveObject::getInstance().exportImages(distpath) == false) {
+			//completedSummary.setResult("Failed to complete");
 			return false;
 		}
-
+		//completedSummary.setResult("Completed Successfully");
 		return true;
 	}
 
@@ -415,8 +438,10 @@ namespace simplearchive {
 	bool SIALib::showCheckedOut(const char *filepath) {
 
 		if (ArchiveObject::getInstance().showCheckedOut(filepath) == false) {
+			//completedSummary.setResult("Failed to complete");
 			return false;
 		}
+		//completedSummary.setResult("Completed Successfully");
 		return true;
 	}
 
@@ -428,7 +453,8 @@ namespace simplearchive {
 	}
 
 	bool SIALib::get(const char *scope, const char *comment, bool force) {
-		if (ArchiveObject::getInstance().get(scope, comment, force) == false) {
+		const char *version = "1, 2, [4-@]";
+		if (ArchiveObject::getInstance().get(scope, version, comment, force) == false) {
 			return false;
 		}
 
@@ -436,6 +462,7 @@ namespace simplearchive {
 	}
 
 	bool SIALib::checkout(const char *scope, const char *comment, bool force) {
+		
 		if (ArchiveObject::getInstance().checkout(scope, comment, force) == false) {
 			return false;
 		}
@@ -495,7 +522,7 @@ namespace simplearchive {
 
 		
 		CheckoutStatus checkoutStatus;
-		if (checkoutStatus.status(scope) == false) {
+		if (checkoutStatus.scopedStatus(scope) == false) {
 			
 			return false;
 		}
@@ -570,7 +597,8 @@ namespace simplearchive {
 		return true;
 	}
 
-	bool SIALib::validate(CompletedSummary& completedSummary, const char *archivePath, const char *workspacePath, const char *homePath, Scope scope, bool repair) {
+	bool SIALib::validate(const char *archivePath, const char *workspacePath, const char *homePath, Scope scope, bool repair) {
+		CLogger &logger = CLogger::getLogger();
 		IntegrityManager &im = IntegrityManager::get();
 		IMCompletedSummary imCompletedSummary;
 		if (repair) {
@@ -596,21 +624,25 @@ namespace simplearchive {
 		else {
 			switch (scope) {
 			case Workspace:
+				logger.log(LOG_COMMAND, CLogger::Level::SUMMARY, "Validating Workspace");
 				if (im.validate(imCompletedSummary, true, false) == false) {
 					return false;
 				}
 				break;
 			case Master:
+				logger.log(LOG_COMMAND, CLogger::Level::SUMMARY, "Validating Master");
 				if (im.validate(imCompletedSummary, false, true) == false) {
 					return false;
 				}
 				break;
 			default:
+				logger.log(LOG_COMMAND, CLogger::Level::SUMMARY, "Validating Both Master and Workspace");
 				if (im.validate(imCompletedSummary, true, true) == false) {
 					return false;
 				}
 			}
-			
+			//completedSummary.setSummary(imCompletedSummary.getSummary());
+			//completedSummary.setResult(imCompletedSummary.getResult());
 			return true;
 		}
 		return true;

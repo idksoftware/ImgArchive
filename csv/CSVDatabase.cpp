@@ -146,7 +146,7 @@ public:
 	virtual ~MetadataPartition() {};
 };
 
-std::shared_ptr<CSVDatabase> CSVDatabase::m_this(0);
+
 std::string CSVDatabase::m_dbpath;
 
 //std::shared_ptr<CSVVersionDatabase> CSVVersionDatabase::m_this(0);
@@ -161,10 +161,8 @@ CSVDatabase::~CSVDatabase() {
 }
 
 CSVDatabase &CSVDatabase::get() {
-	if (!m_this.get()) {
-		m_this.reset(new CSVDatabase());
-	}
-	return *(m_this.get());
+	static CSVDatabase csvDatabase;
+	return csvDatabase;
 }
 
 void CSVDatabase::setDBPath(const char *path) {

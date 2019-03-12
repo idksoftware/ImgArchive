@@ -38,6 +38,7 @@
 #include "CLogger.h"
 #include "HookCmd.h"
 
+#undef FILECODE
 #define FILECODE TARGETSLIST_CPP
 
 #ifdef _DEBUG

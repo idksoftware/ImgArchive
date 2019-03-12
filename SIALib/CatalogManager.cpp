@@ -55,8 +55,6 @@ namespace simplearchive {
 std::string CatalogManager::m_catalogPath;
 std::string CatalogManager::m_MasterPath;
 
-std::auto_ptr<CatalogManager> CatalogManager::m_this(0);
-
 /**
  * brief This class contains the information for a folder within the catalog.
  *
@@ -594,10 +592,8 @@ bool CatalogManager::addFile(const char *folderPath, const char *fileName) {
 
 
 CatalogManager &CatalogManager::get() {
-	if (!m_this.get()) {
-		m_this.reset(new CatalogManager());
-	}
-	return *m_this;
+	static CatalogManager catalogManager;
+	return catalogManager;
 }
 
 class CatalogAction : public AVAction {

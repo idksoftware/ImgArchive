@@ -102,8 +102,26 @@ namespace simplearchive {
 	using namespace CommandLineProcessing;
 
 	
-	SIAArcApp::SIAArcApp() : AppBase(new SIAArcArgvParser) {};
+	SIAArcApp::SIAArcApp() : AppBase(std::make_shared<SIAArcArgvParser>()) {};
 
+
+class CheckoutSummary : public SummaryReporter {
+protected:
+	virtual bool doProcess() {
+		std::stringstream str;
+		int warnings = 0;
+		int errors = 0;
+		int competed = 0;
+		std::shared_ptr<StatusList> list = getList();
+		for (auto i = list->begin(); i != list->end(); i++) {
+			ReporterEvent& item = *i;
+			
+		}
+		setSummary(str.str().c_str());
+
+		return false;
+	}
+};
 
 
 bool SIAArcApp::initaliseArgs(int argc, char **argv) {
@@ -260,7 +278,7 @@ bool SIAArcApp::doRun()
 {
 	SIAArcAppOptions &appOptions = SIAArcAppOptions::get();
 	AppConfig &config = AppConfig::get();
-
+	
 	SIALib siaLib;
 	// Set global options
 	if (appOptions.isEnventsOn() == true) {
@@ -334,10 +352,16 @@ bool SIAArcApp::doRun()
 		}
 		break;
 	case SIAArcAppOptions::CommandMode::CM_Checkout:
+	{
 		if (siaLib.checkout(appOptions.getImageAddress(), appOptions.getComment(), appOptions.isForced()) == false) {
 			setError(CLogger::getLastCode(), CLogger::getLastMessage());
 			return false;
 		}
+		StatusReporter& statusReporter = StatusReporter::get();
+		SummaryReporter summaryReporter(statusReporter.getList());
+		summaryReporter.process();
+		summaryReporter.toConsole();
+	}
 		break;
 	case SIAArcAppOptions::CommandMode::CM_Checkin:
 		if (siaLib.checkin(appOptions.getImageAddress(), appOptions.getComment(), appOptions.isForced()) == false) {
@@ -467,7 +491,7 @@ int main(int argc, char **argv)
 	}
 	if (error) {
 		int code = CommandLineProcessing::AppBase::getError();
-		cout << CommandLineProcessing::AppBase::getFullErrorString();
+		cout << '\n\n' << CommandLineProcessing::AppBase::getFullErrorString() << '\n';
 		return code;
 	}
 	else {

@@ -146,6 +146,9 @@
   <ItemGroup>
     <ClInclude Include="ContentsLister.h" />
     <ClInclude Include="DayIndexer.h" />
+    <ClInclude Include="DerivativeMetadata.h" />
+    <ClInclude Include="MatadataManager.h" />
+    <ClInclude Include="VersionsList.h" />
     <ClInclude Include="HTMLWriter.h" />
     <ClInclude Include="ImageSideCar.h" />
     <ClInclude Include="VersionMetadataObject.h" />
@@ -157,8 +160,10 @@
   <ItemGroup>
     <ClCompile Include="ContentsLister.cpp" />
     <ClCompile Include="DayIndexer.cpp" />
+    <ClCompile Include="DerivativeMetadata.cpp" />
     <ClCompile Include="HTMLWriter.cpp" />
     <ClCompile Include="ImageSideCar.cpp" />
+    <ClCompile Include="MatadataManager.cpp" />
     <ClCompile Include="VersionMetadataObject.cpp" />
     <ClCompile Include="JSONWriter.cpp" />
     <ClCompile Include="MetadataObject.cpp" />

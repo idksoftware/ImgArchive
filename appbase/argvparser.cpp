@@ -154,7 +154,7 @@ ArgvParser::parse(int _argc, char ** _argv)
 	while (i < _argc)
 	{
 		string argument = _argv[i];
-		unsigned int key = 0;
+		
 		string option; // option name
 		string value;  // option value
 
@@ -174,12 +174,12 @@ ArgvParser::parse(int _argc, char ** _argv)
 				return(ParserOptionAfterArgument); // return error code
 			}
 
-
+			unsigned int key = 0;
 			// check for long options
 			if (isValidLongOptionString(argument))
 			{
 				// handle long options
-
+				
 				// remove trailing '--'
 				argument = argument.substr(2);
 				// check for option value assignment 'option=value'
@@ -332,7 +332,7 @@ ArgvParser::parse(int _argc, char ** _argv)
 				return(ParserHelpRequested);
 			}
 			if (commandListFound) {
-				for (vector<string>::const_iterator opt = ii->second.begin(); opt != ii->second.end(); opt++) {
+				for ( auto opt = ii->second.begin(); opt != ii->second.end(); opt++) {
 					std::string s = *opt;
 					//printf("%s", s.c_str());
 				}
@@ -342,8 +342,8 @@ ArgvParser::parse(int _argc, char ** _argv)
         ++i;
     }
 
-    map<unsigned int, OptionAttributes>::iterator it;
-    for( it = option2attribute.begin(); it != option2attribute.end(); it++ )
+    
+    for( auto it = option2attribute.begin(); it != option2attribute.end(); it++ )
     {
 		if (it->second == MasterOption)
 		{
@@ -527,9 +527,7 @@ string ArgvParser::generalHelp(unsigned int _width) const
 	usage += AVAILABLE_COMMANDS;
 	usage += ":\n";
 	usage += "\n";
-	for (Key2AttributeMap::const_iterator it = option2attribute.begin();
-		it != option2attribute.end();
-		++it)
+	for (auto it = option2attribute.begin(); it != option2attribute.end(); ++it)
 	{
 		string _os; // temp string for the option
 		if (option2attribute.find(it->first)->second != MasterOption) {
@@ -635,7 +633,7 @@ string ArgvParser::generalHelp(unsigned int _width) const
 	usage += formatString("Return codes:\n", _width) + "\n";
 
 	//   map<int, string>::const_iterator eit;
-	for (std::map<int, std::string>::const_iterator alt = errorcode2descr.begin();
+	for (auto alt = errorcode2descr.begin();
 		alt != errorcode2descr.end();
 		++alt)
 	{
@@ -677,9 +675,7 @@ string ArgvParser::usageDescription(unsigned int _width) const
 	usage += AVAILABLE_COMMANDS;
 	usage += ":\n\n";
 
-	for (Key2AttributeMap::const_iterator it = option2attribute.begin();
-		it != option2attribute.end();
-		++it)
+	for (auto it = option2attribute.begin(); it != option2attribute.end(); ++it)
 	{
 		string _os; // temp string for the option
 		if (option2attribute.find(it->first)->second != MasterOption) {
@@ -735,7 +731,7 @@ string ArgvParser::usageDescription(unsigned int _width) const
     usage += formatString("\nReturn codes:\n", _width) + "\n";
 
     //   map<int, string>::const_iterator eit;
-    for( std::map<int, std::string>::const_iterator alt = errorcode2descr.begin();
+    for( auto alt = errorcode2descr.begin();
             alt != errorcode2descr.end();
             ++alt )
     {

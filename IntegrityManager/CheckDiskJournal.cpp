@@ -33,12 +33,13 @@ namespace simplearchive {
 		}
 	}
 
-	CDJournalItem::CDJournalItem(int num, const char *image, ReportStatus &status, const char *orginal) {
+	CDJournalItem::CDJournalItem(int num, const char *image, ReportStatus &status, const char *orginal) : m_image(image) {
 		m_num = num;
-		m_image = image;
 		m_status = status;
 		m_checkedOut = false;
-		if (orginal != nullptr) m_orginal = orginal;
+		if (orginal != nullptr) {
+			m_orginal = orginal;
+		}
 		m_fixed = false;
 	}
 
@@ -99,7 +100,7 @@ namespace simplearchive {
 		file << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 			<< "<CheckJournal Completed=\"" << timeCompleted.toString() << "\">\n";
 		file << "<List>\n";
-		for (std::vector<CDJournalItem>::iterator i = m_list->begin(); i != m_list->end(); i++) {
+		for (auto i = m_list->begin(); i != m_list->end(); i++) {
 			CDJournalItem item = *i;
 			file << "\t<Item>\n";
 
@@ -133,7 +134,7 @@ namespace simplearchive {
 		if (file.is_open() == false) {
 			return false;
 		}
-		for (std::vector<CDJournalItem>::iterator i = m_list->begin(); i != m_list->end(); i++) {
+		for (auto i = m_list->begin(); i != m_list->end(); i++) {
 			CDJournalItem item = *i;
 			std::string line = item.toString();
 			//printf("%s\n", line.c_str());
@@ -245,14 +246,7 @@ namespace simplearchive {
 		file << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 			<< "<CheckJournal Completed=\"" << timeCompleted.toString() << "\">\n";
 		file << "<List>\n";
-		int unknown = 0;
-		int contentChanged = 0;
-		int nameChanged = 0;
-		int missing = 0;
-		int added = 0;
-		int checkedOutNoChange = 0;
-		int checkedOutChanged = 0;
-		int unchanged = 0;
+		
 		for (auto i = m_list->begin(); i != m_list->end(); i++) {
 			std::shared_ptr<CDYearSummary>& yitem = *i;
 			CDDaySummaryList& list = yitem->getList();
@@ -290,7 +284,7 @@ namespace simplearchive {
 			file << "</Summary>\n";
 			file << "\t</Item>\n";
 
-			m_totalSummary.updateAll(summaryItem);
+			totalSummary.updateAll(summaryItem);
 			
 		}
 		file << "</List>\n";
@@ -310,6 +304,27 @@ namespace simplearchive {
 		
 		file << "</CheckJournal>\n";
 		file.close();
+		return true;
+	}
+
+	bool CheckDiskSummaryJounal::makeSumary()
+	{
+		for (auto i = m_list->begin(); i != m_list->end(); i++) {
+			std::shared_ptr<CDYearSummary>& yitem = *i;
+			CDDaySummaryList& list = yitem->getList();
+			
+			CDSummaryItem summaryItem;
+			for (auto j = list.begin(); j != list.end(); j++) {
+				std::shared_ptr<CDDaySummary>& ditem = *j;
+				
+
+				summaryItem.updateAll(ditem->m_summaryItem);
+			}
+			
+
+			m_totalSummary.updateAll(summaryItem);
+
+		}	
 		return true;
 	}
 

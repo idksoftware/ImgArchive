@@ -52,27 +52,44 @@ namespace simplearchive {
 
 
 
-void IntegrityManager::setPaths(const char* archivePath, const char* workspacePath, const char* homePath) {
+void IntegrityManager::setPaths(const char* archivePath, const char *derivativePath, const char* workspacePath, const char* homePath) {
 	m_archivePath = archivePath;
+	m_derivativePath = derivativePath;
 	m_workspacePath = workspacePath;
 	m_homePath = homePath;
 	
-	CheckDisk::setArchivePath(archivePath);
+	//CheckDisk::setArchivePath(archivePath);
 	
 }
 
-bool IntegrityManager::addDayFolder(const char *folderName) {
-	FolderList folderList(m_archivePath.c_str());
+bool IntegrityManager::addDerivativeDayFolder(const char *folderName) {
+	return addDayFolder(m_derivativePath.c_str(), folderName);
+}
+
+bool IntegrityManager::addMasterDayFolder(const char *folderName) {
+	return addDayFolder(m_archivePath.c_str(), folderName);
+}
+
+bool IntegrityManager::addDayFolder(const char *rootName, const char *folderName) {
+	FolderList folderList(rootName);
 	folderList.addDayFolder(folderName);
 	return true;
 }
 
-bool IntegrityManager::addFile(const char *folderPath, const char *fileName) {
+bool IntegrityManager::addDerivativeFile(const char *folderPath, const char *fileName) {
+	return addFile(m_derivativePath.c_str(), folderPath, fileName);
+}
+
+bool IntegrityManager::addMasterFile(const char *folderPath, const char *fileName) {
+	return addFile(m_archivePath.c_str(), folderPath, fileName);
+}
+
+bool IntegrityManager::addFile(const char *rootPath, const char *folderPath, const char *fileName) {
 	CheckDisk checkDisk;
-	if (checkDisk.update(folderPath, fileName) == false) {
+	if (checkDisk.update(rootPath, folderPath, fileName) == false) {
 		return false;
 	}
-	FolderList folderList(m_archivePath.c_str());
+	FolderList folderList(rootPath);
 	folderList.incFiles(folderPath);
 	return true;
 }
@@ -125,6 +142,19 @@ bool IntegrityManager::repair(IMCompletedSummary& imCompletedSummary, bool works
 	}
 	ValidateReportingObject::setPath(tmp.c_str());
 	FolderList folderList(m_archivePath.c_str(), m_workspacePath.c_str());
+	if (workspace && Master) {
+		folderList.SetAction(FolderList::READING_BOTH);
+	}
+	else if (workspace) {
+		folderList.SetAction(FolderList::READING_WORKSPACE);
+	}
+	else if (Master) {
+		folderList.SetAction(FolderList::READING_MASTER);
+	}
+	else {
+		return false;
+	}
+	
 	if (folderList.validateAndRepair(imCompletedSummary) == false) {
 		return false;
 	}
@@ -146,7 +176,7 @@ bool IntegrityManager::makeList() {
 	}
 	
 	FileList_Ptr filelist = SAUtils::getFiles_(m_archivePath.c_str());
-	for (std::vector<std::string>::iterator i = filelist->begin(); i != filelist->end(); i++) {
+	for (auto i = filelist->begin(); i != filelist->end(); i++) {
 		std::string year = *i;
 		std::string filepath = m_archivePath + "/" + year;
 
@@ -159,7 +189,7 @@ bool IntegrityManager::makeList() {
 		std::string yearfolder = m_archivePath + '/' + year;
 		FileList_Ptr dayList = SAUtils::getFiles_(yearfolder.c_str());
 
-		for (std::vector<std::string>::iterator i = dayList->begin(); i != dayList->end(); i++) {
+		for (auto i = dayList->begin(); i != dayList->end(); i++) {
 			std::string name = *i;
 			
 

@@ -113,7 +113,7 @@ bool UDPOut::init() {
 #else
 	m_si_other.sin_addr.s_addr = inet_addr(m_address);
 #endif
-	int recv_len;
+	
 	//start communication
 	return true;
 }

@@ -49,9 +49,9 @@ static char THIS_FILE[] = __FILE__;
 using namespace CommandLineProcessing;
 namespace simplearchive {
 
-AppOptions *AppOptions::m_this = 0;
+
 std::string AppOptions::m_name;
-AppOptions::CommandMode AppOptions::m_commandMode = AppOptions::CM_Unknown;
+AppOptions::CommandMode AppOptions::m_commandMode = AppOptions::CommandMode::CM_Unknown;
 std::string AppOptions::m_comment;
 std::string AppOptions::m_imageAddress;
 std::string AppOptions::m_homePath;
@@ -62,16 +62,15 @@ std::string AppOptions::m_derivativePath;
 std::string AppOptions::m_repositoryPath;
 std::string AppOptions::m_cataloguePath;
 
-AppOptions::Scope AppOptions::m_scope = AppOptions::Both;
+AppOptions::VerifyOperation AppOptions::m_verifyOperation = AppOptions::VerifyOperation::Both;
+AppOptions::ShowOperation AppOptions::m_showOperation = AppOptions::ShowOperation::CheckedOut;
 bool AppOptions::m_repair = false;
 bool AppOptions::m_users = true;
 
 
 AppOptions &AppOptions::get() {
-	if (m_this == nullptr) {
-		m_this = new AppOptions;
-	}
-	return *m_this;
+	static AppOptions _this;
+	return _this;
 }
 
 AppOptions::AppOptions() {
@@ -183,7 +182,7 @@ bool AppOptions::setCommandMode(const char *modeString) {
 		return true;
 	}
 	*/
-	m_commandMode = CM_Unknown;
+	m_commandMode = CommandMode::CM_Unknown;
 	return false;
 }
 

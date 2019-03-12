@@ -56,7 +56,6 @@ static char THIS_FILE[] = __FILE__;
 namespace simplearchive {
 std::string SummaryFile::m_briefFilename;
 std::string SummaryFile::m_detailedFilename;
-std::auto_ptr<SummaryFile> SummaryFile::m_this(0);
 std::ofstream SummaryFile::m_summaryFile;
 std::ofstream SummaryFile::m_detailedFile;
 
@@ -73,12 +72,9 @@ SummaryFile::SummaryFile() {
 }
 
 SummaryFile &SummaryFile::getSummaryFile() {
-
-	if (!m_this.get()) {
-		m_this.reset(new SummaryFile());
-
-	}
-	return *(m_this.get());
+	static SummaryFile summaryFile;
+	
+	return summaryFile;
 }
 
 SummaryFile::~SummaryFile() {

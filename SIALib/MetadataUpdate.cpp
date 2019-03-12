@@ -21,7 +21,7 @@ static char THIS_FILE[] = __FILE__;
 //#define new DEBUG_NEW
 #endif
 
-/*
+
 namespace simplearchive {
 
 
@@ -45,12 +45,13 @@ bool MetadataUpdate::process(const char *imagePath, const char *imageName, const
 	std::string fullImagePath = tmp.substr(0, 4);
 	fullImagePath += '/';
 	fullImagePath += imagePath;
-
+	/*
 	DatabaseInterface &db = DatabaseInterface::get();
 	std::auto_ptr<MetadataObject> mo = db.get(imageName, imagePath);
 	if (!mo.get()) {
 		return false;
 	}
+	
 	cmdString = cmdString.substr(1, cmdString.length()-2);
 	CSVArgs csvArgs;
 	csvArgs.process(cmdString.c_str());
@@ -62,6 +63,7 @@ bool MetadataUpdate::process(const char *imagePath, const char *imageName, const
 		}
 	}
 	db.put(imageName, imagePath, *mo);
+	*/
 	return true;
 }
 
@@ -92,7 +94,7 @@ bool MetadataUpdate::command(std::string &cmdarg, MetadataObject &mo) {
 std::auto_ptr<MetadataDocument> MetadataUpdate::get(const char *imagePath, const char *imageName) {
 	std::string tmp = imagePath;
 	std::auto_ptr<MetadataDocument> metadataDocument(0);
-
+	/*
 	DatabaseInterface &db = DatabaseInterface::get();
 	std::auto_ptr<MetadataObject> mo = db.get(imageName, imagePath);
 	if (!mo.get()) {
@@ -102,6 +104,7 @@ std::auto_ptr<MetadataDocument> MetadataUpdate::get(const char *imagePath, const
 	metadataDocument->setImageName(imageName);
 	metadataDocument->setImagePath(imagePath);
 	loadMetadataDocument(*metadataDocument, *mo);
+	*/
 	return metadataDocument;
 }
 
@@ -118,5 +121,5 @@ bool MetadataUpdate::loadMetadataDocument(MetadataDocument &metadataDocument, Me
 
 	return true;
 }
-*/
-//} /* namespace simplearchive */
+
+} /* namespace simplearchive */

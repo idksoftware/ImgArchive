@@ -13,6 +13,7 @@
 
 namespace simplearchive {
 
+#undef FILECODE
 #define FILECODE ARCHIVEPATH_CPP
 
 ArchivePath& ArchivePath::getArchivePath() {
@@ -141,38 +142,44 @@ bool RepositoryPath::settup() {
 		m_historyLogPath = systemFolder + HISTORY_PATH;
 		m_DBPath = systemFolder + DATABASE_PATH;
 		m_ImageIndexPath = systemFolder + INDEX_PATH;
+
 		if (SAUtils::DirExists(m_metadataPath.c_str()) == false) {
 			if (SAUtils::mkDir(m_metadataPath.c_str()) == false) {
 				logger.log(LOG_OK, CLogger::Level::FATAL, "Invalid metadata path: \"%s\"?", m_metadataPath.c_str());
 				return false;
 			}
 		}
+		/*
 		if (SAUtils::DirExists(m_ImageIndexPath.c_str()) == false) {
 			if (SAUtils::mkDir(m_ImageIndexPath.c_str()) == false) {
 				logger.log(LOG_OK, CLogger::Level::FATAL, "Invalid image index path: \"%s\"?", m_ImageIndexPath.c_str());
 				return false;
 			}
 		}
+		*/
+		/*
 		if (SAUtils::DirExists(m_idxDBPath.c_str()) == false) {
 			if (SAUtils::mkDir(m_idxDBPath.c_str()) == false) {
 				logger.log(LOG_OK, CLogger::Level::FATAL, "Invalid m_index DB Path: \"%s\"?", m_idxDBPath.c_str());
 				return false;
 			}
 		}
-
+		*/
+		/*
 		if (SAUtils::DirExists(m_historyLogPath.c_str()) == false) {
 			if (SAUtils::mkDir(m_historyLogPath.c_str()) == false) {
 				logger.log(LOG_OK, CLogger::Level::FATAL, "Invalid history log path: \"%s\"?", m_historyLogPath.c_str());
 				return false;
 			}
 		}
-
+		*/
 		if (SAUtils::DirExists(m_DBPath.c_str()) == false) {
 			if (SAUtils::mkDir(m_DBPath.c_str()) == false) {
 				logger.log(LOG_OK, CLogger::Level::FATAL, "Invalid DB Path: \"%s\"?", m_DBPath.c_str());
 				return false;
 			}
 		}
+		
 	}
 	return true;
 }
@@ -204,7 +211,6 @@ bool RepositoryPath::settupRelative(std::string &yyyymmddStr) {
 	}
 	m_dataPath = m_yyyymmddStrPath + MASTER_IMAGE_PATH;
 	m_metadataPath = m_yyyymmddStrPath + METADATA_PATH;
-	
 
 	if (SAUtils::DirExists(m_dataPath.c_str()) == false) {
 		if (SAUtils::mkDir(m_dataPath.c_str()) == false) {
@@ -219,10 +225,6 @@ bool RepositoryPath::settupRelative(std::string &yyyymmddStr) {
 
 	}
 	
-	
-		
-	//IntegrityManager &integrityManager = IntegrityManager::get();
-	//integrityManager.addDayFolder(m_yyyymmddStr.c_str());
 	return true;
 }
 
@@ -240,6 +242,14 @@ void RepositoryPath::setImageName(const char *imageName) {
 
 const std::string& RepositoryPath::getImageName() const {
 	return m_imageName;
+}
+
+const std::string& RepositoryPath::getYYYYMMDD() const {
+	return m_yyyymmddStr;
+}
+
+const std::string& RepositoryPath::getYYYYMMDDPath() const {
+	return m_yyyymmddStrPath;
 }
 
 const std::string& RepositoryPath::getRelativePath() const {

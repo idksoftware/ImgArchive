@@ -57,3 +57,16 @@ checkout --force --image-address="2017-01-16/DSC01278.JPG"
 status --scope="2017/01/16-2017/01/18"
 
 add --source-path="D:\tmp"
+
+checkin --scope 2017
+
+uncheckout --scope 2017
+
+add --source-path="D:\tmp_pics"
+
+add --source-path="C:\tmp_raw"
+
+get --scope=2017
+
+
+checkin --scope 2017-*-*/DSC01277.JPG

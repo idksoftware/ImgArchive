@@ -14,12 +14,12 @@ namespace simplearchive {
 
 	class FolderFile {
 	public:
-		typedef enum {
+		enum class Status {
 			FOUND_Ok,		//< Found ok.
 			NOT_FOUND,		//< Folder not found in archive.
 			EXTRA_FOLDER,	//< Found a folder not included in the check data. 
 			UNKNOWN			//< Unknown state.
-		} Status;
+		};
 	private:
 		std::string m_folderName;
 		int m_nFiles;
@@ -28,13 +28,14 @@ namespace simplearchive {
 		Status m_status;
 	public:
 		FolderFile() {
-			m_status = NOT_FOUND;
+			m_status = Status::NOT_FOUND;
 			m_nFiles = 0;
 			m_nFolders = 0;
 			m_time = 0;
+			
 		};
-		FolderFile(std::string data) {
-			m_status = NOT_FOUND;
+		explicit FolderFile(std::string &data) {
+			m_status = Status::NOT_FOUND;
 			CSVArgs csvArgs(':');
 			try {
 				csvArgs.process(data.c_str());
@@ -64,6 +65,8 @@ namespace simplearchive {
 		};
 
 		FolderFile(const char *folderName, int folders = 0, int files = 0) {
+			m_status = Status::NOT_FOUND;
+			m_time = 0;
 			time(&m_time);
 			m_folderName = folderName;
 			m_nFiles = files;

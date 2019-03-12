@@ -212,6 +212,7 @@ private:
 	static std::string m_distinationPath;
 	static std::string m_filePath;
 	static LogDocument::FormatType m_formatType;
+	static std::string m_version;
 
 	ShowCommandOption m_showCommandOption;
 

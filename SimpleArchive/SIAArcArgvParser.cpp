@@ -104,6 +104,10 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineOption("F", "no output is sent to the terminal.", ArgvParser::NoOptionAttribute);
 	defineOptionAlternative("F", "force");
 
+	defineOption("v", "specifies a version.", ArgvParser::OptionRequiresValue);
+	defineOptionAlternative("v", "version");
+
+
 	defineOption("td", "to date", ArgvParser::OptionRequiresValue);
 	defineOptionAlternative("td", "to-date");
 
@@ -142,18 +146,22 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineCommandOption("get", "comment");
 	defineCommandOption("get", "scope");
 	defineCommandOption("get", "force");
+	defineCommandOption("get", "version");
 
 	defineCommandOption("checkin", "comment");
 	defineCommandOption("checkin", "scope");
 	defineCommandOption("checkin", "force");
+	defineCommandOption("checkin", "file");
 
 	defineCommandOption("checkout", "comment");
 	defineCommandOption("checkout", "scope");
 	defineCommandOption("checkout", "force");
+	defineCommandOption("checkout", "file");
 
 	defineCommandOption("uncheckout", "comment");
 	defineCommandOption("uncheckout", "scope");
 	defineCommandOption("uncheckout", "force");
+	defineCommandOption("uncheckout", "file");
 
 	defineCommandOption("export", "comment");
 	defineCommandOption("export", "logging-level");
@@ -269,6 +277,11 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 			appOptions.m_force = true;
 		}
 
+		if (foundOption("version") == true) {
+			std::string opt = optionValue("version");
+			appOptions.m_version = opt.c_str();
+		}
+
 		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Get);
 		cmdFound = true;
 	}
@@ -315,7 +328,6 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 		}
 
 		if (foundOption("force") == true) {
-			std::string opt = optionValue("force");
 			appOptions.m_force = true;
 		}
 
@@ -340,7 +352,6 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 		}
 
 		if (foundOption("force") == true) {
-			std::string opt = optionValue("force");
 			appOptions.m_force = true;
 		}
 

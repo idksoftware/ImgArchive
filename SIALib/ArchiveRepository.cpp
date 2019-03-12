@@ -209,7 +209,7 @@ bool ArchiveRepository::uncheckout(const char *filepath, const char *comment) {
 	int idx = 0;
 	buff = SAUtils::sprintf("%.4d", idx);
 	//ImageHistory imageHistory(hstpath.c_str());
-	const HistoryEvent he(HistoryEvent::UNCHECKOUT);
+	const HistoryEvent he(HistoryEvent::Event::UNCHECKOUT);
 	//imageHistory.add(filepath, buff, comment, he);
 	History &history = History::getHistory();
 	//history.checkoutImage(filepath, buff.c_str(), comment);

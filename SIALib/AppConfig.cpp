@@ -47,6 +47,7 @@ static char THIS_FILE[] = __FILE__;
 //#define new DEBUG_NEW
 #endif
 
+#undef FILECODE
 #define FILECODE APPCONFIG_CPP
 
 namespace simplearchive {
@@ -112,6 +113,7 @@ namespace simplearchive {
 	ExifDateTime AppConfig::m_toDate;
 	bool AppConfig::m_isFromDate = false;
 	bool AppConfig::m_isToDate = false;
+	std::string AppConfig::m_filenaming = "None";
 
 	/*
 		Default paths based on UserDrive and UserHome
@@ -144,24 +146,27 @@ namespace simplearchive {
 		// Backup 1
 		/*
 		if (AppConfig::m_backup1.empty() == true) {
-			if (getBackup()->value("BackupOne", AppConfig::m_backup1) == true) {
+			auto backup = getMaster();
+			if (backup == nullptr && backup->value("BackupOne", AppConfig::m_backup1) == true) {
 				ArchivePath::setBackup1Path(AppConfig::m_backup1);
 				AppConfig::m_backup1Enabled = true;
 			}
+			
 		}
 		else {
-			ArchivePath::setBackup1Path(AppConfig::m_backup1);
+			AppConfig::m_backup1Enabled = true;
 		}
 		
 		// Backup 2
 		if (AppConfig::m_backup2.empty() == true) {
-			if (getBackup()->value("BackupTwo", AppConfig::m_backup2) == true) {
+			auto backup = getBackup();
+			if (backup == nullptr && backup->value("BackupTwo", AppConfig::m_backup2) == true) {
 				ArchivePath::setBackup2Path(AppConfig::m_backup2);
 				AppConfig::m_backup2Enabled = true;
 			}
 		}
 		else {
-			ArchivePath::setBackup2Path(AppConfig::m_backup2);
+			AppConfig::m_backup2Enabled = true;
 		}
 		*/
 		// Repository Archive Path
@@ -250,6 +255,33 @@ namespace simplearchive {
 		}
 		ArchivePath::setPathToWorkspace(AppConfig::m_workspacePath);
 		logger.log(LOG_OK, CLogger::Level::INFO, "        Workspace path:            \"%s\"", AppConfig::m_workspacePath.c_str());
+
+		/*
+		if (AppConfig::m_backup1.empty() == true) {
+			auto backup = getMaster();
+			if (backup == nullptr && backup->value("BackupOne", AppConfig::m_backup1) == true) {
+				ArchivePath::setBackup1Path(AppConfig::m_backup1);
+				AppConfig::m_backup1Enabled = true;
+			}
+
+		}
+		else {
+			AppConfig::m_backup1Enabled = true;
+		}
+
+		// Backup 2
+		if (AppConfig::m_backup2.empty() == true) {
+			auto backup = getBackup();
+			if (backup == nullptr && backup->value("BackupTwo", AppConfig::m_backup2) == true) {
+			ArchivePath::setBackup2Path(AppConfig::m_backup2);
+				AppConfig::m_backup2Enabled = true;
+			}
+		}
+		else {
+			AppConfig::m_backup2Enabled = true;
+		}
+		*/
+
 		
 		std::string temp = SAUtils::GetPOSIXEnv("SIA_SOURCE");
 		if (temp.empty() == false) {
@@ -301,7 +333,7 @@ namespace simplearchive {
 		// Home Path (The path to this file will be based on the home path)
 		std::string homePath = home;
 		setHomePath(home);
-
+		/*
 		// Backup 1
 		if (getRoot().value("BackupOne", AppConfig::m_backup1) == true) {
 			ArchivePath::setBackup1Path(AppConfig::m_backup1);
@@ -312,11 +344,12 @@ namespace simplearchive {
 			ArchivePath::setBackup2Path(AppConfig::m_backup2);
 			AppConfig::m_backup2Enabled = true;
 		}
-	
+		*/
+		printAll();
 	// General	
 		std::string dry_run = "false";
 		setGeneral(DRY_RUN_LABEL, dry_run, dry_run);
-		AppConfig::m_dry_run = (stricmp(dry_run.c_str(), "true") == 0);
+		AppConfig::m_dry_run = (_stricmp(dry_run.c_str(), "true") == 0);
 
 		std::string logLevel = "SUMMARY";
 		setGeneral(LOG_LEVEL_LABEL, logLevel, logLevel);
@@ -328,14 +361,14 @@ namespace simplearchive {
 
 		std::string sql_on = "false";
 		setGeneral(SQL_LABEL, sql_on, sql_on);
-		AppConfig::m_sql_on = (stricmp(sql_on.c_str(), "true") == 0);
+		AppConfig::m_sql_on = (_stricmp(sql_on.c_str(), "true") == 0);
 		
 		std::string file_cat_on = "false";
 		setGeneral(SQL_LABEL, file_cat_on, file_cat_on);
-		AppConfig::m_file_cat_on = (stricmp(file_cat_on.c_str(), "true") == 0);
+		AppConfig::m_file_cat_on = (_stricmp(file_cat_on.c_str(), "true") == 0);
 		std::string www_cat_on = "false";
 		setGeneral(SQL_LABEL, www_cat_on, www_cat_on);
-		AppConfig::m_www_cat_on = (stricmp(www_cat_on.c_str(), "true") == 0);
+		AppConfig::m_www_cat_on = (_stricmp(www_cat_on.c_str(), "true") == 0);
 	// System Folders
 		// Master Archive Path
 		//std::shared_ptr<ConfigBlock> folders = getSystemFolders();
@@ -380,7 +413,7 @@ namespace simplearchive {
 		std::string externalExifToolEnabledStr;
 		emptyString = "False";
 		setExternalExifTool(ENABLED_LABEL, externalExifToolEnabledStr, emptyString);
-		AppConfig::m_externalExifToolEnabled = (stricmp(externalExifToolEnabledStr.c_str(), "true") == 0);
+		AppConfig::m_externalExifToolEnabled = (_stricmp(externalExifToolEnabledStr.c_str(), "true") == 0);
 		AppConfig::m_ExternalExifTool = "None";
 		setExternalExifTool(EXIF_TOOL_LABEL, AppConfig::m_ExternalExifTool, AppConfig::m_ExternalExifTool);
 		AppConfig::m_ExternalCommandLine = "None";
@@ -389,19 +422,24 @@ namespace simplearchive {
 	// Master
 		std::string backup1Enabled = "false";
 		setMaster(BACKUP_ONE_ENABLED_LABEL, backup1Enabled, backup1Enabled);
-		AppConfig::m_backup1Enabled = (stricmp(backup1Enabled.c_str(), "true") == 0);
+		AppConfig::m_backup1Enabled = (_stricmp(backup1Enabled.c_str(), "true") == 0);
 		
 		std::string backup2Enabled = "false";
 		setMaster(BACKUP_ONE_ENABLED_LABEL, backup2Enabled, backup2Enabled);
-		AppConfig::m_backup2Enabled = (stricmp(backup2Enabled.c_str(), "true") == 0);
+		AppConfig::m_backup2Enabled = (_stricmp(backup2Enabled.c_str(), "true") == 0);
+
+		std::string masterBackupPath = homePath + BACKUPS_PATH + MASTER_BACKUP1_PATH;
+		setMaster(MASTER_PATH_LABEL, AppConfig::m_backup1, masterBackupPath);
+		masterBackupPath = homePath + BACKUPS_PATH + MASTER_BACKUP2_PATH;
+		setMaster(MASTER_PATH_LABEL, AppConfig::m_backup2, masterBackupPath);
 
 	// Network
 		std::string eventsOn = "false";
-		setMaster(BACKUP_ONE_ENABLED_LABEL, eventsOn, eventsOn);
-		AppConfig::m_eventsOn = (stricmp(eventsOn.c_str(), "true") == 0);
+		setNetwork(EVENTS_ENABLED_LABEL, eventsOn, eventsOn);
+		AppConfig::m_eventsOn = (_stricmp(eventsOn.c_str(), "true") == 0);
 
 		std::string m_udpPortNum = "127.0.0.1";
-		setMaster(BACKUP_ONE_ENABLED_LABEL, m_udpPortNum, m_udpPortNum);
+		setNetwork(COMMANDS_PORT_LABEL, m_udpPortNum, m_udpPortNum);
 		//AppConfig::m_udpAddress = std::to
 
 		AppConfig::m_udpAddress;
@@ -411,7 +449,7 @@ namespace simplearchive {
 		AppConfig::m_serverOn;
 		AppConfig::m_tcpPortNum;
 
-		setNetwork(BACKUP_ONE_ENABLED_LABEL, backup2Enabled, backup2Enabled);
+		//setNetwork(BACKUP_ONE_ENABLED_LABEL, backup2Enabled, backup2Enabled);
 		
 		// Workspace Path	
 		std::string wtemp = SAUtils::GetPOSIXEnv("SIA_WORKSPACE");
@@ -456,6 +494,11 @@ namespace simplearchive {
 		logger.log(LOG_OK, CLogger::Level::INFO, "        Catalog path:              \"%s\"", AppConfig::m_catalogPath.c_str());
 		logger.log(LOG_OK, CLogger::Level::INFO, "        SQL Database path:         \"%s\"", AppConfig::m_DatabasePath.c_str());
 
+		logger.log(LOG_OK, CLogger::Level::INFO, "    Master Archive");
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Backup One Enabled:        \"%s\"", (AppConfig::m_backup1Enabled) ? "True" : "False");
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Backup One path:           \"%s\"", AppConfig::m_backup1.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Backup Two Enabled:        \"%s\"", (AppConfig::m_backup2Enabled) ? "True" : "False");
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Backup Two path:           \"%s\"", AppConfig::m_backup2.c_str());
 		logger.log(LOG_OK, CLogger::Level::INFO, "    External Exif Tool");
 		logger.log(LOG_OK, CLogger::Level::INFO, "        External Exif tool enabled:\"%s\"", (AppConfig::m_externalExifToolEnabled)?"True":"False");
 		logger.log(LOG_OK, CLogger::Level::INFO, "        Exif map path:             \"%s\"", AppConfig::m_ExifMapPath.c_str());
@@ -463,6 +506,21 @@ namespace simplearchive {
 		logger.log(LOG_OK, CLogger::Level::INFO, "        Exif Tool:                 \"%s\"", AppConfig::m_ExternalExifTool.c_str());
 		logger.log(LOG_OK, CLogger::Level::INFO, "        Exif command line:         \"%s\"", AppConfig::m_ExternalCommandLine.c_str());
 		
+		// Backup 1
+		if (AppConfig::m_backup1.empty() == false) {
+			ArchivePath::setBackup1Path(AppConfig::m_backup1);
+		}
+		else {
+			AppConfig::m_backup1Enabled = false;
+		}
+
+		// Backup 2
+		if (AppConfig::m_backup2.empty() == false) {
+			ArchivePath::setBackup2Path(AppConfig::m_backup2);	
+		}
+		else {
+			AppConfig::m_backup2Enabled = true;
+		}
 		
 	}
 

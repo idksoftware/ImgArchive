@@ -40,18 +40,23 @@ namespace simplearchive {
 
 class IMCompletedSummary {
 	std::string m_summary;
+	std::string m_result;
 public:
 	IMCompletedSummary() = default;
 	virtual ~IMCompletedSummary() = default;
-	void set(const char *s) { m_summary = s; };
-	const char *get() { return m_summary.c_str(); };
+	void setSummary(const char *s) { m_summary = s; };
+	const char *getSummary() { return m_summary.c_str(); };
+	void setResult(const char *s) { m_result = s; };
+	const char *getResult() { return m_result.c_str(); };
 };
 
 class IntegrityManager {
 	
 	std::string m_archivePath;
+	std::string m_derivativePath;
 	std::string m_workspacePath;
 	std::string m_homePath;
+	
 	IntegrityManager() = default;
 public:
 	IntegrityManager(IntegrityManager const&) = delete;
@@ -59,16 +64,21 @@ public:
 	IntegrityManager(IntegrityManager&&) = delete;                  // Move construct
 	IntegrityManager& operator=(IntegrityManager &&) = delete;      // Move assign
 
+	bool addDayFolder(const char *rootName, const char *folderName);
+	bool addFile(const char *rootName, const char *folderPath, const char *fileName);
 
 	virtual ~IntegrityManager() = default;
-	bool addDayFolder(const char *folderName);
-	bool addFile(const char *folderPath, const char *fileName);
+	bool addMasterDayFolder(const char *folderName);
+	bool addDerivativeDayFolder(const char *folderName);
+	bool addDerivativeFile(const char *folderPath, const char *fileName);
+	bool addMasterFile(const char *folderPath, const char *fileName);
+	
 	bool makeList();
 	bool validate(IMCompletedSummary& imCompletedSummary, bool workspace, bool Master);
 	bool repair(IMCompletedSummary& imCompletedSummary, bool workspace, bool Master);
 	//static IntegrityManager &get(const char *archivePath, const char* workspacePath, const char* homePath);
 	static IntegrityManager &get();
-	void setPaths(const char* archivePath, const char* workspacePath, const char* homePath);
+	void setPaths(const char* archivePath, const char *derivativePath, const char* workspacePath, const char* homePath);
 };
 
 } /* namespace simplearchive */

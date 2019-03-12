@@ -107,16 +107,16 @@ public:
 		return m_exported;
 	}
 	void doSummary();
+	SummaryFile& operator = (const SummaryFile&) = delete;
 	virtual ~SummaryFile();
 private:
 	Level m_level;
 	SummaryFile();
 
-	SummaryFile& operator = (const SummaryFile& ) { return *this; }
+	
 
 	static std::string m_briefFilename;
 	static std::string m_detailedFilename;
-	static std::auto_ptr<SummaryFile> m_this;
 	static std::ofstream m_summaryFile;
 	static std::ofstream m_detailedFile;
 

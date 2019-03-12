@@ -63,6 +63,7 @@
 #include "ExportImages.h"
 #include "CheckFile.h"
 #include "ArchiveObject.h"
+//#include "SequenceFileManager.h"
 #include <stdio.h>
 #include <sstream>
 #include <vector>
@@ -139,7 +140,7 @@ namespace simplearchive {
 	class ImportListReader {
 	public:
 		std::unique_ptr<ImportList> Read(const char *filepath) {
-			std::unique_ptr<ImportList> importFile(new ImportList);
+			std::unique_ptr<ImportList> importFile = std::make_unique<ImportList>();
 			char text[MAX_PATH];
 			std::ifstream file(filepath);
 			if (file.is_open() == false) {
@@ -186,7 +187,7 @@ namespace simplearchive {
 			}
 			m_curImageSet->PostProcess();
 
-			m_archiveDate.reset(new ArchiveDate);
+			m_archiveDate = std::make_unique<ArchiveDate>();
 			if (m_archiveDate->process(*m_curImageSet) == false) {
 				logger.log(LOG_OK, CLogger::Level::WARNING, "Error processing image capture date, not found: \"%s\" using another date", m_curImageSet->getName().c_str());	
 			}
@@ -258,7 +259,7 @@ namespace simplearchive {
 			
 			ImportJournal& importJournal = ImportJournalManager::GetJournal();
 			std::string from = path + "/" + picName;
-			importJournal.update(from.c_str(), ImportJournal::Imported, shortFilePath.c_str());
+			importJournal.update(from.c_str(), ImportJournal::Result::Imported, shortFilePath.c_str());
 			PrimaryIndexObject& primaryIndexObject = m_archiveObject.getPrimaryIndexObject();
 			ImageIndex& imageIndex = primaryIndexObject.getimageIndex();
 			if (imageIndex.add(BasicMetadata) == false) {
@@ -367,9 +368,10 @@ namespace simplearchive {
 		imageIndex.init(m_indexPath.c_str());
 		
 	
-		std::string MasterPath = ImagePath::getMasterHistoryPath();
 		
-		CheckFile::initalise(config.getWorkspacePath());
+		CDCheckInOutManager &cd = CDCheckInOutManager::get();
+		std::string repositoryPath = m_archiveObject.getDerivativesObject().getRepositoryPath().getRepositoryPath();
+		cd.initalise(config.getWorkspacePath(), m_MasterPath.c_str(), repositoryPath.c_str());
 		
 		m_doDryRun = config.isDryRun();
 		return (!m_Error);
@@ -381,7 +383,7 @@ namespace simplearchive {
 		
 		std::unique_ptr<ImportList> list = importListReader.Read(sourcePath);
 		
-		for (ImportList::iterator i = list->begin(); i != list->end(); i++) {
+		for (auto i = list->begin(); i != list->end(); i++) {
 			std::string fileItem = *i;
 			if (SAUtils::IsFile(fileItem.c_str())) {
 				continue;
@@ -469,7 +471,7 @@ namespace simplearchive {
 		
 		SACmdArgs &saCmdArgs = SACmdArgs::get();
 		
-		const char *seqPath = ImagePath::getMasterSequenceNumberPath().c_str();
+		//const char *seqPath = ImagePath::getMasterSequenceNumberPath().c_str();
 		
 		PrimaryIndexObject& primaryIndexObject = m_archiveObject.getPrimaryIndexObject();
 		ImageIndex& imageIndex = primaryIndexObject.getimageIndex();
@@ -497,13 +499,13 @@ namespace simplearchive {
 		// ==== Step 2 ====
 		// Read files into Image group sets (ImageGroups)
 		//
-		ArchiveRepository &archiveRepository = ArchiveRepository::get();
-		archiveRepository.setPathToArchive(m_MasterPath);
+		//ArchiveRepository &archiveRepository = ArchiveRepository::get();
+		//archiveRepository.setPathToArchive(m_MasterPath);
 		logger.log(LOG_IMPORTING, CLogger::Level::SUMMARY, "Stage 2: Processing Image files");
-		archiveRepository.setPathToActiveRoot(this->m_workspacePath);
+		//archiveRepository.setPathToActiveRoot(this->m_workspacePath);
 		/// Iterate the Image Sets
 		
-		for (std::vector<std::shared_ptr<ImageSet>>::iterator i = imageSets->begin(); i != imageSets->end(); i++) {
+		for (auto i = imageSets->begin(); i != imageSets->end(); i++) {
 			std::shared_ptr<ImageSet> imageSet = *i;
 
 			/// Create a Image Group container
@@ -513,7 +515,7 @@ namespace simplearchive {
 			//imageGroups.insert(imageGroups.end(), imageGroup);
 			logger.log(LOG_SOURCE_PATH, CLogger::Level::SUMMARY, "Processing Image files in the source location %s", imageSet->getPath());
 			/// Iterate the current image set
-			for (std::vector<std::shared_ptr<ImageItem>>::iterator i = imageSet->begin(); i != imageSet->end(); i++) {
+			for (auto i = imageSet->begin(); i != imageSet->end(); i++) {
 				/// Image Item
 				SIAApplicationState::RunState state = SIAApplicationState::getState();
 				std::shared_ptr<ImageItem> imageItem = *i;
@@ -572,7 +574,7 @@ namespace simplearchive {
 								logger.log(LOG_OK, CLogger::Level::ERR, "Image indexing corrupt %s", imageItem->getFilename().c_str());
 							}
 							else {
-								importJournal.update(imageItem->getPath(), ImportJournal::Duplicate, imageId.getLocation().c_str());
+								importJournal.update(imageItem->getPath(), ImportJournal::Result::Duplicate, imageId.getLocation().c_str());
 								if (ImportJournalManager::save() == false) {
 									logger.log(LOG_OK, CLogger::Level::FATAL, "Unable to save Journal File");
 									return false;
@@ -610,8 +612,6 @@ namespace simplearchive {
 						*/
 					}
 				}
-				
-				
 				
 				
 				// Not a dup so add to group. 
@@ -656,13 +656,12 @@ namespace simplearchive {
 				imageGroup->print();
 				logger.log(LOG_OK, CLogger::Level::INFO, "completed Stage 2 \"%s\"", imageItem->getFilename().c_str());
 				
-				//XMLWriter xmlWriter;
-				//xmlWriter.writeImage(*metadataObject, "c:/temp/image.xml");
+				
 				
 			}
 			if (!m_doDryRun) {
 				logger.log(LOG_IMPORTING, CLogger::Level::SUMMARY, "Stage 3: Archiving images");
-				for (std::vector<ImageContainer *>::iterator i = imageGroup->begin(); i != imageGroup->end(); i++) {
+				for (auto i = imageGroup->begin(); i != imageGroup->end(); i++) {
 					ImageContainer *imageSet = *i;
 
 					ImageProcessor imageProcessor(imageSet, m_workspacePath, m_archiveObject);
@@ -670,6 +669,19 @@ namespace simplearchive {
 						return false;
 					}
 					m_imageFilesCompleted++;
+				}
+
+				MasterRepositoryObject&mdb = m_archiveObject.getMasterObject();
+				for (auto i = importJournal.begin(); i != importJournal.end(); i++) {
+					std::shared_ptr<ImportJournalItem> item = *i;
+					std::string location = item->getLocation();
+					std::string source = item->getSourceImage();
+				
+					if(item->getResultEnum() == ImportJournal::Result::Imported) {
+						if (mdb.validate(location.c_str(), source.c_str()) == true) {
+							item->setValidated();
+						}
+					}
 				}
 				logger.log(LOG_IMPORTING, CLogger::Level::SUMMARY, "Completed Stage 3: Archiving images");
 			}
@@ -693,7 +705,7 @@ namespace simplearchive {
 			}
 		}
 #endif
-				return true;
+		return true;
 	}
 
 
@@ -726,7 +738,7 @@ void ArchiveBuilder::print(const BasicMetadata &be) {
 	DEBUG_PRINT("%s\n", be.getName().c_str());
 	logger.log(LOG_OK, CLogger::Level::FINE, "Basic Exif");
 	MTTableSchema& bes = (MTTableSchema&)be.getSchema();
-	for (std::vector<MTSchema>::iterator i = bes.begin(); i != bes.end(); i++) {
+	for (auto i = bes.begin(); i != bes.end(); i++) {
 		MTSchema& columnInfo = *i;
 		printf("%-20s %s\n", columnInfo.getName().c_str(), be.columnAt(columnInfo.getName().c_str()).toString().c_str());
 		logger.log(LOG_OK, CLogger::Level::FINE, "%-20s %s", columnInfo.getName().c_str(), be.columnAt(columnInfo.getName().c_str()).toString().c_str());
@@ -738,7 +750,7 @@ void ArchiveBuilder::print(const MetadataObject& mo) {
 	//DEBUG_PRINT("%s\n", mo.getName().c_str());
 	logger.log(LOG_OK, CLogger::Level::FINE, "Final metadata for %s", mo.getName().c_str());
 	MTTableSchema& mos = (MTTableSchema&)mo.getSchema();
-	for (std::vector<MTSchema>::iterator i = mos.begin(); i != mos.end(); i++) {
+	for (auto i = mos.begin(); i != mos.end(); i++) {
 		MTSchema& columnInfo = *i;
 		//DEBUG_PRINT("%-20s %s\n", columnInfo.getName().c_str(), mo.columnAt(columnInfo.getName().c_str()).toString().c_str());
 		logger.log(LOG_OK, CLogger::Level::FINE, "%-20s %s", columnInfo.getName().c_str(), mo.columnAt(columnInfo.getName().c_str()).toString().c_str());

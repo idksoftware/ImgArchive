@@ -40,7 +40,7 @@ namespace simplearchive {
 
 class AppOptions {
 public:
-	typedef enum {
+	enum class CommandMode {
 		CM_InitArchive, //* Initalise an archive with the default prameter
 		CM_Show,        //* Show
 		CM_Version,     //* show version
@@ -51,13 +51,21 @@ public:
         CM_Fix,         //* Fix the archive
 		CM_Test,        //* Test the archive
 		CM_Unknown
-	} CommandMode;
+	};
 
-	typedef enum {
+	enum class VerifyOperation {
 		Workspace,		//* Initalise an archive with the default 
 		Master,			//* Show
 		Both			//* show version
-	} Scope;
+	};
+
+	enum class ShowOperation {
+		Settup,
+		CheckedOut,		//* Show the images that are checked out 
+		ModifiedNotCheckedOut,			//* Show
+		
+	};
+
 
 private:
 	static AppOptions *AppOptions::m_this;
@@ -72,7 +80,8 @@ private:
 	static std::string m_derivativePath;
 	static std::string m_repositoryPath;
 	static std::string m_cataloguePath;
-	static Scope m_scope;
+	static VerifyOperation m_verifyOperation;
+	static ShowOperation m_showOperation;
 	static bool m_repair;
 	static bool m_users;
 	bool m_error;
@@ -123,8 +132,12 @@ public:
 		return m_repair;
 	}
 
-	Scope getScope() {
-		return m_scope;
+	VerifyOperation getVerifyOperation() {
+		return m_verifyOperation;
+	}
+
+	ShowOperation getShowOperation() {
+		return m_showOperation;
 	}
 
 	bool getUsers() {

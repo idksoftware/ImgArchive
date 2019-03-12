@@ -68,7 +68,7 @@ class MirrorDB;
 //class CSVDatabase : MTDatabase {
 class CSVDatabase {
 	CSVDatabase();
-	static std::shared_ptr<CSVDatabase> m_this;
+	
 	static std::string m_dbpath;
 	//std::unique_ptr<MirrorDB> m_mirrorDB;
 	

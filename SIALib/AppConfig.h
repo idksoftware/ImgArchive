@@ -77,8 +77,10 @@
 #define CONSOLE_LEVEL_LABEL				"ConsoleLevel"
 #define FILE_CAT_LABEL				"FileCatalogue"
 #define WWW_CAT_LABEL				"WWWCatalogue"
-
-
+#define EVENTS_ENABLED_LABEL		"EventsEnabled"
+#define COMMANDS_PORT_LABEL			"CommandPort"
+#define BACKUP_ONE_LABEL			"BackupOne"
+#define BACKUP_TWO_LABEL			"BackupTwo"
 
 namespace simplearchive {
 
@@ -169,7 +171,7 @@ namespace simplearchive {
 		static int m_udpPortNum;
 		static std::string m_udpAddress;
 
-		
+		static std::string m_filenaming;
 
 	
 	public:

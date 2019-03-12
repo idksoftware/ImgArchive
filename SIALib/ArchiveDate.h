@@ -63,13 +63,14 @@ namespace simplearchive {
 	private:
 		static bool m_useEXIFDate;
 		static bool m_useFileDate;
-		static bool m_useDate;
+		static bool m_useThisDate;
 		static bool m_useDateToday;
 		static bool m_forceDate;
 		static ExifDate m_date;
 		static bool m_defaultDateSet;
-		std::unique_ptr<ExifDate> m_exifDate;
-		std::unique_ptr<ExifDate> m_fileDate;
+		std::shared_ptr<ExifDate> m_exifDate;
+		std::shared_ptr<ExifDate> m_fileDate;
+		
 		ExifDate m_achiveDate;
 		static void setFalse();
 		void processExifDate();
@@ -91,7 +92,7 @@ namespace simplearchive {
 		static void setUseFileDate(bool b);
 
 		static bool getUseDate();
-		static void setUseDate(ExifDate date);
+		static void setUseDate(const ExifDate &date);
 
 		static bool getUseDateToday();
 		static void setUseDateToday(bool b);
@@ -102,9 +103,9 @@ namespace simplearchive {
 
 		bool process(ImageContainer &ic);
 
-		void setExifDate(ExifDate& d);
-		void setFileDate(ExifDate& d);
-		static void setDate(ExifDate& d);
+		void setExifDate(const ExifDate& d);
+		void setFileDate(const ExifDate& d);
+		static void setDate(const ExifDate& d);
 
 		ExifDate getArchiveDate();
 

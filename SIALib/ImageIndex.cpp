@@ -112,7 +112,7 @@ public:
 		std::sort(begin(), end(), IdxCompare(*this));
 
 		//std::cout << "\nDupCache" << '\n';
-		for (size_t i = 0; i < size(); ++i)
+		//for (size_t i = 0; i < size(); ++i)
 			//std::cout << (*this)[i].getCRC() << '\n';
 
 		return true;
@@ -127,6 +127,7 @@ public:
 			//std::cout << "Dup not found.\n";
 			return false;
 		}
+		return true;
 	}
 
 };
@@ -167,7 +168,7 @@ public:
 	bool read(const char *datafile);
 	bool write();
 	bool write(const char *datafile);
-	bool add(const char *name, unsigned long crc, const char *md5, const char *path, const char *version);
+	bool add(const char *name, unsigned long crc, const char *md5, const char *path, const char *version, const char *orginal);
 	int find(unsigned long crc);
 	std::string findData(unsigned long crc);
 	bool IsEmpty() {
@@ -215,14 +216,14 @@ bool DupDataFile::write(const char *datafile) {
 	file.close();
 	return true;
 }
-bool DupDataFile::add(const char *name, unsigned long crc, const char *md5, const char *path, const char *version) {
+bool DupDataFile::add(const char *name, unsigned long crc, const char *md5, const char *path, const char *version, const char *orginal) {
 	//char c_crc[9];
 	std::string crcStr; // = c_crc;
 	sprintf_p(crcStr, "%.8x", crc);
 	//std::string crcStr = c_crc;
 	std::string nameStr = name;
 	std::string md5Str = md5;
-	std::string row(crcStr + ':' + nameStr + ':' + md5Str + ':' + path + ':' + version);
+	std::string row(crcStr + ':' + nameStr + ':' + md5Str + ':' + path + ':' + version + ':' + orginal);
 	if (find(crc) != -1) {
 		return false; // found
 	}
@@ -468,13 +469,13 @@ bool ImageIndex::add(const BasicMetadata &basicMetadata) {
 
 	//std::string filename = pathStr.substr(pathStr.find_last_of("/") + 1);
 	std::string filename = basicMetadata.getName();
-	return add(filename.c_str(), basicMetadata.getCrc(), basicMetadata.getMd5().c_str(), basicMetadata.getPath().c_str(), 0);
+	return add(filename.c_str(), basicMetadata.getCrc(), basicMetadata.getMd5().c_str(), basicMetadata.getPath().c_str(), 0, basicMetadata.getOrginalName().c_str());
 }
 
 
 
-bool ImageIndex::add(const FileInfo &fileinfo) {
-	return add(fileinfo.getName().c_str(), fileinfo.getCrc(), fileinfo.getMd5().c_str(), fileinfo.getPath().c_str(), 0);
+bool ImageIndex::add(const FileInfo &fileinfo, const char *orginalName) {
+	return add(fileinfo.getName().c_str(), fileinfo.getCrc(), fileinfo.getMd5().c_str(), fileinfo.getPath().c_str(), 0, orginalName);
 }
 
 
@@ -499,8 +500,8 @@ bool ImageIndex::add2DupCache(const FileInfo &fileinfo) {
 	return m_dupCache->insert(fileinfo.getCrc(), fileinfo.getMd5().c_str(), fileinfo.getName().c_str());
 }
 
-bool ImageIndex::add(const char *name, unsigned long crc, const char *md5, const char *path, int version) {
-	if (add(name, crc, md5, path, version, m_dbpath.c_str()) == false) {
+bool ImageIndex::add(const char *name, unsigned long crc, const char *md5, const char *path, int version, const char *orginal) {
+	if (add(name, crc, md5, path, version, m_dbpath.c_str(), orginal) == false) {
 		return false;
 	}
 	/*
@@ -511,7 +512,7 @@ bool ImageIndex::add(const char *name, unsigned long crc, const char *md5, const
 	return true;
 }
 
-bool ImageIndex::add(const char *name, unsigned long crc, const char *md5, const char *imagePath, int version, const char *rootPath) {
+bool ImageIndex::add(const char *name, unsigned long crc, const char *md5, const char *imagePath, int version, const char *rootPath, const char *orginal) {
 	char hexStr[3];
 	unsigned char data[4];
 	data[0] = (unsigned char)crc & 0xFF;
@@ -549,7 +550,7 @@ bool ImageIndex::add(const char *name, unsigned long crc, const char *md5, const
 
 	}
 	std::string ver = std::to_string(version);
-	if (dupDataFile.add(name, crc, md5, imagePath, ver.c_str()) == false) {
+	if (dupDataFile.add(name, crc, md5, imagePath, ver.c_str(), orginal) == false) {
 		return false;
 	}
 	if (dupDataFile.write(path.c_str()) == false) {

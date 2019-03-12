@@ -48,6 +48,7 @@
 //#include <sys/stat.h>
 //#include <dirent.h>
 #include <cstdlib>
+#include <cctype>
 #include <stdio.h>
 #include <vector>
 #include <string.h>
@@ -78,7 +79,7 @@ static char THIS_FILE[] = __FILE__;
 
 using namespace std;
 
-const char *SIAAppException::what() throw() {
+const char *SIAException::what() throw() {
 	std::stringstream s;
 	s << message << " line:" << __LINE__ << " file:" << __FILE__;
 	std::string tmp = s.str();
@@ -99,7 +100,10 @@ SAUtils::~SAUtils() {
 bool SAUtils::FileExists(const char *filename)
 {
 	struct stat buffer;
-	return (stat(filename, &buffer) == 0);
+	if (stat(filename, &buffer) != 0) {
+		return false;
+	}
+	return true;
 }
 
 bool SAUtils::DirExists(const char *path) {
@@ -115,20 +119,21 @@ bool SAUtils::DirExists(const char *path) {
 	return false;
 }
 
+/*
 std::vector<std::string *> *SAUtils::getFiles(const char *dirpath) {
 	
 	//DIR *dir;
 	//struct dirent *ent;
 	std::vector<std::string *> *fileList = new std::vector<std::string *>();
-	/*
-	if ((dir = opendir(dirpath)) == NULL) {
-		return false;
-	}
-	while ((ent = readdir(dir)) != NULL) {
-		printf("%s", ent->d_name);
-		fileList->push_back(new std::string(ent->d_name));
-	}
-	*/
+	
+	//if ((dir = opendir(dirpath)) == NULL) {
+	//	return false;
+	//}
+	//while ((ent = readdir(dir)) != NULL) {
+	//	printf("%s", ent->d_name);
+	//	fileList->push_back(new std::string(ent->d_name));
+	//}
+	
 	std::string dirpathstr(dirpath);
 	dirpathstr = dirpathstr + "/*.*";
 	CIDKFileFind fileFind(dirpathstr);
@@ -144,10 +149,12 @@ std::vector<std::string *> *SAUtils::getFiles(const char *dirpath) {
 	return fileList;
 
 }
+*/
 
 FileList_Ptr SAUtils::getFiles_(const char *dirpath) {
 
-	FileList_Ptr fileList(new std::vector<std::string>);
+	//FileList_Ptr fileList(new std::vector<std::string>);
+	FileList_Ptr fileList = std::make_unique<FileList>();
 	/*
 	DIR *dir;
 	struct dirent *ent;
@@ -168,7 +175,7 @@ FileList_Ptr SAUtils::getFiles_(const char *dirpath) {
 	}
 	do {
 		std::string tmp(fileFind.GetFileName());
-		fileList->push_back(tmp);
+		fileList->emplace_back(tmp);
 	} while (fileFind.GetNext());
 
 	return fileList;
@@ -272,10 +279,14 @@ std::string SAUtils::getFolder(const std::string &filepath) {
 }
 
 std::string SAUtils::getFilenameNoExt(const std::string &file) {
-	int sp = file.find_last_of("/");
-	int ep = file.find_last_of(".");
-	std::string name = file.substr(++sp);
-	name = name.substr(0, name.find_last_of("."));
+	int sp = file.find_last_of("/\\");
+	
+	std::string name;
+	if (sp != -1) {
+		name = file.substr(++sp);
+	}
+	int ep = file.find_last_of('.');
+	name = file.substr(0, ep);
 	return name;
 }
 
@@ -302,6 +313,13 @@ bool SAUtils::mkDir(const char *path) {
 		return false;
 	}
 	return true;
+}
+
+bool SAUtils::isNumber(const std::string& s)
+{
+	std::string::const_iterator it = s.begin();
+	while (it != s.end() && std::isdigit(*it)) ++it;
+	return !s.empty() && it == s.end();
 }
 
 bool SAUtils::setHidden(const char *path) {
@@ -424,7 +442,8 @@ std::string SAUtils::sprintf(const char *fmt, ...)
 	std::unique_ptr<char[]> formatted;
 	va_list ap;
 	while (1) {
-		formatted.reset(new char[n]); // Wrap the plain char array into the unique_ptr
+		//formatted.reset(new char[n]); // Wrap the plain char array into the unique_ptr
+		auto formatted = std::make_unique<char[]>(n);
 		strcpy(&formatted[0], fmt);
 		va_start(ap, fmt);
 		final_n = vsnprintf(&formatted[0], n, fmt, ap);
@@ -582,7 +601,7 @@ int SAUtils::getFileContents(const char *filename, std::string &contents)
 	if (in)
 	{
 		in.seekg(0, std::ios::end);
-		contents.resize(in.tellg());
+		contents.resize((const unsigned int)in.tellg());
 		in.seekg(0, std::ios::beg);
 		in.read(&contents[0], contents.size());
 		in.close();
@@ -756,4 +775,5 @@ bool SAUtils::SetEnv(const char *name, const char *value, bool all)
 	return true;
 }
 #endif
+
 

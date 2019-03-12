@@ -594,10 +594,8 @@ bool GetImagesManager::addFile(const char *folderPath, const char *fileName) {
 
 
 GetImagesManager &GetImagesManager::get() {
-	if (!m_this.get()) {
-		m_this.reset(new GetImagesManager());
-	}
-	return *m_this;
+	static GetImagesManager getImagesManager;
+	return getImagesManager;
 }
 
 class ImageCatalogAction : public AVAction {

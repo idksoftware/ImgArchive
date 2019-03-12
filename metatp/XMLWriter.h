@@ -38,7 +38,9 @@
 namespace simplearchive {
 
 class MetadataObject;
+class DerivativeMetadata;
 class VersionMetadataObject;
+class VersionsList;
 class SideCar;
 
 class XMLWriter {
@@ -49,6 +51,8 @@ public:
 	bool writeImage(MetadataObject &container, const char *path);
 	bool writeGroup(SideCar &sideCar, const char *path);
 	bool writeIndexImage(VersionMetadataObject &container, const char *path);
+	bool writeDerivativeMetadata(DerivativeMetadata &container, const char *path);
+	bool writeImageVersionList(VersionsList &container, const char *imagePath, const char *location);
 };
 
 } /* namespace simplearchive */

@@ -81,7 +81,7 @@ Java HotSpot(TM) 64-Bit Server VM (build 24.51-b03, mixed mode)
 */
 namespace simplearchive {
 	
-	AdminApp::AdminApp() : AppBase(new AdminArgvParser) {};
+	AdminApp::AdminApp() : AppBase(std::make_shared<AdminArgvParser>()) {};
 
 bool AdminApp::Show() {
 	/*
@@ -186,83 +186,9 @@ bool AdminApp::Show() {
 }
 
 
-#ifdef XXXXXXXXXXXXx
-bool AppOptions::initaliseConfig() {
-
-	AppConfig &config = AppConfig::get();
-	const std::string key = "SIA_HOME";
-	std::string temp = SAUtils::GetPOSIXEnv(key);
-	std::string homePath = temp;
-	//printf("%s", homePath.c_str());
-	int i = homePath.length();
-	if (homePath.empty() == true || homePath.length() == 0) {
-		homePath = SAUtils::GetPOSIXEnv("ProgramData");
-		//C:\ProgramData\IDK Software\ImageArchive1.0
-		homePath += "/IDK Software/ImageArchive1.0";
-
-	}
-	std::string configfile = homePath + "/config/" + "config.dat";
-	std::string configPath = homePath + "/config";
-	if (SAUtils::DirExists(homePath.c_str()) == false) {
-		//printf("SIA Unable to start?\nArchive not found at default location and the environment variable SA_HOME not set.\n"
-		//	"Use siaadmin -i to create an empty archive at the default location (see documentation).\n");
-		//m_error = true;
-		//return false;
-		m_configured = false;
-	}
-	else {
-
-		if (SAUtils::FileExists(configfile.c_str()) == true) {
-			setConfigPath(configPath.c_str());
-			ConfigReader configReader;
-			configReader.setNoLogging();
-			configReader.read(configfile.c_str(), config);
-			// This is usfull to print the config
-			//config.printAll();
-			/*
-			if (config.value("SourcePath", temp) == true) {
-			m_sourcePath = temp;
-			}
-			if (config.value("ArchivePath", temp) == true) {
-			m_archivePath = temp;
-			}
-			if (config.value("LogLevel", temp) == true) {
-			m_logLevel = temp;
-			}
-			*/
-			config.setHomePath(homePath.c_str());
-			temp = SAUtils::GetPOSIXEnv("SIA_WORKSPACE");
-			if (temp.empty() == false) {
-				config.setWorkspacePath(temp.c_str());
-			}
-			temp = SAUtils::GetPOSIXEnv("SIA_SOURCE");
-			if (temp.empty() == false) {
-				config.setSourcePath(temp.c_str());
-			}
-			temp = SAUtils::GetPOSIXEnv("SIA_LOGLEVEL");
-			if (temp.empty() == false) {
-				config.setLogLevel(temp.c_str());
-			}
-			temp = SAUtils::GetPOSIXEnv("SIA_CONSOLELEVEL");
-			if (temp.empty() == false) {
-				config.setConsoleLevel(temp.c_str());
-			}
-		}
-		else {
-			m_configured = false;
-		}
-	}
-	return true;
-}
-#endif
-
-
 int test(const std::string key) {
 	return 0;
 }
-
-
-
 
 
 bool AdminApp::doInitalise(int argc, char **argv) {
@@ -287,11 +213,11 @@ bool AdminApp::doRun()
 	AppOptions &appOptions = AppOptions::get();
 
 	if (appOptions.isConfiguratedOk() == false) {
-		if (appOptions.getCommandMode() == AppOptions::CM_Show) {
+		if (appOptions.getCommandMode() == AppOptions::CommandMode::CM_Show) {
 			Show();
 			return false;
 		}
-		if (appOptions.getCommandMode() == AppOptions::CM_InitArchive) {
+		if (appOptions.getCommandMode() == AppOptions::CommandMode::CM_InitArchive) {
 			// const char *archivePath, const char *workspacePath, const char *reposPath, const char *masterPath, const char *derivativePath, bool users
 			if (CreateArchive(appOptions.getHomePath(), appOptions.getWorkspacePath(), appOptions.getRepositoryPath(), appOptions.getMasterPath(), appOptions.getDerivativePath(), appOptions.getCataloguePath(), appOptions.getUsers()) == false) {
 				return false;
@@ -303,12 +229,12 @@ bool AdminApp::doRun()
 	}
 
 	
-	
+	CompletedSummary ;
 
 	switch (appOptions.getCommandMode()) {
-	case AppOptions::CM_InitArchive:
+	case AppOptions::CommandMode::CM_InitArchive:
 		break;
-	case AppOptions::CM_Show:
+	case AppOptions::CommandMode::CM_Show:
 	{
 		Show();
 		ShowCommand show;
@@ -316,7 +242,7 @@ bool AdminApp::doRun()
 		}
 		break;
 	}
-	case AppOptions::CM_View:
+	case AppOptions::CommandMode::CM_View:
 	{
 		SIALib siaLib;
 		siaLib.initalise();
@@ -327,7 +253,7 @@ bool AdminApp::doRun()
 		siaLib.complete();
 		break;
 	}
-	case AppOptions::CM_Mirror:
+	case AppOptions::CommandMode::CM_Mirror:
 	{
 		// make mirror
 		SIALib siaLib;
@@ -341,7 +267,7 @@ bool AdminApp::doRun()
 		siaLib.complete();
 		break;
 	}
-	case AppOptions::CM_Validate:
+	case AppOptions::CommandMode::CM_Validate:
 	{
 		SIALib siaLib;
 		siaLib.initalise();
@@ -352,19 +278,19 @@ bool AdminApp::doRun()
 		}
 	
 		CompletedSummary completedSummary;
-		switch (appOptions.getScope()) {
-		case AppOptions::Workspace:
-			if (siaLib.validate(completedSummary, config.getMasterPath(), config.getWorkspacePath(), config.getHomePath(), SIALib::Workspace, appOptions.repair()) == false) {
+		switch (appOptions.getVerifyOperation()) {
+		case AppOptions::VerifyOperation::Workspace:
+			if (siaLib.validate(config.getMasterPath(), config.getWorkspacePath(), config.getHomePath(), SIALib::Workspace, appOptions.repair()) == false) {
 				return false;
 			}
 			break;
-		case AppOptions::Master:			//* Show
-			if (siaLib.validate(completedSummary, config.getMasterPath(), config.getWorkspacePath(), config.getHomePath(), SIALib::Master, appOptions.repair()) == false) {
+		case AppOptions::VerifyOperation::Master:			//* Show
+			if (siaLib.validate(config.getMasterPath(), config.getWorkspacePath(), config.getHomePath(), SIALib::Master, appOptions.repair()) == false) {
 				return false;
 			}
 			break;
 		default:
-			if (siaLib.validate(completedSummary, config.getMasterPath(), config.getWorkspacePath(), config.getHomePath(), SIALib::Both, appOptions.repair()) == false) {
+			if (siaLib.validate(config.getMasterPath(), config.getWorkspacePath(), config.getHomePath(), SIALib::Both, appOptions.repair()) == false) {
 				return false;
 			}
 		}
@@ -373,12 +299,12 @@ bool AdminApp::doRun()
 		break;
 	}
 	
-	case AppOptions::CM_Version:
+	case AppOptions::CommandMode::CM_Version:
 		printf("Simple Image Archive Administrator\n"
 			   "siaadmin version \"%s\" (build %s)\n"
 			   "Copyright@(2010-2016) IDK Sftware Ltd.\n", VERSION, BUILD);
 		return true;
-	case AppOptions::CM_Test:
+	case AppOptions::CommandMode::CM_Test:
 	{
 		
 		TestArchive testArchive;
@@ -386,7 +312,7 @@ bool AdminApp::doRun()
 		testArchive.testFolders();
 		return true;
 	}
-	case AppOptions::CM_Unknown:
+	case AppOptions::CommandMode::CM_Unknown:
 		break;
 	}
 
@@ -566,63 +492,6 @@ bool AdminApp::initaliseConfig() {
 	}
 
 	return true;
-
-	/*
-	AppConfig &config = AppConfig::get();
-	const std::string key = "SIA_HOME";
-	std::string temp = SAUtils::GetPOSIXEnv(key);
-	std::string homePath = temp;
-	//printf("%s", homePath.c_str());
-	int i = homePath.length();
-	if (homePath.empty() == true || homePath.length() == 0) {
-		homePath = SAUtils::GetPOSIXEnv("ProgramData");
-		//C:\ProgramData\IDK Software\ImageArchive1.0
-		homePath += "/IDK Software/ImageArchive1.0";
-
-	}
-	std::string configfile = homePath + "/config/" + "config.dat";
-	std::string configPath = homePath + "/config";
-	if (SAUtils::DirExists(homePath.c_str()) == false) {
-		//printf("SIA Unable to start?\nArchive not found at default location and the environment variable SA_HOME not set.\n"
-		//	"Use siaadmin -i to create an empty archive at the default location (see documentation).\n");
-		//m_error = true;
-		//return false;
-		m_configured = false;
-	}
-	else {
-
-		if (SAUtils::FileExists(configfile.c_str()) == true) {
-			setConfigPath(configPath.c_str());
-			AppConfigReader configReader;
-			configReader.setNoLogging();
-			configReader.read(configfile.c_str(), config);
-			// This is usfull to print the config
-			//config.printAll();
-			
-			config.setHomePath(homePath.c_str());
-			temp = SAUtils::GetPOSIXEnv("SIA_WORKSPACE");
-			if (temp.empty() == false) {
-				config.setWorkspacePath(temp.c_str());
-			}
-			temp = SAUtils::GetPOSIXEnv("SIA_SOURCE");
-			if (temp.empty() == false) {
-				config.setSourcePath(temp.c_str());
-			}
-			temp = SAUtils::GetPOSIXEnv("SIA_LOGLEVEL");
-			if (temp.empty() == false) {
-				config.setLogLevel(temp.c_str());
-			}
-			temp = SAUtils::GetPOSIXEnv("SIA_CONSOLELEVEL");
-			if (temp.empty() == false) {
-				config.setConsoleLevel(temp.c_str());
-			}
-		}
-		else {
-			m_configured = false;
-		}
-	}
-	return true;
-	*/
 }
 
 // AppConfig &config = AppConfig::get();

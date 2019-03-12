@@ -44,24 +44,86 @@
 
 namespace simplearchive {
 
+class ReporterEvent {
+public:
+	enum class Status {
+		Completed,
+		Warning,
+		Error,
+		Fatal,
+		Unkown
+	};
+	const char *statusString();
+	static const char *statusString(ReporterEvent::Status status);
+	std::string m_message;
+	Status m_status;
+	ReporterEvent(ReporterEvent::Status status, std::string &message);
+};
+
+typedef std::vector<ReporterEvent> StatusList;
+
+class StatusReporter {
+	std::shared_ptr<StatusList> m_list;
+public:
+	StatusReporter() : m_list(std::make_shared<StatusList>())
+	{};
+	static StatusReporter &get();
+	void add(ReporterEvent::Status status, const char *format, ...);
+	void add(ReporterEvent::Status status, std::string &msg);
+	std::shared_ptr<StatusList> getList() { return m_list; };
+};
+
+class SummaryReporter {
+	std::shared_ptr<StatusList> m_list;
+	std::string m_summary;
+	std::string m_result;
+protected:
+	int m_completed;
+	int m_warning;
+	int m_error;
+	int m_fatal;
+	int m_unknown;
+	virtual bool doProcess();
+	std::shared_ptr<StatusList> getList() { return m_list; };
+	const char *getSummary() { return m_summary.c_str(); };
+	const char *getResult() { return m_result.c_str(); };
+public:
+	SummaryReporter(std::shared_ptr<StatusList> list) : m_list(list), 
+				m_completed(0), m_warning(0), m_error(0), m_fatal(0), m_unknown(0) {};
+
+	bool process() {
+		return doProcess();
+	}
+
+	SummaryReporter() = default;
+	virtual ~SummaryReporter() = default;
+	void setSummary(const char *s) { m_summary = s; };
+	
+	void setResult(const char *s) { m_result = s; };
+	void toConsole();
+};
+
+
 typedef std::vector<std::string> LogBuffer;
 
 class CLogger {
 public:
 	enum class Level {
-		TRACE = 0,
-		FINE = 1,
-		INFO = 2,
-		SUMMARY = 3,
-		WARNING = 4,
-		ERR = 5,
-		FATAL = 6,
+		TRACE = 0,		// Trace debugging
+		FINE = 1,		// Fine debugging
+		INFO = 2,		// General information
+		STATUS = 3,		// Status information
+		SUMMARY = 4,	// Summary information
+		WARNING = 5,	// Warning of incomplete operations
+		ERR = 6,		// Failed operations
+		FATAL = 7,		// Application cannot complete
 		UNKNOWN = -1
 	};
 	
 
 	void log(int code, Level level, const std::string &message);
 	void log(int code, Level level, const char *format, ...);
+	void CLogger::status(int cod, ReporterEvent::Status level, const char *format, ...);
 	CLogger& operator << (const std::string& message);
 	static CLogger &getLogger();
 	

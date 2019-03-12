@@ -334,7 +334,7 @@ void MTColumn::set(unsigned long i) {
 	MTSchema::EItemType type = m_info->getType();
 	if (type == MTSchema::Integer) {
 		if (m_object == nullptr) {
-			m_object.reset(new MetaTypeObject(i));
+			m_object = std::make_shared<MetaTypeObject>(i);
 		} else {
 			*m_object = i;
 		}
@@ -349,7 +349,7 @@ void MTColumn::set(const char *str) {
 	MTSchema::EItemType type = m_info->getType();
 	if (type == MTSchema::Text) {
 		if (m_object == nullptr) {
-			m_object.reset(new MetaTypeObject(tmp.c_str()));
+			m_object = std::make_shared<MetaTypeObject>(tmp.c_str());
 		} else {
 			*m_object = str;
 		}
@@ -358,13 +358,13 @@ void MTColumn::set(const char *str) {
 	else if (type == MTSchema::Integer) {
 		if (m_object == nullptr) {
 			unsigned long tmpLong = std::stol(str);
-			m_object.reset(new MetaTypeObject(tmpLong));
+			m_object = std::make_shared<MetaTypeObject>(tmpLong);
 		}
 	}
 	else if (type == MTSchema::Date) {
 		if (m_object == nullptr) {
 			ExifDateTime date(str);
-			m_object.reset(new MetaTypeObject(date));
+			m_object = std::make_shared<MetaTypeObject>(date);
 		}
 	}
 	else {
@@ -375,7 +375,7 @@ void MTColumn::set(const std::string &str) {
 	MTSchema::EItemType type = m_info->getType();
 	if (type == MTSchema::Text) {
 		if (m_object == nullptr) {
-			m_object.reset(new MetaTypeObject(str.c_str()));
+			m_object = std::make_shared<MetaTypeObject>(str.c_str());
 		} else {
 			*m_object = str.c_str();
 		}
@@ -389,7 +389,7 @@ void MTColumn::set(const ExifDateTime &date) {
 	MTSchema::EItemType type = m_info->getType();
 	if (type == MTSchema::Date) {
 		if (m_object == nullptr) {
-			m_object.reset(new MetaTypeObject(date));
+			m_object = std::make_shared<MetaTypeObject>(date);
 		} else {
 			*m_object = date;
 		}
@@ -403,7 +403,7 @@ void MTColumn::set(double d) {
 	MTSchema::EItemType type = m_info->getType();
 	if (type == MTSchema::Float) {
 		if (m_object == nullptr) {
-			m_object.reset(new MetaTypeObject(d));
+			m_object = std::make_shared<MetaTypeObject>(d);
 		} else {
 			*m_object = d;
 		}
@@ -532,7 +532,7 @@ void MTColumn::boundUpdate() {
 
 MTRow::MTRow(MTTableSchema &schemaTable) : m_schema(schemaTable), m_delim(',')
 {
-	for (std::vector<MTSchema>::iterator i = m_schema.begin(); i != m_schema.end(); i++) {
+	for (auto i = m_schema.begin(); i != m_schema.end(); i++) {
 		std::shared_ptr<MTColumn> col = std::make_shared<MTColumn>(*i);
 		this->emplace_back(col);
 	}
@@ -540,7 +540,7 @@ MTRow::MTRow(MTTableSchema &schemaTable) : m_schema(schemaTable), m_delim(',')
 
 MTRow::MTRow(const MTRow &row) : m_schema(row.m_schema), m_delim(row.m_delim) {
 	
-	for (std::vector<MTSchema>::iterator i = m_schema.begin(); i != m_schema.end(); i++) {
+	for (auto i = m_schema.begin(); i != m_schema.end(); i++) {
 		std::shared_ptr<MTColumn> col = std::make_shared<MTColumn>(*i);
 		this->emplace_back(col);
 	}
@@ -557,7 +557,7 @@ MTRow &MTRow::operator=(const MTRow &row) {
 	//	delete column;
 	//}
 	clear();
-	for (std::vector<MTSchema>::iterator i = m_schema.begin(); i != m_schema.end(); i++) {
+	for (auto i = m_schema.begin(); i != m_schema.end(); i++) {
 		std::shared_ptr<MTColumn> col = std::make_shared<MTColumn>(*i);
 		this->emplace_back(col);
 	}
@@ -580,7 +580,7 @@ bool MTRow::join(MTRow &otherRow) {
 	int thisIndex = 0;
 	int otherIndex = 0;
 	try {
-	for (std::vector<MTSchema>::iterator i = thisSchema.begin(); i != thisSchema.end(); i++, thisIndex++) {
+	for (auto i = thisSchema.begin(); i != thisSchema.end(); i++, thisIndex++) {
 		MTSchema& columnInfo = *i;
 		//printf("%s\n", columnInfo.getName().c_str());
 		otherIndex = otherSchema.getIndex(columnInfo.getName().c_str());
@@ -606,7 +606,7 @@ bool MTRow::join(const MTRow &otherRow) {
 	int thisIndex = 0;
 	int otherIndex = 0;
 	try {
-		for (std::vector<MTSchema>::iterator i = thisSchema.begin(); i != thisSchema.end(); i++, thisIndex++) {
+		for (auto i = thisSchema.begin(); i != thisSchema.end(); i++, thisIndex++) {
 			MTSchema& columnInfo = *i;
 			//printf("%s\n", columnInfo.getName().c_str());
 			otherIndex = otherSchema.getIndex(columnInfo.getName().c_str());
@@ -638,7 +638,7 @@ SharedMTRow MTTable::makeRow() {
 
 bool MTTable::addRow(const MTRow &r) {
 	auto row = std::make_shared<MTRow>(r);
-	push_back(std::move(row));
+	emplace_back(row);
 	return true;
 }
 
@@ -718,13 +718,13 @@ bool MTTable::write(const char *fullpath) {
 
 bool MTTable::find(MTColumn& column) {
 	
-	if (rowCursor == NOT_FOUND) {
-		rowCursor = 0;
+	if (m_rowCursor == NOT_FOUND) {
+		m_rowCursor = 0;
 	}
 	if (empty()) {
 		return false;
 	}
-	int pos = rowCursor;
+	int pos = m_rowCursor;
 	if (size() <= (size_type)pos) {
 		return false;
 	}
@@ -740,13 +740,13 @@ bool MTTable::find(MTColumn& column) {
 		switch (type) {
 		case MTSchema::Integer:
 			if (other.getULong() == column.getULong()) {
-				rowCursor = pos;
+				m_rowCursor = pos;
 				return true;
 			}
 			break;
 		case MTSchema::Text:
 			if (other.getString() == column.getString()) {
-				rowCursor = pos;
+				m_rowCursor = pos;
 				return true;
 			}
 			break;
@@ -755,14 +755,14 @@ bool MTTable::find(MTColumn& column) {
 			ExifDateTime otherDate = other.getDate();
 			ExifDateTime columnDate = column.getDate();
 			if (otherDate == columnDate) {
-				rowCursor = pos;
+				m_rowCursor = pos;
 				return true;
 			}
 			break;
 			}
 		case  MTSchema::Float:
 			if (other.getDouble() == column.getDouble()) {
-				rowCursor = pos;
+				m_rowCursor = pos;
 				return true;
 			}
 			break;

@@ -21,7 +21,7 @@ bool FileDataContainer::write(const char *datafile) {
 	if (file.is_open() == false) {
 		return false;
 	}
-	for (std::vector<FolderFile>::iterator i = begin(); i != end(); i++) {
+	for (auto i = begin(); i != end(); i++) {
 		FolderFile &data = *i;
 		file << data.toString() << '\n';
 		//printf("%s\n", data.toString().c_str());
@@ -32,7 +32,7 @@ bool FileDataContainer::write(const char *datafile) {
 
 int FileDataContainer::find(const char *filename) {
 
-	for (std::vector<FolderFile>::iterator i = begin(); i != end(); i++) {
+	for (auto i = begin(); i != end(); i++) {
 		FolderFile &data = *i;
 		if (data.match(filename) == true) {
 			return true;
@@ -46,7 +46,7 @@ bool FileDataContainer::add(const char *filename) {
 	FolderFile folderFile(filename);
 
 	int pos = 0;
-	for (std::vector<FolderFile>::iterator i = begin(); i != end(); i++) {
+	for (auto i = begin(); i != end(); i++) {
 		FolderFile data = *i;
 		//printf("%s", data.c_str());
 		std::string extStr = data.getFolderName();
@@ -67,7 +67,7 @@ bool FileDataContainer::add(const char *filename) {
 bool FileDataContainer::incFolders(const char *filename) {
 	FolderFile folderFile(filename);
 
-	for (std::vector<FolderFile>::iterator i = begin(); i != end(); i++) {
+	for (auto i = begin(); i != end(); i++) {
 		FolderFile &data = *i;
 		std::string extStr = data.getFolderName();
 		if (extStr.compare(filename) == 0) {
@@ -81,7 +81,7 @@ bool FileDataContainer::incFolders(const char *filename) {
 bool FileDataContainer::incFiles(const char *filename) {
 	FolderFile folderFile(filename);
 
-	for (std::vector<FolderFile>::iterator i = begin(); i != end(); i++) {
+	for (auto i = begin(); i != end(); i++) {
 		FolderFile &data = *i;
 		std::string extStr = data.getFolderName();
 		if (extStr.compare(filename) == 0) {

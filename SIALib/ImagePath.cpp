@@ -65,7 +65,7 @@ std::string ImagePath::m_MasterJournalPath;
 
 
 
-bool ImagePath::settupMainArchiveFolders(const char *pathToWorkspace, const char *pathToMaster, const char *pathToHome) {
+bool ImagePath::settupMainArchiveFolders(const char *pathToWorkspace, const char *pathToMaster, const char *pathToDerivative, const char *pathToHome) {
 
 	if (SAUtils::DirExists(pathToWorkspace) == false) {
 		return false;
@@ -76,7 +76,7 @@ bool ImagePath::settupMainArchiveFolders(const char *pathToWorkspace, const char
 	m_pathToWorkspace = pathToWorkspace;
 	m_pathToMaster = pathToMaster;
 	IntegrityManager &integrityManager = IntegrityManager::get();
-	integrityManager.setPaths(pathToMaster, pathToWorkspace, pathToHome);
+	integrityManager.setPaths(pathToMaster, pathToDerivative, pathToWorkspace, pathToHome);
 
 	// Master Archive
 	std::string m_dataFolder = m_pathToMaster;
@@ -93,6 +93,7 @@ bool ImagePath::settupMainArchiveFolders(const char *pathToWorkspace, const char
 		if (SAUtils::DirExists(m_MasterMetadataPath.c_str()) == false) {
 			SAUtils::mkDir(m_MasterMetadataPath.c_str());
 		}
+		/*
 		if (SAUtils::DirExists(m_MasterSequenceNumberPath.c_str()) == false) {
 			SAUtils::mkDir(m_MasterSequenceNumberPath.c_str());
 		}
@@ -100,6 +101,7 @@ bool ImagePath::settupMainArchiveFolders(const char *pathToWorkspace, const char
 		if (SAUtils::DirExists(m_MasterHistory.c_str()) == false) {
 			SAUtils::mkDir(m_MasterHistory.c_str());
 		}
+		*/
 	}
 	return true;
 }
@@ -190,7 +192,7 @@ void ImagePath::createLocalPaths(std::string localPath)
 	SAUtils::mkDir(m_localMasterMetadataPath.c_str());
 	
 	IntegrityManager &integrityManager = IntegrityManager::get();
-	integrityManager.addDayFolder(m_yyyymmddStr.c_str());
+	//integrityManager.addMasterDayFolder(m_yyyymmddStr.c_str());
 }
 
 
@@ -203,10 +205,11 @@ ImagePath::ImagePath(const char *filepath) {
 	init(pathController.getYearday());
 }
 
-bool ImagePath::copyFile(std::string  pathToSourceRoot, std::string file) {
+
+bool ImagePath::copyFile2Workspace(std::string  pathToSourceRoot, const std::string& file, const std::string& sequenceFile) {
 	IntegrityManager &integrityManager = IntegrityManager::get();
 	std::string from = pathToSourceRoot + "/" + file;
-	std::string to = m_yyyymmddStrPath + '/' + file;
+	std::string to = m_yyyymmddStrPath + '/' + sequenceFile;
 	
 	// Working Archive
 	if (SAUtils::copy(from.c_str(), to.c_str()) == false) {
@@ -214,7 +217,8 @@ bool ImagePath::copyFile(std::string  pathToSourceRoot, std::string file) {
 	}
 
 	// this can only be done after the file copy
-	integrityManager.addFile(m_yyyymmddStr.c_str(), file.c_str());
+	integrityManager.addMasterDayFolder(m_yyyymmddStr.c_str());
+	integrityManager.addMasterFile(m_yyyymmddStr.c_str(), sequenceFile.c_str());
 	return true;
 }
 

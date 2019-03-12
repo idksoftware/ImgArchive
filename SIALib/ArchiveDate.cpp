@@ -49,32 +49,31 @@ namespace simplearchive {
 
 	bool ArchiveDate::m_useEXIFDate = true;
 	bool ArchiveDate::m_useFileDate = false;
-	bool ArchiveDate::m_useDate = false;
+	bool ArchiveDate::m_useThisDate = false;
 	bool ArchiveDate::m_useDateToday = false;
 	bool ArchiveDate::m_forceDate = false;
 	bool ArchiveDate::m_defaultDateSet = false;
 	ExifDate ArchiveDate::m_date;
+	
 
-	ArchiveDate::ArchiveDate()
-	{
-		m_exifDate.reset(0);
-		m_fileDate.reset(0);
-	}
+	ArchiveDate::ArchiveDate() : 
+					m_exifDate(nullptr), m_fileDate(nullptr)
+	{}
 
 
 	ArchiveDate::~ArchiveDate()
 	{
 	}
 
-	void ArchiveDate::setExifDate(ExifDate& d) {
-		m_exifDate.reset(new ExifDate(d));
+	void ArchiveDate::setExifDate(const ExifDate& d) {
+		m_exifDate = std::make_shared<ExifDate>(d);
 	}
 
-	void ArchiveDate::setFileDate(ExifDate& d) {
-		m_fileDate.reset(new ExifDate(d));
+	void ArchiveDate::setFileDate(const ExifDate& d) {
+		m_fileDate = std::make_shared<ExifDate>(d);
 	}
 
-	void ArchiveDate::setDate(ExifDate& d) {
+	void ArchiveDate::setDate(const ExifDate& d) {
 		m_date = d;
 	}
 
@@ -117,11 +116,12 @@ namespace simplearchive {
 	
 
 	bool ArchiveDate::getUseDate() {
-		return m_useDate;
+		return m_useThisDate;
 	}
-	void ArchiveDate::setUseDate(ExifDate date) {
+	void ArchiveDate::setUseDate(const ExifDate &date) {
 		setFalse();
-		m_useDate = true;
+		m_useThisDate = true;
+		m_date = date;
 	}
 
 	bool ArchiveDate::getUseDateToday() {
@@ -145,7 +145,7 @@ namespace simplearchive {
 			//logger.log(LOG_OK, CLogger::Level::FINE, "Image \"%s\" has picture file: ", ic.getName());
 			picId = (BasicMetadata *)&(ic.getPictureId());
 			const ExifDateTime& createTime = picId->getCreateTime();
-			m_fileDate.reset(new ExifDate(createTime));
+			m_fileDate = std::make_shared<ExifDate>(createTime);
 			//logger.log(LOG_OK, CLogger::Level::TRACE, "Image \"%s\" will be archived under the date: %s", ic.getName(), createTime.toString().c_str());
 			m_usingDate = USING_FILE_PIC_DATE;
 		}
@@ -153,7 +153,7 @@ namespace simplearchive {
 			//logger.log(LOG_OK, CLogger::Level::FINE, "Image \"%s\" has RAW file: ", ic.getName());
 			rawId = (BasicMetadata *)&(ic.getRawId());
 			const ExifDateTime& createTime = rawId->getCreateTime();
-			m_fileDate.reset(new ExifDate(createTime));
+			m_fileDate = std::make_shared<ExifDate>(createTime);
 			//logger.log(LOG_OK, CLogger::Level::TRACE, "Image \"%s\" will be archived under the date: %s", ic.getName(), createTime.toString().c_str());
 			m_usingDate = USING_FILE_RAW_DATE;
 		}
@@ -179,7 +179,7 @@ namespace simplearchive {
 		if ((rawId != nullptr) && (rawId->isExifFound())) {
 			try {
 				const ExifDateTime& captureDate = rawId->getDateTimeDigitized();
-				m_exifDate.reset(new ExifDate(captureDate));
+				m_exifDate = std::make_shared<ExifDate>(captureDate);
 				if (m_exifDate->isOk() == true) {
 					//logger.log(LOG_OK, CLogger::Level::SUMMARY, "Image \"%s\" will be archived under the date: %s", ic.getName(), m_exifDate->toString().c_str());
 					m_usingDate = USING_CAPTURE_RAW_DATE;
@@ -195,7 +195,7 @@ namespace simplearchive {
 		if (picMetadata != nullptr) {
 			try {
 				const ExifDateTime captureDate = picMetadata->getCaptureDate();
-				m_exifDate.reset(new ExifDate(captureDate));
+				m_exifDate = std::make_shared<ExifDate>(captureDate);
 				if (m_exifDate->isOk() == true) {
 					//logger.log(LOG_OK, CLogger::Level::SUMMARY, "Image \"%s\" will be archived under the date: %s", ic.getName(), m_exifDate->toString().c_str());
 					m_usingDate = USING_CAPTURE_PIC_DATE;
@@ -213,7 +213,7 @@ namespace simplearchive {
 		if ((picId != nullptr) && (picId->isExifFound())) {
 			try {
 				const ExifDateTime& captureDate = picId->getDateTimeDigitized();
-				m_exifDate.reset(new ExifDate(captureDate));
+				m_exifDate = std::make_shared<ExifDate>(captureDate);
 				if (m_exifDate->isOk() == true) {
 					//logger.log(LOG_OK, CLogger::Level::SUMMARY, "Image \"%s\" will be archived under the date: %s", ic.getName(), m_exifDate->toString().c_str());
 					m_usingDate = USING_CAPTURE_PIC_DATE;
@@ -231,7 +231,7 @@ namespace simplearchive {
 
 	ExifDate ArchiveDate::getArchiveDate() {
 		if (m_forceDate == true) {
-			if (m_useDate) {
+			if (m_useThisDate) {
 				m_achiveDate = m_date;
 				m_usingDate = USING_FORCED_DATE;
 				return m_achiveDate;
@@ -285,7 +285,7 @@ namespace simplearchive {
 	void ArchiveDate::setFalse() {
 		m_useEXIFDate = false;
 		m_useFileDate = false;
-		m_useDate = false;
+		m_useThisDate = false;
 		m_useDateToday = false;
 	}
 

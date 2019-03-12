@@ -111,7 +111,6 @@ public:
 		return m_data;
 	}
 
-
 	HistoryItem::~HistoryItem() {
 		
 	}
@@ -146,7 +145,7 @@ bool ImageHistory::init() {
 }
 
 bool ImageHistory::add(const char *filename, const char *comment) {
-	return add(filename, "0000", comment, HistoryEvent::ADDED);
+	return add(filename, "0000", comment, HistoryEvent::Event::ADDED);
 }
 /**
  * This function adds history to an image.
@@ -171,7 +170,7 @@ bool ImageHistory::add(const char *filepath, const char *version, const char *co
 	
 	PathController workspaceController;
 	workspaceController.setRoot(m_workspace.c_str());
-	workspaceController.splitLong(filepath);
+	workspaceController.splitShort(filepath);
 	workspaceController.makePath();
 	std::string workspacePath = workspaceController.getFullPath();
 	workspacePath += "/.sia/"; workspacePath += workspaceController.getImage();
@@ -185,7 +184,7 @@ bool ImageHistory::add(const char *filepath, const char *version, const char *co
 	
 	PathController indexController;
 	indexController.setRoot(m_index.c_str());
-	indexController.splitLong(filepath);
+	indexController.splitShort(filepath);
 	indexController.makeImagePath();
 	
 	std::string indexPath = indexController.getFullPath();;

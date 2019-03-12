@@ -62,21 +62,21 @@ typedef std::unique_ptr<MetadataObject> MetadataObject_ptr;
 typedef std::unique_ptr<ConfigBlock> Config_ptr;
 //class Config;
 class MetadataTemplate {
-	//std::map<std::string, std::string *> m_lookup;
-	//MetadataObject *m_metadataObject;
-	//static std::unique_ptr<Config> m_templateFile;
+	
+	
 	static Config_ptr m_templateFile;
 	static std::string &getValue(const char *key);
 
-	static std::unique_ptr<MetadataTemplate> m_instance;
-	static std::once_flag m_onceFlag;
-	MetadataTemplate() noexcept {};
-	MetadataTemplate(const MetadataTemplate& src);
-	MetadataTemplate& operator=(const MetadataTemplate& rhs);
-
+	
+	
+	MetadataTemplate() noexcept = default;
 public:
 	static MetadataTemplate& GetInstance();
 	virtual ~MetadataTemplate();
+	
+	MetadataTemplate(const MetadataTemplate& src) = delete;
+	MetadataTemplate& operator=(const MetadataTemplate& rhs) = delete;
+
 	static bool read(const char *datafile);
 	static MetadataObject_ptr getMetadataObject();
 };

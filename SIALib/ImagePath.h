@@ -63,6 +63,7 @@ class ImagePath {
 	std::string m_relpath;
 	std::string m_imagePath;
 	std::string m_imageName;
+	std::string m_orginalName;
 	std::string m_yearStr;
 	std::string m_yyyymmddStr;
 	std::string m_yearStrPath;
@@ -104,7 +105,7 @@ public:
 	ImagePath(time_t time);
 	ImagePath(const char *filepath);
 	ImagePath(std::string &yyyymmddStr);
-	bool copyFile(std::string  pathToSourceRoot, std::string file);
+	bool copyFile2Workspace(std::string  pathToSourceRoot, const std::string& file, const std::string& sequenceFile);
 
 	virtual ~ImagePath();
 
@@ -115,8 +116,21 @@ public:
 		m_imageName = imageName;
 	}
 
+	void setOrginalName(const char *imageName) {
+		m_orginalName = imageName;
+	}
+
+	void switchOrginalName(const char *imageName) {
+		m_orginalName = m_imageName;
+		m_imageName = imageName;
+	}
+
 	const std::string& getImageName() const noexcept {
 		return m_imageName;
+	}
+
+	const std::string& getOrginalName() const noexcept {
+		return m_orginalName;
 	}
 
 	void setCurrentSourcePath(const char *currentSourcePath) {
@@ -188,7 +202,7 @@ public:
 		return m_relpath;
 	}
 
-	static bool settupMainArchiveFolders(const char *pathToArchive, const char *pathToMaster, const char *pathToHome);
+	static bool settupMainArchiveFolders(const char *pathToWorkspace, const char *pathToMaster, const char *pathToDerivative, const char *pathToHome);
 
 	// main
 	/// @brief The dups path is set in the configuation file (Default is $Master_FOLDER/root/dups)

@@ -54,14 +54,12 @@
 
 #define DEBUG_PRINT printf
 
-class SIAAppException : public std::exception {
+class SIAException : public std::exception {
 	std::string message;
 public:
-	explicit SIAAppException(const char *msg) : message(msg){
-
-	}
-	explicit SIAAppException(std::string msg) : message(msg) {}
-	virtual ~SIAAppException() throw() {}
+	explicit SIAException(const char *msg) : message(msg) {}
+	explicit SIAException(std::string msg) : message(msg) {}
+	virtual ~SIAException() throw() {}
 	virtual const char *what() throw();
 
 };
@@ -83,7 +81,7 @@ public:
 	static bool IsFile(const char *path);
 	static time_t createTime(const char *path);
 	static time_t modTime(const char *path);
-	static std::vector<std::string *> *getFiles(const char *dirpath);
+	//static std::vector<std::string *> *getFiles(const char *dirpath);
 	static FileList_Ptr getFiles_(const char *dirpath);
 	static std::string getExtention(const std::string &file);
 	static std::string getExtention(const char *file);
@@ -98,6 +96,7 @@ public:
 	static bool hasExt(const char *file);
 	static bool hasExt(const std::string &file);
 	static bool mkDir(const char *path);
+	static bool SAUtils::isNumber(const std::string& s);
 	static bool setHidden(const char *path);
 	static bool copy(const char *from, const char *to);
 	static bool rename(const char *from, const char *to);
@@ -120,6 +119,7 @@ public:
 	static std::string GetEnv(const std::string &key, bool all = true);
 	static std::string GetPOSIXEnv(const std::string &key);
 	static bool SetEnv(const std::string &key, const std::string &value, bool all = true);
+
 };
 
 

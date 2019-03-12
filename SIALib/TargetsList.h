@@ -44,10 +44,8 @@ namespace simplearchive {
 	class ImageItem {
 		std::string m_path;
 	public:
-		ImageItem(const char *path) {
-			m_path = path;
-
-		}
+		ImageItem(const char *path) : m_path(path)
+		{}
 		virtual ~ImageItem() {
 			//printf("deleting item %s\n", m_path.c_str());
 		}
@@ -89,7 +87,7 @@ namespace simplearchive {
 		}
 		void print() {
 			//printf("Set %s\n", m_path.c_str());
-			for (std::vector<std::shared_ptr<ImageItem>>::iterator i = this->begin(); i != this->end(); i++) {
+			for (auto i = this->begin(); i != this->end(); i++) {
 				std::shared_ptr<ImageItem> data = *i;
 				data->print();
 			}
@@ -97,7 +95,7 @@ namespace simplearchive {
 		void processHook() {
 			
 			//printf("Hook process %s\n", m_path.c_str());
-			for (std::vector<std::shared_ptr<ImageItem>>::iterator i = this->begin(); i != this->end(); i++) {
+			for (auto i = this->begin(); i != this->end(); i++) {
 				std::shared_ptr<ImageItem> data = *i;
 				
 				data->processHook();
@@ -105,7 +103,7 @@ namespace simplearchive {
 		}
 
 		void processImportJournal(ImportJournal& importJournal) {
-			for (std::vector<std::shared_ptr<ImageItem>>::iterator i = this->begin(); i != this->end(); i++) {
+			for (auto i = this->begin(); i != this->end(); i++) {
 				std::shared_ptr<ImageItem>data = *i;
 				importJournal.add(data->getPath());
 				
@@ -128,14 +126,14 @@ namespace simplearchive {
 		}
 		void print() {
 
-			for (std::vector<std::shared_ptr<ImageSet>>::iterator i = this->begin(); i != this->end(); i++) {
+			for (auto i = this->begin(); i != this->end(); i++) {
 				std::shared_ptr<ImageSet> data = *i;
 				data->print();
 			}
 		}
 		std::shared_ptr<ImageSet> find(const char *folder) {
 
-			for (std::vector<std::shared_ptr<ImageSet>>::iterator i = this->begin(); i != this->end(); i++) {
+			for (auto i = this->begin(); i != this->end(); i++) {
 				std::shared_ptr<ImageSet> data = *i;
 				if (strcmp(data->getPath(), folder) == 0) {
 					return data;
@@ -145,13 +143,13 @@ namespace simplearchive {
 		}
 		void processHook() {
 
-			for (std::vector<std::shared_ptr<ImageSet>>::iterator i = this->begin(); i != this->end(); i++) {
+			for (auto i = this->begin(); i != this->end(); i++) {
 				std::shared_ptr<ImageSet> data = *i;
 				data->processHook();
 			}
 		}
 		void processImportJournal(ImportJournal& importJournal) {
-			for (std::vector<std::shared_ptr<ImageSet>>::iterator i = this->begin(); i != this->end(); i++) {
+			for (auto i = this->begin(); i != this->end(); i++) {
 				std::shared_ptr<ImageSet> data = *i;
 				data->processImportJournal(importJournal);
 			}

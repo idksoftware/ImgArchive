@@ -59,6 +59,9 @@ namespace simplearchive {
 		defineOption("repair", "Validate and repair.", ArgvParser::NoOptionAttribute);
 		//defineOptionAlternative("r", "repair");
 
+		defineOption("checkedOut", "Show images checkedOut.", ArgvParser::NoOptionAttribute);
+		defineOptionAlternative("o", "checkedOut");
+
 		defineOption("scope", "Scope validate. i.e. Workspace/Master or both", ArgvParser::OptionRequiresValue);
 		//defineOptionAlternative("s", "scope");
 
@@ -110,6 +113,7 @@ namespace simplearchive {
 		defineCommandOption("init", "workspace-path");
 		*/
 		defineCommandOption("show", "settup");
+		defineCommandOption("show", "checkedOut");
 
 		defineCommandOption("validate", "scope");
 		defineCommandOption("validate", "repair");
@@ -152,7 +156,7 @@ namespace simplearchive {
 		if (command("init") == true) {
 			// This command will initalise the configuration.
 			// so the the configuration need not to be initalised.
-			appOptions.setCommandMode(AppOptions::CM_InitArchive);
+			appOptions.setCommandMode(AppOptions::CommandMode::CM_InitArchive);
 
 			appOptions.m_configured = false;
 			std::string opt;
@@ -203,19 +207,23 @@ namespace simplearchive {
 			}
 
 			if (command("version") == true) {
-				appOptions.setCommandMode(AppOptions::CM_Version);
+				appOptions.setCommandMode(AppOptions::CommandMode::CM_Version);
 				cmdFound = true;
 			}
 			else if (command("show") == true) {
-				appOptions.setCommandMode(AppOptions::CM_Show);
+				appOptions.setCommandMode(AppOptions::CommandMode::CM_Show);
 				if (foundOption("settup") == true) {
 					
 					appOptions.setName("settup");
 				}
+				if (foundOption("checkedOut") == true) {
+
+					appOptions.m_showOperation = AppOptions::ShowOperation::CheckedOut;
+				}
 				cmdFound = true;
 			}
 			else if (command("validate") == true) {
-				appOptions.setCommandMode(AppOptions::CM_Validate);
+				appOptions.setCommandMode(AppOptions::CommandMode::CM_Validate);
 				cmdFound = true;
 				if (foundOption("archive-path") == true) {
 
@@ -228,13 +236,13 @@ namespace simplearchive {
 					std::string opt = optionValue("scope");
 //					printf(opt.c_str()); printf("\n");
 					if (opt.compare("workspace") == 0) {
-						appOptions.m_scope = appOptions.Workspace;
+						appOptions.m_verifyOperation = AppOptions::VerifyOperation::Workspace;
 					}
 					else if (opt.compare("master") == 0) {
-						appOptions.m_scope = appOptions.Master;
+						appOptions.m_verifyOperation = AppOptions::VerifyOperation::Master;
 					}
 					else if (opt.compare("both") == 0) {
-						appOptions.m_scope = appOptions.Both;
+						appOptions.m_verifyOperation = AppOptions::VerifyOperation::Both;
 					}
 					else {
 						printf("Invalid argument for sub-command: %s \"%s\"\n\n", getCurrentCommand().c_str(), opt.c_str());
@@ -247,7 +255,7 @@ namespace simplearchive {
 				}
 			}
 			else if (command("mirror") == true) {
-				appOptions.setCommandMode(AppOptions::CM_Mirror);
+				appOptions.setCommandMode(AppOptions::CommandMode::CM_Mirror);
 
 				if (foundOption("archive-path") == true) {
 
@@ -286,11 +294,11 @@ namespace simplearchive {
 
 				cmdFound = true;
 			} else if (command("test") == true) {
-				appOptions.setCommandMode(AppOptions::CM_Test);
+				appOptions.setCommandMode(AppOptions::CommandMode::CM_Test);
 				cmdFound = true;
 			}
 			else if (foundOption("backup") == true) {
-				appOptions.setCommandMode(AppOptions::CM_Archive);
+				appOptions.setCommandMode(AppOptions::CommandMode::CM_Archive);
 
 				if (foundOption("archive-path") == true) {
 
@@ -330,11 +338,11 @@ namespace simplearchive {
 				cmdFound = true;
 			}
 			else if (foundOption("version") == true) {
-				appOptions.setCommandMode(AppOptions::CM_Version);
+				appOptions.setCommandMode(AppOptions::CommandMode::CM_Version);
 				cmdFound = true;
 			}
 			else {
-				appOptions.setCommandMode(AppOptions::CM_Unknown);
+				appOptions.setCommandMode(AppOptions::CommandMode::CM_Unknown);
 				cmdFound = true;
 			}
 		}

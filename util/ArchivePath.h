@@ -57,9 +57,7 @@ class RepositoryPath {
 	std::string m_yyyymmddStr;
 	std::string m_yearStrPath;				//< i.e. C:\ProgramData\IDK Software\ImageArchive1.0\Master\2015
 	std::string m_yyyymmddStrPath;			//< i.e. C:\ProgramData\IDK Software\ImageArchive1.0\Master\2015\2015-11-26
-
 	std::string m_pathToRepository;
-
 	std::string m_metadataPath;
 	std::string m_idxDBPath;
 	std::string m_historyLogPath;
@@ -81,6 +79,8 @@ public:
 	void setImageName(const char *imageName);
 
 	const std::string& getImageName() const;
+	const std::string& getYYYYMMDD() const;
+	const std::string& getYYYYMMDDPath() const;
 	const std::string& getRelativePath() const;
 	
 	std::string getRepositoryPath() const;
@@ -104,24 +104,23 @@ public:
 class ArchivePath contains the set of Repository Paths and the global paths for the Archive.
 */
 class ArchivePath {
+
 	static std::string m_pathToHome;
 	static std::string m_pathToWorkspace;
 	static std::string m_mainMetadataPath;
-	//	static std::string m_userDefinedSequenceNumberPath;
 	static std::string m_mainDupsPath;
 	static std::string m_mainHistory;
-	//static ArchivePath *m_master;
 	static std::string m_pathToMaster;
 	static std::string m_pathToDerivitive;
 	static std::string m_workspaceYyyymmddPath;
 	static std::string m_workspaceMetadataPath;
-
 	static std::string m_backup1;
 	static std::string m_backup2;
 	static RepositoryPath m_master;
 	static RepositoryPath m_derivative;
 	static RepositoryPath m_backupPath[2];
 	static PrimaryIndexPath m_primaryIndex;
+
 public:
 
 	

@@ -90,22 +90,25 @@ public:
 * found if there is way changes. If there are changes that the system
 * was not aware of then this me be an error that needs fixing by copying
 * the changed file back from a mirror. 
-*
+* Also includes if the images has been checked out.
 */
 class CkdskDiffFile;
 class CheckDisk {
 public:
 	
 private:
-        /// Helper function to print a tag into a XML file.  
+    /// Helper function to print a tag into a XML file.  
 	std::string writeTag(const char *tag, const std::string& value, int tab);
-        /// Helper function to print a tag into a XML file.
+    /// Helper function to print a tag into a XML file.
 	std::string writeTag(const char *tag, const unsigned int value, int tab);
-        /// The root archive path
-	static std::string m_archivePath;
-	
+    /// The root archive path
+	//static std::string m_archivePath;
+	/// The root archive path
+	static std::string m_derivativePath;
         /// Make an XML file manifest in the target directory 
 	bool makeXML(const char *targetdir);
+	bool makeXML(const char *chkdskFolder, const char *csvFile, const char *mxlFile);
+	
 
 	//std::string m_orginalName;
 	//Error m_error;
@@ -114,16 +117,15 @@ public:
         /// Constructor
         /// @param archivePath  The root archive folder  
 	//CheckDisk(const char *archivePath);
-	static void setArchivePath(const char *archivePath);
-	CheckDisk() {
-		
-	};
+	//static void setArchivePath(const char *archivePath);
+	CheckDisk() {};
         /// Destructor
 	virtual ~CheckDisk();
         /// Makes the check disk data from the target folder
 	bool makeCheckData(const char *targetdir);
     	/// Makes the check disk data from the target folder, saves into the save folder
 	bool makeCheckData(const char *targetdir, const char *saveDir);
+	bool makeCheckData(const char *chkdskfolder, const char *targetdir, const char *csvPath, const char *xmlPath);
         /// Checks the folder against the manifest file.
 	//bool check(const char *targetdir);
 	/// Checks the folder against the manifest file.
@@ -135,7 +137,8 @@ public:
 	/// Write the status file
 	//bool writeStatus(const char *path);
         /// Updates the manifest file with new file data.
-	bool update(const char *targetdir, const char *targetfile);
+	bool update(const char *rootPath, const char *targetdir, const char *targetfile);
+	bool update(const char *chkdskFolderPath, const char *chkdskFilename, const char *targetFolderPath, const char *targetfilename);
 
 	//const char *getOrginalName() {
 	//	return m_orginalName.c_str();

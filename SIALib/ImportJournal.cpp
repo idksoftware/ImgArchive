@@ -11,24 +11,12 @@ static char THIS_FILE[] = __FILE__;
 
 namespace simplearchive {
 
-	class ImportJournalItem {
-		std::string m_filepath;
-		ImportJournal::Result m_result;
-		std::string m_location;
-		const char *ResultString(ImportJournal::Result& result);
-	public:
-		ImportJournalItem(const char *filepath);
-		void setResult(ImportJournal::Result result);
-		void setLocation(const char *location);
-		std::string toString();
-		const char *getSourceImage();
-		const char *getLocation();
-		const char *getResult();
-	};
+	
 
 	ImportJournalItem::ImportJournalItem(const char *filepath) {
 		m_filepath = filepath;
-		m_result = ImportJournal::Incomplete;
+		m_result = ImportJournal::Result::Incomplete;
+		m_validated = false;
 	}
 
 	void ImportJournalItem::setResult(ImportJournal::Result result) {
@@ -39,20 +27,29 @@ namespace simplearchive {
 		m_location = location;
 	}
 
+	void ImportJournalItem::setValidated()
+	{
+		m_validated = true;
+	}
+
 	const char *ImportJournalItem::ResultString(ImportJournal::Result& result) {
 		switch (result) {
-		case ImportJournal::Incomplete:
+		case ImportJournal::Result::Incomplete:
 			return "Incomplete";
-		case ImportJournal::Imported:
+		case ImportJournal::Result::Imported:
 			return "Imported";
-		case ImportJournal::Duplicate:
+		case ImportJournal::Result::Duplicate:
 			return "Duplicate";
-		case ImportJournal::Error:
+		case ImportJournal::Result::Error:
 			return "Error";
-		case ImportJournal::Unknown:
+		case ImportJournal::Result::Unknown:
 		default:
 			return "Unknown";
 		}
+	}
+
+	ImportJournal::Result ImportJournalItem::getResultEnum() {
+		return m_result;
 	}
 
 	const char *ImportJournalItem::getResult() {
@@ -67,6 +64,10 @@ namespace simplearchive {
 		return m_location.c_str();
 	}
 
+	bool ImportJournalItem::isValidated() {
+		return m_validated;
+	}
+
 	std::string ImportJournalItem::toString() {
 		std::string tmp;
 		tmp += m_filepath;
@@ -74,6 +75,8 @@ namespace simplearchive {
 		tmp += ResultString(m_result);
 		tmp += ',';
 		tmp += m_location;
+		tmp += ',';
+		tmp += m_validated ? "True" : "False";
 		return tmp;
 	}
 
@@ -164,6 +167,7 @@ namespace simplearchive {
 			file << writeTag("SourceImage", item->getSourceImage(), 2);
 			file << writeTag("Result", item->getResult(), 2);
 			file << writeTag("Location", item->getLocation(), 2);
+			file << writeTag("Validated", (item->isValidated())?"True":"False", 2);
 			file << "\t</Event>\n";
 		}
 		file << "</ImportJournal>\n";
@@ -194,9 +198,7 @@ namespace simplearchive {
 	}
 
 	std::string ImportJournalManager::m_journalFilePath;
-	std::unique_ptr<ImportJournalManager> ImportJournalManager::m_instance;
-	std::once_flag ImportJournalManager::m_onceFlag;
-
+	
 	ImportJournalManager::ImportJournalManager() {
 		LogName logName;
 		std::string logNameStr = logName.makeName(m_journalFilePath.c_str(), "ij", "log", LogName::ALWAYS_CREATE);
@@ -207,13 +209,6 @@ namespace simplearchive {
 	ImportJournal& ImportJournalManager::GetJournal()
 	{
 		static ImportJournalManager INSTANCE;
-		/*
-		std::call_once(m_onceFlag,
-			[] {
-			m_instance.reset(new ImportJournalManager);
-		});
-		return *(m_instance->m_importJournal);
-		*/
 		return *(INSTANCE.m_importJournal);
 	}
 

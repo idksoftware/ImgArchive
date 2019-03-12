@@ -1,4 +1,5 @@
 #include "AddressScope.h"
+#include "SAUtils.h"
 #include <vector>
 
 class DataString {
@@ -76,45 +77,33 @@ void DataString::init(const std::string &s) {
 
 int DataString::compare(DataString &d) {
 	int res = 0;
-	if (m_year == "*" || d.m_year == "*" ) {
-		return 0;
-	} else if ((res = m_year.compare(d.m_year)) != 0) {
-		return res;
-	} else {
-		if (m_month == "*" || d.m_month == "*") {
-			return 0;
-		}
-		else if ((res = m_month.compare(d.m_month)) != 0) {
-			return res;
-		} else {
-			if (m_day == "*" || d.m_day == "*") {
-				return 0;
-			} else if ((res = m_day.compare(d.m_day)) != 0) {
-				return res;
-			} else {
-				if (m_image == "*") {
+	if (m_year == "*" || d.m_year == "*" || m_year.compare(d.m_year) == 0) {
+		// year matched
+		if (m_month == "*" || d.m_month == "*" || m_month.compare(d.m_month) == 0) {
+			// month matched
+			if (m_day == "*" || d.m_day == "*" || m_day.compare(d.m_day) == 0) {
+				// day matched
+				if (m_image == "*" || d.m_image == "*" || m_image.compare(d.m_image) == 0) {
 					return 0;
-				} else if ((res = m_day.compare(d.m_day)) != 0) {
-					return res;
 				}
 			}
 		}
 	}
-	return 0;
+	return -1;
 }
 
-class ScopeItem {
+class AddressScopeItem {
 	DataString m_begin;
 	DataString m_end;
 	bool m_range;
 	void init(std::string &pattern);
 public:
-	ScopeItem(const char *pattern);
-	ScopeItem(std::string &pattern);
+	AddressScopeItem(const char *pattern);
+	AddressScopeItem(std::string &pattern);
 	const bool isInScope(DataString &d);
 };
 
-void ScopeItem::init(std::string &pattern) {
+void AddressScopeItem::init(std::string &pattern) {
 	// begin-2009
 	std::string s = pattern;
 	int pos = s.find('-');
@@ -126,24 +115,24 @@ void ScopeItem::init(std::string &pattern) {
 		m_begin = DataString(begin);
 		std::string end = s.substr(pos+1, s.length() - (pos+1));
 		m_end = DataString(end);
-		m_range = true;
+		m_range = false;
 	}
 	std::string begin = s.substr(0, pos);
 
 }
 
-ScopeItem::ScopeItem(std::string &pattern) {
+AddressScopeItem::AddressScopeItem(std::string &pattern) {
 	init(pattern);
 }
 
-ScopeItem::ScopeItem(const char *pattern) {
+AddressScopeItem::AddressScopeItem(const char *pattern) {
 	// begin-2009
 	std::string s = pattern;
 	init(s);
 
 }
 
-const bool ScopeItem::isInScope(DataString &d) {
+const bool AddressScopeItem::isInScope(DataString &d) {
 	
 	if (m_range) {
 		if (m_begin.compare(d) <= 0 && m_end.compare(d) >= 0) {
@@ -158,11 +147,11 @@ const bool ScopeItem::isInScope(DataString &d) {
 	return false;
 }
 
-class TokenList : public std::vector<ScopeItem> {};
+class AddressSTokenList : public std::vector<AddressScopeItem> {};
 
 AddressScope::AddressScope()
 {
-	m_list = new TokenList;
+	m_list = new AddressSTokenList;
 }
 
 
@@ -203,14 +192,31 @@ std::string removespace(std::string str)
 }
 // Range: 2009-2015, 2009-end, begin-2009, 2009/08/16-2015
 // Item: 2009/08/16, 2009/08/17,
+
 bool AddressScope::isInScope(const char *d) {
 
 	if (m_matchAll) return true;
 
 	DataString date(d);
-	for( TokenList::iterator iter = m_list->begin();  iter != m_list->end(); iter++) {
-		ScopeItem &item = *iter;
+	for(auto iter = m_list->begin();  iter != m_list->end(); iter++) {
+		AddressScopeItem &item = *iter;
 		if (item.isInScope(date)) {
+			return true;
+		}
+	}
+	return false;
+}
+
+bool AddressScope::isImageInScope(const char * image)
+{
+	if (m_matchAll) return true;
+	std::string pattern = "*-*-*/";
+	pattern += image;
+
+	DataString dateImage(pattern);
+	for (auto iter = m_list->begin(); iter != m_list->end(); iter++) {
+		AddressScopeItem &item = *iter;
+		if (item.isInScope(dateImage)) {
 			return true;
 		}
 	}
@@ -234,12 +240,177 @@ bool AddressScope::scope(const char *str) {
 	while ((next = s.find(delimiter, last)) != std::string::npos) {
 		token = s.substr(last, next-last);
 		//printf("%s", token.c_str());
-		m_list->push_back(ScopeItem(token));
+		m_list->push_back(AddressScopeItem(token));
 		last = next + 1;
 	}
 	token = s.substr(last);
 	//printf("%s", token.c_str());
-	m_list->push_back(ScopeItem(token));
+	m_list->push_back(AddressScopeItem(token));
 	return true;
 }
 
+
+
+class VersionScopeItem {
+	int m_begin;
+	int m_end;
+	bool m_range;
+	bool m_error;
+	bool init(std::string &pattern, int version);
+	bool VersionScopeItem::isScope(const char *pattern, int version);
+	std::string m_pattern;
+	int m_maxVersion;
+public:
+	VersionScopeItem(const char *pattern, int maxVersion);
+	VersionScopeItem(std::string &pattern, int maxVersion);
+	~VersionScopeItem();
+	const bool isInScope(int version);
+};
+
+class VersionTokenList : public std::vector<VersionScopeItem> {};
+
+bool VersionScopeItem::init(std::string &pattern, int version) {
+	int num = -1;
+	if (m_pattern[0] == '[') {
+		int rangeCharPos = m_pattern.find('-', 1);
+		//std::string first = m_pattern.substr(1, m_pattern.length() - )
+		return true;
+	}
+	else if (m_pattern[0] == '*') {
+		return true;
+	}
+	else {
+		if ((num = SAUtils::isNumber(m_pattern)) == -1) {
+			return false;
+		}
+		if (version != num) {
+			return false;
+		}
+	}
+	return true;
+}
+
+VersionScopeItem::VersionScopeItem(const char *pattern, int maxVersion) {
+	m_pattern = pattern;
+	m_maxVersion = maxVersion;
+}
+
+VersionScopeItem::VersionScopeItem(std::string &pattern, int maxVersion) {
+	m_pattern = pattern;
+	m_maxVersion = maxVersion;
+}
+
+VersionScopeItem::~VersionScopeItem() {
+
+}
+
+
+const bool VersionScopeItem::isInScope(int version) {
+	int num = -1;
+	if (m_pattern[0] == '[') {
+		int rangeCharPos = m_pattern.find('-', 1);
+		//std::string first = m_pattern.substr(1, m_pattern.length() - )
+		return true;
+	}
+	else if (m_pattern[0] == '*') {
+		return true;
+	}
+	else {
+		if (isScope(m_pattern.c_str(), version) == false) {
+			return false;
+		}
+	}
+	return true;
+}
+
+
+bool VersionScopeItem::isScope(const char *pattern, int version) {
+	std::string m_pattern = pattern;
+
+	if (m_pattern[0] != '[' || m_pattern[m_pattern.length() - 1] != ']') {
+		return false;
+	}
+
+	int delimt = m_pattern.find_first_of('-', 1);
+	if (delimt == std::string::npos) {
+		return false;
+	}
+
+	std::string fs = m_pattern.substr(1, delimt - 1);
+	
+	if (SAUtils::isNumber(fs) == false) {
+		return false;
+	}
+	int first = std::stoi(fs);
+
+	std::string ls = m_pattern.substr(delimt + 1, m_pattern.length() - (delimt + 2));
+	int end = 0;
+	if (ls[0] == '@') {
+		end = m_maxVersion;
+	}
+	else {
+		if (SAUtils::isNumber(ls) == false) {
+			return false;
+		}
+		end = std::stoi(ls);
+	}
+	//printf("First: %d End: %d\n", first, end);
+	if (version >= first && version <= end) {
+		return false;
+	}
+	return true;
+}
+
+VersionScope::VersionScope(int maxVersion) : m_list(std::make_unique<VersionTokenList>()), m_maxVersion(maxVersion)
+{
+}
+
+
+VersionScope::~VersionScope()
+{
+
+}
+
+bool VersionScope::scope(const char * str)
+{
+	m_matchAll = false;
+	std::string tmp = str;
+	std::string s = removespace(tmp);
+	std::string delimiter = ",";
+
+	size_t last = 0;
+	size_t next = 0;
+	std::string token;
+	while ((next = s.find(delimiter, last)) != std::string::npos) {
+		token = s.substr(last, next - last);
+		//printf("%s", token.c_str());
+		if (token[0] == '*') {
+			m_matchAll = true;
+		}
+		m_list->push_back(VersionScopeItem(token, m_maxVersion));
+		last = next + 1;
+	}
+	token = s.substr(last);
+	//printf("%s", token.c_str());
+	m_list->push_back(VersionScopeItem(token, m_maxVersion));
+	return false;
+}
+
+void VersionScope::scopeAll()
+{
+	m_matchAll = true;
+}
+
+bool VersionScope::isInScope(int version)
+{
+	if (m_matchAll) return true;
+
+	for (auto iter = m_list->begin(); iter != m_list->end(); iter++) {
+		VersionScopeItem &item = *iter;
+		if (item.isInScope(version)) {
+			return true;
+		}
+	}
+	return false;
+	
+}

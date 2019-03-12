@@ -15,7 +15,7 @@ namespace simplearchive {
 		explicit SQLInsertException(const char *msg) : message(msg) {
 
 		}
-		explicit SQLInsertException(std::string msg) : message(msg) {}
+		explicit SQLInsertException(std::string &msg) : message(msg) {}
 		virtual ~SQLInsertException() throw() {}
 		virtual const char *what() const throw();
 

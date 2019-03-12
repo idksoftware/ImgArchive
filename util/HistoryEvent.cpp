@@ -44,7 +44,7 @@ static char THIS_FILE[] = __FILE__;
 namespace simplearchive {
 
 HistoryEvent::HistoryEvent() {
-	m_event = ERROR;
+	m_event = Event::ERROR;
 }
 
 HistoryEvent::~HistoryEvent() {
@@ -53,17 +53,17 @@ HistoryEvent::~HistoryEvent() {
 
 const char *HistoryEvent::getString() const {
 	switch (m_event) {
-	case ADDED:
+	case Event::ADDED:
 		return "added";
-	case CHECKOUT:
+	case Event::CHECKOUT:
 		return "checkout";
-	case CHECKIN:
+	case Event::CHECKIN:
 		return "checkin";
-	case EXPORT:
+	case Event::EXPORT:
 		return "export";
-	case UNCHECKOUT:
+	case Event::UNCHECKOUT:
 		return "uncheckout";
-	case ERROR:
+	case Event::ERROR:
 		return "error";
 	}
 	return "error";
@@ -72,31 +72,31 @@ const char *HistoryEvent::getString() const {
 void HistoryEvent::set(const char *he) {
 	std::string eventstr = he;
 	if (eventstr.compare("add") == 0) {
-		m_event = ADDED;
+		m_event = Event::ADDED;
 	} else if(eventstr.compare("checkout") == 0) {
-		m_event = CHECKOUT;
+		m_event = Event::CHECKOUT;
 	} else if(eventstr.compare("checkin") == 0) {
-		m_event = CHECKIN;
+		m_event = Event::CHECKIN;
 	} else if(eventstr.compare("export") == 0) {
-		m_event = EXPORT;
+		m_event = Event::EXPORT;
 	}
-	m_event = ERROR;
+	m_event = Event::ERROR;
 
 }
 
 const char HistoryEvent::getChar(HistoryEvent::Event evt) {
 	switch (evt) {
-	case ADDED:
+	case Event::ADDED:
 		return 'A';
-	case CHECKOUT:
+	case Event::CHECKOUT:
 		return 'O';
-	case CHECKIN:
+	case Event::CHECKIN:
 		return 'I';
-	case EXPORT:
+	case Event::EXPORT:
 		return 'X';
-	case UNCHECKOUT:
+	case Event::UNCHECKOUT:
 		return 'U';
-	case ERROR:
+	case Event::ERROR:
 		return 'E';
 	}
 	return 'E';

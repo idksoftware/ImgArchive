@@ -65,6 +65,8 @@
 #define DEFAULT_WORKSPACE_PATH			"/SIA Workspace"
 #define DEFAULT_MASTER_CATALOGUE_PATH	"/pictures/SIA Pictures"
 #define DEFAULT_HOME_PATH				"/IDK-Software/SIA"
+#define MASTER_BACKUP1_PATH				"/MasterBackup1"
+#define MASTER_BACKUP2_PATH				"/MasterBackup2"
 //#define DEFAULT_MASTER_PATH				"/IDK-Software/SIA/master"
 //#define DEFAULT_DERIVATIVE_PATH			"/IDK-Software/SIA/derivative"
 //#define DEFAULT_TOOLS_PATH				"/IDK-Software/SIA/tools"

@@ -40,14 +40,14 @@ namespace simplearchive {
 
 class HistoryEvent {
 public:
-	typedef enum {
+	enum class Event {
 		ERROR = 1,
 		ADDED,
 		CHECKOUT,
 		CHECKIN,
 		UNCHECKOUT,
 		EXPORT
-	} Event;
+	};
 	Event m_event;
 public:
 

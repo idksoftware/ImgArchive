@@ -62,14 +62,13 @@ namespace simplearchive {
 
 
 
-FolderList::FolderList(const char *archivePath) {
-	m_archivePath = archivePath;
+FolderList::FolderList(const char *archivePath) : m_archivePath(archivePath) {
+	
 	m_action = READING_WORKSPACE;
 }
 
-FolderList::FolderList(const char *archivePath, const char *workspacePath) {
-	m_archivePath = archivePath;
-	m_workspacePath = workspacePath;
+FolderList::FolderList(const char *archivePath, const char *workspacePath) :
+									m_archivePath(archivePath), m_workspacePath(workspacePath) {
 	m_action = READING_WORKSPACE;
 }
 
@@ -77,8 +76,7 @@ FolderList::~FolderList() {
 	// TODO Auto-generated destructor stub
 }
 
-bool FolderList::addDayFolder(const char *folderName) {
-	
+std::string FolderList::makeDBPathCSV() const {
 	std::string path = m_archivePath + std::string("/system");
 	if (SAUtils::DirExists(path.c_str()) == false) {
 		if (SAUtils::mkDir(path.c_str()) == false) {
@@ -88,14 +86,41 @@ bool FolderList::addDayFolder(const char *folderName) {
 		//	throw std::exception();
 		//}
 	}
-	
+
 	path += std::string("/chdsk");
 	if (SAUtils::DirExists(path.c_str()) == false) {
 		if (SAUtils::mkDir(path.c_str()) == false) {
 			throw std::exception();
 		}
-    }
-    std::string fpath = path + std::string("/ddata.csv");
+	}
+	path += "/fdata.csv";
+	return path;
+}
+
+std::string FolderList::makeDBPathXML() const {
+	std::string path = m_archivePath + std::string("/system");
+	if (SAUtils::DirExists(path.c_str()) == false) {
+		if (SAUtils::mkDir(path.c_str()) == false) {
+			throw std::exception();
+		}
+		//if (SAUtils::setHidden(path.c_str()) == false) {
+		//	throw std::exception();
+		//}
+	}
+
+	path += std::string("/chdsk");
+	if (SAUtils::DirExists(path.c_str()) == false) {
+		if (SAUtils::mkDir(path.c_str()) == false) {
+			throw std::exception();
+		}
+	}
+	path += "/fdata.xml";
+	return path;
+}
+
+bool FolderList::addDayFolder(const char *folderName) {
+	
+	std::string fpath = makeDBPathCSV();
     FileDataContainer fileDataContainer;
     fileDataContainer.read(fpath.c_str());
     fileDataContainer.add(folderName);
@@ -112,7 +137,9 @@ bool FolderList::incFolders(const char *folderName) {
 		}
     }
 	std::string fpath = path;
-	fpath += "/ddata.csv";
+	fpath += "/";
+	fpath += folderName;
+	fpath += ".csv";
 
     if (SAUtils::FileExists(path.c_str()) == false) {
 		throw std::exception();
@@ -125,26 +152,11 @@ bool FolderList::incFolders(const char *folderName) {
 }
 
 bool FolderList::incFiles(const char *folderName) {
-	std::string path = m_archivePath;
 	
-	path += "/system";
-	if (SAUtils::DirExists(path.c_str()) == false) {
-		if (SAUtils::mkDir(path.c_str()) == false) {
-			throw std::exception();
-		}
-	}
-	path += "/chdsk";
-	if (SAUtils::DirExists(path.c_str()) == false) {
-		if (SAUtils::mkDir(path.c_str()) == false) {
-			throw std::exception();
-		}
-    }
-	
-	std::string fpath = path;
-	fpath += "/ddata.csv";
 	//if (SAUtils::FileExists(fpath.c_str()) == false) {
     //	throw std::exception();
     //}
+	std::string fpath = makeDBPathCSV();
     FileDataContainer fileDataContainer;
     fileDataContainer.read(fpath.c_str());
     fileDataContainer.incFiles(folderName);
@@ -156,31 +168,19 @@ bool FolderList::incFiles(const char *folderName) {
 }
 
 bool FolderList::makeXML() {
-	std::string path = m_archivePath;
-	path += "/system";
-	if (SAUtils::DirExists(path.c_str()) == false) {
-		if (SAUtils::mkDir(path.c_str()) == false) {
-			throw std::exception();
-		}
-	}
-	path += "/chdsk";
-	if (SAUtils::DirExists(path.c_str()) == false) {
-		if (SAUtils::mkDir(path.c_str()) == false) {
-			throw std::exception();
-		}
+	
+	std::string fpathcsv = makeDBPathCSV();
+	if (SAUtils::FileExists(fpathcsv.c_str()) == false) {
+		throw std::exception();
 	}
 	// do files
-	std::string fpathxml = path;
-	fpathxml += "/ddata.xml";
+	std::string fpathxml = makeDBPathXML();
+	
 	std::ofstream filexml(fpathxml.c_str());
 	if (filexml.is_open() == false) {
 		return false;
 	}
-	std::string fpathcsv = path;
-	fpathcsv += "/ddata.csv";
-	if (SAUtils::FileExists(fpathcsv.c_str()) == false) {
-	    throw std::exception();
-	}
+	
 	FileDataContainer fileDataContainer;
 	fileDataContainer.read(fpathcsv.c_str());
 
@@ -188,7 +188,7 @@ bool FolderList::makeXML() {
 					<<	"<CheckDisk ordering=\"date\" >\n";
 	std::string currYear;
 	bool first = true;
-	for (std::vector<FolderFile>::iterator i = fileDataContainer.begin(); i != fileDataContainer.end(); i++) {
+	for (auto i = fileDataContainer.begin(); i != fileDataContainer.end(); i++) {
 		FolderFile data = *i;
 			//printf("%s", data.c_str());
 		//printf("%s: \n", year->c_str());
@@ -202,7 +202,8 @@ bool FolderList::makeXML() {
 			filexml <<	"\t<YearFolder Name=\"" << data.getYear() << "\" >\n";
 
 		}
-		std::string filepath = currYear + "/" + data.getFolderName() + "/.sia/chdsk/fdata.xml";
+		//for workspace std::string filepath = currYear + "/" + data.getFolderName() + "/.sia/chdsk/fdata.xml";
+		std::string filepath = currYear + "/" + data.getFolderName() + "/fdata.xml";
 		//printf("folder: %s \n", name->c_str());
 		filexml <<	"\t\t<DayFolder Name=\"" << data.getFolderName() << "\" "
 				"Files=\"" << data.getNFiles() << "\""
@@ -221,26 +222,13 @@ bool FolderList::makeXML() {
 }
 
 bool FolderList::makeList() {
-	std::string path = m_archivePath;
-	path += "/system";
-	if (SAUtils::DirExists(path.c_str()) == false) {
-		if (SAUtils::mkDir(path.c_str()) == false) {
-			throw std::exception();
-		}
-	}
-	path += std::string("/chdsk");
-	if (SAUtils::DirExists(path.c_str()) == false) {
-		if (SAUtils::mkDir(path.c_str()) == false) {
-			throw std::exception();
-		}
-	}
-	// do files
-	std::string fpath = path + std::string("/ddata.csv");
+	
+	std::string fpath = makeDBPathCSV();
 	std::ofstream filedat(fpath.c_str());
 	if (filedat.is_open() == false) {
 		return false;
 	}
-	fpath = path + std::string("/ddata.xml");
+	fpath = makeDBPathXML();
 	std::ofstream filexml(fpath.c_str());
 	if (filexml.is_open() == false) {
 		return false;
@@ -250,9 +238,9 @@ bool FolderList::makeList() {
 	filexml <<	"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 					<<	"<FolderList>\n";
 	FileList_Ptr filelist = SAUtils::getFiles_(m_archivePath.c_str());
-	for (std::vector<std::string>::iterator i = filelist->begin(); i != filelist->end(); i++) {
+	for (auto i = filelist->begin(); i != filelist->end(); i++) {
 		std::string year = *i;
-		std::string filepath = m_archivePath + "/" + year;
+		
 
 		char c = (year)[0];
 		if (c == '.' ) {
@@ -264,9 +252,10 @@ bool FolderList::makeList() {
 		std::string yearfolder = m_archivePath + '/' + year;
 		FileList_Ptr dayList = SAUtils::getFiles_(yearfolder.c_str());
 
-		for (std::vector<std::string >::iterator i = dayList->begin(); i != dayList->end(); i++) {
+		for (auto i = dayList->begin(); i != dayList->end(); i++) {
 			std::string name = *i;
-			std::string filepath = year + "/" + name + "/.sia/chdsk/fdata.xml";
+			//for workspace std::string filepath = year + "/" + name + "/.sia/chdsk/fdata.xml";
+			std::string filepath = year + "/" + name + "/fdata.xml";
 
 			char c = (name)[0];
 			if (c == '.' ) {
@@ -297,23 +286,15 @@ bool FolderList::validateAndRepairWorkspace(IMCompletedSummary& imCompletedSumma
 
 bool FolderList::validateOnlyWorkspace(IMCompletedSummary& imCompletedSummar) {
 	ValidateReportingObject validateReportingObject;
-	return validateWorkspace(validateReportingObject);
+	bool ret = validateWorkspace(validateReportingObject);
+	CheckDiskSummaryJounal& jounal = validateReportingObject.GetCheckDiskSummaryJounal();
+	imCompletedSummar.setSummary(jounal.getTotalSummary().toSummary().c_str());
+	imCompletedSummar.setResult(jounal.getTotalSummary().toResult().c_str());
+	return ret;
 }
 bool FolderList::validateWorkspace(ValidateReportingObject &validateReportingObject) {
-	std::string path = m_archivePath;
-	path += "/system";
-
-	if (SAUtils::DirExists(path.c_str()) == false) {
-		if (SAUtils::mkDir(path.c_str()) == false) {
-			throw std::exception();
-		}
-	}
-	path += std::string("/chdsk");
-	if (SAUtils::DirExists(path.c_str()) == false) {
-		return false;
-	}
-
-	std::string fpath = path + std::string("/ddata.csv");
+	
+	std::string fpath = makeDBPathCSV();
 	if (SAUtils::FileExists(fpath.c_str()) == false) {
 		return false;
 	}
@@ -322,7 +303,7 @@ bool FolderList::validateWorkspace(ValidateReportingObject &validateReportingObj
 	std::string dataPath = m_workspacePath;
 	
 	FileList_Ptr filelist = SAUtils::getFiles_(dataPath.c_str());
-	for (std::vector<std::string>::iterator i = filelist->begin(); i != filelist->end(); i++) {
+	for (auto i = filelist->begin(); i != filelist->end(); i++) {
 		std::string dataString = *i;
 		if (dataString[0] == '.') {
 			continue;
@@ -334,11 +315,12 @@ bool FolderList::validateWorkspace(ValidateReportingObject &validateReportingObj
 			continue;
 		}
 		//printf("Year found %s\n", year.c_str());
+		validateReportingObject.startYear(year.c_str());
 		std::string yearPath = dataPath += '/';
 		yearPath += year;
 
 		FileList_Ptr yearlist = SAUtils::getFiles_(yearPath.c_str());
-		for (std::vector<std::string>::iterator i = yearlist->begin(); i != yearlist->end(); i++) {
+		for (auto i = yearlist->begin(); i != yearlist->end(); i++) {
 			std::string dataString = *i;
 			if (dataString[0] == '.') {
 				continue;
@@ -352,9 +334,8 @@ bool FolderList::validateWorkspace(ValidateReportingObject &validateReportingObj
 				yearDayPath += '/';
 				yearDayPath += dataString;
 				//printf("File found %s\n", dataString.c_str());
-				std::string tmp = yearDayPath;
+				validateReportingObject.startDay(dataString.c_str());
 				
-
 				std::string archivePath = m_archivePath;
 					// Master
 				archivePath += '/'; archivePath += year;
@@ -365,7 +346,9 @@ bool FolderList::validateWorkspace(ValidateReportingObject &validateReportingObj
 					return false;
 				}
 			}
+			validateReportingObject.endDay(dataString.c_str());
 		}
+		validateReportingObject.endYear(year.c_str());
 
 	}
 	validateReportingObject.save();
@@ -387,7 +370,7 @@ bool ShowCheckedOut::doWork(const char *targetdir, const char *checkFilePath, co
 	if (checkDisk.showCheckedOut(checkFilePath, imageList) == false) {
 		return false;
 	}
-	for (std::vector<std::string>::iterator i = imageList.begin(); i != imageList.end(); i++) {
+	for (auto i = imageList.begin(); i != imageList.end(); i++) {
 		std::string dataString = *i;
 		std::string imageAddress = address;
 		imageAddress += "/";
@@ -474,26 +457,14 @@ bool FolderList::validateOnlyMaster(IMCompletedSummary& imCompletedSummar) {
 	ValidateReportingObject validateReportingObject;
 	bool ret = validateMaster(validateReportingObject);
 	CheckDiskSummaryJounal& jounal = validateReportingObject.GetCheckDiskSummaryJounal();
-	imCompletedSummar.set(jounal.getTotalSummary().toConsole().c_str());
+	imCompletedSummar.setSummary(jounal.getTotalSummary().toSummary().c_str());
+	imCompletedSummar.setResult(jounal.getTotalSummary().toResult().c_str());
 	return ret;
 }
 
 bool FolderList::validateMaster(ValidateReportingObject &validateReportingObject) {
 	
-	std::string path = m_archivePath;
-	path += "/system";
-		
-	if (SAUtils::DirExists(path.c_str()) == false) {
-		if (SAUtils::mkDir(path.c_str()) == false) {
-			throw std::exception();
-		}
-	}
-	path += std::string("/chdsk");
-	if (SAUtils::DirExists(path.c_str()) == false) {
-		throw std::exception();
-	}
-
-	std::string fpath = path + std::string("/ddata.csv");
+	std::string fpath = makeDBPathCSV();
 	if (SAUtils::FileExists(fpath.c_str()) == false) {
 		throw std::exception();
 	}
@@ -502,7 +473,7 @@ bool FolderList::validateMaster(ValidateReportingObject &validateReportingObject
 	std::string dataPath = m_archivePath;
 	
 	FileList_Ptr filelist = SAUtils::getFiles_(dataPath.c_str());
-	for (std::vector<std::string>::iterator i = filelist->begin(); i != filelist->end(); i++) {
+	for (auto i = filelist->begin(); i != filelist->end(); i++) {
 		std::string dataString = *i;
 		if (dataString[0] == '.') {
 			continue;
@@ -520,13 +491,11 @@ bool FolderList::validateMaster(ValidateReportingObject &validateReportingObject
 
 		
 		FileList_Ptr yearlist = SAUtils::getFiles_(yearPath.c_str());
-		for (std::vector<std::string>::iterator i = yearlist->begin(); i != yearlist->end(); i++) {
+		for (auto i = yearlist->begin(); i != yearlist->end(); i++) {
 			std::string dataString = *i;
 			if (dataString[0] == '.') {
 				continue;
 			}
-
-			std::string filepath = m_archivePath + "/" + dataString;
 			validateReportingObject.startDay(dataString.c_str());
 			if (fileDataContainer.find(dataString.c_str()) == false) {
 				printf("File not found %s\n", dataString.c_str());

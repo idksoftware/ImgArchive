@@ -15,23 +15,35 @@ class VersionMetadataObject;
 class VersionIndex 
 {
 	std::shared_ptr<VersionTable> versionTable;
-	std::string versionPath;
+	static std::string m_versionPath;
 	const char *getVersionPath() {
-		return versionPath.c_str();
+		return m_versionPath.c_str();
 	}
-	std::shared_ptr<MTRow> currow;
+	std::shared_ptr<MTRow> m_currow;
 	bool isValid;
+	int m_current;
 public:
 	VersionIndex();
 	~VersionIndex();
-	void setVersionPath(const char *s) {
-		versionPath = s;
+	static void setVersionPath(const char *s) {
+		m_versionPath = s;
 	}
 	bool createMasterVersion(const BasicMetadata &bm, const char *path, int masterSeqNumber, int primarySeqNumber);
-	bool createDerivativeVersion(const VersionMetadataObject& vmo, const char *path, int derivativeSeqNumber, int primarySeqNumber);
+	bool createDerivativeVersion(const VersionMetadataObject& vmo, const char *path, int derivativeSeqNumber, int primarySeqNumber, const char *masterFileName);
 	std::string getCurrentVersion(const char *path);
 	SharedMTRow getCurrentRow();
 	bool setRowCursor(const char *path);
+	bool setRowCursor(const char *path, int version);
+	int getLatest(const char *path) {
+		if (m_current == -1) {
+			if (setRowCursor(path) == false) {
+				return -1;
+			}
+		}
+		return m_current;
+	}
+
+	
 };
 
 }

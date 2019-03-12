@@ -98,6 +98,16 @@ errno_t strncpy_p(char *strDest, size_t numberOfElements, const char *strSource,
 	return err;
 }
 
+errno_t strncpy_p(char * strDest, const char * strSource, size_t count)
+{
+	errno_t err = 1;
+	strDest = strncpy(strDest, strSource, count);
+	if (strDest == nullptr) {
+		err = 0;
+	}
+	return err;
+}
+
 void sprintf_p(std::string &s, const std::string fmt, ...)
 {
 	int n, size = 100;

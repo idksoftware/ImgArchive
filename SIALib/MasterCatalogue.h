@@ -27,6 +27,8 @@ namespace simplearchive {
 		
 		bool m_enabled;
 	public:
+		ViewPath() = default;
+		virtual ~ViewPath() = default;
 		bool settup();
 		bool settupRelative(std::string &yyyymmddStr);
 		bool isEnabled();

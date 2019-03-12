@@ -36,6 +36,8 @@
 #include "ImageSideCar.h"
 #include "MetadataObject.h"
 #include "VersionMetadataObject.h"
+#include "DerivativeMetadata.h"
+#include "VersionsList.h"
 #include "JpegEXIF.h"
 #include <sstream>
 #include <iostream>
@@ -218,6 +220,36 @@ bool XMLWriter::writeImage(MetadataObject &container, const char *path) {
 
 }
 
+
+bool XMLWriter::writeDerivativeMetadata(DerivativeMetadata &container, const char *path) {
+	std::ofstream xmlFile;
+	xmlFile.open(path);
+	xmlFile << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+		<< "<DerivativeMetadata>\n"
+		<< writeTag(DB_SEQUENCEID, container.getSequenceIDString())
+		<< writeTag(DB_VERSION, container.getVersionString())
+		<< writeTag(DB_DATABASEID, container.getDatabaseIDString())
+		<< writeTag(DB_FILENAME, container.getFilenameString())
+		<< writeTag(DB_ORGINALNAME, container.getOrginalNameString())
+		<< writeTag(DB_FILEPATH, container.getFilePathString())
+		<< writeTag(DB_CRC, container.getCRCString())
+		<< writeTag(DB_MD5, container.getMD5String())
+		<< writeTag(DB_UUID, container.getUUIDString())
+		<< writeTag(DB_FILESIZE, container.getFileSizeString())
+		<< writeTag(DB_DATEMODIFIED, container.getDateModifiedString())
+		<< writeTag(DB_DATECREATE, container.getDateCreateString())
+		<< writeTag(DB_DATEADDED, container.getDateAddedString())
+		<< writeTag(DB_COMMENT, container.getCommentString())
+		<< writeTag(DB_AUTHOR, container.getAuthorString())
+		<< writeTag(DB_DESCRIPTION, container.getDescriptionString())
+		<< writeTag(DB_EDITOR, container.getEditorString())
+		<< writeTag(DB_VERSIONPATH, container.getVersionPathString())
+		<< "</DerivativeMetadata>\n";
+		xmlFile.close();
+
+	return true;
+}
+
 bool XMLWriter::writeIndexImage(VersionMetadataObject &container, const char *path) {
 
 	std::ofstream xmlFile;
@@ -237,6 +269,33 @@ bool XMLWriter::writeIndexImage(VersionMetadataObject &container, const char *pa
 		<< "</Version>\n"
 		
 		<< "</VersionData>\n";
+
+
+	xmlFile.close();
+
+	return true;
+
+}
+
+bool XMLWriter::writeImageVersionList(VersionsList &container, const char *imagePath, const char *location) {
+
+	std::ofstream xmlFile;
+	xmlFile.open(location);
+	xmlFile << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+		<< "<VersionData>\n"
+		<< "<ImageName>\n"
+		<< writeTag(DB_FILENAME, imagePath)
+		<< "</ImageName>\n"
+		<< "<Versions>\n";
+		for (auto i = container.begin(); i != container.end(); i++) {
+			VersionsListItem& item = *i;
+			xmlFile << "<Version>\n"
+					<< writeTag("Num", std::to_string(item.getVersion()))
+					<< writeTag(DB_FILEPATH, item.getVersionMetadataPath())
+					<< "</Version>\n";
+		}
+		xmlFile << "</Versions>\n"
+				<< "</VersionData>\n";
 
 
 	xmlFile.close();

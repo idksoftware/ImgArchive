@@ -52,7 +52,6 @@ namespace simplearchive {
  * This will allow the calalog to be mantained in files and foldes of a manageable size.
  */
 class CatalogManager {
-	static std::auto_ptr<CatalogManager> m_this;
 	static std::string m_catalogPath;
 	static std::string m_MasterPath;
 	bool addDayFolder(const char *folderName);

@@ -119,7 +119,7 @@ namespace simplearchive {
 		}
 	}
 
-std::string CheckDisk::m_archivePath;
+//std::string CheckDisk::m_archivePath;
 
 /*
  * This class manages the check disk process.
@@ -681,10 +681,12 @@ CkdskData::Status CkdskDiffFile::find(unsigned int crc, const char *md5, const c
 }
 
 
+/*
 void CheckDisk::setArchivePath(const char *archivePath) {
 	m_archivePath = archivePath;
 	
 }
+*/
 
 
 CheckDisk::~CheckDisk() {}
@@ -708,31 +710,38 @@ bool CheckDisk::makeCheckData(const char *targetdir) {
 }
 
 
-bool CheckDisk::makeCheckData(const char *targetdir, const char *savefolder) {
-	FileList_Ptr filelist = SAUtils::getFiles_(targetdir);
+bool CheckDisk::makeCheckData(const char *targetdir, const char *chkdskfolder) {
 
 	// do files
-	std::string fpath = savefolder + std::string("/fdata.csv");
-	std::ofstream filedat(fpath.c_str());
+	std::string csvPath = chkdskfolder + std::string("/fdata.csv");
+	std::string xmlPath = chkdskfolder + std::string("/fdata.xml");
+
+	return makeCheckData(chkdskfolder, targetdir, csvPath.c_str(), xmlPath.c_str());
+}
+
+bool CheckDisk::makeCheckData(const char *chkdskfolder, const char *targetFolder, const char *csvPath, const char *xmlPath) {
+
+	std::ofstream filedat(csvPath);
 	if (filedat.is_open() == false) {
 		return false;
 	}
-	fpath = savefolder + std::string("/fdata.xml");
-	std::ofstream filexml(fpath.c_str());
+
+	std::ofstream filexml(xmlPath);
 	if (filexml.is_open() == false) {
 		return false;
 	}
 	filexml <<	"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 					<<	"<FileList>\n";
 
-	std::string targetdirStr = targetdir;
+	std::string targetdirStr = targetFolder;
 
 	// do directories
-	std::string dpath = savefolder + std::string("/ddata.csv");
+	std::string dpath = chkdskfolder + std::string("/ddata.csv");
 	std::ofstream dir(dpath.c_str());
 	if (dir.is_open() == false) {
 		return false;
 	}
+	FileList_Ptr filelist = SAUtils::getFiles_(targetFolder);
 
 	for (std::vector<std::string>::iterator i = filelist->begin(); i != filelist->end(); i++) {
 		std::string name = *i;
@@ -797,18 +806,23 @@ bool CheckDisk::makeCheckData(const char *targetdir, const char *savefolder) {
 	return true;
 }
 
-bool CheckDisk::makeXML(const char *targetdir) {
+bool CheckDisk::makeXML(const char *chkdskFolder) {
+	std::string fpath = chkdskFolder + std::string("/fdata.csv");
+	std::string targetdirStr = chkdskFolder;
+	std::string fpathxml = targetdirStr + std::string("/fdata.xml");
+	return makeXML(chkdskFolder, fpath.c_str(), fpathxml.c_str());
+}
+
+bool CheckDisk::makeXML(const char *chkdskFolder, const char *csvFile, const char *mxlFile) {
 
 	// do files
 
-	std::string fpath = targetdir + std::string("/fdata.csv");
-	std::string targetdirStr = targetdir;
-	std::string fpathxml = targetdirStr + std::string("/fdata.xml");
+	
 	CkdskManifestFile ckdskDataFile;
-	if (ckdskDataFile.read(fpath.c_str()) == false) {
+	if (ckdskDataFile.read(csvFile) == false) {
 		return false;
 	}
-	std::ofstream filexml(fpathxml.c_str());
+	std::ofstream filexml(mxlFile);
 
 	filexml <<	"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 					<<	"<FileList>\n";
@@ -817,7 +831,8 @@ bool CheckDisk::makeXML(const char *targetdir) {
 	CkdskDataContainer& list = ckdskDataFile.getData();
 	for (std::vector<CkdskData>::iterator i = list.begin(); i != list.end(); i++) {
 		CkdskData &data = *i;
-		std::string filepath = targetdirStr + "/" + data.getName();
+		std::string filepath = chkdskFolder;
+		filepath += "/" + data.getName();
 		std::string checkedOut = (data.getCheckedOut()) ? "True" : "";
 		ExifDateTime modified;
 		modified.setDateTime(data.getModified());
@@ -837,41 +852,66 @@ bool CheckDisk::makeXML(const char *targetdir) {
 	return true;
 }
 
-bool CheckDisk::update(const char *targetdir, const char *targetfile) {
-
+bool CheckDisk::update(const char *rootPath, const char *targetdir, const char *targetfilename) {
+	std::string m_archivePath = rootPath;
 	std::string targetStr = targetdir;
 	std::string yearStr = targetStr.substr(0, 4);
-	std::string path = m_archivePath + '/' + yearStr + '/';
-	path += targetdir + std::string("/chdsk");
-	std::string fpath = path + std::string("/fdata.csv");
-	if (SAUtils::DirExists(path.c_str()) == false) {
-		if (SAUtils::mkDir(path.c_str()) == false) {
+	std::string chkdskFolderPath = m_archivePath + "/system/chdsk/" + yearStr + '/';
+	if (SAUtils::DirExists(chkdskFolderPath.c_str()) == false) {
+		if (SAUtils::mkDir(chkdskFolderPath.c_str()) == false) {
 			throw std::exception();
 		}
 	}
-	std::string fullpath = m_archivePath;
-	fullpath += '/';
-	fullpath += yearStr;
-	fullpath += '/';
-	fullpath += targetStr;
-	fullpath += "/images/";
-	fullpath += targetfile;
-	if (SAUtils::FileExists(path.c_str()) == false) {
-		throw std::exception();
-	}
-	CkdskManifestFile ckdskDataFile;
-	if (SAUtils::FileExists(fpath.c_str()) == true) {
-		if (ckdskDataFile.read(fpath.c_str()) == false) {
-			return false;
+	chkdskFolderPath += targetdir;
+	if (SAUtils::DirExists(chkdskFolderPath.c_str()) == false) {
+		if (SAUtils::mkDir(chkdskFolderPath.c_str()) == false) {
+			throw std::exception();
 		}
 	}
-	if (ckdskDataFile.add(fullpath.c_str(), targetfile) == false) {
+
+	std::string chkdskFilename = std::string("fdata"); // name without extention
+	
+	std::string targetFolderPath = m_archivePath;
+	targetFolderPath += '/';
+	targetFolderPath += yearStr;
+	targetFolderPath += '/';
+	targetFolderPath += targetStr;
+	targetFolderPath += "/images";
+	
+	return update(chkdskFolderPath.c_str(), chkdskFilename.c_str(), targetFolderPath.c_str(), targetfilename);
+}
+/**
+	const char *chkdskFolderPath	= The full path to the chkdsk folder.
+	const char *targetFolderPath	= The full path to the target folder.
+	const char *targetfilename	= target file name.
+	const char *chkdskfilename	= target file name without extention.
+*/
+
+bool CheckDisk::update(const char *chkdskFolderPath, const char *chkdskFilename, const char *targetFolderPath, const char *targetfilename) {
+	CkdskManifestFile ckdskDataFile;
+	
+	std::string fullCkdskFile = chkdskFolderPath;
+	fullCkdskFile += '/';
+	fullCkdskFile += chkdskFilename;
+	fullCkdskFile += ".csv";
+	if (SAUtils::FileExists(fullCkdskFile.c_str()) == true) {
+		// read if exist else continue
+		if (ckdskDataFile.read(fullCkdskFile.c_str()) == false) {
+			throw std::exception();
+		}
+	}
+
+	std::string fullTargetFilePath = targetFolderPath;
+	fullTargetFilePath += '/';
+	fullTargetFilePath += targetfilename;
+
+	if (ckdskDataFile.add(fullTargetFilePath.c_str(), targetfilename) == false) {
 		return false;
 	}
-	if (ckdskDataFile.write(fpath.c_str()) == false) {
+	if (ckdskDataFile.write(fullCkdskFile.c_str()) == false) {
 		return false;
 	}
-	if (makeXML(path.c_str()) == false) {
+	if (makeXML(chkdskFolderPath) == false) {
 		return false;
 	}
 

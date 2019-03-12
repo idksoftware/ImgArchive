@@ -52,7 +52,7 @@ public:
 	bool addMetadata(const char *filename);
 	virtual ~ImageGroup();
 	void print() {
-		for (std::vector<ImageContainer *>::iterator i = this->begin(); i != this->end(); i++) {
+		for (auto i = this->begin(); i != this->end(); i++) {
 			ImageContainer *data = *i;
 			data->print();
 		}
@@ -71,7 +71,7 @@ class ImageGroups : public std::vector < ImageGroup * > {
 public:
 	void print() {
 
-		for (std::vector<ImageGroup *>::iterator i = this->begin(); i != this->end(); i++) {
+		for (auto i = this->begin(); i != this->end(); i++) {
 			ImageGroup *data = *i;
 			data->print();
 		}

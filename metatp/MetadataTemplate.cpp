@@ -49,16 +49,11 @@ namespace simplearchive {
 std::unique_ptr<ConfigBlock>	MetadataTemplate::m_templateFile(new ConfigBlock);
 //Config *MetadataTemplate::m_templateFile = 0;
 
-std::unique_ptr<MetadataTemplate> MetadataTemplate::m_instance;
-std::once_flag MetadataTemplate::m_onceFlag;
 
 MetadataTemplate& MetadataTemplate::GetInstance()
 {
-	std::call_once(m_onceFlag,
-		[] {
-		m_instance.reset(new MetadataTemplate);
-	});
-	return *m_instance.get();
+	static MetadataTemplate metadataTemplate;
+	return metadataTemplate;
 }
 
 MetadataTemplate::~MetadataTemplate() {}
@@ -91,7 +86,7 @@ bool MetadataTemplate::read(const char *datafile) {
 	return true;
 }
 MetadataObject_ptr MetadataTemplate::getMetadataObject() {
-	MetadataObject* metadataObject = new MetadataObject;
+	MetadataObject_ptr metadataObject = std::make_unique<MetadataObject>();
 	
 	for (std::map<std::string, std::string>::iterator ii = m_templateFile->begin(); ii != m_templateFile->end(); ++ii) {
 		std::string &value = getValue((*ii).first.c_str());
@@ -111,6 +106,6 @@ MetadataObject_ptr MetadataTemplate::getMetadataObject() {
 		//	*value = (*ii).second.c_str();
 		//}
 	}
-	return MetadataObject_ptr(metadataObject);
+	return metadataObject;
 }
 } /* namespace simplearchive */

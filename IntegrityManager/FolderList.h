@@ -42,7 +42,7 @@ namespace simplearchive {
 
 	class ShowCheckedOut : public MasterFolderVistor {
 	public:
-		ShowCheckedOut(const char *archivePath) : MasterFolderVistor(archivePath) {};
+		explicit ShowCheckedOut(const char *archivePath) : MasterFolderVistor(archivePath) {};
 		virtual bool doWork(const char *targetdir, const char *checkFilePath, const char *address, VisitingObject *visitingObject);
 	};
 
@@ -91,13 +91,16 @@ namespace simplearchive {
 
 		bool fixWorkspace(const char *jouralFile);
 		Action m_action;
+
+		std::string makeDBPathCSV() const;
+		std::string makeDBPathXML() const;
 	public:
-		FolderList(const char *archivePath);
+		explicit FolderList(const char *archivePath);
 		FolderList(const char *archivePath, const char *workspacePath);
 		virtual ~FolderList();
 
 		bool addDayFolder(const char *folderName);
-		bool incFolders(const char *folderName);
+		bool incFolders(const char *folderName = "fdata");
 		bool incFiles(const char *folderName);
 		bool makeList();
 		bool validate(IMCompletedSummary& imCompletedSummary);

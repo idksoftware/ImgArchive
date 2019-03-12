@@ -73,10 +73,9 @@ namespace simplearchive {
 
 
 
-	ValidateAndRepairingWorkspaceObject::ValidateAndRepairingWorkspaceObject(const char *archivePath, const char *workspacePath) {
-		m_archivePath = archivePath;
-		m_workspacePath = workspacePath;
-	}
+	ValidateAndRepairingWorkspaceObject::ValidateAndRepairingWorkspaceObject(const char *archivePath, const char *workspacePath) :
+										m_archivePath(archivePath), m_workspacePath(workspacePath)
+	{}
 	
 	bool ValidateAndRepairingWorkspaceObject::process(const char *file, ReportStatus &status, const char *orginal) {
 		if (status.get() == ReportStatus::Unchanged) {
@@ -121,8 +120,8 @@ namespace simplearchive {
 			{
 				std::string fileStr = file;
 				std::string year = fileStr.substr(0, 4);
-				std::string dmy = fileStr.substr(0, 10);
-				std::string name = fileStr.substr(11, fileStr.length() - 9);
+				//std::string dmy = fileStr.substr(0, 10);
+				//std::string name = fileStr.substr(11, fileStr.length() - 9);
 				std::string workspacePath = m_workspacePath;
 				workspacePath += '/'; workspacePath += year; workspacePath += '/';
 				workspacePath += file;
@@ -207,10 +206,8 @@ namespace simplearchive {
 		return true;
 	}
 
-	ValidateAndRepairingMasterObject::ValidateAndRepairingMasterObject(const char *archivePath, const char *workspacePath) {
-		m_archivePath = archivePath;
-		m_workspacePath = workspacePath;
-	}
+	ValidateAndRepairingMasterObject::ValidateAndRepairingMasterObject(const char *archivePath, const char *workspacePath)
+						: m_archivePath(archivePath), m_workspacePath(workspacePath) {}
 
 	bool ValidateAndRepairingMasterObject::process(const char *file, ReportStatus &status, const char *orginal) {
 		

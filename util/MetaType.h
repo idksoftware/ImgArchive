@@ -466,12 +466,12 @@ using SharedMTRow = std::shared_ptr<MTRow>;
 class MTTable : public std::vector<SharedMTRow> {
 
 	std::shared_ptr<MTTableSchema> m_TableSchema;
-	int rowCursor;
+	int m_rowCursor;
 public:
 	const int NOT_FOUND = -1;
 	MTTable(MTTableSchema *pSchemaTable) {
 		m_TableSchema = std::make_shared<MTTableSchema>(*pSchemaTable);
-		rowCursor = NOT_FOUND;
+		m_rowCursor = NOT_FOUND;
 	};
 	virtual ~MTTable() {};
 	MTTableSchema &getSchema() const {
@@ -495,8 +495,8 @@ public:
 	}
 
 	void SetRowsetCursorPosition(int pos) {
-		rowCursor = pos;
-		at(rowCursor);
+		m_rowCursor = pos;
+		at(m_rowCursor);
 	}
 
 	const MTSchema& getSchema(int pos) {
@@ -504,15 +504,15 @@ public:
 		return s;
 	}
 	/// create a column that has the column name set and the value to be matched.
-	/// If true the RoCurson will be at the mached row.
+	/// If true the m_rowCursor will be at the matched row.
 	bool find(MTColumn& column);
 
 	SharedMTRow getCurrentRow() {
-		if (rowCursor == NOT_FOUND) {
+		if (m_rowCursor == NOT_FOUND) {
 			return nullptr;
 		}
-		SharedMTRow row = at(rowCursor);
-		return row;
+		std::shared_ptr<MTRow> srow = vector::at(m_rowCursor);
+		return srow;
 	}
 };
 

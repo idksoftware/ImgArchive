@@ -240,6 +240,27 @@ enum class MetadataObjectIndex {
 	
 };
 
+enum class DerivativeMetadataIndex {
+	DB_SEQUENCEID_IDX,
+	DB_VERSION_IDX,
+	DB_DATABASEID_IDX,
+	DB_FILENAME_IDX,
+	DB_ORGINALNAME_IDX,
+	DB_FILEPATH_IDX,
+	DB_CRC_IDX,
+	DB_MD5_IDX,
+	DB_UUID_IDX,
+	DB_FILESIZE_IDX,
+	DB_DATEMODIFIED_IDX,
+	DB_DATECREATE_IDX,
+	DB_DATEADDED_IDX,
+	DB_COMMENT_IDX,
+	DB_AUTHOR_IDX,
+	DB_DESCRIPTION_IDX,
+	DB_EDITOR_IDX,
+	DB_VERSIONPATH_IDX
+};
+
 enum class PrimaryIndexIndex {
 	PI_SEQUENCEID_IDX,// template
 	PI_SHORTIMAGEPATH_IDX,
@@ -269,7 +290,14 @@ enum class SystemHistoryIndex {
 	SH_COMMENT_IDX
 };
 
-
+enum class CheckoutIndex {
+	CO_FILENAME_IDX,
+	CO_FILEPATH_IDX,
+	CO_EVENT_IDX,
+	CO_VERSION_IDX,
+	CO_DATEADDED_IDX,
+	CO_COMMENT_IDX,
+};
 // CSV Database Defines
 	/// Asset Properties
 /*

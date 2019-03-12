@@ -17,7 +17,7 @@ namespace CommandLineProcessing {
 	class AppBase
 	{
 	protected:
-		std::unique_ptr<SIAArgvParser> m_argvParser;
+		std::shared_ptr<SIAArgvParser> m_argvParser;
 		bool m_configured;
 		std::string  m_configPath;
 		std::string  m_homePath;
@@ -25,10 +25,11 @@ namespace CommandLineProcessing {
 		static int m_error;
 		static std::string m_errorstring;
 
-		AppBase(SIAArgvParser *argvParser) {
-			m_argvParser.reset(argvParser);
-			m_configured = false;
-		}
+		AppBase(std::shared_ptr<SIAArgvParser> argvParser) :
+					m_argvParser(argvParser),
+					m_configured(false)
+		{}
+
 	public:
 		~AppBase();
 		
@@ -49,7 +50,7 @@ namespace CommandLineProcessing {
 		}
 
 		static const char *getFullErrorString() {
-			std::string tmp;
+			
 			std::stringstream str;
 			str << "E" << std::setw(4) << std::setfill('0')<< m_error << ": " << m_errorstring;
 			m_errorstring = str.str();

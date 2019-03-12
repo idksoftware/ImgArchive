@@ -4,14 +4,13 @@
 
 namespace simplearchive {
 
-	ArchiveFolderVistor::ArchiveFolderVistor(const char *archivePath) {
-		m_archivePath = archivePath;
+	ArchiveFolderVistor::ArchiveFolderVistor(const char *archivePath) : m_archivePath(archivePath) {
+		
 	}
 
-	ArchiveFolderVistor::ArchiveFolderVistor(const char *archivePath, const char *workspacePath) {
-		m_archivePath = archivePath;
-		m_workspacePath = workspacePath;
-	}
+	ArchiveFolderVistor::ArchiveFolderVistor(const char *archivePath, const char *workspacePath) :
+											m_archivePath(archivePath), m_workspacePath(workspacePath)
+		{}
 
 
 	bool MasterFolderVistor::process(const char *addressScope) {
@@ -40,7 +39,7 @@ namespace simplearchive {
 		// place holder for reporting object ValidateReportingObject validateReportingObject;
 		// root year list
 		FileList_Ptr yearlist = SAUtils::getFiles_(dataPath.c_str());
-		for (std::vector<std::string>::iterator i = yearlist->begin(); i != yearlist->end(); i++) {
+		for (auto i = yearlist->begin(); i != yearlist->end(); i++) {
 			std::string dataString = *i;
 			if (dataString[0] == '.') {
 				continue;
@@ -57,13 +56,11 @@ namespace simplearchive {
 
 
 			FileList_Ptr daylist = SAUtils::getFiles_(yearPath.c_str());
-			for (std::vector<std::string>::iterator i = daylist->begin(); i != daylist->end(); i++) {
+			for (auto i = daylist->begin(); i != daylist->end(); i++) {
 				std::string dataString = *i;
 				if (dataString[0] == '.') {
 					continue;
 				}
-
-				std::string filepath = m_archivePath + "/" + dataString;
 
 				if (folderDataContainer.find(dataString.c_str()) == false) {
 					printf("File not found %s\n", dataString.c_str());
@@ -114,7 +111,7 @@ namespace simplearchive {
 		std::string dataPath = m_workspacePath;
 
 		FileList_Ptr filelist = SAUtils::getFiles_(dataPath.c_str());
-		for (std::vector<std::string>::iterator i = filelist->begin(); i != filelist->end(); i++) {
+		for (auto i = filelist->begin(); i != filelist->end(); i++) {
 			std::string dataString = *i;
 			if (dataString[0] == '.') {
 				continue;
@@ -125,27 +122,25 @@ namespace simplearchive {
 			if (year.compare("system") == 0) {
 				continue;
 			}
-			printf("Year found %s\n", year.c_str());
+			//printf("Year found %s\n", year.c_str());
 			std::string yearPath = dataPath += '/';
 			yearPath += year;
 
 			FileList_Ptr yearlist = SAUtils::getFiles_(yearPath.c_str());
-			for (std::vector<std::string>::iterator i = yearlist->begin(); i != yearlist->end(); i++) {
+			for (auto i = yearlist->begin(); i != yearlist->end(); i++) {
 				std::string dataString = *i;
 				if (dataString[0] == '.') {
 					continue;
 				}
 
 				if (fileDataContainer.find(dataString.c_str()) == false) {
-					printf("File not found %s\n", dataString.c_str());
+					//printf("File not found %s\n", dataString.c_str());
 				}
 				else {
 					std::string yearDayPath = yearPath;
 					yearDayPath += '/';
 					yearDayPath += dataString;
-					printf("File found %s\n", dataString.c_str());
-					std::string tmp = yearDayPath;
-
+					//printf("File found %s\n", dataString.c_str());
 
 					std::string archivePath = m_archivePath;
 					// Master

@@ -69,16 +69,23 @@ bool CheckFileItem::write() {
 	return true;
 }
 
-std::string CheckFile::m_workspacePath;
+/*
+std::string CheckWorkspaceFile::m_workspacePath;
 
-bool CheckFile::initalise(const char *workspacePath) {
+bool CheckWorkspaceFile::initalise(const char *workspacePath) {
 	m_workspacePath = workspacePath;
 	return true;
 }
 
+std::string CheckMasterFile::m_masterPath;
+
+bool CheckMasterFile::initalise(const char *masterPath) {
+	m_masterPath = masterPath;
+	return true;
+}
 
 
-std::string CheckFile::getFullAddress(const char *address) {
+std::string CheckWorkspaceFile::getFullAddress(const char *address) {
 	std::string addr = address;
 	PathController pathcontroller(m_workspacePath.c_str());
 	pathcontroller.splitShort(address);
@@ -88,7 +95,17 @@ std::string CheckFile::getFullAddress(const char *address) {
 	return fullPath;
 }
 
-bool CheckFile::CheckOut(const char *address) {
+std::string CheckMasterFile::getFullAddress(const char *address) {
+	std::string addr = address;
+	PathController pathcontroller(m_masterPath.c_str());
+	pathcontroller.splitShort(address);
+	pathcontroller.makePath();
+	std::string fullPath = pathcontroller.getFullPath();
+	fullPath += "/.sia/ckfile.dat";
+	return fullPath;
+}
+
+bool CheckWorkspaceFile::CheckOut(const char *address) {
 	std::string fullPath = getFullAddress(address);
 	CheckFileItem checkFileItem(fullPath.c_str());
 	if (checkFileItem.read() == false) {
@@ -105,7 +122,25 @@ bool CheckFile::CheckOut(const char *address) {
 	}
 	return true;
 }
-bool CheckFile::CheckIn(const char *address) {
+
+bool CheckMasterFile::CheckOut(const char *address) {
+	std::string fullPath = getFullAddress(address);
+	CheckFileItem checkFileItem(fullPath.c_str());
+	if (checkFileItem.read() == false) {
+		ErrorCode::setErrorCode(SIA_ERROR::READ_ERROR);
+		return true;
+	}
+	std::string addr = address;
+	PathController pathcontroller;
+	pathcontroller.splitShort(address);
+	checkFileItem.check(pathcontroller.getImage().c_str());
+	if (checkFileItem.write() == false) {
+		ErrorCode::setErrorCode(SIA_ERROR::WRITE_ERROR);
+		return true;
+	}
+	return true;
+}
+bool CheckWorkspaceFile::CheckIn(const char *address) {
 	std::string fullPath = getFullAddress(address);
 	CheckFileItem checkFileItem(fullPath.c_str());
 	if (checkFileItem.read() == false) {
@@ -120,6 +155,107 @@ bool CheckFile::CheckIn(const char *address) {
 		return true;
 	}
 	return true;
+}
+
+bool CheckMasterFile::CheckIn(const char *address) {
+	std::string fullPath = getFullAddress(address);
+	CheckFileItem checkFileItem(fullPath.c_str());
+	if (checkFileItem.read() == false) {
+		ErrorCode::setErrorCode(SIA_ERROR::READ_ERROR);
+		return true;
+	}
+	std::string addr = address;
+	std::string filename = addr.substr(14, addr.length() - 14);
+	checkFileItem.uncheck(filename.c_str());
+	if (checkFileItem.write() == false) {
+		ErrorCode::setErrorCode(SIA_ERROR::WRITE_ERROR);
+		return true;
+	}
+	return true;
+}
+*/
+
+std::string CDCheckInOutManager::m_masterPath;
+std::string CDCheckInOutManager::m_workspacePath;
+std::string CDCheckInOutManager::m_derivativePath;
+
+std::string CDCheckInOutManager::getFullAddress(DB db, const char *address) {
+	std::string addr = address;
+	std::string fullPath;
+	switch (db) {
+	case DB::Workspace:
+	{
+		PathController pathcontroller(m_workspacePath.c_str());
+		pathcontroller.splitShort(address);
+		pathcontroller.makePath();
+		fullPath = pathcontroller.getFullPath();
+		break;
+	}
+	case DB::Master:
+	{
+		PathController pathcontroller(m_masterPath.c_str());
+		pathcontroller.splitShort(address);
+		pathcontroller.makePath();
+		fullPath = pathcontroller.getFullPath();
+		break;
+	}
+	case DB::Derivative:
+	{
+		PathController pathcontroller(m_derivativePath.c_str());
+		pathcontroller.splitShort(address);
+		pathcontroller.makePath();
+		fullPath = pathcontroller.getFullPath();
+		break;
+	}
+	}
+	fullPath += "/.sia/ckfile.dat";
+	return fullPath;
+}
+
+
+bool CDCheckInOutManager::CheckOut(DB db, const char * address)
+{
+	std::string fullPath = getFullAddress(db, address);
+	CheckFileItem checkFileItem(fullPath.c_str());
+	if (checkFileItem.read() == false) {
+		ErrorCode::setErrorCode(SIA_ERROR::READ_ERROR);
+		return false;
+	}
+	std::string addr = address;
+	PathController pathcontroller;
+	pathcontroller.splitShort(address);
+	checkFileItem.check(pathcontroller.getImage().c_str());
+	if (checkFileItem.write() == false) {
+		ErrorCode::setErrorCode(SIA_ERROR::WRITE_ERROR);
+		return false;
+	}
+	return true;
+}
+
+
+bool CDCheckInOutManager::CheckIn(DB db, const char * address)
+{
+	std::string fullPath = getFullAddress(db, address);
+	CheckFileItem checkFileItem(fullPath.c_str());
+	if (checkFileItem.read() == false) {
+		ErrorCode::setErrorCode(SIA_ERROR::READ_ERROR);
+		return false;
+	}
+	std::string addr = address;
+	std::string filename = addr.substr(14, addr.length() - 14);
+	checkFileItem.uncheck(filename.c_str());
+	if (checkFileItem.write() == false) {
+		ErrorCode::setErrorCode(SIA_ERROR::WRITE_ERROR);
+		return false;
+	}
+	return true;
+}
+
+CDCheckInOutManager & CDCheckInOutManager::get()
+{
+	static CDCheckInOutManager _this;
+
+	return _this;
 }
 
 } /* namespace simplearchive */

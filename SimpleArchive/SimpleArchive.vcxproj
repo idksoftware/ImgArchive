@@ -22,6 +22,7 @@
     <ProjectGuid>{E6B44F35-CDAB-4487-9CD4-3DC02BBB488E}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>SimpleArchive</RootNamespace>
+    <ProjectName>iaarc</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

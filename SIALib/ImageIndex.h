@@ -64,12 +64,10 @@ public:
 		m_version = csvArgs.at(4);
 	}
 
-	ImageId(const char *name, unsigned long crc, const char *md5, const char *path, int version) {
-		m_name = name;
-		m_crc = crc;
-		m_md5 = md5;
-		m_location = path;
-		m_version = version;
+	ImageId(const char *name, unsigned long crc, const char *md5, const char *path, int version) :
+		m_name(name), m_crc(crc), m_md5(md5), m_location(path)
+	{
+		m_version = std::to_string(version);
 	}
 
 	//bool add(const char *name, unsigned long crc, const char *md5);
@@ -124,9 +122,9 @@ class ImageIndex {
 	std::string m_dbpath;
 	unsigned char m_data[4];
 	/** Adds to primary and backups */
-	bool add(const char *name, unsigned long crc, const char *md5, const char *path, int version);
+	bool add(const char *name, unsigned long crc, const char *md5, const char *path, int version, const char *orginal);
 	/** Adds to the Image index db using the given path */
-	bool add(const char *name, unsigned long crc, const char *md5, const char *imagePath, int version, const char *rootPath);
+	bool add(const char *name, unsigned long crc, const char *md5, const char *imagePath, int version, const char *rootPath, const char *orginal);
 	DupDataFile_Ptr findDupDataFile(unsigned long crc);
 	DupDataFile_Ptr findDupDataFile(unsigned long crc, const char *root);
 	/**
@@ -147,7 +145,7 @@ public:
 	*	This function returns true if added, false if dup
 	*/
 	bool add(const BasicMetadata &BasicMetadata);
-	bool add(const FileInfo& fileInfo);
+	bool add(const FileInfo& fileInfo, const char *orginal);
 	bool IsDup(unsigned long crc);
 	bool add2DupCache(const BasicMetadata &BasicMetadata);
 	bool add2DupCache(const FileInfo& fileInfo);

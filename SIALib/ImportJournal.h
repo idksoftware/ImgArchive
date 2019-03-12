@@ -10,8 +10,7 @@
 namespace simplearchive {
 
 	class ImportJournalItem;
-	//*
-	class ImportJournal : protected std::vector <std::shared_ptr<ImportJournalItem>>
+	class ImportJournal : public std::vector <std::shared_ptr<ImportJournalItem>>
 	{
 		std::string writeTag(const char *tag, const std::string& value, int tab);
 		std::string writeTag(const char *tag, const int value, int tab);
@@ -21,13 +20,13 @@ namespace simplearchive {
 		int m_count;
 		int m_current;
 	public:
-		typedef enum {
+		enum class Result {
 			Incomplete,
 			Imported,
 			Duplicate,
 			Error,
 			Unknown
-		} Result;
+		};
 	private:
 		bool write(const char *journalFilePath);
 		bool writeXML(const char *journalFilePath);
@@ -46,12 +45,31 @@ namespace simplearchive {
 		bool writeXML() {
 			return writeXML(m_xmlNameStr.c_str());
 		}
+		
 	};
+
+	class ImportJournalItem {
+		std::string m_filepath;
+		ImportJournal::Result m_result;
+		std::string m_location;
+		bool m_validated;
+		const char *ResultString(ImportJournal::Result& result);
+	public:
+		ImportJournalItem(const char *filepath);
+		void setResult(ImportJournal::Result result);
+		void setLocation(const char *location);
+		void setValidated();
+		std::string toString();
+		const char *getSourceImage();
+		const char *getLocation();
+		const char *getResult();
+		ImportJournal::Result getResultEnum();
+		bool isValidated();
+	};
+
 
 	class ImportJournalManager {
 		static std::string m_journalFilePath;
-		static std::unique_ptr<ImportJournalManager> m_instance;
-		static std::once_flag m_onceFlag;
 		ImportJournalManager();
 		ImportJournalManager(const ImportJournalManager& src);
 		ImportJournalManager& operator=(const ImportJournalManager& rhs);

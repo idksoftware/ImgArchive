@@ -154,7 +154,6 @@
     <ClInclude Include="ArchiveBuilder.h" />
     <ClInclude Include="ArchiveDate.h" />
     <ClInclude Include="ArchiveObject.h" />
-    <ClInclude Include="ArchiveRepository.h" />
     <ClInclude Include="Catalog.h" />
     <ClInclude Include="CatalogManager.h" />
     <ClInclude Include="CFolderStatus.h" />
@@ -178,7 +177,9 @@
     <ClInclude Include="MakeMedia.h" />
     <ClInclude Include="MasterCatalogue.h" />
     <ClInclude Include="MetadataUpdate.h" />
+    <ClInclude Include="SequenceFileManager.h" />
     <ClInclude Include="SQLiteDB.h" />
+    <ClInclude Include="VersionControl.h" />
     <ClInclude Include="VersionIndex.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SACmdArgs.h" />
@@ -195,7 +196,6 @@
     <ClCompile Include="ArchiveBuilder.cpp" />
     <ClCompile Include="ArchiveDate.cpp" />
     <ClCompile Include="ArchiveObject.cpp" />
-    <ClCompile Include="ArchiveRepository.cpp" />
     <ClCompile Include="Catalog.cpp" />
     <ClCompile Include="CatalogManager.cpp" />
     <ClCompile Include="CFolderStatus.cpp" />
@@ -219,6 +219,7 @@
     <ClCompile Include="MakeMedia.cpp" />
     <ClCompile Include="MasterCatalogue.cpp" />
     <ClCompile Include="MetadataUpdate.cpp" />
+    <ClCompile Include="SequenceFileManager.cpp" />
     <ClCompile Include="SQLiteDB.cpp" />
     <ClCompile Include="VersionIndex.cpp" />
     <ClCompile Include="SACmdArgs.cpp" />

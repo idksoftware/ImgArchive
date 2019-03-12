@@ -91,7 +91,7 @@ CIDKUuid::CIDKUuid(const char *uuid)
 	buffer = temp+24;
 	for (int i = 0; i < 6; i++ )
 	{
-		strncpy(temp2,buffer+(i*2),2);
+		strncpy_p(temp2,buffer+(i*2),2);
 		temp2[2] = '\0';		
 		m_Uuid->node[i] = (unsigned8)Str2Hex(temp2);
 	}

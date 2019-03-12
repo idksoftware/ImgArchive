@@ -50,11 +50,14 @@ namespace simplearchive {
 	
 	class CompletedSummary {
 		std::string m_summary;
+		std::string m_result;
 	public:
 		CompletedSummary() = default;
 		virtual ~CompletedSummary() = default;
-		void set(const char *s) { m_summary = s; };
-		const char *get() { return m_summary.c_str(); };
+		void setSummary(const char *s) { m_summary = s; };
+		const char *getSummary() { return m_summary.c_str(); };
+		void setResult(const char *s) { m_result = s; };
+		const char *getResult() { return m_result.c_str(); };
 	};
 
 	class SIALib
@@ -83,6 +86,7 @@ namespace simplearchive {
 		void enableServer(int port);
 		int initalise();
 		int complete();
+		//int complete();
 		int checkin();
 
 		bool Import();
@@ -131,7 +135,7 @@ namespace simplearchive {
 
 		bool checkDisk();
 
-		bool validate(CompletedSummary& completedSummary, const char *archivePath, const char *workspacePath, const char *homePath, Scope, bool repair = false);
+		bool validate(const char *archivePath, const char *workspacePath, const char *homePath, Scope, bool repair = false);
 
 		bool log(const char *filepath, LogDocument::FormatType& formatType);
 	

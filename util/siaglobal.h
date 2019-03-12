@@ -95,6 +95,9 @@
 #define LOG_SOURCE_PATH   		35 // Application completed successfully
 #define LOG_ASSOCIATING			36	// Associating
 #define LOG_ARCHIVING_IMAGE		37  // Archiving image
+#define LOG_SUMMARY				38  // Completed summary
+#define LOG_RESULT				39  // Completed result
+#define LOG_COMMAND				40  // Current command
 
 #define LOG_INITIAL_SUMMARY		101
 #define LOG_IMAGE_SUMMARY		102

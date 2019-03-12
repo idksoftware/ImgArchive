@@ -92,8 +92,8 @@ class ImageContainer {
 	std::string m_imageRootPath;
 	std::string m_comment;
 	const BasicMetadata *m_BasicMetadata;
-	ImageNode *m_PictureNode;
-	ImageNode *m_RawNode;
+	std::shared_ptr<ImageNode> m_PictureNode;
+	std::shared_ptr<ImageNode> m_RawNode;
 	time_t m_Time;
 	int m_error;
 	ImageContainer();

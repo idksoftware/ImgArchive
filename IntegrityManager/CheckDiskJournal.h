@@ -20,7 +20,7 @@ namespace simplearchive {
 
 	public:
 		CDJournalItem() {};
-		CDJournalItem(const char *dataString);
+		explicit CDJournalItem(const char *dataString);
 		CDJournalItem(int num, const char *image, ReportStatus &status, const char *orginal);
 		void setFixed();
 		void setCheckedOut();
@@ -51,7 +51,7 @@ namespace simplearchive {
 		
 		bool write(const char *path);
 		bool writeXML(const char *path);
-
+		
 		int size();
 		ReportStatus &getReportStatusAt(int i);
 		const char *getImageAt(int i);
@@ -81,7 +81,7 @@ namespace simplearchive {
 		int m_checkedOutChanged;
 		int m_unchanged;
 		std::string m_title;
-		CDSummaryItem(const char *title) : m_title(title) {
+		explicit CDSummaryItem(const char *title) : m_title(title) {
 			init();
 		}
 		CDSummaryItem() {
@@ -110,17 +110,24 @@ namespace simplearchive {
 			m_unchanged += ditem.m_unchanged;
 		}
 
-		std::string toConsole() {
+		std::string toSummary() {
 			std::stringstream str;
-			str << "Unknown:" << m_unknown << '\n'
-				<< "Content Changed:" << m_contentChanged << '\n'
-				<< "Name Changed:" << m_nameChanged << '\n'
-				<< "Missing:" << m_missing << '\n'
-				<< "Added:" << m_added << '\n'
-				<< "Checked Out No Change:" << m_checkedOutNoChange << '\n'
-				<< "Checked Out Changed:" << m_checkedOutChanged << '\n'
-				<< "Unchanged:" << m_unchanged << '\n';
+			str << "\tUnknown            : " << m_unknown << '\n'
+				<< "\tContent Changed    : " << m_contentChanged << '\n'
+				<< "\tName Changed       : " << m_nameChanged << '\n'
+				<< "\tMissing            : " << m_missing << '\n'
+				<< "\tAdded              : " << m_added << '\n'
+				<< "\tCheckedOut NoChange: " << m_checkedOutNoChange << '\n'
+				<< "\tCheckedOut Changed : " << m_checkedOutChanged << '\n'
+				<< "\tUnchanged          : " << m_unchanged << '\n';
 			return str.str();
+		}
+
+		std::string toResult() {
+			if (m_contentChanged || m_nameChanged || m_missing) {
+				return "Needs repairing";
+			}
+			return "No Action required";
 		}
 	};
 
@@ -131,7 +138,7 @@ namespace simplearchive {
 
 	public:
 		CDSummaryItem m_summaryItem;
-		CDDaySummary(const char *day) : m_summaryItem(day) {}	
+		explicit CDDaySummary(const char *day) : m_summaryItem(day) {}	
 		CDDaySummary(const CDDaySummary &) = default;
 		CDDaySummary& operator=(const CDDaySummary&) = default;
 		virtual ~CDDaySummary() = default;
@@ -150,7 +157,7 @@ namespace simplearchive {
 		std::shared_ptr<CDDaySummaryList> m_list;
 		
 	public:
-		CDYearSummary(const char *year) : m_list(std::make_shared<CDDaySummaryList>()), m_year(year) {}
+		explicit CDYearSummary(const char *year) : m_list(std::make_shared<CDDaySummaryList>()), m_year(year) {}
 		CDYearSummary(const CDYearSummary &) {};
 		CDYearSummary& operator=(const CDYearSummary&) = default;
 		virtual ~CDYearSummary() = default;
@@ -171,14 +178,18 @@ namespace simplearchive {
 		std::string writeTag(const char *tag, const int value, int tab);
 		std::shared_ptr<CDDYearSummaryList> m_list;
 		CDSummaryItem m_totalSummary;
+		bool makeSumary();
 	public:
 		CheckDiskSummaryJounal() : m_list(std::make_shared<CDDYearSummaryList>()) {}
 		virtual ~CheckDiskSummaryJounal() = default;
 		void add(const std::shared_ptr<CDYearSummary> &yearSummary);
 		bool write(const char *path);
 		bool writeXML(const char *path);
-
+		
 		CDDYearSummaryList &getList() { return *m_list; }
-		CDSummaryItem& getTotalSummary() { return m_totalSummary; };
+		CDSummaryItem& getTotalSummary() {
+			makeSumary();
+			return m_totalSummary;
+		};
 	};
 };

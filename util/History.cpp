@@ -93,12 +93,12 @@ namespace simplearchive {
 
 	bool History::newImage(const char *filepath, const char *comment) {
 		
-		if (systemHistory->add(filepath, "0000", comment, HistoryEvent::ADDED) == false) {
+		if (systemHistory->add(filepath, "0000", comment, HistoryEvent::Event::ADDED) == false) {
 			ErrorCode::setErrorCode(SIA_ERROR::INVALID_PATH);
 			return false;
 		}
 	
-		if (imageHistory->add(filepath, "0000", comment, HistoryEvent::ADDED) == false) {
+		if (imageHistory->add(filepath, "0000", comment, HistoryEvent::Event::ADDED) == false) {
 			ErrorCode::setErrorCode(SIA_ERROR::INVALID_PATH);
 			return false;
 		}
@@ -117,12 +117,12 @@ namespace simplearchive {
 	bool History::checkinImage(const char *filepath, int version, const char *comment) { 
 		std::string versionString = Version2String(version);
 
-		if (systemHistory->add(filepath, versionString.c_str(), comment, HistoryEvent::CHECKIN) == false) {
+		if (systemHistory->add(filepath, versionString.c_str(), comment, HistoryEvent::Event::CHECKIN) == false) {
 			ErrorCode::setErrorCode(SIA_ERROR::INVALID_PATH);
 			return false;
 		}
 
-		if (imageHistory->add(filepath, versionString.c_str(), comment, HistoryEvent::CHECKIN) == false) {
+		if (imageHistory->add(filepath, versionString.c_str(), comment, HistoryEvent::Event::CHECKIN) == false) {
 			ErrorCode::setErrorCode(SIA_ERROR::INVALID_PATH);
 			return false;
 		}
@@ -131,12 +131,12 @@ namespace simplearchive {
 
 	bool History::checkoutImage(const char *filepath, int version, const char *comment) {
 		std::string versionString = Version2String(version);
-		if (systemHistory->add(filepath, versionString.c_str(), comment, HistoryEvent::CHECKOUT) == false) {
+		if (systemHistory->add(filepath, versionString.c_str(), comment, HistoryEvent::Event::CHECKOUT) == false) {
 			ErrorCode::setErrorCode(SIA_ERROR::INVALID_PATH);
 			return false;
 		}
 
-		if (imageHistory->add(filepath, versionString.c_str(), comment, HistoryEvent::CHECKOUT) == false) {
+		if (imageHistory->add(filepath, versionString.c_str(), comment, HistoryEvent::Event::CHECKOUT) == false) {
 			ErrorCode::setErrorCode(SIA_ERROR::INVALID_PATH);
 			return false;
 		}
@@ -147,12 +147,12 @@ namespace simplearchive {
 
 	bool History::uncheckoutImage(const char *filepath, int version, const char *comment) {
 		std::string versionString = Version2String(version);
-		if (systemHistory->add(filepath, versionString.c_str(), comment, HistoryEvent::UNCHECKOUT) == false) {
+		if (systemHistory->add(filepath, versionString.c_str(), comment, HistoryEvent::Event::UNCHECKOUT) == false) {
 			ErrorCode::setErrorCode(SIA_ERROR::INVALID_PATH);
 			return false;
 		}
 
-		if (imageHistory->add(filepath, versionString.c_str(), comment, HistoryEvent::UNCHECKOUT) == false) {
+		if (imageHistory->add(filepath, versionString.c_str(), comment, HistoryEvent::Event::UNCHECKOUT) == false) {
 			ErrorCode::setErrorCode(SIA_ERROR::INVALID_PATH);
 			return false;
 		}
@@ -162,12 +162,12 @@ namespace simplearchive {
 
 	bool History::exportImage(const char *filepath, int version, const char *comment) {
 		std::string versionString = Version2String(version);
-		if (systemHistory->add(filepath, versionString.c_str(), comment, HistoryEvent::EXPORT) == false) {
+		if (systemHistory->add(filepath, versionString.c_str(), comment, HistoryEvent::Event::EXPORT) == false) {
 			ErrorCode::setErrorCode(SIA_ERROR::INVALID_PATH);
 			return false;
 		}
 
-		if (imageHistory->add(filepath, versionString.c_str(), comment, HistoryEvent::EXPORT) == false) {
+		if (imageHistory->add(filepath, versionString.c_str(), comment, HistoryEvent::Event::EXPORT) == false) {
 			ErrorCode::setErrorCode(SIA_ERROR::INVALID_PATH);
 			return false;
 		}

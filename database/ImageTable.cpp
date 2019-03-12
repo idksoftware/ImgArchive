@@ -74,7 +74,7 @@ bool ImageTable::createFromSchema(MTTableSchema &mtSchema) {
 	createBulder.addfield("autoIncrement", "integer", "primary key", "autoincrement");
 	//for (int i = 0; i < mtSchema. i++) {
 	//	mtSchema.
-	//	createBulder.addfield(, "text");
+	//	createBulder.addfield("text");
 	//}
 	for (auto i = mtSchema.begin(); i != mtSchema.end(); i++) {
 		MTSchema& columnInfo = *i;

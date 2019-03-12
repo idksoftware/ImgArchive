@@ -47,6 +47,7 @@
 #include "ExifDateTime.h"
 #include "UDPOut.h"
 #include "LogName.h"
+//#include "ErrorCode.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -80,17 +81,13 @@ CLogger::CLogger() {
 	m_startUpBuffer = make_unique<LogBuffer>();
 	m_logLevel = Level::SUMMARY;
 	
-	m_consoleLevel = Level::SUMMARY;
-	m_isConsoleOut = Level::SUMMARY;
+	m_consoleLevel = Level::STATUS;
+	m_isConsoleOut = Level::STATUS;
 }
 
 CLogger &CLogger::getLogger() {
-	if (m_this.get() == nullptr)
-	{
-		m_this.reset(new CLogger());
-		makeFile();
-	}
-	return *m_this;
+	static CLogger thisLogger;
+	return thisLogger;
 }
 
 CLogger::~CLogger() {
@@ -164,15 +161,102 @@ void CLogger::makeFile() {
 	}
 	m_filename = logName.makeName(m_logpath.c_str(), "", "log", 256);
 	m_logfile.open(m_filename.c_str(), ios::out | ios::app);
-	if (m_logfile.is_open() == false) {
-		throw SIAAppException("Cannot open log file");
+	if (m_logfile.is_open() == false) {  // changed to true for testing
+		throw SIAException("Cannot open log file");
 	}
 }
 
 ExifDateTime last;
 int count = 0;
 
+/**
+This is for status leval messages only. They will be output as status level messaes with an
+extra status code defining the tatus of the last opertion. For example if an operation to import an
+image failed as the image already is in the achive then this will e recorded in the status message but also
+recorded with the ReporterEvent
+*/
 
+void CLogger::status(int code, ReporterEvent::Status level, const char *format, ...) {
+	if (m_size < m_cursize) {
+		m_logfile.close();
+		makeFile();
+		m_cursize = 0;
+	}
+	
+
+	ExifDateTime date;
+	date.now();
+	if (last.getTime() == date.getTime()) {
+		count++;
+	}
+	else {
+		count = 1;
+	}
+	last.now();
+	char message[1024];
+	try {
+
+		va_list args;
+		va_start(args, format);
+#ifdef _WIN32
+		vsprintf_s(message, format, args);
+#else
+		vsprintf(message, format, args);
+#endif
+		va_end(args);
+	}
+	catch (exception e) {
+		printf("logger crashed parsing message");
+		exit(-1);
+	}
+	try {
+		m_lastMessage = message;
+		m_lastCode = code;
+		std::stringstream logstr;
+		logstr << "\n" << setfill('0') << setw(6) << code << ": " << date.toLogString() << '.' << count << "\t";
+		logstr << '[' << levelStr(CLogger::Level::STATUS) << "]\t";
+		logstr << message;
+		// Return if the message is to low leval to be include in the log, UDP or terminal.
+		if (!IsLogOut(CLogger::Level::STATUS) && m_isOpen) {
+			return;
+		}
+		if (m_isOpen) {
+			if (IsLogOut(CLogger::Level::STATUS)) {
+				m_logfile << logstr.str();
+			}
+		}
+		else {
+			m_startUpBuffer->push_back(logstr.str());
+		}
+		m_cursize++;
+
+		if (m_isSilent == false) {
+			if (IsConsoleOut(CLogger::Level::STATUS)) {
+				if (m_isQuiet) {
+					std::cout << message << '\n';
+				}
+				else {
+					std::cout << "\n" << setfill('0') << setw(6) << code << '\t';
+					std::cout << message << " - " << ReporterEvent::statusString(level) << " ";
+				}
+			}
+		}
+
+		std::stringstream strudp;
+		strudp << setfill('0') << setw(6) << code << ":" << message;
+		std::string udpMessage = strudp.str();
+		UDPOut::out(udpMessage.c_str());
+
+		StatusReporter& statusReporter = StatusReporter::get();
+		std::string finalStr = message;
+		statusReporter.add(level, finalStr);
+
+	}
+	catch (exception e) {
+		printf("logger crashed");
+		exit(-1);
+	}
+}
 
 void CLogger::log(int code, Level level, const char *format, ...) {
 	
@@ -195,8 +279,9 @@ void CLogger::log(int code, Level level, const char *format, ...) {
 		count = 1;
 	}
 	last.now();
+	char message[1024];
 	try {
-		char message[1024];
+		
 		va_list args;
 		va_start(args, format);
 #ifdef _WIN32
@@ -205,6 +290,12 @@ void CLogger::log(int code, Level level, const char *format, ...) {
 		vsprintf(message, format, args);
 #endif
 		va_end(args);
+	}
+	catch (exception e) {
+		printf("logger crashed parsing message");
+		exit(-1);
+	}
+	try {
 		m_lastMessage = message;
 		m_lastCode = code;
 		std::stringstream logstr;
@@ -227,7 +318,9 @@ void CLogger::log(int code, Level level, const char *format, ...) {
 					std::cout << message << '\n';
 				}
 				else {
-					std::cout << setfill('0') << setw(6) << code << ": " << message << '\n';
+					std::cout << "\n" << setfill('0') << setw(6) << code << ": " << date.toLogString() << '.' << count << "\t";
+					std::cout << '[' << levelStr(level) << "]\t";
+					std::cout << message;
 				}
 			}
 		}
@@ -236,6 +329,10 @@ void CLogger::log(int code, Level level, const char *format, ...) {
 		strudp << setfill('0') << setw(6) << code << ":" << message;
 		std::string udpMessage = strudp.str();
 		UDPOut::out(udpMessage.c_str());
+
+		if (level == Level::STATUS) {
+
+		}
 	}
 	catch (exception e) {
 		printf("logger crashed");
@@ -256,6 +353,8 @@ void CLogger::Log(Level level, const char *format, ...) {
 	Logger.Log(level, message);
 }
 */
+
+
 void CLogger::log(int code, Level level, const std::string &message) {
 	
 	if (!IsLogOut(level)) return;
@@ -301,6 +400,7 @@ const char *CLogger::toString(CLogger::Level level) {
 	case CLogger::Level::TRACE: return    "TRACE";
 	case CLogger::Level::FINE: return     "FINE";
 	case CLogger::Level::INFO: return     "INFO";
+	case CLogger::Level::STATUS: return   "STATUS";
 	case CLogger::Level::SUMMARY: return  "SUMMARY";
 	case CLogger::Level::WARNING: return  "WARNING";
 	case CLogger::Level::ERR: return      "ERROR";
@@ -312,14 +412,15 @@ const char *CLogger::toString(CLogger::Level level) {
 
 const char *CLogger::levelStr(CLogger::Level level) {
 	switch (level) {
-	case CLogger::Level::TRACE: return    "     TRACE";
-	case CLogger::Level::FINE: return     "     FINE ";
-	case CLogger::Level::INFO: return     "    INFO  ";
-	case CLogger::Level::SUMMARY: return  "   SUMMARY";
-	case CLogger::Level::WARNING: return  "  WARNING ";
-	case CLogger::Level::ERR: return      " ERROR    ";
-	case CLogger::Level::FATAL: return    "FATAL     ";
-	case CLogger::Level::UNKNOWN: return  "FATAL     ";
+	case CLogger::Level::TRACE: return    "      TRACE";
+	case CLogger::Level::FINE: return     "      FINE ";
+	case CLogger::Level::INFO: return     "     INFO  ";
+	case CLogger::Level::STATUS: return   "    STATUS ";
+	case CLogger::Level::SUMMARY: return  "   SUMMARY ";
+	case CLogger::Level::WARNING: return  "  WARNING  ";
+	case CLogger::Level::ERR: return      " ERROR     ";
+	case CLogger::Level::FATAL: return    "FATAL      ";
+	case CLogger::Level::UNKNOWN: return  "FATAL      ";
 	}
 	return "FATAL";
 }
@@ -334,6 +435,9 @@ CLogger::Level CLogger::toLevel(const std::string &s) {
 	}
 	else if (s.compare("INFO") == 0) {
 		level = Level::INFO;
+	}
+	else if (s.compare("STATUS") == 0) {
+		level = Level::SUMMARY;
 	}
 	else if (s.compare("SUMMARY") == 0) {
 		level = Level::SUMMARY;
@@ -361,6 +465,117 @@ bool CLogger::setLevel(CLogger::Level &level, const std::string &s) {
 	}
 	
 	return true;
+}
+
+ReporterEvent::ReporterEvent(ReporterEvent::Status status, std::string & message) : m_message(message), m_status(status) {}
+
+StatusReporter& StatusReporter::get()
+{
+	static StatusReporter statusReporter;
+	return statusReporter;
+}
+
+void StatusReporter::add(ReporterEvent::Status status, const char * fmt, ...)
+{
+	char message[1024];
+	try {
+
+		va_list args;
+		va_start(args, fmt);
+#ifdef _WIN32
+		vsprintf_s(message, fmt, args);
+#else
+		vsprintf(message, format, args);
+#endif
+		va_end(args);
+	}
+	catch (std::exception e) {
+		printf("logger crashed parsing message");
+		exit(-1);
+	}
+	std::string finalStr = message;
+	add(status, finalStr);
+
+}
+
+void StatusReporter::add(ReporterEvent::Status status, std::string &msg) {
+
+	m_list->push_back(ReporterEvent(status, msg));
+}
+
+const char * ReporterEvent::statusString(ReporterEvent::Status status)
+{
+	switch (status) {
+	case ReporterEvent::Status::Completed: return	"Completed ";
+	case ReporterEvent::Status::Warning: return		"Warning   ";
+	case ReporterEvent::Status::Error: return		"Error     ";
+	case ReporterEvent::Status::Fatal: return		"Fatal     ";
+	}
+	return											"Unknown   ";
+}
+
+const char * ReporterEvent::statusString()
+{
+	return statusString(m_status);
+}
+
+bool SummaryReporter::doProcess()
+{
+
+	
+	for (auto i = m_list->begin(); i != m_list->end(); i++) {
+		ReporterEvent& item = *i;
+		//str << item.statusString() << item.m_message << '\n';
+		switch (item.m_status) {
+		case ReporterEvent::Status::Completed: m_completed++; break;
+		case ReporterEvent::Status::Warning: m_warning++; break;
+		case ReporterEvent::Status::Error: m_error++; break;
+		case ReporterEvent::Status::Fatal: m_fatal++; break;
+		case ReporterEvent::Status::Unkown: m_unknown++; break;
+		}
+	}
+	std::stringstream strSummary;
+	strSummary << '\n' << "Summary" << '\n';
+	strSummary << "  Completed: " << m_completed << '\n';
+	if (m_warning != 0) strSummary << "  Warnings:   " << m_warning << '\n';
+	if (m_error != 0) strSummary << "  Errors:     " << m_error << '\n';
+	if (m_fatal != 0) strSummary << "  Fatal:     " << m_fatal << '\n';
+	if (m_unknown != 0) strSummary << "  Unknowns:   " << m_unknown << '\n';
+	
+	setSummary(strSummary.str().c_str());
+
+	std::stringstream strResult;
+	strResult << '\n' << "Result" << '\n';
+	if (m_fatal != 0) {
+		strResult << "Not completed, Fatal error encountered" << '\n';
+	}
+	else if (m_error != 0) {
+		strResult << "Completed with errors, some operations may not have been completed" << '\n';
+	}
+	else if (m_warning != 0) {
+		strResult << "Completed with warnings, some operations may not have been completed as exepected" << '\n';
+	}
+	else if (m_unknown != 0) {
+		strResult << "Unknown error has be encountered, some operations may not have been completed" << '\n';
+	}
+	else {
+		strResult << "Completed successfully" << '\n';
+	}
+	/*
+	if (m_warning != 0)
+	if (m_error != 0) 
+	if (m_fatal != 0) 
+	if (m_unknown != 0) 
+	*/
+	setResult(strResult.str().c_str());
+	return false;
+}
+
+void SummaryReporter::toConsole()
+{
+	std::cout << m_summary;
+	std::cout << '\n';
+	std::cout << m_result;
 }
 
 } /* namespace simplearchive */

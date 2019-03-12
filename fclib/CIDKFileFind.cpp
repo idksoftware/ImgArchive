@@ -139,7 +139,7 @@ bool CIDKFileFind::GetNext(void)
 
 bool CIDKFileFind::GetNext(void)
 {
-	struct dirent *entry;
+	struct dirent *entry = null_ptr;
 
 	if (m_Filelocator == 0)
 	{

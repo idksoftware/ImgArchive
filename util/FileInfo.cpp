@@ -66,20 +66,25 @@ namespace simplearchive {
 
 	static std::string getFileContents(const char *filename)
 	{
-
-		int count = 0;
-		std::ifstream in(filename, std::ios::in | std::ios::binary);
-		if (in)
-		{
-			std::string contents;
-			in.seekg(0, std::ios::end);
-			contents.resize((std::string::size_type)in.tellg());
-			in.seekg(0, std::ios::beg);
-			in.read(&contents[0], contents.size());
-			in.close();
-			return(contents);
+		try {
+			int count = 0;
+			std::ifstream in(filename, std::ios::in | std::ios::binary);
+			if (in)
+			{
+				std::string contents;
+				in.seekg(0, std::ios::end);
+				contents.resize((std::string::size_type)in.tellg());
+				in.seekg(0, std::ios::beg);
+				in.read(&contents[0], contents.size());
+				in.close();
+				return(contents);
+			}
 		}
-		throw(errno);
+		catch (std::exception /*&e*/) {
+			throw std::exception();
+		}
+		std::string error;
+		return error;
 	}
 
 	FileInfo::FileInfo(std::string &path)
@@ -88,9 +93,16 @@ namespace simplearchive {
 
 		CIDKCrc Crc;
 		m_path = path;
-		m_name = splitName(m_path);
-		logger.log(LOG_OK, CLogger::Level::INFO, "Image: %s", m_path.c_str());
-		std::string buf = getFileContents(path.c_str());
+		std::string buf;
+		try {
+			m_name = splitName(m_path);
+			logger.log(LOG_OK, CLogger::Level::INFO, "Image: %s", m_path.c_str());
+			buf = getFileContents(path.c_str());
+		}
+		catch (std::exception /*&e*/) {
+			logger.log(LOG_OK, CLogger::Level::FATAL, "Cannot read image: %s", m_path.c_str());
+			throw std::exception();
+		}
 		MD5 md5(buf);
 		m_md5 = md5.hexdigest();
 		logger.log(LOG_OK, CLogger::Level::INFO, "MD5 of image: %s is %s", path.c_str(), m_md5.c_str());
@@ -105,6 +117,7 @@ namespace simplearchive {
 		m_createTime = SAUtils::createTime(path.c_str());
 		logger.log(LOG_OK, CLogger::Level::INFO, "Create time of image: %s", m_createTime.toLogString().c_str());
 		m_modTime = SAUtils::modTime(path.c_str());
+		
 	}
 
 	FileInfo::~FileInfo()

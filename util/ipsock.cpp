@@ -73,6 +73,7 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 #include <arpa/inet.h>
+#include "cport.h"
 #endif
 
 #include "ipsock.h"
@@ -96,7 +97,7 @@ CIPComms::CIPComms()
 
 CIPComms::EErrorCode CIPClient::Connect(char *AddressStr, int port)
 {
-	strncpy(m_ServerAddressStr, AddressStr, 256);
+	strncpy_s(m_ServerAddressStr, AddressStr, 256);
 	return ConnectToServer(AddressStr, port, &m_iSocket);
 }
 
