@@ -45,6 +45,15 @@
     <ClInclude Include="VersionMetadataObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DerivativeMetadata.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VersionsList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MatadataManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MetadataObject.cpp">
@@ -72,6 +81,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="VersionMetadataObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DerivativeMetadata.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MatadataManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
