@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel = "stylesheet" type = "text/css" href = "../../../../style/mainnav.css">
+<link rel = "stylesheet" type = "text/css" href = "../../../../style/history.css">
+<style>
+body {font-family: Arial;}
+
+/* Style the tab */
+.tab {
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+}
+
+/* Style the buttons inside the tab */
+.tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+    font-size: 14px;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+    background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+    background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+    display: none;
+    padding: 6px 8px;
+    border: 1px solid #ccc;
+    border-top: none;
+}
+
+/* Style the close button */
+.topright {
+    float: right;
+    cursor: pointer;
+    font-size: 28px;
+}
+
+.topright:hover {color: red;}
+</style>
+
+<style>
+    div.gallery {
+        margin: 20px;
+        border: 1px solid #ccc;
+        float: center;
+        width: 800px;
+    }
+    
+    div.gallery:hover {
+        border: 1px solid #777;
+    }
+    
+    div.gallery img {
+        width: 100%;
+        height: auto;
+    }
+    
+    div.desc {
+        padding: 15px;
+        text-align: center;
+    }
+    </style>
+
+</head>
+<body>
+
+
+<div class="gallery">
+        <a target="_blank" href="../images/DSC00942.JPG">
+          <img src="../images/DSC00942_2.JPG" alt="Fjords" width="300" height="200">
+        </a>
+        <div class="desc">Canon EOS 1D X | Canon EF 600mm f/4.0L IS II USM @840mm | 1/500 | f/5.6 | ISO 1000</div>
+</div>
+
+<section class="tabcontainer">
+
+    <div class="tab">
+        <button class="tablinks" onclick="openCity(event, 'FileInformation')" id="defaultOpen">File</button>
+        <button class="tablinks" onclick="openCity(event, 'Description')">Description</button>
+        <button class="tablinks" onclick="openCity(event, 'Origin')">Origin</button>
+        <button class="tablinks" onclick="openCity(event, 'Camera')">Camera</button>
+        <button class="tablinks" onclick="openCity(event, 'Image')">Image</button>
+        <button class="tablinks" onclick="openCity(event, 'AdvancedPhoto')">Advanced</button>
+        <button class="tablinks" onclick="openCity(event, 'Location')">Location</button>
+        <button class="tablinks" onclick="openCity(event, 'IPTC')">IPTC</button>
+    </div>
+
+	<!--
+	<button class="tablinks" onclick="openCity(event, 'FileInformation')"
+												id="FileInformation">File</button>
+	-->
+    <div id="Location" class="tabcontent">
+        <table class="image_attr">
+        <Caption>Location</Caption>
+        <tr> <td>Location</td> <td>Devils Dyke</td></tr>
+        <tr> <td>Scene</td> <td>The scene in the image</td></tr>
+        </table>
+    </div>
+
+    <div id="FileInformation" class="tabcontent">
+		<table class="image_attr">
+        <Caption>File Information</Caption>
+        <tr> <td>SequenceId</td> <td>6</td></tr>
+        <tr> <td>Filename</td> <td>DSC00942.JPG</td></tr>
+        <tr> <td>OrginalName</td> <td>DSC00942.JPG</td></tr>
+        <tr> <td>Filepath</td> <td>2018-01-19</td></tr>
+        <tr> <td>Uuid</td> <td>da787b68-31b0-11e8-bc4c-ce7a60a260f9</td></tr>
+        <tr> <td>MediaType</td> <td>1539279276</td></tr>
+        <tr> <td>Md5</td> <td>5d546ceb51eff6a14d9981e4baad01a6</td></tr>
+		<tr> <td>Crc</td> <td>1539279276</td></tr>
+		<tr> <td>FileSize</td> <td>4577040</td></tr>
+		<tr> <td>DateCreate</td> <td>2018.03.15.22.50.23</td></tr>
+		<tr> <td>DateModified</td> <td>2018.01.19.12.19.44</td></tr>
+		<tr> <td>DateAdded</td> <td>2018.03.27.12.20.28</td></tr>
+		</table>
+	</div>
+
+	<div id="Description" class="tabcontent">
+		<table class="image_attr">
+		<Caption>Description</Caption>
+		<tr> <td>Description</td> <td>                               </td></tr>
+		<tr> <td>Rating</td> <td>52685</td></tr>
+		<tr> <td>RatingPercent</td> <td>52685</td></tr>
+		<tr> <td>Version</td> <td>0</td></tr>
+		</table>
+	</div>
+
+	<div id="Camera" class="tabcontent">
+		<table class="image_attr">
+		<Caption>Camera</Caption>
+		<tr> <td>Maker</td> <td>SONY</td></tr>
+		<tr> <td>Model</td> <td>DSC-WX350</td></tr>
+		<tr> <td>ExposureTime</td> <td>1/400</td></tr>
+		<tr> <td>Aperture</td> <td>8</td></tr>
+		<tr> <td>IsoSpeedRating</td> <td>100</td></tr>
+		<tr> <td>ExposureBias</td> <td>0</td></tr>
+		<tr> <td>ExposureProgram</td> <td>Normal program</td></tr>
+		<tr> <td>SubjectDistance</td> <td>0</td></tr>
+		<tr> <td>FocalLength</td> <td>4.3</td></tr>
+		<tr> <td>FocalLenghtIn35mm</td> <td>0</td></tr>
+		<tr> <td>Flash</td> <td>Off, Did not fire</td></tr>
+		<tr> <td>MeteringMode</td> <td>multi-segment</td></tr>
+		<tr> <td>DigitalZoom</td> <td>1</td></tr>
+		</table>
+	</div>
+
+	<div id="Image" class="tabcontent">
+		<table class="image_attr">
+		<Caption>Image</Caption>
+		<tr> <td>Width</td> <td>4896</td></tr>
+		<tr> <td>Height</td> <td>3672</td></tr>
+		<tr> <td>ViewRotation</td> <td>1</td></tr>
+		<tr> <td>BitsPerSample</td> <td>0</td></tr>
+		<tr> <td>XResolution</td> <td>350</td></tr>
+		<tr> <td>YResolution</td> <td>350</td></tr>
+		<tr> <td>ResolutionUnit</td> <td>inches</td></tr>
+		<tr> <td>Compression</td> <td>6</td></tr>
+		</table>
+	</div>
+
+	<div id="AdvancedPhoto" class="tabcontent">
+		<table class="image_attr">
+		<Caption>Advanced photo</Caption>
+		<tr> <td>LightSource</td> <td>Unknown</td></tr>
+		<tr> <td>ColorSpace</td> <td> sRGB</td></tr>
+		<tr> <td>SceneCaptureType</td> <td>stardard</td></tr>
+		<tr> <td>Contrast</td> <td>Normal</td></tr>
+		<tr> <td>Saturation</td> <td>Normal</td></tr>
+		<tr> <td>Sharpness</td> <td>Normal</td></tr>
+		<tr> <td>BrightnessValue</td> <td>10.8336</td></tr>
+		<tr> <td>MaxAperture</td> <td>3.61719</td></tr>
+		<tr> <td>CompressedBitsPerPixel</td> <td>2</td></tr>
+		<tr> <td>FlashEnergy</td> <td>0</td></tr>
+		<tr> <td>ExifVersion</td> <td>DSC-WX350 v2.00</td></tr>
+		<tr> <td>Software</td> <td>DSC-WX350 v2.00</td></tr>
+		<tr> <td>PhotometricInterpretation</td> <td>11</td></tr>
+		</table>
+	</div>
+
+	<div id="IPTC" class="tabcontent">
+		<table class="image_attr">
+		<Caption>IPTC</Caption>
+		<tr> <td>SourceUrl</td> <td>Some Text</td></tr>
+		<tr> <td>UsageRights</td> <td>Some Text</td></tr>
+		<tr> <td>Headline</td> <td>Headline here</td></tr>
+		<tr> <td>Category</td> <td>The category of the image</td></tr>
+		<tr> <td>Source</td> <td>Source of image</td></tr>
+		<tr> <td>Instructions</td> <td>Some Instructions</td></tr>
+		<tr> <td>Creator</td> <td>The creater</td></tr>
+		<tr> <td>JobTitle</td> <td>Your Job title</td></tr>
+		<tr> <td>Address</td> <td>Your addess`</td></tr>
+		<tr> <td>City</td> <td>Your City</td></tr>
+		<tr> <td>State</td> <td>Your state</td></tr>
+		<tr> <td>PostalCode</td> <td>Your Post code</td></tr>
+		<tr> <td>Country</td> <td>Your Country</td></tr>
+		<tr> <td>Phone</td> <td>Your Phone</td></tr>
+		<tr> <td>Email</td> <td>Your@Email.com</td></tr>
+		<tr> <td>Website</td> <td>www.YourWebsite.com</td></tr>
+		</table>
+	</div>
+
+	<div id="Origin" class="tabcontent">
+		<table class="image_attr">
+		<Caption>Origin</Caption>
+		<tr> <td>CaptureDate</td> <td>2018.01.19.12.19.45</td></tr>
+		</table>
+	</div>
+</section>
+
+
+
+<script>
+
+
+function openCity(evt, cityName) {
+    var i, tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+    document.getElementById(cityName).style.display = "block";
+    evt.currentTarget.className += " active";
+}
+
+document.getElementById("defaultOpen").click();
+</script>
+     
+</body>
+</html> 

@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26228.4
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimpleArchive", "SimpleArchive\SimpleArchive.vcxproj", "{E6B44F35-CDAB-4487-9CD4-3DC02BBB488E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "iaarc", "SimpleArchive\SimpleArchive.vcxproj", "{E6B44F35-CDAB-4487-9CD4-3DC02BBB488E}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C2205319-E84B-4C68-950F-FB4C97C88E5E} = {C2205319-E84B-4C68-950F-FB4C97C88E5E}
 		{EA5B7D32-8B8C-4CEA-B2D0-F6DA98F6DC5B} = {EA5B7D32-8B8C-4CEA-B2D0-F6DA98F6DC5B}
@@ -64,7 +64,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sia", "sia\sia.vcxproj", "{
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "database", "database\database.vcxproj", "{CEC11A92-CEAE-43A7-B31A-F1490B5A0CA2}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "siaadmin", "siaadmin\siaadmin.vcxproj", "{403AEF6D-0C29-4126-8E37-C3707984F198}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "iaadmin", "siaadmin\siaadmin.vcxproj", "{403AEF6D-0C29-4126-8E37-C3707984F198}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C2205319-E84B-4C68-950F-FB4C97C88E5E} = {C2205319-E84B-4C68-950F-FB4C97C88E5E}
 		{EA5B7D32-8B8C-4CEA-B2D0-F6DA98F6DC5B} = {EA5B7D32-8B8C-4CEA-B2D0-F6DA98F6DC5B}
@@ -88,6 +88,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sqlshell", "sqlshell\sqlshell.vcxproj", "{0F585909-ADDC-49D2-BE5D-458244FDDB21}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "web", "web\web.vcxproj", "{9216D1EA-CF96-4A10-B9BA-521D17974256}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "iamirror", "iamirror\iamirror.vcxproj", "{D65ACB48-6439-441D-9061-1A11176644D5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -409,6 +411,22 @@ Global
 		{9216D1EA-CF96-4A10-B9BA-521D17974256}.Release|Win32.Build.0 = Release|Win32
 		{9216D1EA-CF96-4A10-B9BA-521D17974256}.Release|x64.ActiveCfg = Release|x64
 		{9216D1EA-CF96-4A10-B9BA-521D17974256}.Release|x64.Build.0 = Release|x64
+		{D65ACB48-6439-441D-9061-1A11176644D5}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{D65ACB48-6439-441D-9061-1A11176644D5}.Debug|ARM.ActiveCfg = Debug|Win32
+		{D65ACB48-6439-441D-9061-1A11176644D5}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{D65ACB48-6439-441D-9061-1A11176644D5}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{D65ACB48-6439-441D-9061-1A11176644D5}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D65ACB48-6439-441D-9061-1A11176644D5}.Debug|Win32.Build.0 = Debug|Win32
+		{D65ACB48-6439-441D-9061-1A11176644D5}.Debug|x64.ActiveCfg = Debug|x64
+		{D65ACB48-6439-441D-9061-1A11176644D5}.Debug|x64.Build.0 = Debug|x64
+		{D65ACB48-6439-441D-9061-1A11176644D5}.Release|Any CPU.ActiveCfg = Release|Win32
+		{D65ACB48-6439-441D-9061-1A11176644D5}.Release|ARM.ActiveCfg = Release|Win32
+		{D65ACB48-6439-441D-9061-1A11176644D5}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{D65ACB48-6439-441D-9061-1A11176644D5}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{D65ACB48-6439-441D-9061-1A11176644D5}.Release|Win32.ActiveCfg = Release|Win32
+		{D65ACB48-6439-441D-9061-1A11176644D5}.Release|Win32.Build.0 = Release|Win32
+		{D65ACB48-6439-441D-9061-1A11176644D5}.Release|x64.ActiveCfg = Release|x64
+		{D65ACB48-6439-441D-9061-1A11176644D5}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

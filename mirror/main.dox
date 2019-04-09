@@ -2,6 +2,7 @@
 <p>A data mirror provides a complete copy of a set of data. Then as the target set of data changes so the changes are reflected in the mirrored data in near real time.
 The data set changes are synchronised with the mirror.
 </p>
+<p>The Mirror process will be run as an additional application to imarc.exe</p>
 <p>
 The Mirror provided by libray is not a true mirror as a true data mirror is the replication of logical disk volumes onto separate physical hard disks in real time to ensure
 continuous availability of the data using physical hardware. It is most commonly used in RAID 1 where two physical hard disks mirror each other. The user can be
