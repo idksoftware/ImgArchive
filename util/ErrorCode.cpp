@@ -1,4 +1,6 @@
 #include "ErrorCode.h"
+#include <iostream>
+
 namespace simplearchive {
 	// Move the codes above errno codes 
 	const int ErrorCode::errorOffset = 200;

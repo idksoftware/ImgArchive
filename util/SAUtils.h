@@ -59,7 +59,7 @@ class SIAException : public std::exception {
 public:
 	explicit SIAException(const char *msg) : message(msg) {}
 	explicit SIAException(std::string msg) : message(msg) {}
-	virtual ~SIAException() throw() {}
+	virtual ~SIAException() throw() {};
 	virtual const char *what() throw();
 
 };
