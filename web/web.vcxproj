@@ -38,6 +38,7 @@
     <ProjectGuid>{9216D1EA-CF96-4A10-B9BA-521D17974256}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>util</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -103,7 +104,7 @@
       <PreserveSbr>true</PreserveSbr>
     </Bscmake>
     <Lib>
-      <AdditionalDependencies>C:\development\SIA\SimpleArchive\Debug\fclib.lib;C:\development\SIA\SimpleArchive\Debug\util.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\Debug\fclib.lib;..\Debug\util.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

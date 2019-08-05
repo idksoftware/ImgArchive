@@ -23,6 +23,7 @@
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>SimpleArchive</RootNamespace>
     <ProjectName>iaarc</ProjectName>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -95,7 +96,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>Ws2_32.lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>C:\development\sia\SimpleArchive\Debug\fclib.lib;C:\development\sia\SimpleArchive\Debug\util.lib;C:\development\sia\SimpleArchive\Debug\exifcl.lib;C:\development\sia\SimpleArchive\Debug\metatp.lib;C:\development\sia\SimpleArchive\Debug\csv.lib;C:\development\sia\SimpleArchive\Debug\sqlite3.lib;C:\development\sia\SimpleArchive\Debug\database.lib;C:\development\sia\SimpleArchive\Debug\SIALib.lib;C:\development\sia\SimpleArchive\Debug\IntegrityManager.lib;C:\development\sia\SimpleArchive\Debug\AppBase.lib;C:\development\sia\SimpleArchive\Debug\web.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\Debug\fclib.lib;..\Debug\util.lib;..\Debug\exifcl.lib;..\Debug\metatp.lib;..\Debug\csv.lib;..\Debug\sqlite3.lib;..\Debug\database.lib;..\Debug\SIALib.lib;..\Debug\IntegrityManager.lib;..\Debug\AppBase.lib;..\Debug\web.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Bscmake>
       <PreserveSbr>true</PreserveSbr>
