@@ -99,7 +99,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>C:\development\SIA\SimpleArchive\Debug\fclib.lib;C:\development\SIA\SimpleArchive\Debug\util.lib;C:\development\SIA\SimpleArchive\Debug\exifcl.lib;C:\development\SIA\SimpleArchive\Debug\metatp.lib;C:\development\SIA\SimpleArchive\Debug\csv.lib;C:\development\SIA\SimpleArchive\Debug\mirror.lib;C:\development\SIA\SimpleArchive\Debug\sqlite3.lib;C:\development\SIA\SimpleArchive\Debug\database.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\Debug\fclib.lib;..\Debug\util.lib;..\Debug\exifcl.lib;..\Debug\metatp.lib;..\Debug\csv.lib;..\Debug\mirror.lib;..\Debug\sqlite3.lib;..\Debug\database.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
