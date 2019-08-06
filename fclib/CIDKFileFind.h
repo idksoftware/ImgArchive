@@ -52,7 +52,7 @@ public:
 		m_szFilePattern = inFilePattern;
 
 		const char* ptr = m_szFilePattern.c_str();
-		const char *l_ResPtr = 0;
+		const char *l_ResPtr = nullptr;
 		//i=strrchr(ptr, '/')-ptr;
 		l_ResPtr = strrchr(ptr, '/');
 		if (l_ResPtr != nullptr)

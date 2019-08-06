@@ -1,4 +1,5 @@
 #include "JpegEXIF.h"
+#include <iostream>
 
 #pragma once
 
