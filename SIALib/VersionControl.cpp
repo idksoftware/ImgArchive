@@ -671,6 +671,7 @@ bool VersionControl::makeVersionsList(const char * filepath)
 	if (xmlWriter.writeImageVersionList(versionsList, filepath, listFilePath.c_str()) == false) {
 		return false;
 	}
+	return true;
 }
 
 } /* namespace simplearchive */
