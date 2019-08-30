@@ -597,6 +597,7 @@ namespace simplearchive {
 		return true;
 	}
 
+
 	bool SIALib::validate(const char *archivePath, const char *workspacePath, const char *homePath, Scope scope, bool repair) {
 		CLogger &logger = CLogger::getLogger();
 		IntegrityManager &im = IntegrityManager::get();
