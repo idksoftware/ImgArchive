@@ -240,6 +240,10 @@ public:
 
 	bool matchOption(unsigned int topic, const char *option) const;
 
+	std::string getCommandLine() {
+		return commandLine;
+	}
+
 private:
     /** Returns the key of a defined option with name _name or -1 if such option
      * is not defined. */
@@ -278,6 +282,9 @@ private:
 	/** General description to be returned as first part of the generated help page. */
 	std::string masteroption_description;
 
+	// Command line
+	std::string commandLine;
+
 	CommandSet command_set;
 
 	unsigned int current_command_id;
@@ -292,6 +299,8 @@ private:
     /** Holds the name of the option that was responsible for a parser error.
     */
     std::string error_option;
+
+	void makeCommandline(int _argc, char ** _argv);
 }; // class ArgvParser
 
 

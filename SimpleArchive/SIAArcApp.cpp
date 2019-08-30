@@ -127,7 +127,7 @@ protected:
 bool SIAArcApp::initaliseArgs(int argc, char **argv) {
 	
 	if (m_argvParser->doInitalise(argc, argv) == false) {
-return false;
+		return false;
 	}
 
 	return true;

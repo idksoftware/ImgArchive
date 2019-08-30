@@ -128,7 +128,12 @@ void BasicMetadata::copyJpegExif(JpegEXIF &jpegExif) {
 	columnAt(static_cast<int>(BasicMetadataIndex::BM_EXPOSURETIME_IDX)) = et.str().c_str();
 	columnAt(static_cast<int>(BasicMetadataIndex::BM_APERTURE_IDX)) = jpegExif.FNumber.rational;
 	columnAt(static_cast<int>(BasicMetadataIndex::BM_ISOSPEEDRATING_IDX)) = jpegExif.ISOSpeedRatings;
-	columnAt(static_cast<int>(BasicMetadataIndex::BM_EXPOSUREBIAS_IDX)) = (double)(jpegExif.ExposureBiasValue.numerator / jpegExif.ExposureBiasValue.denominator);
+	if (jpegExif.ExposureBiasValue.denominator != 0) {
+		columnAt(static_cast<int>(BasicMetadataIndex::BM_EXPOSUREBIAS_IDX)) = (double)(jpegExif.ExposureBiasValue.numerator / jpegExif.ExposureBiasValue.denominator);
+	}
+	else {
+		columnAt(static_cast<int>(BasicMetadataIndex::BM_EXPOSUREBIAS_IDX)) = 0.0;
+	}
 	ExposureProgramValue ep = (ExposureProgramValue)jpegExif.exposureProgram;
 	columnAt(static_cast<int>(BasicMetadataIndex::BM_EXPOSUREPROGRAM_IDX)) = JpegEXIF::toString(ep);
 	columnAt(static_cast<int>(BasicMetadataIndex::BM_SUBJECTDISTANCE_IDX)) = jpegExif.SubjectDistance;
