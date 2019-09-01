@@ -685,6 +685,9 @@ namespace simplearchive {
 				}
 				logger.log(LOG_IMPORTING, CLogger::Level::SUMMARY, "Completed Stage 3: Archiving images");
 			}
+			else {
+				logger.log(LOG_IMPORTING, CLogger::Level::SUMMARY, "Stage 3: Archiving images, Not run? Option: dry run is active");
+			}
 		}
 
 		logger.log(LOG_COMPLETED_SUMMARY, CLogger::Level::SUMMARY, "Imported %d image files found in %d Folder(s) into the archive, %d image files rejected", m_imageFilesCompleted, m_folders, m_imageFilesRejected);

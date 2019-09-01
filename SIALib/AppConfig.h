@@ -74,6 +74,7 @@
 #define WORKSPACE_PATH_LABEL			"WorkspacePath"
 #define DRY_RUN_LABEL					"DryRun"
 #define LOG_LEVEL_LABEL					"LogLevel"
+#define LIGHTROOM_LABEL					"Lightroom"
 #define CONSOLE_LEVEL_LABEL				"ConsoleLevel"
 #define FILE_CAT_LABEL				"FileCatalogue"
 #define WWW_CAT_LABEL				"WWWCatalogue"
@@ -106,6 +107,7 @@ namespace simplearchive {
 		static bool m_www_cat_on;
 		static std::string m_logLevel;
 		static std::string m_consoleLevel;
+		static bool m_lightroom;
 		static bool m_dry_run;
 		/// Log file path
 		static std::string m_logPath;

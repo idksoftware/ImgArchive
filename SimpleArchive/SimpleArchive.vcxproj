@@ -23,6 +23,7 @@
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>SimpleArchive</RootNamespace>
     <ProjectName>iaarc</ProjectName>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -75,7 +76,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <TargetName>siaarc</TargetName>
+    <TargetName>iaarc</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -95,7 +96,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>Ws2_32.lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>C:\development\sia\SimpleArchive\Debug\fclib.lib;C:\development\sia\SimpleArchive\Debug\util.lib;C:\development\sia\SimpleArchive\Debug\exifcl.lib;C:\development\sia\SimpleArchive\Debug\metatp.lib;C:\development\sia\SimpleArchive\Debug\csv.lib;C:\development\sia\SimpleArchive\Debug\sqlite3.lib;C:\development\sia\SimpleArchive\Debug\database.lib;C:\development\sia\SimpleArchive\Debug\SIALib.lib;C:\development\sia\SimpleArchive\Debug\IntegrityManager.lib;C:\development\sia\SimpleArchive\Debug\AppBase.lib;C:\development\sia\SimpleArchive\Debug\web.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\Debug\fclib.lib;..\Debug\util.lib;..\Debug\exifcl.lib;..\Debug\metatp.lib;..\Debug\csv.lib;..\Debug\sqlite3.lib;..\Debug\database.lib;..\Debug\SIALib.lib;..\Debug\IntegrityManager.lib;..\Debug\AppBase.lib;..\Debug\web.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Bscmake>
       <PreserveSbr>true</PreserveSbr>
@@ -115,8 +116,14 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>Ws2_32.lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>C:\development\sia\SimpleArchive\x64\Debug\fclib.lib;C:\development\sia\SimpleArchive\x64\Debug\util.lib;C:\development\sia\SimpleArchive\x64\Debug\exifcl.lib;C:\development\sia\SimpleArchive\x64\Debug\metatp.lib;C:\development\sia\SimpleArchive\x64\Debug\csv.lib;C:\development\sia\SimpleArchive\x64\Debug\database.lib;C:\development\sia\SimpleArchive\x64\Debug\sqlite3.lib;C:\development\sia\SimpleArchive\x64\Debug\SIALib.lib;C:\development\sia\SimpleArchive\x64\Debug\IntegrityManager.lib;C:\development\sia\SimpleArchive\x64\Debug\mirror.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\x64\Debug\fclib.lib;..\x64\Debug\util.lib;..\x64\Debug\exifcl.lib;..\x64\Debug\metatp.lib;..\x64\Debug\csv.lib;..\x64\Debug\database.lib;..\x64\Debug\sqlite3.lib;..\x64\Debug\SIALib.lib;..\x64\Debug\IntegrityManager.lib;..\x64\Debug\mirror.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+    <ProjectReference>
+      <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -135,7 +142,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>Ws2_32.lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>C:\development\SIA\SimpleArchive\Release\fclib.lib;..\Release\util.lib;..\Release\exifcl.lib;..\Release\metatp.lib;..\Release\csv.lib;..\Release\sqlite3.lib;..\Release\database.lib;..\Release\SIALib.lib;..\Release\IntegrityManager.lib;..\Release\mirror.lib;..\Release\web.lib;..\Release\appbase.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\Release\fclib.lib;..\Release\util.lib;..\Release\exifcl.lib;..\Release\metatp.lib;..\Release\csv.lib;..\Release\sqlite3.lib;..\Release\database.lib;..\Release\SIALib.lib;..\Release\IntegrityManager.lib;..\Release\mirror.lib;..\Release\web.lib;..\Release\appbase.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

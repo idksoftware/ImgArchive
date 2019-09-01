@@ -5,10 +5,11 @@
 #define MyAppVersion "0.9"
 #define MyAppPublisher "IDK Software Ltd"
 #define MyAppURL "http://www.idk-software.com/"
-#define MyAppExeName "siaarc.exe"
+#define MyAppExeName "iaarc.exe"
 #define AppConfig "{commonappdata}\IDK-Software\SIA\config"
 #define AppHooks "{commonappdata}\IDK-Software\SIA\hooks"
 #define AppHome "{commonappdata}\IDK-Software\SIA"
+#define ReleasePath "C:\Users\iain.ferguson\source\repos\New folder (4)\ImgArchive\Release"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
@@ -26,10 +27,10 @@ AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 DefaultDirName={pf}\IDK-Software\SIA
 DefaultGroupName={#MyAppName}
-LicenseFile=C:\development\SIA\SimpleArchive\Release\licence.txt
+LicenseFile={#ReleasePath}\licence.txt
 OutputDir=C:\temp\2
 OutputBaseFilename=siasetup
-SetupIconFile=C:\development\SIA\SimpleArchive\Release\sia.ico
+SetupIconFile={#ReleasePath}\sia.ico
 Compression=lzma
 SolidCompression=yes
 ; "ArchitecturesInstallIn64BitMode=x64" requests that the install be
@@ -49,10 +50,10 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 Name: modifypath; Description:{cm:AppAddPath}; 
 [Files]
-Source: "C:\development\SIA\SimpleArchive\Release\siaarc.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\development\SIA\SimpleArchive\Release\siaadmin.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\development\SIA\SimpleArchive\Release\dlls_x86\msvcp120.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\development\SIA\SimpleArchive\Release\dlls_x86\msvcr120.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: {#ReleasePath}\siaarc.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: {#ReleasePath}\siaadmin.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: {#ReleasePath}\dlls_x86\msvcp120.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: {#ReleasePath}\dlls_x86\msvcr120.dll"; DestDir: "{app}"; Flags: ignoreversion
 ; This is a bit of code to do 64 when ready
 ; Install MyProg-x64.exe if running in 64-bit mode (x64; see above),
 ; MyProg.exe otherwise.

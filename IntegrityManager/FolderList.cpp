@@ -338,9 +338,9 @@ bool FolderList::validateWorkspace(ValidateReportingObject &validateReportingObj
 				
 				std::string archivePath = m_archivePath;
 					// Master
-				archivePath += '/'; archivePath += year;
+				archivePath += "/system/chdsk/"; archivePath += year;
 				archivePath += '/'; archivePath += dataString;
-				archivePath += "/chdsk";
+				archivePath += '/';
 				CheckDisk checkDisk;
 				if (checkDisk.check(yearDayPath.c_str(), archivePath.c_str(), dataString.c_str(), validateReportingObject) == false) {
 					return false;
