@@ -113,6 +113,7 @@ private:
 	//std::string m_orginalName;
 	//Error m_error;
 	bool checkMissing(CkdskDiffFile &ckdskDiffFile, FileList_Ptr &filelist, VisitingObject *visitingObject, const char *address);
+	bool checkExtra(CkdskDiffFile &ckdskDiffFile, FileList_Ptr &filelist, VisitingObject *visitingObject, const char *address);
 public:
         /// Constructor
         /// @param archivePath  The root archive folder  

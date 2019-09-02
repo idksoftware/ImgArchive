@@ -922,6 +922,33 @@ bool CheckDisk::update(const char *chkdskFolderPath, const char *chkdskFilename,
 //	return check(targetdir, targetdir);
 //}
 
+bool CheckDisk::checkExtra(CkdskDiffFile &ckdskDiffFile, FileList_Ptr &filelist, VisitingObject *visitingObject, const char *address) {
+	bool found = false;
+	// This is a very slow way? better ways must be found.
+	for (std::vector<std::string>::iterator j = filelist->begin(); j != filelist->end(); j++) {
+		std::string &chkname = *j;
+		if (chkname.compare(".") || chkname.compare("..") || chkname.compare(".sia")) {
+			continue;
+		}
+		for (std::vector<std::string>::iterator i = ckdskDiffFile.begin(); i != ckdskDiffFile.end(); i++) {
+			std::string name = *i;
+			
+			if (chkname.compare(name) == 0) {
+				found = true;
+				break;
+			}
+		}
+		if (found == false) {
+			std::string fullAddress = address; fullAddress += '/'; fullAddress += chkname;
+			ReportStatus status = ReportStatus::Status::Added;
+			visitingObject->process(fullAddress.c_str(), status);
+		}
+		found = false;
+	}
+	return true;
+}
+
+
 bool CheckDisk::checkMissing(CkdskDiffFile &ckdskDiffFile, FileList_Ptr &filelist, VisitingObject *visitingObject, const char *address) {
 	bool found = false;
 	// This is a very slow way? better ways must be found.
@@ -966,6 +993,10 @@ bool CheckDisk::check(const char *targetdir, const char *checkFilePath, const ch
 	if (checkMissing(ckdskDiffFile, filelist, &visitingObject, address) == false) {
 		return false;
 	}
+	if (checkExtra(ckdskDiffFile, filelist, &visitingObject, address) == false) {
+		return false;
+	}
+	
 	// Iterate round the files in the target folder
 	CLogger &logger = CLogger::getLogger();
 	std::string targetdirStr = targetdir;
