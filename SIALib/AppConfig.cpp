@@ -709,8 +709,6 @@ namespace simplearchive {
 		AppConfig::m_consoleLevel = logLevel;
 	}
 
-
-
 	void SharedConfig::setDerivativePath(const char *path) {
 		AppConfig::m_derivativePath = path;
 	}

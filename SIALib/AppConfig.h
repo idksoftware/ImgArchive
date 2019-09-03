@@ -243,8 +243,16 @@ namespace simplearchive {
 		const char *getBackup1();
 		const char *getBackup2();
 
+		bool getLightroom() {
+			return m_lightroom;
+		}
+
 		bool isBackup1Enabled() { return m_backup1Enabled; };
 		bool isBackup2Enabled() { return m_backup2Enabled; };
+
+		void setLightroom() {
+			m_lightroom = true;
+		}
 
 		void setBackupDestinationPath(const char *path);
 		long getBackupMediaSize();
