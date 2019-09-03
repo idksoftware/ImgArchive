@@ -175,6 +175,7 @@
     <ClInclude Include="ImageSideCar.h" />
     <ClInclude Include="ImportJournal.h" />
     <ClInclude Include="JournalFile.h" />
+    <ClInclude Include="LightroomImport.h" />
     <ClInclude Include="MakeMedia.h" />
     <ClInclude Include="MasterCatalogue.h" />
     <ClInclude Include="MetadataUpdate.h" />
@@ -217,6 +218,7 @@
     <ClCompile Include="ImageSideCars.cpp" />
     <ClCompile Include="ImportJournal.cpp" />
     <ClCompile Include="JournalFile.cpp" />
+    <ClCompile Include="LightroomImport.cpp" />
     <ClCompile Include="MakeMedia.cpp" />
     <ClCompile Include="MasterCatalogue.cpp" />
     <ClCompile Include="MetadataUpdate.cpp" />

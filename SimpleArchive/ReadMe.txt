@@ -69,5 +69,13 @@ add --source-path="C:\tmp_raw"
 get --scope=2017
 
 
+<<<<<<< HEAD
 
 checkin --scope 2017-*-*/DSC01277.JPG
+=======
+checkin --scope 2017-*-*/DSC01277.JPG
+
+add --source-path="C:\local\Lightroom\2019"
+
+add --lightroom
+>>>>>>> e828bc4ef0e16049b060893d67b872388a916d4b
