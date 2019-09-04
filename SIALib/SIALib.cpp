@@ -406,8 +406,15 @@ namespace simplearchive {
 
 	bool SIALib::Import() {
 		AppConfig &config = AppConfig::get();
-		if (m_ArchiveBuilder->Import(config.getSourcePath()) == false) {
-			return false;
+		if (config.isLightroom()) {
+			if (m_ArchiveBuilder->ImportLightroom(config.getLightroomPath()) == false) {
+				return false;
+			}
+		}
+		else {
+			if (m_ArchiveBuilder->Import(config.getSourcePath()) == false) {
+				return false;
+			}
 		}
 		
 		return true;

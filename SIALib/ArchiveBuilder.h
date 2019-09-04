@@ -88,7 +88,7 @@ public:
 	/// @param sourcePath - source folder were the images to be imported reside.
 	bool Import(const char *sourcePath, bool peekImport = false);
 	bool ImportFile(const char *filePath);
-	
+	bool ImportLightroom(const char *sourcePath);
 	/// Distructor
 	virtual ~ArchiveBuilder();
 	/// @brief The 

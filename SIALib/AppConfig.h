@@ -61,9 +61,10 @@
 #define HOME_PATH_LABEL					"HomePath"
 #define INDEX_PATH_LABEL				"IndexPath"
 #define HISTORY_PATH_LABEL				"HistoryPath"
-#define ENABLED_LABEL				"Enabled"
-#define BACKUP_ONE_ENABLED_LABEL			"BackupOneEnabled"
-#define BACKUP_TWO_ENABLED_LABEL			"BackupTwoEnabled"
+#define LIGHTROOM_PATH_LABEL			"LightroomPath"
+#define ENABLED_LABEL					"Enabled"
+#define BACKUP_ONE_ENABLED_LABEL		"BackupOneEnabled"
+#define BACKUP_TWO_ENABLED_LABEL		"BackupTwoEnabled"
 #define EXTERNAL_COMMAND_LINE_LABEL		"ExternalCommandLine"
 #define EXIF_MAP_PATH_LABEL				"ExifMapPath"
 #define EXIF_MAP_FILE_LABEL				"ExifMapFile"
@@ -97,6 +98,7 @@ namespace simplearchive {
 	private:
 		friend class AppOptions;
 		friend class SharedConfig;
+		friend class SIAARCConfig;
 
 		static std::unique_ptr<AppConfig> m_this;
 		static bool m_verbose; //< -v --Verbose
@@ -141,7 +143,7 @@ namespace simplearchive {
 		static std::string m_masterCataloguePath;
 		static std::string m_masterWWWCataloguePath;
 		static std::string m_catalogPath;
-
+		static std::string m_lightroomPath;
 		static std::string m_sourcePath;
 
 		static std::string m_configPath;
@@ -239,20 +241,18 @@ namespace simplearchive {
 		/// @brief Gets the Master archive path
 		/// user definable
 		const char *getMasterPath();
+		const char *getLightroomPath();
 
 		const char *getBackup1();
 		const char *getBackup2();
 
-		bool getLightroom() {
-			return m_lightroom;
-		}
+		
 
+		
 		bool isBackup1Enabled() { return m_backup1Enabled; };
 		bool isBackup2Enabled() { return m_backup2Enabled; };
 
-		void setLightroom() {
-			m_lightroom = true;
-		}
+		
 
 		void setBackupDestinationPath(const char *path);
 		long getBackupMediaSize();
@@ -272,6 +272,10 @@ namespace simplearchive {
 		bool isVerbose() const;
 		const char *getLogLevel();
 		const char *getConsoleLevel();
+
+		bool isLightroom() {
+			return m_lightroom;
+		}
 
 		bool isEventsOn();
 		int eventPort();
@@ -439,6 +443,12 @@ namespace simplearchive {
 	class SIAARCConfig : public SharedConfig {
 	public:
 		SIAARCConfig() = default;
+		bool getLightroom() {
+			return AppConfig::m_lightroom;
+		}
+		void setLightroom() {
+			AppConfig::m_lightroom = true;
+		}
 	};
 
 	class AdminConfig : public SharedConfig {

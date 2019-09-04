@@ -971,6 +971,61 @@ bool CheckDisk::checkMissing(CkdskDiffFile &ckdskDiffFile, FileList_Ptr &filelis
 	return true;
 }
 
+bool CheckDisk::findNewImages(const char *checkFilePath, const char *targetdir, std::vector<std::string> &list) {
+	bool errors = false;
+	FileList_Ptr filelist = SAUtils::getFiles_(targetdir);
+	std::string path = checkFilePath;
+	// Check the folder the manifest file folder exists
+	if (SAUtils::FileExists(path.c_str()) == false) {
+		return false;
+	}
+	// Check the manifest file exists
+	
+	if (SAUtils::IsFile(checkFilePath) == false) {
+		return false;
+	}
+	CkdskDiffFile ckdskDiffFile;
+	// read the manifest file
+	ckdskDiffFile.read(checkFilePath);
+	
+	
+
+	// Iterate round the files in the target folder
+	CLogger &logger = CLogger::getLogger();
+	std::string targetdirStr = targetdir;
+	for (std::vector<std::string>::iterator i = filelist->begin(); i != filelist->end(); i++) {
+		std::string name = *i;
+		if (name.compare(".") == 0 || name.compare("..") == 0 || name.compare(".sia") == 0) {
+			continue;
+		}
+		std::string filepath = targetdirStr + "/" + name;
+
+		if (SAUtils::IsFile(filepath.c_str()) == true) {
+			unsigned long size;
+			if (SAUtils::fileSize(filepath.c_str(), &size) == false) {
+				// Log error
+			}
+			CIDKCrc Crc;
+			logger.log(LOG_OK, CLogger::Level::INFO, "Image: %s", filepath.c_str());
+
+
+			std::string buf;
+			SAUtils::getFileContents(filepath.c_str(), buf);
+			MD5 md5(buf);
+			std::string md5Str = md5.hexdigest();
+			unsigned int crc = Crc.crc((unsigned char *)buf.c_str(), size);
+			CkdskData::Status fileStatus;
+			ReportStatus status;
+			std::string orginal;
+			fileStatus = ckdskDiffFile.find(crc, md5Str.c_str(), name.c_str());
+			if (fileStatus == CkdskData::Status::Missing) {
+				list.push_back(name);
+			}
+		}
+	}
+	return !errors;
+}
+
 bool CheckDisk::check(const char *targetdir, const char *checkFilePath, const char *address, VisitingObject& visitingObject) {
 	// Read the target folder
 	FileList_Ptr filelist = SAUtils::getFiles_(targetdir);

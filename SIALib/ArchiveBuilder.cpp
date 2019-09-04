@@ -67,6 +67,7 @@
 #include <stdio.h>
 #include <sstream>
 #include <vector>
+#include "LightroomImport.h"
 
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
@@ -394,6 +395,39 @@ namespace simplearchive {
 				}
 			}
 		}
+		return true;
+	}
+
+	bool ArchiveBuilder::ImportLightroom(const char *lightroomPath) {
+		LightroomImport lightroomImport(m_archiveObject.getMasterPath().getRepositoryPath().c_str(), lightroomPath);
+		if (lightroomImport.makeList() == false) {
+			return false;
+		}
+		
+		CLogger &logger = CLogger::getLogger();
+		if (SAUtils::DirExists(lightroomPath) == false) {
+			logger.log(LOG_OK, CLogger::Level::ERR, "Source path \"%s\" not Found", lightroomPath);
+			return false;
+		}
+		// imageSets are no longer required so can be deleted.
+		ImportJournal& importJournal = ImportJournalManager::GetJournal();
+		std::shared_ptr<ImageSets> imageSets = nullptr;
+		if ((imageSets = processFiles(lightroomPath, importJournal)) == nullptr) {
+			return false;
+		}
+		/*
+		if (processImageGroupSets(imageSets, importJournal) == false) {
+			return false;
+		}
+		TargetsList::destroy();
+		//if (imageSets != nullptr) {
+		//	delete imageSets;
+		//}
+		ArchiveObject& archiveObject = ArchiveObject::getInstance();
+		if (archiveObject.OnCompletion() == false) {
+			return false;
+		}
+		*/
 		return true;
 	}
 

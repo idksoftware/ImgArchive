@@ -78,6 +78,7 @@ namespace simplearchive {
 	std::string AppConfig::m_sourcePath;
 	std::string AppConfig::m_catalogPath;
 	std::string AppConfig::m_configPath;
+	std::string AppConfig::m_lightroomPath;
 	std::string AppConfig::m_tempPath;
 	std::string AppConfig::m_logPath;
 	std::string AppConfig::m_consoleLevel;
@@ -382,12 +383,13 @@ namespace simplearchive {
 		//
 //#define CONFIG_PATH_LABEL				"ConfigPath"	 
 //#define TOOLS_PATH_LABEL           		"ToolsPath"
-		
+		std::string noLightroom = "NoLightroom";
 		setSystemFolders(TEMP_PATH_LABEL, AppConfig::m_tempPath, homePath + TEMP_PATH);
 //#define SOURCE_PATH_LABEL         		"SourcePath"
 		setSystemFolders(SYSTEM_PATH_LABEL, AppConfig::m_systemPath, homePath + SYSTEM_PATH);
 		setSystemFolders(LOG_PATH_LABEL, AppConfig::m_logPath, homePath + LOG_PATH);
 		setSystemFolders(MASTER_PATH_LABEL, AppConfig::m_masterPath, homePath + MASTER_PATH);
+		setSystemFolders(LIGHTROOM_PATH_LABEL, AppConfig::m_lightroomPath, noLightroom);
 		setSystemFolders(DERIVATIVE_PATH_LABEL, AppConfig::m_derivativePath, homePath + DERIVATIVE_PATH);
 		setSystemFolders(TOOLS_PATH_LABEL, AppConfig::m_toolsPath, homePath + TOOLS_PATH);
 		setSystemFolders(HOOK_SCRIPTS_PATH_LABEL, AppConfig::m_hookPath, homePath + HOOKS_PATH);
@@ -639,6 +641,11 @@ namespace simplearchive {
 		*/
 		return m_masterPath.c_str();
 
+	}
+
+	const char *AppConfig::getLightroomPath()
+	{
+		return m_lightroomPath.c_str();
 	}
 	
 	const char *AppConfig::getDerivativePath() {

@@ -129,6 +129,7 @@ public:
 	bool makeCheckData(const char *chkdskfolder, const char *targetdir, const char *csvPath, const char *xmlPath);
         /// Checks the folder against the manifest file.
 	//bool check(const char *targetdir);
+	bool findNewImages(const char *archivePath, const char *targetPath, std::vector<std::string> &list);
 	/// Checks the folder against the manifest file.
 	/// @param targetdir		This is the path to the files to be checked.
 	/// @param checkFilePath	This is the path to the manifest files
