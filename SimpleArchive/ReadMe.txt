@@ -74,3 +74,4 @@ checkin --scope 2017-*-*/DSC01277.JPG
 add --source-path="C:\local\Lightroom\2019"
 
 add --lightroom
+
