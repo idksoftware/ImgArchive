@@ -399,10 +399,6 @@ namespace simplearchive {
 	}
 
 	bool ArchiveBuilder::ImportLightroom(const char *lightroomPath) {
-		LightroomImport lightroomImport(m_archiveObject.getMasterPath().getRepositoryPath().c_str(), lightroomPath);
-		if (lightroomImport.makeList() == false) {
-			return false;
-		}
 		
 		CLogger &logger = CLogger::getLogger();
 		if (SAUtils::DirExists(lightroomPath) == false) {
@@ -412,10 +408,10 @@ namespace simplearchive {
 		// imageSets are no longer required so can be deleted.
 		ImportJournal& importJournal = ImportJournalManager::GetJournal();
 		std::shared_ptr<ImageSets> imageSets = nullptr;
-		if ((imageSets = processFiles(lightroomPath, importJournal)) == nullptr) {
+		if ((imageSets = processLightroomFiles(lightroomPath)) == nullptr) {
 			return false;
 		}
-		/*
+		
 		if (processImageGroupSets(imageSets, importJournal) == false) {
 			return false;
 		}
@@ -427,7 +423,7 @@ namespace simplearchive {
 		if (archiveObject.OnCompletion() == false) {
 			return false;
 		}
-		*/
+		
 		return true;
 	}
 
@@ -440,7 +436,7 @@ namespace simplearchive {
 		// imageSets are no longer required so can be deleted.
 		ImportJournal& importJournal = ImportJournalManager::GetJournal();
 		std::shared_ptr<ImageSets> imageSets = nullptr;
-		if ((imageSets = processFiles(sourcePath, importJournal)) == nullptr) {
+		if ((imageSets = processFiles(sourcePath)) == nullptr) {
 			return false;
 		}
 		if (peekImport == true) {
@@ -461,7 +457,35 @@ namespace simplearchive {
 		return true;
 	}
 
-	std::shared_ptr<ImageSets> ArchiveBuilder::processFiles(const char *sourcePath, ImportJournal& importJournal) {
+	std::shared_ptr<ImageSets> ArchiveBuilder::processLightroomFiles(const char *lightroomPath) {
+
+		CLogger &logger = CLogger::getLogger();
+
+		//
+		// ==== Step 1 ====
+		// Read files into folder sets (ImageSets)
+		//
+		logger.log(LOG_ANALISING, CLogger::Level::SUMMARY, "Stage 1: Reading Image files to be processes");
+
+		LightroomImport lightroomImport(m_archiveObject.getMasterPath().getRepositoryPath().c_str(), lightroomPath);
+		if (lightroomImport.makeList() == false) {
+			return false;
+		}
+
+		m_folders = ImportImageList::getFolderCount();
+		m_folders++;
+		m_imageFiles = ImportImageList::getFileCount();
+		logger.log(LOG_INITIAL_SUMMARY, CLogger::Level::SUMMARY, "Completed Stage 1: Found %d image files to be processed in %d Folder(s)", m_imageFiles, m_folders);
+		std::shared_ptr<ImageSets> imageSets = nullptr;
+		if ((imageSets = ImportImageList::getImageSets()) == nullptr) {
+			// No images to process
+			return nullptr;
+		}
+
+		return imageSets;
+	}
+
+	std::shared_ptr<ImageSets> ArchiveBuilder::processFiles(const char *sourcePath) {
 		
 		CLogger &logger = CLogger::getLogger();
 

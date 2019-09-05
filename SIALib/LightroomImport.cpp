@@ -44,8 +44,10 @@ namespace simplearchive {
 		
 		time_t timeValue = 0;
 		time(&timeValue);
-		std::vector<std::string> list;
+		
+		ImportImageList importImageList;
 		FileList_Ptr filelist = SAUtils::getFiles_(m_archivePath.c_str());
+		
 		for (auto i = filelist->begin(); i != filelist->end(); i++) {
 			std::string year = *i;
 
@@ -68,12 +70,18 @@ namespace simplearchive {
 				}
 				//for workspace std::string filepath = year + "/" + name + "/.sia/chdsk/fdata.xml";
 				std::string relfilepath = year + "/" + name;
-				
 				std::string lightroomFullPath = m_lightroomPath + '/' + relfilepath;
 				std::string archiveFullPath = m_archivePath + "/system/chdsk/" + relfilepath + "/fdata.csv";
 				CheckDisk checkDisk;
-				
+				std::vector<std::string> list;
 				checkDisk.findNewImages(archiveFullPath.c_str(), lightroomFullPath.c_str(), list);
+				if (!list.empty()) {
+					importImageList.onStart(lightroomFullPath.c_str());
+					importImageList.onDirectory(lightroomFullPath.c_str());
+					for (auto j = list.begin(); j == list.end(); j++) {
+						importImageList.onDirectory((*j).c_str());
+					}
+				}
 			}
 		}
 		

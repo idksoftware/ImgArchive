@@ -157,6 +157,53 @@ namespace simplearchive {
 
 	};
 
+
+	class ImportImageList {
+		static int m_folderCount;
+		static int m_fileCount;
+		static std::shared_ptr<ImageSets> m_imageSets;
+		std::shared_ptr<ImageSet> m_imageSet;
+		
+	public:
+		bool onStart(const char *path) {
+			if (m_imageSets == nullptr) {
+				m_imageSets = std::make_shared<ImageSets>();
+			}
+			m_imageSet = std::make_shared<ImageSet>(path);
+			m_imageSets->insert(m_imageSets->end(), m_imageSet);
+			return true;
+		};
+
+		bool onFile(const char *path);
+
+		bool onDirectory(const char *path) {
+			m_folderCount++;
+			return true;
+		};
+
+		bool onEnd() {
+			return true;
+		};
+
+		ImportImageList() {};
+		virtual ~ImportImageList() {};
+		static std::shared_ptr<ImageSets> getImageSets() {
+			return m_imageSets;
+		}
+		static void destroy() {
+			m_imageSets = nullptr;
+		}
+
+		static int getFileCount() {
+			return m_fileCount;
+		}
+
+		static int getFolderCount() {
+			return m_folderCount;
+		}
+	};
+
+
 /// @class TargetsList TargetsList.h "TargetsList.h"
 /// @brief This class Provides the target list. this contains the target images.
 /// @note this is the raw list. Further processing is required to process the list into
