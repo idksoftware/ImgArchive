@@ -208,25 +208,6 @@ int CIPComms::ReceivePacket(int socket, CIPPacket &pIPPacket)
 //	char buffer[4 * 1024];
 
 	pIPPacket.Empty();
-/*
-#ifdef _WIN32
-	if (SOCKET_ERROR == ioctlsocket(socket,FIONREAD ,&opt))
-	{
-		m_LastError = WSAGetLastError();
-		return -1;
-	}
-#else
-	if (SOCKET_ERROR == ioctl(socket,FIONREAD ,&opt))
-	{
-		m_LastError = errno;
-		return -1;
-	}
-#endif
-*/
-//	if (opt == 0)
-//	{
-//		return 0;
-//	}
 	
 	char c;
 	msglen = recv(socket, &c, 1, 0);
@@ -817,6 +798,7 @@ CIPComms::EErrorCode CChildConnection::talk()
 	EErrorCode status = SUCCESS;
 	
 	int res = ReceivePacket(m_ConnectSocket, m_CChBuffer);
+	printf("Message: %s", m_CChBuffer.GetData());
 	if (res > 0)
 	{				
 		//long size = m_CChBuffer.GetSize();

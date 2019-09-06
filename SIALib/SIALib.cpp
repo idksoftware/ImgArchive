@@ -185,9 +185,7 @@ namespace simplearchive {
 
 		CLogger &logger = CLogger::getLogger();
 
-		CTerminalServerManager &terminalServerManager = CTerminalServerManager::getInstance();
-		terminalServerManager.start();
-
+		
 #ifdef _WIN32
 		WSADATA wsa;
 		if (m_winsockRequired) {
@@ -653,6 +651,14 @@ namespace simplearchive {
 			//completedSummary.setResult(imCompletedSummary.getResult());
 			return true;
 		}
+		return true;
+	}
+
+	bool SIALib::remoteServer() {
+		CTerminalServer terminalServer;
+		terminalServer.Init(22);
+		terminalServer.Run();
+
 		return true;
 	}
 } // simplearchive

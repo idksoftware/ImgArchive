@@ -138,6 +138,8 @@ namespace simplearchive {
 		bool validate(const char *archivePath, const char *workspacePath, const char *homePath, Scope, bool repair = false);
 
 		bool log(const char *filepath, LogDocument::FormatType& formatType);
+
+		bool remoteServer();
 	
 	};
 

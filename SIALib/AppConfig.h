@@ -76,6 +76,7 @@
 #define DRY_RUN_LABEL					"DryRun"
 #define LOG_LEVEL_LABEL					"LogLevel"
 #define LIGHTROOM_LABEL					"Lightroom"
+#define SERVER_MODE_LABEL				"RemoteServerMode"
 #define CONSOLE_LEVEL_LABEL				"ConsoleLevel"
 #define FILE_CAT_LABEL				"FileCatalogue"
 #define WWW_CAT_LABEL				"WWWCatalogue"
@@ -110,6 +111,7 @@ namespace simplearchive {
 		static std::string m_logLevel;
 		static std::string m_consoleLevel;
 		static bool m_lightroom;
+		static bool m_serverMode;
 		static bool m_dry_run;
 		/// Log file path
 		static std::string m_logPath;
@@ -275,6 +277,10 @@ namespace simplearchive {
 
 		bool isLightroom() {
 			return m_lightroom;
+		}
+
+		bool isServerMode() {
+			return m_serverMode;
 		}
 
 		bool isEventsOn();
@@ -448,6 +454,9 @@ namespace simplearchive {
 		}
 		void setLightroom() {
 			AppConfig::m_lightroom = true;
+		}
+		void setServerModeON() {
+			AppConfig::m_serverMode = true;
 		}
 	};
 

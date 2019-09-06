@@ -58,7 +58,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineOption("show", "Show details", ArgvParser::MasterOption);
 	defineOption("prop", "Manage image properties", ArgvParser::MasterOption);
 	defineOption("log", "Show history log", ArgvParser::MasterOption);
-
+	defineOption("mode", "Sets the mode in which imgarchive will be operating", ArgvParser::MasterOption);
 	/*
 	defineOption("b", "Goes through the motions of running the subcommand but makes no\nactual changes ether disk or repository.", ArgvParser::NoOptionAttribute);
 	defineOptionAlternative("b", "backup");
@@ -88,6 +88,8 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineOption("S", "address scope", ArgvParser::OptionRequiresValue);
 	defineOptionAlternative("S", "scope");
 
+	defineOption("R", "Remode server mode", ArgvParser::NoOptionAttribute);
+	defineOptionAlternative("R", "remote-server");
 
 	defineOption("d", "destination of the images", ArgvParser::OptionRequiresValue);
 	defineOptionAlternative("d", "dist-path");
@@ -177,7 +179,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 
 	defineCommandOption("log", "image-address");
 	defineCommandOption("log", "format-type");
-
+	defineCommandOption("mode", "remote-server");
 	ArgvParser::ParserResults res = parse(argc, argv);
 
 	std::string errStr;
@@ -469,6 +471,13 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	}
 	else if (command("version") == true) {
 		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Version);
+		cmdFound = true;
+	}
+	else if (command("mode") == true) {
+		if (foundOption("remote-server") == true) {
+			config.setServerModeON();
+		}
+		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Mode);
 		cmdFound = true;
 	}
 	else {

@@ -426,7 +426,15 @@ bool SIAArcApp::doRun()
 		break;
 	}
 
+	case SIAArcAppOptions::CommandMode::CM_Mode:
+	{
 
+		if (siaLib.remoteServer() == false) {
+			setError(CLogger::getLastCode(), CLogger::getLastMessage());
+			return false;
+		}
+		break;
+	}
 	case SIAArcAppOptions::CommandMode::CM_Uncheckin:
 		break;
 	

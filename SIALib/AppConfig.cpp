@@ -60,6 +60,7 @@ namespace simplearchive {
 	bool AppConfig::m_dry_run = false;
 	bool AppConfig::m_sql_on = true;
 	bool AppConfig::m_lightroom = false;
+	bool AppConfig::m_serverMode = false;
 	bool AppConfig::m_file_cat_on = true;
 	bool AppConfig::m_www_cat_on = true;
 
@@ -367,6 +368,10 @@ namespace simplearchive {
 		std::string lightroom = "false";
 		setGeneral(LIGHTROOM_LABEL, lightroom, lightroom);
 		AppConfig::m_lightroom = (_stricmp(lightroom.c_str(), "true") == 0);
+
+		std::string serverMode = "false";
+		setGeneral(SERVER_MODE_LABEL, serverMode, serverMode);
+		AppConfig::m_serverMode = (_stricmp(serverMode.c_str(), "true") == 0);
 		
 		std::string file_cat_on = "false";
 		setGeneral(SQL_LABEL, file_cat_on, file_cat_on);
@@ -489,6 +494,7 @@ namespace simplearchive {
 		logger.log(LOG_OK, CLogger::Level::INFO, "        Console level:             %s", AppConfig::m_consoleLevel.c_str());
 		logger.log(LOG_OK, CLogger::Level::INFO, "        SQL database:              %s", (AppConfig::m_sql_on) ? "True" : "False");
 		logger.log(LOG_OK, CLogger::Level::INFO, "        Lightroom:                 %s", (AppConfig::m_lightroom) ? "True" : "False");
+		logger.log(LOG_OK, CLogger::Level::INFO, "        RemoteServerMode:          %s", (AppConfig::m_serverMode) ? "True" : "False");
 		logger.log(LOG_OK, CLogger::Level::INFO, "    System paths");
 		logger.log(LOG_OK, CLogger::Level::INFO, "        System path:               \"%s\"", AppConfig::m_systemPath.c_str());
 		logger.log(LOG_OK, CLogger::Level::INFO, "        Log path:                  \"%s\"", AppConfig::m_logPath.c_str());
@@ -1159,7 +1165,7 @@ namespace simplearchive {
 		str << "<IsQuiet>" << (isQuiet() ? "true" : "false") << "</IsQuiet>" << '\n';
 		str << "<IsVerbose>" << (isVerbose() ? "true" : "false") << "</IsVerbose>" << '\n';
 		str << "<LogLevel>" << getLogLevel() << "</LogLevel>" << '\n';
-		str << "<Lightroom>" << getLogLevel() << "</Lightroom>" << '\n';
+		str << "<Lightroom>" << (isLightroom() ? "true" : "false") << "</Lightroom>" << '\n';
 		str << "</Configuration>" << '\n';
 		return str.str();
 	}
