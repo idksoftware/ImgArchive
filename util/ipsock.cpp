@@ -208,7 +208,7 @@ int CIPComms::ReceivePacket(int socket, CIPPacket &pIPPacket)
 //	char buffer[4 * 1024];
 
 	pIPPacket.Empty();
-	
+/*
 	char c;
 	msglen = recv(socket, &c, 1, 0);
 	if (!msglen)
@@ -229,7 +229,7 @@ int CIPComms::ReceivePacket(int socket, CIPPacket &pIPPacket)
 		return -1;
 	}
 #endif
-
+*/
 #ifdef _WIN32
 	if (SOCKET_ERROR == ioctlsocket(socket,FIONREAD ,&opt))
 	{
@@ -243,10 +243,10 @@ int CIPComms::ReceivePacket(int socket, CIPPacket &pIPPacket)
 		return -1;
 	}
 #endif
-	pIPPacket.SetData(opt+1);
+	pIPPacket.SetData(opt);
 	char *l_Temp = (char *)pIPPacket.GetData();
-	*l_Temp = c;
-	msglen = recv(socket, l_Temp + 1, opt, 0);
+	//*l_Temp = c;
+	msglen = recv(socket, l_Temp, opt, 0);
 #ifdef _WIN32
 	if (SOCKET_ERROR == msglen)
 	{
@@ -260,7 +260,8 @@ int CIPComms::ReceivePacket(int socket, CIPPacket &pIPPacket)
 		return -1;
 	}
 #endif
-	msglen++;
+	//msglen++;
+	/*
 	if (opt+1 < msglen)
 	{
 		return -1; // allocated too little space?? 
@@ -269,51 +270,7 @@ int CIPComms::ReceivePacket(int socket, CIPPacket &pIPPacket)
 	{
 		return -1; // more data to get fix later 
 	}
-	
-	//if (msglen != opt)
-	//{
-	//	return -1;
-	//}
-/* Temp fix to get things working
-	
-		
-	unsigned int l_iBufferSize = 1024 * 2;
-	char l_szStrbuffer[l_iBufferSize];
-
-
-	while (1)
-	{
-		unsigned long opt = 0L;
-
-		if (SOCKET_ERROR == ioctlsocket(socket,FIONREAD ,&opt))
-		{
-#ifdef _WIN32
-			m_LastError = WSAGetLastError();
-#endif
-			return -1;
-		}
-		if (opt == 0)
-		{
-			break;
-		}
-		if (opt > l_iBufferSize)
-		{
-			msglen = recv(socket, l_szStrbuffer, l_iBufferSize, 0);
-		}
-		else
-		{
-			msglen = recv(socket, l_szStrbuffer, opt, 0);
-
-		}
-			
-		if (SOCKET_ERROR == msglen)  	
-		{
-			return -1;
-		}
-		l_szStrbuffer[msglen] = 0;
-		*pChBuffer += l_szStrbuffer;
-	}
-*/	
+	*/
 	
 
 	return msglen;
@@ -798,7 +755,10 @@ CIPComms::EErrorCode CChildConnection::talk()
 	EErrorCode status = SUCCESS;
 	
 	int res = ReceivePacket(m_ConnectSocket, m_CChBuffer);
-	printf("Message: %s", m_CChBuffer.GetData());
+	char buf[256];
+	memcpy(buf, m_CChBuffer.GetData(), m_CChBuffer.GetSize());
+	buf[m_CChBuffer.GetSize()] = '\0';
+	printf("Message: %s", buf);
 	if (res > 0)
 	{				
 		//long size = m_CChBuffer.GetSize();
