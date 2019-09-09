@@ -53,6 +53,7 @@
 ** $Id$ */
 
 // Version 12341234
+#include <memory>
 
 #ifndef _IPSOCK_
 #define _IPSOCK_
@@ -190,9 +191,7 @@ public:
 	/// .
 	bool Disconnect()
 	{
-
 		return true;
-	
 	}
 
 	/// .
@@ -253,7 +252,7 @@ class CIPServer : public CIPComms
 {
 private:
 	bool m_bNewConnection;
-	ChildConnectionList *m_pChildList;
+	std::shared_ptr<ChildConnectionList>  m_pChildList;
 	int m_ServerListenSocket;
 	long m_sec;
 	long m_usec;
@@ -297,9 +296,9 @@ public:
 	~CIPServer();
 
 	/// .
-	CChildConnection *GetFirst();
+	std::shared_ptr<CChildConnection> GetFirst();
 	/// .
-	CChildConnection *GetNext();
+	std::shared_ptr<CChildConnection> GetNext();
 	/// .
 	bool ConnectToPB(int iPort);
 	/// .
@@ -318,7 +317,7 @@ public:
 		return m_bNewConnection;
 	}
 	/// .
-	bool Send(char *pBuffer, int iSize, CChildConnection *pChildConnection);
+	bool Send(char *pBuffer, int iSize, std::shared_ptr<CChildConnection> pChildConnection);
 };
 
 /*

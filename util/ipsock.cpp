@@ -79,6 +79,7 @@
 #include "ipsock.h"
 //#include "cidklinklist.h"
 #include <vector>
+#include <memory>
 #include <algorithm>
 
 const int RETRY_MAX = 5;
@@ -347,31 +348,25 @@ CIPEventHandler::~CIPEventHandler(void)
 class ChildConnectionList
 {
 private:
-	std::vector<CChildConnection *> m_list;
-	std::vector<CChildConnection *>::iterator m_iter;
+	std::vector<std::shared_ptr<CChildConnection>> m_list;
+	std::vector<std::shared_ptr<CChildConnection>>::iterator m_iter;
 	bool m_cleanUp;
 public:
 	ChildConnectionList() {
 		m_cleanUp = false;
 	};
-	CChildConnection *GetFirst()
+	std::shared_ptr<CChildConnection> GetFirst()
 	{
-		//if (m_cleanUp) {
-		//	for (std::vector<CChildConnection *>::iterator i = m_list.begin(); i != m_list.end(); i++) {
-		//		if (*i == nullptr) {
-		//			m_list.erase(i);
-		//		}
-		//	}
-		//}
+		
 		m_iter = m_list.begin();
 		if (m_iter == m_list.end()) {
 			return nullptr;
 		}
-		CChildConnection *item = *m_iter;
+		std::shared_ptr<CChildConnection>item = *m_iter;
 		return item;
 	}
 
-	CChildConnection *GetNext()
+	std::shared_ptr<CChildConnection> GetNext()
 	{
 		if (m_iter == m_list.end()) {
 			return nullptr;
@@ -380,13 +375,13 @@ public:
 		if (m_iter == m_list.end()) {
 			return nullptr;
 		}
-		CChildConnection *item = *m_iter;
+		std::shared_ptr<CChildConnection> item = *m_iter;
 		return item;
 	}
 	
 	void DeleteChild (CChildConnection *ChildConnection_in, CIPComms::EErrorCode status)
 	{
-		std::vector<CChildConnection *>::iterator iter = std::find(m_list.begin(), m_list.end(), ChildConnection_in);
+		std::vector<std::shared_ptr<CChildConnection>>::iterator iter = std::find(m_list.begin(), m_list.end(), ChildConnection_in);
 		if (iter == m_list.end()) {
 			return; // not found
 		}
@@ -434,11 +429,9 @@ public:
 			}
 		};
 		
-		delete ChildConnection_in;
-		CChildConnection *item = *iter;
-		//m_list.erase(iter);
-		//delete item;
-		*item = 0;
+		
+		std::shared_ptr<CChildConnection> item = *iter;
+		item = nullptr;
 		m_cleanUp = true;
 		
 	}
@@ -479,15 +472,13 @@ CIPServer::CIPServer()
 		m_IsStarted = true;
 	}
 #endif
-	m_pChildList = new ChildConnectionList;
+	m_pChildList = std::make_shared<ChildConnectionList>();
 	m_ErrorCode = SUCCESS;
 	m_bNewConnection = false;
 }
 
 CIPServer::~CIPServer()
-{
-	delete m_pChildList;
-}
+{}
 
 bool CIPServer::ConnectToPB(int iPort)
 {
@@ -590,22 +581,22 @@ bool CIPServer::ConnectToPB(int iPort)
 	return ok;
 }
 
-CChildConnection *CIPServer::GetFirst()
+std::shared_ptr<CChildConnection> CIPServer::GetFirst()
 {
 	return m_pChildList->GetFirst();
 }
 
-CChildConnection *CIPServer::GetNext()
+std::shared_ptr<CChildConnection> CIPServer::GetNext()
 {
 	return m_pChildList->GetNext();
 }
 
-bool CIPServer::Send(char *pBuffer, int iSize, CChildConnection *pChildConnection)
+bool CIPServer::Send(char *pBuffer, int iSize, std::shared_ptr<CChildConnection> pChildConnection)
 {
 
 	// This tests that the child connection is still valid.
 	bool found = false;
-	CChildConnection *l_pCC = m_pChildList->GetFirst();
+	std::shared_ptr<CChildConnection> l_pCC = m_pChildList->GetFirst();
 	do 
 	{
 		if (l_pCC == pChildConnection)
@@ -636,7 +627,7 @@ bool CIPServer::Run(bool Listening)
     int sock;
     struct timeval l_tvTime;
 
-	CChildConnection *temp_childconnection;
+	std::shared_ptr<CChildConnection> temp_childconnection;
 
     CIPComms::EErrorCode status;
     int fd_count;
@@ -664,7 +655,7 @@ bool CIPServer::Run(bool Listening)
             FD_SET(l_ListenSocket, &noSockets2Read); // internal server
 	}
 
-    CChildConnection *l_item = m_pChildList->GetFirst();
+		std::shared_ptr<CChildConnection> l_item = m_pChildList->GetFirst();
 	if (l_item)
 	{
 		 // Set socket for reading per child connection
