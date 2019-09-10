@@ -379,7 +379,7 @@ public:
 		return item;
 	}
 	
-	void DeleteChild (CChildConnection *ChildConnection_in, CIPComms::EErrorCode status)
+	void DeleteChild (std::shared_ptr<CChildConnection> ChildConnection_in, CIPComms::EErrorCode status)
 	{
 		std::vector<std::shared_ptr<CChildConnection>>::iterator iter = std::find(m_list.begin(), m_list.end(), ChildConnection_in);
 		if (iter == m_list.end()) {
@@ -436,7 +436,7 @@ public:
 		
 	}
 	
-	void AddObject(CChildConnection* object_in)
+	void AddObject(std::shared_ptr<CChildConnection> object_in)
 	{
 		m_list.push_back(object_in);
 	}
@@ -700,7 +700,7 @@ bool CIPServer::Run(bool Listening)
                 
                 // Create a new Child connection
 			m_bNewConnection = true;
-			m_pChildList->AddObject(new CChildConnection(connect_socket));
+			m_pChildList->AddObject(std::make_shared<CChildConnection>(connect_socket));
 		} 
         else
 	{

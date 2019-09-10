@@ -37,7 +37,7 @@ bool CTerminalServer::Run()
 		m_Server.Run(true);
 		if (m_Server.IsNeedRead())
 		{
-			CChildConnection *l_CC = m_Server.GetFirst();
+			std::shared_ptr<CChildConnection> l_CC = m_Server.GetFirst();
 			do {
 				if (l_CC->IsNeedRead())
 				{
