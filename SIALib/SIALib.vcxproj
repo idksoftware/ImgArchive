@@ -179,6 +179,7 @@
     <ClInclude Include="MakeMedia.h" />
     <ClInclude Include="MasterCatalogue.h" />
     <ClInclude Include="MetadataUpdate.h" />
+    <ClInclude Include="RemoteServer.h" />
     <ClInclude Include="SequenceFileManager.h" />
     <ClInclude Include="SQLiteDB.h" />
     <ClInclude Include="VersionControl.h" />
@@ -222,6 +223,7 @@
     <ClCompile Include="MakeMedia.cpp" />
     <ClCompile Include="MasterCatalogue.cpp" />
     <ClCompile Include="MetadataUpdate.cpp" />
+    <ClCompile Include="RemoteServer.cpp" />
     <ClCompile Include="SequenceFileManager.cpp" />
     <ClCompile Include="SQLiteDB.cpp" />
     <ClCompile Include="VersionIndex.cpp" />

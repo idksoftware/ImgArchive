@@ -73,6 +73,7 @@
 #include "ArchivePath.h"
 #include "CheckoutStatus.h"
 #include "IndexVisitor.h"
+#include "RemoteServer.h"
 #include <stdio.h>
 #include <sstream>
 
@@ -655,10 +656,14 @@ namespace simplearchive {
 	}
 
 	bool SIALib::remoteServer() {
+		RemoteServer remoteServer;
+		remoteServer.Connect(22);
+		remoteServer.Run();
+		/*
 		CTerminalServer terminalServer;
 		terminalServer.Init(22);
 		terminalServer.Run();
-
+		*/
 		return true;
 	}
 } // simplearchive

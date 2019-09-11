@@ -144,6 +144,9 @@
     <ClInclude Include="LightroomImport.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="RemoteServer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SIALib.cpp">
@@ -264,6 +267,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="LightroomImport.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RemoteServer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
