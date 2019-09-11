@@ -206,7 +206,7 @@ public:
 class ChildConnectionList;
 class CChildConnection : public CIPComms
 {
-    private:
+    protected:
         int m_ConnectSocket;
      
 		CChildConnection() {};
@@ -236,11 +236,17 @@ class CChildConnection : public CIPComms
 		}
 
 	/// .
-        CIPComms::EErrorCode talk();
+        virtual CIPComms::EErrorCode talk();
+	/// .
+		virtual std::shared_ptr<CChildConnection> make(int sock) {
+			return std::make_shared<CChildConnection>(sock);
+		}
 	/// .
         bool  operator == (CChildConnection CChildConnection_in);
 	/// .
         bool Send(char *data, long size);
+
+
 };
 
 
@@ -294,11 +300,10 @@ public:
 	CIPServer();
 	/// .
 	~CIPServer();
-
-	/// .
-	std::shared_ptr<CChildConnection> GetFirst();
-	/// .
-	std::shared_ptr<CChildConnection> GetNext();
+	
+	virtual std::shared_ptr<CChildConnection> MakeClient(int sock) {
+		return std::make_shared<CChildConnection>(sock);
+	}
 	/// .
 	bool ConnectToPB(int iPort);
 	/// .
