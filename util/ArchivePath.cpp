@@ -139,7 +139,7 @@ bool RepositoryPath::settup() {
 		m_metadataPath = systemFolder + METADATA_PATH;
 		m_idxDBPath = systemFolder + IMAGEID_PATH;
 		m_journalPath = systemFolder + JOURNAL_PATH;
-		m_historyLogPath = systemFolder + HISTORY_PATH;
+		m_historySystemPath = systemFolder + HISTORY_PATH;
 		m_DBPath = systemFolder + DATABASE_PATH;
 		m_ImageIndexPath = systemFolder + INDEX_PATH;
 
@@ -268,20 +268,20 @@ void RepositoryPath::setCatalog(std::string& catalog) {
 	m_catalog = catalog;
 }
 
-std::string RepositoryPath::getHistory() const {
-	return m_historyPath;
+std::string RepositoryPath::getImageHistory() const {
+	return m_historyImagePath;
 }
 
-std::string RepositoryPath::getLogHistory() const {
-	return m_historyLogPath;
+std::string RepositoryPath::getSystemHistory() const {
+	return m_historySystemPath;
 }
 
 std::string RepositoryPath::getCSVDatabasePath() const {
 	return m_DBPath;
 }
 
-void RepositoryPath::setHistory(std::string& history) {
-	m_historyPath = history;
+void RepositoryPath::setImageHistory(std::string& history) {
+	m_historyImagePath = history;
 }
 
 std::string RepositoryPath::getJournalPath() const {

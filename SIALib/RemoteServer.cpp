@@ -19,28 +19,31 @@ public:
 
 	}
 	const char *getName() {
-		std::string name;
-		name += '<';
-		name += m_name;
-		name += '>';
-		return name.c_str();
+		
+		return m_name.c_str();
 	}
 };
 class UnknownCommand : public Command {
 public:
 	UnknownCommand() : Command("Unknown") {}
 };
-class Commands : std::vector<Command> {
+class Commands : std::vector<std::shared_ptr<Command>> {
 	UnknownCommand unknownCommand;
 public:
-	void add(Command command) {
+	void add(std::shared_ptr<Command> command) {
 		push_back(command);
 	}
 	bool find(const char *commandName);
 	Command &getCommand(const char *commandName) {
 		for (auto i = begin(); i != end(); i++) {
-			Command c = *i;
-			return c;
+			std::shared_ptr<Command> c = *i;
+			std::string name;
+			name += '<';
+			name += c->getName();
+			name += '>';
+			if (name.compare(commandName) == 0) {
+				return *c;
+			}
 		}
 		return unknownCommand;
 	}
@@ -49,7 +52,7 @@ public:
 
 class HistoryCommand : public Command {
 public:
-	HistoryCommand() : Command("history") {}
+	HistoryCommand() : Command("History") {}
 };
 
 class GetImageCommand : public Command {
@@ -65,30 +68,34 @@ public:
 
 class IACommands : public Commands {
 public:
-	IACommands() {
-		HistoryCommand historyCommand;
+	IACommands() {};
+	void Init() {
+		std::shared_ptr <HistoryCommand> historyCommand = std::make_shared<HistoryCommand>();
 		add(historyCommand);
-		GetImageCommand getImageCommand;
+		std::shared_ptr <GetImageCommand> getImageCommand = std::make_shared<GetImageCommand>();
 		add(getImageCommand);
-		PutImageCommand putImageCommand;
+		std::shared_ptr <PutImageCommand> putImageCommand = std::make_shared<PutImageCommand>();
 		add(putImageCommand);
-	}
+	};
 };
 
 
 
 class RemoteServerChild : public CChildConnection {
-	IACommands iaCommands;
+	IACommands &m_commands;
 public:
-	RemoteServerChild(int sock) : CChildConnection(sock) {}
+	RemoteServerChild(int sock, IACommands &commands) : m_commands(commands), CChildConnection(sock) {}
 	CIPComms::EErrorCode talk();
 };
 
 
 class RemoteServerComms : public CIPServer {
+	IACommands &m_commands;
 public:
+	RemoteServerComms(IACommands &commands) : m_commands(commands) {}
+
 	virtual std::shared_ptr<CChildConnection> MakeClient(int sock) {
-		std::shared_ptr<RemoteServerChild> ptr = std::make_shared<RemoteServerChild>(sock);
+		std::shared_ptr<RemoteServerChild> ptr = std::make_shared<RemoteServerChild>(sock, m_commands);
 		return ptr;
 	}
 };
@@ -106,9 +113,10 @@ CIPComms::EErrorCode RemoteServerChild::talk() {
 		buf[m_CChBuffer.GetSize()] = '\0';
 		printf("Message: %s", buf);
 		//long size = m_CChBuffer.GetSize();
-		Command &cmd = iaCommands.getCommand(buf);
+		Command &cmd = m_commands.getCommand(buf);
 		printf("Command found %s", cmd.getName());
-		m_Read = true;
+		char *name = (char *)cmd.getName();
+		Send(name, strlen(name));
 	}
 	else if (!res)
 	{
@@ -144,13 +152,16 @@ CIPComms::EErrorCode RemoteServerChild::talk() {
 #endif
 		
 	}
-	Send("gggg", 4);
+	
 	return status;
 }
 
 
-RemoteServer::RemoteServer() :  m_Server(std::make_unique<RemoteServerComms>())
+
+RemoteServer::RemoteServer() : m_iaCommands(std::make_unique<IACommands>())
+				
 {
+	m_Server = std::make_unique<RemoteServerComms>(*m_iaCommands);
 }
 
 
@@ -159,6 +170,7 @@ RemoteServer::~RemoteServer()
 }
 
 bool RemoteServer::Connect(int iPort) {
+	m_iaCommands->Init();
 	return m_Server->ConnectToPB(iPort);
 }
 

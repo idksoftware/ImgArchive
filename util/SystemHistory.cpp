@@ -123,11 +123,21 @@ bool SystemHistory::init() {
 	m_index += '/'; m_index += logName.getFilename();
 		
 	if (ArchivePath::isBackup1Enabled() == true) {
-		m_backup1 = ArchivePath::getBackup1().getLogHistory();
+		m_backup1 = ArchivePath::getBackup1().getSystemHistory();
+		if (SAUtils::DirExists(m_backup1.c_str()) == false) {
+			if (SAUtils::mkDir(m_backup1.c_str()) == false) {
+				return false;
+			}
+		}
 		m_backup1 += '/'; m_backup1 += logName.getFilename();
 	}
 	if (ArchivePath::isBackup2Enabled() == true) {
-		m_backup2 = ArchivePath::getBackup2().getLogHistory();
+		m_backup2 = ArchivePath::getBackup2().getSystemHistory();
+		if (SAUtils::DirExists(m_backup2.c_str()) == false) {
+			if (SAUtils::mkDir(m_backup2.c_str()) == false) {
+				return false;
+			}
+		}
 		m_backup2 += '/'; m_backup2 += logName.getFilename();
 	}
 	return true;
