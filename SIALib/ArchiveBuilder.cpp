@@ -729,25 +729,39 @@ namespace simplearchive {
 					m_imageFilesCompleted++;
 				}
 
-				MasterRepositoryObject&mdb = m_archiveObject.getMasterObject();
-				for (auto i = importJournal.begin(); i != importJournal.end(); i++) {
-					std::shared_ptr<ImportJournalItem> item = *i;
-					std::string location = item->getLocation();
-					std::string source = item->getSourceImage();
 				
-					if(item->getResultEnum() == ImportJournal::Result::Imported) {
-						if (mdb.validate(location.c_str(), source.c_str()) == true) {
-							item->setValidated();
-						}
-					}
-				}
+				
 				logger.log(LOG_IMPORTING, CLogger::Level::SUMMARY, "Completed Stage 3: Archiving images");
 			}
 			else {
 				logger.log(LOG_IMPORTING, CLogger::Level::SUMMARY, "Stage 3: Archiving images, Not run? Option: dry run is active");
 			}
 		}
+		if (!m_doDryRun) {
+			int count = 0;
+			for (auto i = importJournal.begin(); i != importJournal.end(); i++) {
+				std::shared_ptr<ImportJournalItem> item = *i;
+				if (item->getResultEnum() == ImportJournal::Result::Imported) {
+					count++;
+				}
+			}
 
+			logger.log(LOG_IMPORTING, CLogger::Level::SUMMARY, "Stage 4: Validating images against the originals, %d images to be processed.", count);
+			MasterRepositoryObject&mdb = m_archiveObject.getMasterObject();
+			for (auto i = importJournal.begin(); i != importJournal.end(); i++) {
+				std::shared_ptr<ImportJournalItem> item = *i;
+				std::string location = item->getLocation();
+				std::string source = item->getSourceImage();
+
+				if (item->getResultEnum() == ImportJournal::Result::Imported) {
+					logger.log(LOG_OK, CLogger::Level::INFO, "Validating image \"%s\"", location.c_str());
+					if (mdb.validate(location.c_str(), source.c_str()) == true) {
+						item->setValidated();
+					}
+				}
+			}
+			logger.log(LOG_IMPORTING, CLogger::Level::SUMMARY, "Stage 4: Validating images completed");
+		}
 		logger.log(LOG_COMPLETED_SUMMARY, CLogger::Level::SUMMARY, "Imported %d image files found in %d Folder(s) into the archive, %d image files rejected", m_imageFilesCompleted, m_folders, m_imageFilesRejected);
 		
 		ImportJournalManager::save();
