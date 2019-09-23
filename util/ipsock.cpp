@@ -79,6 +79,7 @@
 #include "ipsock.h"
 //#include "cidklinklist.h"
 #include <vector>
+#include <memory>
 #include <algorithm>
 
 const int RETRY_MAX = 5;
@@ -209,25 +210,6 @@ int CIPComms::ReceivePacket(int socket, CIPPacket &pIPPacket)
 
 	pIPPacket.Empty();
 /*
-#ifdef _WIN32
-	if (SOCKET_ERROR == ioctlsocket(socket,FIONREAD ,&opt))
-	{
-		m_LastError = WSAGetLastError();
-		return -1;
-	}
-#else
-	if (SOCKET_ERROR == ioctl(socket,FIONREAD ,&opt))
-	{
-		m_LastError = errno;
-		return -1;
-	}
-#endif
-*/
-//	if (opt == 0)
-//	{
-//		return 0;
-//	}
-	
 	char c;
 	msglen = recv(socket, &c, 1, 0);
 	if (!msglen)
@@ -248,7 +230,7 @@ int CIPComms::ReceivePacket(int socket, CIPPacket &pIPPacket)
 		return -1;
 	}
 #endif
-
+*/
 #ifdef _WIN32
 	if (SOCKET_ERROR == ioctlsocket(socket,FIONREAD ,&opt))
 	{
@@ -262,10 +244,10 @@ int CIPComms::ReceivePacket(int socket, CIPPacket &pIPPacket)
 		return -1;
 	}
 #endif
-	pIPPacket.SetData(opt+1);
+	pIPPacket.SetData(opt);
 	char *l_Temp = (char *)pIPPacket.GetData();
-	*l_Temp = c;
-	msglen = recv(socket, l_Temp + 1, opt, 0);
+	//*l_Temp = c;
+	msglen = recv(socket, l_Temp, opt, 0);
 #ifdef _WIN32
 	if (SOCKET_ERROR == msglen)
 	{
@@ -279,7 +261,8 @@ int CIPComms::ReceivePacket(int socket, CIPPacket &pIPPacket)
 		return -1;
 	}
 #endif
-	msglen++;
+	//msglen++;
+	/*
 	if (opt+1 < msglen)
 	{
 		return -1; // allocated too little space?? 
@@ -288,51 +271,7 @@ int CIPComms::ReceivePacket(int socket, CIPPacket &pIPPacket)
 	{
 		return -1; // more data to get fix later 
 	}
-	
-	//if (msglen != opt)
-	//{
-	//	return -1;
-	//}
-/* Temp fix to get things working
-	
-		
-	unsigned int l_iBufferSize = 1024 * 2;
-	char l_szStrbuffer[l_iBufferSize];
-
-
-	while (1)
-	{
-		unsigned long opt = 0L;
-
-		if (SOCKET_ERROR == ioctlsocket(socket,FIONREAD ,&opt))
-		{
-#ifdef _WIN32
-			m_LastError = WSAGetLastError();
-#endif
-			return -1;
-		}
-		if (opt == 0)
-		{
-			break;
-		}
-		if (opt > l_iBufferSize)
-		{
-			msglen = recv(socket, l_szStrbuffer, l_iBufferSize, 0);
-		}
-		else
-		{
-			msglen = recv(socket, l_szStrbuffer, opt, 0);
-
-		}
-			
-		if (SOCKET_ERROR == msglen)  	
-		{
-			return -1;
-		}
-		l_szStrbuffer[msglen] = 0;
-		*pChBuffer += l_szStrbuffer;
-	}
-*/	
+	*/
 	
 
 	return msglen;
@@ -406,58 +345,31 @@ CIPEventHandler::~CIPEventHandler(void)
 }
 */
 
-class ChildConnectionList
+class ChildConnectionList : public std::vector<std::shared_ptr<CChildConnection>>
 {
 private:
-	std::vector<CChildConnection *> m_list;
-	std::vector<CChildConnection *>::iterator m_iter;
 	bool m_cleanUp;
 public:
 	ChildConnectionList() {
 		m_cleanUp = false;
 	};
-	CChildConnection *GetFirst()
-	{
-		//if (m_cleanUp) {
-		//	for (std::vector<CChildConnection *>::iterator i = m_list.begin(); i != m_list.end(); i++) {
-		//		if (*i == nullptr) {
-		//			m_list.erase(i);
-		//		}
-		//	}
-		//}
-		m_iter = m_list.begin();
-		if (m_iter == m_list.end()) {
-			return nullptr;
-		}
-		CChildConnection *item = *m_iter;
-		return item;
-	}
-
-	CChildConnection *GetNext()
-	{
-		if (m_iter == m_list.end()) {
-			return nullptr;
-		}
-		m_iter++;
-		if (m_iter == m_list.end()) {
-			return nullptr;
-		}
-		CChildConnection *item = *m_iter;
-		return item;
-	}
 	
-	void DeleteChild (CChildConnection *ChildConnection_in, CIPComms::EErrorCode status)
+
+	
+	void DeleteChild (std::shared_ptr<CChildConnection> ChildConnection_in, CIPComms::EErrorCode status)
 	{
-		std::vector<CChildConnection *>::iterator iter = std::find(m_list.begin(), m_list.end(), ChildConnection_in);
-		if (iter == m_list.end()) {
+		std::vector<std::shared_ptr<CChildConnection>>::iterator iter = std::find(begin(), end(), ChildConnection_in);
+		if (iter == end()) {
 			return; // not found
 		}
+		/*
 		printf("Deleting child connection\n");
 		if (status == CIPComms::ORDERLY_SHUTDOWN)
 		{
 			// socker is closed
 			return;
 		}
+		*/
 #ifdef _WIN32
 		if ((shutdown(ChildConnection_in->GetSocket(), SD_SEND)) == SOCKET_ERROR)
 #else
@@ -495,19 +407,37 @@ public:
 				break;
 			}
 		};
+		std::shared_ptr<CChildConnection> item = *iter;
+		//Find new end iterator
+		std::vector<std::shared_ptr<CChildConnection>>::iterator newEnd = std::remove(begin(), end(), item);
+
+		//Erase the "removed" elements.
+		erase(newEnd, end());
 		
-		delete ChildConnection_in;
-		CChildConnection *item = *iter;
-		//m_list.erase(iter);
-		//delete item;
-		*item = 0;
+		item = nullptr;
 		m_cleanUp = true;
 		
 	}
 	
-	void AddObject(CChildConnection* object_in)
+	void AddObject(std::shared_ptr<CChildConnection> object_in)
 	{
-		m_list.push_back(object_in);
+		push_back(object_in);
+	}
+
+	bool IsEmpty() {
+		return empty();
+	}
+
+	bool GetNext(std::vector<std::shared_ptr<CChildConnection>>::iterator &iter)
+	{
+		if (iter == end()) {
+			return false;
+		}
+		iter++;
+		if (iter == end()) {
+			return false;
+		}
+		return true;
 	}
 };
 
@@ -541,15 +471,13 @@ CIPServer::CIPServer()
 		m_IsStarted = true;
 	}
 #endif
-	m_pChildList = new ChildConnectionList;
+	m_pChildList = std::make_shared<ChildConnectionList>();
 	m_ErrorCode = SUCCESS;
 	m_bNewConnection = false;
 }
 
 CIPServer::~CIPServer()
-{
-	delete m_pChildList;
-}
+{}
 
 bool CIPServer::ConnectToPB(int iPort)
 {
@@ -652,37 +580,25 @@ bool CIPServer::ConnectToPB(int iPort)
 	return ok;
 }
 
-CChildConnection *CIPServer::GetFirst()
-{
-	return m_pChildList->GetFirst();
-}
 
-CChildConnection *CIPServer::GetNext()
-{
-	return m_pChildList->GetNext();
-}
-
-bool CIPServer::Send(char *pBuffer, int iSize, CChildConnection *pChildConnection)
+bool CIPServer::Send(char *pBuffer, int iSize, std::shared_ptr<CChildConnection> pChildConnection)
 {
 
 	// This tests that the child connection is still valid.
 	bool found = false;
-	CChildConnection *l_pCC = m_pChildList->GetFirst();
-	do 
-	{
+	for (auto ii = m_pChildList->begin(); ii != m_pChildList->end(); ++ii) {
+		std::shared_ptr<CChildConnection> l_pCC = *ii;
 		if (l_pCC == pChildConnection)
 		{
 			found = true;
 			break;
 		}
 	}
-	while ((l_pCC = m_pChildList->GetNext()));
-	if (!found)
-	{
-		return false;
-	}
+	
 	return pChildConnection->Send(pBuffer, iSize);
 }
+
+
 
 bool CIPServer::Run(bool Listening)
 	{
@@ -698,7 +614,7 @@ bool CIPServer::Run(bool Listening)
     int sock;
     struct timeval l_tvTime;
 
-	CChildConnection *temp_childconnection;
+	std::shared_ptr<CChildConnection> temp_childconnection;
 
     CIPComms::EErrorCode status;
     int fd_count;
@@ -721,80 +637,76 @@ bool CIPServer::Run(bool Listening)
         FD_ZERO(&noSockets2Write);
         FD_ZERO(&noSockets2Error);
         if (Listening)
-	{
+		{
 			int l_ListenSocket = GetServerListenSocket();
             FD_SET(l_ListenSocket, &noSockets2Read); // internal server
-	}
-
-    CChildConnection *l_item = m_pChildList->GetFirst();
-	if (l_item)
-	{
-		 // Set socket for reading per child connection
-		do
-		{
+		}
+		// Set socket for reading per child connection
+		for (auto ii = m_pChildList->begin(); ii != m_pChildList->end(); ++ii) {
+			std::shared_ptr<CChildConnection> l_item = *ii;
 			FD_SET(l_item->GetSocket(), &noSockets2Read);
-		} while ((l_item = m_pChildList->GetNext()));
-	}
-
+		}
         // 1st parameter - for UNIX compatibility
-	if((fd_count = select(FD_SETSIZE, &noSockets2Read, &noSockets2Write, &noSockets2Error, &l_tvTime))  == -1) // SOCKET ERROR
-	{
+		if((fd_count = select(FD_SETSIZE, &noSockets2Read, &noSockets2Write, &noSockets2Error, &l_tvTime))  == -1) // SOCKET ERROR
+		{
 #ifdef _WIN32
-		m_LastError = WSAGetLastError();
+			m_LastError = WSAGetLastError();
 #else
-		m_LastError = errno;
+			m_LastError = errno;
 #endif
             return false; // cannot select so returning
-	}
+		}
         
         // No Read data
         if (fd_count == 0 ) 
-	{
-            done = true;
-	}				
-        else
-	{
-            // Is there a new connection to the listen socket ??
-		if (FD_ISSET(GetServerListenSocket(), &noSockets2Read) && Listening) 
 		{
-			connect_socket = (int)accept(GetServerListenSocket(),
-						(struct sockaddr *)&client_addr,&client_addr_len);
-			if (connect_socket < 0)
+            done = true;
+		}				
+        else {
+            // Is there a new connection to the listen socket ??
+			if (FD_ISSET(GetServerListenSocket(), &noSockets2Read) && Listening) 
 			{
+				connect_socket = (int)accept(GetServerListenSocket(),
+						(struct sockaddr *)&client_addr,&client_addr_len);
+				if (connect_socket < 0)
+				{
 #ifdef _WIN32
-				m_LastError = WSAGetLastError();
+					m_LastError = WSAGetLastError();
 #else
-				m_LastError = errno;
+					m_LastError = errno;
 #endif
-				return false; // cannot connect so returning
-			}
+					return false; // cannot connect so returning
+				}
                 
                 // Create a new Child connection
-			m_bNewConnection = true;
-			m_pChildList->AddObject(new CChildConnection(connect_socket));
-		} 
-        else
-	{
+				m_bNewConnection = true;
+				CChildConnection temp(-1); // temp CChildConnection used only to make a new CChildConnection.
+				m_pChildList->AddObject(MakeClient(connect_socket));
+			} 
+			else {
                 connect_socket = -1;
 				// See which child corresponds to socket
-
-				temp_childconnection = m_pChildList->GetFirst();
-				if (temp_childconnection)
-				{
+				if (m_pChildList->IsEmpty() == false) {
+					auto ii = m_pChildList->begin(); //ii != m_pChildList->end(); ++ii) {
 					do {
-				
-						if ((sock = temp_childconnection->GetSocket()) != GetServerListenSocket()) 
+						std::shared_ptr<CChildConnection> temp_childconnection = *ii;
+						if ((sock = temp_childconnection->GetSocket()) != GetServerListenSocket())
 						{
 							if (FD_ISSET(sock, &noSockets2Read))
 							{
-								if ((status = temp_childconnection->talk()) != SUCCESS) 
+								if ((status = temp_childconnection->talk()) != SUCCESS)
 								{
 									//shutdown command sent or external disconnection
 									if (status == SHUTDOWN || status == FAILED_EXTERNAL_RESET || status == ORDERLY_SHUTDOWN)
 									{
-									// Close this child connection down
+										// Close this child connection down
 										m_pChildList->DeleteChild(temp_childconnection, status);
-									
+										if (m_pChildList->IsEmpty()) {
+											break;
+										}
+										else {
+											ii = m_pChildList->begin();
+										}
 									}
 								}
 								else
@@ -803,9 +715,9 @@ bool CIPServer::Run(bool Listening)
 								}
 							}
 						}
-					} while ((temp_childconnection = m_pChildList->GetNext()));
-					done = true;
+					} while (m_pChildList->GetNext(ii));
 				}
+				
 			}
 		} 
 	}
@@ -817,9 +729,13 @@ CIPComms::EErrorCode CChildConnection::talk()
 	EErrorCode status = SUCCESS;
 	
 	int res = ReceivePacket(m_ConnectSocket, m_CChBuffer);
+	
 	if (res > 0)
-	{				
-		//long size = m_CChBuffer.GetSize();
+	{		
+		char buf[256];
+		memcpy(buf, m_CChBuffer.GetData(), m_CChBuffer.GetSize());
+		buf[m_CChBuffer.GetSize()] = '\0';
+		printf("Message: %s", buf);
 		m_Read = true;
 	}
 	else if (!res)

@@ -176,6 +176,7 @@ public:
 		CM_Prop,        // Show images properties.
 		CM_Log,         // Show images properties.
 		CM_Status,      // Show check in/out status.
+		CM_Mode,		// Sets the mode in which imgarchive will be operating
 		CM_Unknown
 	};
 

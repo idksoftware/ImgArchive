@@ -61,9 +61,10 @@
 #define HOME_PATH_LABEL					"HomePath"
 #define INDEX_PATH_LABEL				"IndexPath"
 #define HISTORY_PATH_LABEL				"HistoryPath"
-#define ENABLED_LABEL				"Enabled"
-#define BACKUP_ONE_ENABLED_LABEL			"BackupOneEnabled"
-#define BACKUP_TWO_ENABLED_LABEL			"BackupTwoEnabled"
+#define LIGHTROOM_PATH_LABEL			"LightroomPath"
+#define ENABLED_LABEL					"Enabled"
+#define BACKUP_ONE_ENABLED_LABEL		"BackupOneEnabled"
+#define BACKUP_TWO_ENABLED_LABEL		"BackupTwoEnabled"
 #define EXTERNAL_COMMAND_LINE_LABEL		"ExternalCommandLine"
 #define EXIF_MAP_PATH_LABEL				"ExifMapPath"
 #define EXIF_MAP_FILE_LABEL				"ExifMapFile"
@@ -74,6 +75,8 @@
 #define WORKSPACE_PATH_LABEL			"WorkspacePath"
 #define DRY_RUN_LABEL					"DryRun"
 #define LOG_LEVEL_LABEL					"LogLevel"
+#define LIGHTROOM_LABEL					"Lightroom"
+#define SERVER_MODE_LABEL				"RemoteServerMode"
 #define CONSOLE_LEVEL_LABEL				"ConsoleLevel"
 #define FILE_CAT_LABEL				"FileCatalogue"
 #define WWW_CAT_LABEL				"WWWCatalogue"
@@ -96,6 +99,7 @@ namespace simplearchive {
 	private:
 		friend class AppOptions;
 		friend class SharedConfig;
+		friend class SIAARCConfig;
 
 		static std::unique_ptr<AppConfig> m_this;
 		static bool m_verbose; //< -v --Verbose
@@ -106,6 +110,8 @@ namespace simplearchive {
 		static bool m_www_cat_on;
 		static std::string m_logLevel;
 		static std::string m_consoleLevel;
+		static bool m_lightroom;
+		static bool m_serverMode;
 		static bool m_dry_run;
 		/// Log file path
 		static std::string m_logPath;
@@ -139,7 +145,7 @@ namespace simplearchive {
 		static std::string m_masterCataloguePath;
 		static std::string m_masterWWWCataloguePath;
 		static std::string m_catalogPath;
-
+		static std::string m_lightroomPath;
 		static std::string m_sourcePath;
 
 		static std::string m_configPath;
@@ -238,12 +244,18 @@ namespace simplearchive {
 		/// @brief Gets the Master archive path
 		/// user definable
 		const char *getMasterPath();
+		const char *getLightroomPath();
 
 		const char *getBackup1();
 		const char *getBackup2();
 
+		
+
+		
 		bool isBackup1Enabled() { return m_backup1Enabled; };
 		bool isBackup2Enabled() { return m_backup2Enabled; };
+
+		
 
 		void setBackupDestinationPath(const char *path);
 		long getBackupMediaSize();
@@ -263,6 +275,14 @@ namespace simplearchive {
 		bool isVerbose() const;
 		const char *getLogLevel();
 		const char *getConsoleLevel();
+
+		bool isLightroom() {
+			return m_lightroom;
+		}
+
+		bool isServerMode() {
+			return m_serverMode;
+		}
 
 		bool isEventsOn();
 		int eventPort();
@@ -430,6 +450,15 @@ namespace simplearchive {
 	class SIAARCConfig : public SharedConfig {
 	public:
 		SIAARCConfig() = default;
+		bool getLightroom() {
+			return AppConfig::m_lightroom;
+		}
+		void setLightroom() {
+			AppConfig::m_lightroom = true;
+		}
+		void setServerModeON() {
+			AppConfig::m_serverMode = true;
+		}
 	};
 
 	class AdminConfig : public SharedConfig {

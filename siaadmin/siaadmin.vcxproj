@@ -102,12 +102,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>./;../fclib;../util;../exifcl;../metatp;../csv;../mirror;../sqlite3;../SIALib;../IntegrityManager;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../fclib;../util;../exifcl;../metatp;../csv;../mirror;../sqlite3;../SIALib;../IntegrityManager;../appbase;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>C:\development\SIA\SimpleArchive\Debug\fclib.lib;C:\development\SIA\SimpleArchive\Debug\util.lib;C:\development\SIA\SimpleArchive\Debug\exifcl.lib;C:\development\SIA\SimpleArchive\Debug\metatp.lib;C:\development\SIA\SimpleArchive\Debug\csv.lib;C:\development\SIA\SimpleArchive\Debug\sqlite3.lib;C:\development\SIA\SimpleArchive\Debug\SIALib.lib;C:\development\SIA\SimpleArchive\Debug\IntegrityManager.lib;%(AdditionalDependencies);kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib</AdditionalDependencies>
+      <AdditionalDependencies>..\x64\Debug\fclib.lib;..\x64\Debug\util.lib;..\x64\Debug\exifcl.lib;..\x64\Debug\metatp.lib;..\x64\Debug\csv.lib;..\x64\Debug\sqlite3.lib;..\x64\Debug\SIALib.lib;..\x64\Debug\IntegrityManager.lib;%(AdditionalDependencies);kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

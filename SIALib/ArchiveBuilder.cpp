@@ -67,6 +67,7 @@
 #include <stdio.h>
 #include <sstream>
 #include <vector>
+#include "LightroomImport.h"
 
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
@@ -397,6 +398,35 @@ namespace simplearchive {
 		return true;
 	}
 
+	bool ArchiveBuilder::ImportLightroom(const char *lightroomPath) {
+		
+		CLogger &logger = CLogger::getLogger();
+		if (SAUtils::DirExists(lightroomPath) == false) {
+			logger.log(LOG_OK, CLogger::Level::ERR, "Source path \"%s\" not Found", lightroomPath);
+			return false;
+		}
+		// imageSets are no longer required so can be deleted.
+		ImportJournal& importJournal = ImportJournalManager::GetJournal();
+		std::shared_ptr<ImageSets> imageSets = nullptr;
+		if ((imageSets = processLightroomFiles(lightroomPath)) == nullptr) {
+			return false;
+		}
+		
+		if (processImageGroupSets(imageSets, importJournal) == false) {
+			return false;
+		}
+		TargetsList::destroy();
+		//if (imageSets != nullptr) {
+		//	delete imageSets;
+		//}
+		ArchiveObject& archiveObject = ArchiveObject::getInstance();
+		if (archiveObject.OnCompletion() == false) {
+			return false;
+		}
+		
+		return true;
+	}
+
 	bool ArchiveBuilder::Import(const char *sourcePath, bool peekImport) {
 		CLogger &logger = CLogger::getLogger();
 		if (SAUtils::DirExists(sourcePath) == false) {
@@ -406,7 +436,7 @@ namespace simplearchive {
 		// imageSets are no longer required so can be deleted.
 		ImportJournal& importJournal = ImportJournalManager::GetJournal();
 		std::shared_ptr<ImageSets> imageSets = nullptr;
-		if ((imageSets = processFiles(sourcePath, importJournal)) == nullptr) {
+		if ((imageSets = processFiles(sourcePath)) == nullptr) {
 			return false;
 		}
 		if (peekImport == true) {
@@ -427,7 +457,35 @@ namespace simplearchive {
 		return true;
 	}
 
-	std::shared_ptr<ImageSets> ArchiveBuilder::processFiles(const char *sourcePath, ImportJournal& importJournal) {
+	std::shared_ptr<ImageSets> ArchiveBuilder::processLightroomFiles(const char *lightroomPath) {
+
+		CLogger &logger = CLogger::getLogger();
+
+		//
+		// ==== Step 1 ====
+		// Read files into folder sets (ImageSets)
+		//
+		logger.log(LOG_ANALISING, CLogger::Level::SUMMARY, "Stage 1: Reading Image files to be processes");
+
+		LightroomImport lightroomImport(m_archiveObject.getMasterPath().getRepositoryPath().c_str(), lightroomPath);
+		if (lightroomImport.makeList() == false) {
+			return false;
+		}
+
+		m_folders = ImportImageList::getFolderCount();
+		m_folders++;
+		m_imageFiles = ImportImageList::getFileCount();
+		logger.log(LOG_INITIAL_SUMMARY, CLogger::Level::SUMMARY, "Completed Stage 1: Found %d image files to be processed in %d Folder(s)", m_imageFiles, m_folders);
+		std::shared_ptr<ImageSets> imageSets = nullptr;
+		if ((imageSets = ImportImageList::getImageSets()) == nullptr) {
+			// No images to process
+			return nullptr;
+		}
+
+		return imageSets;
+	}
+
+	std::shared_ptr<ImageSets> ArchiveBuilder::processFiles(const char *sourcePath) {
 		
 		CLogger &logger = CLogger::getLogger();
 
@@ -671,22 +729,39 @@ namespace simplearchive {
 					m_imageFilesCompleted++;
 				}
 
-				MasterRepositoryObject&mdb = m_archiveObject.getMasterObject();
-				for (auto i = importJournal.begin(); i != importJournal.end(); i++) {
-					std::shared_ptr<ImportJournalItem> item = *i;
-					std::string location = item->getLocation();
-					std::string source = item->getSourceImage();
 				
-					if(item->getResultEnum() == ImportJournal::Result::Imported) {
-						if (mdb.validate(location.c_str(), source.c_str()) == true) {
-							item->setValidated();
-						}
-					}
-				}
+				
 				logger.log(LOG_IMPORTING, CLogger::Level::SUMMARY, "Completed Stage 3: Archiving images");
 			}
+			else {
+				logger.log(LOG_IMPORTING, CLogger::Level::SUMMARY, "Stage 3: Archiving images, Not run? Option: dry run is active");
+			}
 		}
+		if (!m_doDryRun) {
+			int count = 0;
+			for (auto i = importJournal.begin(); i != importJournal.end(); i++) {
+				std::shared_ptr<ImportJournalItem> item = *i;
+				if (item->getResultEnum() == ImportJournal::Result::Imported) {
+					count++;
+				}
+			}
 
+			logger.log(LOG_IMPORTING, CLogger::Level::SUMMARY, "Stage 4: Validating images against the originals, %d images to be processed.", count);
+			MasterRepositoryObject&mdb = m_archiveObject.getMasterObject();
+			for (auto i = importJournal.begin(); i != importJournal.end(); i++) {
+				std::shared_ptr<ImportJournalItem> item = *i;
+				std::string location = item->getLocation();
+				std::string source = item->getSourceImage();
+
+				if (item->getResultEnum() == ImportJournal::Result::Imported) {
+					logger.log(LOG_OK, CLogger::Level::INFO, "Validating image \"%s\"", location.c_str());
+					if (mdb.validate(location.c_str(), source.c_str()) == true) {
+						item->setValidated();
+					}
+				}
+			}
+			logger.log(LOG_IMPORTING, CLogger::Level::SUMMARY, "Stage 4: Validating images completed");
+		}
 		logger.log(LOG_COMPLETED_SUMMARY, CLogger::Level::SUMMARY, "Imported %d image files found in %d Folder(s) into the archive, %d image files rejected", m_imageFilesCompleted, m_folders, m_imageFilesRejected);
 		
 		ImportJournalManager::save();

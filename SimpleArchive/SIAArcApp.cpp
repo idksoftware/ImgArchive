@@ -127,7 +127,7 @@ protected:
 bool SIAArcApp::initaliseArgs(int argc, char **argv) {
 	
 	if (m_argvParser->doInitalise(argc, argv) == false) {
-return false;
+		return false;
 	}
 
 	return true;
@@ -426,7 +426,15 @@ bool SIAArcApp::doRun()
 		break;
 	}
 
+	case SIAArcAppOptions::CommandMode::CM_Mode:
+	{
 
+		if (siaLib.remoteServer() == false) {
+			setError(CLogger::getLastCode(), CLogger::getLastMessage());
+			return false;
+		}
+		break;
+	}
 	case SIAArcAppOptions::CommandMode::CM_Uncheckin:
 		break;
 	

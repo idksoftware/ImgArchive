@@ -60,8 +60,8 @@ class RepositoryPath {
 	std::string m_pathToRepository;
 	std::string m_metadataPath;
 	std::string m_idxDBPath;
-	std::string m_historyLogPath;
-	std::string m_historyPath;
+	std::string m_historySystemPath;
+	std::string m_historyImagePath;
 	std::string m_journalPath;
 	std::string m_catalog;
 	std::string m_dataPath;
@@ -87,9 +87,9 @@ public:
 	std::string getDataPath();
 	std::string getCatalog() const;
 	void setCatalog(std::string &catalog);
-	std::string getHistory() const;
-	void setHistory(std::string &history);
-	std::string getLogHistory() const;
+	std::string getImageHistory() const;
+	void setImageHistory(std::string &history);
+	std::string getSystemHistory() const;
 	std::string getCSVDatabasePath() const;
 
 	std::string getJournalPath() const;

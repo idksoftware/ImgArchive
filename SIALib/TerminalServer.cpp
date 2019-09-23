@@ -8,6 +8,7 @@
 #include "SIAApplicationState.h"
 
 
+
 CTerminalServer::State CTerminalServer::m_state = CTerminalServer::Running;
 
 CTerminalServer::CTerminalServer()
@@ -32,12 +33,13 @@ bool CTerminalServer::Init(int port)
 
 bool CTerminalServer::Run()
 {
+	/* 
 	while (1)
 	{
 		m_Server.Run(true);
 		if (m_Server.IsNeedRead())
 		{
-			CChildConnection *l_CC = m_Server.GetFirst();
+			std::shared_ptr<CChildConnection> l_CC = m_Server.GetFirst();
 			do {
 				if (l_CC->IsNeedRead())
 				{
@@ -54,6 +56,7 @@ bool CTerminalServer::Run()
 			} while ((l_CC = m_Server.GetNext()));
 		}
 	}
+	*/
 	return true;
 }
 

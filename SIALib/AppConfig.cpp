@@ -59,6 +59,8 @@ namespace simplearchive {
 	std::string AppConfig::m_logLevel = "SUMMARY";
 	bool AppConfig::m_dry_run = false;
 	bool AppConfig::m_sql_on = true;
+	bool AppConfig::m_lightroom = false;
+	bool AppConfig::m_serverMode = false;
 	bool AppConfig::m_file_cat_on = true;
 	bool AppConfig::m_www_cat_on = true;
 
@@ -77,6 +79,7 @@ namespace simplearchive {
 	std::string AppConfig::m_sourcePath;
 	std::string AppConfig::m_catalogPath;
 	std::string AppConfig::m_configPath;
+	std::string AppConfig::m_lightroomPath;
 	std::string AppConfig::m_tempPath;
 	std::string AppConfig::m_logPath;
 	std::string AppConfig::m_consoleLevel;
@@ -362,6 +365,14 @@ namespace simplearchive {
 		std::string sql_on = "false";
 		setGeneral(SQL_LABEL, sql_on, sql_on);
 		AppConfig::m_sql_on = (_stricmp(sql_on.c_str(), "true") == 0);
+
+		std::string lightroom = "false";
+		setGeneral(LIGHTROOM_LABEL, lightroom, lightroom);
+		AppConfig::m_lightroom = (_stricmp(lightroom.c_str(), "true") == 0);
+
+		std::string serverMode = "false";
+		setGeneral(SERVER_MODE_LABEL, serverMode, serverMode);
+		AppConfig::m_serverMode = (_stricmp(serverMode.c_str(), "true") == 0);
 		
 		std::string file_cat_on = "false";
 		setGeneral(SQL_LABEL, file_cat_on, file_cat_on);
@@ -378,12 +389,13 @@ namespace simplearchive {
 		//
 //#define CONFIG_PATH_LABEL				"ConfigPath"	 
 //#define TOOLS_PATH_LABEL           		"ToolsPath"
-		
+		std::string noLightroom = "NoLightroom";
 		setSystemFolders(TEMP_PATH_LABEL, AppConfig::m_tempPath, homePath + TEMP_PATH);
 //#define SOURCE_PATH_LABEL         		"SourcePath"
 		setSystemFolders(SYSTEM_PATH_LABEL, AppConfig::m_systemPath, homePath + SYSTEM_PATH);
 		setSystemFolders(LOG_PATH_LABEL, AppConfig::m_logPath, homePath + LOG_PATH);
 		setSystemFolders(MASTER_PATH_LABEL, AppConfig::m_masterPath, homePath + MASTER_PATH);
+		setSystemFolders(LIGHTROOM_PATH_LABEL, AppConfig::m_lightroomPath, noLightroom);
 		setSystemFolders(DERIVATIVE_PATH_LABEL, AppConfig::m_derivativePath, homePath + DERIVATIVE_PATH);
 		setSystemFolders(TOOLS_PATH_LABEL, AppConfig::m_toolsPath, homePath + TOOLS_PATH);
 		setSystemFolders(HOOK_SCRIPTS_PATH_LABEL, AppConfig::m_hookPath, homePath + HOOKS_PATH);
@@ -474,7 +486,7 @@ namespace simplearchive {
 		setWorkspacePath(AppConfig::m_workspacePath.c_str());
 		setMasterPath(AppConfig::m_masterPath.c_str());
 
-		setSystemFolders("SystemPath", AppConfig::m_systemPath, AppConfig::m_masterPath + SYSTEM_PATH);
+		//setSystemFolders("SystemPath", AppConfig::m_systemPath, AppConfig::m_systemPath + SYSTEM_PATH);
 		AppConfig::m_indexPath = AppConfig::m_systemPath + "/index";
 
 		logger.log(LOG_OK, CLogger::Level::INFO, "    General");
@@ -482,6 +494,8 @@ namespace simplearchive {
 		logger.log(LOG_OK, CLogger::Level::INFO, "        Log level:                 %s", AppConfig::m_logLevel.c_str());
 		logger.log(LOG_OK, CLogger::Level::INFO, "        Console level:             %s", AppConfig::m_consoleLevel.c_str());
 		logger.log(LOG_OK, CLogger::Level::INFO, "        SQL database:              %s", (AppConfig::m_sql_on) ? "True" : "False");
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Lightroom:                 %s", (AppConfig::m_lightroom) ? "True" : "False");
+		logger.log(LOG_OK, CLogger::Level::INFO, "        RemoteServerMode:          %s", (AppConfig::m_serverMode) ? "True" : "False");
 		logger.log(LOG_OK, CLogger::Level::INFO, "    System paths");
 		logger.log(LOG_OK, CLogger::Level::INFO, "        System path:               \"%s\"", AppConfig::m_systemPath.c_str());
 		logger.log(LOG_OK, CLogger::Level::INFO, "        Log path:                  \"%s\"", AppConfig::m_logPath.c_str());
@@ -635,6 +649,11 @@ namespace simplearchive {
 		return m_masterPath.c_str();
 
 	}
+
+	const char *AppConfig::getLightroomPath()
+	{
+		return m_lightroomPath.c_str();
+	}
 	
 	const char *AppConfig::getDerivativePath() {
 		/*
@@ -703,8 +722,6 @@ namespace simplearchive {
 	void SharedConfig::setConsoleLevel(const char *logLevel) {
 		AppConfig::m_consoleLevel = logLevel;
 	}
-
-
 
 	void SharedConfig::setDerivativePath(const char *path) {
 		AppConfig::m_derivativePath = path;
@@ -1149,6 +1166,7 @@ namespace simplearchive {
 		str << "<IsQuiet>" << (isQuiet() ? "true" : "false") << "</IsQuiet>" << '\n';
 		str << "<IsVerbose>" << (isVerbose() ? "true" : "false") << "</IsVerbose>" << '\n';
 		str << "<LogLevel>" << getLogLevel() << "</LogLevel>" << '\n';
+		str << "<Lightroom>" << (isLightroom() ? "true" : "false") << "</Lightroom>" << '\n';
 		str << "</Configuration>" << '\n';
 		return str.str();
 	}

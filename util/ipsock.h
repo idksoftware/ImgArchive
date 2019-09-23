@@ -53,6 +53,7 @@
 ** $Id$ */
 
 // Version 12341234
+#include <memory>
 
 #ifndef _IPSOCK_
 #define _IPSOCK_
@@ -190,9 +191,7 @@ public:
 	/// .
 	bool Disconnect()
 	{
-
 		return true;
-	
 	}
 
 	/// .
@@ -207,7 +206,7 @@ public:
 class ChildConnectionList;
 class CChildConnection : public CIPComms
 {
-    private:
+    protected:
         int m_ConnectSocket;
      
 		CChildConnection() {};
@@ -237,11 +236,17 @@ class CChildConnection : public CIPComms
 		}
 
 	/// .
-        CIPComms::EErrorCode talk();
+        virtual CIPComms::EErrorCode talk();
+	/// .
+		virtual std::shared_ptr<CChildConnection> make(int sock) {
+			return std::make_shared<CChildConnection>(sock);
+		}
 	/// .
         bool  operator == (CChildConnection CChildConnection_in);
 	/// .
         bool Send(char *data, long size);
+
+
 };
 
 
@@ -253,7 +258,7 @@ class CIPServer : public CIPComms
 {
 private:
 	bool m_bNewConnection;
-	ChildConnectionList *m_pChildList;
+	std::shared_ptr<ChildConnectionList>  m_pChildList;
 	int m_ServerListenSocket;
 	long m_sec;
 	long m_usec;
@@ -295,11 +300,10 @@ public:
 	CIPServer();
 	/// .
 	~CIPServer();
-
-	/// .
-	CChildConnection *GetFirst();
-	/// .
-	CChildConnection *GetNext();
+	
+	virtual std::shared_ptr<CChildConnection> MakeClient(int sock) {
+		return std::make_shared<CChildConnection>(sock);
+	}
 	/// .
 	bool ConnectToPB(int iPort);
 	/// .
@@ -318,7 +322,7 @@ public:
 		return m_bNewConnection;
 	}
 	/// .
-	bool Send(char *pBuffer, int iSize, CChildConnection *pChildConnection);
+	bool Send(char *pBuffer, int iSize, std::shared_ptr<CChildConnection> pChildConnection);
 };
 
 /*

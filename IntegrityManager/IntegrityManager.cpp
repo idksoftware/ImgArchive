@@ -103,6 +103,7 @@ bool IntegrityManager::validate(IMCompletedSummary& imCompletedSummary, bool wor
 	tmp += "/system/journal";
 	if (SAUtils::DirExists(tmp.c_str()) == false) {
 		throw std::exception("Journal path not found");
+		return false;
 	}
 	tmp += "/checkdisk";
 	if (SAUtils::DirExists(tmp.c_str()) == false) {

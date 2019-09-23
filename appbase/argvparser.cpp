@@ -94,8 +94,10 @@ string ArgvParser::optionValue(const string& _option) const
 ArgvParser::ParserResults
 ArgvParser::parse(int _argc, char ** _argv)
 {
+	
     bool finished_options = false; // flag whether an argument was found (options are passed)
 	unsigned int key = -1;
+	makeCommandline(_argc, _argv);
     // loop over all command line arguments
     int i = 2; // argument counter
 	
@@ -481,6 +483,15 @@ string ArgvParser::usageDescription(unsigned int _width) const
 	return(usage);
 }
 */
+
+void ArgvParser::makeCommandline(int _argc, char ** _argv)
+{
+	commandLine = _argv[0];
+	for (int i = 1; i < _argc; i++) {
+		commandLine += ' ';
+		commandLine += _argv[i];
+	}
+}
 
 string ArgvParser::commandUsage(unsigned int width) const
 {

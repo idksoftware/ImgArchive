@@ -243,7 +243,7 @@ bool AdminApp::doRun()
 	}
 
 	
-	CompletedSummary ;
+	//CompletedSummary ;
 
 	switch (appOptions.getCommandMode()) {
 	case AppOptions::CommandMode::CM_InitArchive:

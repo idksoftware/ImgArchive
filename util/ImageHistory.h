@@ -58,7 +58,8 @@ class ImageHistory {
 private:
 	static std::string m_workspace;
 	static std::string m_index;
-	
+	static std::string m_backup1;
+	static std::string m_backup2;
 	ImageHistory(const ImageHistory&);
 	ImageHistory& operator = (const ImageHistory&) { return *this; };
 	
@@ -79,7 +80,12 @@ public:
 	bool add(const char *filename, const char *version, const char *comment, const HistoryEvent &he);
 	
 	std::shared_ptr<ImageHistoryLog> getEntries(const char *imagePath);
-	
+	static void setBackup1Path(const char *path) {
+		m_backup1 = path;
+	}
+	static void setBackup2Path(const char *path) {
+		m_backup2 = path;
+	}
 };
 
 } /* namespace simplearchive */

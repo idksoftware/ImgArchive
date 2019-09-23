@@ -92,14 +92,14 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../fclib;../util;../exifcl;../metatp;../csv;../mirror;../sqlite3;../database;../IntegrityManager;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../web;../fclib;../util;../exifcl;../metatp;../csv;../mirror;../sqlite3;../database;../IntegrityManager;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>C:\development\SIA\SimpleArchive\Debug\fclib.lib;C:\development\SIA\SimpleArchive\Debug\util.lib;C:\development\SIA\SimpleArchive\Debug\exifcl.lib;C:\development\SIA\SimpleArchive\Debug\metatp.lib;C:\development\SIA\SimpleArchive\Debug\csv.lib;C:\development\SIA\SimpleArchive\Debug\mirror.lib;C:\development\SIA\SimpleArchive\Debug\sqlite3.lib;C:\development\SIA\SimpleArchive\Debug\database.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\Debug\fclib.lib;..\Debug\util.lib;..\Debug\exifcl.lib;..\Debug\metatp.lib;..\Debug\csv.lib;..\Debug\mirror.lib;..\Debug\sqlite3.lib;..\Debug\database.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -175,9 +175,11 @@
     <ClInclude Include="ImageSideCar.h" />
     <ClInclude Include="ImportJournal.h" />
     <ClInclude Include="JournalFile.h" />
+    <ClInclude Include="LightroomImport.h" />
     <ClInclude Include="MakeMedia.h" />
     <ClInclude Include="MasterCatalogue.h" />
     <ClInclude Include="MetadataUpdate.h" />
+    <ClInclude Include="RemoteServer.h" />
     <ClInclude Include="SequenceFileManager.h" />
     <ClInclude Include="SQLiteDB.h" />
     <ClInclude Include="VersionControl.h" />
@@ -217,9 +219,11 @@
     <ClCompile Include="ImageSideCars.cpp" />
     <ClCompile Include="ImportJournal.cpp" />
     <ClCompile Include="JournalFile.cpp" />
+    <ClCompile Include="LightroomImport.cpp" />
     <ClCompile Include="MakeMedia.cpp" />
     <ClCompile Include="MasterCatalogue.cpp" />
     <ClCompile Include="MetadataUpdate.cpp" />
+    <ClCompile Include="RemoteServer.cpp" />
     <ClCompile Include="SequenceFileManager.cpp" />
     <ClCompile Include="SQLiteDB.cpp" />
     <ClCompile Include="VersionIndex.cpp" />

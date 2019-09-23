@@ -73,6 +73,7 @@
 #include "ArchivePath.h"
 #include "CheckoutStatus.h"
 #include "IndexVisitor.h"
+#include "RemoteServer.h"
 #include <stdio.h>
 #include <sstream>
 
@@ -185,9 +186,7 @@ namespace simplearchive {
 
 		CLogger &logger = CLogger::getLogger();
 
-		CTerminalServerManager &terminalServerManager = CTerminalServerManager::getInstance();
-		terminalServerManager.start();
-
+		
 #ifdef _WIN32
 		WSADATA wsa;
 		if (m_winsockRequired) {
@@ -406,8 +405,15 @@ namespace simplearchive {
 
 	bool SIALib::Import() {
 		AppConfig &config = AppConfig::get();
-		if (m_ArchiveBuilder->Import(config.getSourcePath()) == false) {
-			return false;
+		if (config.isLightroom()) {
+			if (m_ArchiveBuilder->ImportLightroom(config.getLightroomPath()) == false) {
+				return false;
+			}
+		}
+		else {
+			if (m_ArchiveBuilder->Import(config.getSourcePath()) == false) {
+				return false;
+			}
 		}
 		
 		return true;
@@ -597,6 +603,7 @@ namespace simplearchive {
 		return true;
 	}
 
+
 	bool SIALib::validate(const char *archivePath, const char *workspacePath, const char *homePath, Scope scope, bool repair) {
 		CLogger &logger = CLogger::getLogger();
 		IntegrityManager &im = IntegrityManager::get();
@@ -651,6 +658,18 @@ namespace simplearchive {
 			//completedSummary.setResult(imCompletedSummary.getResult());
 			return true;
 		}
+		return true;
+	}
+
+	bool SIALib::remoteServer() {
+		RemoteServer remoteServer;
+		remoteServer.Connect(22);
+		remoteServer.Run();
+		/*
+		CTerminalServer terminalServer;
+		terminalServer.Init(22);
+		terminalServer.Run();
+		*/
 		return true;
 	}
 } // simplearchive

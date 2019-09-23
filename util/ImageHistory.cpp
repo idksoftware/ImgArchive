@@ -126,23 +126,53 @@ ImageHistory::~ImageHistory() {
 
 std::string ImageHistory::m_workspace;
 std::string ImageHistory::m_index;
+std::string ImageHistory::m_backup1;
+std::string ImageHistory::m_backup2;
 
+/*
 bool ImageHistory::init() {
 
 	if (ArchivePath::isBackup1Enabled() == true) {
-		SystemHistory::setBackup1Path(ArchivePath::getBackup1().getHistory().c_str());
+		ImageHistory::setBackup1Path(ArchivePath::getBackup1().getHistory().c_str());
 	}
 	if (ArchivePath::isBackup2Enabled() == true) {
-		SystemHistory::setBackup2Path(ArchivePath::getBackup2().getHistory().c_str());
+		ImageHistory::setBackup2Path(ArchivePath::getBackup2().getHistory().c_str());
 	}
-	/*
-	m_workspacePath = workspacePath;
-	m_backup1Path = backup1Path;
-	m_backup1Path = backup1Path;
-	m_backup1Path = backup1Path;
-	*/
+	
 	return true;
 }
+*/
+
+bool ImageHistory::init() {
+
+
+	LogName logName;
+	//m_currentFilename = logName.makeName(m_primary.c_str(), "", "hst", 256);
+
+	m_index = ArchivePath::getPrimaryIndex().getHistoryPath();
+	m_index += '/'; m_index += logName.getFilename();
+
+	if (ArchivePath::isBackup1Enabled() == true) {
+		m_backup1 = ArchivePath::getBackup1().getImageHistory();
+		if (SAUtils::DirExists(m_backup1.c_str()) == false) {
+			if (SAUtils::mkDir(m_backup1.c_str()) == false) {
+				return false;
+			}
+		}
+		
+	}
+	if (ArchivePath::isBackup2Enabled() == true) {
+		m_backup2 = ArchivePath::getBackup2().getImageHistory();
+		if (SAUtils::DirExists(m_backup2.c_str()) == false) {
+			if (SAUtils::mkDir(m_backup2.c_str()) == false) {
+				return false;
+			}
+		}
+		
+	}
+	return true;
+}
+
 
 bool ImageHistory::add(const char *filename, const char *comment) {
 	return add(filename, "0000", comment, HistoryEvent::Event::ADDED);

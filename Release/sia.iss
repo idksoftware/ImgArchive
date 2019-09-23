@@ -5,10 +5,11 @@
 #define MyAppVersion "0.9"
 #define MyAppPublisher "IDK Software Ltd"
 #define MyAppURL "http://www.idk-software.com/"
-#define MyAppExeName "siaarc.exe"
+#define MyAppExeName "iaarc.exe"
 #define AppConfig "{commonappdata}\IDK-Software\SIA\config"
 #define AppHooks "{commonappdata}\IDK-Software\SIA\hooks"
 #define AppHome "{commonappdata}\IDK-Software\SIA"
+#define ReleasePath "C:\Users\iain.ferguson\source\repos\New folder (4)\ImgArchive\Release"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
@@ -18,25 +19,25 @@ AppId={{6B8F38C3-5F82-4F44-86AD-4AFFA35649A8}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 ; Changes Environment 
-ChangesEnvironment=true
-;AppVerName={#MyAppName} {#MyAppVersion}
+;    ChangesEnvironment=true
+AppVerName={#MyAppName} {#MyAppVersion}
 AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 DefaultDirName={pf}\IDK-Software\SIA
 DefaultGroupName={#MyAppName}
-LicenseFile=C:\development\SIA\SimpleArchive\Release\licence.txt
+LicenseFile={#ReleasePath}\licence.txt
 OutputDir=C:\temp\2
 OutputBaseFilename=siasetup
-SetupIconFile=C:\development\SIA\SimpleArchive\Release\sia.ico
+SetupIconFile={#ReleasePath}\app.ico
 Compression=lzma
 SolidCompression=yes
 ; "ArchitecturesInstallIn64BitMode=x64" requests that the install be
 ; done in "64-bit mode" on x64, meaning it should use the native
 ; 64-bit Program Files directory and the 64-bit view of the registry.
 ; On all other architectures it will install in "32-bit mode".
-ArchitecturesInstallIn64BitMode=x64
+; ArchitecturesInstallIn64BitMode=x64
 ; Note: We don't set ProcessorsAllowed because we want this
 ; installation to run on all architectures (including Itanium,
 ; since it's capable of running 32-bit code too).
@@ -49,10 +50,10 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 Name: modifypath; Description:{cm:AppAddPath}; 
 [Files]
-Source: "C:\development\SIA\SimpleArchive\Release\siaarc.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\development\SIA\SimpleArchive\Release\siaadmin.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\development\SIA\SimpleArchive\Release\dlls_x86\msvcp120.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\development\SIA\SimpleArchive\Release\dlls_x86\msvcr120.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: {#ReleasePath}\iaarc.exe; DestDir: "{app}"; Flags: ignoreversion
+Source: {#ReleasePath}\iaadmin.exe; DestDir: "{app}"; Flags: ignoreversion
+Source: {#ReleasePath}\dlls_x86\msvcp120.dll; DestDir: "{app}"; Flags: ignoreversion
+Source: {#ReleasePath}\dlls_x86\msvcr120.dll; DestDir: "{app}"; Flags: ignoreversion
 ; This is a bit of code to do 64 when ready
 ; Install MyProg-x64.exe if running in 64-bit mode (x64; see above),
 ; MyProg.exe otherwise.
@@ -78,7 +79,7 @@ Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{commondesktop}\{#MyAppName}"; Filename: "cmd.exe {app}\{#MyAppExeName}"; Tasks: desktopicon
 
 [Run]
-Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
+; Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 
 [Dirs]
 Name: "{#AppHome}\logs"
@@ -108,14 +109,14 @@ Root: "HKLM"; Subkey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environm
 [CustomMessages]
 AppAddPath=Add application directory to your environmental path (required)
 
-[Code]
-const 
-    ModPathName = 'modifypath'; 
-    ModPathType = 'system'; 
+;[Code]
+;const
+;    ModPathName = 'modifypath';
+;    ModPathType = 'system';
 
-function ModPathDir(): TArrayOfString; 
-begin 
-    setArrayLength(Result, 1) 
-    Result[0] := ExpandConstant('{app}'); 
-end; 
-#include "modpath.iss"
+;function ModPathDir(): TArrayOfString;
+;begin
+;    setArrayLength(Result, 1)
+;    Result[0] := ExpandConstant('{app}');
+;end;
+;#include "modpath.iss"

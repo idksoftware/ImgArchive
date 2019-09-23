@@ -116,8 +116,14 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>Ws2_32.lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>C:\development\sia\SimpleArchive\x64\Debug\fclib.lib;C:\development\sia\SimpleArchive\x64\Debug\util.lib;C:\development\sia\SimpleArchive\x64\Debug\exifcl.lib;C:\development\sia\SimpleArchive\x64\Debug\metatp.lib;C:\development\sia\SimpleArchive\x64\Debug\csv.lib;C:\development\sia\SimpleArchive\x64\Debug\database.lib;C:\development\sia\SimpleArchive\x64\Debug\sqlite3.lib;C:\development\sia\SimpleArchive\x64\Debug\SIALib.lib;C:\development\sia\SimpleArchive\x64\Debug\IntegrityManager.lib;C:\development\sia\SimpleArchive\x64\Debug\mirror.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\x64\Debug\fclib.lib;..\x64\Debug\util.lib;..\x64\Debug\exifcl.lib;..\x64\Debug\metatp.lib;..\x64\Debug\csv.lib;..\x64\Debug\database.lib;..\x64\Debug\sqlite3.lib;..\x64\Debug\SIALib.lib;..\x64\Debug\IntegrityManager.lib;..\x64\Debug\mirror.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+    <ProjectReference>
+      <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>

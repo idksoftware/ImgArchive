@@ -1,5 +1,5 @@
 SOFTWARE PRODUCT LICENSE AGREEMENT
-Simple Image Archive 1.01
+Image Archive 1.01
 Copyright © 1998-2017 IDK Software Ltd. All Rights Reserved.
 IMPORTANT - READ CAREFULLY: This End User License Agreement ("EULA") is a legal agreement between YOU as Licensee and IDK Software Ltd. ("IDK") for the SOFTWARE PRODUCT identified above. By installing, copying, or otherwise using the SOFTWARE PRODUCT, YOU agree to be bound by the terms of this EULA. If YOU do not agree to the terms of this EULA, promptly return the unused SOFTWARE PRODUCT to the place of purchase for a full refund.
 
@@ -9,7 +9,7 @@ Your use of this software indicates your acceptance of this EULA and warranty.
 DEFINITIONS
 "EULA" means this End User License Agreement
 "Licensee" means YOU, or the organization (if any) on whose behalf YOU are taking the EULA.
-"Registered Edition of Simple Image Archive" means the edition of the SOFTWARE PRODUCT which is available for purchase from the web site: <http://www.IDK-Software.com/products/sia>. 
+"Registered Edition of Image Archive" means the edition of the SOFTWARE PRODUCT which is available for purchase from the web site: <http://www.IDK-Software.com/products/sia>. 
 GRANT OF LICENSE
 In accordance with the terms of this EULA, YOU are granted the following rights:
 To install and use one copy of the SOFTWARE PRODUCT, or in its place, any prior version for the same operating system, on a single computer. As the primary user of the computer on which the SOFTWARE PRODUCT is installed, YOU may make a second copy for your exclusive use on either a home or portable computer.

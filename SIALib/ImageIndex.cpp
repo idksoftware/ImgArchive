@@ -51,6 +51,7 @@
 #include "Fileinfo.h"
 #include "SAUtils.h"
 #include <stdio.h>
+#include <iostream>
 
 
 #ifdef _DEBUG
@@ -191,7 +192,7 @@ bool DupDataFile::read(const char *datafile) {
 		return false;
 	}
 	m_filePath = datafile;
-	while (file.getline(text, 100)) {
+	while (file.getline(text, 256)) {
 		m_dataContainer->push_back(text);
 	}
 	file.close();
