@@ -10,6 +10,7 @@ public:
 	~TestArchive();
 	bool readingConfigFile();
 	bool testFolders();
+	bool Show();
 };
 
 } // simplearchive

@@ -220,6 +220,7 @@ namespace simplearchive {
 		const char *getExternalCommandLine();
 		/// @brief Gets path to the Exif Map files. For example the Exiftool map
 		/// that maps exiftool keywords to Simple Archive keywords.
+		bool isExternalExifToolEnabled() { return m_externalExifToolEnabled; }
 		const char *getExifMapPath();
 		const char *getExifMapFile();
 		const char *getExifFileDelim();

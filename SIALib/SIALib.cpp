@@ -625,7 +625,13 @@ namespace simplearchive {
 			switch (scope) {
 			case Workspace:
 				logger.log(LOG_COMMAND, CLogger::Level::SUMMARY, "Validating Workspace");
-				if (im.validate(imCompletedSummary, true, false) == false) {
+				try {
+					if (im.validate(imCompletedSummary, true, false) == false) {
+						return false;
+					}
+				}
+				catch (std::exception& e) {
+					logger.log(LOG_COMMAND, CLogger::Level::FATAL, e.what());
 					return false;
 				}
 				break;

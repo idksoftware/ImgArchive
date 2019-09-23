@@ -63,7 +63,7 @@ static int LookupDigits[] = {
 const char *Base32::decimal2Base32(long dec, int padding) {
 	std::vector<char> list;
 	m_str.clear();
-	int rem;
+	int rem = 0;
 	if (dec > 0) {
 		while (dec > 0) {
 			rem = dec % 32;
@@ -76,7 +76,7 @@ const char *Base32::decimal2Base32(long dec, int padding) {
 	}
 	std::reverse(list.begin(), list.end());
 	for (auto i = list.begin(); i != list.end(); i++) {
-		char c = *i;
+		const char c = *i;
 		m_str += c;
 	}
 	if (padding != 0) {
@@ -89,8 +89,8 @@ int Base32::Base32ToDecimal(std::string encoded)
 {
 	int ret = 0;
 	unsigned char c = 0;
-	unsigned int num;
-	int len = encoded.length();
+	unsigned int num = 0;
+	const int len = encoded.length();
 	for (unsigned int index = 0; index < encoded.length(); index++) {
 		c = encoded[index];
 		if (c >= sizeof(LookupDigits)) {

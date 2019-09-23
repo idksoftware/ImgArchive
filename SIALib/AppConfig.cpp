@@ -344,7 +344,8 @@ namespace simplearchive {
 			AppConfig::m_backup2Enabled = true;
 		}
 		*/
-		printAll();
+		// This prints all the contents of the config file
+		// printAll();
 	// General	
 		std::string dry_run = "false";
 		setGeneral(DRY_RUN_LABEL, dry_run, dry_run);

@@ -151,7 +151,7 @@ bool AdminApp::Show() {
 	AppConfigReader configReader;
 	configReader.setNoLogging();
 	configReader.read(configfile.c_str(), config);
-	config.printAll();
+	//config.printAll();
 	/*
 	if (config.value("SourcePath", temp) == true) {
 	m_sourcePath = temp;
@@ -211,12 +211,26 @@ bool AdminApp::doRun()
 {
 	// Find if the archive exists
 	AppOptions &appOptions = AppOptions::get();
+	switch (appOptions.getCommandMode()) {
+	case AppOptions::CommandMode::CM_Show:
+		Show();
+		return true;
+	case AppOptions::CommandMode::CM_Version:
+		printf("Simple Image Archive Administrator\n"
+			"siaadmin version \"%s\" (build %s)\n"
+			"Copyright@(2010-2016) IDK Sftware Ltd.\n", VERSION, BUILD);
+		return true;
+	case AppOptions::CommandMode::CM_Test:
+		{
 
-	if (appOptions.isConfiguratedOk() == false) {
-		if (appOptions.getCommandMode() == AppOptions::CommandMode::CM_Show) {
-			Show();
-			return false;
+		TestArchive testArchive;
+		testArchive.readingConfigFile();
+		testArchive.testFolders();
+		return true;
 		}
+	}
+	if (isConfiguratedOk() == false) {
+		
 		if (appOptions.getCommandMode() == AppOptions::CommandMode::CM_InitArchive) {
 			// const char *archivePath, const char *workspacePath, const char *reposPath, const char *masterPath, const char *derivativePath, bool users
 			if (CreateArchive(appOptions.getHomePath(), appOptions.getWorkspacePath(), appOptions.getRepositoryPath(), appOptions.getMasterPath(), appOptions.getDerivativePath(), appOptions.getCataloguePath(), appOptions.getUsers()) == false) {
@@ -236,7 +250,7 @@ bool AdminApp::doRun()
 		break;
 	case AppOptions::CommandMode::CM_Show:
 	{
-		Show();
+		//Show();
 		ShowCommand show;
 		if (show.process(appOptions.getName())) {
 		}
@@ -299,19 +313,7 @@ bool AdminApp::doRun()
 		break;
 	}
 	
-	case AppOptions::CommandMode::CM_Version:
-		printf("Simple Image Archive Administrator\n"
-			   "siaadmin version \"%s\" (build %s)\n"
-			   "Copyright@(2010-2016) IDK Sftware Ltd.\n", VERSION, BUILD);
-		return true;
-	case AppOptions::CommandMode::CM_Test:
-	{
-		
-		TestArchive testArchive;
-		testArchive.readingConfigFile();
-		testArchive.testFolders();
-		return true;
-	}
+	
 	case AppOptions::CommandMode::CM_Unknown:
 		break;
 	}
@@ -440,7 +442,7 @@ bool AdminApp::initaliseConfig() {
 
 	//AppConfig &config = AppConfig::get();
 	AdminConfig config;
-
+	m_configured = false;
 	bool found = false;
 	std::string homePath;
 	// Looking the HKEY_LOCAL_MACHINE first
@@ -468,7 +470,7 @@ bool AdminApp::initaliseConfig() {
 	}
 
 	if (SAUtils::DirExists(homePath.c_str()) == false) {
-		setError(12, "SIA Unable to start? Archive not found at default location and the environment variable SA_HOME not set.\n"
+		setError(12, "ImgArchive Unable to start? Archive not found at default location and the environment variable IAHOME not set.\n"
 			"Use siaadmin -i to create an empty archive at the default location (see documentation).\n");
 		return false;
 
@@ -485,11 +487,9 @@ bool AdminApp::initaliseConfig() {
 			return false;
 		}
 		config.fileBasedValues(homePath.c_str());
-
+		m_configured = true;
 	}
-	else {
-		m_configured = false;
-	}
+	
 
 	return true;
 }
@@ -571,12 +571,9 @@ bool AdminApp::initaliseHomePath() {
 }
 
 bool AdminApp::initaliseArgs(int argc, char **argv) {
-
-	
 	if (m_argvParser->doInitalise(argc, argv) == false) {
 		return false;
 	}
-
 	return true;
 }
 

@@ -285,7 +285,7 @@ std::string SAUtils::getFilenameNoExt(const std::string &file) {
 	if (sp != -1) {
 		name = file.substr(++sp);
 	}
-	int ep = file.find_last_of('.');
+	const int ep = file.find_last_of('.');
 	name = file.substr(0, ep);
 	return name;
 }

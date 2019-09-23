@@ -97,14 +97,17 @@ bool IntegrityManager::addFile(const char *rootPath, const char *folderPath, con
 bool IntegrityManager::validate(IMCompletedSummary& imCompletedSummary, bool workspace, bool Master) {
 //	FolderList folderList(m_archivePath.c_str());
 	std::string tmp = m_archivePath;
+	if (SAUtils::DirExists(tmp.c_str()) == false) {
+		throw std::exception("Archive path not found");
+	}
 	tmp += "/system/journal";
 	if (SAUtils::DirExists(tmp.c_str()) == false) {
-		throw std::exception();
+		throw std::exception("Journal path not found");
 	}
 	tmp += "/checkdisk";
 	if (SAUtils::DirExists(tmp.c_str()) == false) {
 		if (SAUtils::mkDir(tmp.c_str()) == false) {
-			throw std::exception();
+			throw std::exception("checkdisk path not found");
 		}
 	}
 	ValidateReportingObject::setPath(tmp.c_str());

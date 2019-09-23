@@ -21,16 +21,16 @@ namespace simplearchive {
 		//define error codes
 		addErrorCode(0, "Success");
 		addErrorCode(1, "Error");
-		setIntroductoryDescription("The Image archive provides an organised place to store images. This archive is"
+		setIntroductoryDescription("ImgArchive provides an organised place to store images. This archiving tool is"
 			"designed to be simple in design and to use. It consists of archiving core that provides the basic archiving"
-			" functions but in addition, takes input and provides output from optional external components to provide a"
+			"functions but in addition, takes input and provides output from optional external components to provide a"
 			"tailored achieving solution and can be extended into a complete achieving system. ");
 		setHelpOption();
 
-		setHeader("usage: siaadmin subcommand [options] [args]\n\n"
-			"Image archive command line administrator, version 1.0.0.1\n"
+		setHeader("usage: iaadmin subcommand [options] [args]\n\n"
+			"ImgArchive command line administrator, version 1.0.0.1\n"
 			"Type 'siaadmin help <subcommand>' for help on a specific subcommand.\n\n"
-			"siaadmin is the primary command-line interface to administer Simple Image Archive (sia)."
+			"iaadmin is the primary command-line interface to administer ImgArchive."
 			"\n");
 
 
@@ -119,6 +119,7 @@ namespace simplearchive {
 		defineCommandOption("validate", "repair");
 		defineCommandOption("validate", "archive-path");
 		
+		defineCommandOption("test", "settup");
 
 		ArgvParser::ParserResults res = parse(argc, argv);
 
@@ -294,6 +295,10 @@ namespace simplearchive {
 
 				cmdFound = true;
 			} else if (command("test") == true) {
+				if (foundOption("settup") == true) {
+
+					appOptions.setName("settup");
+				}
 				appOptions.setCommandMode(AppOptions::CommandMode::CM_Test);
 				cmdFound = true;
 			}

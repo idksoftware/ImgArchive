@@ -86,7 +86,7 @@ bool GetEnv(std::string& value, bool all) {
 			return false;
 		}
 	}
-	if (RegQueryValueEx(hKey, "SIA_HOME", NULL, NULL, (BYTE*)buf, &dwBufSize) != ERROR_SUCCESS)
+	if (RegQueryValueEx(hKey, "IAHOME", NULL, NULL, (BYTE*)buf, &dwBufSize) != ERROR_SUCCESS)
 	{
 		RegCloseKey(hKey);
 		return false;
