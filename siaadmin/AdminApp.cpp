@@ -227,6 +227,7 @@ bool AdminApp::doRun()
 		testArchive.readingConfigFile();
 		testArchive.testFolders();
 		return true;
+
 		}
 	}
 	if (isConfiguratedOk() == false) {
