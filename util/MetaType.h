@@ -454,9 +454,9 @@ public:
 		return true;
 	}
 
-	bool join(MTRow &row);
+	//bool join(MTRow& row);
 
-	bool join(const MTRow &row);
+	bool join(const MTRow& row);
 
 	const MTTableSchema& getSchema() const {
 		return m_schema;

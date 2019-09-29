@@ -567,7 +567,7 @@ MTRow &MTRow::operator=(const MTRow &row) {
 		std::shared_ptr<MTColumn> col = std::make_shared<MTColumn>(*i);
 		this->emplace_back(col);
 	}
-	join((MTRow&)row);
+	join((const MTRow&)row);
 	return *this;
 }
 
@@ -579,8 +579,11 @@ MTRow::~MTRow() {
 	this->clear();
 	//delete m_schema;
 };
+/*
 bool MTRow::join(MTRow &otherRow) {
 
+	
+	== old ==
 	MTTableSchema& thisSchema = (MTTableSchema&)getSchema();
 	MTTableSchema& otherSchema = (MTTableSchema&)otherRow.getSchema();
 	int thisIndex = 0;
@@ -603,10 +606,41 @@ bool MTRow::join(MTRow &otherRow) {
 		printf("%s\n", ex.what());
 	}
 	return true;
+	== end old ==
+	
+	MTTableSchema& thisSchema = (MTTableSchema&)getSchema();
+	MTTableSchema& otherSchema = (MTTableSchema&)otherRow.getSchema();
+	int thisIndex = 0;
+	int otherIndex = 0;
+	try {
+		for (auto i = thisSchema.begin(); i != thisSchema.end(); i++, thisIndex++) {
+			MTSchema& columnInfo = *i;
+			//printf("%s\n", columnInfo.getName().c_str());
+			otherIndex = otherSchema.getIndex(columnInfo.getName().c_str());
+			if (otherIndex == -1) {
+				continue;
+			}
+			MTColumn& thisColumn = columnAt(thisIndex);
+			MTColumn& otherColumn = otherRow.columnAt(otherIndex);
+			if (thisColumn.getInfo().getType() != otherColumn.getInfo().getType()) {
+				printf("Invalid Types");
+				ErrorCode::setErrorCode(SIA_ERROR::TYPE_MISMATCH);
+			}
+			if (!otherColumn.isNull()) {
+				thisColumn.set(otherColumn);
+			}
+
+		}
+	}
+	catch (const std::exception & ex) {
+		printf(" thisIndex:%d otherIndex:%d\n", thisIndex, otherIndex);
+		printf("%s\n", ex.what());
+	}
+	return true;
 }
-
+*/
 bool MTRow::join(const MTRow &otherRow) {
-
+	
 	MTTableSchema& thisSchema = (MTTableSchema&)getSchema();
 	MTTableSchema& otherSchema = (MTTableSchema&)otherRow.getSchema();
 	int thisIndex = 0;
@@ -636,6 +670,7 @@ bool MTRow::join(const MTRow &otherRow) {
 		printf("%s\n", ex.what());
 	}
 	return true;
+	
 }
 
 

@@ -206,7 +206,7 @@ public:
 		return m_dateAdded;
 	}
 
-	void setDateAdded(const std::string& dateAdded = "2014/06/12 12:13:02") {
+	void setDateAdded(const std::string& dateAdded) {
 		m_dateAdded = dateAdded;
 	}
 
@@ -214,7 +214,7 @@ public:
 		return m_dateCreate;
 	}
 
-	void setDateCreate(const std::string& dateCreate = "2014/06/12 12:13:02") {
+	void setDateCreate(const std::string& dateCreate) {
 		m_dateCreate = dateCreate;
 	}
 
@@ -223,7 +223,7 @@ public:
 	}
 
 	void setDateModified(
-			const std::string& dateModified = "2014/06/12 12:13:02") {
+			const std::string& dateModified) {
 		m_dateModified = dateModified;
 	}
 
@@ -288,7 +288,7 @@ public:
 		return m_fileSize;
 	}
 
-	void setFileSize(const std::string& fileSize = "89efaa") {
+	void setFileSize(const std::string& fileSize) {
 		m_fileSize = fileSize;
 	}
 
@@ -296,7 +296,7 @@ public:
 		return m_flash;
 	}
 
-	void setFlash(const std::string& flash = "Flash did not fire, auto") {
+	void setFlash(const std::string& flash) {
 		m_flash = flash;
 	}
 
@@ -320,7 +320,7 @@ public:
 		return m_height;
 	}
 
-	void setHeight(const std::string& height = "6000") {
+	void setHeight(const std::string& height) {
 		m_height = height;
 	}
 
@@ -336,7 +336,7 @@ public:
 		return m_label;
 	}
 
-	void setLabel(const std::string& label = "This is a label") {
+	void setLabel(const std::string& label) {
 		m_label = label;
 	}
 
@@ -376,7 +376,7 @@ public:
 		return m_mediaType;
 	}
 
-	void setMediaType(const std::string& mediaType = "jpg") {
+	void setMediaType(const std::string& mediaType) {
 		m_mediaType = mediaType;
 	}
 
@@ -416,7 +416,7 @@ public:
 		return m_rating;
 	}
 
-	void setRating(const std::string& rating = "5") {
+	void setRating(const std::string& rating) {
 		m_rating = rating;
 	}
 
@@ -424,7 +424,7 @@ public:
 		return m_resolution;
 	}
 
-	void setResolution(const std::string& resolution = "24bit") {
+	void setResolution(const std::string& resolution) {
 		m_resolution = resolution;
 	}
 

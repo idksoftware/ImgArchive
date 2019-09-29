@@ -149,6 +149,9 @@ ExifObject *ExternalExifMapper::create(ConfigBlock &exifData) {
 		logger.log(LOG_OK, CLogger::Level::TRACE, "Found keyword:\"%s\" value:\"%s\"", ii->first.c_str(), ii->second.c_str());
 		std::string keyword = ii->first;
 		std::string value = iter->second;
+		if (value.empty()) {
+			continue; // Do not add empty string
+		}
 		logger.log(LOG_OK, CLogger::Level::FINE, "Keyword:\"%s\" = \"%s\"", keyword.c_str(), value.c_str());
 
 		try {

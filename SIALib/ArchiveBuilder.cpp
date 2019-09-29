@@ -696,21 +696,21 @@ namespace simplearchive {
 				MetadataTemplate &metadataTemplate = MetadataTemplate::GetInstance();
 				MetadataObject_ptr metadataObjectPtr = metadataTemplate.getMetadataObject();
 				MetadataObject &metadataObject = *metadataObjectPtr;
-				print(metadataObject);
+				//print(metadataObject);
 				try {
 					copyBasicExit(metadataObject, BasicMetadata);
 				}
 				catch (std::out_of_range &e) {
 					printf("%s\n", e.what());
 				}
-				print(metadataObject);
+				//print(metadataObject);
 				if (exifObject != nullptr) {
 					copyExternalExif(metadataObject, *exifObject);
 				}
-				print(metadataObject);
+				//print(metadataObject);
 				
 				imageGroup->add(BasicMetadataPtr, metadataObjectPtr);
-				imageGroup->print();
+				//imageGroup->print();
 				logger.log(LOG_OK, CLogger::Level::INFO, "completed Stage 2 \"%s\"", imageItem->getFilename().c_str());
 				
 				

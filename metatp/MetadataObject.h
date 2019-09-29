@@ -462,11 +462,11 @@ public:
 	}
 
 	const char *getMediaTypeString() const {
-	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_CRC_IDX)).toString().c_str();
+	        return columnAt(static_cast<int>(MetadataObjectIndex::MD_MEDIATYPE_IDX)).toString().c_str();
 	}
 
 	void setMediaType(const std::string& mediaType) {
-	        columnAt(static_cast<int>(MetadataObjectIndex::MD_CRC_IDX)).fromString(mediaType);;
+	        columnAt(static_cast<int>(MetadataObjectIndex::MD_MEDIATYPE_IDX)).fromString(mediaType);;
 	}
 
 	const char *getMeteringModeString() const {
