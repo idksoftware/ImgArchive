@@ -104,7 +104,8 @@ bool ExternalComand::init(const char *externalCommandLine, const char *exifMapPa
 ExifObject *ExternalComand::process(const char *imagefile) {
 	CLogger &logger = CLogger::getLogger();
 	ExifObject *exifObject = nullptr;
-	std::string in = imagefile;
+	std::string in = "\""; in += imagefile; in += "\"";
+
 	ExternalShell externalShell;
 	ExternalExifMapper externalExifMapper;
 	if (findToken(m_commandLine, "output") == false) {
