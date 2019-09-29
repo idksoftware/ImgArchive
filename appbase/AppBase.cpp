@@ -12,8 +12,6 @@ namespace CommandLineProcessing {
 	}
 
 	bool AppBase::initalise(int argc, char **argv) {
-
-
 		if (initaliseConfig() == false) {
 			return false;
 		}

@@ -71,12 +71,15 @@ ExifObject *ImageFileReader::externalExifTool(std::string &path) {
 	AppConfig config = AppConfig::get();
 	
 	ExternalComand externalComand(config.getTempPath());
+	// Get the temp path for temp exif files
 	if (config.getExternalExifTool() == nullptr) {
 		//logger.log(LOG_OK, CLogger::ERROR, "Exif command line not found\n");
 
 		return nullptr;
 	}
+	// Get the path to the external tool i.e. exiftool.exe
 	std::string externalExifTool = config.getExternalExifTool();
+	// Get the path to the external tool map file i.e. exiftool.ini
 	std::string ExifToolPath = config.getToolsPath();
 	ExifToolPath += '/';
 	ExifToolPath += externalExifTool;
@@ -101,14 +104,14 @@ ExifObject *ImageFileReader::externalExifTool(std::string &path) {
 	std::string exifMap = exifMapPath;
 	const char *exifMapFile;
 	if (!(exifMapFile = config.getExifMapFile())) {
-		logger.log(LOG_OK, CLogger::Level::ERR, "Exif map path not found");
+		logger.log(LOG_OK, CLogger::Level::ERR, "Exif map File not found");
 		return nullptr;
 	}
 	exifMap += '/';
 	exifMap += exifMapFile;
 
 	logger.log(LOG_OK, CLogger::Level::FINE, "Raw Exif command line found \"%s\"", externalCommandLine.c_str());
-	if (!externalComand.init(externalCommandLine.c_str(), exifMapPath)) {
+	if (!externalComand.init(externalCommandLine.c_str(), exifMap.c_str())) {
 		
 		return nullptr;
 	}

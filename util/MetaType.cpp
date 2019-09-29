@@ -30,6 +30,7 @@ class MetaTypeObject {
 	    None
 	} EType;
 	EType m_type;
+	bool m_isSet;
 	MetaTypeObject() {
 		m_type = None;
 		
@@ -46,24 +47,29 @@ public:
 	MetaTypeObject(double d) {
 		m_typeObject.m_double = d;
 		m_type = Float;
+		m_isSet = true;
 	}
 	MetaTypeObject(const char *s) {
 		m_typeObject.m_string = new std::string(s);
 		m_type = Text;
+		m_isSet = true;
 	}
 	
 	MetaTypeObject(unsigned long l) {
 		m_typeObject.m_int = l;
 		m_type = Integer;
+		m_isSet = true;
 	}
 	MetaTypeObject(const ExifDateTime &date) {
 		m_typeObject.m_date = new ExifDateTime(date);
 		m_type = Date;
+		m_isSet = true;
 	}
 	MetaTypeObject& operator=(const ExifDateTime &date) {
 		delete m_typeObject.m_date;
 		m_typeObject.m_date = new ExifDateTime(date);
 		m_type = Date;
+		m_isSet = true;
 		return *this;
 	}
 	virtual ~MetaTypeObject() {
@@ -619,7 +625,9 @@ bool MTRow::join(const MTRow &otherRow) {
 				printf("Invalid Types");
 				ErrorCode::setErrorCode(SIA_ERROR::TYPE_MISMATCH);
 			}
-			thisColumn.set(otherColumn);
+			if (!otherColumn.isNull()) {
+				thisColumn.set(otherColumn);
+			}
 
 		}
 	}

@@ -86,16 +86,16 @@ constexpr auto to_underlying(BasicMetadataIndex e)
 
 void BasicMetadata::copyJpegExif(JpegEXIF &jpegExif) {
 	
-	columnAt(static_cast<int>(BasicMetadataIndex::BM_LABEL_IDX)) = jpegExif.title;
-	columnAt(static_cast<int>(BasicMetadataIndex::BM_TITLE_IDX)) = jpegExif.title;
-	columnAt(static_cast<int>(BasicMetadataIndex::BM_SUBJECT_IDX)) = jpegExif.subject;
-	columnAt(static_cast<int>(BasicMetadataIndex::BM_RATING_IDX)) = jpegExif.rating;
-	columnAt(static_cast<int>(BasicMetadataIndex::BM_RATINGPERCENT_IDX)) = jpegExif.ratingPercent;
-	columnAt(static_cast<int>(BasicMetadataIndex::BM_DESCRIPTION_IDX)) = jpegExif.ImageDescription;
-	columnAt(static_cast<int>(BasicMetadataIndex::BM_KEYWORDS_IDX)) = jpegExif.keywords;
+	if (!jpegExif.title.empty()) columnAt(static_cast<int>(BasicMetadataIndex::BM_TITLE_IDX)) = jpegExif.title;
+	//columnAt(static_cast<int>(BasicMetadataIndex::BM_LABEL_IDX)) = jpegExif.label;
+	if (!jpegExif.subject.empty()) columnAt(static_cast<int>(BasicMetadataIndex::BM_SUBJECT_IDX)) = jpegExif.subject;
+	if (jpegExif.rating == 0) columnAt(static_cast<int>(BasicMetadataIndex::BM_RATING_IDX)) = jpegExif.rating;
+	if (jpegExif.ratingPercent == 0) columnAt(static_cast<int>(BasicMetadataIndex::BM_RATINGPERCENT_IDX)) = jpegExif.ratingPercent;
+	if (!jpegExif.ImageDescription.empty()) columnAt(static_cast<int>(BasicMetadataIndex::BM_DESCRIPTION_IDX)) = jpegExif.ImageDescription;
+	if (!jpegExif.keywords.empty()) columnAt(static_cast<int>(BasicMetadataIndex::BM_KEYWORDS_IDX)) = jpegExif.keywords;
 
-	columnAt(static_cast<int>(BasicMetadataIndex::BM_COMMENT_IDX)) = jpegExif.comment;
-	columnAt(static_cast<int>(BasicMetadataIndex::BM_AUTHOR_IDX)) = jpegExif.author;
+	if (!jpegExif.comment.empty()) columnAt(static_cast<int>(BasicMetadataIndex::BM_COMMENT_IDX)) = jpegExif.comment;
+	if (!jpegExif.author.empty()) columnAt(static_cast<int>(BasicMetadataIndex::BM_AUTHOR_IDX)) = jpegExif.author;
 	if (jpegExif.DateTimeDigitized.length() != 0) {
 		ExifDateTime edt(jpegExif.DateTimeDigitized.c_str());
 		columnAt(static_cast<int>(BasicMetadataIndex::BM_CAPTUREDATE_IDX)) = edt;

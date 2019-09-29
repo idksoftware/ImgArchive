@@ -107,15 +107,15 @@ public:
 
 class MTTableSchema : private std::vector<MTSchema> {
 	std::map<std::string, int> m_index;
-	int m_count;
+int m_count;
 protected:
 	std::string m_tablename;
 public:
-	MTTableSchema(const char *name) {
+	MTTableSchema(const char* name) {
 		m_tablename = name;
 		m_count = 0;
 	}
-	MTTableSchema(MTTableSchema &ts) {
+	MTTableSchema(MTTableSchema& ts) {
 		m_tablename = ts.m_tablename;
 		m_count = ts.m_count;
 		int count = 0;
@@ -136,15 +136,15 @@ public:
 		m_index.insert(std::make_pair(item.getName(), m_count));
 		m_count++;
 	}
-	int getIndex(const char *name) const {
-		
+	int getIndex(const char* name) const {
+
 		if (m_index.find(name) == m_index.end()) {
 			return -1;
 		}
 		else {
 			return m_index.at(name);
 		}
-		
+
 	}
 	void print() {
 		//m_name = name;
@@ -184,7 +184,7 @@ public:
 
 class MetaTypeObject;
 class MTColumn {
-	static const char *nullStr;
+	static const char* nullStr;
 	std::shared_ptr<MTSchema> m_info;
 	std::shared_ptr<MetaTypeObject> m_object;
 	std::shared_ptr<std::string> m_boundValue;
@@ -194,21 +194,25 @@ class MTColumn {
 		m_object = nullptr;
 		m_boundValue = nullptr;
 	};
-//	void boundUpdate();
+	//	void boundUpdate();
 	bool isBound() {
 		return (m_boundValue != nullptr);
 	}
 public:
-	
-	MTColumn(const MTSchema &info);
+
+	MTColumn(const MTSchema& info);
 	virtual ~MTColumn();
 	MTColumn(const MTColumn& r);
 	MTColumn& operator=(const MTColumn& r);
 
 	bool isNull() {
 		if (m_object != nullptr) {
+			if (m_info->getType() == MTSchema::EItemType::Text) {
+				
+			}		
 			return false;
 		}
+	
 		return true;
 	}
 	std::string &toString();

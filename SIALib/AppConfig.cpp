@@ -988,7 +988,7 @@ namespace simplearchive {
 			return m_ExifMapFile.c_str();
 		}
 		*/
-		return 	m_ExifMapPath.c_str();
+		return 	m_ExifMapFile.c_str();
 	}
 
 	bool AppConfig::isDryRun() const {

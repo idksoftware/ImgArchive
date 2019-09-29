@@ -318,7 +318,7 @@ void RepositoryPath::setEnabled(bool b) {
 	
 void RepositoryPath::setRepositoryPath(std::string &pathToRepository) {
 	m_pathToRepository = pathToRepository;
-	m_enabled = true;
+//	m_enabled = true;
 }
 	
 std::string  RepositoryPath::getRepositoryPath() const {
@@ -353,14 +353,14 @@ std::string ArchivePath::getBackup1Path() {
 }
 void ArchivePath::setBackup1Path(std::string &pathToBackup) {
 	m_backupPath[0].setRepositoryPath(pathToBackup);
-	m_backupPath[0].setEnabled(true);
+//	m_backupPath[0].setEnabled(true);
 }
 std::string ArchivePath::getBackup2Path() {
 	return m_backupPath[1].getRepositoryPath();
 }
 void ArchivePath::setBackup2Path(std::string &pathToBackup) {
 	m_backupPath[1].setRepositoryPath(pathToBackup);
-	m_backupPath[1].setEnabled(true);
+//	m_backupPath[1].setEnabled(true);
 }
 
 bool ArchivePath::isBackup1Enabled() {
@@ -461,6 +461,7 @@ std::string ArchivePath::getDerivativePath() {
 
 void ArchivePath::setDerivativePath(std::string &path) {
 	m_derivative.setRepositoryPath(path);
+	m_derivative.setEnabled(true);
 }
 
 

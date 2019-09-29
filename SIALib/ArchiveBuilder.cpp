@@ -677,13 +677,10 @@ namespace simplearchive {
 					logger.log(LOG_OK, CLogger::Level::INFO, "No simple EXIF infomation found in \"%s\"", imageItem->getFilename().c_str());
 				}
 				logger.log(LOG_OK, CLogger::Level::INFO, "Simple EXIF infomation found in \"%s\"", imageItem->getFilename().c_str());
-				if (!BasicMetadata.isExifFound() && m_useExternalExifTool) {
-					// Try external Exif Tool
-					logger.log(LOG_OK, CLogger::Level::INFO, "Using external EXIF tool on file \"%s\"", imageItem->getFilename().c_str());
-					exifObject = ImageFileReader::externalExifTool(pathstr);
-				}
 				//exifObject->debugPrint();
 				if (m_useExternalExifTool == true) {
+					logger.log(LOG_OK, CLogger::Level::INFO, "Using external EXIF tool on file \"%s\"", imageItem->getFilename().c_str());
+					exifObject = ImageFileReader::externalExifTool(pathstr);
 					if (exifObject == nullptr) {
 						logger.log(LOG_OK, CLogger::Level::INFO, "External EXIF reader failed. No extra EXIF readings for image: \"%s\"", imageItem->getFilename().c_str());
 					}
@@ -699,12 +696,14 @@ namespace simplearchive {
 				MetadataTemplate &metadataTemplate = MetadataTemplate::GetInstance();
 				MetadataObject_ptr metadataObjectPtr = metadataTemplate.getMetadataObject();
 				MetadataObject &metadataObject = *metadataObjectPtr;
+				print(metadataObject);
 				try {
 					copyBasicExit(metadataObject, BasicMetadata);
 				}
 				catch (std::out_of_range &e) {
 					printf("%s\n", e.what());
 				}
+				print(metadataObject);
 				if (exifObject != nullptr) {
 					copyExternalExif(metadataObject, *exifObject);
 				}
@@ -827,7 +826,7 @@ void ArchiveBuilder::print(const MetadataObject& mo) {
 	MTTableSchema& mos = (MTTableSchema&)mo.getSchema();
 	for (auto i = mos.begin(); i != mos.end(); i++) {
 		MTSchema& columnInfo = *i;
-		//DEBUG_PRINT("%-20s %s\n", columnInfo.getName().c_str(), mo.columnAt(columnInfo.getName().c_str()).toString().c_str());
+		DEBUG_PRINT("%-20s %s\n", columnInfo.getName().c_str(), mo.columnAt(columnInfo.getName().c_str()).toString().c_str());
 		logger.log(LOG_OK, CLogger::Level::FINE, "%-20s %s", columnInfo.getName().c_str(), mo.columnAt(columnInfo.getName().c_str()).toString().c_str());
 	}
 }

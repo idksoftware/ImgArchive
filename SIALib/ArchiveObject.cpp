@@ -720,7 +720,7 @@ namespace simplearchive {
 		MasterCatalogue& masterView = getMasterCatalogue();
 
 		// Testing
-		masterView.setFileEnabled(true);
+		masterView.setFileEnabled(false);
 		masterView.setWWWEnabled(false);
 
 		if (masterView.isWWWEnabled()) {
