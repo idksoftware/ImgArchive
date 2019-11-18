@@ -382,7 +382,7 @@ std::string MD5::md5(const char *szPath, bool &status)
 		return 0;
 	}
 	while (!feof(fp)) {
-		count = fread(buf, 1, 1024, fp);
+		count = fread(buf, (size_t)1, (size_t)1024, fp);
 		update(buf, count);
 		if (ferror(fp)) {
 			return false;

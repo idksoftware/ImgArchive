@@ -38,7 +38,7 @@
 #include <vector>
 #include <memory>
 #include "HistoryEvent.h"
-#include "CDate.h"
+//#include "CDate.h"
 
 namespace simplearchive {
 

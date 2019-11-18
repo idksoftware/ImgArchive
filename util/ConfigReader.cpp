@@ -57,7 +57,7 @@ static char THIS_FILE[] = __FILE__;
 namespace simplearchive {
 
 void ConfigBlock::printAll() {
-	int size = this->size();
+	size_t size = this->size();
 	std::cout << m_name << '\n';
 	// &logger = CLogger::getLogger();
 	for (std::map<std::string, std::string>::iterator ii = begin(); ii != end(); ++ii) {
@@ -350,12 +350,12 @@ ConfigReader::Token ConfigReader::parseExif(const char *text, ConfigBlock &confi
 	line = trim(line);
 
 	if (line.empty()) {
-		return Comment;
+		return ConfigReader::Comment;
 	}
 	int commentIdx = line.find_first_of('#');
 	if (commentIdx == 0) {
 		//printf("%s\n", line.c_str());
-		return Comment; // comment before command
+		return ConfigReader::Comment; // comment before command
 	}
 	
 	int delimIdx = line.find_first_of(config.getDelimChar());

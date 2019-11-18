@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26228.4
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29509.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "iaarc", "SimpleArchive\SimpleArchive.vcxproj", "{E6B44F35-CDAB-4487-9CD4-3DC02BBB488E}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -130,8 +130,8 @@ Global
 		{EA5B7D32-8B8C-4CEA-B2D0-F6DA98F6DC5B}.Debug|Mixed Platforms.Build.0 = Debug|Win32
 		{EA5B7D32-8B8C-4CEA-B2D0-F6DA98F6DC5B}.Debug|Win32.ActiveCfg = Debug|Win32
 		{EA5B7D32-8B8C-4CEA-B2D0-F6DA98F6DC5B}.Debug|Win32.Build.0 = Debug|Win32
-		{EA5B7D32-8B8C-4CEA-B2D0-F6DA98F6DC5B}.Debug|x64.ActiveCfg = Debug|x64
-		{EA5B7D32-8B8C-4CEA-B2D0-F6DA98F6DC5B}.Debug|x64.Build.0 = Debug|x64
+		{EA5B7D32-8B8C-4CEA-B2D0-F6DA98F6DC5B}.Debug|x64.ActiveCfg = Release|x64
+		{EA5B7D32-8B8C-4CEA-B2D0-F6DA98F6DC5B}.Debug|x64.Build.0 = Release|x64
 		{EA5B7D32-8B8C-4CEA-B2D0-F6DA98F6DC5B}.Release|Any CPU.ActiveCfg = Release|Win32
 		{EA5B7D32-8B8C-4CEA-B2D0-F6DA98F6DC5B}.Release|Any CPU.Build.0 = Release|Win32
 		{EA5B7D32-8B8C-4CEA-B2D0-F6DA98F6DC5B}.Release|ARM.ActiveCfg = Release|Win32

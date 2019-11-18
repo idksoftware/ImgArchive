@@ -116,7 +116,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>Ws2_32.lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>..\x64\Debug\fclib.lib;..\x64\Debug\util.lib;..\x64\Debug\exifcl.lib;..\x64\Debug\metatp.lib;..\x64\Debug\csv.lib;..\x64\Debug\database.lib;..\x64\Debug\sqlite3.lib;..\x64\Debug\SIALib.lib;..\x64\Debug\IntegrityManager.lib;..\x64\Debug\mirror.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\x64\Debug\fclib.lib;..\x64\Debug\util.lib;..\x64\Debug\exifcl.lib;..\x64\Debug\metatp.lib;..\x64\Debug\csv.lib;..\x64\Debug\database.lib;..\x64\Debug\sqlite3.lib;..\x64\Debug\SIALib.lib;..\x64\Debug\IntegrityManager.lib;..\x64\Debug\mirror.lib;..\x64\Debug\appbase.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ProjectReference>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
@@ -154,7 +154,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN64;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../fclib;../util;../exifcl;../metatp;../csv;../mirror;../sqlite3;../SIALib;../IntegrityManager;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../appbase;../fclib;../util;../exifcl;../metatp;../csv;../mirror;../sqlite3;../SIALib;../IntegrityManager;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -162,7 +162,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>C:\development\sia\SimpleArchive\x64\Release\fclib.lib;C:\development\sia\SimpleArchive\x64\Release\util.lib;C:\development\sia\SimpleArchive\x64\Release\exifcl.lib;C:\development\sia\SimpleArchive\x64\Release\metatp.lib;C:\development\sia\SimpleArchive\x64\Release\csv.lib;C:\development\sia\SimpleArchive\x64\Release\database.lib;C:\development\sia\SimpleArchive\x64\Release\sqlite3.lib;C:\development\sia\SimpleArchive\x64\Release\SIALib.lib;C:\development\sia\SimpleArchive\x64\Release\IntegrityManager.lib;C:\development\sia\SimpleArchive\x64\Release\mirror.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\x64\Release\fclib.lib;..\x64\Release\util.lib;..\x64\Release\web.lib;..\x64\Release\exifcl.lib;..\x64\Release\metatp.lib;..\x64\Release\csv.lib;..\x64\Release\database.lib;..\x64\Release\sqlite3.lib;..\x64\Release\SIALib.lib;..\x64\Release\IntegrityManager.lib;..\x64\Release\mirror.lib;..\x64\Release\appbase.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

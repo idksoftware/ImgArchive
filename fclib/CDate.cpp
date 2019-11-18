@@ -43,8 +43,6 @@
 namespace simplearchive {
 
 	CDate::CDate() {
-		// TODO Auto-generated constructor stub
-
 	}
 
 	CDate::CDate(time_t t) {
@@ -55,11 +53,11 @@ namespace simplearchive {
 
 	CDate::CDate(const char *str) {
 		std::string data = str;
-		int delim1 = data.find_first_of('.');
-		int delim2 = data.find_first_of(".", delim1 + 1);
-		int delim3 = data.find_first_of(".", delim2 + 1);
-		int delim4 = data.find_first_of(".", delim3 + 1);
-		int delim5 = data.find_first_of(".", delim4 + 1);
+		size_t delim1 = data.find_first_of('.');
+		size_t delim2 = data.find_first_of(".", delim1 + 1);
+		size_t delim3 = data.find_first_of(".", delim2 + 1);
+		size_t delim4 = data.find_first_of(".", delim3 + 1);
+		size_t delim5 = data.find_first_of(".", delim4 + 1);
 
 		time_t rawtime;
 		time(&rawtime);
