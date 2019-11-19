@@ -3,6 +3,7 @@
 	<name>util</name>
 	<comment></comment>
 	<projects>
+		<project>fclib</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

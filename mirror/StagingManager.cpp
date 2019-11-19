@@ -195,7 +195,7 @@ std::string StagingManager::readTxtFile(const char *txtFilePath) {
 	char text[1024];
 	std::ifstream txtfile(txtFilePath);
 	if (txtfile.is_open() == false) {
-		return false;
+		throw std::exception();
 	}
 	std::string number;
 	std::string path;

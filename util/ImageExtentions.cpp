@@ -179,7 +179,7 @@ ImageExtentions &ImageExtentions::get() {
 		std::string path = m_extentionsFilePath + "/ext.dat";
 		if (SAUtils::FileExists(path.c_str()) == false) {
 			m_isError = true;
-			throw std::exception("Cannot read extentions file \"ext.dat\"");
+			throw std::exception();
 			
 		}
 		m_extentionsFile = std::make_unique<CExtentionsFile>();

@@ -12,14 +12,7 @@
 
 namespace simplearchive {
 
-MetadataDocument::MetadataDocument() {
-	// TODO Auto-generated constructor stub
 
-}
-
-MetadataDocument::~MetadataDocument() {
-	// TODO Auto-generated destructor stub
-}
 
 bool MetadataDocument::write() {
 	for (std::list<std::string>::iterator i = begin(); i != end(); i++) {

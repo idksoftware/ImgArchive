@@ -47,7 +47,7 @@ namespace simplearchive {
 		CSVArgs(char delim = '.');
 		virtual ~CSVArgs();
 		bool process(const char *dataString);
-		bool CSVArgs::process(const std::string &data);
+		bool process(const std::string &data);
 		void print();
 		/// @brief This will get an optional argument empty if no argument
 		/// found.
@@ -60,7 +60,7 @@ namespace simplearchive {
 			}
 		}
 
-		std::istream& CSVArgs::nextField(std::istringstream& s, std::string& field);
+		std::istream& nextField(std::istringstream& s, std::string& field);
 	};
 
 } /* namespace simplearchive */

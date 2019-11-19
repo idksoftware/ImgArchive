@@ -385,14 +385,17 @@ std::string MD5::md5(const char *szPath, bool &status)
 		count = fread(buf, (size_t)1, (size_t)1024, fp);
 		update(buf, count);
 		if (ferror(fp)) {
-			return false;
+			status = false;
+			std::string s;
+			return s;
 		}
 	}
 
 	if (fclose(fp))
 	{
 		status = false;
-		return 0;
+		std::string s;
+		return s;
 	}
 	finalize();
 	return hexdigest();

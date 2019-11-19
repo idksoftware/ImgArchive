@@ -34,7 +34,7 @@
 
 #include "Version.h"
 #include "SAUtils.h"
-#include "PathController.h"
+#include "pathcontroller.h"
 #include "ImageEncode.h"
 #include <string>
 #include <cstdlib>

@@ -1,5 +1,7 @@
-#include "Base64.h"
+#include <algorithm>
 #include <vector>
+#include "Base64.h"
+
 static char base64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+_";
 
 static int LookupDigits[] = {

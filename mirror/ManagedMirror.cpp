@@ -88,7 +88,6 @@ bool ManagedMirror::initalise(const char *rootFolder, const char *configFile) {
 bool ManagedMirror::process() {
 	int volume = 1;
 
-
 	std::string indexPath = m_rootFolder;
 	indexPath += "/.sia/index";
 	CSVDBFile csvDBFile;

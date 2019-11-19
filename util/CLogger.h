@@ -123,7 +123,7 @@ public:
 
 	void log(int code, Level level, const std::string &message);
 	void log(int code, Level level, const char *format, ...);
-	void CLogger::status(int cod, ReporterEvent::Status level, const char *format, ...);
+	void status(int cod, ReporterEvent::Status level, const char *format, ...);
 	CLogger& operator << (const std::string& message);
 	static CLogger &getLogger();
 	
@@ -199,7 +199,7 @@ private:
 	CLogger(const CLogger&) {};
 	CLogger& operator = (const CLogger& ) { return *this; }
 	bool IsLogOut(Level level);
-	static bool CLogger::IsConsoleOut(Level level);
+	static bool IsConsoleOut(Level level);
 	static void makeFile();
 	const char *levelStr(Level level);
 	static bool m_isQuiet;

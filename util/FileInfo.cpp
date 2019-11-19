@@ -106,6 +106,7 @@ namespace simplearchive {
 		MD5 md5(buf);
 		m_md5 = md5.hexdigest();
 		logger.log(LOG_OK, CLogger::Level::INFO, "MD5 of image: %s is %s", path.c_str(), m_md5.c_str());
+
 		CIDKUuid uuid;
 		m_uuid = uuid.GetUuid();
 		logger.log(LOG_OK, CLogger::Level::INFO, "UUID of image: %s is %s", path.c_str(), m_uuid.c_str());

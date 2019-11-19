@@ -363,7 +363,7 @@ public:
 		}
 	}
 	void print() {
-		std::string &text = toString();
+		std::string text = toString();
 		std::cout << text << '\n';
 	}
 
@@ -382,7 +382,7 @@ public:
 
 	std::string toDebugString() {
 		std::string text;
-		bool first = true;
+
 		for (auto i = this->begin(); i != this->end(); i++) {
 			SharedMTColumn column = *i;
 			std::shared_ptr<MTSchema> mtSchema = column->getMTSchemaItem();
@@ -515,7 +515,7 @@ public:
 		if (m_rowCursor == NOT_FOUND) {
 			return nullptr;
 		}
-		std::shared_ptr<MTRow> srow = vector::at(m_rowCursor);
+		std::shared_ptr<MTRow> srow = at(m_rowCursor);
 		return srow;
 	}
 };

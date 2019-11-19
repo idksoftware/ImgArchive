@@ -123,4 +123,4 @@ namespace simplearchive {
 	};
 
 }; // simplearchive namespace
-#endif DERIVATIVEMETADATAOBJECT_H_
+#endif // DERIVATIVEMETADATAOBJECT_H_

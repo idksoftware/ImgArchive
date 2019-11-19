@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <iostream> 
+#include <algorithm>
 #include "SAUtils.h"
 //#include "CIDKFileFind.h"
 
@@ -188,7 +189,7 @@ const char * DateSequence::toSequence()
 {
 	std::vector<int> seqList;
 	if (m_year > 2999 || m_year < 1900) {
-		throw  std::exception("Invalid year");
+		throw  std::exception();
 	}
 	if (m_year >= 2000) {
 		m_year = m_year - 2000;

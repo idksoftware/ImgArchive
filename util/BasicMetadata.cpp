@@ -33,7 +33,7 @@
 ** #$$@@$$# */
 #include <sstream>
 #include "BasicMetadata.h"
-#include "JpegExif.h"
+#include "JpegEXIF.h"
 #include "SimpleExifReader.h"
 #include "DBDefines.h"
 #include "SAUtils.h"

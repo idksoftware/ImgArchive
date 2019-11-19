@@ -767,9 +767,9 @@ std::string SAUtils::GetEnv(const std::string &key, bool all)
 	return retval;
 }
 
-bool SAUtils::SetEnv(const char *name, const char *value, bool all)
+bool SAUtils::SetEnv(const std::string &key, const std::string &value, bool all)
 {
-	if (setenv(name, value, 1) != 0) {
+	if (setenv(key.c_str(), value.c_str(), 1) != 0) {
 		return false;
 	}
 	return true;

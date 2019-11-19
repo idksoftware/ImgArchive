@@ -76,7 +76,7 @@ public:
 	bool add(const char *filepath, int version, const char *comment, const HistoryEvent &he);
 	bool add(const char *filepath, const char *version, const char *comment, const HistoryEvent &he);
 	std::unique_ptr<ImageHistoryItem> get();
-	bool SystemHistory::init();
+	bool init();
 
 	static void setPath(const char *primaryPath, const char *indexPath) {
 		m_primary = primaryPath;
