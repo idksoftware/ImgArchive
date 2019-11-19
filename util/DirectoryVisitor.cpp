@@ -43,8 +43,8 @@
 #include <string.h>
 #include <sstream>
 
-#ifdef WINDOWS
-	#include <sysstat.h>
+#ifdef _WIN32
+	//#include <sysstat.h>
 #else
 	#include <dirent.h>
 	#include <unistd.h>
