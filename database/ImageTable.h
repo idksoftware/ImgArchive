@@ -32,11 +32,11 @@
 **
 ** #$$@@$$# */
 
-#ifndef IMAGETABLE_H_
-#define IMAGETABLE_H_
+#pragma once
 #include <string>
-#include "Metatype.h"
+#include "MetaType.h"
 #include "Database.h"
+#include "sqlite3.h"
 
 //namespace simplearchive {
 /*
@@ -539,7 +539,9 @@ public:
 
 
 struct sqlite3;
-class Database;
+
+
+
 class ImageTable {
 	int m_errcode;
 	const sqlite3 *m_dbfile;
@@ -557,4 +559,4 @@ public:
 };
 
 //} /* namespace simplearchive */
-#endif /* IMAGETABLE_H_ */
+

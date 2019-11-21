@@ -29,7 +29,7 @@
 #include "SQLiteDB.h"
 #include "HistoryEvent.h"
 #include "History.h"
-#include "PathController.h"
+#include "pathcontroller.h"
 
 #include "CSVDatabase.h"
 #include "CSVDerivativeDatabase.h"
@@ -465,7 +465,7 @@ namespace simplearchive {
 		ExifDateTime addTime;
 		ExifDate addDate;
 		m_derivativeMetadata->columnAt(DB_DATEADDED) = addTime;
-		m_derivativeMetadata->columnAt(DB_VERSIONPATH) = addDate.toShortRelativePath();
+		m_derivativeMetadata->columnAt(DB_VERSIONPATH) = addDate.toShortRelativePath().c_str();
 
 		CLogger &logger = CLogger::getLogger();
 		try {
@@ -489,8 +489,8 @@ namespace simplearchive {
 		}
 
 
-
-		if (settupRelative(addDate.toShortRelativePath()) == false) {
+		std::string ddmmyy = addDate.toShortRelativePath();
+		if (settupRelative(ddmmyy) == false) {
 			return false;
 		}
 
@@ -685,7 +685,8 @@ namespace simplearchive {
 		}
 		*/
 		PrimaryIndexPath& primaryIndexPath = ArchivePath::getPrimaryIndex();
-		primaryIndexPath.setRepositoryPath(ArchivePath::getPathToHome() + PRIMARY_INDEX_PATH);
+		std::string path = ArchivePath::getPathToHome() + PRIMARY_INDEX_PATH;
+		primaryIndexPath.setRepositoryPath(path);
 		primaryIndexPath.settup();
 		try {
 			if (!getPrimaryIndexObject().init(primaryIndexPath)) {
@@ -1069,17 +1070,20 @@ namespace simplearchive {
 	}
 	bool ArchiveObject::writeMetadata2MasterDatabase(std::string &imageName, MetadataObject &metadataObject) {
 		if (ArchivePath::isMasterEnabled() == true) {
-			if (writeMetadata(m_master.getRepositoryPath().getMetadataPath(), imageName, metadataObject) == false) {
+			std::string path = m_master.getRepositoryPath().getMetadataPath();
+			if (writeMetadata(path, imageName, metadataObject) == false) {
 				return false;
 			}
 		}
 		if (ArchivePath::isBackup1Enabled() == true) {
-			if (writeMetadata(m_master.getBackup1Object().getRepositoryPath().getMetadataPath(), imageName, metadataObject) == false) {
+			std::string path = m_master.getBackup1Object().getRepositoryPath().getMetadataPath();
+			if (writeMetadata(path, imageName, metadataObject) == false) {
 				return false;
 			}
 		}
 		if (ArchivePath::isBackup2Enabled() == true) {
-			if (writeMetadata(m_master.getBackup2Object().getRepositoryPath().getMetadataPath(), imageName, metadataObject) == false) {
+			std::string path = m_master.getBackup2Object().getRepositoryPath().getMetadataPath();
+			if (writeMetadata(path, imageName, metadataObject) == false) {
 				return false;
 			}
 		}
@@ -1087,7 +1091,8 @@ namespace simplearchive {
 	}
 	bool ArchiveObject::writeMetadata2DerivativesDatabase(std::string &versionName, DerivativeMetadata &metadataObject, std::string &imageName) {
 		if (ArchivePath::isDerivativeEnabled() == true) {
-			if (writeDerivativeMetadata(m_derivatives.getRepositoryPath().getMetadataPath(), versionName, metadataObject, imageName) == false) {
+			std::string path = m_derivatives.getRepositoryPath().getMetadataPath();
+			if (writeDerivativeMetadata(path, versionName, metadataObject, imageName) == false) {
 				return false;
 			}
 		}
@@ -1443,7 +1448,8 @@ namespace simplearchive {
 		versionControl.setCurrentVersion(filepath);
 		int version = versionControl.getVersion();
 		// Fill-in the details of the checkedin image
-		FileInfo fileInfo(pathController.getFullPath());
+		std::string ddmmyy = pathController.getFullPath();
+		FileInfo fileInfo(ddmmyy);
 		if (!force) {
 			if (checkoutStatus.isChanged(filepath, versionControl.getCRC(), versionControl.getMD5().c_str()) == false) {
 				if (alreadyCheckedIn) {
@@ -1522,11 +1528,13 @@ namespace simplearchive {
 		std::string versionName = VersionControl::getInstance().getCurrentVersion().getVersionName();
 		
 		// Note the workspase needs the image name note the version image name
-		if (this->writeMetadata2Workspace(imagePath, pathController.getImageName(), metadataObject) == false) {
+		std::string name = pathController.getImageName();
+		if (this->writeMetadata2Workspace(imagePath, name, metadataObject) == false) {
 			logger.log(LOG_OK, CLogger::Level::FATAL, "Fataled to write image \"%s\" metadata to workspace", versionName.c_str());
 			return false;
 		}
-		if (this->writeDerivativeMetadat2Workspace(imagePath, versionName, derivativeMetadata, (std::string)fileInfo.getName()) == false) {
+		name = fileInfo.getName();
+		if (this->writeDerivativeMetadat2Workspace(imagePath, versionName, derivativeMetadata, name) == false) {
 			logger.log(LOG_OK, CLogger::Level::FATAL, "Fataled to write image \"%s\" metadata to workspace", versionName.c_str());
 			return false;
 		}
@@ -1534,7 +1542,7 @@ namespace simplearchive {
 			logger.log(LOG_OK, CLogger::Level::FATAL, "Fataled to write image \"%s\" metadata to primary index", versionName.c_str());
 			return false;
 		}
-		if (this->writeMetadata2DerivativesDatabase(versionName, derivativeMetadata, (std::string)fileInfo.getName()) == false) {
+		if (this->writeMetadata2DerivativesDatabase(versionName, derivativeMetadata, name) == false) {
 			logger.log(LOG_OK, CLogger::Level::FATAL, "Fataled to write image \"%s\" metadata Derivatives Database", versionName.c_str());
 			return false;
 		}

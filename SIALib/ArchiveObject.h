@@ -263,7 +263,7 @@ namespace simplearchive {
 		DerivativesObject& getDerivativesObject();
 		MasterRepositoryObject& getMasterObject();
 		
-		MasterCatalogue& ArchiveObject::getMasterCatalogue();
+		MasterCatalogue& getMasterCatalogue();
 
 		bool imageHistory(const char *filepath, const LogDocument::FormatType& formatType);
 	};

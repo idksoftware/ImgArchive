@@ -38,7 +38,7 @@
 #include <string>
 #include <memory>
 
-#include "ExifDateTime.h"
+#include "ExifDate.h"
 #include "LogDocument.h"
 /*
 */
@@ -95,7 +95,7 @@ namespace simplearchive {
 		void setUseEXIFDate();
 		void setUseFileDate();
 		void setUseDateToday();
-		void setUseDate(ExifDate &date);
+		void setUseDate(const ExifDate &exifDate);
 
 		static const int getLastCode();
 		

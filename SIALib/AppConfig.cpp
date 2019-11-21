@@ -49,6 +49,13 @@ static char THIS_FILE[] = __FILE__;
 #undef FILECODE
 #define FILECODE APPCONFIG_CPP
 
+#ifdef WIN32
+#define STRICMP _stricmp
+#else
+#include <strings.h>
+#define STRICMP strcasecmp
+#endif
+
 namespace simplearchive {
 
 	std::unique_ptr<AppConfig> m_this = nullptr;
@@ -352,7 +359,7 @@ namespace simplearchive {
 	// General	
 		std::string dry_run = "false";
 		setGeneral(DRY_RUN_LABEL, dry_run, dry_run);
-		AppConfig::m_dry_run = (_stricmp(dry_run.c_str(), "true") == 0);
+		AppConfig::m_dry_run = (STRICMP(dry_run.c_str(), "true") == 0);
 
 		std::string logLevel = "SUMMARY";
 		setGeneral(LOG_LEVEL_LABEL, logLevel, logLevel);
@@ -364,22 +371,22 @@ namespace simplearchive {
 
 		std::string sql_on = "false";
 		setGeneral(SQL_LABEL, sql_on, sql_on);
-		AppConfig::m_sql_on = (_stricmp(sql_on.c_str(), "true") == 0);
+		AppConfig::m_sql_on = (STRICMP(sql_on.c_str(), "true") == 0);
 
 		std::string lightroom = "false";
 		setGeneral(LIGHTROOM_LABEL, lightroom, lightroom);
-		AppConfig::m_lightroom = (_stricmp(lightroom.c_str(), "true") == 0);
+		AppConfig::m_lightroom = (STRICMP(lightroom.c_str(), "true") == 0);
 
 		std::string serverMode = "false";
 		setGeneral(SERVER_MODE_LABEL, serverMode, serverMode);
-		AppConfig::m_serverMode = (_stricmp(serverMode.c_str(), "true") == 0);
+		AppConfig::m_serverMode = (STRICMP(serverMode.c_str(), "true") == 0);
 		
 		std::string file_cat_on = "false";
 		setGeneral(SQL_LABEL, file_cat_on, file_cat_on);
-		AppConfig::m_file_cat_on = (_stricmp(file_cat_on.c_str(), "true") == 0);
+		AppConfig::m_file_cat_on = (STRICMP(file_cat_on.c_str(), "true") == 0);
 		std::string www_cat_on = "false";
 		setGeneral(SQL_LABEL, www_cat_on, www_cat_on);
-		AppConfig::m_www_cat_on = (_stricmp(www_cat_on.c_str(), "true") == 0);
+		AppConfig::m_www_cat_on = (STRICMP(www_cat_on.c_str(), "true") == 0);
 	// System Folders
 		// Master Archive Path
 		//std::shared_ptr<ConfigBlock> folders = getSystemFolders();
@@ -389,21 +396,39 @@ namespace simplearchive {
 		//
 //#define CONFIG_PATH_LABEL				"ConfigPath"	 
 //#define TOOLS_PATH_LABEL           		"ToolsPath"
-		std::string noLightroom = "NoLightroom";
-		setSystemFolders(TEMP_PATH_LABEL, AppConfig::m_tempPath, homePath + TEMP_PATH);
-//#define SOURCE_PATH_LABEL         		"SourcePath"
-		setSystemFolders(SYSTEM_PATH_LABEL, AppConfig::m_systemPath, homePath + SYSTEM_PATH);
-		setSystemFolders(LOG_PATH_LABEL, AppConfig::m_logPath, homePath + LOG_PATH);
-		setSystemFolders(MASTER_PATH_LABEL, AppConfig::m_masterPath, homePath + MASTER_PATH);
-		setSystemFolders(LIGHTROOM_PATH_LABEL, AppConfig::m_lightroomPath, noLightroom);
-		setSystemFolders(DERIVATIVE_PATH_LABEL, AppConfig::m_derivativePath, homePath + DERIVATIVE_PATH);
-		setSystemFolders(TOOLS_PATH_LABEL, AppConfig::m_toolsPath, homePath + TOOLS_PATH);
-		setSystemFolders(HOOK_SCRIPTS_PATH_LABEL, AppConfig::m_hookPath, homePath + HOOKS_PATH);
-		setSystemFolders(SQL_DATABASE_PATH_LABEL, AppConfig::m_DatabasePath, homePath + SQLITEDB_PATH);
-		
-//#define HOME_PATH_LABEL					"HomePath"
 
-		setSystemFolders(HISTORY_PATH_LABEL, AppConfig::m_historyPath, homePath + HISTORY_PATH);	
+
+		std::string defauleValue = homePath + TEMP_PATH;
+		setSystemFolders(TEMP_PATH_LABEL, AppConfig::m_tempPath, defauleValue);
+
+//#define SOURCE_PATH_LABEL         		"SourcePath"
+		defauleValue = homePath + SYSTEM_PATH;
+		setSystemFolders(SYSTEM_PATH_LABEL, AppConfig::m_systemPath, defauleValue);
+
+		defauleValue = homePath + LOG_PATH;
+		setSystemFolders(LOG_PATH_LABEL, AppConfig::m_logPath, defauleValue);
+
+		defauleValue = homePath + MASTER_PATH;
+		setSystemFolders(MASTER_PATH_LABEL, AppConfig::m_masterPath, defauleValue);
+
+		std::string noLightroom = "NoLightroom";
+		setSystemFolders(LIGHTROOM_PATH_LABEL, AppConfig::m_lightroomPath, noLightroom);
+		
+		defauleValue = homePath + DERIVATIVE_PATH;
+		setSystemFolders(DERIVATIVE_PATH_LABEL, AppConfig::m_derivativePath, defauleValue);
+
+		defauleValue = homePath + TOOLS_PATH;
+		setSystemFolders(TOOLS_PATH_LABEL, AppConfig::m_toolsPath, defauleValue);
+
+		defauleValue = homePath + HOOKS_PATH;
+		setSystemFolders(HOOK_SCRIPTS_PATH_LABEL, AppConfig::m_hookPath, defauleValue);
+
+		defauleValue = homePath + SQLITEDB_PATH;
+		setSystemFolders(SQL_DATABASE_PATH_LABEL, AppConfig::m_DatabasePath, defauleValue);
+
+//#define HOME_PATH_LABEL					"HomePath"
+		defauleValue = homePath + HISTORY_PATH;
+		setSystemFolders(HISTORY_PATH_LABEL, AppConfig::m_historyPath, defauleValue);
 		/*
 		if (m_historyPath.empty() == true) {
 		if (getRoot().value("HistoryPath", m_logPath) == false) {
@@ -413,19 +438,25 @@ namespace simplearchive {
 		}
 		}
 		*/
+		defauleValue = homePath + TEMPLATE_PATH;
+		setSystemFolders(TEMPLATE_PATH_LABEL, AppConfig::m_templatePath, defauleValue);
 
-		setSystemFolders(TEMPLATE_PATH_LABEL, AppConfig::m_templatePath, homePath + TEMPLATE_PATH);
-		setSystemFolders(CATALOG_PATH_LABEL, AppConfig::m_catalogPath, homePath + TOOLS_PATH);
+		defauleValue = homePath + TOOLS_PATH;
+		setSystemFolders(CATALOG_PATH_LABEL, AppConfig::m_catalogPath, defauleValue);
 		
 
 	// External Exif Tool
+
+		defauleValue = homePath + CONFIG_PATH;
+		setExternalExifTool(EXIF_MAP_PATH_LABEL, AppConfig::m_ExifMapPath, defauleValue);
+
+
 		std::string emptyString;
-		setExternalExifTool(EXIF_MAP_PATH_LABEL, AppConfig::m_ExifMapPath, homePath + CONFIG_PATH);
 		setExternalExifTool(EXIF_MAP_FILE_LABEL, AppConfig::m_ExifMapFile, emptyString);
 		std::string externalExifToolEnabledStr;
 		emptyString = "False";
 		setExternalExifTool(ENABLED_LABEL, externalExifToolEnabledStr, emptyString);
-		AppConfig::m_externalExifToolEnabled = (_stricmp(externalExifToolEnabledStr.c_str(), "true") == 0);
+		AppConfig::m_externalExifToolEnabled = (STRICMP(externalExifToolEnabledStr.c_str(), "true") == 0);
 		AppConfig::m_ExternalExifTool = "None";
 		setExternalExifTool(EXIF_TOOL_LABEL, AppConfig::m_ExternalExifTool, AppConfig::m_ExternalExifTool);
 		AppConfig::m_ExternalCommandLine = "None";
@@ -434,11 +465,11 @@ namespace simplearchive {
 	// Master
 		std::string backup1Enabled = "false";
 		setMaster(BACKUP_ONE_ENABLED_LABEL, backup1Enabled, backup1Enabled);
-		AppConfig::m_backup1Enabled = (_stricmp(backup1Enabled.c_str(), "true") == 0);
+		AppConfig::m_backup1Enabled = (STRICMP(backup1Enabled.c_str(), "true") == 0);
 		
 		std::string backup2Enabled = "false";
 		setMaster(BACKUP_ONE_ENABLED_LABEL, backup2Enabled, backup2Enabled);
-		AppConfig::m_backup2Enabled = (_stricmp(backup2Enabled.c_str(), "true") == 0);
+		AppConfig::m_backup2Enabled = (STRICMP(backup2Enabled.c_str(), "true") == 0);
 
 		std::string masterBackupPath = homePath + BACKUPS_PATH + MASTER_BACKUP1_PATH;
 		setMaster(MASTER_PATH_LABEL, AppConfig::m_backup1, masterBackupPath);
@@ -448,7 +479,7 @@ namespace simplearchive {
 	// Network
 		std::string eventsOn = "false";
 		setNetwork(EVENTS_ENABLED_LABEL, eventsOn, eventsOn);
-		AppConfig::m_eventsOn = (_stricmp(eventsOn.c_str(), "true") == 0);
+		AppConfig::m_eventsOn = (STRICMP(eventsOn.c_str(), "true") == 0);
 
 		std::string m_udpPortNum = "127.0.0.1";
 		setNetwork(COMMANDS_PORT_LABEL, m_udpPortNum, m_udpPortNum);

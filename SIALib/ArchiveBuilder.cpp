@@ -146,7 +146,8 @@ namespace simplearchive {
 			std::ifstream file(filepath);
 			if (file.is_open() == false) {
 				// empty?
-				return false;
+				std::unique_ptr<ImportList> emply;
+				return emply;
 			}
 
 			while (file.getline(text, 100)) {
@@ -267,7 +268,7 @@ namespace simplearchive {
 				
 				logger.log(LOG_DUPLICATE, CLogger::Level::ERR, "Image \"%s\" was found to be a duplicate. Rejecting from import", shortFilePath.c_str());
 				// reject image from import
-				ImageId imageId = imageIndex.findDup(BasicMetadata.getCrc());
+				ImageId imageId = imageIndex.findDup((unsigned long)BasicMetadata.getCrc());
 				if (imageId.getName().empty()) {
 					logger.log(LOG_OK, CLogger::Level::FATAL, "Image indexing corrupt %s", shortFilePath.c_str());
 				}
@@ -469,7 +470,8 @@ namespace simplearchive {
 
 		LightroomImport lightroomImport(m_archiveObject.getMasterPath().getRepositoryPath().c_str(), lightroomPath);
 		if (lightroomImport.makeList() == false) {
-			return false;
+			std::shared_ptr<ImageSets> empty;
+			return empty;
 		}
 
 		m_folders = ImportImageList::getFolderCount();

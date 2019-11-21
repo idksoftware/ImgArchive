@@ -50,7 +50,7 @@
 #include "SystemHistory.h"
 #include "ArchivePath.h"
 #include "ErrorCode.h"
-#include "PathController.h"
+#include "pathcontroller.h"
 
 
 
@@ -111,7 +111,7 @@ public:
 		return m_data;
 	}
 
-	HistoryItem::~HistoryItem() {
+	~HistoryItem() {
 		
 	}
 };

@@ -485,7 +485,7 @@ void StatusReporter::add(ReporterEvent::Status status, const char * fmt, ...)
 #ifdef _WIN32
 		vsprintf_s(message, fmt, args);
 #else
-		vsprintf(message, format, args);
+		vsprintf(message, fmt, args);
 #endif
 		va_end(args);
 	}

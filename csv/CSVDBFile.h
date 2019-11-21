@@ -147,6 +147,9 @@ class ImageInfo {
 	ExifDate m_dateArchived;
 	int m_dbidx;
 public:
+
+
+
 	ImageInfo(int idx, const char *imagePath, const char *name, unsigned long size, unsigned long crc,
 		const char *md5, const char *uuid, int version, ExifDate &date, int m_dbidx);
 	~ImageInfo();

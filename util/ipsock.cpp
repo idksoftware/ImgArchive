@@ -98,7 +98,11 @@ CIPComms::CIPComms()
 
 CIPComms::EErrorCode CIPClient::Connect(char *AddressStr, int port)
 {
+#ifdef _WIN32
 	strncpy_s(m_ServerAddressStr, AddressStr, 256);
+#else
+	strncpy(m_ServerAddressStr, AddressStr, 256);
+#endif
 	return ConnectToServer(AddressStr, port, &m_iSocket);
 }
 
@@ -255,7 +259,7 @@ int CIPComms::ReceivePacket(int socket, CIPPacket &pIPPacket)
 		return -1;
 	}
 #else
-	if (SOCKET_ERROR == msglen)
+	if (SOCKET_ERROR == (int)msglen)
 	{
 		m_LastError = errno;
 		return -1;

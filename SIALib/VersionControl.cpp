@@ -51,7 +51,7 @@
 #include "SAUtils.h"
 #include "ErrorCode.h"
 
-#include "PathController.h"
+#include "pathcontroller.h"
 #include "CSVDatabase.h"
 #include "FolderList.h"
 #include "IntegrityManager.h"

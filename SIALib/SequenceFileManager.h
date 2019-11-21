@@ -14,7 +14,7 @@ class SequenceFileManager
 		// Note: The sequence manager will only rename master image
 		// names.
 	static ImageSequenceOption m_option;
-	const char *SequenceFileManager::sequenceFile(int y, int m, int d, long seq, const std::string& imagePath, const char * orginalName);
+	const char *sequenceFile(int y, int m, int d, long seq, const std::string& imagePath, const char * orginalName);
 public:
 	SequenceFileManager();
 	~SequenceFileManager();
@@ -24,7 +24,7 @@ public:
 	static void setOption(ImageSequenceOption option) {
 		m_option = option;
 	}
-	const char *SequenceFileManager::sequenceFile(const char *yearDay, long dec, const char * orginalName);
+	const char *sequenceFile(const char *yearDay, long dec, const char * orginalName);
 	
 	static SequenceFileManager& get();
 };

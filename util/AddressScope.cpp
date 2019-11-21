@@ -257,7 +257,7 @@ class VersionScopeItem {
 	bool m_range;
 	bool m_error;
 	bool init(std::string &pattern, int version);
-	bool VersionScopeItem::isScope(const char *pattern, int version);
+	bool isScope(const char *pattern, int version);
 	std::string m_pattern;
 	int m_maxVersion;
 public:

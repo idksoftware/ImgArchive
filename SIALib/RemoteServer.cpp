@@ -9,6 +9,8 @@
 #include <stdio.h>
 #else
 #include <sys/socket.h>
+#include <unistd.h>
+#define SOCKET_ERROR (-1)
 #endif
 
 class Command {

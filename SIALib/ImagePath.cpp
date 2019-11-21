@@ -39,7 +39,7 @@
 #include <sstream>
 #include <iomanip>
 #include "IntegrityManager.h"
-#include "PathController.h"
+#include "pathcontroller.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -202,7 +202,8 @@ ImagePath::ImagePath(const char *filepath) {
 	PathController pathController;
 	pathController.splitShort(filepath);
 	m_imageName = pathController.getImage();
-	init(pathController.getYearday());
+	std::string path = pathController.getYearday();
+	init(path);
 }
 
 

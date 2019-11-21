@@ -1,5 +1,9 @@
 #include <memory>
-#include  <io.h>  
+#ifdef _WIN32
+#include  <io.h>
+#else
+#include <unistd.h>
+#endif
 #include  <stdio.h>  
 #include  <stdlib.h> 
 #include <sstream>
@@ -17,7 +21,11 @@ namespace simplearchive {
 		std::unique_ptr<char> absPath(new char[1024 * 4]());
 		char *fullPath;
 		int outSize = 1024 * 4;
+#ifdef WIN32
 		fullPath = _fullpath(absPath.get(), path, outSize);
+#else
+		fullPath = realpath(path , absPath.get());
+#endif
 		if (validate) {
 			int ret = doValidate(fullPath);
 			if (ret) {
@@ -37,7 +45,7 @@ namespace simplearchive {
 
 	
 
-	PathController::PathController()
+	PathController::PathController() : m_isValid(false)
 	{
 	}
 
@@ -47,7 +55,11 @@ namespace simplearchive {
 
 
 	bool PathController::doValidate(const char *path) {
+#ifdef WIN32
 		int ret = _access(path, 0);
+#else
+		int ret = access(path, 0);
+#endif
 		if (ret == -1) {
 			ErrorCode::setErrorCode(SIA_ERROR::FILE_NOT_FOUND);
 			return false;
@@ -140,7 +152,8 @@ namespace simplearchive {
 
 	std::string PathController::makeYYYY(const char *yymmdd) {
 		if (!validateYYMMDD(yymmdd)) {
-			return false;
+			std::string s;
+			return s;
 		}
 
 		std::string year = yymmdd;

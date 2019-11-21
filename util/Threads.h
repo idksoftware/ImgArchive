@@ -49,9 +49,7 @@
 #ifdef _WIN32
 	#include <process.h>
 #else
-#ifdef _UNIX
 	#include <pthread.h>
-#endif
 #endif
 
 /*******************************************************
@@ -161,8 +159,7 @@ public:
 
 #ifdef _WIN32
 	bool SIACreateThread(void( __cdecl * pFunction)(void*), void* pArguments);
-#endif
-#ifdef _UNIX
+#else
 	bool SIACreateThread(void(Function)(void*), void* pArguments);
 #endif
 

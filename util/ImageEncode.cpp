@@ -73,8 +73,6 @@ ImageEncode::ImageEncode(const char *encodedString) {
 
 int ImageEncode::days_from_civil(int y, unsigned m, unsigned d)
 {
-	static_assert(std::numeric_limits<unsigned>::digits >= 18,
-		"This algorithm has not been ported to a 16 bit unsigned integer");
 
 	y -= m <= 2;
 	const int era = (y >= 0 ? y : y - 399) / 400;

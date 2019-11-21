@@ -159,8 +159,16 @@ namespace simplearchive {
 		PathController pathController(img);
 		pathController.splitShort(img);
 		CheckoutRow checkoutRow;
+
+#ifdef WIN32
 		checkoutRow.columnAt(DB_FILENAME) = pathController.getImage();
 		checkoutRow.columnAt(DB_FILEPATH) = pathController.getYearday();
+#else
+		MTColumn &col = checkoutRow.columnAt(DB_FILENAME);
+		col = pathController.getImage().c_str();
+		col = checkoutRow.columnAt(DB_FILEPATH);
+		col = pathController.getYearday().c_str();
+#endif
 		checkoutRow.columnAt(DB_EVENT) = static_cast<int>(HistoryEvent::Event::ADDED);
 		checkoutRow.columnAt(DB_VERSION) = 0;
 		ExifDateTime dateAdded;

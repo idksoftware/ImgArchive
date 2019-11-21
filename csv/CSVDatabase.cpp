@@ -40,7 +40,7 @@
 #include "MetaType.h"
 #include "SAUtils.h"
 #include "CSVDBVisitor.h"
-#include "PathController.h"
+#include "pathcontroller.h"
 #include "DBDefines.h"
 #include "MetadataObject.h"
 
@@ -229,14 +229,14 @@ SharedMTRow CSVDatabase::get(const char *name, const char *path) {
 
 	PathController pathController(m_dbpath.c_str());
 	if (pathController.isValid() == false) {
-		return false;
+		throw std::exception();
 	}
 	pathController.setRelativePath(path);
 	
 	pathController.makeImagePath();
 	std::string fullPath = pathController.getFullPath();
 	if (pathController.splitPathAndFile(fullPath.c_str()) == false) {
-		return false;
+		throw std::exception();
 	}
 	MetadataPartition metadataPartition;
 	std::string filename = metadataPartition.getSchema().getName() + ".csv";

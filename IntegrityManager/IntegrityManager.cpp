@@ -98,17 +98,17 @@ bool IntegrityManager::validate(IMCompletedSummary& imCompletedSummary, bool wor
 //	FolderList folderList(m_archivePath.c_str());
 	std::string tmp = m_archivePath;
 	if (SAUtils::DirExists(tmp.c_str()) == false) {
-		throw std::exception("Archive path not found");
+		throw std::exception(); //"Archive path not found");
 	}
 	tmp += "/system/journal";
 	if (SAUtils::DirExists(tmp.c_str()) == false) {
-		throw std::exception("Journal path not found");
+		throw std::exception(); //"Journal path not found");
 		return false;
 	}
 	tmp += "/checkdisk";
 	if (SAUtils::DirExists(tmp.c_str()) == false) {
 		if (SAUtils::mkDir(tmp.c_str()) == false) {
-			throw std::exception("checkdisk path not found");
+			throw std::exception(); //"checkdisk path not found");
 		}
 	}
 	ValidateReportingObject::setPath(tmp.c_str());

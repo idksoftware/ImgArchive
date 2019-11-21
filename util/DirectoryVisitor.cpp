@@ -36,15 +36,18 @@
 #include <vector>
 #include <sys/types.h>
 #include <sys/stat.h>
-//#include <dirent.h>
+
 #include <cstdlib>
 #include <stdio.h>
 #include <vector>
 #include <string.h>
 #include <sstream>
-//#include <unistd.h>
+
 #ifdef WINDOWS
 	#include <sysstat.h>
+#else
+	#include <dirent.h>
+	#include <unistd.h>
 #endif
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -157,17 +160,17 @@ bool DirNode::process() {
 	DIR *dir;
 	struct dirent *ent;
 
-	if ((dir = opendir(m_dirpath.c_str())) == NULL) {
+	if ((dir = opendir(m_dirpath.c_str())) == nullptr) {
 		return false;
 	}
-	while ((ent = readdir(dir)) != NULL) {
+	while ((ent = readdir(dir)) != nullptr) {
 		if (!strcmp(ent->d_name,".") || !strcmp(ent->d_name,"..")) {
 			continue;
 		}
 
 		std::string path = m_dirpath + '/' + ent->d_name;
 
-		if (opendir(path.c_str()) == NULL) {
+		if (opendir(path.c_str()) == nullptr) {
 			if (m_folderVisitor) {
 				if (m_folderVisitor->onFile(path.c_str()) == false) {
 					return false;
@@ -181,13 +184,12 @@ bool DirNode::process() {
 				}
 			}
 			if (m_folderVisitor != 0) {
-				m_dirNode = new DirNode(NULL, path.c_str(), m_folderVisitor->make());
+				m_dirNode = std::make_shared<DirNode>(nullptr, path.c_str(), m_folderVisitor->make());
 			} else {
-				m_dirNode = new DirNode(NULL, path.c_str());
+				m_dirNode = std::make_shared<DirNode>(nullptr, path.c_str());
 			}
 			m_dirNode->process();
-			delete m_dirNode;
-			m_dirNode = 0;
+
 		}
 
 	}

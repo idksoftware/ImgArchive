@@ -140,6 +140,7 @@ bool SIAArcApp::initaliseHomePath() {
 
 	bool found = false;
 	std::string homePath;
+#ifdef WIN32
 	// Looking the HKEY_LOCAL_MACHINE first
 	if (GetEnv(homePath, true) == true) {
 		//printf("Found SIA_HOME in system variables: %s", homePath.c_str());
@@ -179,7 +180,14 @@ bool SIAArcApp::initaliseHomePath() {
 			}
 		}
 	}
-
+#else
+	homePath = SAUtils::GetPOSIXEnv("IMGARCHIVE_HOMR");
+	if (homePath.empty() == true || homePath.length() == 0) {
+		printf("SIA Unable to start? Cannot read user profile.");
+		setError(12, "SIA Unable to start? Cannot read user profile.");
+		return false;
+	}
+#endif
 	std::string temp;
 	temp = SAUtils::GetPOSIXEnv("SIA_ARCHIVE");
 	if (temp.empty() == false) {
@@ -216,6 +224,7 @@ bool SIAArcApp::initaliseConfig() {
 
 	bool found = false;
 	std::string homePath;
+#ifdef WIN32
 	// Looking the HKEY_LOCAL_MACHINE first
 	if (GetEnv(homePath, true) == true) {
 		//printf("Found SIA_HOME in system variables: %s", homePath.c_str());
@@ -226,6 +235,14 @@ bool SIAArcApp::initaliseConfig() {
 		//printf("Found SIA_HOME in user variables: %s", homePath.c_str());
 		found = true;
 	}
+#else
+	homePath = SAUtils::GetPOSIXEnv("IMGARCHIVE_HOMR");
+	if (homePath.empty() == true || homePath.length() == 0) {
+		printf("SIA Unable to start? Cannot read user profile.");
+		setError(12, "SIA Unable to start? Cannot read user profile.");
+		return false;
+	}
+#endif
 	if (found) {
 		// Initalise without the config file i.e. set defaults.
 		if (config.init(homePath.c_str()) == false) {

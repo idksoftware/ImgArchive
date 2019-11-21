@@ -181,8 +181,8 @@ namespace simplearchive {
 
 	
 	public:
-		AppConfig::AppConfig() noexcept {}
-		AppConfig::~AppConfig() {}
+		AppConfig() noexcept {}
+		~AppConfig() {}
 		void settup();
 
 		static AppConfig &get() {

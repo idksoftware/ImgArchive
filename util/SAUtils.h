@@ -96,7 +96,7 @@ public:
 	static bool hasExt(const char *file);
 	static bool hasExt(const std::string &file);
 	static bool mkDir(const char *path);
-	static bool SAUtils::isNumber(const std::string& s);
+	static bool isNumber(const std::string& s);
 	static bool setHidden(const char *path);
 	static bool copy(const char *from, const char *to);
 	static bool rename(const char *from, const char *to);
@@ -106,7 +106,7 @@ public:
 	static std::string to_string(int i);
 	static void chartohex2(char *buffer, unsigned char x);
 	static void chartohex3(char *buffer, unsigned short x);
-	static std::string SAUtils::sprintf(const char *fmt, ...);
+	static std::string sprintf(const char *fmt, ...);
 	static bool makePath(const char *from, const char *to);
 	static bool makePath(const char *to);
 	static bool makeLink(const char *file, const char *link);

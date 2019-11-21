@@ -302,7 +302,7 @@ bool ImportJournalMaker::process() {
 				std::string day = filename.substr(6, 2);
 				std::string id = filename.substr(11, 4);
 
-				stringstream s;
+				std::stringstream s;
 				s << day << ':' << mon << ':' << year << '-' << id;
 				item.m_date = s.str();
 

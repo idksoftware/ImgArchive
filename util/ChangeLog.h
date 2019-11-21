@@ -53,7 +53,7 @@ public:
 	
 	virtual ~ChangeLog();
 
-	void ChangeLog::init();
+	void init();
 private:
 
 	

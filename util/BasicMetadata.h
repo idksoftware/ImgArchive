@@ -361,7 +361,7 @@ public:
 //	void setDateTimeOriginal(const std::string& dateTimeOriginal);
     const std::string& getExposureBiasValue() const;
 	void setExposureBiasValue(const std::string& exposureBiasValue);
-	const std::string& BasicMetadata::getExposureProgram() const;
+	const std::string& getExposureProgram() const;
 	const std::string& getExposureTime() const;
 	void setExposureTime(const std::string& exposureTime);
 	const std::string& getFlash() const;
@@ -379,9 +379,9 @@ public:
 	const std::string& getImageWidth() const;
 	void setImageWidth(const std::string& imageWidth);
 
-	const std::string& BasicMetadata::getXResolution() const;
-	const std::string& BasicMetadata::getYResolution() const;
-	const std::string& BasicMetadata::getResolutionUnit() const;
+	const std::string& getXResolution() const;
+	const std::string& getYResolution() const;
+	const std::string& getResolutionUnit() const;
 
 	const std::string& getISoSpeedRatings() const;
 	void setISoSpeedRatings(const std::string& iSoSpeedRatings);

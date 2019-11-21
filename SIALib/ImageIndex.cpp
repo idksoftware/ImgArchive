@@ -48,7 +48,7 @@
 #include "cport.h"
 #include "ArchivePath.h"
 #include "ImageIndex.h"
-#include "Fileinfo.h"
+#include "FileInfo.h"
 #include "SAUtils.h"
 #include <stdio.h>
 #include <iostream>

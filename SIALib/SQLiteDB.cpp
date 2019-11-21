@@ -7,7 +7,7 @@
 #include "History.h"
 #include "HistoryEvent.h"
 #include "SAUtils.h"
-#include "Clogger.h"
+#include "CLogger.h"
 
 
 namespace simplearchive {

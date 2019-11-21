@@ -434,10 +434,10 @@ bool CkdskManifestFile::add(const char *filepath, const char *name) {
 		time_t created = SAUtils::createTime(filepath);
 		//logger.log(LOG_OK, CLogger::INFO, "Create time of image: %s", m_createTime.toLogString().c_str());
 		time_t modified = SAUtils::modTime(filepath);
-		
-		// old m_data->insert(m_data->end(), *ckdskData);
+		CkdskData ckdskData(name, size, crc, md5Str.c_str(), created, modified);
+		m_data->insert(m_data->end(), ckdskData);
 		// new
-		m_data->emplace(m_data->end(), name, size, crc, md5Str.c_str(), created, modified);
+		//m_data->emplace(m_data->end(), name, (int)size, crc, md5Str.c_str(), created, modified);
 		return true;
 	}
 	return false;

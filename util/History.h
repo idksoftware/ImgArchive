@@ -99,7 +99,7 @@ namespace simplearchive {
 		static std::string m_indexPath;
 		static std::string m_workspacePath;
 		static std::string m_systemHisteryPath;
-		static std::string History::m_changeLogPath;
+		static std::string m_changeLogPath;
 		std::unique_ptr<SystemHistory> systemHistory;
 		std::unique_ptr<ImageHistory> imageHistory;
 		std::unique_ptr<ChangeLog> changeLog;

@@ -145,14 +145,14 @@ void IDKYieldThread()
 // Mutex
 //
 
-#endif
+#else
 /*
  *		END WINDOWS 32 IMPLEMENTATION
  */
-#ifdef _UNIX
+
 
 #ifndef _POSIX
-#include <thread.h>
+#include <pthread.h>
 #endif
 
 
@@ -176,8 +176,7 @@ bool IDKCreateThread(void(pFunction)(void*), void* pArguments)
 {
 	
 	void*(*ppFunction)(void*)  = (void*(*)(void*))pFunction;
-	return (pthread_create(NULL, NULL,
-		ppFunction, pArguments)==0);
+	return (pthread_create(NULL, NULL, ppFunction, pArguments)==0);
 }
 
 SIAThread::~SIAThread()
@@ -188,10 +187,10 @@ SIAThread::~SIAThread()
 
 	}
 
-	if(m_List.Delete(this))
-	{
-		s_Status = DeleteFailed;
-	}
+	//if(m_List.Delete(this))
+	//{
+	//	s_Status = DeleteFailed;
+	//}
 	void* status = NULL;
 	pthread_exit(status);
 
@@ -206,9 +205,11 @@ bool IDKEndThread()
 	return true; 
 }
 
+
 /*
  *	Give up remaining time slice of current thread
  */
+/*
 void IDKYieldThread()
 {
 #ifdef _POSIX
@@ -265,8 +266,7 @@ bool SIAMutex::Unlock()
 {
 	return (pthread_mutex_unlock(&m_section)==0);
 }
-
-
+*/
 #endif
 
 

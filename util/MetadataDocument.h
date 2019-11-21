@@ -16,8 +16,8 @@ class MetadataDocument : public LogDocument {
 	std::string m_imageName;
 	std::string m_imagePath;
 public:
-	MetadataDocument();
-	virtual ~MetadataDocument();
+	MetadataDocument() = default;
+	virtual ~MetadataDocument() = default;
 	bool write();
 	bool writeXML();
 	bool writeHtml(const char *fileName);

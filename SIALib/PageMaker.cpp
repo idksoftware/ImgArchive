@@ -112,7 +112,7 @@ namespace simplearchive {
 		
 		bool creatDayHtmlfile(std::shared_ptr<PageNode> dayNode, DayFileItem &fileItem);
 		bool creatYearHtmlfile(std::shared_ptr<PageNode> archive);
-		bool MakePageBlocks::creatDaysHtmlfile(std::shared_ptr<PageNode> year);
+		bool creatDaysHtmlfile(std::shared_ptr<PageNode> year);
 	public:
 		MakePageBlocks(const char *root, std::shared_ptr<PageNode> imageTree, std::shared_ptr<PageNode> imageNodes, const char *htmlRoot, const char *archiveRoot);
 		bool makeImageBlocks();

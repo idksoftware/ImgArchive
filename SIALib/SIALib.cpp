@@ -132,7 +132,7 @@ namespace simplearchive {
 		ArchiveDate::setUseDateToday(true);
 	}
 
-	void SIALib::setUseDate(ExifDate &date) {
+	void SIALib::setUseDate(const ExifDate &date) {
 		ArchiveDate::setUseDate(date);
 		ArchiveDate::setDefaultDateSet(true);
 	}

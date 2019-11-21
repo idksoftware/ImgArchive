@@ -2,6 +2,7 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include "PageMakerBase.h"
 
 namespace simplearchive {
 	using namespace std;
@@ -49,13 +50,13 @@ namespace simplearchive {
 
 	};
 
-	typedef std::vector<std::string> DaysProcessed;
+
 
 	class MasterCatalogue {
 		std::unique_ptr<ViewPath> m_viewFilePath;
 		std::unique_ptr<ViewPath> m_viewWWWPath;
-		std::unique_ptr<PageIndexMaker> m_pageIndexMaker;
-		std::unique_ptr<ImagePageMaker> m_pageImageMaker;
+		//std::unique_ptr<PageIndexMaker> m_pageIndexMaker;
+		//std::unique_ptr<ImagePageMaker> m_pageImageMaker;
 		std::unique_ptr<SystemHistoryMaker> m_systemHistoryMaker;
 		std::unique_ptr<ImportJournalMaker> m_inputJournalMaker;
 
@@ -85,7 +86,7 @@ namespace simplearchive {
 		bool convertRAW(const std::string &source, const std::string &dist, const std::string &fileIn, const std::string &fileOut);
 		bool initWWW(const char *tempPath, const char *templatePath, const char* htmlPath);
 		
-		DaysProcessed m_daysProcessed;
+		std::vector<std::string> m_daysProcessed;
 		void addDayUpdate(std::string yyyymmddimg);
 	public:
 		MasterCatalogue();

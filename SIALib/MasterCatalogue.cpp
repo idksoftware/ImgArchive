@@ -1,4 +1,5 @@
 #include "MasterCatalogue.h"
+#include "PageMakerBase.h"
 #include "XMLWriter.h"
 #include "SAUtils.h"
 #include "AppPaths.h"
@@ -38,6 +39,7 @@ namespace simplearchive {
 
 	bool MasterCatalogue::settupSystemWWW(const char *archiveRootPath, const char *templatePath, const char* wwwCataloguePath, const char *systemHistoryPath, const char *inputJounalPath) {
 		m_archiveRootPath = archiveRootPath;
+#ifdef WIN32
 		m_pageImageMaker->setArchiveRootPath(archiveRootPath);
 		if (m_systemHistoryMaker->setPaths(templatePath, wwwCataloguePath, systemHistoryPath) == false) {
 			return false;
@@ -45,6 +47,7 @@ namespace simplearchive {
 		if (m_inputJournalMaker->setPaths(templatePath, wwwCataloguePath, inputJounalPath) == false) {
 			return false;
 		}
+#endif
 		return true;
 	}
 
@@ -62,8 +65,8 @@ namespace simplearchive {
 	MasterCatalogue::MasterCatalogue() :
 						m_viewFilePath(std::make_unique<ViewPath>()),
 						m_viewWWWPath(std::make_unique<ViewPath>()),
-						m_pageIndexMaker(std::make_unique<PageIndexMaker>()),
-						m_pageImageMaker(std::make_unique<ImagePageMaker>()),
+//						m_pageIndexMaker(std::make_unique<PageIndexMaker>()),
+//						m_pageImageMaker(std::make_unique<ImagePageMaker>()),
 						m_systemHistoryMaker(std::make_unique<SystemHistoryMaker>()),
 						m_inputJournalMaker(std::make_unique<ImportJournalMaker>())
 	{
@@ -89,7 +92,7 @@ namespace simplearchive {
 
 	bool MasterCatalogue::initWWW(const char *tempPath, const char *templatePath, const char* rootPath) {
 		m_tempPath = tempPath;
-		
+#ifdef WIN32
 		std::string imagesPath = rootPath;
 		imagesPath += '/';
 		imagesPath += "html";
@@ -100,7 +103,7 @@ namespace simplearchive {
 		if (m_pageImageMaker->setTemplatePath(templatePath, rootPath) == false) {
 			return false;
 		}
-
+#endif
 		
 
 		return true;
@@ -260,20 +263,23 @@ namespace simplearchive {
 
 
 	void MasterCatalogue::addDayUpdate(std::string yyyymmddimg) {
+#ifdef WIN32 // no compiling for linux
 		if (std::find(m_daysProcessed.begin(), m_daysProcessed.end(), yyyymmddimg) != m_daysProcessed.end()) {
 			return;
 		}
+#endif
 		m_daysProcessed.push_back(yyyymmddimg);
 	}
 
 	bool MasterCatalogue::makePages() {
+#ifdef WIN32
 		if (m_pageIndexMaker->process() == false) {
 			return false;
 		}
 		if (m_pageImageMaker->process(m_daysProcessed) == false) {
 			return false;
 		}
-
+#endif
 		return true;
 	}
 

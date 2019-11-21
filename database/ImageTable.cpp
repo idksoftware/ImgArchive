@@ -32,16 +32,16 @@
 **
 ** #$$@@$$# */
 
-#include "DBDefines.h"
-#include "ImageTable.h"
-#include "Database.h"
-#include "sqlite3.h"
+
+
+
 #include <stdio.h>
 #include <sstream>
 #include <iostream>
 #include <fstream>
 #include "SQLBuilder.h"
-#include "MetaType.h"
+#include "DBDefines.h"
+#include "ImageTable.h"
 
 
 using namespace simplearchive;

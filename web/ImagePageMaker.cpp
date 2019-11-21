@@ -16,6 +16,7 @@
 #include "HtmlPages.h"
 #include "MenuPages.h"
 #include "HookCmd.h"
+#include "PageMakerBase.h"
 
 namespace simplearchive {
 
@@ -491,7 +492,7 @@ namespace simplearchive {
 				currentPage++;
 			}
 
-			std::shared_ptr<ImageFileItem> imageNode = make_shared<ImageFileItem>(*ii);
+			std::shared_ptr<ImageFileItem> imageNode = std::make_shared<ImageFileItem>(*ii);
 			dayPagePtr->m_items.push_back(imageNode);
 			dayPagePtr->m_numberOfImages++;
 			imageIdx++;
