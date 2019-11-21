@@ -55,8 +55,10 @@ namespace simplearchive {
 	class MasterCatalogue {
 		std::unique_ptr<ViewPath> m_viewFilePath;
 		std::unique_ptr<ViewPath> m_viewWWWPath;
-		//std::unique_ptr<PageIndexMaker> m_pageIndexMaker;
-		//std::unique_ptr<ImagePageMaker> m_pageImageMaker;
+#ifdef WIN32
+		std::unique_ptr<PageIndexMaker> m_pageIndexMaker;
+		std::unique_ptr<ImagePageMaker> m_pageImageMaker;
+#endif
 		std::unique_ptr<SystemHistoryMaker> m_systemHistoryMaker;
 		std::unique_ptr<ImportJournalMaker> m_inputJournalMaker;
 
