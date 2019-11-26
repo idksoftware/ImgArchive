@@ -207,6 +207,7 @@ MTColumn& MTColumn::operator=(const MTColumn& r) {
 	MTSchema::EItemType type = m_info->getType();
 	if (r.m_object == 0) {
 		m_object = 0;
+		return *this;
 	}
 	switch (type) {
 	case MTSchema::Integer:
