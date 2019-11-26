@@ -67,7 +67,7 @@ namespace simplearchive {
 		std::string m_year;
 		void makeImageHtmlBlock(std::ofstream &htmlFile, std::vector<ImageFileItem> &items);
 		void makeImageHtmlBlock(std::ofstream &htmlFile, std::vector<std::shared_ptr<ImageFileItem>> &items);
-		int m_currentPage;
+		size_t m_currentPage;
 	public:
 		DaysHtmlPage(const char *year);
 		~DaysHtmlPage();

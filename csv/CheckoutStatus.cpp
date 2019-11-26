@@ -164,10 +164,10 @@ namespace simplearchive {
 		checkoutRow.columnAt(DB_FILENAME) = pathController.getImage();
 		checkoutRow.columnAt(DB_FILEPATH) = pathController.getYearday();
 #else
-		MTColumn &col = checkoutRow.columnAt(DB_FILENAME);
-		col = pathController.getImage().c_str();
-		col = checkoutRow.columnAt(DB_FILEPATH);
-		col = pathController.getYearday().c_str();
+		Column& tmp = checkoutRow.columnAt(DB_FILENAME);
+		tmp = pathController.getImage().c_str();
+		tmp = checkoutRow.columnAt(DB_FILEPATH);
+		tmp = pathController.getYearday().c_str();
 #endif
 		checkoutRow.columnAt(DB_EVENT) = static_cast<int>(HistoryEvent::Event::ADDED);
 		checkoutRow.columnAt(DB_VERSION) = 0;

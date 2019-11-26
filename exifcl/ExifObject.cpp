@@ -271,8 +271,9 @@ void ExifObject::setYResolution(const std::string& yResolution) {
 */
 void ExifObject::print() {
 	
-	CLogger &logger = CLogger::getLogger();
 	/*
+	CLogger &logger = CLogger::getLogger();
+
 	logger.log(LOG_OK, CLogger::Level::FINE, "Using Exif Color Space: \"%s\"", columnAt(static_cast<int>(DB_COLORSPACE)).toString().c_str());
 	logger.log(LOG_OK, CLogger::Level::FINE, "Using Exif Image Width: \"%s\"", m_imageWidth.c_str());
 	logger.log(LOG_OK, CLogger::Level::FINE, "Using Exif Image Height: \"%s\"", m_imageHeight.c_str());

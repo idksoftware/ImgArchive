@@ -4,7 +4,7 @@
 
 
 class HtmlPageNav : public std::vector<std::string> {
-	int m_currentPage;
+	size_t m_currentPage;
 	size_t m_maxPages;
 	std::string m_activeColor;
 	std::string m_mouseOverColor;

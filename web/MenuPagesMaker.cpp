@@ -229,7 +229,6 @@ bool ImportJournalMaker::process(const char *fileIn, const char *fileOut, Journa
 
 	htmlFile << "</tr>\n";
 	htmlFile << "<tr>\n";
-	bool first = true;
 
 	item.m_complete = false;
 	item.m_total = 0;

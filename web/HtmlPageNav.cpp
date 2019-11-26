@@ -21,7 +21,7 @@ bool HtmlPageNav::make(std::ofstream &htmlFile) {
 	bool addNext = false;
 	bool makeSubSet = false;
 
-	if ((int)size() > 1) {
+	if (size() > (size_t)1) {
 
 		// Preconditions
 
@@ -32,20 +32,20 @@ bool HtmlPageNav::make(std::ofstream &htmlFile) {
 		}
 
 		// Last and Next selection buttons
-		if (m_currentPage < (int)size()-1) {
+		if (m_currentPage < size()-1) {
 			addLast = true;
 			addNext = true;
 		}
 
 		// Make less than all pages (Used when large number of pages generated
-		if (m_maxPages < (int)size()) {
+		if (m_maxPages < size()) {
 			makeSubSet = true;
 		}
 
 
 		// Generate Html
 		htmlFile << "<ul>\n";
-		int idx = 1;
+		size_t idx = 1;
 		if (addFirst) {
 			std::string& i = at(0);
 			htmlFile << "<li><a href = \"" << i.c_str() << "\">First</a></li>\n";
@@ -56,10 +56,10 @@ bool HtmlPageNav::make(std::ofstream &htmlFile) {
 		}
 		if (makeSubSet) {
 			int startPage = 0;
-			if (m_currentPage < (int)(m_maxPages / 2)) {
+			if (m_currentPage < (m_maxPages / 2)) {
 				startPage = 0;
 			}
-			else if (m_currentPage > (int)(size() - (m_maxPages / 2))) {
+			else if (m_currentPage > (size() - (m_maxPages / 2))) {
 				startPage = (int)(size() - m_maxPages);
 			}
 			for (vector<std::string>::iterator i = std::next(begin(), startPage); i != end(); i++) {

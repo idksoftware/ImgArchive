@@ -236,12 +236,13 @@ bool SIAArcApp::initaliseConfig() {
 		found = true;
 	}
 #else
-	homePath = SAUtils::GetPOSIXEnv("IMGARCHIVE_HOMR");
+	homePath = SAUtils::GetPOSIXEnv("IMGARCHIVE_HOME");
 	if (homePath.empty() == true || homePath.length() == 0) {
 		printf("SIA Unable to start? Cannot read user profile.");
 		setError(12, "SIA Unable to start? Cannot read user profile.");
 		return false;
 	}
+	found = true;
 #endif
 	if (found) {
 		// Initalise without the config file i.e. set defaults.
@@ -516,7 +517,7 @@ int main(int argc, char **argv)
 	}
 	if (error) {
 		int code = CommandLineProcessing::AppBase::getError();
-		cout << '\n\n' << CommandLineProcessing::AppBase::getFullErrorString() << '\n';
+		cout << "\n\n" << CommandLineProcessing::AppBase::getFullErrorString() << '\n';
 		return code;
 	}
 	else {

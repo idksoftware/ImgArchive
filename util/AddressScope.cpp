@@ -76,7 +76,7 @@ void DataString::init(const std::string &s) {
 }
 
 int DataString::compare(DataString &d) {
-	int res = 0;
+
 	if (m_year == "*" || d.m_year == "*" || m_year.compare(d.m_year) == 0) {
 		// year matched
 		if (m_month == "*" || d.m_month == "*" || m_month.compare(d.m_month) == 0) {
@@ -272,7 +272,7 @@ class VersionTokenList : public std::vector<VersionScopeItem> {};
 bool VersionScopeItem::init(std::string &pattern, int version) {
 	int num = -1;
 	if (m_pattern[0] == '[') {
-		int rangeCharPos = m_pattern.find('-', 1);
+		//int rangeCharPos = m_pattern.find('-', 1);
 		//std::string first = m_pattern.substr(1, m_pattern.length() - )
 		return true;
 	}
@@ -306,9 +306,9 @@ VersionScopeItem::~VersionScopeItem() {
 
 
 const bool VersionScopeItem::isInScope(int version) {
-	int num = -1;
+
 	if (m_pattern[0] == '[') {
-		int rangeCharPos = m_pattern.find('-', 1);
+		//int rangeCharPos = m_pattern.find('-', 1);
 		//std::string first = m_pattern.substr(1, m_pattern.length() - )
 		return true;
 	}
@@ -331,7 +331,7 @@ bool VersionScopeItem::isScope(const char *pattern, int version) {
 		return false;
 	}
 
-	int delimt = m_pattern.find_first_of('-', 1);
+	unsigned int delimt = m_pattern.find_first_of('-', 1);
 	if (delimt == std::string::npos) {
 		return false;
 	}

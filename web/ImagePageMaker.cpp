@@ -25,8 +25,8 @@ namespace simplearchive {
 	// pic1_thumb.png PNG 480x270 480x270+0+0 8-bit sRGB 255793B 0.000u 0:00.000
 
 	class ImageSize {
-		bool lookforSize(std::string &str, int &idx);
-		int lookforNum(std::string &str, int &idx);
+		bool lookforSize(std::string &str, size_t &idx);
+		int lookforNum(std::string &str, size_t &idx);
 	public:
 		int w;
 		int h;
@@ -34,7 +34,7 @@ namespace simplearchive {
 		bool parse(const char *str);
 	};
 
-	bool ImageSize::lookforSize(std::string &str, int &idx) {
+	bool ImageSize::lookforSize(std::string &str, size_t &idx) {
 		w = 0;
 		h = 0;
 		w = lookforNum(str, idx);
@@ -49,7 +49,7 @@ namespace simplearchive {
 		return true;
 	}
 
-	int ImageSize::lookforNum(std::string &str, int &idx) {
+	int ImageSize::lookforNum(std::string &str, size_t &idx) {
 		std::string sstr = str;
 
 		size_t sizeOfString = sstr.length();
@@ -72,7 +72,7 @@ namespace simplearchive {
 
 		std::string string = str;
 		size_t sizeOfString = string.length();
-		int iteration = 0;
+		size_t iteration = 0;
 
 		while (iteration < sizeOfString)
 		{
