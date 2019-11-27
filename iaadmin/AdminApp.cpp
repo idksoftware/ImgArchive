@@ -184,7 +184,7 @@ bool AdminApp::Show() {
 	}
 	CreateArchive::checkFolders(homePath.c_str());
 	return true;
-#elseif
+#else
 #endif
 }
 
@@ -555,7 +555,7 @@ bool AdminApp::initaliseHomePath() {
 			}
 		}
 	}
-#elseif
+#else
 #endif
 	std::string temp;
 	temp = SAUtils::GetPOSIXEnv("SIA_ARCHIVE");

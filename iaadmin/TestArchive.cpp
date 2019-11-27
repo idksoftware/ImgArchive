@@ -122,7 +122,7 @@ namespace simplearchive {
 				}
 			}
 		}
-#elseif
+#else
 #endif
 		if (found = false) {
 			printf("SIA Unable to start? No archive found in the default location or"

@@ -190,7 +190,7 @@ bool CreateArchive::createHomeEnvVar(const char *root, bool users) {
 	}
 #ifdef WIN32
 	return SetEnv(root, users);
-#elseif
+#else
 #endif
 }
 
@@ -648,7 +648,7 @@ bool CreateArchive::checkFolder(const char *root, const char *folder) {
 bool CreateArchive::IsAdmin() {
 #ifdef WIN32
 	return IsElevated();
-#elseif
+#else
 	return false;
 #endif
 }
