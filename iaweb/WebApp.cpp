@@ -81,13 +81,7 @@ namespace simplearchive {
 	AdminApp::AdminApp() : AppBase(std::make_shared<AdminArgvParser>()) {};
 
 bool AdminApp::Show() {
-	/*
-	m_error = false;
-	m_verbose = false;
-	m_quiet = false;
-	m_logLevel = "INFO";
-	m_dry_run = false;
-	*/
+	
 	AdminConfig config;
 	/*
 	const std::string key = "SIA_HOME";

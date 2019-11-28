@@ -58,6 +58,8 @@
 //#include "ArchiveBuilder.h"
 #include "AppBase.h"
 
+
+
 using namespace CommandLineProcessing;
 namespace simplearchive {
 
@@ -78,7 +80,6 @@ public:
 	
 	
 protected:
-	bool initaliseHomePath();
 	bool initaliseConfig();
 	bool initaliseArgs(int argc, char **argv);
 	bool doRun();

@@ -9,6 +9,8 @@
 #include <string>
 #include "SIAArgvParser.h"
 
+constexpr auto DEFAULT_DATA_CONFIG_PATH = "/IDK-Software/ImgArchive";
+
 namespace CommandLineProcessing {
 
 
@@ -63,7 +65,6 @@ namespace CommandLineProcessing {
 
 	protected:
 		
-		virtual bool initaliseHomePath() = 0;
 		virtual bool initaliseConfig() = 0;
 		virtual bool initaliseArgs(int argc, char **argv) = 0;
 		virtual bool doRun() = 0;

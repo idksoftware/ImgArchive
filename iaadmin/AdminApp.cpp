@@ -449,18 +449,50 @@ bool AdminApp::initaliseConfig() {
 	m_configured = false;
 	bool found = false;
 	std::string homePath;
+	
 #ifdef WIN32
+		// Find if the IMGARCHIVE_HOME pathe is in the windows registery 
+
 		// Looking the HKEY_LOCAL_MACHINE first
 		if (GetEnv(homePath, true) == true) {
-			//printf("Found SIA_HOME in system variables: %s", homePath.c_str());
+			//printf("Found IMGARCHIVE_HOME in system variables: %s", homePath.c_str());
 			found = true;
 		}
 		// Looking the HKEY_CURRENT_USER
 		else if (GetEnv(homePath, false) == true) {
-			//printf("Found SIA_HOME in user variables: %s", homePath.c_str());
+			//printf("Found IMGARCHIVE_HOME in user variables: %s", homePath.c_str());
 			found = true;
 		}
+		else {
+			homePath = SAUtils::GetPOSIXEnv("ProgramData");
+			if (homePath.empty() == true || homePath.length() == 0) {
+				printf("SIA Unable to start? Cannot read user profile.");
+				setError(12, "ImgArchive Unable to start? Cannot read user profile.");
+				return false;
+			}
+			else {
+				homePath += DEFAULT_DATA_CONFIG_PATH;
+				if (SAUtils::DirExists(homePath.c_str()) == true) {
+					//printf("Found IMGARCHIVE_HOME in user profile: %s", homePath.c_str());
+					found = true;
+				}
+			}
+			if (found == false) {
+				homePath = SAUtils::GetPOSIXEnv("USERPROFILE");
+				if (homePath.empty() == true || homePath.length() == 0) {
+					printf("SIA Unable to start? Cannot read all users profile.");
+					setError(12, "SIA Unable to start? Cannot read all users profile.");
+					return false;
+				}
+				homePath += DEFAULT_DATA_CONFIG_PATH;
+				if (SAUtils::DirExists(homePath.c_str()) == true) {
+					//printf("Found IMGARCHIVE_HOME in all users profile: %s", homePath.c_str());
+					found = true;
+				}
+			}
+		}
 #else
+		// Under Linux look for the HKEY_LOCAL_MACHINE enviroment variable
 		homePath = SAUtils::GetPOSIXEnv("IMGARCHIVE_HOME");
 		if (homePath.empty() == true || homePath.length() == 0) {
 			printf("SIA Unable to start? Cannot read user profile.");
