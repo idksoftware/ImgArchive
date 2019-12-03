@@ -1,20 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>iaadmin</name>
+	<name>iaweb</name>
 	<comment></comment>
 	<projects>
-		<project>appbase</project>
-		<project>csv</project>
-		<project>database</project>
-		<project>exifcl</project>
-		<project>fclib</project>
-		<project>IntegrityManager</project>
-		<project>metatp</project>
-		<project>mirror</project>
-		<project>SIALib</project>
-		<project>sqlite3</project>
-		<project>util</project>
-		<project>web</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
