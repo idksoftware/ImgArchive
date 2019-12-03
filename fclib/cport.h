@@ -2,9 +2,7 @@
 #include <string>
 #include <time.h>
 #include <stdio.h>
-#ifndef _WIN32
-#include <errno.h>
-#endif
+
 
 #ifdef _WIN32
 int fopen_p(FILE *&streamptr, const char *filename, const char *mode);
@@ -17,7 +15,7 @@ std::string ctime_p(const time_t *time);
 int localtime_p(struct tm &lmt, const time_t * time);
 
 #else
-//#define errno_t int
+
 
 int fopen_p(FILE *&streamptr, const char *filename, const char *mode);
 
