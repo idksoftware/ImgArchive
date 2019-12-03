@@ -706,8 +706,8 @@ std::string SAUtils::GetPOSIXEnv(const std::string &key)
 	size_t pReturnValue = 0;
 	char buffer[2 * 1024];
 	size_t numberOfElements = 2 * 1024;
-	int errno_t = getenv_s(&pReturnValue, buffer, numberOfElements, key.c_str());
-	if (errno_t == 0) {
+	int errno = getenv_s(&pReturnValue, buffer, numberOfElements, key.c_str());
+	if (errno == 0) {
 		var = buffer;
 	}
 

@@ -8,8 +8,8 @@
 #define MAX_SIZE	256
 
 
-errno_t gmtime_p(struct tm &tmTime, const time_t * time) {
-	errno_t err = 1;
+int gmtime_p(struct tm &tmTime, const time_t * time) {
+	int err = 1;
 #ifdef _WIN32
 	err = gmtime_s(&tmTime, time); 
 #else
@@ -29,7 +29,7 @@ std::string ctime_p(const time_t *time)
 {
 	char buffer[MAX_SIZE];
 #ifdef _WIN32
-	errno_t err = ctime_s(buffer, MAX_SIZE, time);
+	int err = ctime_s(buffer, MAX_SIZE, time);
 	std::string str = buffer;
 #else
 	std::string str = ctime_r(time, buffer);
@@ -42,9 +42,9 @@ std::string ctime_p(const time_t *time)
 
  */
 
-errno_t localtime_p(struct tm &tmTime, const time_t * time)
+int localtime_p(struct tm &tmTime, const time_t * time)
 {
-	errno_t err = 1;
+	int err = 1;
 #ifdef _WIN32
 	err = localtime_s(&tmTime, time); 
 #else
@@ -64,8 +64,8 @@ errno_t localtime_p(struct tm &tmTime, const time_t * time)
 			       struct tm *__restrict __tp) __THROW;
  */
 
-errno_t fopen_p(FILE *&streamptr, const char *filename, const char *mode) {
-	errno_t err = 1;
+int fopen_p(FILE *&streamptr, const char *filename, const char *mode) {
+	int err = 1;
 #ifdef _WIN32
 	err = fopen_s(&streamptr, filename, mode);
 #else
@@ -75,8 +75,8 @@ errno_t fopen_p(FILE *&streamptr, const char *filename, const char *mode) {
 	return err;
 }
 
-errno_t strcpy_p(char *strDestination, size_t numberOfElements, const char *strSource) {
-	errno_t err = 1;
+int strcpy_p(char *strDestination, size_t numberOfElements, const char *strSource) {
+	int err = 1;
 #ifdef _WIN32
 	err = strcpy_s(strDestination, numberOfElements, strSource);
 #else
@@ -85,8 +85,8 @@ errno_t strcpy_p(char *strDestination, size_t numberOfElements, const char *strS
 	return err;
 }
 
-errno_t strncpy_p(char *strDest, size_t numberOfElements, const char *strSource, size_t count) {
-	errno_t err = 1;
+int strncpy_p(char *strDest, size_t numberOfElements, const char *strSource, size_t count) {
+	int err = 1;
 #ifdef _WIN32
 	err = strncpy_s(strDest, numberOfElements, strSource, count);
 #else
@@ -98,9 +98,9 @@ errno_t strncpy_p(char *strDest, size_t numberOfElements, const char *strSource,
 	return err;
 }
 
-errno_t strncpy_p(char * strDest, const char * strSource, size_t count)
+int strncpy_p(char * strDest, const char * strSource, size_t count)
 {
-	errno_t err = 1;
+	int err = 1;
 	strDest = strncpy(strDest, strSource, count);
 	if (strDest == nullptr) {
 		err = 0;
