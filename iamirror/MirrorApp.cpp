@@ -82,6 +82,8 @@ namespace simplearchive {
 
 bool AdminApp::Show() {
 	
+/*
+
 	AdminConfig config;
 	
 	bool found = false;
@@ -125,12 +127,12 @@ bool AdminApp::Show() {
 	if (found = false) {
 		printf("SIA Unable to start? No archive found in the default location or"
 			" the environment variable SIA_HOME not set.\nUse siaadmin to initalise an archive.\n");
-		
+
 		return false;
 	}
 	std::string configfile = homePath + "/config/" + "config.dat";
 	if (SAUtils::FileExists(configfile.c_str()) == false) {
-		
+
 		printf("SIA Unable to start? No config.dat file found in the default location or"
 			" the environment variable SIA_HOME not set.\nUse siaadmin to initalise an archive.\n");
 		return false;
@@ -139,17 +141,17 @@ bool AdminApp::Show() {
 	configReader.setNoLogging();
 	configReader.read(configfile.c_str(), config);
 	config.printAll();
-	/*
-	if (config.value("SourcePath", temp) == true) {
-	m_sourcePath = temp;
-	}
-	if (config.value("ArchivePath", temp) == true) {
-	m_archivePath = temp;
-	}
-	if (config.value("LogLevel", temp) == true) {
-	m_logLevel = temp;
-	}
-	*/
+
+	//if (config.value("SourcePath", temp) == true) {
+	//m_sourcePath = temp;
+	//}
+	//if (config.value("ArchivePath", temp) == true) {
+	//m_archivePath = temp;
+	//}
+	//if (config.value("LogLevel", temp) == true) {
+	//m_logLevel = temp;
+	//}
+
 	config.setHomePath(homePath.c_str());
 	std::string temp;
 	temp = SAUtils::GetPOSIXEnv("SIA_ARCHIVE");
@@ -168,7 +170,7 @@ bool AdminApp::Show() {
 	if (temp.empty() == false) {
 		config.setConsoleLevel(temp.c_str());
 	}
-
+*/
 	return true;
 }
 
@@ -213,7 +215,7 @@ bool AdminApp::doRun()
 	}
 
 	
-	CompletedSummary ;
+	//CompletedSummary ;
 
 	switch (appOptions.getCommandMode()) {
 	case AppOptions::CommandMode::CM_InitArchive:
@@ -311,19 +313,61 @@ bool AdminApp::initaliseConfig() {
 
 	//AppConfig &config = AppConfig::get();
 	AdminConfig config;
-
+	m_configured = false;
 	bool found = false;
 	std::string homePath;
-	// Looking the HKEY_LOCAL_MACHINE first
-	if (GetEnv(homePath, true) == true) {
-		//printf("Found SIA_HOME in system variables: %s", homePath.c_str());
+
+#ifdef WIN32
+		// Find if the IMGARCHIVE_HOME pathe is in the windows registery
+
+		// Looking the HKEY_LOCAL_MACHINE first
+		if (GetEnv(homePath, true) == true) {
+			//printf("Found IMGARCHIVE_HOME in system variables: %s", homePath.c_str());
+			found = true;
+		}
+		// Looking the HKEY_CURRENT_USER
+		else if (GetEnv(homePath, false) == true) {
+			//printf("Found IMGARCHIVE_HOME in user variables: %s", homePath.c_str());
+			found = true;
+		}
+		else {
+			homePath = SAUtils::GetPOSIXEnv("ProgramData");
+			if (homePath.empty() == true || homePath.length() == 0) {
+				printf("SIA Unable to start? Cannot read user profile.");
+				setError(12, "ImgArchive Unable to start? Cannot read user profile.");
+				return false;
+			}
+			else {
+				homePath += DEFAULT_DATA_CONFIG_PATH;
+				if (SAUtils::DirExists(homePath.c_str()) == true) {
+					//printf("Found IMGARCHIVE_HOME in user profile: %s", homePath.c_str());
+					found = true;
+				}
+			}
+			if (found == false) {
+				homePath = SAUtils::GetPOSIXEnv("USERPROFILE");
+				if (homePath.empty() == true || homePath.length() == 0) {
+					printf("SIA Unable to start? Cannot read all users profile.");
+					setError(12, "SIA Unable to start? Cannot read all users profile.");
+					return false;
+				}
+				homePath += DEFAULT_DATA_CONFIG_PATH;
+				if (SAUtils::DirExists(homePath.c_str()) == true) {
+					//printf("Found IMGARCHIVE_HOME in all users profile: %s", homePath.c_str());
+					found = true;
+				}
+			}
+		}
+#else
+		// Under Linux look for the HKEY_LOCAL_MACHINE enviroment variable
+		homePath = SAUtils::GetPOSIXEnv("IMGARCHIVE_HOME");
+		if (homePath.empty() == true || homePath.length() == 0) {
+			printf("SIA Unable to start? Cannot read user profile.");
+			setError(12, "SIA Unable to start? Cannot read user profile.");
+			return false;
+		}
 		found = true;
-	}
-	// Looking the HKEY_CURRENT_USER
-	else if (GetEnv(homePath, false) == true) {
-		//printf("Found SIA_HOME in user variables: %s", homePath.c_str());
-		found = true;
-	}
+#endif
 	if (found) {
 		// Initalise without the config file i.e. set defaults.
 		if (config.init(homePath.c_str()) == false) {
@@ -339,7 +383,7 @@ bool AdminApp::initaliseConfig() {
 	}
 
 	if (SAUtils::DirExists(homePath.c_str()) == false) {
-		setError(12, "SIA Unable to start? Archive not found at default location and the environment variable SA_HOME not set.\n"
+		setError(12, "ImgArchive Unable to start? Archive not found at default location and the environment variable IAHOME not set.\n"
 			"Use siaadmin -i to create an empty archive at the default location (see documentation).\n");
 		return false;
 
@@ -356,11 +400,9 @@ bool AdminApp::initaliseConfig() {
 			return false;
 		}
 		config.fileBasedValues(homePath.c_str());
+		m_configured = true;
+	}
 
-	}
-	else {
-		m_configured = false;
-	}
 
 	return true;
 }
@@ -372,6 +414,7 @@ bool AdminApp::initaliseHomePath() {
 
 	bool found = false;
 	std::string homePath;
+#ifdef WIN32
 	// Looking the HKEY_LOCAL_MACHINE first
 	if (GetEnv(homePath, true) == true) {
 		//printf("Found SIA_HOME in system variables: %s", homePath.c_str());
@@ -411,7 +454,8 @@ bool AdminApp::initaliseHomePath() {
 			}
 		}
 	}
-
+#else
+#endif
 	std::string temp;
 	temp = SAUtils::GetPOSIXEnv("SIA_ARCHIVE");
 	if (temp.empty() == false) {

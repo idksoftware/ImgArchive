@@ -68,7 +68,7 @@ public:
 
 
 private:
-	static AppOptions *AppOptions::m_this;
+	static AppOptions *m_this;
 	static CommandMode m_commandMode;
 	static std::string m_name;
 	static std::string m_comment;
