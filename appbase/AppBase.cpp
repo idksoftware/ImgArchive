@@ -16,6 +16,7 @@ namespace CommandLineProcessing {
 			return false;
 		}
 		if (initaliseArgs(argc, argv) == false) {
+
 			return false;
 		}
 		return true;

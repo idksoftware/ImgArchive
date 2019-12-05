@@ -444,7 +444,7 @@ namespace simplearchive {
 		/// @brief Initalises the config object
 		bool init(const char *homePath = nullptr);
 		
-		void fileBasedValues(const char *homePath);
+		void fileBasedValues(const char *homePath, const char* tmpPath);
 	};
 
 	class SIAARCConfig : public SharedConfig {

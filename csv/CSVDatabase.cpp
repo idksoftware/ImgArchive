@@ -550,7 +550,7 @@ bool CSVDatabase::validate(const char *path) {
 	return true;
 }
 /*
-std::auto_ptr<MetadataObject> CSVDatabase::get(const char *name, const char *path) {
+std::shared_ptr<MetadataObject> CSVDatabase::get(const char *name, const char *path) {
 	MetadataSet metadataSet(path);
 	return MetadataSet.get(name);
 }

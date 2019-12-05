@@ -47,7 +47,7 @@ bool MetadataUpdate::process(const char *imagePath, const char *imageName, const
 	fullImagePath += imagePath;
 	/*
 	DatabaseInterface &db = DatabaseInterface::get();
-	std::auto_ptr<MetadataObject> mo = db.get(imageName, imagePath);
+	std::shared_ptr<MetadataObject> mo = db.get(imageName, imagePath);
 	if (!mo.get()) {
 		return false;
 	}
@@ -91,12 +91,12 @@ bool MetadataUpdate::command(std::string &cmdarg, MetadataObject &mo) {
 	return true;
 }
 
-std::auto_ptr<MetadataDocument> MetadataUpdate::get(const char *imagePath, const char *imageName) {
+std::shared_ptr<MetadataDocument> MetadataUpdate::get(const char *imagePath, const char *imageName) {
 	std::string tmp = imagePath;
-	std::auto_ptr<MetadataDocument> metadataDocument(0);
+	std::shared_ptr<MetadataDocument> metadataDocument = nullptr;
 	/*
 	DatabaseInterface &db = DatabaseInterface::get();
-	std::auto_ptr<MetadataObject> mo = db.get(imageName, imagePath);
+	std::shared_ptr<MetadataObject> mo = db.get(imageName, imagePath);
 	if (!mo.get()) {
 		return metadataDocument;
 	}

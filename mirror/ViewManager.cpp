@@ -337,9 +337,9 @@ class ImageSetContainer : public std::vector<std::string> {};
 
 class ImageSetReader {
 	std::string m_setFilePath;
-	std::auto_ptr<ImageSetContainer> m_imageSetContainer;
+	std::shared_ptr<ImageSetContainer> m_imageSetContainer;
 public:
-	ImageSetReader() : m_imageSetContainer(new ImageSetContainer) {}
+	ImageSetReader() : m_imageSetContainer(std::make_shared<ImageSetContainer>()) {}
 	bool read(const char *setFilePath) {
 
 		char text[1024];
@@ -360,7 +360,7 @@ public:
 
 	}
 
-	const std::auto_ptr<ImageSetContainer>& getImageSetContainer() const {
+	const std::shared_ptr<ImageSetContainer>& getImageSetContainer() const {
 		return m_imageSetContainer;
 	}
 };
@@ -481,7 +481,7 @@ bool ViewItem::processSet(const char *setFile, bool include) {
 	if (imageSetReader.read(setFile) == false) {
 		return false;
 	}
-	const std::auto_ptr<ImageSetContainer>& images = imageSetReader.getImageSetContainer();
+	const std::shared_ptr<ImageSetContainer>& images = imageSetReader.getImageSetContainer();
 
 	for (ImageSetContainer::iterator i = images->begin(); i != images->end(); i++) {
 		std::string& name = *i;

@@ -225,9 +225,9 @@ bool SystemHistory::write(const char *datafile) {
 */
 
 /*
-std::auto_ptr<SystemHistoryLog>  SystemHistory::get() {
+std::shared_ptr<SystemHistoryLog>  SystemHistory::get() {
 	std::string str;
-	std::auto_ptr<SystemHistoryLog> SystemHistoryLog(new SystemHistoryLog);
+	std::shared_ptr<SystemHistoryLog> SystemHistoryLog(std::make_shared<SystemHistoryLog>());
 	if (read(mpath.c_str()) == false) {
 		return SystemHistoryLog;
 	}

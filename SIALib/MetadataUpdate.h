@@ -20,7 +20,7 @@ public:
 	virtual ~MetadataUpdate();
 
 	bool process(const char *imagePath, const char *imageName, const char *cmd);
-	std::auto_ptr<MetadataDocument> get(const char *imagePath, const char *imageName);
+	std::shared_ptr<MetadataDocument> get(const char *imagePath, const char *imageName);
 	bool loadMetadataDocument(MetadataDocument &metadataDocument, MetadataObject &metadataObject);
 };
 

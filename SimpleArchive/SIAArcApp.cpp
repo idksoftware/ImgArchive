@@ -179,6 +179,7 @@ bool SIAArcApp::initaliseConfig() {
 				found = true;
 			}
 		}
+
 	}
 #else
 	homePath = SAUtils::GetPOSIXEnv("IMGARCHIVE_HOME");
@@ -215,7 +216,14 @@ bool SIAArcApp::initaliseConfig() {
 		return false;
 		
 	}
-	
+	// try to set a systems temp folder 
+	std::string tempPath = SAUtils::GetPOSIXEnv("TEMP");
+	if (tempPath.empty() == true || tempPath.length() == 0) {
+		tempPath = SAUtils::GetPOSIXEnv("TMP");
+	}
+
+
+
 	std::string configfile = homePath + "/config/" + "config.dat";
 	std::string configPath = homePath + "/config";
 	// Now set the file based configuration with the possablity of overrighting defaults set prevously. 
@@ -227,7 +235,7 @@ bool SIAArcApp::initaliseConfig() {
 			setError(13, "Error found at line %d in the configuration file.\n", configReader.getCurrentLineNumber());
 			return false;
 		}
-		config.fileBasedValues(homePath.c_str());
+		config.fileBasedValues(homePath.c_str(), tempPath.c_str());
 		m_configured = true;
 	}
 	else {
@@ -285,8 +293,12 @@ bool SIAArcApp::doRun()
 			siaLib.setUseDateToday();
 		}
 		
+		// using file list
 		if (appOptions.isUsingFile()) {
-			siaLib.ImportFile(appOptions.getFilePath());
+			if (siaLib.ImportFile(appOptions.getFilePath())== false) {
+				setError(CLogger::getLastCode(), CLogger::getLastMessage());
+				return false;
+			}
 		}
 		else {
 			if (siaLib.Import() == false) {
@@ -294,6 +306,7 @@ bool SIAArcApp::doRun()
 				return false;
 			}
 		}
+		
 		break;
 	case SIAArcAppOptions::CommandMode::CM_Export:
 		if (siaLib.exportImage(appOptions.getDistinationPath()) == false) {

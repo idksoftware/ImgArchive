@@ -201,8 +201,8 @@ namespace simplearchive {
 	}
 
 	bool MasterCatalogue::addFileImage(const char *sourcePath, MetadataObject &metadataObject, const char *imageRelativePath) {
-		if (m_viewFilePath->isEnabled()) {
-			return true;
+		if (m_viewFilePath->isEnabled() == false) {
+			return false;
 		}
 		std::string yyyymmddimg = imageRelativePath;
 		if (m_viewFilePath->settupRelative(yyyymmddimg) == false) {

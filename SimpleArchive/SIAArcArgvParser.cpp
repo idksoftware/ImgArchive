@@ -215,6 +215,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 
 	else if (command("add") == true) {
 
+		// Source of images
 		if (foundOption("source-path") == true) {
 			std::string opt = optionValue("source-path");
 			config.setSourcePath(opt.c_str());
@@ -225,14 +226,16 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 			config.setLightroom();
 		}
 
-		if (foundOption("archive-path") == true) {
-			std::string opt = optionValue("archive-path");
-			config.setWorkspacePath(opt.c_str());
-		}
 		if (foundOption("file") == true) {
 			appOptions.m_filePath = optionValue("file");
 			appOptions.m_usingFile = true;
 		}
+
+		if (foundOption("archive-path") == true) {
+			std::string opt = optionValue("archive-path");
+			config.setWorkspacePath(opt.c_str());
+		}
+		
 		if (foundOption("peek") == true) {
 			appOptions.m_peekOnly = true;
 		}

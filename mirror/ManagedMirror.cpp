@@ -99,7 +99,7 @@ bool ManagedMirror::process() {
 	std::string volumePath; //= distPath;
 
 
-	//std::auto_ptr<CSVJournalFile> pJournalFile (new CSVJournalFile);
+	//std::shared_ptr<CSVJournalFile> pJournalFile = std::make_shared<CSVJournalFile>();
 
 	for (;current < max; current++) {
 		std::unique_ptr<ImageInfo> ii = csvDBFile.getItemAt(current);

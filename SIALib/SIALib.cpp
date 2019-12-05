@@ -395,6 +395,7 @@ namespace simplearchive {
 		return 0;
 	}
 
+	// using list of images in a file
 	bool SIALib::ImportFile(const char *filePath) {
 		if (m_ArchiveBuilder->ImportFile(filePath) == false) {
 			return false;

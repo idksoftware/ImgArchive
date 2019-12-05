@@ -721,8 +721,8 @@ namespace simplearchive {
 		MasterCatalogue& masterView = getMasterCatalogue();
 
 		// Testing
-		masterView.setFileEnabled(false);
-		masterView.setWWWEnabled(false);
+		masterView.setFileEnabled(true);
+		masterView.setWWWEnabled(true);
 
 		if (masterView.isWWWEnabled()) {
 			if (masterView.settupWWW(config.getTempPath(), config.getTemplatePath(), config.getMasterWWWCataloguePath()) == false) {

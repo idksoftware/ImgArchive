@@ -336,7 +336,7 @@ namespace simplearchive {
 
 
 	
-	void SharedConfig::fileBasedValues(const char *home) {
+	void SharedConfig::fileBasedValues(const char *home, const char *tmpPath) {
 		CLogger &logger = CLogger::getLogger();
 		logger.log(LOG_OK, CLogger::Level::INFO, "Reading configuration file ");
 		// Home Path (The path to this file will be based on the home path)
@@ -397,8 +397,11 @@ namespace simplearchive {
 //#define CONFIG_PATH_LABEL				"ConfigPath"	 
 //#define TOOLS_PATH_LABEL           		"ToolsPath"
 
-
+		std::string tmpStr = tmpPath;
 		std::string defauleValue = homePath + TEMP_PATH;
+		if (tmpStr.empty() == false) {
+			defauleValue = tmpStr;
+		}
 		setSystemFolders(TEMP_PATH_LABEL, AppConfig::m_tempPath, defauleValue);
 
 //#define SOURCE_PATH_LABEL         		"SourcePath"

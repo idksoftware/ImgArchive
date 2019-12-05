@@ -883,7 +883,7 @@ bool VersionControl::getPathAndFilename(const char *filepath, std::string &filen
 }
 
 /*
-std::auto_ptr<ImageHistoryLog>  VersionControl::getHistory(const char *filepath) {
+std::shared_ptr<ImageHistoryLog>  VersionControl::getHistory(const char *filepath) {
 	std::string fullPath = m_pathToArchive + "/" + filepath;
 	std::string filename;
 	std::string path;
