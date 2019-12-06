@@ -218,9 +218,16 @@ namespace simplearchive {
 		if (AppConfig::m_masterWWWCataloguePath.empty() == true) {
 			auto folders = getSystemFolders();
 			if (folders == nullptr || getRoot().value("MasterWWWCataloguePath", AppConfig::m_masterWWWCataloguePath) == false) {
-				std::string temp = SAUtils::GetPOSIXEnv("HOMEPATH");
-				AppConfig::m_masterWWWCataloguePath = AppConfig::m_homePath + MASTER_WWW_CATALOGUE_PATH;
-
+				// if not found read from SIA_MASTER_CATALOGUE environment variable
+				std::string temp = SAUtils::GetPOSIXEnv("IMGA_WWW_CATALOGUE");
+				if (temp.empty() == false) {
+					AppConfig::m_masterWWWCataloguePath = temp;
+				}
+				else {
+					std::string tempHomeDrive = SAUtils::GetPOSIXEnv("HOMEDRIVE");
+					std::string tempHomePath = SAUtils::GetPOSIXEnv("HOMEPATH");
+					AppConfig::m_masterWWWCataloguePath = tempHomeDrive + tempHomePath + MASTER_WWW_CATALOGUE_PATH;
+				}
 			}
 		}
 		logger.log(LOG_OK, CLogger::Level::INFO, "        Master Web catalogue: path \"%s\"", AppConfig::m_masterWWWCataloguePath.c_str());
@@ -229,8 +236,8 @@ namespace simplearchive {
 			// read from config file
 			auto folders = getSystemFolders();
 			if (folders == nullptr || getRoot().value("MasterCataloguePath", AppConfig::m_masterCataloguePath) == false) {
-				// if not found read from SIA_WORKSPACE environment variable
-				std::string temp = SAUtils::GetPOSIXEnv("SIA_MASTER_CATALOGUE");
+				// if not found read from SIA_MASTER_CATALOGUE environment variable
+				std::string temp = SAUtils::GetPOSIXEnv("IMGA_MASTER_CATALOGUE");
 				if (temp.empty() == false) {
 					AppConfig::m_masterCataloguePath = temp;
 				}
@@ -498,7 +505,7 @@ namespace simplearchive {
 		//setNetwork(BACKUP_ONE_ENABLED_LABEL, backup2Enabled, backup2Enabled);
 		
 		// Workspace Path	
-		std::string wtemp = SAUtils::GetPOSIXEnv("SIA_WORKSPACE");
+		std::string wtemp = SAUtils::GetPOSIXEnv("IMGA_WORKSPACE");
 		if (wtemp.empty() == true) {
 			std::string tempHomeDrive = SAUtils::GetPOSIXEnv("HOMEDRIVE");
 			std::string tempHomePath = SAUtils::GetPOSIXEnv("HOMEPATH");

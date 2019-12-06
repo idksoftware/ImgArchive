@@ -522,6 +522,12 @@ bool AdminApp::initaliseConfig() {
 
 	}
 
+	// try to set a systems temp folder 
+	std::string tempPath = SAUtils::GetPOSIXEnv("TEMP");
+	if (tempPath.empty() == true || tempPath.length() == 0) {
+		tempPath = SAUtils::GetPOSIXEnv("TMP");
+	}
+
 	std::string configfile = homePath + "/config/" + "config.dat";
 	std::string configPath = homePath + "/config";
 	if (SAUtils::FileExists(configfile.c_str()) == true) {
@@ -532,7 +538,7 @@ bool AdminApp::initaliseConfig() {
 			setError(13, "Error found at line %d in the configuration file.\n", configReader.getCurrentLineNumber());
 			return false;
 		}
-		config.fileBasedValues(homePath.c_str());
+		config.fileBasedValues(homePath.c_str(), tempPath.c_str());
 		m_configured = true;
 	}
 	

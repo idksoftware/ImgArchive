@@ -726,16 +726,27 @@ namespace simplearchive {
 
 		if (masterView.isWWWEnabled()) {
 			if (masterView.settupWWW(config.getTempPath(), config.getTemplatePath(), config.getMasterWWWCataloguePath()) == false) {
+				logger.log(LOG_OK, CLogger::Level::FATAL, "Initalisation Failed creating master WWW view");
 				return false;
 			}
 
 
-			if (masterView.settupSystemWWW(primaryIndexPath.getPathToRepository().c_str(), config.getTemplatePath(), config.getMasterWWWCataloguePath(), ArchivePath::getMainHistory().c_str(), master.getJournalPath().c_str()) == false) {
+			if (masterView.settupSystemWWW(primaryIndexPath.getPathToRepository().c_str(), config.getTemplatePath(), config.getMasterWWWCataloguePath(), ArchivePath::getMainHistory().c_str(),
+																		master.getJournalPath().c_str()) == false) {
+				logger.log(LOG_OK, CLogger::Level::FATAL, "Initalisation Failed creating master WWW view system");
 				return false;
 			}
 		}
 		if (masterView.isFileEnabled()) {
+			
+			if (SAUtils::DirExists(config.getMasterCataloguePath()) == false) {
+				if (SAUtils::mkDir(config.getMasterCataloguePath()) == false) {
+					logger.log(LOG_OK, CLogger::Level::FATAL, "Invalid master catalogue path");
+					return false;
+				}
+			}
 			if (masterView.settupFile(config.getTempPath(), config.getMasterCataloguePath()) == false) {
+				logger.log(LOG_OK, CLogger::Level::FATAL, "Initalisation Failed creating master view");
 				return false;
 			}
 		}

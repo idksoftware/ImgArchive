@@ -36,11 +36,11 @@
 
 #define SYSTEM_PATH					    "/system"
 #define IMAGEID_FOLDER					"/system/imageid"
-#define WORKSPACE_METADATA_PATH			"/.sia"
+#define WORKSPACE_METADATA_PATH			"/.imga"
 #define HOOKS_PATH						"/hooks"
 #define BACKUP_DESTINATION_PATH			"/Image Backups"
-#define MASTER_CATALOGUE_PATH			"/SIA Pictures"
-#define MASTER_WWW_CATALOGUE_PATH		"/web"
+#define MASTER_CATALOGUE_PATH			"/IAPictures"
+#define MASTER_WWW_CATALOGUE_PATH		"/IAWebSite"
 #define TOOLS_PATH						"/tools"
 #define CONFIG_PATH						"/config"
 #define DERIVATIVE_PATH					"/derivative"
@@ -62,9 +62,9 @@
 #define IMAGES_PATH						"/images"
 #define LOG_PATH						"/logs"
 #define BACKUP_PATH						"/backup"
-#define DEFAULT_WORKSPACE_PATH			"/SIA Workspace"
-#define DEFAULT_MASTER_CATALOGUE_PATH	"/pictures/SIA Pictures"
-#define DEFAULT_HOME_PATH				"/IDK-Software/SIA"
+#define DEFAULT_WORKSPACE_PATH			"/IAWorkspace"
+#define DEFAULT_MASTER_CATALOGUE_PATH	"/pictures/IAPictures"
+#define DEFAULT_HOME_PATH				"/IDK-Software/IMGARCHIVE"
 #define MASTER_BACKUP1_PATH				"/MasterBackup1"
 #define MASTER_BACKUP2_PATH				"/MasterBackup2"
 //#define DEFAULT_MASTER_PATH				"/IDK-Software/SIA/master"
@@ -83,7 +83,7 @@
 
 #define CSVDB_PATH						"/csvdb"
 #define CHKSTATUS_PATH					"/chkout"
-#define SQLITE3_DB						"SIASqlite3.db"
+#define SQLITE3_DB						"IASqlite3.db"
 
 
 //m_sourcePath = tempHomeDrive + tempHomePath + "/Pictures";
