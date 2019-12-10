@@ -23,16 +23,12 @@
     <ClCompile Include="HtmlPageNav.cpp" />
     <ClCompile Include="HtmlPages.cpp" />
     <ClCompile Include="MenuPages.cpp" />
-    <ClCompile Include="MenuPagesMaker.cpp" />
-    <ClCompile Include="ImagePageMaker.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseHtmlPage.h" />
     <ClInclude Include="HtmlPageNav.h" />
     <ClInclude Include="HtmlPages.h" />
     <ClInclude Include="MenuPages.h" />
-    <ClInclude Include="MenuPagesMaker.h" />
-    <ClInclude Include="ImagePageMaker.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{9216D1EA-CF96-4A10-B9BA-521D17974256}</ProjectGuid>
@@ -93,7 +89,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../fclib;../util;../exifcl;../metatp;../SIALib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../fclib;../util;../exifcl;../metatp</AdditionalIncludeDirectories>
       <BrowseInformation>true</BrowseInformation>
     </ClCompile>
     <Link>

@@ -155,6 +155,7 @@
     <ClInclude Include="ArchiveBuilder.h" />
     <ClInclude Include="ArchiveDate.h" />
     <ClInclude Include="ArchiveObject.h" />
+    <ClInclude Include="ArchiveRepository.h" />
     <ClInclude Include="Catalog.h" />
     <ClInclude Include="CatalogManager.h" />
     <ClInclude Include="CFolderStatus.h" />
@@ -171,6 +172,7 @@
     <ClInclude Include="BasicMetadataFactory.h" />
     <ClInclude Include="ImageIndex.h" />
     <ClInclude Include="ImageLock.h" />
+    <ClInclude Include="ImagePageMaker.h" />
     <ClInclude Include="ImagePath.h" />
     <ClInclude Include="ImageSideCar.h" />
     <ClInclude Include="ImportJournal.h" />
@@ -178,6 +180,7 @@
     <ClInclude Include="LightroomImport.h" />
     <ClInclude Include="MakeMedia.h" />
     <ClInclude Include="MasterCatalogue.h" />
+    <ClInclude Include="MenuPagesMaker.h" />
     <ClInclude Include="MetadataUpdate.h" />
     <ClInclude Include="RemoteServer.h" />
     <ClInclude Include="SequenceFileManager.h" />
@@ -199,6 +202,7 @@
     <ClCompile Include="ArchiveBuilder.cpp" />
     <ClCompile Include="ArchiveDate.cpp" />
     <ClCompile Include="ArchiveObject.cpp" />
+    <ClCompile Include="ArchiveRepository.cpp" />
     <ClCompile Include="Catalog.cpp" />
     <ClCompile Include="CatalogManager.cpp" />
     <ClCompile Include="CFolderStatus.cpp" />
@@ -215,6 +219,7 @@
     <ClCompile Include="ImageGroup_old.cpp" />
     <ClCompile Include="ImageIndex.cpp" />
     <ClCompile Include="ImageLock.cpp" />
+    <ClCompile Include="ImagePageMaker.cpp" />
     <ClCompile Include="ImagePath.cpp" />
     <ClCompile Include="ImageSideCars.cpp" />
     <ClCompile Include="ImportJournal.cpp" />
@@ -222,6 +227,7 @@
     <ClCompile Include="LightroomImport.cpp" />
     <ClCompile Include="MakeMedia.cpp" />
     <ClCompile Include="MasterCatalogue.cpp" />
+    <ClCompile Include="MenuPagesMaker.cpp" />
     <ClCompile Include="MetadataUpdate.cpp" />
     <ClCompile Include="RemoteServer.cpp" />
     <ClCompile Include="SequenceFileManager.cpp" />
