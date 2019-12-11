@@ -1628,7 +1628,7 @@ namespace simplearchive {
 			int pos = -1;
 			if (pos = imageIndex.IsDup(fileinfo.getCrc())) {
 				//m_imageIndex->getData(imageId->getCrc());
-				logger.log(LOG_DUPLICATE, CLogger::Level::WARNING, "Image \"%s\" was found to be a duplicate. Rejecting from import", fileinfo.getName().c_str());
+				logger.log(LOG_DUPLICATE, CLogger::Level::SUMMARY, "Image \"%s\" was found to be a duplicate. Rejecting from import", fileinfo.getName().c_str());
 				// reject image from import
 				ImageId imageId = imageIndex.findDup(fileinfo.getCrc());
 				if (imageId.getName().empty()) {

@@ -102,17 +102,30 @@ namespace simplearchive {
 		friend class SIAARCConfig;
 
 		static std::unique_ptr<AppConfig> m_this;
-		static bool m_verbose; //< -v --Verbose
-		static bool m_quiet;
-		static bool m_silent;
-		static bool m_sql_on;
-		static bool m_file_cat_on;
-		static bool m_www_cat_on;
-		static std::string m_logLevel;
-		static std::string m_consoleLevel;
-		static bool m_lightroom;
-		static bool m_serverMode;
-		static bool m_dry_run;
+
+		static bool m_verbose;					//< -v --Verbose
+		static bool m_quiet;					//
+		static bool m_silent;					// 
+		static bool m_sql_on;					// Sqlite2 On/Off
+		static bool m_file_cat_on;				// File cat On/Off 
+		static bool m_www_cat_on;				// WWW cat On/Off (web site)
+		static std::string m_logLevel;			// Logging Level
+		static std::string m_consoleLevel;		// Logging level to console
+		static bool m_lightroom;				// Lightroom intergration On/Off
+		static bool m_serverMode;				// Server mode On/Off
+		static bool m_dry_run;					// Dry run		On/Off
+		static bool m_backup1Enabled;			// Backup 1 Enabled
+		static bool m_backup2Enabled;			// Backup 2 Enabled
+		static bool m_workspaceEnabled;			// Workspace Enabled
+		static bool m_externalExifToolEnabled;	// External Exif Tool Enabled
+		
+		static bool m_masterViewEnabled;
+		static bool m_masterViewFullSizeOn;
+		static bool m_masterViewPreview1On;    // Previews Enabled
+		static bool m_masterViewThumbnailOn;
+		static bool m_eventsOn; // UDP events
+		static bool m_serverOn;
+
 		/// Log file path
 		static std::string m_logPath;
 		/// home path. This is the root path all default paths are made. 
@@ -124,7 +137,7 @@ namespace simplearchive {
 		/// This is the path the history file are stored. These files are used for
 		/// the history of the changes made to the archive.  
 		static std::string m_historyPath;
-		static bool m_externalExifToolEnabled;
+		
 		/// External Exif tool
 		static std::string m_ExternalExifTool;
 		/// External Exif Command line
@@ -164,14 +177,8 @@ namespace simplearchive {
 
 		static std::string m_backup1;
 		static std::string m_backup2;
-		static bool m_backup1Enabled;
-		static bool m_backup2Enabled;
-		static bool m_masterViewEnabled;
-		static bool m_masterViewFullSizeOn;
-		static bool m_masterViewPreview1On;
-		static bool m_masterViewThumbnailOn;
-		static bool m_eventsOn; // UDP events
-		static bool m_serverOn;
+		
+		
 
 		static int m_tcpPortNum;
 		static int m_udpPortNum;

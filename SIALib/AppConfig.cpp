@@ -64,12 +64,24 @@ namespace simplearchive {
 	bool AppConfig::m_quiet = true;
 	bool AppConfig::m_silent = false;
 	std::string AppConfig::m_logLevel = "SUMMARY";
+	std::string AppConfig::m_consoleLevel;
 	bool AppConfig::m_dry_run = false;
 	bool AppConfig::m_sql_on = true;
 	bool AppConfig::m_lightroom = false;
 	bool AppConfig::m_serverMode = false;
-	bool AppConfig::m_file_cat_on = true;
-	bool AppConfig::m_www_cat_on = true;
+	bool AppConfig::m_file_cat_on = false;
+	bool AppConfig::m_www_cat_on = false;
+	bool AppConfig::m_workspaceEnabled = false;			// Workspace Enabled
+	bool AppConfig::m_externalExifToolEnabled = false;	// External Exif Tool Enabled
+			
+	bool AppConfig::m_masterViewEnabled = false;
+	bool AppConfig::m_masterViewFullSizeOn = false;
+	bool AppConfig::m_masterViewPreview1On = false; // Previews Enabled
+	bool AppConfig::m_masterViewThumbnailOn = false;
+
+	bool AppConfig::m_backup1Enabled = false;
+	bool AppConfig::m_backup2Enabled = false;
+
 
 	bool AppConfig::m_eventsOn = false; // UDP events
 	bool AppConfig::m_serverOn = false;
@@ -89,7 +101,6 @@ namespace simplearchive {
 	std::string AppConfig::m_lightroomPath;
 	std::string AppConfig::m_tempPath;
 	std::string AppConfig::m_logPath;
-	std::string AppConfig::m_consoleLevel;
 	std::string AppConfig::m_homePath;
 	std::string AppConfig::m_systemPath;
 	std::string AppConfig::m_indexPath;
@@ -108,14 +119,8 @@ namespace simplearchive {
 
 	std::string AppConfig::m_masterCataloguePath;
 	std::string AppConfig::m_masterWWWCataloguePath;
-	bool AppConfig::m_externalExifToolEnabled = false;
-	bool AppConfig::m_masterViewEnabled = true;
-	bool AppConfig::m_masterViewFullSizeOn = true;
-	bool AppConfig::m_masterViewPreview1On = true;
-	bool AppConfig::m_masterViewThumbnailOn = true;
-
-	bool AppConfig::m_backup1Enabled = false;
-	bool AppConfig::m_backup2Enabled = false;
+	
+	
 
 	long AppConfig::m_backupMediaSize;
 	ExifDateTime AppConfig::m_fromDate;
@@ -471,7 +476,7 @@ namespace simplearchive {
 		std::string externalExifToolEnabledStr;
 		emptyString = "False";
 		setExternalExifTool(ENABLED_LABEL, externalExifToolEnabledStr, emptyString);
-		AppConfig::m_externalExifToolEnabled = (STRICMP(externalExifToolEnabledStr.c_str(), "true") == 0);
+		AppConfig::m_externalExifToolEnabled = (STRICMP(externalExifToolEnabledStr.c_str(), "false") == 0);
 		AppConfig::m_ExternalExifTool = "None";
 		setExternalExifTool(EXIF_TOOL_LABEL, AppConfig::m_ExternalExifTool, AppConfig::m_ExternalExifTool);
 		AppConfig::m_ExternalCommandLine = "None";
@@ -480,11 +485,11 @@ namespace simplearchive {
 	// Master
 		std::string backup1Enabled = "false";
 		setMaster(BACKUP_ONE_ENABLED_LABEL, backup1Enabled, backup1Enabled);
-		AppConfig::m_backup1Enabled = (STRICMP(backup1Enabled.c_str(), "true") == 0);
+		AppConfig::m_backup1Enabled = (STRICMP(backup1Enabled.c_str(), "false") == 0);
 		
 		std::string backup2Enabled = "false";
 		setMaster(BACKUP_ONE_ENABLED_LABEL, backup2Enabled, backup2Enabled);
-		AppConfig::m_backup2Enabled = (STRICMP(backup2Enabled.c_str(), "true") == 0);
+		AppConfig::m_backup2Enabled = (STRICMP(backup2Enabled.c_str(), "false") == 0);
 
 		std::string masterBackupPath = homePath + BACKUPS_PATH + MASTER_BACKUP1_PATH;
 		setMaster(MASTER_PATH_LABEL, AppConfig::m_backup1, masterBackupPath);
@@ -540,12 +545,28 @@ namespace simplearchive {
 		AppConfig::m_indexPath = AppConfig::m_systemPath + "/index";
 
 		logger.log(LOG_OK, CLogger::Level::INFO, "    General");
-		logger.log(LOG_OK, CLogger::Level::INFO, "        Dry run enabled:           %s", (AppConfig::m_dry_run) ? "True" : "False");
-		logger.log(LOG_OK, CLogger::Level::INFO, "        Log level:                 %s", AppConfig::m_logLevel.c_str());
-		logger.log(LOG_OK, CLogger::Level::INFO, "        Console level:             %s", AppConfig::m_consoleLevel.c_str());
-		logger.log(LOG_OK, CLogger::Level::INFO, "        SQL database:              %s", (AppConfig::m_sql_on) ? "True" : "False");
-		logger.log(LOG_OK, CLogger::Level::INFO, "        Lightroom:                 %s", (AppConfig::m_lightroom) ? "True" : "False");
-		logger.log(LOG_OK, CLogger::Level::INFO, "        RemoteServerMode:          %s", (AppConfig::m_serverMode) ? "True" : "False");
+		
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Verbose:                    %s", (AppConfig::m_verbose) ? "True" : "False");
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Quiet:                      %s", (AppConfig::m_quiet) ? "True" : "False");
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Silent:                     %s", (AppConfig::m_silent) ? "True" : "False");
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Dry run enabled:            %s", (AppConfig::m_dry_run) ? "True" : "False");
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Log level:                  %s", AppConfig::m_logLevel.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Console level:              %s", AppConfig::m_consoleLevel.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "        SQL database:               %s", (AppConfig::m_sql_on) ? "True" : "False");
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Lightroom:                  %s", (AppConfig::m_lightroom) ? "True" : "False");
+		logger.log(LOG_OK, CLogger::Level::INFO, "        External Exif tool enabled: %s", (AppConfig::m_externalExifToolEnabled) ? "True" : "False");
+		logger.log(LOG_OK, CLogger::Level::INFO, "        RemoteServerMode:           %s", (AppConfig::m_serverMode) ? "True" : "False");
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Backup One Enabled:         %s", (AppConfig::m_backup1Enabled) ? "True" : "False");
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Backup Two Enabled:         %s", (AppConfig::m_backup2Enabled) ? "True" : "False");
+		logger.log(LOG_OK, CLogger::Level::INFO, "        File Cataloging Enabled:    %s", (AppConfig::m_file_cat_on) ? "True" : "False");
+		logger.log(LOG_OK, CLogger::Level::INFO, "        WWW Cataloging Enabled:     %s", (AppConfig::m_www_cat_on) ? "True" : "False");
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Workspace Enabled:          %s", (AppConfig::m_workspaceEnabled) ? "True" : "False");
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Previews Enabled:           %s", (AppConfig::m_masterViewPreview1On) ? "True" : "False");
+		logger.log(LOG_OK, CLogger::Level::INFO, "        m_masterViewEnabled:        %s", (AppConfig::m_masterViewEnabled) ? "True" : "False");
+		logger.log(LOG_OK, CLogger::Level::INFO, "        m_masterViewFullSizeOn:     %s", (AppConfig::m_masterViewFullSizeOn) ? "True" : "False");
+		logger.log(LOG_OK, CLogger::Level::INFO, "        m_masterViewThumbnailOn:    %s", (AppConfig::m_masterViewThumbnailOn) ? "True" : "False");
+		logger.log(LOG_OK, CLogger::Level::INFO, "        m_eventsOn:                 %s", (AppConfig::m_eventsOn) ? "True" : "False");
+		logger.log(LOG_OK, CLogger::Level::INFO, "        m_serverOn:                 %s", (AppConfig::m_serverOn) ? "True" : "False");
 		logger.log(LOG_OK, CLogger::Level::INFO, "    System paths");
 		logger.log(LOG_OK, CLogger::Level::INFO, "        System path:               \"%s\"", AppConfig::m_systemPath.c_str());
 		logger.log(LOG_OK, CLogger::Level::INFO, "        Log path:                  \"%s\"", AppConfig::m_logPath.c_str());
@@ -559,12 +580,10 @@ namespace simplearchive {
 		logger.log(LOG_OK, CLogger::Level::INFO, "        SQL Database path:         \"%s\"", AppConfig::m_DatabasePath.c_str());
 
 		logger.log(LOG_OK, CLogger::Level::INFO, "    Master Archive");
-		logger.log(LOG_OK, CLogger::Level::INFO, "        Backup One Enabled:        \"%s\"", (AppConfig::m_backup1Enabled) ? "True" : "False");
 		logger.log(LOG_OK, CLogger::Level::INFO, "        Backup One path:           \"%s\"", AppConfig::m_backup1.c_str());
-		logger.log(LOG_OK, CLogger::Level::INFO, "        Backup Two Enabled:        \"%s\"", (AppConfig::m_backup2Enabled) ? "True" : "False");
 		logger.log(LOG_OK, CLogger::Level::INFO, "        Backup Two path:           \"%s\"", AppConfig::m_backup2.c_str());
 		logger.log(LOG_OK, CLogger::Level::INFO, "    External Exif Tool");
-		logger.log(LOG_OK, CLogger::Level::INFO, "        External Exif tool enabled:\"%s\"", (AppConfig::m_externalExifToolEnabled)?"True":"False");
+		
 		logger.log(LOG_OK, CLogger::Level::INFO, "        Exif map path:             \"%s\"", AppConfig::m_ExifMapPath.c_str());
 		logger.log(LOG_OK, CLogger::Level::INFO, "        Exif map file:             \"%s\"", AppConfig::m_ExifMapFile.c_str());
 		logger.log(LOG_OK, CLogger::Level::INFO, "        Exif Tool:                 \"%s\"", AppConfig::m_ExternalExifTool.c_str());

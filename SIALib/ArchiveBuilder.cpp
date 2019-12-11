@@ -561,7 +561,7 @@ namespace simplearchive {
 		//
 		//ArchiveRepository &archiveRepository = ArchiveRepository::get();
 		//archiveRepository.setPathToArchive(m_MasterPath);
-		logger.log(LOG_IMPORTING, CLogger::Level::SUMMARY, "Stage 2: Processing Image files");
+		logger.log(LOG_IMPORTING, CLogger::Level::STATUS, "Stage 2: Processing Image files");
 		//archiveRepository.setPathToActiveRoot(this->m_workspacePath);
 		/// Iterate the Image Sets
 		
@@ -573,14 +573,14 @@ namespace simplearchive {
 
 			/// Insert into Image Group Sets
 			//imageGroups.insert(imageGroups.end(), imageGroup);
-			logger.log(LOG_SOURCE_PATH, CLogger::Level::SUMMARY, "Processing Image files in the source location %s", imageSet->getPath());
+			logger.log(LOG_SOURCE_PATH, CLogger::Level::STATUS, "Processing Image files in the source location %s", imageSet->getPath());
 			/// Iterate the current image set
 			for (auto i = imageSet->begin(); i != imageSet->end(); i++) {
 				/// Image Item
 				SIAApplicationState::RunState state = SIAApplicationState::getState();
 				std::shared_ptr<ImageItem> imageItem = *i;
 				importJournal.setCurrent(imageItem->getPath());
-				logger.log(LOG_CURRENT_IMAGE, CLogger::Level::SUMMARY, "Processing Image %d file: \"%s\"", importJournal.getCurrentImageIndex() + 1, imageItem->getFilename().c_str());
+				logger.log(LOG_CURRENT_IMAGE, CLogger::Level::STATUS, "Processing Image %d file: \"%s\"", importJournal.getCurrentImageIndex() + 1, imageItem->getFilename().c_str());
 				ExifObject *exifObject = nullptr;
 				//data->print();	
 				bool status = false;
@@ -627,7 +627,7 @@ namespace simplearchive {
 						int pos = -1;
 						if ((pos = imageIndex.IsDup(BasicMetadata.getCrc())) || imageIndex.isDupInCache(BasicMetadata.getCrc())) {
 							//m_imageIndex->getData(imageId->getCrc());
-							logger.log(LOG_DUPLICATE, CLogger::Level::WARNING, "Image \"%s\" was found to be a duplicate. Rejecting from import", imageItem->getFilename().c_str());
+							logger.log(LOG_DUPLICATE, CLogger::Level::SUMMARY, "Image \"%s\" was found to be a duplicate. Rejecting from import", imageItem->getFilename().c_str());
 							// reject image from import
 							ImageId imageId = imageIndex.findDup(BasicMetadata.getCrc());
 							if (imageId.getName().empty()) {
@@ -651,7 +651,7 @@ namespace simplearchive {
 						else {
 							// Add To the Image Indexing (used to find duplicates)
 							if (imageIndex.add(BasicMetadata) == false) {
-								logger.log(LOG_DUPLICATE, CLogger::Level::WARNING, "Image \"%s\" was found to be a duplicate. Rejecting from import", imageItem->getFilename().c_str());
+								logger.log(LOG_DUPLICATE, CLogger::Level::SUMMARY, "Image \"%s\" was found to be a duplicate. Rejecting from import", imageItem->getFilename().c_str());
 								// reject image from import
 								ImageId imageId = imageIndex.findDup(BasicMetadata.getCrc());
 								if (imageId.getName().empty()) {
