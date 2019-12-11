@@ -263,8 +263,13 @@ namespace simplearchive {
 					AppConfig::m_workspacePath = temp;
 				}
 				else {
+#ifdef WIN32
 					std::string tempHomeDrive = SAUtils::GetPOSIXEnv("HOMEDRIVE");
 					std::string tempHomePath = SAUtils::GetPOSIXEnv("HOMEPATH");
+#else // Linux
+					std::string tempHomeDrive = SAUtils::GetPOSIXEnv("HOME");
+					std::string tempHomePath = "/Pictures/IMGAWorkspace";
+#endif
 					AppConfig::m_workspacePath = tempHomeDrive + tempHomePath + DEFAULT_WORKSPACE_PATH;
 				}
 			}
@@ -506,11 +511,15 @@ namespace simplearchive {
 		
 		// Workspace Path	
 		std::string wtemp = SAUtils::GetPOSIXEnv("IMGA_WORKSPACE");
+
+/*
 		if (wtemp.empty() == true) {
+
 			std::string tempHomeDrive = SAUtils::GetPOSIXEnv("HOMEDRIVE");
 			std::string tempHomePath = SAUtils::GetPOSIXEnv("HOMEPATH");
 			wtemp = tempHomeDrive + tempHomePath + DEFAULT_WORKSPACE_PATH;
 		}
+*/
 		
 		setSystemFolders(WORKSPACE_PATH_LABEL, AppConfig::m_workspacePath, wtemp);
 		ArchivePath::setPathToWorkspace(AppConfig::m_workspacePath);

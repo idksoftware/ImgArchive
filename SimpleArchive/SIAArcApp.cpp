@@ -142,6 +142,7 @@ bool SIAArcApp::initaliseConfig() {
 	bool found = false;
 	std::string homePath;
 #ifdef WIN32
+	// Set Windows Defaults (they can be overridden later)
 	// Looking the HKEY_LOCAL_MACHINE first
 	if (GetEnv(homePath, true) == true) {
 		//printf("Found IMGARCHIVE_HOME in system variables: %s", homePath.c_str());
@@ -153,6 +154,7 @@ bool SIAArcApp::initaliseConfig() {
 		found = true;
 	}
 	else {
+
 		homePath = SAUtils::GetPOSIXEnv("ProgramData");
 		if (homePath.empty() == true || homePath.length() == 0) {
 			printf("SIA Unable to start? Cannot read user profile.");
@@ -182,6 +184,8 @@ bool SIAArcApp::initaliseConfig() {
 
 	}
 #else
+	// Set Linux Defaults (they can be overridden later)
+	//homePath = SAUtils::GetPOSIXEnv("HOME");
 	homePath = SAUtils::GetPOSIXEnv("IMGARCHIVE_HOME");
 	if (homePath.empty() == true || homePath.length() == 0) {
 		printf("SIA Unable to start? Cannot read user profile.");
