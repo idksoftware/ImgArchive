@@ -157,7 +157,7 @@ bool SIAArcApp::initaliseConfig() {
 
 		homePath = SAUtils::GetPOSIXEnv("ProgramData");
 		if (homePath.empty() == true || homePath.length() == 0) {
-			printf("SIA Unable to start? Cannot read user profile.");
+			printf("ImgArchive Unable to start? Cannot read user profile.");
 			setError(12, "ImgArchive Unable to start? Cannot read user profile.");
 			return false;
 }
@@ -171,8 +171,8 @@ bool SIAArcApp::initaliseConfig() {
 		if (found == false) {
 			homePath = SAUtils::GetPOSIXEnv("USERPROFILE");
 			if (homePath.empty() == true || homePath.length() == 0) {
-				printf("SIA Unable to start? Cannot read all users profile.");
-				setError(12, "SIA Unable to start? Cannot read all users profile.");
+				printf("ImgArchive Unable to start? Cannot read all users profile.");
+				setError(12, "ImgArchive Unable to start? Cannot read all users profile.");
 				return false;
 			}
 			homePath += DEFAULT_DATA_CONFIG_PATH;
@@ -188,8 +188,8 @@ bool SIAArcApp::initaliseConfig() {
 	//homePath = SAUtils::GetPOSIXEnv("HOME");
 	homePath = SAUtils::GetPOSIXEnv("IMGARCHIVE_HOME");
 	if (homePath.empty() == true || homePath.length() == 0) {
-		printf("SIA Unable to start? Cannot read user profile.");
-		setError(12, "SIA Unable to start? Cannot read user profile.");
+		printf("ImgArchive Unable to start? Cannot read user profile.");
+		setError(12, "ImgArchive Unable to start? Cannot read user profile.");
 		return false;
 	}
 	found = true;
@@ -210,11 +210,11 @@ bool SIAArcApp::initaliseConfig() {
 	
 	if (SAUtils::DirExists(homePath.c_str()) == false) {
 		if (found) {
-			setError(12, "SIA Unable to start? The environment variable SIA_HOME set to \"%s\" but can not be located.\n", homePath.c_str());
+			setError(12, "ImgArchive Unable to start? The environment variable IMGARCHIVE_HOME set to \"%s\" but can not be located.\n", homePath.c_str());
 		}
 		else {
-			setError(12, "SIA Unable to start? Archive not found at default location and the environment variable SIA_HOME not set.\n"
-				"Use siaadmin -i to create an empty archive at the default location (see documentation).\n");
+			setError(12, "ImgArchive Unable to start? Archive not found at default location and the environment variable IMGARCHIVE_HOME not set.\n"
+				"Use iaadmin -i to create an empty archive at the default location (see documentation).\n");
 		}
 
 		return false;
@@ -270,8 +270,8 @@ bool SIAArcApp::doRun()
 	config.settup();
 	
 	if (isConfiguratedOk() == false) {
-		setError(12, "SIA Unable to start? Archive not found at the specified location \"%s\".\n"
-			"Use siaadmin -i to create an empty archive at the default location (see documentation).\n", config.getHomePath());
+		setError(12, "ImgArchive Unable to start? Archive not found at the specified location \"%s\".\n"
+			"Use iaadmin -i to create an empty archive at the default location (see documentation).\n", config.getHomePath());
 		return false;
 	}
 	

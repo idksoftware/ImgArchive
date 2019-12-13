@@ -742,7 +742,7 @@ std::string SAUtils::GetEnv(const std::string& value, bool all) {
 		}
 	}
 	if (RegQueryValueEx(hKey, value.c_str(), NULL, NULL, (BYTE*)buf, &dwBufSize) != ERROR_SUCCESS)
-	//if (RegQueryValueEx(hKey, "SIA_HOME", NULL, NULL, (BYTE*)buf, &dwBufSize) != ERROR_SUCCESS)
+	//if (RegQueryValueEx(hKey, "IMGARCHIVE_HOME", NULL, NULL, (BYTE*)buf, &dwBufSize) != ERROR_SUCCESS)
 	{
 		RegCloseKey(hKey);
 		return res;

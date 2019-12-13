@@ -30,7 +30,7 @@ bool SetEnv(const char *szSIAHome, bool all)
     {
         dwType = REG_SZ;
         dwSize = strlen(szSIAHome)+1;
-        LONG setResult = RegSetValueEx(hkey, TEXT("SIA_HOME"), 0, dwType, 
+        LONG setResult = RegSetValueEx(hkey, TEXT("IMGARCHIVE_HOME"), 0, dwType,
         (PBYTE)szSIAHome, dwSize);
         RegCloseKey(hkey);
         return setResult == ERROR_SUCCESS;

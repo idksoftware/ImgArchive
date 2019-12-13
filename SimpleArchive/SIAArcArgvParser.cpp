@@ -509,7 +509,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	if (foundOption("console-level") == true) {
 
 		std::string opt = optionValue("console-level");
-		printf(opt.c_str()); printf("\n");
+		printf("%s\n",opt.c_str());
 		config.setConsoleLevel(opt.c_str());
 	}
 	if (foundOption("dry-run") == true) {

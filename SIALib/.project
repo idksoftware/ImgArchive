@@ -3,6 +3,16 @@
 	<name>SIALib</name>
 	<comment></comment>
 	<projects>
+		<project>csv</project>
+		<project>database</project>
+		<project>exifcl</project>
+		<project>fclib</project>
+		<project>IntegrityManager</project>
+		<project>metatp</project>
+		<project>mirror</project>
+		<project>sqlite3</project>
+		<project>util</project>
+		<project>web</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

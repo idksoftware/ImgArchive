@@ -31,7 +31,7 @@ bool SetEnv(const char *szSIAHome, bool all)
     {
         dwType = REG_SZ;
         dwSize = strlen(szSIAHome)+1;
-        LONG setResult = RegSetValueEx(hkey, TEXT("SIA_HOME"), 0, dwType, 
+        LONG setResult = RegSetValueEx(hkey, TEXT("IMGARCHIVE_HOME"), 0, dwType,
         (PBYTE)szSIAHome, dwSize);
         RegCloseKey(hkey);
         return setResult == ERROR_SUCCESS;
@@ -54,7 +54,7 @@ bool GetEnv(const char *szSIAHome, std::string &resultStr, bool all)
 	unsigned long size = MAX_PATH;
 	char *regPath = "SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment";
 	//result = RegOpenKeyEx(HKEY_LOCAL_MACHINE, regPath, 0, KEY_READ, &hkey);
-	result = RegGetValue(HKEY_LOCAL_MACHINE, regPath, "SIA_HOME", NULL, NULL, NULL, NULL);
+	result = RegGetValue(HKEY_LOCAL_MACHINE, regPath, "IMGARCHIVE_HOME", NULL, NULL, NULL, NULL);
 	//result = RegQueryValue(hkey, TEXT("Path"), (LPSTR)&path[0], (PLONG)&size);
 	/*
 	if (all) {
@@ -89,7 +89,7 @@ bool GetEnv(std::string& value, bool all) {
 			return false;
 		}
 	}
-	if (RegQueryValueEx(hKey, "SIA_HOME", NULL, NULL, (BYTE*)buf, &dwBufSize) != ERROR_SUCCESS)
+	if (RegQueryValueEx(hKey, "IMGARCHIVE_HOME", NULL, NULL, (BYTE*)buf, &dwBufSize) != ERROR_SUCCESS)
 	{
 		RegCloseKey(hKey);
 		return false;

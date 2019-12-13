@@ -94,7 +94,7 @@ bool AdminApp::Show() {
 	*/
 	AdminConfig config;
 	/*
-	const std::string key = "SIA_HOME";
+	const std::string key = "IMGARCHIVE_HOME";
 	std::string temp = SAUtils::GetPOSIXEnv(key);
 	std::string homePath = temp;
 	*/
@@ -102,11 +102,11 @@ bool AdminApp::Show() {
 	std::string homePath;
 	// Looking the HKEY_LOCAL_MACHINE first
 	if (GetEnv(homePath, true) == true) {
-		printf("Found SIA_HOME in system variables: %s", homePath.c_str());
+		printf("Found IMGARCHIVE_HOME in system variables: %s", homePath.c_str());
 		found = true;
 	}
 	else if (GetEnv(homePath, false) == true) {
-		//printf("Found SIA_HOME in user variables: %s", homePath.c_str());
+		//printf("Found IMGARCHIVE_HOME in user variables: %s", homePath.c_str());
 		found = true;
 	}
 	else {
@@ -119,7 +119,7 @@ bool AdminApp::Show() {
 		else {
 			homePath += "/IDK Software/ImageArchive1.0";
 			if (SAUtils::DirExists(homePath.c_str()) == true) {
-				printf("Found SIA_HOME in user profile: %s", homePath.c_str());
+				printf("Found IMGARCHIVE_HOME in user profile: %s", homePath.c_str());
 				found = true;
 			}
 		}
@@ -131,14 +131,14 @@ bool AdminApp::Show() {
 			}
 			homePath += "/IDK Software/ImageArchive1.0";
 			if (SAUtils::DirExists(homePath.c_str()) == true) {
-				printf("Found SIA_HOME in all users profile: %s", homePath.c_str());
+				printf("Found IMGARCHIVE_HOME in all users profile: %s", homePath.c_str());
 				found = true;
 			}
 		}
 	}
 	if (found = false) {
 		printf("SIA Unable to start? No archive found in the default location or"
-			" the environment variable SIA_HOME not set.\nUse siaadmin to initalise an archive.\n");
+			" the environment variable IMGARCHIVE_HOME not set.\nUse siaadmin to initalise an archive.\n");
 		
 		return false;
 	}
@@ -146,7 +146,7 @@ bool AdminApp::Show() {
 	if (SAUtils::FileExists(configfile.c_str()) == false) {
 		
 		printf("SIA Unable to start? No config.dat file found in the default location or"
-			" the environment variable SIA_HOME not set.\nUse siaadmin to initalise an archive.\n");
+			" the environment variable IMGARCHIVE_HOME not set.\nUse siaadmin to initalise an archive.\n");
 		return false;
 	}
 	AppConfigReader configReader;
@@ -166,19 +166,19 @@ bool AdminApp::Show() {
 	*/
 	config.setHomePath(homePath.c_str());
 	std::string temp;
-	temp = SAUtils::GetPOSIXEnv("SIA_ARCHIVE");
+	temp = SAUtils::GetPOSIXEnv("IMGARCHIVE_HOME");
 	if (temp.empty() == false) {
 		config.setWorkspacePath(temp.c_str());
 	}
-	temp = SAUtils::GetPOSIXEnv("SIA_SOURCE");
+	temp = SAUtils::GetPOSIXEnv("IASOURCE");
 	if (temp.empty() == false) {
 		config.setSourcePath(temp.c_str());
 	}
-	temp = SAUtils::GetPOSIXEnv("SIA_LOGLEVEL");
+	temp = SAUtils::GetPOSIXEnv("IALOGLEVEL");
 	if (temp.empty() == false) {
 		config.setLogLevel(temp.c_str());
 	}
-	temp = SAUtils::GetPOSIXEnv("SIA_CONSOLELEVEL");
+	temp = SAUtils::GetPOSIXEnv("IACONSOLELEVEL");
 	if (temp.empty() == false) {
 		config.setConsoleLevel(temp.c_str());
 	}
@@ -420,7 +420,7 @@ bool AdminApp::CreateArchive(const char *archivePath, const char *workspacePath,
 		return false;
 	}
 	if (CreateArchive::createHomeEnvVar(CreateArchive::getArchivePath().c_str(), users) == false) {
-		std::cout << "Failed creating enviroment variable SIA_HOME" << '\n';
+		std::cout << "Failed creating enviroment variable IMGARCHIVE_HOME" << '\n';
 		return false;
 	}
 	
@@ -556,12 +556,12 @@ bool AdminApp::initaliseHomePath() {
 #ifdef WIN32
 	// Looking the HKEY_LOCAL_MACHINE first
 	if (GetEnv(homePath, true) == true) {
-		//printf("Found SIA_HOME in system variables: %s", homePath.c_str());
+		//printf("Found IMGARCHIVE_HOME in system variables: %s", homePath.c_str());
 		found = true;
 	}
 	// Looking the HKEY_CURRENT_USER
 	else if (GetEnv(homePath, false) == true) {
-		//printf("Found SIA_HOME in user variables: %s", homePath.c_str());
+		//printf("Found IMGARCHIVE_HOME in user variables: %s", homePath.c_str());
 		found = true;
 	}
 	else {
@@ -575,7 +575,7 @@ bool AdminApp::initaliseHomePath() {
 		else {
 			homePath += "/IDK Software/ImageArchive1.0";
 			if (SAUtils::DirExists(homePath.c_str()) == true) {
-				//printf("Found SIA_HOME in user profile: %s", homePath.c_str());
+				//printf("Found IMGARCHIVE_HOME in user profile: %s", homePath.c_str());
 				found = true;
 			}
 		}
@@ -588,7 +588,7 @@ bool AdminApp::initaliseHomePath() {
 			}
 			homePath += "/IDK Software/ImageArchive1.0";
 			if (SAUtils::DirExists(homePath.c_str()) == true) {
-				//printf("Found SIA_HOME in all users profile: %s", homePath.c_str());
+				//printf("Found IMGARCHIVE_HOME in all users profile: %s", homePath.c_str());
 				found = true;
 			}
 		}
@@ -596,21 +596,21 @@ bool AdminApp::initaliseHomePath() {
 #else
 #endif
 	std::string temp;
-	temp = SAUtils::GetPOSIXEnv("SIA_ARCHIVE");
+	temp = SAUtils::GetPOSIXEnv("IAWORKSPACE");
 	if (temp.empty() == false) {
 		config.setWorkspacePath(temp.c_str());
 	}
-	temp = SAUtils::GetPOSIXEnv("SIA_SOURCE");
+	temp = SAUtils::GetPOSIXEnv("IASOURCE");
 	if (temp.empty() == false) {
 		config.setSourcePath(temp.c_str());
 	}
-	temp = SAUtils::GetPOSIXEnv("SIA_LOGLEVEL");
+	temp = SAUtils::GetPOSIXEnv("IALOGLEVEL");
 	if (temp.empty() == false) {
 		config.setLogLevel(temp.c_str());
 	}
 
 
-	const std::string key = "SIA_HOME";
+	const std::string key = "IMGARCHIVE_HOME";
 	temp = SAUtils::GetPOSIXEnv(key);
 	homePath = temp;
 	//printf("%s", homePath.c_str());

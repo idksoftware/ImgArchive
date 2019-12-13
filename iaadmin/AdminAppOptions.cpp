@@ -81,7 +81,7 @@ bool AppOptions::initaliseConfig() {
 
 	AdminConfig config;
 
-	const std::string key = "SIA_HOME";
+	const std::string key = "IMGARCHIVE_HOME";
 	std::string temp = SAUtils::GetPOSIXEnv(key);
 	std::string homePath = temp;
 	//printf("%s", homePath.c_str());
@@ -122,19 +122,19 @@ bool AppOptions::initaliseConfig() {
 			}
 			*/
 			config.setHomePath(homePath.c_str());
-			temp = SAUtils::GetPOSIXEnv("SIA_WORKSPACE");
+			temp = SAUtils::GetPOSIXEnv("IAWORKSPACE");
 			if (temp.empty() == false) {
 				config.setWorkspacePath(temp.c_str());
 			}
-			temp = SAUtils::GetPOSIXEnv("SIA_SOURCE");
+			temp = SAUtils::GetPOSIXEnv("IASOURCE");
 			if (temp.empty() == false) {
 				config.setSourcePath(temp.c_str());
 			}
-			temp = SAUtils::GetPOSIXEnv("SIA_LOGLEVEL");
+			temp = SAUtils::GetPOSIXEnv("IALOGLEVEL");
 			if (temp.empty() == false) {
 				config.setLogLevel(temp.c_str());
 			}
-			temp = SAUtils::GetPOSIXEnv("SIA_CONSOLELEVEL");
+			temp = SAUtils::GetPOSIXEnv("IACONSOLELEVEL");
 			if (temp.empty() == false) {
 				config.setConsoleLevel(temp.c_str());
 			}

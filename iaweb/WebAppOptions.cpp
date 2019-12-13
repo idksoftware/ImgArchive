@@ -81,7 +81,7 @@ bool AppOptions::initaliseConfig() {
 
 	AdminConfig config;
 
-	const std::string key = "SIA_HOME";
+	const std::string key = "IMGARCHIVE_HOME";
 	std::string temp = SAUtils::GetPOSIXEnv(key);
 	std::string homePath = temp;
 	//printf("%s", homePath.c_str());

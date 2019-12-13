@@ -386,7 +386,7 @@ ConfigReader::Token ConfigReader::parse(const char *text, ConfigBlock &config) {
 	std::string line = text;
 	line = trim(line);
 
-	if (line.empty()) {
+	if (line.empty() || line.at(0) == '\r') {
 		return Comment;
 	}
 	int commentIdx = line.find_first_of('#');
