@@ -109,12 +109,12 @@ class CheckoutSummary : public SummaryReporter {
 protected:
 	virtual bool doProcess() {
 		std::stringstream str;
-		int warnings = 0;
-		int errors = 0;
-		int competed = 0;
+		//int warnings = 0;
+		//int errors = 0;
+		//int competed = 0;
 		std::shared_ptr<StatusList> list = getList();
 		for (auto i = list->begin(); i != list->end(); i++) {
-			ReporterEvent& item = *i;
+			//ReporterEvent& item = *i;
 			
 		}
 		setSummary(str.str().c_str());
@@ -428,6 +428,9 @@ bool SIAArcApp::doRun()
 	case SIAArcAppOptions::CommandMode::CM_Unknown:
 		setError(CLogger::getLastCode(), CLogger::getLastMessage());
 		break;
+	default:
+		setError(15, "Command not implimented at this time");
+		return false;
 	}
 	siaLib.complete();
 	

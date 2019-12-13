@@ -63,10 +63,6 @@ ImageTable::~ImageTable() {
 	// TODO Auto-generated destructor stub
 }
 
-static int callback(void *notUsed, int argc, char **argv, char **colName) {
-	return 0;
-}
-
 bool ImageTable::createFromSchema(MTTableSchema &mtSchema) {
 
 	std::string name = mtSchema.getName().c_str();

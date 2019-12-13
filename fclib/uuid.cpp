@@ -291,9 +291,9 @@ int CIDKUuid::Create(uuid_t * uuid) {
     /* put name space ID in network byte order so it hashes the same
         no matter what endian machine we're on */
     net_nsid = nsid;
-    htonl(net_nsid.time_low);
-    htons(net_nsid.time_mid);
-    htons(net_nsid.time_hi_and_version);
+    //htonl(net_nsid.time_low);
+    //htons(net_nsid.time_mid);
+    //htons(net_nsid.time_hi_and_version);
 	/*
 	MD5_CTX c;
     MD5Init(&c);
@@ -316,9 +316,9 @@ int CIDKUuid::Create(uuid_t * uuid) {
       memcpy(uuid, hash, sizeof(uuid_t));
 
     /* convert UUID to local byte order */
-    ntohl(uuid->time_low);
-    ntohs(uuid->time_mid);
-    ntohs(uuid->time_hi_and_version);
+    //ntohl(uuid->time_low);
+    //ntohs(uuid->time_mid);
+    //ntohs(uuid->time_hi_and_version);
 
     /* put in the variant and version bits */
       uuid->time_hi_and_version &= 0x0FFF;

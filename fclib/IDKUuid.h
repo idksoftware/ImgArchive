@@ -70,7 +70,7 @@ public:
 	CIDKUuid() noexcept
 	{
 		m_Uuid = new struct _uuid_t;
-		int m_Res = Create(m_Uuid);
+		Create(m_Uuid);
 		//printf("%s\n",GetUuid());
 	};
 
@@ -95,7 +95,7 @@ public:
 #else
 		sprintf(m_szUuid, "%8.8x-%4.4x-%4.4x-%2.2x%2.2x-", u.time_low, u.time_mid,
 										u.time_hi_and_version, u.clock_seq_hi_and_reserved,
-										u.clock_seq_low);
+										(unsigned int)u.clock_seq_low);
 		for (i = 0; i < 6; i++)
 		{
 			char tbuffer[30];

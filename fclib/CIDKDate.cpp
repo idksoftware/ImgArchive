@@ -248,7 +248,7 @@ bool CIDKDate::GetDate(long& nYear, long& nMonth, long& nDay)
 
 	while ((nTmpMonth < 11) && (nCalendarDays >= daysInMonth[nTmpMonth]))
 	{
-		unsigned long dayInMonth = daysInMonth[nTmpMonth];
+		//unsigned long dayInMonth = daysInMonth[nTmpMonth];
 
 		nCalendarDays -= daysInMonth[nTmpMonth];
 		nTmpMonth++;
@@ -376,7 +376,7 @@ bool CIDKDate::SetDate(long nYear, long nMonth, long nDay, long nHour, long nMin
 
 	for (long i = 0; i < nMonth; i++)
 	{
-		unsigned long dayInMonth = pDaysInMonth[i];
+		//unsigned long dayInMonth = pDaysInMonth[i];
 
 		nTotalSeconds += (pDaysInMonth[i] * IDK_DATE_SECONDS_IN_DAY);
 	}
@@ -595,7 +595,9 @@ int CIDKDate::GetElement(time_t inTime, int elementType)
 	int				ret = 0;
 
 	int err =  gmtime_p(brkTime, &inTime);
-
+	if (err < 0) {
+		return(err);
+	}
 	switch (elementType)
 	{
 		case IDK_MINUTE:	ret = brkTime.tm_min; break;

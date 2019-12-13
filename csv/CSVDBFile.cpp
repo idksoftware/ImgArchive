@@ -357,7 +357,7 @@ bool CSVDBFile::insert(int idx, const char *imagePath, const char *name, unsigne
 	}
 
 	std::string imagepath = imagePath;
-	int pos = imagepath.find_first_of('/');
+	unsigned int pos = imagepath.find_first_of('/');
 	if (pos == std::string::npos) {
 		if (PathController::validateYYMMDD(imagepath.c_str()) == false) {
 			return false;

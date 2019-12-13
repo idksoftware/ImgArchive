@@ -77,7 +77,7 @@ bool MetadataTemplate::read(const char *datafile) {
 	}
 	//templateFile.printAll();
 	for (std::map<std::string, std::string>::iterator ii = m_templateFile->begin(); ii != m_templateFile->end(); ++ii) {
-		std::string &value = getValue((*ii).first.c_str());
+		//std::string &value = getValue((*ii).first.c_str());
 		//printf("\"%s\" opt:\"%s\"\n", (*ii).first.c_str(), (*ii).second.c_str());
 		//if (value.compare("")) {
 		//	*value = (*ii).second.c_str();
@@ -89,7 +89,7 @@ MetadataObject_ptr MetadataTemplate::getMetadataObject() {
 	MetadataObject_ptr metadataObject = std::make_unique<MetadataObject>();
 	
 	for (std::map<std::string, std::string>::iterator ii = m_templateFile->begin(); ii != m_templateFile->end(); ++ii) {
-		std::string &value = getValue((*ii).first.c_str());
+		//std::string &value = getValue((*ii).first.c_str());
 		//printf("\"%s\" opt:\"%s\"\n", (*ii).first.c_str(), (*ii).second.c_str());
 		try {
 			MTColumn& col = metadataObject->columnAt((*ii).first.c_str());

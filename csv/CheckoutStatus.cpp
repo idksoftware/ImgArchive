@@ -446,7 +446,7 @@ namespace simplearchive {
 		fullPath += '/';
 		fullPath += img;
 
-		unsigned long size = 0;
+		//unsigned long size = 0;
 
 		if (SAUtils::FileExists(fullPath.c_str()) == false) {
 			ErrorCode::setErrorCode(SIA_ERROR::IMAGE_NOT_FOUND);

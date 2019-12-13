@@ -16,10 +16,11 @@ int gmtime_p(struct tm &tmTime, const time_t * time) {
 	struct tm tmp;
 	struct tm *tmpp;
 	tmpp = gmtime_r(time, &tmp);
-	tmTime = *tmpp;
 	if (tmpp == nullptr) {
-		err = 0;
+		err = -1;
 	}
+	tmTime = *tmpp;
+
 #endif
 	return err;
 }
