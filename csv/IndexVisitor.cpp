@@ -239,7 +239,7 @@ namespace simplearchive {
 	bool StatusAction::onEnd()
 	{
 		if (!log->write(LogDocument::FormatType::Human)) {
-			ErrorCode::setErrorCode(SIA_ERROR::INVALID_PATH);
+			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 			return false;
 		}
 		return true;

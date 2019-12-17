@@ -99,7 +99,7 @@ namespace simplearchive {
 			bool found = false;
 			homePath = SAUtils::GetPOSIXEnv("USERPROFILE");
 			if (homePath.empty() == true || homePath.length() == 0) {
-				printf("SIA Unable to start? Cannot read user profile.");
+				printf("ImgArchive Unable to start? Cannot read user profile.");
 				return false;
 			}
 			else {
@@ -112,7 +112,7 @@ namespace simplearchive {
 			if (found == false) {
 				homePath = SAUtils::GetPOSIXEnv("ProgramData");
 				if (homePath.empty() == true || homePath.length() == 0) {
-					printf("SIA Unable to start? Cannot read all users profile.");
+					printf("ImgArchive Unable to start? Cannot read all users profile.");
 					return false;
 				}
 				homePath += "/IDK Software/ImageArchive1.0";
@@ -125,7 +125,7 @@ namespace simplearchive {
 #else
 #endif
 		if (found = false) {
-			printf("SIA Unable to start? No archive found in the default location or"
+			printf("ImgArchive Unable to start? No archive found in the default location or"
 				" the environment variable IMGARCHIVE_HOME not set.\nUse siaadmin to initalise an archive.\n");
 
 			return false;
@@ -133,7 +133,7 @@ namespace simplearchive {
 		std::string configfile = homePath + "/config/" + "config.dat";
 		if (SAUtils::FileExists(configfile.c_str()) == false) {
 
-			printf("SIA Unable to start? No config.dat file found in the default location or"
+			printf("ImgArchive Unable to start? No config.dat file found in the default location or"
 				" the environment variable IMGARCHIVE_HOME not set.\nUse siaadmin to initalise an archive.\n");
 			return false;
 		}

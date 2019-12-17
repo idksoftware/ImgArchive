@@ -67,7 +67,7 @@ namespace simplearchive {
 *	Exiv2
 *	Python Image Library.
 *
-*	The Python Image Library is a python library that can be used to extract EXIF SIA product provides a python
+*	The Python Image Library is a python library that can be used to extract EXIF ImgArchive product provides a python
 *	sample that intergrates into Sia. This camn be further extended as requited.
 *
 * \section external_tool_components_sec External Tool Components

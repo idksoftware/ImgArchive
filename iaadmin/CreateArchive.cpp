@@ -296,7 +296,7 @@ bool CreateArchive::createAdminSystem(const char *archivePath, const char *works
 		if (SAUtils::FileExists(path.c_str()) == false) {
 			return false;
 		}
-		path += "/SIA Pictures";
+		path += "/IAPictures";
 		if (SAUtils::FileExists(path.c_str()) == false) {
 			if (SAUtils::mkDir(path.c_str()) == false) {
 				return false;
@@ -367,7 +367,7 @@ bool CreateArchive::createUserSystem(const char *archivePath, const char *worksp
 		if (SAUtils::FileExists(path.c_str()) == false) {
 			return false;
 		}
-		path += "/SIA Pictures";
+		path += "/IAPictures";
 		if (SAUtils::FileExists(path.c_str()) == false) {
 			if (SAUtils::mkDir(path.c_str()) == false) {
 				return false;
@@ -393,7 +393,7 @@ bool CreateArchive::createUserSystem(const char *archivePath, const char *worksp
 		if (SAUtils::FileExists(path.c_str()) == false) {
 			return false;
 		}
-		path += "/SIA Workspace";
+		path += "/IAWorkspace";
 		if (SAUtils::FileExists(path.c_str()) == false) {
 			if (SAUtils::mkDir(path.c_str()) == false) {
 				return false;

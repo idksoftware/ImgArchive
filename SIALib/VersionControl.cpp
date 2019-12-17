@@ -172,7 +172,7 @@ bool VersionControl::checkoutFile(const char *filepath, const char *comment, boo
 	std::string targetRootPath = m_workspace;
 	PathController pathController;
 	if (pathController.splitShort(filepath) == false) {
-		ErrorCode::setErrorCode(SIA_ERROR::INVALID_PATH);
+		ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 		logger.log(LOG_UNABLE_TO_CHECKOUT_GENERAL, CLogger::Level::FATAL, "Unable to checkout: \"%s\" Error: %s", filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
 		return false;
 	}
@@ -188,16 +188,16 @@ bool VersionControl::checkoutFile(const char *filepath, const char *comment, boo
 	// It should be checked in so to be checked out.
 	if (checkoutStatus.isCheckedIn(filepath) == false) {
 
-		if (ErrorCode::getErrorCode() == SIA_ERROR::ALREADY_CHECKED_OUT && !force) {
+		if (ErrorCode::getErrorCode() == IMGA_ERROR::ALREADY_CHECKED_OUT && !force) {
 			// return after not checkinh out as checked out already and not forced to check out
 			return false;
 		}
-		if (ErrorCode::getErrorCode() == SIA_ERROR::TARGET_NOT_FOUND) {
+		if (ErrorCode::getErrorCode() == IMGA_ERROR::TARGET_NOT_FOUND) {
 			// Not an error but the image needs to be copied form the repository to the workspace
 			return false;
 		}
 
-		else if (ErrorCode::getErrorCode() == SIA_ERROR::WILL_OVERWRITE_CHANGES) {
+		else if (ErrorCode::getErrorCode() == IMGA_ERROR::WILL_OVERWRITE_CHANGES) {
 			// This may be an option
 
 			return false;
@@ -212,7 +212,7 @@ bool VersionControl::checkoutFile(const char *filepath, const char *comment, boo
 	if (getVersion() == 0) {
 		// Original
 		if (checkoutFromMaster(filepath, comment, force) == false) {
-			if (ErrorCode::getErrorCode() != SIA_ERROR::CHANGE_MAY_BE_LOST) {
+			if (ErrorCode::getErrorCode() != IMGA_ERROR::CHANGE_MAY_BE_LOST) {
 				logger.log((LOG_OK + 1), CLogger::Level::FATAL, "Unable to checkout: \"%s\" Error: %s", filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
 				return false;
 			}
@@ -223,11 +223,11 @@ bool VersionControl::checkoutFile(const char *filepath, const char *comment, boo
 	else {
 		if (checkoutFromDerivatives(filepath, comment, force) == false) {
 
-			if (ErrorCode::getErrorCode() == SIA_ERROR::CHANGE_MAY_BE_LOST && !force) {
+			if (ErrorCode::getErrorCode() == IMGA_ERROR::CHANGE_MAY_BE_LOST && !force) {
 				logger.log(LOG_OK, CLogger::Level::INFO, "checked out but image not copied\"%s\" Error: %s?", filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
 				// check out;
 			}
-			else if (ErrorCode::getErrorCode() == SIA_ERROR::NO_CHANGE_IN_IMAGE && !force) {
+			else if (ErrorCode::getErrorCode() == IMGA_ERROR::NO_CHANGE_IN_IMAGE && !force) {
 				logger.log(LOG_OK, CLogger::Level::INFO, "image not copied \"%s\"? Error: %s", filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
 				// check out;
 			}
@@ -243,16 +243,16 @@ bool VersionControl::checkoutFile(const char *filepath, const char *comment, boo
 	
 
 	if (checkoutStatus.checkoutUpdate(filepath, comment) == false) {
-		if (ErrorCode::getErrorCode() == SIA_ERROR::ALREADY_CHECKED_OUT && !force) {
+		if (ErrorCode::getErrorCode() == IMGA_ERROR::ALREADY_CHECKED_OUT && !force) {
 			// return after not checkinh out as checked out already and not forced to check out
 			return false;
 		}
-		if (ErrorCode::getErrorCode() == SIA_ERROR::TARGET_NOT_FOUND) {
+		if (ErrorCode::getErrorCode() == IMGA_ERROR::TARGET_NOT_FOUND) {
 			// Not an error but the image needs to be copied form the repository to the workspace
 			return false;
 		}
 
-		else if (ErrorCode::getErrorCode() == SIA_ERROR::WILL_OVERWRITE_CHANGES) {
+		else if (ErrorCode::getErrorCode() == IMGA_ERROR::WILL_OVERWRITE_CHANGES) {
 			// This may be an option
 			logger.log(LOG_UNABLE_TO_CHECKOUT_GENERAL, CLogger::Level::INFO, "Unable to checkout: \"%s\" Error: %s", filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
 			return false;
@@ -323,7 +323,7 @@ bool VersionControl::checkoutFromMaster(const char *targetRelPath, const char *c
 
 	if (pathController.makeRelativePath(targetRelPath) == false) {
 		logger.log(LOG_OK, CLogger::Level::FATAL, "Invalid version path: \"%s\"?", targetRelPath);
-		ErrorCode::setErrorCode(SIA_ERROR::IMAGE_NOT_FOUND);
+		ErrorCode::setErrorCode(IMGA_ERROR::IMAGE_NOT_FOUND);
 		return false;
 	}
 	std::string from = m_pathToMaster.c_str();
@@ -355,7 +355,7 @@ bool VersionControl::checkoutFromMaster(const char *targetRelPath, const char *c
 			FileInfo fileInfoTo(to);
 			if (fileInfoFrom.getCrc() != fileInfoTo.getCrc()) {
 				logger.log(LOG_OK, CLogger::Level::WARNING, "Changes may be lost by Checkout \"%s\"?", targetRelPath);
-				ErrorCode::setErrorCode(SIA_ERROR::CHANGE_MAY_BE_LOST);
+				ErrorCode::setErrorCode(IMGA_ERROR::CHANGE_MAY_BE_LOST);
 				return false;
 			}
 			logger.log(LOG_OK, CLogger::Level::INFO, "Target image is the same as checked in image: \"%s\"?", from.c_str());
@@ -438,7 +438,7 @@ bool VersionControl::checkoutFromDerivatives(const char *targetRelPath, const ch
 		if (fileInfoFrom.getCrc() != fileInfoTo.getCrc()) {
 			if (force != true) {
 				logger.log(LOG_OK, CLogger::Level::INFO, "Changes may be lost by checkout, file not copied\"%s\"?", targetRelPath);
-				ErrorCode::setErrorCode(SIA_ERROR::CHANGE_MAY_BE_LOST);
+				ErrorCode::setErrorCode(IMGA_ERROR::CHANGE_MAY_BE_LOST);
 				return false;
 			}
 			else {
@@ -448,7 +448,7 @@ bool VersionControl::checkoutFromDerivatives(const char *targetRelPath, const ch
 		else {
 			if (force != true) {
 				logger.log(LOG_OK, CLogger::Level::INFO, "File not copied as the images are the same, \"%s\"?", targetRelPath);
-				ErrorCode::setErrorCode(SIA_ERROR::NO_CHANGE_IN_IMAGE);
+				ErrorCode::setErrorCode(IMGA_ERROR::NO_CHANGE_IN_IMAGE);
 				return false;
 			}
 			else {
@@ -472,7 +472,7 @@ bool VersionControl::uncheckoutFile(const char *filepath, const char *comment, b
 	CheckoutStatus checkoutStatus;
 	// Is checked out, if out then can not be unchecked out
 	if (checkoutStatus.isCheckedOut(filepath) == false) {
-		if (ErrorCode::getErrorCode() == SIA_ERROR::ALREADY_CHECKED_IN) {
+		if (ErrorCode::getErrorCode() == IMGA_ERROR::ALREADY_CHECKED_IN) {
 			// Needs chacking for changes beween the one in the workspace and the one checked in
 			// even if is already chected in, the user needs to if this is the case.
 			return false;

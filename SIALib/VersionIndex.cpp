@@ -113,7 +113,7 @@ bool VersionIndex::setRowCursor(const char *path) {
 
 	std::string rootPath = getVersionPath();
 	if (PathController::validateFullYYMMDD(rootPath.c_str(), path) == false) {
-		ErrorCode::setErrorCode(SIA_ERROR::INVALID_PATH);
+		ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 		return false;
 	}
 	pathController.setRoot(rootPath);
@@ -126,11 +126,11 @@ bool VersionIndex::setRowCursor(const char *path) {
 	std::string filename = pathController.getImageName();
 
 	if (versionTable->read(pathController.getRoot().c_str(), filename.c_str()) == false) {
-		ErrorCode::setErrorCode(SIA_ERROR::INVALID_PATH);
+		ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 		return false;
 	}
 	if (versionTable->empty()) {
-		ErrorCode::setErrorCode(SIA_ERROR::IMAGE_NOT_FOUND);
+		ErrorCode::setErrorCode(IMGA_ERROR::IMAGE_NOT_FOUND);
 		return false;
 	}
 
@@ -152,7 +152,7 @@ bool VersionIndex::setRowCursor(const char *path, int version) {
 
 	std::string rootPath = getVersionPath();
 	if (PathController::validateFullYYMMDD(rootPath.c_str(), path) == false) {
-		ErrorCode::setErrorCode(SIA_ERROR::INVALID_PATH);
+		ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 		return false;
 	}
 	pathController.setRoot(rootPath);
@@ -165,11 +165,11 @@ bool VersionIndex::setRowCursor(const char *path, int version) {
 	std::string filename = pathController.getImageName();
 
 	if (versionTable->read(pathController.getRoot().c_str(), filename.c_str()) == false) {
-		ErrorCode::setErrorCode(SIA_ERROR::INVALID_PATH);
+		ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 		return false;
 	}
 	if (versionTable->empty()) {
-		ErrorCode::setErrorCode(SIA_ERROR::IMAGE_NOT_FOUND);
+		ErrorCode::setErrorCode(IMGA_ERROR::IMAGE_NOT_FOUND);
 		return false;
 	}
 	m_current = 0;

@@ -505,39 +505,28 @@ namespace simplearchive {
 		setNetwork(COMMANDS_PORT_LABEL, m_udpPortNum, m_udpPortNum);
 		//AppConfig::m_udpAddress = std::to
 
-		AppConfig::m_udpAddress;
-		AppConfig::m_udpPortNum;
+		//AppConfig::m_udpAddress;
+		//AppConfig::m_udpPortNum;
 		
 
-		AppConfig::m_serverOn;
-		AppConfig::m_tcpPortNum;
+		//AppConfig::m_serverOn;
+		//AppConfig::m_tcpPortNum;
 
 		//setNetwork(BACKUP_ONE_ENABLED_LABEL, backup2Enabled, backup2Enabled);
 		
 		// Workspace Path	
 		std::string wtemp = SAUtils::GetPOSIXEnv("IMGA_WORKSPACE");
-
-/*
-		if (wtemp.empty() == true) {
-
-			std::string tempHomeDrive = SAUtils::GetPOSIXEnv("HOMEDRIVE");
-			std::string tempHomePath = SAUtils::GetPOSIXEnv("HOMEPATH");
-			wtemp = tempHomeDrive + tempHomePath + DEFAULT_WORKSPACE_PATH;
+		if (wtemp.empty() == false) {
+			setSystemFolders(WORKSPACE_PATH_LABEL, AppConfig::m_workspacePath, wtemp);
+			ArchivePath::setPathToWorkspace(AppConfig::m_workspacePath);
 		}
-*/
-		
-		setSystemFolders(WORKSPACE_PATH_LABEL, AppConfig::m_workspacePath, wtemp);
-		ArchivePath::setPathToWorkspace(AppConfig::m_workspacePath);
-
-		// Workspace Path	
+		// Master Catalogue path
 		std::string ctemp = SAUtils::GetPOSIXEnv("SIA_MASTER_CATALOGUE");
 		if (ctemp.empty() == true) {
-			std::string tempHomeDrive = SAUtils::GetPOSIXEnv("HOMEDRIVE");
-			std::string tempHomePath = SAUtils::GetPOSIXEnv("HOMEPATH");
-			ctemp = tempHomeDrive + tempHomePath + DEFAULT_MASTER_CATALOGUE_PATH;
+			setSystemFolders(MASTER_VIEW_PATH_LABEL, AppConfig::m_masterCataloguePath, ctemp);
 		}
 		// todo
-		setSystemFolders(MASTER_VIEW_PATH_LABEL, AppConfig::m_masterCataloguePath, ctemp);
+
 		setWorkspacePath(AppConfig::m_workspacePath.c_str());
 		setMasterPath(AppConfig::m_masterPath.c_str());
 

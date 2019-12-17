@@ -318,12 +318,12 @@ namespace simplearchive {
 		SystemHistoryRow systemHistoryRow(filepath, "0000", comment, he);
 		
 		if (add(imageHistoryRow) == false) {
-			ErrorCode::setErrorCode(SIA_ERROR::INVALID_PATH);
+			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 			return false;
 		}
 
 		if (add(systemHistoryRow) == false) {
-			ErrorCode::setErrorCode(SIA_ERROR::INVALID_PATH);
+			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 			return false;
 		}
 		

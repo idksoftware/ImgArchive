@@ -1163,12 +1163,12 @@ bool CheckDisk::ischeckedOut(const char *filePath, const char *image) {
 	CkdskManifestFile ckdskManifestFile;
 	// read the manifest file
 	if (ckdskManifestFile.read(filePath) == false) {
-		ErrorCode::setErrorCode(SIA_ERROR::IMAGE_NOT_FOUND);
+		ErrorCode::setErrorCode(IMGA_ERROR::IMAGE_NOT_FOUND);
 		return false;
 	}
 	CkdskData* data = ckdskManifestFile.findFile(image);
 	if (data == nullptr) {
-		ErrorCode::setErrorCode(SIA_ERROR::IMAGE_NOT_FOUND);
+		ErrorCode::setErrorCode(IMGA_ERROR::IMAGE_NOT_FOUND);
 		return false;
 	}
 	if (data->getCheckedOut() == true) {
@@ -1182,12 +1182,12 @@ unsigned int CheckDisk::getCrc(const char *filePath, const char *image) {
 	CkdskManifestFile ckdskManifestFile;
 	// read the manifest file
 	if (ckdskManifestFile.read(filePath) == false) {
-		ErrorCode::setErrorCode(SIA_ERROR::READ_ERROR);
+		ErrorCode::setErrorCode(IMGA_ERROR::READ_ERROR);
 		return 0;
 	}
 	CkdskData* data = ckdskManifestFile.findFile(image);
 	if (data == nullptr) {
-		ErrorCode::setErrorCode(SIA_ERROR::IMAGE_NOT_FOUND);
+		ErrorCode::setErrorCode(IMGA_ERROR::IMAGE_NOT_FOUND);
 		return 0;
 	}
 	unsigned int crc = data->getCrc();	
@@ -1198,16 +1198,16 @@ bool CheckDisk::checkout(const char *filePath, const char *image) {
 	CkdskManifestFile ckdskManifestFile;
 	// read the manifest file
 	if (ckdskManifestFile.read(filePath) == false) {
-		ErrorCode::setErrorCode(SIA_ERROR::READ_ERROR);
+		ErrorCode::setErrorCode(IMGA_ERROR::READ_ERROR);
 		return false;
 	}
 	CkdskData* data = ckdskManifestFile.findFile(image);
 	if (data == nullptr) {
-		ErrorCode::setErrorCode(SIA_ERROR::IMAGE_NOT_FOUND);
+		ErrorCode::setErrorCode(IMGA_ERROR::IMAGE_NOT_FOUND);
 		return false;
 	}
 	if (data->getCheckedOut() == true) {
-		ErrorCode::setErrorCode(SIA_ERROR::ALREADY_CHECKED_OUT);
+		ErrorCode::setErrorCode(IMGA_ERROR::ALREADY_CHECKED_OUT);
 		return false; // already checked out
 	}
 	data->setCheckedOut(true);
@@ -1216,7 +1216,7 @@ bool CheckDisk::checkout(const char *filePath, const char *image) {
 	int pos = path.find_last_of('/');
 	path = path.substr(0, pos);
 	if (makeXML(path.c_str()) == false) {
-		ErrorCode::setErrorCode(SIA_ERROR::XML_WRITE_ERROR);
+		ErrorCode::setErrorCode(IMGA_ERROR::XML_WRITE_ERROR);
 		return false;
 	}
 	return true;
@@ -1228,7 +1228,7 @@ bool CheckDisk::checkin(const char *filePath, const char *image) {
 	ckdskManifestFile.read(filePath);
 	CkdskData* data = ckdskManifestFile.findFile(image);
 	if (data == nullptr) {
-		ErrorCode::setErrorCode(SIA_ERROR::IMAGE_NOT_FOUND);
+		ErrorCode::setErrorCode(IMGA_ERROR::IMAGE_NOT_FOUND);
 		return false;
 	}
 	if (data->getCheckedOut() == false) {

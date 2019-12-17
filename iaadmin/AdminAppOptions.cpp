@@ -95,7 +95,7 @@ bool AppOptions::initaliseConfig() {
 	std::string configfile = homePath + "/config/" + "config.dat";
 	std::string configPath = homePath + "/config";
 	if (SAUtils::DirExists(homePath.c_str()) == false) {
-		//printf("SIA Unable to start?\nArchive not found at default location and the environment variable SA_HOME not set.\n"
+		//printf("ImgArchive Unable to start?\nArchive not found at default location and the environment variable SA_HOME not set.\n"
 		//	"Use siaadmin -i to create an empty archive at the default location (see documentation).\n");
 		//m_error = true;
 		//return false;

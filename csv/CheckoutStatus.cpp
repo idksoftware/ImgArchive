@@ -104,7 +104,7 @@ namespace simplearchive {
 				//processFile(log, filepath);
 				m_currentPartition = std::make_shared<CheckoutPartition>();
 				if (m_currentPartition->read(filepath.c_str()) == false) {
-					if (ErrorCode::getErrorCode() != SIA_ERROR::OPEN_ERROR) {
+					if (ErrorCode::getErrorCode() != IMGA_ERROR::OPEN_ERROR) {
 						throw std::exception("Cannot read current partition");
 					}
 				}
@@ -237,7 +237,7 @@ namespace simplearchive {
 		PathController pathController(m_primaryIndex.c_str());
 		pathController.splitShort(img);
 		if (pathController.makePath(false) == false) {
-			ErrorCode::setErrorCode(SIA_ERROR::INVALID_PATH);
+			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 			return nullptr;
 		}
 
@@ -250,12 +250,12 @@ namespace simplearchive {
 
 		std::string workPath = m_workspace.c_str();
 		if (SAUtils::FileExists(workPath.c_str()) == false) {
-			ErrorCode::setErrorCode(SIA_ERROR::WORKSPACE_NOT_FOUND);
+			ErrorCode::setErrorCode(IMGA_ERROR::WORKSPACE_NOT_FOUND);
 			return nullptr;
 		}
 		workPath += '/'; workPath += pathController.getYear();
 		if (SAUtils::FileExists(workPath.c_str()) == false) {
-			ErrorCode::setErrorCode(SIA_ERROR::INVALID_PATH);
+			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 			return nullptr;
 		}
 
@@ -266,15 +266,15 @@ namespace simplearchive {
 		pidxPath += filenameStr;
 
 		if (SAUtils::FileExists(pidxPath.c_str()) == false) {
-			ErrorCode::setErrorCode(SIA_ERROR::FILE_NOT_FOUND);
+			ErrorCode::setErrorCode(IMGA_ERROR::FILE_NOT_FOUND);
 			return nullptr;
 		}
 		if (checkoutPartition.read(pidxPath.c_str()) == false) {
-			ErrorCode::setErrorCode(SIA_ERROR::READ_ERROR);
+			ErrorCode::setErrorCode(IMGA_ERROR::READ_ERROR);
 			return nullptr;
 		}
 		if (checkoutPartition.findImage(pathController.getImage().c_str()) == false) {
-			ErrorCode::setErrorCode(SIA_ERROR::IMAGE_NOT_FOUND);
+			ErrorCode::setErrorCode(IMGA_ERROR::IMAGE_NOT_FOUND);
 			return nullptr;
 		}
 		SharedMTRow row = checkoutPartition.getCurrentRow();
@@ -289,7 +289,7 @@ namespace simplearchive {
 		PathController pathController(m_primaryIndex.c_str());
 		pathController.splitShort(img);
 		if (pathController.makePath(false) == false) {
-			ErrorCode::setErrorCode(SIA_ERROR::INVALID_PATH);
+			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 			return false;
 		}
 
@@ -302,12 +302,12 @@ namespace simplearchive {
 
 		std::string workPath = m_workspace.c_str();
 		if (SAUtils::FileExists(workPath.c_str()) == false) {
-			ErrorCode::setErrorCode(SIA_ERROR::WORKSPACE_NOT_FOUND);
+			ErrorCode::setErrorCode(IMGA_ERROR::WORKSPACE_NOT_FOUND);
 			return false;
 		}
 		workPath += '/'; workPath += pathController.getYear();
 		if (SAUtils::FileExists(workPath.c_str()) == false) {
-			ErrorCode::setErrorCode(SIA_ERROR::INVALID_PATH);
+			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 			return false;
 		}
 
@@ -318,15 +318,15 @@ namespace simplearchive {
 		pidxPath += filenameStr;
 
 		if (SAUtils::FileExists(pidxPath.c_str()) == false) {
-			ErrorCode::setErrorCode(SIA_ERROR::FILE_NOT_FOUND);
+			ErrorCode::setErrorCode(IMGA_ERROR::FILE_NOT_FOUND);
 			return false;
 		}
 		if (checkoutPartition.read(pidxPath.c_str()) == false) {
-			ErrorCode::setErrorCode(SIA_ERROR::READ_ERROR);
+			ErrorCode::setErrorCode(IMGA_ERROR::READ_ERROR);
 			return false;
 		}
 		if (checkoutPartition.findImage(pathController.getImage().c_str()) == false) {
-			ErrorCode::setErrorCode(SIA_ERROR::IMAGE_NOT_FOUND);
+			ErrorCode::setErrorCode(IMGA_ERROR::IMAGE_NOT_FOUND);
 			return false;
 		}
 		SharedMTRow row = checkoutPartition.getCurrentRow();
@@ -340,7 +340,7 @@ namespace simplearchive {
 		row->columnAt(DB_DATEADDED) = dateAdded;
 
 		if (checkoutPartition.write(pidxPath.c_str()) == false) {
-			ErrorCode::setErrorCode(SIA_ERROR::WRITE_ERROR);
+			ErrorCode::setErrorCode(IMGA_ERROR::WRITE_ERROR);
 			return false;
 		}
 		return true;
@@ -370,7 +370,7 @@ namespace simplearchive {
 				return true;
 			}
 			if (event == HistoryEvent::Event::CHECKOUT) {
-				ErrorCode::setErrorCode(SIA_ERROR::ALREADY_CHECKED_OUT);
+				ErrorCode::setErrorCode(IMGA_ERROR::ALREADY_CHECKED_OUT);
 				return false;
 			}
 		}
@@ -379,7 +379,7 @@ namespace simplearchive {
 				return true;
 			}
 			if (event == HistoryEvent::Event::CHECKIN) {
-				ErrorCode::setErrorCode(SIA_ERROR::ALREADY_CHECKED_IN);
+				ErrorCode::setErrorCode(IMGA_ERROR::ALREADY_CHECKED_IN);
 				return false;
 			}
 			
@@ -395,10 +395,10 @@ namespace simplearchive {
 			return true;
 		}
 		if (event == HistoryEvent::Event::CHECKOUT) {
-			ErrorCode::setErrorCode(SIA_ERROR::ALREADY_CHECKED_OUT);
+			ErrorCode::setErrorCode(IMGA_ERROR::ALREADY_CHECKED_OUT);
 			return false;
 		}
-		ErrorCode::setErrorCode(SIA_ERROR::ERROR);
+		ErrorCode::setErrorCode(IMGA_ERROR::ERROR);
 		return false;
 	}
 
@@ -409,15 +409,15 @@ namespace simplearchive {
 			return true;
 		}
 		if (event == HistoryEvent::Event::CHECKIN) {
-			ErrorCode::setErrorCode(SIA_ERROR::ALREADY_CHECKED_IN);
+			ErrorCode::setErrorCode(IMGA_ERROR::ALREADY_CHECKED_IN);
 			return false;
 		}
 		if (event == HistoryEvent::Event::UNCHECKOUT) {
-			ErrorCode::setErrorCode(SIA_ERROR::ALREADY_CHECKED_IN);
+			ErrorCode::setErrorCode(IMGA_ERROR::ALREADY_CHECKED_IN);
 			return false;
 		}
 		if (event == HistoryEvent::Event::ADDED) {
-			ErrorCode::setErrorCode(SIA_ERROR::NOT_BEEN_CHECKED_OUT);
+			ErrorCode::setErrorCode(IMGA_ERROR::NOT_BEEN_CHECKED_OUT);
 			return false;
 		}
 		return false;
@@ -428,18 +428,18 @@ namespace simplearchive {
 		PathController pathController(m_primaryIndex.c_str());
 		pathController.splitShort(img);
 		if (pathController.makePath(false) == false) {
-			ErrorCode::setErrorCode(SIA_ERROR::INVALID_PATH);
+			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 			return false;
 		}
 
 		std::string workPath = m_workspace.c_str();
 		if (SAUtils::FileExists(workPath.c_str()) == false) {
-			ErrorCode::setErrorCode(SIA_ERROR::WORKSPACE_NOT_FOUND);
+			ErrorCode::setErrorCode(IMGA_ERROR::WORKSPACE_NOT_FOUND);
 			return false;
 		}
 		workPath += '/'; workPath += pathController.getYear();
 		if (SAUtils::FileExists(workPath.c_str()) == false) {
-			ErrorCode::setErrorCode(SIA_ERROR::INVALID_PATH);
+			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 			return false;
 		}
 		std::string fullPath = workPath;
@@ -449,7 +449,7 @@ namespace simplearchive {
 		//unsigned long size = 0;
 
 		if (SAUtils::FileExists(fullPath.c_str()) == false) {
-			ErrorCode::setErrorCode(SIA_ERROR::IMAGE_NOT_FOUND);
+			ErrorCode::setErrorCode(IMGA_ERROR::IMAGE_NOT_FOUND);
 			return false;
 		}
 		
@@ -461,18 +461,18 @@ namespace simplearchive {
 		PathController pathController(m_primaryIndex.c_str());
 		pathController.splitShort(img);
 		if (pathController.makePath(false) == false) {
-			ErrorCode::setErrorCode(SIA_ERROR::INVALID_PATH);
+			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 			return false;
 		}
 
 		std::string workPath = m_workspace.c_str();
 		if (SAUtils::FileExists(workPath.c_str()) == false) {
-			ErrorCode::setErrorCode(SIA_ERROR::WORKSPACE_NOT_FOUND);
+			ErrorCode::setErrorCode(IMGA_ERROR::WORKSPACE_NOT_FOUND);
 			return false;
 		}
 		workPath += '/'; workPath += pathController.getYear();
 		if (SAUtils::FileExists(workPath.c_str()) == false) {
-			ErrorCode::setErrorCode(SIA_ERROR::INVALID_PATH);
+			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 			return false;
 		}
 		std::string fullPath = workPath;
@@ -482,7 +482,7 @@ namespace simplearchive {
 		unsigned long size = 0;
 		
 		if (SAUtils::fileSize(fullPath.c_str(), &size) == false) {
-			ErrorCode::setErrorCode(SIA_ERROR::INVALID_PATH);
+			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 			return false;
 		}
 		std::string buf;
@@ -493,7 +493,7 @@ namespace simplearchive {
 		CIDKCrc Crc;
 		unsigned int crc = Crc.crc((unsigned char *)buf.c_str(), size);
 		if (crc == versionCRC && (md5str.compare(versionMD5) == 0)) {
-			ErrorCode::setErrorCode(SIA_ERROR::NO_CHANGE_IN_IMAGE);
+			ErrorCode::setErrorCode(IMGA_ERROR::NO_CHANGE_IN_IMAGE);
 			return false;
 		}
 		return true;;
@@ -568,7 +568,7 @@ namespace simplearchive {
 		CheckoutPartition checkoutPartition;
 		std::string filename = checkoutRow.getSchema().getName() + ".csv";
 		if (checkoutPartition.read(chkoutPath.c_str(), filename.c_str()) == false) {
-			if (ErrorCode::getErrorCode() != SIA_ERROR::OPEN_ERROR) {
+			if (ErrorCode::getErrorCode() != IMGA_ERROR::OPEN_ERROR) {
 				// file may not exist
 				return false;
 			}
@@ -592,14 +592,14 @@ namespace simplearchive {
 		PathController pathController(m_primaryIndex.c_str());
 		pathController.splitShort(img);
 		if (pathController.makePath(false) == false) {
-			ErrorCode::setErrorCode(SIA_ERROR::TARGET_NOT_FOUND);
+			ErrorCode::setErrorCode(IMGA_ERROR::TARGET_NOT_FOUND);
 			return HistoryEvent::Event::ERROR;
 		}
 
 		std::string pidxPath = m_primaryIndex.c_str();
 		pidxPath += '/'; pidxPath += pathController.getYear();
 		if (SAUtils::DirExists(pidxPath.c_str()) == false) {
-			ErrorCode::setErrorCode(SIA_ERROR::TARGET_NOT_FOUND);
+			ErrorCode::setErrorCode(IMGA_ERROR::TARGET_NOT_FOUND);
 			return HistoryEvent::Event::ERROR;
 		}
 
@@ -607,7 +607,7 @@ namespace simplearchive {
 		std::string workPath = m_workspace.c_str();
 		workPath += '/'; workPath += pathController.getYear();
 		if (SAUtils::FileExists(workPath.c_str()) == false) {
-			ErrorCode::setErrorCode(SIA_ERROR::WORKSPACE_NOT_FOUND);
+			ErrorCode::setErrorCode(IMGA_ERROR::WORKSPACE_NOT_FOUND);
 			return HistoryEvent::Event::ERROR;
 		}
 
@@ -702,7 +702,7 @@ namespace simplearchive {
 		}
 		
 		if (!log->write(LogDocument::FormatType::Human)) {
-			ErrorCode::setErrorCode(SIA_ERROR::INVALID_PATH);
+			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 			return false;
 		}
 		return true;
@@ -711,7 +711,7 @@ namespace simplearchive {
 	bool CheckoutStatus::processFile(std::shared_ptr<CheckoutStatusLog> log, const std::string yyyymmddFile) {
 		CheckoutPartition checkoutPartition;
 		if (checkoutPartition.read(yyyymmddFile.c_str()) == false) {
-			if (ErrorCode::getErrorCode() != SIA_ERROR::OPEN_ERROR) {
+			if (ErrorCode::getErrorCode() != IMGA_ERROR::OPEN_ERROR) {
 				// file may not exist
 				return false;
 			}
@@ -735,7 +735,7 @@ namespace simplearchive {
 
 		CheckoutPartition checkoutPartition;
 		if (checkoutPartition.read(filepath) == false) {
-			if (ErrorCode::getErrorCode() != SIA_ERROR::OPEN_ERROR) {
+			if (ErrorCode::getErrorCode() != IMGA_ERROR::OPEN_ERROR) {
 				// file may not exist
 				return false;
 			}
@@ -749,12 +749,12 @@ namespace simplearchive {
 	bool CheckoutStatus::historyLog(const char *filepath, LogDocument::FormatType formatType) {
 		std::shared_ptr<CheckoutStatusLog> log;
 		//if ((log = imageHistory->getEntries(filepath)) == nullptr) {
-		//	ErrorCode::setErrorCode(SIA_ERROR::INVALID_PATH);
+		//	ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 		//	return false;
 		//}
 
 		if (!log->write(formatType)) {
-			ErrorCode::setErrorCode(SIA_ERROR::INVALID_PATH);
+			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 			return false;
 		}
 		return true;

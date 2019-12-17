@@ -185,7 +185,7 @@ namespace simplearchive {
 			}
 		}
 		else {
-			ErrorCode::setErrorCode(SIA_ERROR::INVALID_IMAGE_TYPE);
+			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_IMAGE_TYPE);
 			return false;
 		}
 		
@@ -252,7 +252,7 @@ namespace simplearchive {
 			}
 		}
 		else {
-			ErrorCode::setErrorCode(SIA_ERROR::INVALID_IMAGE_TYPE);
+			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_IMAGE_TYPE);
 			return false;
 		}
 

@@ -113,7 +113,7 @@ bool AdminApp::Show() {
 		bool found = false;
 		homePath = SAUtils::GetPOSIXEnv("USERPROFILE");
 		if (homePath.empty() == true || homePath.length() == 0) {
-			printf("SIA Unable to start? Cannot read user profile.");
+			printf("ImgArchive Unable to start? Cannot read user profile.");
 			return false;
 		}
 		else {
@@ -126,7 +126,7 @@ bool AdminApp::Show() {
 		if (found == false) {
 			homePath = SAUtils::GetPOSIXEnv("ProgramData");
 			if (homePath.empty() == true || homePath.length() == 0) {
-				printf("SIA Unable to start? Cannot read all users profile.");
+				printf("ImgArchive Unable to start? Cannot read all users profile.");
 				return false;
 			}
 			homePath += "/IDK Software/ImageArchive1.0";
@@ -137,7 +137,7 @@ bool AdminApp::Show() {
 		}
 	}
 	if (found = false) {
-		printf("SIA Unable to start? No archive found in the default location or"
+		printf("ImgArchive Unable to start? No archive found in the default location or"
 			" the environment variable IMGARCHIVE_HOME not set.\nUse siaadmin to initalise an archive.\n");
 		
 		return false;
@@ -145,7 +145,7 @@ bool AdminApp::Show() {
 	std::string configfile = homePath + "/config/" + "config.dat";
 	if (SAUtils::FileExists(configfile.c_str()) == false) {
 		
-		printf("SIA Unable to start? No config.dat file found in the default location or"
+		printf("ImgArchive Unable to start? No config.dat file found in the default location or"
 			" the environment variable IMGARCHIVE_HOME not set.\nUse siaadmin to initalise an archive.\n");
 		return false;
 	}
@@ -466,7 +466,7 @@ bool AdminApp::initaliseConfig() {
 		else {
 			homePath = SAUtils::GetPOSIXEnv("ProgramData");
 			if (homePath.empty() == true || homePath.length() == 0) {
-				printf("SIA Unable to start? Cannot read user profile.");
+				printf("ImgArchiveUnable to start? Cannot read user profile.");
 				setError(12, "ImgArchive Unable to start? Cannot read user profile.");
 				return false;
 			}
@@ -480,8 +480,8 @@ bool AdminApp::initaliseConfig() {
 			if (found == false) {
 				homePath = SAUtils::GetPOSIXEnv("USERPROFILE");
 				if (homePath.empty() == true || homePath.length() == 0) {
-					printf("SIA Unable to start? Cannot read all users profile.");
-					setError(12, "SIA Unable to start? Cannot read all users profile.");
+					printf("ImgArchive Unable to start? Cannot read all users profile.");
+					setError(12, "ImgArchiveUnable to start? Cannot read all users profile.");
 					return false;
 				}
 				homePath += DEFAULT_DATA_CONFIG_PATH;
@@ -495,8 +495,8 @@ bool AdminApp::initaliseConfig() {
 		// Under Linux look for the HKEY_LOCAL_MACHINE enviroment variable
 		homePath = SAUtils::GetPOSIXEnv("IMGARCHIVE_HOME");
 		if (homePath.empty() == true || homePath.length() == 0) {
-			printf("SIA Unable to start? Cannot read user profile.");
-			setError(12, "SIA Unable to start? Cannot read user profile.");
+			printf("ImgArchive Unable to start? Cannot read user profile.");
+			setError(12, "ImgArchive Unable to start? Cannot read user profile.");
 			return false;
 		}
 		found = true;
@@ -568,8 +568,8 @@ bool AdminApp::initaliseHomePath() {
 		bool found = false;
 		homePath = SAUtils::GetPOSIXEnv("ProgramData");
 		if (homePath.empty() == true || homePath.length() == 0) {
-			printf("SIA Unable to start? Cannot read user profile.");
-			setError(12, "SIA Unable to start? Cannot read user profile.");
+			printf("ImgArchive Unable to start? Cannot read user profile.");
+			setError(12, "ImgArchive Unable to start? Cannot read user profile.");
 			return false;
 		}
 		else {
@@ -582,8 +582,8 @@ bool AdminApp::initaliseHomePath() {
 		if (found == false) {
 			homePath = SAUtils::GetPOSIXEnv("USERPROFILE");
 			if (homePath.empty() == true || homePath.length() == 0) {
-				printf("SIA Unable to start? Cannot read all users profile.");
-				setError(12, "SIA Unable to start? Cannot read all users profile.");
+				printf("ImgArchive Unable to start? Cannot read all users profile.");
+				setError(12, "ImgArchive Unable to start? Cannot read all users profile.");
 				return false;
 			}
 			homePath += "/IDK Software/ImageArchive1.0";

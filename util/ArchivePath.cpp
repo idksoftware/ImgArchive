@@ -1,7 +1,7 @@
 /*
  * ArchivePath.cpp
  *
- * The SIA consists of two main archives Master
+ * The ImgArchive consists of two main archives Master
  *  Created on: 23 Nov 2015
  *      Author: FergusonI
  */

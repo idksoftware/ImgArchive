@@ -203,7 +203,7 @@ void CSVDatabase::add(MetadataObject &metadataObject, const char *relpath) {
 	MetadataPartition metadataPartition;
 	std::string filename = metadataPartition.getSchema().getName() + ".csv";
 	if (metadataPartition.read(fullPath.c_str(), filename.c_str()) == false) {
-		if (ErrorCode::getErrorCode() != SIA_ERROR::OPEN_ERROR) {
+		if (ErrorCode::getErrorCode() != IMGA_ERROR::OPEN_ERROR) {
 			// file may not exist
 			throw std::exception();
 		}
@@ -243,7 +243,7 @@ SharedMTRow CSVDatabase::get(const char *name, const char *path) {
 	std::string rootPath = pathController.getRoot();
 	std::string imagename = pathController.getImage();
 	if (metadataPartition.read(rootPath.c_str(), filename.c_str()) == false) {
-		if (ErrorCode::getErrorCode() != SIA_ERROR::OPEN_ERROR) {
+		if (ErrorCode::getErrorCode() != IMGA_ERROR::OPEN_ERROR) {
 			// file may not exist
 			throw std::exception();
 		}

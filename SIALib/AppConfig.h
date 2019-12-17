@@ -231,17 +231,14 @@ namespace simplearchive {
 		const char *getExternalExifTool();
 		/// @brief gets external Command line
 		const char *getExternalCommandLine();
-		/// @brief Gets path to the Exif Map files. For example the Exiftool map
-		/// that maps exiftool keywords to Simple Archive keywords.
-		bool isExternalExifToolEnabled() { return m_externalExifToolEnabled; }
+
 		const char *getExifMapPath();
 		const char *getExifMapFile();
 		const char *getExifFileDelim();
 		const char *getConfigPath();
 		/// @brief Gets home path. This is the root path all default paths are made.
 		const char *getHomePath();
-		bool isMasterCatalogueEnabled();
-		bool isMasterWWWCatalogueEnabled();
+
 		const char *getMasterCataloguePath();
 		const char *getMasterWWWCataloguePath();
 		const char *getDatabasePath();
@@ -259,8 +256,7 @@ namespace simplearchive {
 		
 
 		
-		bool isBackup1Enabled() { return m_backup1Enabled; };
-		bool isBackup2Enabled() { return m_backup2Enabled; };
+
 
 		
 
@@ -280,6 +276,16 @@ namespace simplearchive {
 		bool isSilent() const;
 		bool isQuiet() const;
 		bool isVerbose() const;
+		bool isBackup1Enabled() { return m_backup1Enabled; };
+		bool isBackup2Enabled() { return m_backup2Enabled; };
+		bool isMasterCatalogueEnabled();
+		bool isMasterWWWCatalogueEnabled();
+
+		bool isWorkspaceEnabled() { return m_workspaceEnabled; }
+		/// @brief Gets path to the Exif Map files. For example the Exiftool map
+		/// that maps exiftool keywords to Simple Archive keywords.
+		bool isExternalExifToolEnabled() { return m_externalExifToolEnabled; }
+
 		const char *getLogLevel();
 		const char *getConsoleLevel();
 

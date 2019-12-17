@@ -61,7 +61,7 @@ namespace simplearchive {
 		int ret = access(path, 0);
 #endif
 		if (ret == -1) {
-			ErrorCode::setErrorCode(SIA_ERROR::FILE_NOT_FOUND);
+			ErrorCode::setErrorCode(IMGA_ERROR::FILE_NOT_FOUND);
 			return false;
 		}
 		return true;
@@ -89,7 +89,7 @@ namespace simplearchive {
 		year += dateStr[3];
 
 		if (year.find_first_not_of("0123456789") != std::string::npos) {
-			ErrorCode::setErrorCode(SIA_ERROR::INVALID_PATH);
+			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 			return false;
 		}
 		return true;
@@ -103,7 +103,7 @@ namespace simplearchive {
 			return false;
 		}
 		if (dateStr.find_first_of("-") != 4 || dateStr.find_first_of("-", 5) != 7)  {
-			ErrorCode::setErrorCode(SIA_ERROR::INVALID_PATH);
+			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 			return false;
 		}
 		std::string year;
@@ -113,7 +113,7 @@ namespace simplearchive {
 		year += dateStr[3];
 
 		if (year.find_first_not_of("0123456789") != std::string::npos) {
-			ErrorCode::setErrorCode(SIA_ERROR::INVALID_PATH);
+			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 			return false;
 		}
 		std::string  mon;
@@ -121,7 +121,7 @@ namespace simplearchive {
 		mon += dateStr[6];
 
 		if (mon.find_first_not_of("0123456789") != std::string::npos) {
-			ErrorCode::setErrorCode(SIA_ERROR::INVALID_PATH);
+			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 			return false;
 		}
 		std::string  day;
@@ -129,7 +129,7 @@ namespace simplearchive {
 		day += dateStr[9];
 
 		if (day.find_first_not_of("0123456789") != std::string::npos) {
-			ErrorCode::setErrorCode(SIA_ERROR::INVALID_PATH);
+			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 			return false;
 		}
 		
@@ -208,7 +208,7 @@ namespace simplearchive {
 		std::string tmpPath = path;
 		int pos = 0;
 		if ((pos = tmpPath.find_first_of("0123456789")) == std::string::npos) {
-			ErrorCode::setErrorCode(SIA_ERROR::INVALID_PATH);
+			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 			return false;
 		}
 		if (pos == 0) { // first char a number
@@ -219,7 +219,7 @@ namespace simplearchive {
 			m_year = m_relativePath.substr(0, 4);
 			m_yearday = m_relativePath.substr(5, tmpPath.length() - 5);
 			if (validateYYMMDD(m_yearday.c_str()) == false) {
-				ErrorCode::setErrorCode(SIA_ERROR::INVALID_PATH);
+				ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 				return false;
 			}
 		}
@@ -239,14 +239,14 @@ namespace simplearchive {
 		pos = m_root.find_last_of("\\/");
 		std::string yymmdd = m_root.substr(pos + 1, m_fullPath.length() - (pos + 1));
 		if (PathController::validateYYMMDD(yymmdd.c_str()) == false) {
-			ErrorCode::setErrorCode(SIA_ERROR::INVALID_PATH);
+			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 			return false;
 		}
 		m_root = m_fullPath.substr(0, pos);
 		pos = m_root.find_last_of("\\/");
 		std::string yyyy = m_root.substr(pos + 1, m_fullPath.length() - (pos + 1));
 		if (yyyy.find_first_not_of("0123456789") != std::string::npos) {
-			ErrorCode::setErrorCode(SIA_ERROR::INVALID_PATH);
+			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 			return false;
 		}
 		m_yearday = yymmdd;

@@ -109,7 +109,7 @@ bool CheckWorkspaceFile::CheckOut(const char *address) {
 	std::string fullPath = getFullAddress(address);
 	CheckFileItem checkFileItem(fullPath.c_str());
 	if (checkFileItem.read() == false) {
-		ErrorCode::setErrorCode(SIA_ERROR::READ_ERROR);
+		ErrorCode::setErrorCode(IMGA_ERROR::READ_ERROR);
 		return true;
 	}
 	std::string addr = address;
@@ -117,7 +117,7 @@ bool CheckWorkspaceFile::CheckOut(const char *address) {
 	pathcontroller.splitShort(address);
 	checkFileItem.check(pathcontroller.getImage().c_str());
 	if (checkFileItem.write() == false) {
-		ErrorCode::setErrorCode(SIA_ERROR::WRITE_ERROR);
+		ErrorCode::setErrorCode(IMGA_ERROR::WRITE_ERROR);
 		return true;
 	}
 	return true;
@@ -127,7 +127,7 @@ bool CheckMasterFile::CheckOut(const char *address) {
 	std::string fullPath = getFullAddress(address);
 	CheckFileItem checkFileItem(fullPath.c_str());
 	if (checkFileItem.read() == false) {
-		ErrorCode::setErrorCode(SIA_ERROR::READ_ERROR);
+		ErrorCode::setErrorCode(IMGA_ERROR::READ_ERROR);
 		return true;
 	}
 	std::string addr = address;
@@ -135,7 +135,7 @@ bool CheckMasterFile::CheckOut(const char *address) {
 	pathcontroller.splitShort(address);
 	checkFileItem.check(pathcontroller.getImage().c_str());
 	if (checkFileItem.write() == false) {
-		ErrorCode::setErrorCode(SIA_ERROR::WRITE_ERROR);
+		ErrorCode::setErrorCode(IMGA_ERROR::WRITE_ERROR);
 		return true;
 	}
 	return true;
@@ -144,14 +144,14 @@ bool CheckWorkspaceFile::CheckIn(const char *address) {
 	std::string fullPath = getFullAddress(address);
 	CheckFileItem checkFileItem(fullPath.c_str());
 	if (checkFileItem.read() == false) {
-		ErrorCode::setErrorCode(SIA_ERROR::READ_ERROR);
+		ErrorCode::setErrorCode(IMGA_ERROR::READ_ERROR);
 		return true;
 	}
 	std::string addr = address;
 	std::string filename = addr.substr(14, addr.length() - 14);
 	checkFileItem.uncheck(filename.c_str());
 	if (checkFileItem.write() == false) {
-		ErrorCode::setErrorCode(SIA_ERROR::WRITE_ERROR);
+		ErrorCode::setErrorCode(IMGA_ERROR::WRITE_ERROR);
 		return true;
 	}
 	return true;
@@ -161,14 +161,14 @@ bool CheckMasterFile::CheckIn(const char *address) {
 	std::string fullPath = getFullAddress(address);
 	CheckFileItem checkFileItem(fullPath.c_str());
 	if (checkFileItem.read() == false) {
-		ErrorCode::setErrorCode(SIA_ERROR::READ_ERROR);
+		ErrorCode::setErrorCode(IMGA_ERROR::READ_ERROR);
 		return true;
 	}
 	std::string addr = address;
 	std::string filename = addr.substr(14, addr.length() - 14);
 	checkFileItem.uncheck(filename.c_str());
 	if (checkFileItem.write() == false) {
-		ErrorCode::setErrorCode(SIA_ERROR::WRITE_ERROR);
+		ErrorCode::setErrorCode(IMGA_ERROR::WRITE_ERROR);
 		return true;
 	}
 	return true;
@@ -218,7 +218,7 @@ bool CDCheckInOutManager::CheckOut(DB db, const char * address)
 	std::string fullPath = getFullAddress(db, address);
 	CheckFileItem checkFileItem(fullPath.c_str());
 	if (checkFileItem.read() == false) {
-		ErrorCode::setErrorCode(SIA_ERROR::READ_ERROR);
+		ErrorCode::setErrorCode(IMGA_ERROR::READ_ERROR);
 		return false;
 	}
 	std::string addr = address;
@@ -226,7 +226,7 @@ bool CDCheckInOutManager::CheckOut(DB db, const char * address)
 	pathcontroller.splitShort(address);
 	checkFileItem.check(pathcontroller.getImage().c_str());
 	if (checkFileItem.write() == false) {
-		ErrorCode::setErrorCode(SIA_ERROR::WRITE_ERROR);
+		ErrorCode::setErrorCode(IMGA_ERROR::WRITE_ERROR);
 		return false;
 	}
 	return true;
@@ -238,14 +238,14 @@ bool CDCheckInOutManager::CheckIn(DB db, const char * address)
 	std::string fullPath = getFullAddress(db, address);
 	CheckFileItem checkFileItem(fullPath.c_str());
 	if (checkFileItem.read() == false) {
-		ErrorCode::setErrorCode(SIA_ERROR::READ_ERROR);
+		ErrorCode::setErrorCode(IMGA_ERROR::READ_ERROR);
 		return false;
 	}
 	std::string addr = address;
 	std::string filename = addr.substr(14, addr.length() - 14);
 	checkFileItem.uncheck(filename.c_str());
 	if (checkFileItem.write() == false) {
-		ErrorCode::setErrorCode(SIA_ERROR::WRITE_ERROR);
+		ErrorCode::setErrorCode(IMGA_ERROR::WRITE_ERROR);
 		return false;
 	}
 	return true;

@@ -124,7 +124,7 @@ namespace simplearchive {
 			m_yearday = imagePath.substr(0, 10);
 			if (imagePath.length() <= 10)  {
 				// no image
-				ErrorCode::setErrorCode(SIA_ERROR::NO_IMAGE);
+				ErrorCode::setErrorCode(IMGA_ERROR::NO_IMAGE);
 				return false;
 			}
 			m_image = imagePath.substr(11, imagePath.length() - 9);
@@ -136,7 +136,7 @@ namespace simplearchive {
 				m_root = rootPath;
 				return true;
 			}
-			ErrorCode::setErrorCode(SIA_ERROR::INVALID_PATH);
+			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 			return false;
 		}
 
@@ -168,7 +168,7 @@ namespace simplearchive {
 			}
 			else {
 				m_isValid = false;
-				ErrorCode::setErrorCode(SIA_ERROR::INVALID_PATH);
+				ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 			}
 			m_fullPath = path;
 			return m_isValid;
@@ -192,7 +192,7 @@ namespace simplearchive {
 				}
 				else {
 					m_isValid = false;
-					ErrorCode::setErrorCode(SIA_ERROR::INVALID_PATH);
+					ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 				}
 			} 
 			m_fullPath = path;

@@ -158,7 +158,7 @@ namespace simplearchive {
 
 		if (pathController.makeRelativePath(dbImage) == false) {
 			logger.log(LOG_OK, CLogger::Level::FATAL, "Invalid path: \"%s\"?", dbImage);
-			ErrorCode::setErrorCode(SIA_ERROR::IMAGE_NOT_FOUND);
+			ErrorCode::setErrorCode(IMGA_ERROR::IMAGE_NOT_FOUND);
 			return false;
 		}
 
@@ -284,7 +284,7 @@ namespace simplearchive {
 
 			if (pathController.makeRelativePath(dbImage) == false) {
 				logger.log(LOG_OK, CLogger::Level::FATAL, "Invalid path: \"%s\"?", dbImage);
-				ErrorCode::setErrorCode(SIA_ERROR::IMAGE_NOT_FOUND);
+				ErrorCode::setErrorCode(IMGA_ERROR::IMAGE_NOT_FOUND);
 				return false;
 			}
 			std::string from = path.c_str();
@@ -684,6 +684,8 @@ namespace simplearchive {
 			logger.log(LOG_OK, CLogger::Level::INFO, "Backup 2 not enabled");
 		}
 		*/
+
+
 		PrimaryIndexPath& primaryIndexPath = ArchivePath::getPrimaryIndex();
 		std::string path = ArchivePath::getPathToHome() + PRIMARY_INDEX_PATH;
 		primaryIndexPath.setRepositoryPath(path);
@@ -693,11 +695,11 @@ namespace simplearchive {
 				logger.log(LOG_OK, CLogger::Level::FATAL, "Failed to initalise the primary index", ArchivePath::getBackup2Path().c_str());
 				return false;
 			}
-
 			if (SAUtils::DirExists(ArchivePath::getPathToWorkspace().c_str()) == false) {
 				logger.log(LOG_OK, CLogger::Level::FATAL, "Workspace folder: \"%s\" not accessable?", ArchivePath::getPathToWorkspace().c_str());
 				return false;
 			}
+
 			if (ImagePath::settupMainArchiveFolders(ArchivePath::getPathToWorkspace().c_str(), ArchivePath::getMasterPath().c_str(), ArchivePath::getDerivativePath().c_str(), ArchivePath::getPathToHome().c_str()) == false) {
 
 				return false;
@@ -1298,19 +1300,19 @@ namespace simplearchive {
 			
 		if (m_ArchiveObject->checkoutFile(path.c_str(), "", false) == false) {
 			switch (ErrorCode::getErrorCode()) {
-			case SIA_ERROR::INVALID_PATH:
+			case IMGA_ERROR::INVALID_PATH:
 				//m_indexActionReporter->add(ReporterItem::Status::Error, "Failed to check out image \"%s\" %s", path.c_str(), ErrorCode::toString(ErrorCode::getErrorCode()));
 				logger.status(LOG_UNABLE_TO_CHECKOUT_GENERAL, ReporterEvent::Status::Warning, "Failed to check out image \"%s\" Reason: %s", path.c_str(), ErrorCode::toString(ErrorCode::getErrorCode()));
 
 				break;
-			case SIA_ERROR::ALREADY_CHECKED_OUT:
+			case IMGA_ERROR::ALREADY_CHECKED_OUT:
 				//m_indexActionReporter->add(ReporterItem::Status::Warning, "Failed to check out image \"%s\" %s", path.c_str(), ErrorCode::toString(ErrorCode::getErrorCode()));
 				logger.status(LOG_UNABLE_TO_CHECKOUT_GENERAL, ReporterEvent::Status::Warning, "Failed to check out image \"%s\" Reason: %s", path.c_str(), ErrorCode::toString(ErrorCode::getErrorCode()));
 				return true;
-			case SIA_ERROR::WILL_OVERWRITE_CHANGES:
+			case IMGA_ERROR::WILL_OVERWRITE_CHANGES:
 				logger.status(LOG_UNABLE_TO_CHECKOUT_GENERAL, ReporterEvent::Status::Warning, "Unable to checkout: \"%s\" Reason: %s", path.c_str(), ErrorCode::toString(ErrorCode::getErrorCode()));
 				return true;
-			case SIA_ERROR::CHANGE_MAY_BE_LOST:
+			case IMGA_ERROR::CHANGE_MAY_BE_LOST:
 				logger.status(LOG_UNABLE_TO_CHECKOUT_GENERAL, ReporterEvent::Status::Warning, "checked out but not copied\"%s\" Error: %s?", path.c_str(), ErrorCode::toString(ErrorCode::getErrorCode()));
 				return true;
 			}
@@ -1330,25 +1332,25 @@ namespace simplearchive {
 		
 		if (m_ArchiveObject->checkinFile(path.c_str(), "", false) == false) {
 			switch (ErrorCode::getErrorCode()) {
-			case SIA_ERROR::INVALID_PATH:
+			case IMGA_ERROR::INVALID_PATH:
 				//m_indexActionReporter->add(ReporterItem::Status::Error, "Failed to check out image \"%s\" %s", path.c_str(), ErrorCode::toString(ErrorCode::getErrorCode()));
 				logger.status(LOG_UNABLE_TO_CHECKIN_GENERAL, ReporterEvent::Status::Warning, "Images \"%s\" not checked in? Reason: %s", path.c_str(), ErrorCode::toString(ErrorCode::getErrorCode()));
 
 				break;
-			case SIA_ERROR::ALREADY_CHECKED_IN:
+			case IMGA_ERROR::ALREADY_CHECKED_IN:
 				//m_indexActionReporter->add(ReporterItem::Status::Warning, "Failed to check out image \"%s\" %s", path.c_str(), ErrorCode::toString(ErrorCode::getErrorCode()));
 				logger.status(LOG_UNABLE_TO_CHECKIN_GENERAL, ReporterEvent::Status::Warning, "Images \"%s\" not checked in? Reason: %s", path.c_str(), ErrorCode::toString(ErrorCode::getErrorCode()));
 				return true;
-			case SIA_ERROR::ALREADY_CHECKED_IN_NO_CHANGES:
+			case IMGA_ERROR::ALREADY_CHECKED_IN_NO_CHANGES:
 				logger.status(LOG_UNABLE_TO_CHECKIN_GENERAL, ReporterEvent::Status::Warning, "Images \"%s\"? not checked in? Reason: %s", path.c_str(), ErrorCode::toString(ErrorCode::getErrorCode()));
 				return true;
-			case SIA_ERROR::ALREADY_CHECKED_IN_CHANGES:
+			case IMGA_ERROR::ALREADY_CHECKED_IN_CHANGES:
 				logger.status(LOG_UNABLE_TO_CHECKIN_GENERAL, ReporterEvent::Status::Warning, "Images \"%s\"? not checked in? Reason: %s", path.c_str(), ErrorCode::toString(ErrorCode::getErrorCode()));
 				return true;
-			case SIA_ERROR::NO_CHANGE_IN_IMAGE:
+			case IMGA_ERROR::NO_CHANGE_IN_IMAGE:
 				logger.status(LOG_UNABLE_TO_CHECKIN_GENERAL, ReporterEvent::Status::Warning, "File not copied \"%s\"? Error: %s", path.c_str(), ErrorCode::toString(ErrorCode::getErrorCode()));
 				return true;
-			case SIA_ERROR::DUPLICATE_IMAGE:
+			case IMGA_ERROR::DUPLICATE_IMAGE:
 				logger.status(LOG_UNABLE_TO_CHECKIN_GENERAL, ReporterEvent::Status::Warning, "Images \"%s\" not checked in? Reason: %s", path.c_str(), ErrorCode::toString(ErrorCode::getErrorCode()));
 				return true;	
 			}
@@ -1368,12 +1370,12 @@ namespace simplearchive {
 		
 		if (m_ArchiveObject->uncheckoutFile(path.c_str(), "", false) == false) {
 			switch (ErrorCode::getErrorCode()) {
-			case SIA_ERROR::INVALID_PATH:
+			case IMGA_ERROR::INVALID_PATH:
 				//m_indexActionReporter->add(ReporterItem::Status::Error, "Failed to check out image \"%s\" %s", path.c_str(), ErrorCode::toString(ErrorCode::getErrorCode()));
 				logger.status(LOG_UNABLE_TO_CHECKIN_GENERAL, ReporterEvent::Status::Warning, "Images \"%s\" not checked in? Reason: %s", path.c_str(), ErrorCode::toString(ErrorCode::getErrorCode()));
 
 				break;
-			case SIA_ERROR::ALREADY_CHECKED_IN:
+			case IMGA_ERROR::ALREADY_CHECKED_IN:
 				//m_indexActionReporter->add(ReporterItem::Status::Warning, "Failed to check out image \"%s\" %s", path.c_str(), ErrorCode::toString(ErrorCode::getErrorCode()));
 				logger.status(LOG_UNABLE_TO_CHECKIN_GENERAL, ReporterEvent::Status::Warning, "Images \"%s\" not checked in? Reason: %s", path.c_str(), ErrorCode::toString(ErrorCode::getErrorCode()));
 				return true;
@@ -1435,7 +1437,7 @@ namespace simplearchive {
 		bool alreadyCheckedIn = false;
 		if (!force) {
 			if (checkoutStatus.isCheckedOut(filepath) == false) {
-				if (ErrorCode::getErrorCode() == SIA_ERROR::ALREADY_CHECKED_IN || ErrorCode::getErrorCode() == SIA_ERROR::NOT_BEEN_CHECKED_OUT) {
+				if (ErrorCode::getErrorCode() == IMGA_ERROR::ALREADY_CHECKED_IN || ErrorCode::getErrorCode() == IMGA_ERROR::NOT_BEEN_CHECKED_OUT) {
 					// Needs chacking for changes beween the one in the workspace and the one checked in
 					// even if is already chected in, the user needs to if this is the case.
 					alreadyCheckedIn = true;
@@ -1464,7 +1466,7 @@ namespace simplearchive {
 		if (!force) {
 			if (checkoutStatus.isChanged(filepath, versionControl.getCRC(), versionControl.getMD5().c_str()) == false) {
 				if (alreadyCheckedIn) {
-					ErrorCode::setErrorCode(SIA_ERROR::ALREADY_CHECKED_IN_NO_CHANGES);
+					ErrorCode::setErrorCode(IMGA_ERROR::ALREADY_CHECKED_IN_NO_CHANGES);
 					return false; // Just return now as not changes found.
 				}
 				// not checked in but no changes so just change state to checked-in
@@ -1477,7 +1479,7 @@ namespace simplearchive {
 			}
 			else {
 				if (alreadyCheckedIn) {
-					ErrorCode::setErrorCode(SIA_ERROR::ALREADY_CHECKED_IN_CHANGES);
+					ErrorCode::setErrorCode(IMGA_ERROR::ALREADY_CHECKED_IN_CHANGES);
 					logger.log(LOG_UNABLE_TO_CHECKOUT_GENERAL, CLogger::Level::WARNING, "Already checked in: \"%s\" Reason: %s", filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
 					return false; // changes found.
 				}
@@ -1619,7 +1621,7 @@ namespace simplearchive {
 				//m_imageIndex->getData(BasicMetadata.getCrc());
 				logger.log(LOG_OK, CLogger::Level::INFO, "Dup %s", fileinfo.getName().c_str());
 				// reject image from import
-				ErrorCode::setErrorCode(SIA_ERROR::DUPLICATE_IMAGE);				
+				ErrorCode::setErrorCode(IMGA_ERROR::DUPLICATE_IMAGE);				
 				return false;
 			}
 		}
@@ -1633,14 +1635,14 @@ namespace simplearchive {
 				ImageId imageId = imageIndex.findDup(fileinfo.getCrc());
 				if (imageId.getName().empty()) {
 					logger.log(LOG_OK, CLogger::Level::ERR, "Image indexing corrupt %s", fileinfo.getName().c_str());
-					ErrorCode::setErrorCode(SIA_ERROR::IMAGE_INDEXING_CORRUPT);
+					ErrorCode::setErrorCode(IMGA_ERROR::IMAGE_INDEXING_CORRUPT);
 					throw std::exception();
 				}
 				else {
 					importJournal.update(fileinfo.getPath().c_str(), ImportJournal::Result::Duplicate, imageId.getLocation().c_str());
 					if (ImportJournalManager::save() == false) {
 						logger.log(LOG_OK, CLogger::Level::FATAL, "Unable to save Journal File");
-						ErrorCode::setErrorCode(SIA_ERROR::UNABLE_TO_SAVE_JOUNAL);
+						ErrorCode::setErrorCode(IMGA_ERROR::UNABLE_TO_SAVE_JOUNAL);
 						return false;
 					}
 				}
@@ -1660,7 +1662,7 @@ namespace simplearchive {
 						importJournal.update(fileinfo.getPath().c_str(), ImportJournal::Result::Duplicate, imageId.getLocation().c_str());
 						if (ImportJournalManager::save() == false) {
 							logger.log(LOG_OK, CLogger::Level::FATAL, "Unable to save Journal File");
-							ErrorCode::setErrorCode(SIA_ERROR::UNABLE_TO_SAVE_JOUNAL);
+							ErrorCode::setErrorCode(IMGA_ERROR::UNABLE_TO_SAVE_JOUNAL);
 							return false;
 						}
 					}

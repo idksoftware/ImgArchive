@@ -9,7 +9,7 @@
 #include "EnvFunc.h"
 
 #ifdef _WIN32
-bool SetEnv(const char *szSIAHome, bool all)
+bool SetEnv(const char *szIAHome, bool all)
 {
     HKEY   hkey;
     DWORD  dwDisposition;
@@ -29,9 +29,9 @@ bool SetEnv(const char *szSIAHome, bool all)
     if(result == ERROR_SUCCESS)
     {
         dwType = REG_SZ;
-        dwSize = strlen(szSIAHome)+1;
+        dwSize = strlen(szIAHome)+1;
         LONG setResult = RegSetValueEx(hkey, TEXT("IMGARCHIVE_HOME"), 0, dwType,
-        (PBYTE)szSIAHome, dwSize);
+        (PBYTE)szIAHome, dwSize);
         RegCloseKey(hkey);
         return setResult == ERROR_SUCCESS;
     }
@@ -42,7 +42,7 @@ bool SetEnv(const char *szSIAHome, bool all)
 }
 
 #ifdef XXXXXX 
-bool GetEnv(const char *szSIAHome, std::string &resultStr, bool all)
+bool GetEnv(const char *szIAHome, std::string &resultStr, bool all)
 {
 	HKEY   hkey;
 	DWORD  dwDisposition;
@@ -97,7 +97,7 @@ bool GetEnv(std::string& value, bool all) {
 }
 
 #else
-bool SetEnv(const char *szSIAHome)
+bool SetEnv(const char *szIAHome)
 {
 }
 #endif

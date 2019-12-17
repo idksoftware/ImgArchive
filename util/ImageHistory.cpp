@@ -277,7 +277,7 @@ bool ImageHistory::writeLog(HistoryItem &item, const char *path) {
 	std::ofstream file;
 	file.open(path, std::ios::out | std::ios::app);
 	if (file.is_open() == false) {
-		ErrorCode::setErrorCode(SIA_ERROR::INVALID_PATH);
+		ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 		return false;
 	}
 	file << item.toString().c_str() << '\n';

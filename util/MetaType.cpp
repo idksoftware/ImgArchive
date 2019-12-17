@@ -625,7 +625,7 @@ bool MTRow::join(MTRow &otherRow) {
 			MTColumn& otherColumn = otherRow.columnAt(otherIndex);
 			if (thisColumn.getInfo().getType() != otherColumn.getInfo().getType()) {
 				printf("Invalid Types");
-				ErrorCode::setErrorCode(SIA_ERROR::TYPE_MISMATCH);
+				ErrorCode::setErrorCode(IMGA_ERROR::TYPE_MISMATCH);
 			}
 			if (!otherColumn.isNull()) {
 				thisColumn.set(otherColumn);
@@ -658,7 +658,7 @@ bool MTRow::join(const MTRow &otherRow) {
 			MTColumn& otherColumn = otherRow.columnAt(otherIndex);
 			if (thisColumn.getInfo().getType() != otherColumn.getInfo().getType()) {
 				printf("Invalid Types");
-				ErrorCode::setErrorCode(SIA_ERROR::TYPE_MISMATCH);
+				ErrorCode::setErrorCode(IMGA_ERROR::TYPE_MISMATCH);
 			}
 			if (!otherColumn.isNull()) {
 				thisColumn.set(otherColumn);
@@ -712,14 +712,14 @@ bool MTTable::read(const char *fullpath) {
 	
 	std::ifstream file(fullpath);
 	if (file.is_open() == false) {
-		ErrorCode::setErrorCode(SIA_ERROR::OPEN_ERROR);
+		ErrorCode::setErrorCode(IMGA_ERROR::OPEN_ERROR);
 		return false;
 	}
 
 	for (std::string line; std::getline(file, line);) {
 		if (line.length() > 0) {
 			if (fromString(line) == false) {
-				ErrorCode::setErrorCode(SIA_ERROR::READ_ERROR);
+				ErrorCode::setErrorCode(IMGA_ERROR::READ_ERROR);
 				return false;
 			}
 		}
@@ -746,7 +746,7 @@ bool MTTable::write(const char *fullpath) {
 	
 	std::ofstream file(fullpath, std::ofstream::trunc);
 	if (file.is_open() == false) {
-		ErrorCode::setErrorCode(SIA_ERROR::OPEN_ERROR);
+		ErrorCode::setErrorCode(IMGA_ERROR::OPEN_ERROR);
 		return false;
 	}
 	std::stringstream s;
