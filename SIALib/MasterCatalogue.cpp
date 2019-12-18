@@ -72,6 +72,7 @@ namespace simplearchive {
 						m_systemHistoryMaker(std::make_unique<SystemHistoryMaker>()),
 						m_inputJournalMaker(std::make_unique<ImportJournalMaker>())
 	{
+		/* Testing only
 		m_fullSize = true;
 		m_preview1 = true;
 		m_preview2 = true;
@@ -83,7 +84,7 @@ namespace simplearchive {
 		m_filePreview2 = true;
 		m_filePreview3 = true;
 		m_fileThumbnail = true;
-
+		*/
 	}
 
 

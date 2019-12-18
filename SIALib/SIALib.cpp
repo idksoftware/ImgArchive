@@ -231,6 +231,33 @@ namespace simplearchive {
 		logger.log(LOG_STARTING, CLogger::Level::SUMMARY, "Application starting at %s", date.Print().c_str());
 		logger.log(LOG_OK, CLogger::Level::INFO, "Home path is \"%s\"", config.getHomePath());
 
+		if (ImageExtentions::setExtentionsFilePath(config.getConfigPath()) == false) {
+			logger.log(LOG_OK, CLogger::Level::INFO, "Unable to find image extensions file path: \"%s\"", config.getConfigPath());
+			return -1;
+		}
+		std::string temp = config.getWorkspacePath();
+		if (SAUtils::DirExists(temp.c_str()) == false) {
+			if (SAUtils::mkDir(temp.c_str()) == false) {
+				logger.log(LOG_OK, CLogger::Level::FATAL, "Cannot create Workspace at location: \"%s\"", temp.c_str());
+				return -1;
+			}
+		}
+
+		if (SAUtils::DirExists(temp.c_str()) == false) {
+			logger.log(LOG_OK, CLogger::Level::INFO, "Hidden .sia folder not found at location: \"%s\"", temp.c_str());
+
+			if (SAUtils::mkDir(temp.c_str()) == false) {
+				logger.log(LOG_OK, CLogger::Level::FATAL, "Cannot create Hidden .sia folder at location: \"%s\"", temp.c_str());
+				return -1;
+			}
+			if (SAUtils::setHidden(temp.c_str()) == false) {
+				logger.log(LOG_OK, CLogger::Level::INFO, "Cannot set Hidden .sia folder to a hidden folder \"%s\"", temp.c_str());
+				return -1;
+			}
+			logger.log(LOG_OK, CLogger::Level::INFO, "Hidden .sia folder created at location: \"%s\"", temp.c_str());
+		}
+
+
 		try {
 			auto &archiveObject = ArchiveObject::getInstance();
 			if (archiveObject.Initalise() == false) {
@@ -278,25 +305,7 @@ namespace simplearchive {
 			CSVDatabase::setDBPath(csvdbPath.c_str());
 			*/
 			
-			if (ImageExtentions::setExtentionsFilePath(config.getConfigPath()) == false) {
-				logger.log(LOG_OK, CLogger::Level::INFO, "Unable to find image extensions file path: \"%s\"", config.getConfigPath());
-				return -1;
-			}
-			std::string temp = config.getWorkspacePath();
-			if (SAUtils::DirExists(temp.c_str()) == false) {
-				logger.log(LOG_OK, CLogger::Level::INFO, "Hidden .sia folder not found at location: \"%s\"", temp.c_str());
-
-				if (SAUtils::mkDir(temp.c_str()) == false) {
-					logger.log(LOG_OK, CLogger::Level::FATAL, "Cannot create Hidden .sia folder at location: \"%s\"", temp.c_str());
-					return -1;
-				}
-				if (SAUtils::setHidden(temp.c_str()) == false) {
-					logger.log(LOG_OK, CLogger::Level::INFO, "Cannot set Hidden .sia folder to a hidden folder \"%s\"", temp.c_str());
-					return -1;
-				}
-				logger.log(LOG_OK, CLogger::Level::INFO, "Hidden .sia folder created at location: \"%s\"", temp.c_str());
-			}
-
+			
 			logger.log(LOG_OK, CLogger::Level::FINE, "Log path \"%s\"", config.getLogPath());
 			temp = config.getHistoryPath();
 			if (SAUtils::DirExists(temp.c_str()) == false) {

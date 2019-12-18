@@ -60,9 +60,9 @@ namespace simplearchive {
 std::string CLogger::m_filename = "Log.txt";
 std::unique_ptr<CLogger> CLogger::m_this(nullptr);
 std::ofstream CLogger::m_logfile;
-CLogger::Level CLogger::m_logLevel;
-CLogger::Level CLogger::m_consoleLevel;
-CLogger::Level CLogger::m_isConsoleOut;
+CLogger::Level CLogger::m_logLevel = CLogger::Level::SUMMARY;
+CLogger::Level CLogger::m_consoleLevel = CLogger::Level::SUMMARY;
+CLogger::Level CLogger::m_isConsoleOut = CLogger::Level::FATAL;
 std::string CLogger::m_logpath;
 int CLogger::m_size = 10000;
 int CLogger::m_cursize = 0;
@@ -79,10 +79,6 @@ class LoggBuffer : public std::vector<std::string> {
 
 CLogger::CLogger() {
 	m_startUpBuffer = make_unique<LogBuffer>();
-	m_logLevel = Level::SUMMARY;
-	
-	m_consoleLevel = Level::STATUS;
-	m_isConsoleOut = Level::STATUS;
 }
 
 CLogger &CLogger::getLogger() {
@@ -266,10 +262,8 @@ void CLogger::log(int code, Level level, const char *format, ...) {
 		m_cursize = 0;
 	}
 	// Return if the message is to low leval to be include in the log, UDP or terminal.
-	if (!IsLogOut(level) && m_isOpen) {
-		return;
-	}
-
+	
+	
 	ExifDateTime date;
 	date.now();
 	if (last.getTime() == date.getTime()) {
@@ -279,46 +273,49 @@ void CLogger::log(int code, Level level, const char *format, ...) {
 		count = 1;
 	}
 	last.now();
-	char message[1024];
+	std::string message;
 	try {
-		
+		char buffer[1024];
 		va_list args;
 		va_start(args, format);
 #ifdef _WIN32
-		vsprintf_s(message, format, args);
+		vsprintf_s(buffer, format, args);
 #else
-		vsprintf(message, format, args);
+		vsprintf(buffer, format, args);
 #endif
 		va_end(args);
+		message.append(buffer);
 	}
 	catch (exception e) {
 		printf("logger crashed parsing message");
 		exit(-1);
 	}
 	try {
-		m_lastMessage = message;
-		m_lastCode = code;
-		std::stringstream logstr;
-		logstr << "\n" << setfill('0') << setw(6) << code << ": " << date.toLogString() << '.' << count << "\t";
-		logstr << '[' << levelStr(level) << "]\t";
-		logstr << message;
-		if (m_isOpen) {
-			if (IsLogOut(level)) {
-				m_logfile << logstr.str();
-			}
-		}
-		else {
-			m_startUpBuffer->push_back(logstr.str());
-		}
-		m_cursize++;
 
+		if (IsLogOut(level)) {
+			CLogger::m_lastMessage = message;
+			m_lastCode = code;
+			std::stringstream logstr;
+			logstr << "\n" << setfill('0') << setw(6) << code << ": " << date.toLogString() << '.' << count << "\t";
+			logstr << '[' << levelStr(level) << "]\t";
+			logstr << message;
+			if (m_isOpen) {
+				if (IsLogOut(level)) {
+					m_logfile << logstr.str();
+				}
+			}
+			else {
+				m_startUpBuffer->push_back(logstr.str());
+			}
+			m_cursize++;
+		}
 		if (m_isSilent == false) {
 			if (IsConsoleOut(level)) {
 				if (m_isQuiet) {
 					std::cout << message << '\n';
 				}
 				else {
-					std::cout << "\n" << setfill('0') << setw(6) << code << ": " << date.toLogString() << '.' << count << "\t";
+					std::cout << "\n"; // << setfill('0') << setw(6) << code << ": " << date.toLogString() << '.' << count << "\t";
 					std::cout << '[' << levelStr(level) << "]\t";
 					std::cout << message;
 				}

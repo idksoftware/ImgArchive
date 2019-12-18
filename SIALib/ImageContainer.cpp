@@ -98,7 +98,7 @@ bool ImageContainer::add(std::unique_ptr<BasicMetadata> &BasicMetadata, std::uni
 				m_Time = dateTime.getTime();
 			}
 			*/
-			logger.log(LOG_ASSOCIATING, CLogger::Level::SUMMARY, "Associating: %s with %s", imagefile, m_Name.c_str());
+			logger.log(LOG_ASSOCIATING, CLogger::Level::STATUS, "Associating: %s with %s", imagefile, m_Name.c_str());
 			m_PictureNode = std::make_shared<ImageNode>(type, BasicMetadata, metadataObject);
 		}
 		//m_PictureNode->setImageId(BasicMetadata, metadataObject);

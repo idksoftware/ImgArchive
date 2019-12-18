@@ -196,7 +196,7 @@ namespace simplearchive {
 			
 			// using another date
 			ExifDate archiveDate = m_archiveDate->getArchiveDate();
-			logger.log(LOG_OK, CLogger::Level::SUMMARY, "Image capture date, not found: \"%s\" so using this date: %s from this source: %s",
+			logger.log(LOG_OK, CLogger::Level::STATUS, "Image capture date, not found: \"%s\" so using this date: %s from this source: %s",
 															m_curImageSet->getName().c_str(), archiveDate.toString().c_str(), m_archiveDate->getUsingDateString().c_str());
 			m_curImageSet->setTime(archiveDate.getTime());
 			m_imagePath = std::make_unique<ImagePath>(archiveDate.getTime());
@@ -281,7 +281,7 @@ namespace simplearchive {
 
 			PostArchiveCmd postArchiveCmd(*m_imagePath);
 			postArchiveCmd.process();
-			logger.log(LOG_ARCHIVING_IMAGE, CLogger::Level::SUMMARY, "Archiving image: \"%s\"", picName.c_str());
+			logger.log(LOG_ARCHIVING_IMAGE, CLogger::Level::STATUS, "Archiving image: \"%s\"", picName.c_str());
 	
 			processHistory(*m_imagePath, m_curImageSet->getComment().c_str());
 
@@ -594,7 +594,7 @@ namespace simplearchive {
 					m_imageFilesRejected++;
 					continue;
 				}
-				//logger.log(LOG_OK, CLogger::SUMMARY, ": %s", imageItem->getFilename().c_str());
+				//logger.log(LOG_OK, CLogger::STATUS, ": %s", imageItem->getFilename().c_str());
 
 				std::string pathstr = imageItem->getPath();
 				logger.log(LOG_OK, CLogger::Level::INFO, "Path of image: %s", pathstr.c_str());
@@ -627,7 +627,7 @@ namespace simplearchive {
 						int pos = -1;
 						if ((pos = imageIndex.IsDup(BasicMetadata.getCrc())) || imageIndex.isDupInCache(BasicMetadata.getCrc())) {
 							//m_imageIndex->getData(imageId->getCrc());
-							logger.log(LOG_DUPLICATE, CLogger::Level::SUMMARY, "Image \"%s\" was found to be a duplicate. Rejecting from import", imageItem->getFilename().c_str());
+							logger.log(LOG_DUPLICATE, CLogger::Level::STATUS, "Image \"%s\" was found to be a duplicate. Rejecting from import", imageItem->getFilename().c_str());
 							// reject image from import
 							ImageId imageId = imageIndex.findDup(BasicMetadata.getCrc());
 							if (imageId.getName().empty()) {
@@ -651,7 +651,7 @@ namespace simplearchive {
 						else {
 							// Add To the Image Indexing (used to find duplicates)
 							if (imageIndex.add(BasicMetadata) == false) {
-								logger.log(LOG_DUPLICATE, CLogger::Level::SUMMARY, "Image \"%s\" was found to be a duplicate. Rejecting from import", imageItem->getFilename().c_str());
+								logger.log(LOG_DUPLICATE, CLogger::Level::STATUS, "Image \"%s\" was found to be a duplicate. Rejecting from import", imageItem->getFilename().c_str());
 								// reject image from import
 								ImageId imageId = imageIndex.findDup(BasicMetadata.getCrc());
 								if (imageId.getName().empty()) {

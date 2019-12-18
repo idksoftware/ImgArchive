@@ -154,7 +154,7 @@ namespace simplearchive {
 			
 		}
 		ArchivePath::setPathToHome(AppConfig::m_homePath);
-		logger.log(LOG_OK, CLogger::Level::INFO, "Inital valves");
+		logger.log(LOG_OK, CLogger::Level::INFO, "Inital values");
 		logger.log(LOG_OK, CLogger::Level::INFO, "        Home path:                 \"%s\"", AppConfig::m_homePath.c_str());
 
 		// Backup 1
@@ -374,6 +374,14 @@ namespace simplearchive {
 		// This prints all the contents of the config file
 		// printAll();
 	// General	
+		std::string quiet = "false";
+		setGeneral(QUIET_LABEL, quiet, quiet);
+		AppConfig::m_quiet = (STRICMP(quiet.c_str(), "true") == 0);
+
+		std::string silent = "false";
+		setGeneral(Silent_LABEL, silent, silent);
+		AppConfig::m_silent = (STRICMP(silent.c_str(), "true") == 0);
+
 		std::string dry_run = "false";
 		setGeneral(DRY_RUN_LABEL, dry_run, dry_run);
 		AppConfig::m_dry_run = (STRICMP(dry_run.c_str(), "true") == 0);

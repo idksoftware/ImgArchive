@@ -235,11 +235,11 @@ namespace simplearchive {
 			basicMetadata->copyJpegExif(*jpegExifPtr);
 			break;
 		case PARSE_EXIF_ERROR_NO_JPEG:
-			logger.log(LOG_OK, CLogger::Level::WARNING, "No JPEG markers found in buffer, possibly a RAW file: %s", p.c_str());
+			logger.log(LOG_OK, CLogger::Level::WARNING, "No jpeg EXIF found, possibly a RAW file: %s", p.c_str());
 			// No EXIF header found in JPEG file.
 			break;
 		case PARSE_EXIF_ERROR_NO_EXIF:
-			logger.log(LOG_OK, CLogger::Level::WARNING, "No JPEG markers found in buffer, possibly JPEG file with no EXIF or a RAW file: %s", p.c_str());
+			logger.log(LOG_OK, CLogger::Level::WARNING, "No jpeg EXIF found, possibly JPEG file with no EXIF or a RAW file: %s", p.c_str());
 			break;
 		case PARSE_EXIF_ERROR_UNKNOWN_BYTEALIGN:
 			logger.log(LOG_OK, CLogger::Level::WARNING, "Byte alignment specified in EXIF file was unknown in file: %s", p.c_str());

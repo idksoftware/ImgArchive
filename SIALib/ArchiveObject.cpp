@@ -722,9 +722,10 @@ namespace simplearchive {
 		VersionControl::setPaths(primaryIndexPath.getPathToRepository().c_str(), ArchivePath::getMasterPath().c_str(), ArchivePath::getDerivativePath().c_str(), ArchivePath::getPathToWorkspace().c_str());
 		MasterCatalogue& masterView = getMasterCatalogue();
 
-		// Testing
+		/* Testing
 		masterView.setFileEnabled(true);
 		masterView.setWWWEnabled(true);
+		*/
 
 		if (masterView.isWWWEnabled()) {
 			if (masterView.settupWWW(config.getTempPath(), config.getTemplatePath(), config.getMasterWWWCataloguePath()) == false) {
