@@ -160,28 +160,7 @@ AppOptions::CommandMode AppOptions::getCommandMode() {
 bool AppOptions::setCommandMode(const char *modeString) {
 	std::string mode = modeString;
 
-	/*
-	if (mode.compare("add") == 0) {
-		m_commandMode = CM_Import;
-		return true;
-	}
-	else if (mode.compare("add") == 0) {
-		m_commandMode = CM_Export;
-		return true;
-	}
-	else if (mode.compare("add") == 0) {
-		m_commandMode = CM_Checkout;
-		return true;
-	}
-	else if (mode.compare("add") == 0) {
-		m_commandMode = CM_Checkin;
-		return true;
-	}
-	else if (mode.compare("add") == 0) {
-		m_commandMode = CM_Uncheckin;
-		return true;
-	}
-	*/
+	
 	m_commandMode = CommandMode::CM_Unknown;
 	return false;
 }

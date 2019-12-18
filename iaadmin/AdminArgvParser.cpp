@@ -27,7 +27,7 @@ namespace simplearchive {
 			"tailored achieving solution and can be extended into a complete achieving system. ");
 		setHelpOption();
 
-		setHeader("usage: iaadmin subcommand [options] [args]\n\n"
+		setHeader("usage: imgadmin subcommand [options] [args]\n\n"
 			"ImgArchive command line administrator, version 1.0.0.1\n"
 			"Type 'siaadmin help <subcommand>' for help on a specific subcommand.\n\n"
 			"iaadmin is the primary command-line interface to administer ImgArchive."
@@ -43,6 +43,7 @@ namespace simplearchive {
 		defineOption("validate", "Validate commands", ArgvParser::MasterOption);
 		defineOption("mirror", "Mirror commands", ArgvParser::MasterOption);
 		defineOption("test", "test commands", ArgvParser::MasterOption);
+		defineOption("config", "Configure ImgArchive's working parameters", ArgvParser::MasterOption);
 		/*
 		defineOption("image-address", "image address", ArgvParser::NoOptionAttribute);
 
@@ -120,6 +121,8 @@ namespace simplearchive {
 		defineCommandOption("validate", "archive-path");
 		
 		defineCommandOption("test", "settup");
+
+		defineCommandOption("config", "general"); // imgadmin config --general.quiet=false
 
 		ArgvParser::ParserResults res = parse(argc, argv);
 
