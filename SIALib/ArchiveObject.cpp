@@ -136,7 +136,7 @@ namespace simplearchive {
 
 		int versionInt = versionControl.getVersion();
 		//	This is the rolling CSV table that holds all images in the database 
-		// root path is SIA/pi/index"
+		// root path is IMGA/pi/index"
 		if (m_primaryIndexTable->insert(primarySeqNumber, pathController.getYearday().c_str(), fileInfo.getName().c_str(), fileInfo.getSize(),
 			fileInfo.getCrc(), fileInfo.getMd5().c_str(),
 			fileInfo.getUuid().c_str(), versionInt, addDate, derivativeSeqNumber) == false) {

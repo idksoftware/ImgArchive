@@ -75,7 +75,7 @@ namespace simplearchive {
 * These components are used control external tools by a set of configuration files that provides the appropriate
 * command line for the tool and key mapping for the output of the subsequently generated metadata. The output from
 * an external command can be in two forms:
-* 1) An External Output file that is read by SIA.
+* 1) An External Output file that is read by Img.
 * 2) Reading the output from the external tool from the command line.
 *
 *

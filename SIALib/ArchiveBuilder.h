@@ -97,7 +97,7 @@ public:
 	{
 		return (!m_Error);
 	}
-	/// Sets the SIA to use external EXIF tool
+	/// Sets the IMGA to use external EXIF tool
 	void setUseExternalExifTool(bool v) {
 		m_useExternalExifTool = v;
 	}

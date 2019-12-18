@@ -284,7 +284,6 @@ int CIDKUuid::Create(uuid_t * uuid) {
     int namelen           /* the length of the name */
   ) {
 	 
-   
     unsigned char hash[16];
     uuid_t net_nsid;      /* context UUID in network byte order */
 

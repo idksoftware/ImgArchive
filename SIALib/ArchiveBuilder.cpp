@@ -84,8 +84,8 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 
-#define SIA_DEBUG 1
-#if defined( _WIN32 ) && defined (SIA_DEBUG)
+#define IMGA_DEBUG 1
+#if defined( _WIN32 ) && defined (IMGA_DEBUG)
 #include <crtdbg.h>
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -517,7 +517,7 @@ namespace simplearchive {
 
 	bool ArchiveBuilder::processImageGroupSets(std::shared_ptr<ImageSets> imageSets, ImportJournal& importJournal) {
 		CLogger &logger = CLogger::getLogger();
-#if defined( _MSC_VER ) && defined( SIA_DEBUG )
+#if defined( _MSC_VER ) && defined( IMGA_DEBUG )
 		_CrtMemCheckpoint(&startMemState);
 		// Enable MS Visual C++ debug heap memory leaks dump on exit
 		_CrtSetDbgFlag(_CrtSetDbgFlag(_CRTDBG_REPORT_FLAG) | _CRTDBG_LEAK_CHECK_DF);
@@ -767,7 +767,7 @@ namespace simplearchive {
 		
 		ImportJournalManager::save();
 		
-#if defined( _MSC_VER ) &&  defined( SIA_DEBUG )
+#if defined( _MSC_VER ) &&  defined( IMGA_DEBUG )
 		{
 			_CrtMemCheckpoint(&endMemState);
 

@@ -46,7 +46,7 @@ class ConfigBlock;
  *	such as ExifTool.
  *
  *	This reader is initialised with a keyword map in order to map
- *	keywords from the external tool keywords to SIA keywords. This
+ *	keywords from the external tool keywords to Imga keywords. This
  *	map also serves as as a way of mapping only available or required
  *	keywords so there may be equivalents. For  example:
  *

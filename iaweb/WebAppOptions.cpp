@@ -122,19 +122,19 @@ bool AppOptions::initaliseConfig() {
 			}
 			*/
 			config.setHomePath(homePath.c_str());
-			temp = SAUtils::GetPOSIXEnv("SIA_WORKSPACE");
+			temp = SAUtils::GetPOSIXEnv("IMGA_WORKSPACE");
 			if (temp.empty() == false) {
 				config.setWorkspacePath(temp.c_str());
 			}
-			temp = SAUtils::GetPOSIXEnv("SIA_SOURCE");
+			temp = SAUtils::GetPOSIXEnv("IMGA_SOURCE");
 			if (temp.empty() == false) {
 				config.setSourcePath(temp.c_str());
 			}
-			temp = SAUtils::GetPOSIXEnv("SIA_LOGLEVEL");
+			temp = SAUtils::GetPOSIXEnv("IMGA_LOGLEVEL");
 			if (temp.empty() == false) {
 				config.setLogLevel(temp.c_str());
 			}
-			temp = SAUtils::GetPOSIXEnv("SIA_CONSOLELEVEL");
+			temp = SAUtils::GetPOSIXEnv("IMGA_CONSOLELEVEL");
 			if (temp.empty() == false) {
 				config.setConsoleLevel(temp.c_str());
 			}

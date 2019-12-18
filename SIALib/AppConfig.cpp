@@ -223,7 +223,7 @@ namespace simplearchive {
 		if (AppConfig::m_masterWWWCataloguePath.empty() == true) {
 			auto folders = getSystemFolders();
 			if (folders == nullptr || getRoot().value("MasterWWWCataloguePath", AppConfig::m_masterWWWCataloguePath) == false) {
-				// if not found read from SIA_MASTER_CATALOGUE environment variable
+				// if not found read from IMGA_MASTER_CATALOGUE environment variable
 				std::string temp = SAUtils::GetPOSIXEnv("IMGA_WWW_CATALOGUE");
 				if (temp.empty() == false) {
 					AppConfig::m_masterWWWCataloguePath = temp;
@@ -241,7 +241,7 @@ namespace simplearchive {
 			// read from config file
 			auto folders = getSystemFolders();
 			if (folders == nullptr || getRoot().value("MasterCataloguePath", AppConfig::m_masterCataloguePath) == false) {
-				// if not found read from SIA_MASTER_CATALOGUE environment variable
+				// if not found read from IMGA_MASTER_CATALOGUE environment variable
 				std::string temp = SAUtils::GetPOSIXEnv("IMGA_MASTER_CATALOGUE");
 				if (temp.empty() == false) {
 					AppConfig::m_masterCataloguePath = temp;
@@ -262,8 +262,8 @@ namespace simplearchive {
 			// read from config file
 			auto folders = getSystemFolders();
 			if (folders == nullptr || getRoot().value("WorkspacePath", AppConfig::m_workspacePath) == false) {
-				// if not found read from SIA_WORKSPACE environment variable
-				std::string temp = SAUtils::GetPOSIXEnv("SIA_WORKSPACE");
+				// if not found read from IMGA_WORKSPACE environment variable
+				std::string temp = SAUtils::GetPOSIXEnv("IMGA_WORKSPACE");
 				if (temp.empty() == false) {
 					AppConfig::m_workspacePath = temp;
 				}
@@ -309,11 +309,11 @@ namespace simplearchive {
 		*/
 
 		
-		std::string temp = SAUtils::GetPOSIXEnv("SIA_SOURCE");
+		std::string temp = SAUtils::GetPOSIXEnv("IMGA_SOURCE");
 		if (temp.empty() == false) {
 			AppConfig::m_sourcePath = temp.c_str();
 		}
-		temp = SAUtils::GetPOSIXEnv("SIA_LOGLEVEL");
+		temp = SAUtils::GetPOSIXEnv("IMGA_LOGLEVEL");
 		if (temp.empty() == false) {
 			AppConfig::m_logLevel = temp.c_str();
 		}
@@ -521,7 +521,7 @@ namespace simplearchive {
 			ArchivePath::setPathToWorkspace(AppConfig::m_workspacePath);
 		}
 		// Master Catalogue path
-		std::string ctemp = SAUtils::GetPOSIXEnv("SIA_MASTER_CATALOGUE");
+		std::string ctemp = SAUtils::GetPOSIXEnv("IMGA_MASTER_CATALOGUE");
 		if (ctemp.empty() == true) {
 			setSystemFolders(MASTER_VIEW_PATH_LABEL, AppConfig::m_masterCataloguePath, ctemp);
 		}
@@ -690,8 +690,8 @@ namespace simplearchive {
 		if (m_masterPath.empty() == true) {
 			auto folders = getSystemFolders();
 			if (folders == nullptr || getRoot().value("MasterPath", m_masterPath) == false) {
-				// if not found read from SIA_WORKSPACE environment variable
-				std::string temp = SAUtils::GetPOSIXEnv("SIA_MASTER");
+				// if not found read from IMGA_WORKSPACE environment variable
+				std::string temp = SAUtils::GetPOSIXEnv("IMGA_MASTER");
 				if (temp.empty() == false) {
 					m_masterPath = temp;
 				}
@@ -718,8 +718,8 @@ namespace simplearchive {
 		if (m_derivativePath.empty() == true) {
 			auto folders = getSystemFolders();
 			if (folders == nullptr || getRoot().value("DerivativePath", m_derivativePath) == false) {
-				// if not found read from SIA_WORKSPACE environment variable
-				std::string temp = SAUtils::GetPOSIXEnv("SIA_Master");
+				// if not found read from IMGA_WORKSPACE environment variable
+				std::string temp = SAUtils::GetPOSIXEnv("IMGA_Master");
 				if (temp.empty() == false) {
 					m_derivativePath = temp;
 				}

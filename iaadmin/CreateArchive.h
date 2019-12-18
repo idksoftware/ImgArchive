@@ -93,7 +93,7 @@ namespace simplearchive {
 		*/
 		static bool createHookFiles(const char *root, const char *folder);
 		/**
-		/* @brief Creates the enviroment variable SIA_HOME the the path given.
+		/* @brief Creates the enviroment variable IMGARCHIVE_HOME the the path given.
 		*/
 		static bool createHomeEnvVar(const char *root, bool users);
 
