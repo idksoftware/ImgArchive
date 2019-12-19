@@ -2,60 +2,66 @@
 #include "AppConfig.h"
 
 enum class Option {
-	QUIET_LABEL
-	Silent_LABEL					"Silent"
-	LOG_LEVEL_LABEL					"LogLevel"
-	LIGHTROOM_LABEL					"Lightroom"
-	SERVER_MODE_LABEL				"RemoteServerMode"
-	CONSOLE_LEVEL_LABEL				"ConsoleLevel"
-	FILE_CAT_LABEL				"FileCatalogue"
-	WWW_CAT_LABEL				"WWWCatalogue"
-	EVENTS_ENABLED_LABEL		"EventsEnabled"
-	COMMANDS_PORT_LABEL			"CommandPort"
-	BACKUP_ONE_LABEL			"BackupOne"
-	BACKUP_TWO_LABEL			"BackupTwo"
-	HOOK_SCRIPTS_PATH_LABEL			"HookScripsPath" // Path to hook scripts
-	CONFIG_PATH_LABEL				"ConfigPath"	 // Main configuration path
-	TOOLS_PATH_LABEL           		"ToolsPath"
-	TEMP_PATH_LABEL           		"TempPath"
-	SOURCE_PATH_LABEL         		"SourcePath"
-#define SYSTEM_PATH_LABEL         		"SystemPath"
-#define MASTER_PATH_LABEL         		"MasterPath"
-#define SQL_LABEL         				"SQL"
-#define MASTER_VIEW_PATH_LABEL         	"MasterCataloguePath"
-#define DERIVATIVE_PATH_LABEL         	"DerivativePath"
-#define SQL_DATABASE_PATH_LABEL         "SQLDatabasePath"
-#define LOG_PATH_LABEL					"LogPath"
-#define HOME_PATH_LABEL					"HomePath"
-#define INDEX_PATH_LABEL				"IndexPath"
-#define HISTORY_PATH_LABEL				"HistoryPath"
-#define LIGHTROOM_PATH_LABEL			"LightroomPath"
-#define ENABLED_LABEL					"Enabled"
-#define BACKUP_ONE_ENABLED_LABEL		"BackupOneEnabled"
-#define BACKUP_TWO_ENABLED_LABEL		"BackupTwoEnabled"
-#define EXTERNAL_COMMAND_LINE_LABEL		"ExternalCommandLine"
-#define EXIF_MAP_PATH_LABEL				"ExifMapPath"
-#define EXIF_MAP_FILE_LABEL				"ExifMapFile"
-#define EXIF_TOOL_LABEL					"ExifTool"
-#define EXIF_COMMANDLINE_LABEL			"ExifCommandLine"
-#define TEMPLATE_PATH_LABEL				"TemplatePath"
-#define CATALOG_PATH_LABEL				"CatalogPath"
-#define WORKSPACE_PATH_LABEL			"WorkspacePath"
-#define DRY_RUN_LABEL					"DryRun"
-#define QUIET_LABEL						"Quiet"
-#define Silent_LABEL					"Silent"
-#define LOG_LEVEL_LABEL					"LogLevel"
-#define LIGHTROOM_LABEL					"Lightroom"
-#define SERVER_MODE_LABEL				"RemoteServerMode"
-#define CONSOLE_LEVEL_LABEL				"ConsoleLevel"
-#define FILE_CAT_LABEL				"FileCatalogue"
-#define WWW_CAT_LABEL				"WWWCatalogue"
-#define EVENTS_ENABLED_LABEL		"EventsEnabled"
-#define COMMANDS_PORT_LABEL			"CommandPort"
-#define BACKUP_ONE_LABEL			"BackupOne"
-#define BACKUP_TWO_LABEL			"BackupTwo"
+	QUIET,
+	SILENT,
+	LOG_LEVEL,
+	LIGHTROOM,
+	SERVER_MODE,
+	CONSOLE_LEVEL,
+	FILE_CAT,
+	WWW_CAT,
+	EVENTS_ENABLED,
+	COMMANDS_PORT,
+	BACKUP_ONE,
+	BACKUP_TWO,
+	HOOK_SCRIPTS_PATH, // Path to hook scripts
+	CONFIG_PATH,	 // Main configuration path
+	TOOLS_PATH,
+	TEMP_PATH,
+	SOURCE_PATH,
+	SYSTEM_PATH,
+	MASTER_PATH,
+	SQL,
+	MASTER_VIEW_PATH,
+	DERIVATIVE_PATH,
+	SQL_DATABASE_PATH,
+	LOG_PATH,
+	HOME_PATH,
+	INDEX_PATH,
+	HISTORY_PATH,
+	LIGHTROOM_PATH,
+	ENABLED,
+	BACKUP_ONE_ENABLED,
+	BACKUP_TWO_ENABLED,
+	EXTERNAL_COMMAND_LINE,
+	EXIF_MAP_PATH,
+	EXIF_MAP_FILE,
+	EXIF_TOOL,
+	EXIF_COMMANDLINE,
+	TEMPLATE_PATH,
+	CATALOG_PATH,
+	WORKSPACE_PATH,
+	DRY_RUN,
+	
+	UNKNOWN
 };
 
+bool iequals(const std::string& a, const std::string& b)
+{
+	return std::equal(a.begin(), a.end(),
+		b.begin(), b.end(),
+		[](char a, char b) {
+			return tolower(a) == tolower(b);
+		});
+}
+
+bool isTrueFalse(std::string s) {
+	if (iequals("true", s) || iequals("false", s) || iequals("on", s) ||
+		iequals("off", s) || iequals("yes", s) || iequals("no", s)) {
+		return true;
+	}
+	return false;
+}
 
 bool SetConfig::parseGeneralOptions(const char* ov)
 {
@@ -64,26 +70,85 @@ bool SetConfig::parseGeneralOptions(const char* ov)
 	if (pos == std::string::npos) {
 		return false;
 	}
+
 	std::string option = optionValueString.substr(0, pos);
-	processGeneralOptions(std::string option)
-}
-bool SetConfig::processGeneralOptions(const char* ov)
-{
-	std::string optionValueString = ov;
-	size_t pos = optionValueString.find_first_of('=');
-	if (pos == std::string::npos) {
+	std::string value = optionValueString.substr(pos+1, optionValueString.length()-1);
+	Option ret = processGeneralOptions(option);
+	switch (ret) {
+	case Option::QUIET:
+		break;
+	case Option::SILENT:
+		break;
+	case Option::LOG_LEVEL:
+		break;
+	case Option::LIGHTROOM:
+		break;
+	case Option::SERVER_MODE:
+		break;
+	case Option::CONSOLE_LEVEL:
+		break;
+	case Option::FILE_CAT:
+		break;
+	case Option::WWW_CAT:
+		break;
+	case Option::EVENTS_ENABLED:
+		break;
+	case Option::COMMANDS_PORT:
+		break;
+	case Option::BACKUP_ONE:
+		break;
+	case Option::BACKUP_TWO:
+		break;
+	case Option::UNKNOWN:
+		break;
+	default:
 		return false;
 	}
-	
-	if (option.compare(QUIET_LABEL)) {
+	return true;
+}
 
-		return true
+
+
+Option SetConfig::processGeneralOptions(std::string& optionString)
+{
+	if (iequals(optionString, QUIET_LABEL)) {
+		return Option::QUIET;
+	} 
+	else if (iequals(optionString, SILENT_LABEL)) {
+		return Option::SILENT;
 	}
-	if QUIET_LABEL
-#define Silent_LABEL					"Silent"
-#define LOG_LEVEL_LABEL					"LogLevel"
-#define LIGHTROOM_LABEL					"Lightroom"
-#define SERVER_MODE_LABEL				"RemoteServerMode"
+	else if (iequals(optionString, LOG_LEVEL_LABEL)) {
+		return Option::LOG_LEVEL;
+	}
+	else if (iequals(optionString, LIGHTROOM_LABEL)) {
+		return Option::QUIET;
+	}
+	else if (iequals(optionString, SERVER_MODE_LABEL)) {
+		return Option::QUIET;
+	}
+	else if (iequals(optionString, CONSOLE_LEVEL_LABEL)) {
+		return Option::QUIET;
+	}
+	else if (iequals(optionString, FILE_CAT_LABEL)) {
+		return Option::QUIET;
+	}
+	else if (iequals(optionString, WWW_CAT_LABEL)) {
+		return Option::QUIET;
+	}
+	else if (iequals(optionString, EVENTS_ENABLED_LABEL)) {
+		return Option::QUIET;
+	}
+	else if (iequals(optionString, COMMANDS_PORT_LABEL)) {
+		return Option::QUIET;
+	}
+	else if (iequals(optionString, BACKUP_ONE_ENABLED_LABEL)) {
+		return Option::QUIET;
+	}
+	else if (iequals(optionString, BACKUP_TWO_ENABLED_LABEL)) {
+		return Option::QUIET;
+	}
+	/*
+
 #define CONSOLE_LEVEL_LABEL				"ConsoleLevel"
 #define FILE_CAT_LABEL				"FileCatalogue"
 #define WWW_CAT_LABEL				"WWWCatalogue"
@@ -91,6 +156,7 @@ bool SetConfig::processGeneralOptions(const char* ov)
 #define COMMANDS_PORT_LABEL			"CommandPort"
 #define BACKUP_ONE_LABEL			"BackupOne"
 #define BACKUP_TWO_LABEL			"BackupTwo"
+	*/
 	/*
 	#define HOOK_SCRIPTS_PATH_LABEL			"HookScripsPath" // Path to hook scripts 
 #define CONFIG_PATH_LABEL				"ConfigPath"	 // Main configuration path  
@@ -156,5 +222,5 @@ bool SetConfig::processGeneralOptions(const char* ov)
 		static bool m_eventsOn; // UDP events
 		static bool m_serverOn;
 	*/
-	return false;
+	return Option::UNKNOWN;
 }

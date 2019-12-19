@@ -306,8 +306,8 @@ namespace simplearchive {
 					std::string opt = optionValue("general");
 					appOptions.setName("settup");
 					printf(opt.c_str()); printf("\n");
-					SetConfig setConfig();
-					if (setConfig.parseGeneralOptions(const char* opentString)) {
+					SetConfig setConfig;
+					if (setConfig.parseGeneralOptions(opt.c_str())) {
 
 					}
 

@@ -75,7 +75,7 @@
 #define WORKSPACE_PATH_LABEL			"WorkspacePath"
 #define DRY_RUN_LABEL					"DryRun"
 #define QUIET_LABEL						"Quiet"
-#define Silent_LABEL					"Silent"
+#define SILENT_LABEL					"Silent"
 #define LOG_LEVEL_LABEL					"LogLevel"
 #define LIGHTROOM_LABEL					"Lightroom"
 #define SERVER_MODE_LABEL				"RemoteServerMode"

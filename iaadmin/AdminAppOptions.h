@@ -50,6 +50,7 @@ public:
 		CM_Validate,    //* Validate the archive.
         CM_Fix,         //* Fix the archive
 		CM_Test,        //* Test the archive
+		CM_CONFIG,		//* Configure the system
 		CM_Unknown
 	};
 

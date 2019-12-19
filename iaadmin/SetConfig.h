@@ -1,7 +1,11 @@
 #pragma once
+#include <string>
+
+enum class Option;
+
 class SetConfig
 {
-	bool processGeneralOptions(std::string& option);
+	Option processGeneralOptions(std::string& optionString);
 public:
 	SetConfig() = default;
 	bool parseGeneralOptions(const char* optionString);
