@@ -498,9 +498,9 @@ public:
 		return true;
 	}
 
-	void SetRowsetCursorPosition(int pos) {
+	SharedMTRow SetRowsetCursorPosition(int pos) {
 		m_rowCursor = pos;
-		at(m_rowCursor);
+		return at(m_rowCursor);
 	}
 
 	const MTSchema& getSchema(int pos) {

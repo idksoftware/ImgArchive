@@ -275,6 +275,8 @@ void CLogger::log(int code, Level level, const char *format, ...) {
 	last.now();
 	std::string message;
 	try {
+
+/*old way
 		char buffer[1024];
 		va_list args;
 		va_start(args, format);
@@ -285,8 +287,30 @@ void CLogger::log(int code, Level level, const char *format, ...) {
 #endif
 		va_end(args);
 		message.append(buffer);
+
+*/
+		int final_n, n = (strlen(format) * 2); // Reserve two times as much as the length of the fmt_str //
+		std::string str;
+		std::unique_ptr<char[]> formatted;
+		va_list ap;
+		while (1) {
+			//formatted.reset(new char[n]); // Wrap the plain char array into the unique_ptr
+			auto formatted = std::make_unique<char[]>(n);
+			//strcpy(formatted.get(), format);
+			va_start(ap, format);
+			final_n = vsnprintf(formatted.get(), n, format, ap);
+			va_end(ap);
+			if (final_n < 0 || final_n >= n) {
+				n += abs(final_n - n + 1);
+			}
+			else {
+				message = formatted.get();
+				break;
+			}
+		}
+		
 	}
-	catch (exception e) {
+	catch (const exception e) {
 		printf("logger crashed parsing message");
 		exit(-1);
 	}
@@ -300,9 +324,7 @@ void CLogger::log(int code, Level level, const char *format, ...) {
 			logstr << '[' << levelStr(level) << "]\t";
 			logstr << message;
 			if (m_isOpen) {
-				if (IsLogOut(level)) {
-					m_logfile << logstr.str();
-				}
+				m_logfile << logstr.str();
 			}
 			else {
 				m_startUpBuffer->push_back(logstr.str());
@@ -324,14 +346,14 @@ void CLogger::log(int code, Level level, const char *format, ...) {
 
 		std::stringstream strudp;
 		strudp << setfill('0') << setw(6) << code << ":" << message;
-		std::string udpMessage = strudp.str();
+		const std::string udpMessage = strudp.str();
 		UDPOut::out(udpMessage.c_str());
 
 		if (level == Level::STATUS) {
 
 		}
 	}
-	catch (exception e) {
+	catch (const exception e) {
 		printf("logger crashed");
 		exit(-1);
 	}
