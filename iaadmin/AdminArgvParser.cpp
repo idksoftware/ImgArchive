@@ -7,7 +7,7 @@
 #include "stdio.h"
 #include "SIAArgvParser.h"
 #include "Environment.h"
-
+#include "SetConfig.h"
 
 
 using namespace CommandLineProcessing;
@@ -37,22 +37,24 @@ namespace simplearchive {
 		// Subcommands
 
 
-		defineOption("init", "Create Archive enviroment", ArgvParser::MasterOption);
-		defineOption("show", "Show settings", ArgvParser::MasterOption);
-		defineOption("version", "prints the version information", ArgvParser::MasterOption);
-		defineOption("validate", "Validate commands", ArgvParser::MasterOption);
-		defineOption("mirror", "Mirror commands", ArgvParser::MasterOption);
-		defineOption("test", "test commands", ArgvParser::MasterOption);
+		//defineOption("init", "Create Archive enviroment", ArgvParser::MasterOption);
+		//defineOption("show", "Show settings", ArgvParser::MasterOption);
+		//defineOption("version", "prints the version information", ArgvParser::MasterOption);
+		//defineOption("validate", "Validate commands", ArgvParser::MasterOption);
+		//defineOption("mirror", "Mirror commands", ArgvParser::MasterOption);
+		//defineOption("test", "test commands", ArgvParser::MasterOption);
 		defineOption("config", "Configure ImgArchive's working parameters", ArgvParser::MasterOption);
+		
+		defineOption("general", "image address", ArgvParser::OptionRequiresValue);
+		defineOptionAlternative("general", "G");
 		/*
-		defineOption("image-address", "image address", ArgvParser::NoOptionAttribute);
-
 		defineOption("m", "Mirror commands", ArgvParser::NoOptionAttribute);
 		defineOptionAlternative("m", "mirror");
 
 		defineOption("b", "Goes through the motions of running the subcommand but makes no\nactual changes ether disk or repository.", ArgvParser::NoOptionAttribute);
 		defineOptionAlternative("b", "backup");
 		*/
+		/* Commented to for testing
 		// Options
 		defineOption("name", "name of the item.", ArgvParser::OptionRequiresValue);
 		//defineOptionAlternative("n", "name");
@@ -104,24 +106,25 @@ namespace simplearchive {
 
 		defineOption("comment", "Comment to be included in command", ArgvParser::OptionRequiresValue);
 		//defineOptionAlternative("C", "comment");
-
-		defineOption("workspace-path", "Location of the archive Workspace", ArgvParser::OptionRequiresValue);
-		//defineOptionAlternative("w", "workspace-path");
-		defineOption("settup", "Show settup", ArgvParser::NoOptionAttribute);
-		
-		/*
-		defineCommandOption("init", "archive-path");
-		defineCommandOption("init", "workspace-path");
 		*/
+		//defineOption("workspace-path", "Location of the archive Workspace", ArgvParser::OptionRequiresValue);
+		//defineOptionAlternative("workspace-path", "w");
+		/*
+		defineOption("settup", "Show settup", ArgvParser::NoOptionAttribute);
+		*/
+		
+		//defineCommandOption("init", "archive-path");
+		//defineCommandOption("init", "workspace-path");
+		/*
 		defineCommandOption("show", "settup");
 		defineCommandOption("show", "checkedOut");
 
 		defineCommandOption("validate", "scope");
 		defineCommandOption("validate", "repair");
 		defineCommandOption("validate", "archive-path");
+		*/
+		//defineCommandOption("test", "settup");
 		
-		defineCommandOption("test", "settup");
-
 		defineCommandOption("config", "general"); // imgadmin config --general.quiet=false
 
 		ArgvParser::ParserResults res = parse(argc, argv);
@@ -297,7 +300,22 @@ namespace simplearchive {
 				}
 
 				cmdFound = true;
-			} else if (command("test") == true) {
+			}
+			else if (command("config") == true) {
+				if (foundOption("general") == true) {
+					std::string opt = optionValue("general");
+					appOptions.setName("settup");
+					printf(opt.c_str()); printf("\n");
+					SetConfig setConfig();
+					if (setConfig.parseGeneralOptions(const char* opentString)) {
+
+					}
+
+				}
+				appOptions.setCommandMode(AppOptions::CommandMode::CM_CONFIG);
+				cmdFound = true;
+			}
+			else if (command("test") == true) {
 				if (foundOption("settup") == true) {
 
 					appOptions.setName("settup");
