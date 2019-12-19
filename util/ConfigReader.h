@@ -102,11 +102,8 @@ public:
 	AppConfigBase() {
 		//this->[ROOT_BLOCK] = (std::make_shared<ConfigBlock>(ROOT_BLOCK));
 		insert(std::pair<std::string, std::shared_ptr<ConfigBlock>>(ROOT_BLOCK, std::make_shared<ConfigBlock>(ROOT_BLOCK)));
-
 	}
-
 	void printAll();
-
 	bool setConfigBlock(const char* name, std::string &value, std::string &defaultValue, const char *configBlock);
 
 	std::shared_ptr<ConfigBlock> getConfigBlocks(const char *name);

@@ -379,7 +379,7 @@ namespace simplearchive {
 		AppConfig::m_quiet = (STRICMP(quiet.c_str(), "true") == 0);
 
 		std::string silent = "false";
-		setGeneral(Silent_LABEL, silent, silent);
+		setGeneral(SILENT_LABEL, silent, silent);
 		AppConfig::m_silent = (STRICMP(silent.c_str(), "true") == 0);
 
 		std::string dry_run = "false";

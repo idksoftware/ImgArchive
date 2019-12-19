@@ -81,6 +81,9 @@ private:
 	static std::string m_derivativePath;
 	static std::string m_repositoryPath;
 	static std::string m_cataloguePath;
+	static std::string m_configOption;
+	static std::string m_configValue;
+	static std::string m_optionBlock;
 	static VerifyOperation m_verifyOperation;
 	static ShowOperation m_showOperation;
 	static bool m_repair;
@@ -103,6 +106,9 @@ private:
 	void setRepositoryPath(const char *repositoryPath);
 	void setCataloguePath(const char *cataloguePath);
 	void setAllUsers(bool allUsers);
+	void setConfigOption(const char* option);
+	void setConfigValue(const char* value);
+	void setConfigOptionBlock(const char* optionBlock);
 	AppOptions();
 public:
 	
@@ -123,6 +129,10 @@ public:
 	const char *getDerivativePath();
 	const char *getRepositoryPath();
 	const char *getCataloguePath();
+	const char* getConfigOption();
+	const char* getConfigValue();
+	const char* getConfigOptionBlock();
+
 	bool isAllUsers();
 
 	bool isConfiguratedOk() {

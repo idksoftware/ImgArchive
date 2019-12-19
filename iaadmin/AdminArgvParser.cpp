@@ -47,13 +47,26 @@ namespace simplearchive {
 		
 		defineOption("general", "image address", ArgvParser::OptionRequiresValue);
 		defineOptionAlternative("general", "G");
-		/*
+		
+		defineOption("folders", "image address", ArgvParser::OptionRequiresValue);
+		defineOptionAlternative("folders", "F");
+
+		defineOption("exiftool", "image address", ArgvParser::OptionRequiresValue);
+		defineOptionAlternative("exiftool", "G");
+
+		defineOption("master", "image address", ArgvParser::OptionRequiresValue);
+		defineOptionAlternative("master", "M");
+
+		defineOption("network", "image address", ArgvParser::OptionRequiresValue);
+		defineOptionAlternative("network", "N");
+
+		
 		defineOption("m", "Mirror commands", ArgvParser::NoOptionAttribute);
 		defineOptionAlternative("m", "mirror");
 
 		defineOption("b", "Goes through the motions of running the subcommand but makes no\nactual changes ether disk or repository.", ArgvParser::NoOptionAttribute);
 		defineOptionAlternative("b", "backup");
-		*/
+		
 		/* Commented to for testing
 		// Options
 		defineOption("name", "name of the item.", ArgvParser::OptionRequiresValue);
@@ -302,16 +315,49 @@ namespace simplearchive {
 				cmdFound = true;
 			}
 			else if (command("config") == true) {
+				SetConfig setConfig;
 				if (foundOption("general") == true) {
 					std::string opt = optionValue("general");
-					appOptions.setName("settup");
-					printf(opt.c_str()); printf("\n");
-					SetConfig setConfig;
-					if (setConfig.parseGeneralOptions(opt.c_str())) {
-
+					
+					if (setConfig.parseGeneralOptions(opt.c_str()) == false) {
+						return false;
 					}
-
+					
 				}
+				if (foundOption("folders") == true) {
+					std::string opt = optionValue("folders");
+					
+					if (setConfig.parseFolderOptions(opt.c_str()) == false) {
+						return false;
+					}
+					
+				}
+				if (foundOption("exiftool") == true) {
+					std::string opt = optionValue("exiftool");
+					SetConfig setConfig;
+					if (setConfig.parseExifToolOptions(opt.c_str()) == false) {
+						return false;
+					}
+				}
+				if (foundOption("master") == true) {
+					std::string opt = optionValue("master");
+					SetConfig setConfig;
+					if (setConfig.parseMasterOptions(opt.c_str()) == false) {
+						return false;
+					}
+					
+				}
+				if (foundOption("network") == true) {
+					std::string opt = optionValue("network");
+					
+					if (setConfig.parseNetworkOptions(opt.c_str()) == false) {
+						return false;
+					}
+					
+				}
+				appOptions.setConfigOptionBlock(setConfig.getOptionBlock().c_str());
+				appOptions.setConfigOption(setConfig.getOption().c_str());
+				appOptions.setConfigValue(setConfig.getValue().c_str());
 				appOptions.setCommandMode(AppOptions::CommandMode::CM_CONFIG);
 				cmdFound = true;
 			}

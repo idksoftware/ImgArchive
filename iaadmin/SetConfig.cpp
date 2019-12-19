@@ -63,22 +63,28 @@ bool isTrueFalse(std::string s) {
 	return false;
 }
 
-bool SetConfig::parseGeneralOptions(const char* ov)
-{
+bool SetConfig::processArgs(const char* ov) {
 	std::string optionValueString = ov;
 	size_t pos = optionValueString.find_first_of('=');
 	if (pos == std::string::npos) {
 		return false;
 	}
+	m_option = optionValueString.substr(0, pos);
+	m_value = optionValueString.substr(pos + 1, optionValueString.length() - 1);
 
-	std::string option = optionValueString.substr(0, pos);
-	std::string value = optionValueString.substr(pos+1, optionValueString.length()-1);
-	Option ret = processGeneralOptions(option);
+	return true;
+}
+bool SetConfig::parseGeneralOptions(const char* ov)
+{
+	if (!processArgs(ov)) {
+		return false;
+	}
+	Option ret = processGeneralOptions(m_option);
 	switch (ret) {
 	case Option::QUIET:
 		break;
 	case Option::SILENT:
-		break;
+		return isTrueFalse(m_value);
 	case Option::LOG_LEVEL:
 		break;
 	case Option::LIGHTROOM:
@@ -101,6 +107,70 @@ bool SetConfig::parseGeneralOptions(const char* ov)
 		break;
 	case Option::UNKNOWN:
 		break;
+	default:
+		return false;
+	}
+	return true;
+}
+
+bool SetConfig::parseFolderOptions(const char* ov)
+{
+	if (!processArgs(ov)) {
+		return false;
+	}
+	Option ret = processGeneralOptions(m_option);
+	switch (ret) {
+	case Option::QUIET:
+		break;
+	
+	default:
+		return false;
+	}
+	return true;
+}
+
+bool SetConfig::parseExifToolOptions(const char* ov)
+{
+	if (!processArgs(ov)) {
+		return false;
+	}
+	Option ret = processGeneralOptions(m_option);
+	switch (ret) {
+	case Option::QUIET:
+		break;
+
+	default:
+		return false;
+	}
+	return true;
+}
+
+bool SetConfig::parseMasterOptions(const char* optionString)
+{
+	if (!processArgs(optionString)) {
+		return false;
+	}
+	Option ret = processGeneralOptions(m_option);
+	switch (ret) {
+	case Option::QUIET:
+		break;
+
+	default:
+		return false;
+	}
+	return true;
+}
+
+bool SetConfig::parseNetworkOptions(const char* ov)
+{
+	if (!processArgs(ov)) {
+		return false;
+	}
+	Option ret = processGeneralOptions(m_option);
+	switch (ret) {
+	case Option::QUIET:
+		break;
+
 	default:
 		return false;
 	}

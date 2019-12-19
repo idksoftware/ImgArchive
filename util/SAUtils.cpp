@@ -439,21 +439,25 @@ std::string SAUtils::sprintf(const char *fmt, ...)
 	
 	int final_n, n = (strlen(fmt) * 2); // Reserve two times as much as the length of the fmt_str //
 	std::string str;
-	std::unique_ptr<char[]> formatted;
+	
 	va_list ap;
 	while (1) {
 		//formatted.reset(new char[n]); // Wrap the plain char array into the unique_ptr
 		auto formatted = std::make_unique<char[]>(n);
-		strcpy(&formatted[0], fmt);
+		
 		va_start(ap, fmt);
-		final_n = vsnprintf(&formatted[0], n, fmt, ap);
+		final_n = vsnprintf(formatted.get(), n, fmt, ap);
 		va_end(ap);
-		if (final_n < 0 || final_n >= n)
+		if (final_n < 0 || final_n >= n) {
 			n += abs(final_n - n + 1);
-		else
+		}
+		else {
+			str = formatted.get();
 			break;
+		}
+
 	}
-	return std::string(formatted.get());
+	return str;
 	
 }
 

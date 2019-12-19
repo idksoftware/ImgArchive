@@ -61,6 +61,9 @@ std::string AppOptions::m_configPath;
 std::string AppOptions::m_derivativePath;
 std::string AppOptions::m_repositoryPath;
 std::string AppOptions::m_cataloguePath;
+std::string AppOptions::m_configOption;
+std::string AppOptions::m_configValue;
+std::string AppOptions::m_optionBlock;
 
 AppOptions::VerifyOperation AppOptions::m_verifyOperation = AppOptions::VerifyOperation::Both;
 AppOptions::ShowOperation AppOptions::m_showOperation = AppOptions::ShowOperation::CheckedOut;
@@ -177,6 +180,21 @@ void AppOptions::setAllUsers(bool allUsers) {
 	m_users = allUsers;
 }
 
+void AppOptions::setConfigOption(const char* option)
+{
+	m_configOption = option;
+}
+
+void AppOptions::setConfigValue(const char* value)
+{
+	m_configValue = value;
+}
+
+void AppOptions::setConfigOptionBlock(const char* optionBlock)
+{
+	m_optionBlock = optionBlock;
+}
+
 const char *AppOptions::getName() {
 	return m_name.c_str();
 }
@@ -231,6 +249,18 @@ const char *AppOptions::getDerivativePath() {
 }
 const char *AppOptions::getCataloguePath() {
 	return m_cataloguePath.c_str();
+}
+const char* AppOptions::getConfigOption()
+{	
+	return m_configOption.c_str();
+}
+const char* AppOptions::getConfigValue()
+{
+	return m_configValue.c_str();
+}
+const char* AppOptions::getConfigOptionBlock()
+{
+	return m_optionBlock.c_str();
 }
 const char *AppOptions::getRepositoryPath() {
 	return m_repositoryPath.c_str();
