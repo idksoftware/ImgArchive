@@ -69,11 +69,11 @@ public:
 	bool value(const char *key, std::string &value);
 
 	/// Gets the deliminator character.
-	const char getDelimChar() {
+	const char getDelimChar() noexcept {
 		return m_delimChar;
 	}
 	// Set the deliminator character.
-	void setDelimChar(char delimChar) {
+	void setDelimChar(char delimChar) noexcept {
 		m_delimChar = delimChar;
 	}
 
@@ -155,15 +155,15 @@ public:
 	/// @return	returns true if read correctly.
 	bool read(const std::string &str, ConfigBlock &config);
 	bool readExif(const std::string &str, ConfigBlock &config);
-	virtual bool process() {
+	virtual bool process() noexcept {
 		return true;
 	}; 
 	
-	void setNoLogging() {
+	void setNoLogging() noexcept {
 		m_logging = false;
 	}
 	 
-	int getCurrentLineNumber() {
+	int getCurrentLineNumber() noexcept {
 		return m_currentLineNumber;
 	}
 };
