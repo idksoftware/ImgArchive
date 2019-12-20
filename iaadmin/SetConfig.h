@@ -3,14 +3,14 @@
 
 enum class Option;
 
-#define GENERAL_BLOCK	    "General"
-#define LOGGING_BLOCK		"Logging"
-#define NETWORK_BLOCK		"Network"
-#define FOLDERS_BLOCK		"Folders" // This contains the folder paths that the system uses.
-#define MASTER_BLOCK		"Master" // This archive contains the master images.This section controls this archive.
-#define DERIVATIVE_BLOCK	"Derivative"
-#define BACKUP_BLOCK		"Backup"
-#define EXIFTOOL_BLOCK		"ExifTool" //External Exif Tool
+constexpr auto  CONFIG_GENERAL_BLOCK    = "General";
+constexpr auto  CONFIG_LOGGING_BLOCK    = "Logging";
+constexpr auto  CONFIG_NETWORK_BLOCK    = "Network";
+constexpr auto  CONFIG_FOLDERS_BLOCK    = "Folders"; // This contains the folder paths that the system uses.
+constexpr auto  CONFIG_MASTER_BLOCK     = "Master"; // This archive contains the master images.This section controls this archive.
+constexpr auto  CONFIG_DERIVATIVE_BLOCK = "Derivative";
+constexpr auto  CONFIG_BACKUP_BLOCK     = "Backup";
+constexpr auto  CONFIG_EXIFTOOL_BLOCK   = "ExifTool"; //External Exif Tool
 
 class SetConfig
 {
