@@ -456,7 +456,7 @@ CLogger::Level CLogger::toLevel(const std::string &s) {
 		level = Level::INFO;
 	}
 	else if (s.compare("STATUS") == 0) {
-		level = Level::SUMMARY;
+		level = Level::STATUS;
 	}
 	else if (s.compare("SUMMARY") == 0) {
 		level = Level::SUMMARY;

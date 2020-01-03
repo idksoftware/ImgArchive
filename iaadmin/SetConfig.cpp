@@ -63,6 +63,38 @@ bool isTrueFalse(std::string s) {
 	return false;
 }
 
+std::string setLogLevel(std::string s) {
+	
+	if (iequals("TRACE", s)) {
+		return "TRACE";
+	}
+	else if (iequals("FINE", s)) {
+		return "FINE";
+	}
+	else if (iequals("INFO", s)) {
+		return "INFO";
+	}
+	else if (iequals("STATUS", s)) {
+		return "STATUS";
+	}
+	else if (iequals("SUMMARY", s)) {
+		return "SUMMARY";
+	}
+	else if (iequals("WARNING", s)) {
+		return "WARNING";
+	}
+	else if (iequals("ERROR", s)) {
+		return "ERROR";
+	}
+	else if (iequals("FATAL", s)) {
+		return "FATAL";
+	}
+	return "UNKNOWN";
+
+}
+
+
+
 bool SetConfig::processArgs(const char* ov) {
 	std::string optionValueString = ov;
 	size_t pos = optionValueString.find_first_of('=');
@@ -86,25 +118,28 @@ bool SetConfig::parseGeneralOptions(const char* ov)
 	case Option::SILENT:
 		return isTrueFalse(m_value);
 	case Option::LOG_LEVEL:
-		break;
+		if (iequals(issetLogLevel(m_option), "UNKNOWN") {
+			retrurn false;
+		}
+		return true;
 	case Option::LIGHTROOM:
-		break;
+		return isTrueFalse(m_value);
 	case Option::SERVER_MODE:
-		break;
+		return isTrueFalse(m_value);
 	case Option::CONSOLE_LEVEL:
 		break;
 	case Option::FILE_CAT:
-		break;
+		return isTrueFalse(m_value);
 	case Option::WWW_CAT:
-		break;
+		return isTrueFalse(m_value);
 	case Option::EVENTS_ENABLED:
-		break;
+		return isTrueFalse(m_value);
 	case Option::COMMANDS_PORT:
-		break;
+		return isTrueFalse(m_value);
 	case Option::BACKUP_ONE:
-		break;
+		return isTrueFalse(m_value);
 	case Option::BACKUP_TWO:
-		break;
+		return isTrueFalse(m_value);
 	case Option::UNKNOWN:
 		break;
 	default:
