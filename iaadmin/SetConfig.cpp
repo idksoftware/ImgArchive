@@ -63,6 +63,10 @@ bool isTrueFalse(std::string s) {
 	return false;
 }
 
+/*
+
+*/
+
 std::string setLogLevel(std::string s) {
 	
 	if (iequals("TRACE", s)) {
