@@ -118,8 +118,8 @@ bool SetConfig::parseGeneralOptions(const char* ov)
 	case Option::SILENT:
 		return isTrueFalse(m_value);
 	case Option::LOG_LEVEL:
-		if (iequals(issetLogLevel(m_option), "UNKNOWN") {
-			retrurn false;
+		if (iequals(setLogLevel(m_option), "UNKNOWN")) {
+			return false;
 		}
 		return true;
 	case Option::LIGHTROOM:
