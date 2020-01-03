@@ -57,7 +57,7 @@ static char THIS_FILE[] = __FILE__;
 namespace simplearchive {
 
 void ConfigBlock::printAll() {
-	size_t size = this->size();
+	const size_t size = this->size();
 	std::cout << m_name << '\n';
 	// &logger = CLogger::getLogger();
 	for (std::map<std::string, std::string>::iterator ii = begin(); ii != end(); ++ii) {
@@ -123,8 +123,8 @@ ConfigReader::~ConfigReader() {
 
 std::string ConfigReader::includePath(int pos, std::string line) {
 
-	int s = line.find_first_of("\"");
-	int e = line.find_last_of("\"");
+	const int s = line.find_first_of("\"");
+	const int e = line.find_last_of("\"");
 	m_path = line.substr(s+1,e-(s+1));
 	//printf("path:%s\n", m_path.c_str());
 	return m_path;
@@ -306,7 +306,7 @@ bool AppConfigReader::read(const char *datafile, AppConfigBase &config) {
 
 static std::string trim(std::string const& str, char c)
 {
-	std::size_t first = str.find_first_not_of(c);
+	const std::size_t first = str.find_first_not_of(c);
 
 	// If there is no non-whitespace character, both first and last will be std::string::npos (-1)
 	// There is no point in checking both, since if either doesn't work, the
@@ -314,8 +314,8 @@ static std::string trim(std::string const& str, char c)
 	if (first == std::string::npos)
 		return "";
 
-	std::size_t last = str.find_last_not_of(c);
-	std::size_t lastcr = str.find_last_not_of('\r');
+	const std::size_t last = str.find_last_not_of(c);
+	const std::size_t lastcr = str.find_last_not_of('\r');
 	if (lastcr < last) {
 		return str.substr(first, lastcr - first + 1);
 	}
@@ -358,7 +358,7 @@ ConfigReader::Token ConfigReader::parseExif(const char *text, ConfigBlock &confi
 		return ConfigReader::Comment; // comment before command
 	}
 	
-	int delimIdx = line.find_first_of(config.getDelimChar());
+	const int delimIdx = line.find_first_of(config.getDelimChar());
 	if (delimIdx == -1) {
 		if (m_logging) {
 			CLogger::getLogger().log(LOG_OK, CLogger::Level::WARNING, "Cannot read \"%s\" in config file \"%s\"", line.c_str(), m_path.c_str());
@@ -394,19 +394,19 @@ ConfigReader::Token ConfigReader::parse(const char *text, ConfigBlock &config) {
 		//printf("%s\n", line.c_str());
 		return Comment; // comment before command
 	}
-	int blockStartIdx = line.find_first_of('[');
+	const int blockStartIdx = line.find_first_of('[');
 	if (blockStartIdx == 0) {
 		//printf("%s\n", line.c_str());
-		int blockEndIdx = line.find_last_of(']');
+		const int blockEndIdx = line.find_last_of(']');
 		m_blockName = line.substr(blockStartIdx+1, blockEndIdx-1);
 		return NewBlock; // comment before command
 	}
 	// config.getDelimChar()
-	int delimIdx = line.find_first_of(config.getDelimChar());
+	const int delimIdx = line.find_first_of(config.getDelimChar());
 	if (delimIdx == -1) {
 		std::string include("include");
-		std::size_t  includeIdx = line.find("include");
-		if (includeIdx != (std::size_t)-1) {
+		const std::size_t  includeIdx = line.find("include");
+		if (includeIdx != static_cast<std::size_t>(-1)) {
 
 			includePath(includeIdx, line);
 			return Include;
@@ -432,60 +432,6 @@ ConfigReader::Token ConfigReader::parse(const char *text, ConfigBlock &config) {
 
 	return KeyValue;
 }
-
-/*
-ConfigReader::Token AppConfigReader::parse(const char *text, AppConfig &config) {
-	std::string line = text;
-	line = trim(line);
-
-	if (line.empty()) {
-		return Comment;
-	}
-	int commentIdx = line.find_first_of('#');
-	if (commentIdx == 0) {
-		//printf("%s\n", line.c_str());
-		return Comment; // comment before command
-	}
-	int blockStartIdx = line.find_first_of('[');
-	if (blockStartIdx == 0) {
-		//printf("%s\n", line.c_str());
-		int blockEndIdx = line.find_last_of(']');
-		m_blockName = line.substr(blockStartIdx, blockEndIdx);
-		return NewBlock; // comment before command
-	}
-	// config.getDelimChar()
-	int delimIdx = line.find_first_of(config.getDelimChar());
-	if (delimIdx == -1) {
-		std::string include("include");
-		std::size_t  includeIdx = line.find("include");
-		if (includeIdx != (std::size_t) - 1) {
-
-			includePath(includeIdx, line);
-			return Include;
-		}
-		else {
-			if (m_logging) {
-				CLogger::getLogger().log(LOG_OK, CLogger::Level::WARNING, "Cannot read \"%s\" in config file \"%s\"", line.c_str(), m_path.c_str());
-			}
-			return Error;
-		}
-	}
-	std::string cmd = line.substr(0, delimIdx);
-	std::string option = line.substr(delimIdx + 1, line.length());
-	if ((commentIdx = option.find_first_of('#')) != -1) {
-		option = option.substr(0, commentIdx);
-	}
-
-	cmd = trim(cmd);
-	option = trim(option);
-	//printf("cmd:\"%s\" opt:\"%s\"\n", cmd.c_str(), option.c_str());
-	std::string cmdp(cmd);
-	std::string optionp(option);
-	config[(cmdp)] = (optionp);
-
-	return KeyValue;
-}
-*/
 
 ConfigWriter::ConfigWriter() {}
 ConfigWriter::~ConfigWriter() {}
