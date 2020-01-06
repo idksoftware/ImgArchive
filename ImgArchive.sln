@@ -78,9 +78,6 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "iamirror", "iamirror\iamirror.vcxproj", "{D65ACB48-6439-441D-9061-1A11176644D5}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "iaadmin", "iaadmin\siaadmin.vcxproj", "{403AEF6D-0C29-4126-8E37-C3707984F198}"
-	ProjectSection(ProjectDependencies) = postProject
-		{5F3E83BD-04C0-4E33-A067-0436E485EC5D} = {5F3E83BD-04C0-4E33-A067-0436E485EC5D}
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "iaweb", "iaweb\iaweb.vcxproj", "{21FCBA5A-5950-4A81-B858-8EEAD8E370A6}"
 EndProject
