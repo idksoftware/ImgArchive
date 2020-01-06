@@ -10,5 +10,5 @@ namespace simplearchive {
 		bool read();
 	};
 
-}
+};
 

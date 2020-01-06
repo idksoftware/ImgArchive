@@ -70,10 +70,10 @@ namespace simplearchive {
 		configReader.setNoLogging();
 		configReader.read(configfile.c_str(), imgaConfig);
 		imgaConfig.printAll();
-		ConfigWriter configWriter;
-		if (configWriter.write("C:\\Temp\\config.txt", imgaConfig) == false) {
-			return false;
-		}
+		//ConfigWriter configWriter;
+		//if (configWriter.write("C:\\Temp\\config.txt", imgaConfig) == false) {
+		//	return false;
+		//}
 		return true;
 	}
 };
