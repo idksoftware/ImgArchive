@@ -57,6 +57,7 @@
 #include "IntegrityManager.h"
 #include "SIALib.h"
 #include "ShowCommand.h"
+#include "UpdateConfig.h"
 
 #ifdef _WIN32
 #pragma comment(lib, "ws2_32.lib")
@@ -83,7 +84,16 @@ namespace simplearchive {
 	
 	AdminApp::AdminApp() : AppBase(std::make_shared<AdminArgvParser>()) {};
 
-bool AdminApp::Show() {
+	bool AdminApp::Configure(const char* configOptionBlock, const char* configOption, const char* configValue)
+	{
+		UpdateConfig updateConfig;
+		if (updateConfig.read() == false) {
+			return false;
+		}
+		return true;
+	}
+
+	bool AdminApp::Show() {
 #ifdef WIN32
 	/*
 	m_error = false;
@@ -136,7 +146,7 @@ bool AdminApp::Show() {
 			}
 		}
 	}
-	if (found = false) {
+	if (found == false) {
 		printf("ImgArchive Unable to start? No archive found in the default location or"
 			" the environment variable IMGARCHIVE_HOME not set.\nUse siaadmin to initalise an archive.\n");
 		
@@ -215,6 +225,9 @@ bool AdminApp::doRun()
 	// Find if the archive exists
 	AppOptions &appOptions = AppOptions::get();
 	switch (appOptions.getCommandMode()) {
+	case AppOptions::CommandMode::CM_CONFIG:
+		Configure(appOptions.getConfigOptionBlock(), appOptions.getConfigOption(), appOptions.getConfigValue());
+		return true;
 	case AppOptions::CommandMode::CM_Show:
 		Show();
 		return true;

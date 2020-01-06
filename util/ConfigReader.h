@@ -183,13 +183,13 @@ public:
 	//ConfigReader::Token parse(const char *text, AppConfig &config);
 };
 
-class ConfigWriter {
+class ConfigBlockWriter {
 public:
 	/// @brief Constructor for class.
-	ConfigWriter();
+	ConfigBlockWriter();
 
 	/// @brief Destructor for the class.
-	virtual ~ConfigWriter();
+	virtual ~ConfigBlockWriter();
 
 	bool add(const char *cmd, const char *options, ConfigBlock &config);
 	bool edit(const char *cmd, const char *options, ConfigBlock &config);
@@ -206,6 +206,31 @@ public:
 	/// @return	returns true if read correctly.
 	bool write(const char *datafile, ConfigBlock &config);
 
+};
+
+class ConfigWriter {
+public:
+	/// @brief Constructor for class.
+	ConfigWriter();
+
+	/// @brief Destructor for the class.
+	virtual ~ConfigWriter();
+
+	bool add(const char* blockName, const char* cmd, const char* options);
+	bool edit(const char* blockName, const char* cmd, const char* options);
+
+	/// @brief This function attempts to read a configuration file.
+	/// @param    cmd			.
+	/// @param    config		Config class to be written out.
+	/// @return	returns true if read correctly.
+	bool remove(const char* cmd, ConfigBlock& config);
+
+	/// @brief This function attempts to read a configuration file.
+	/// @param    datafile	File name to write.
+	/// @param    config		Config class to be written out.
+	/// @return	returns true if read correctly.
+	bool load(AppConfigBase& config);
+	bool write(const char* datafile, AppConfigBase& config);
 };
 
 } /* namespace simplearchive */

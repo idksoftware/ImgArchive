@@ -710,8 +710,8 @@ std::string SAUtils::GetPOSIXEnv(const std::string &key)
 	size_t pReturnValue = 0;
 	char buffer[2 * 1024];
 	size_t numberOfElements = 2 * 1024;
-	getenv_s(&pReturnValue, buffer, numberOfElements, key.c_str());
-	if (errno == 0) {
+	errno_t res = getenv_s(&pReturnValue, buffer, numberOfElements, key.c_str());
+	if (res == 0) {
 		var = buffer;
 	}
 
@@ -721,7 +721,6 @@ std::string SAUtils::GetPOSIXEnv(const std::string &key)
 	std::string retval;
 	if (var != nullptr) {
 		retval = var;
-		return retval;
 	}
 	return retval;
 }

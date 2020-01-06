@@ -52,7 +52,7 @@ namespace simplearchive {
 		defineOptionAlternative("folders", "F");
 
 		defineOption("exiftool", "image address", ArgvParser::OptionRequiresValue);
-		defineOptionAlternative("exiftool", "G");
+		defineOptionAlternative("exiftool", "E");
 
 		defineOption("master", "image address", ArgvParser::OptionRequiresValue);
 		defineOptionAlternative("master", "M");

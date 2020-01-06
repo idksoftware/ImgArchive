@@ -433,10 +433,10 @@ ConfigReader::Token ConfigReader::parse(const char *text, ConfigBlock &config) {
 	return KeyValue;
 }
 
-ConfigWriter::ConfigWriter() {}
-ConfigWriter::~ConfigWriter() {}
+ConfigBlockWriter::ConfigBlockWriter() {}
+ConfigBlockWriter::~ConfigBlockWriter() {}
 
-bool ConfigWriter::edit(const char *cmd, const char *options, ConfigBlock &config) {
+bool ConfigBlockWriter::edit(const char *cmd, const char *options, ConfigBlock &config) {
 	for (std::map<std::string, std::string>::iterator ii = config.begin(); ii != config.end(); ++ii) {
 		//std::cout << ii->first << '\n';
 		if (ii->first.compare(cmd) == 0) {
@@ -446,7 +446,7 @@ bool ConfigWriter::edit(const char *cmd, const char *options, ConfigBlock &confi
 	return true;
 }
 
-bool ConfigWriter::add(const char *cmd, const char *options, ConfigBlock &config) {
+bool ConfigBlockWriter::add(const char *cmd, const char *options, ConfigBlock &config) {
 	for (std::map<std::string, std::string>::iterator ii = config.begin(); ii != config.end(); ++ii) {
 		//std::cout << ii->first << '\n';
 		if (ii->first.compare(cmd) == 0) {
@@ -460,7 +460,7 @@ bool ConfigWriter::add(const char *cmd, const char *options, ConfigBlock &config
 	return true;
 }
 
-bool ConfigWriter::remove(const char *cmd, ConfigBlock &config) {
+bool ConfigBlockWriter::remove(const char *cmd, ConfigBlock &config) {
 	for (std::map<std::string, std::string>::iterator ii = config.begin(); ii != config.end(); ++ii) {
 		//std::cout << ii->first << '\n';
 		if (ii->first.compare(cmd) == 0) {
@@ -471,7 +471,7 @@ bool ConfigWriter::remove(const char *cmd, ConfigBlock &config) {
 	return false;
 }
 
-bool ConfigWriter::write(const char *datafile, ConfigBlock &config) {
+bool ConfigBlockWriter::write(const char *datafile, ConfigBlock &config) {
 	std::ofstream file(datafile, std::ifstream::trunc);
 	if (file.is_open() == false) {
 		return false;
@@ -481,6 +481,19 @@ bool ConfigWriter::write(const char *datafile, ConfigBlock &config) {
 		//std::cout << ii->first << "=" << ii->second << '\n';
 	}
 	return true;
+}
+
+
+
+
+bool ConfigWriter::load(AppConfigBase& config)
+{
+	return false;
+}
+
+bool ConfigWriter::write(const char* datafile, AppConfigBase& config)
+{
+	return false;
 }
 
 } /* namespace simplearchive */
