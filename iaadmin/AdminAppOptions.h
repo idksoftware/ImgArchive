@@ -115,8 +115,8 @@ public:
 	
 	static AppOptions &get();
 	virtual ~AppOptions();
-	bool initaliseConfig();
-	bool initalise(int argc, char **argv);
+	//bool initaliseConfig();
+	//bool initalise(int argc, char **argv);
 	AppOptions::CommandMode getCommandMode();
 	const char *getName();
 	const char *getCommand();

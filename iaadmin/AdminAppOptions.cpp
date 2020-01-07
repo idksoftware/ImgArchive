@@ -80,6 +80,7 @@ AppOptions::AppOptions() {
 	m_configured = true;
 }
 
+/*
 bool AppOptions::initaliseConfig() {
 
 	AdminConfig config;
@@ -113,7 +114,7 @@ bool AppOptions::initaliseConfig() {
 			configReader.read(configfile.c_str(), config);
 			// This is usfull to print the config
 			//config.printAll();
-			/*
+			
 			if (config.value("SourcePath", temp) == true) {
 			m_sourcePath = temp;
 			}
@@ -123,7 +124,7 @@ bool AppOptions::initaliseConfig() {
 			if (config.value("LogLevel", temp) == true) {
 			m_logLevel = temp;
 			}
-			*/
+			
 			config.setHomePath(homePath.c_str());
 			temp = SAUtils::GetPOSIXEnv("IAWORKSPACE");
 			if (temp.empty() == false) {
@@ -148,7 +149,7 @@ bool AppOptions::initaliseConfig() {
 	}
 	return true;
 }
-
+*/
 
 
 AppOptions::~AppOptions() {

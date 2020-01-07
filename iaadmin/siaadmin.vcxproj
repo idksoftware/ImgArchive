@@ -156,6 +156,7 @@
     <ClInclude Include="AdminAppOptions.h" />
     <ClInclude Include="AdminArgvParser.h" />
     <ClInclude Include="CreateArchive.h" />
+    <ClInclude Include="DefaultEnvironment.h" />
     <ClInclude Include="SetConfig.h" />
     <ClInclude Include="ShowCommand.h" />
     <ClInclude Include="TestArchive.h" />
@@ -166,6 +167,7 @@
     <ClCompile Include="AdminAppOptions.cpp" />
     <ClCompile Include="AdminArgvParser.cpp" />
     <ClCompile Include="CreateArchive.cpp" />
+    <ClCompile Include="DefaultEnvironment.cpp" />
     <ClCompile Include="SetConfig.cpp" />
     <ClCompile Include="ShowCommand.cpp" />
     <ClCompile Include="TestArchive.cpp" />

@@ -94,74 +94,102 @@ namespace simplearchive {
 	}
 
 	bool AdminApp::Show() {
-#ifdef WIN32
-	/*
-	m_error = false;
-	m_verbose = false;
-	m_quiet = false;
-	m_logLevel = "INFO";
-	m_dry_run = false;
-	*/
-	AdminConfig config;
-	/*
-	const std::string key = "IMGARCHIVE_HOME";
-	std::string temp = SAUtils::GetPOSIXEnv(key);
-	std::string homePath = temp;
-	*/
-	bool found = false;
-	std::string homePath;
-	// Looking the HKEY_LOCAL_MACHINE first
-	if (GetEnv(homePath, true) == true) {
-		printf("Found IMGARCHIVE_HOME in system variables: %s", homePath.c_str());
-		found = true;
-	}
-	else if (GetEnv(homePath, false) == true) {
-		//printf("Found IMGARCHIVE_HOME in user variables: %s", homePath.c_str());
-		found = true;
-	}
-	else {
+		AdminConfig config;
+		m_configured = false;
 		bool found = false;
-		homePath = SAUtils::GetPOSIXEnv("USERPROFILE");
-		if (homePath.empty() == true || homePath.length() == 0) {
-			printf("ImgArchive Unable to start? Cannot read user profile.");
-			return false;
+		std::string homePath;
+
+#ifdef WIN32
+		// Find if the IMGARCHIVE_HOME pathe is in the windows registery 
+
+		// Looking the HKEY_LOCAL_MACHINE first
+		if (GetEnv(homePath, true) == true) {
+			//printf("Found IMGARCHIVE_HOME in system variables: %s", homePath.c_str());
+			found = true;
+		}
+		// Looking the HKEY_CURRENT_USER
+		else if (GetEnv(homePath, false) == true) {
+			//printf("Found IMGARCHIVE_HOME in user variables: %s", homePath.c_str());
+			found = true;
 		}
 		else {
-			homePath += "/IDK Software/ImageArchive1.0";
-			if (SAUtils::DirExists(homePath.c_str()) == true) {
-				printf("Found IMGARCHIVE_HOME in user profile: %s", homePath.c_str());
-				found = true;
-			}
-		}
-		if (found == false) {
 			homePath = SAUtils::GetPOSIXEnv("ProgramData");
 			if (homePath.empty() == true || homePath.length() == 0) {
-				printf("ImgArchive Unable to start? Cannot read all users profile.");
+				printf("ImgArchiveUnable to start? Cannot read user profile.");
+				setError(12, "ImgArchive Unable to start? Cannot read user profile.");
 				return false;
 			}
-			homePath += "/IDK Software/ImageArchive1.0";
-			if (SAUtils::DirExists(homePath.c_str()) == true) {
-				printf("Found IMGARCHIVE_HOME in all users profile: %s", homePath.c_str());
-				found = true;
+			else {
+				homePath += DEFAULT_DATA_CONFIG_PATH;
+				if (SAUtils::DirExists(homePath.c_str()) == true) {
+					//printf("Found IMGARCHIVE_HOME in user profile: %s", homePath.c_str());
+					found = true;
+				}
+			}
+			if (found == false) {
+				homePath = SAUtils::GetPOSIXEnv("USERPROFILE");
+				if (homePath.empty() == true || homePath.length() == 0) {
+					printf("ImgArchive Unable to start? Cannot read all users profile.");
+					setError(12, "ImgArchiveUnable to start? Cannot read all users profile.");
+					return false;
+				}
+				homePath += DEFAULT_DATA_CONFIG_PATH;
+				if (SAUtils::DirExists(homePath.c_str()) == true) {
+					//printf("Found IMGARCHIVE_HOME in all users profile: %s", homePath.c_str());
+					found = true;
+				}
 			}
 		}
-	}
-	if (found == false) {
-		printf("ImgArchive Unable to start? No archive found in the default location or"
-			" the environment variable IMGARCHIVE_HOME not set.\nUse siaadmin to initalise an archive.\n");
-		
-		return false;
-	}
-	std::string configfile = homePath + "/config/" + "config.dat";
-	if (SAUtils::FileExists(configfile.c_str()) == false) {
-		
-		printf("ImgArchive Unable to start? No config.dat file found in the default location or"
-			" the environment variable IMGARCHIVE_HOME not set.\nUse siaadmin to initalise an archive.\n");
-		return false;
-	}
-	AppConfigReader configReader;
-	configReader.setNoLogging();
-	configReader.read(configfile.c_str(), config);
+#else
+		// Under Linux look for the HKEY_LOCAL_MACHINE enviroment variable
+		homePath = SAUtils::GetPOSIXEnv("IMGARCHIVE_HOME");
+		if (homePath.empty() == true || homePath.length() == 0) {
+			printf("ImgArchive Unable to start? Cannot read user profile.");
+			setError(12, "ImgArchive Unable to start? Cannot read user profile.");
+			return false;
+		}
+		found = true;
+#endif
+		if (found) {
+			// Initalise without the config file i.e. set defaults.
+			if (config.init(homePath.c_str()) == false) {
+				setError(12, "Cannot find home path? exiting?");
+				return false;
+			}
+		}
+		else {
+			if (config.init() == false) {
+				setError(12, "Cannot find home path? exiting?");
+				return false;
+			}
+		}
+
+		if (SAUtils::DirExists(homePath.c_str()) == false) {
+			setError(12, "ImgArchive Unable to start? Archive not found at default location and the environment variable IAHOME not set.\n"
+				"Use siaadmin -i to create an empty archive at the default location (see documentation).\n");
+			return false;
+
+		}
+
+		// try to set a systems temp folder 
+		std::string tempPath = SAUtils::GetPOSIXEnv("TEMP");
+		if (tempPath.empty() == true || tempPath.length() == 0) {
+			tempPath = SAUtils::GetPOSIXEnv("TMP");
+		}
+
+		std::string configfile = homePath + "/config/" + "config.dat";
+		std::string configPath = homePath + "/config";
+		if (SAUtils::FileExists(configfile.c_str()) == true) {
+			setConfigPath(configPath.c_str());
+			AppConfigReader configReader;
+			configReader.setNoLogging();
+			if (configReader.read(configfile.c_str(), config) == false) {
+				setError(13, "Error found at line %d in the configuration file.\n", configReader.getCurrentLineNumber());
+				return false;
+			}
+			config.fileBasedValues(homePath.c_str(), tempPath.c_str());
+			m_configured = true;
+		}
 	//config.printAll();
 	/*
 	if (config.value("SourcePath", temp) == true) {
@@ -194,8 +222,7 @@ namespace simplearchive {
 	}
 	CreateArchive::checkFolders(homePath.c_str());
 	return true;
-#else
-#endif
+
 }
 
 
@@ -250,7 +277,8 @@ bool AdminApp::doRun()
 		
 		if (appOptions.getCommandMode() == AppOptions::CommandMode::CM_InitArchive) {
 			// const char *archivePath, const char *workspacePath, const char *reposPath, const char *masterPath, const char *derivativePath, bool users
-			if (CreateArchive(appOptions.getHomePath(), appOptions.getWorkspacePath(), appOptions.getRepositoryPath(), appOptions.getMasterPath(), appOptions.getDerivativePath(), appOptions.getCataloguePath(), appOptions.getUsers()) == false) {
+			if (CreateArchive(appOptions.getHomePath(), appOptions.getWorkspacePath(), appOptions.getRepositoryPath(),
+							appOptions.getMasterPath(), appOptions.getDerivativePath(), appOptions.getCataloguePath(), appOptions.getUsers()) == false) {
 				return false;
 			}
 			printf("\nCompleted initalising the Archive\n");
@@ -456,7 +484,11 @@ bool AdminApp::CreateArchive(const char *archivePath, const char *workspacePath,
 
 
 bool AdminApp::initaliseConfig() {
-
+	AppOptions& appOptions = AppOptions::get();
+	if (appOptions.isConfiguratedOk() == false) {
+		// This is for the time the Init option is  in operation
+		return true;
+	}
 	//AppConfig &config = AppConfig::get();
 	AdminConfig config;
 	m_configured = false;

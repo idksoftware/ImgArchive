@@ -218,203 +218,198 @@ namespace simplearchive {
 
 			cmdFound = true;
 		}
-		else {
-			if (appOptions.initaliseConfig() == false) {
-				return false;
-			}
-
-			if (command("version") == true) {
+		else if (command("version") == true) {
 				appOptions.setCommandMode(AppOptions::CommandMode::CM_Version);
 				cmdFound = true;
-			}
-			else if (command("show") == true) {
-				appOptions.setCommandMode(AppOptions::CommandMode::CM_Show);
-				if (foundOption("settup") == true) {
+		}
+		else if (command("show") == true) {
+			appOptions.setCommandMode(AppOptions::CommandMode::CM_Show);
+			if (foundOption("settup") == true) {
 					
-					appOptions.setName("settup");
-				}
-				if (foundOption("checkedOut") == true) {
-
-					appOptions.m_showOperation = AppOptions::ShowOperation::CheckedOut;
-				}
-				cmdFound = true;
+				appOptions.setName("settup");
 			}
-			else if (command("validate") == true) {
-				appOptions.setCommandMode(AppOptions::CommandMode::CM_Validate);
-				cmdFound = true;
-				if (foundOption("archive-path") == true) {
+			if (foundOption("checkedOut") == true) {
 
-					std::string opt = optionValue("archive-path");
-//					printf(opt.c_str()); printf("\n");
-					config.setWorkspacePath(opt.c_str());
-				}
-				if (foundOption("scope") == true) {
+				appOptions.m_showOperation = AppOptions::ShowOperation::CheckedOut;
+			}
+			cmdFound = true;
+		}
+		else if (command("validate") == true) {
+			appOptions.setCommandMode(AppOptions::CommandMode::CM_Validate);
+			cmdFound = true;
+			if (foundOption("archive-path") == true) {
 
-					std::string opt = optionValue("scope");
+				std::string opt = optionValue("archive-path");
 //					printf(opt.c_str()); printf("\n");
-					if (opt.compare("workspace") == 0) {
-						appOptions.m_verifyOperation = AppOptions::VerifyOperation::Workspace;
-					}
-					else if (opt.compare("master") == 0) {
-						appOptions.m_verifyOperation = AppOptions::VerifyOperation::Master;
-					}
-					else if (opt.compare("both") == 0) {
-						appOptions.m_verifyOperation = AppOptions::VerifyOperation::Both;
-					}
-					else {
-						printf("Invalid argument for sub-command: %s \"%s\"\n\n", getCurrentCommand().c_str(), opt.c_str());
-						printf("%s", usageDescription(80).c_str());
-						return false;
-					}
+				config.setWorkspacePath(opt.c_str());
+			}
+			if (foundOption("scope") == true) {
+
+				std::string opt = optionValue("scope");
+//					printf(opt.c_str()); printf("\n");
+				if (opt.compare("workspace") == 0) {
+					appOptions.m_verifyOperation = AppOptions::VerifyOperation::Workspace;
 				}
-				if (foundOption("repair") == true) {
-					appOptions.m_repair = true;
+				else if (opt.compare("master") == 0) {
+					appOptions.m_verifyOperation = AppOptions::VerifyOperation::Master;
+				}
+				else if (opt.compare("both") == 0) {
+					appOptions.m_verifyOperation = AppOptions::VerifyOperation::Both;
+				}
+				else {
+					printf("Invalid argument for sub-command: %s \"%s\"\n\n", getCurrentCommand().c_str(), opt.c_str());
+					printf("%s", usageDescription(80).c_str());
+					return false;
 				}
 			}
-			else if (command("mirror") == true) {
-				appOptions.setCommandMode(AppOptions::CommandMode::CM_Mirror);
-
-				if (foundOption("archive-path") == true) {
-
-					std::string opt = optionValue("archive-path");
-//					printf(opt.c_str()); printf("\n");
-					config.setWorkspacePath(opt.c_str());
-				}
-				/*
-				if (foundOption("dist-path") == true) {
-
-				std::string opt = optionValue("dist-path");
-				printf(opt.c_str()); printf("\n");
-				config.setBackupDestinationPath(opt.c_str());
-
-				}
-				if (foundOption("size") == true) {
-
-				std::string opt = optionValue("size");
-				printf(opt.c_str()); printf("\n");
-				config.setBackupMediaSize(opt.c_str());
-
-				}
-				if (foundOption("from-date") == true) {
-
-				std::string opt = optionValue("from-date");
-				printf(opt.c_str()); printf("\n");
-				config.setFromDate(opt.c_str());
-
-				}
-				*/
-				if (foundOption("name") == true) {
-					std::string opt = optionValue("name");
-//					printf(opt.c_str()); printf("\n");
-					appOptions.setName(opt.c_str());
-				}
-
-				cmdFound = true;
-			}
-			else if (command("config") == true) {
-				SetConfig setConfig;
-				if (foundOption("general") == true) {
-					std::string opt = optionValue("general");
-					
-					if (setConfig.parseGeneralOptions(opt.c_str()) == false) {
-						return false;
-					}
-					
-				}
-				if (foundOption("folders") == true) {
-					std::string opt = optionValue("folders");
-					
-					if (setConfig.parseFolderOptions(opt.c_str()) == false) {
-						return false;
-					}
-					
-				}
-				if (foundOption("exiftool") == true) {
-					std::string opt = optionValue("exiftool");
-					SetConfig setConfig;
-					if (setConfig.parseExifToolOptions(opt.c_str()) == false) {
-						return false;
-					}
-				}
-				if (foundOption("master") == true) {
-					std::string opt = optionValue("master");
-					SetConfig setConfig;
-					if (setConfig.parseMasterOptions(opt.c_str()) == false) {
-						return false;
-					}
-					
-				}
-				if (foundOption("network") == true) {
-					std::string opt = optionValue("network");
-					
-					if (setConfig.parseNetworkOptions(opt.c_str()) == false) {
-						return false;
-					}
-					
-				}
-				appOptions.setConfigOptionBlock(setConfig.getOptionBlock().c_str());
-				appOptions.setConfigOption(setConfig.getOption().c_str());
-				appOptions.setConfigValue(setConfig.getValue().c_str());
-				appOptions.setCommandMode(AppOptions::CommandMode::CM_CONFIG);
-				cmdFound = true;
-			}
-			else if (command("test") == true) {
-				if (foundOption("settup") == true) {
-
-					appOptions.setName("settup");
-				}
-				appOptions.setCommandMode(AppOptions::CommandMode::CM_Test);
-				cmdFound = true;
-			}
-			else if (foundOption("backup") == true) {
-				appOptions.setCommandMode(AppOptions::CommandMode::CM_Archive);
-
-				if (foundOption("archive-path") == true) {
-
-					std::string opt = optionValue("archive-path");
-//					printf(opt.c_str()); printf("\n");
-					config.setWorkspacePath(opt.c_str());
-				}
-
-				if (foundOption("dist-path") == true) {
-
-					std::string opt = optionValue("dist-path");
-//					printf(opt.c_str()); printf("\n");
-					config.setBackupDestinationPath(opt.c_str());
-
-				}
-				if (foundOption("size") == true) {
-
-					std::string opt = optionValue("size");
-//					printf(opt.c_str()); printf("\n");
-					config.setBackupMediaSize(opt.c_str());
-
-				}
-				if (foundOption("from-date") == true) {
-
-					std::string opt = optionValue("from-date");
-//					printf(opt.c_str()); printf("\n");
-					config.setFromDate(opt.c_str());
-
-				}
-				if (foundOption("to-date") == true) {
-
-					std::string opt = optionValue("to-date");
-//					printf(opt.c_str()); printf("\n");
-					config.setToDate(opt.c_str());
-
-				}
-				cmdFound = true;
-			}
-			else if (foundOption("version") == true) {
-				appOptions.setCommandMode(AppOptions::CommandMode::CM_Version);
-				cmdFound = true;
-			}
-			else {
-				appOptions.setCommandMode(AppOptions::CommandMode::CM_Unknown);
-				cmdFound = true;
+			if (foundOption("repair") == true) {
+				appOptions.m_repair = true;
 			}
 		}
+		else if (command("mirror") == true) {
+			appOptions.setCommandMode(AppOptions::CommandMode::CM_Mirror);
+
+			if (foundOption("archive-path") == true) {
+
+				std::string opt = optionValue("archive-path");
+//					printf(opt.c_str()); printf("\n");
+				config.setWorkspacePath(opt.c_str());
+			}
+			/*
+			if (foundOption("dist-path") == true) {
+
+			std::string opt = optionValue("dist-path");
+			printf(opt.c_str()); printf("\n");
+			config.setBackupDestinationPath(opt.c_str());
+
+			}
+			if (foundOption("size") == true) {
+
+			std::string opt = optionValue("size");
+			printf(opt.c_str()); printf("\n");
+			config.setBackupMediaSize(opt.c_str());
+
+			}
+			if (foundOption("from-date") == true) {
+
+			std::string opt = optionValue("from-date");
+			printf(opt.c_str()); printf("\n");
+			config.setFromDate(opt.c_str());
+
+			}
+			*/
+			if (foundOption("name") == true) {
+				std::string opt = optionValue("name");
+//					printf(opt.c_str()); printf("\n");
+				appOptions.setName(opt.c_str());
+			}
+
+			cmdFound = true;
+		}
+		else if (command("config") == true) {
+			SetConfig setConfig;
+			if (foundOption("general") == true) {
+				std::string opt = optionValue("general");
+					
+				if (setConfig.parseGeneralOptions(opt.c_str()) == false) {
+					return false;
+				}
+					
+			}
+			if (foundOption("folders") == true) {
+				std::string opt = optionValue("folders");
+					
+				if (setConfig.parseFolderOptions(opt.c_str()) == false) {
+					return false;
+				}
+					
+			}
+			if (foundOption("exiftool") == true) {
+				std::string opt = optionValue("exiftool");
+				SetConfig setConfig;
+				if (setConfig.parseExifToolOptions(opt.c_str()) == false) {
+					return false;
+				}
+			}
+			if (foundOption("master") == true) {
+				std::string opt = optionValue("master");
+				SetConfig setConfig;
+				if (setConfig.parseMasterOptions(opt.c_str()) == false) {
+					return false;
+				}
+					
+			}
+			if (foundOption("network") == true) {
+				std::string opt = optionValue("network");
+					
+				if (setConfig.parseNetworkOptions(opt.c_str()) == false) {
+					return false;
+				}
+					
+			}
+			appOptions.setConfigOptionBlock(setConfig.getOptionBlock().c_str());
+			appOptions.setConfigOption(setConfig.getOption().c_str());
+			appOptions.setConfigValue(setConfig.getValue().c_str());
+			appOptions.setCommandMode(AppOptions::CommandMode::CM_CONFIG);
+			cmdFound = true;
+		}
+		else if (command("test") == true) {
+			if (foundOption("settup") == true) {
+
+				appOptions.setName("settup");
+			}
+			appOptions.setCommandMode(AppOptions::CommandMode::CM_Test);
+			cmdFound = true;
+		}
+		else if (foundOption("backup") == true) {
+			appOptions.setCommandMode(AppOptions::CommandMode::CM_Archive);
+
+			if (foundOption("archive-path") == true) {
+
+				std::string opt = optionValue("archive-path");
+//					printf(opt.c_str()); printf("\n");
+				config.setWorkspacePath(opt.c_str());
+			}
+
+			if (foundOption("dist-path") == true) {
+
+				std::string opt = optionValue("dist-path");
+//					printf(opt.c_str()); printf("\n");
+				config.setBackupDestinationPath(opt.c_str());
+
+			}
+			if (foundOption("size") == true) {
+
+				std::string opt = optionValue("size");
+//					printf(opt.c_str()); printf("\n");
+				config.setBackupMediaSize(opt.c_str());
+
+			}
+			if (foundOption("from-date") == true) {
+
+				std::string opt = optionValue("from-date");
+//					printf(opt.c_str()); printf("\n");
+				config.setFromDate(opt.c_str());
+
+			}
+			if (foundOption("to-date") == true) {
+
+				std::string opt = optionValue("to-date");
+//					printf(opt.c_str()); printf("\n");
+				config.setToDate(opt.c_str());
+
+			}
+			cmdFound = true;
+		}
+		else if (foundOption("version") == true) {
+			appOptions.setCommandMode(AppOptions::CommandMode::CM_Version);
+			cmdFound = true;
+		}
+		else {
+			appOptions.setCommandMode(AppOptions::CommandMode::CM_Unknown);
+			cmdFound = true;
+		}
+		
 		
 		if (foundOption("logging-level") == true) {
 
@@ -465,13 +460,12 @@ namespace simplearchive {
 	{
 		std::string usage;
 
-		usage += "usage: siaarc subcommand [options] [args]\n\n";
-		usage += "Image archive command line client, version 1.0.0.1\n";
+		usage += "usage: iaadmin subcommand [options] [args]\n\n";
+		usage += "ImgArchive command line Admin client, version 1.0.0.1\n";
 		usage += "Type 'sia help <subcommand>' for help on a specific subcommand.\n\n";
 
-		std::string tmp = "siaarc is the primary command-line interface to Simple Image Archive. This interface is used to manage the control of images going in and out of the archive software. ";
-		tmp += "It has a rich set of subcommands that \"add/import\" images to the archive and \"export\" images out of the archive, In addition manages the controlled modification of images";
-		tmp += " using the \"check-in/check-out\" command set";
+		std::string tmp = "iaadmin is the primary command-line interface to ImgArchive. This interface is used to administer the control of ImgArchice sush as determining the location of";
+		tmp += "the repositories. forfill house keeping tasks as setting the logging levels etc.";
 		usage += '\n';
 		usage += formatString(tmp, _width);
 		usage += '\n';
