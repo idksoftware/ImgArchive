@@ -433,8 +433,6 @@ ConfigReader::Token ConfigReader::parse(const char *text, ConfigBlock &config) {
 	return KeyValue;
 }
 
-ConfigBlockWriter::ConfigBlockWriter() {}
-ConfigBlockWriter::~ConfigBlockWriter() {}
 
 bool ConfigBlockWriter::edit(const char *cmd, const char *options, ConfigBlock &config) {
 	for (std::map<std::string, std::string>::iterator ii = config.begin(); ii != config.end(); ++ii) {
@@ -486,8 +484,25 @@ bool ConfigBlockWriter::write(const char *datafile, ConfigBlock &config) {
 
 
 
+bool ConfigWriter::update(const char* blockName, const char* cmd, const char* options)
+{
+	for (std::map<std::string, std::string>::iterator ii = config.begin(); ii != config.end(); ++ii) {
+		file << ii->first << "=" << ii->second << '\n';
+		//std::cout << ii->first << "=" << ii->second << '\n';
+	}
+	ConfigBlockWriter
+	return false;
+}
+
+bool ConfigWriter::remove(const char* cmd, ConfigBlock& config)
+{
+	return false;
+}
+
 bool ConfigWriter::load(AppConfigBase& config)
 {
+	m_config.reset(&config);
+	m_config->printAll();
 	return false;
 }
 

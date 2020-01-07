@@ -8,9 +8,9 @@
 
 namespace simplearchive {
 
-	bool UpdateConfig::read()
+	bool UpdateConfig::read(SIAARCConfig &imgaConfig)
 	{
-		SIAARCConfig imgaConfig;
+		
 		/*
 		const std::string key = "IMGARCHIVE_HOME";
 		std::string temp = SAUtils::GetPOSIXEnv(key);
@@ -69,11 +69,22 @@ namespace simplearchive {
 		AppConfigReader configReader;
 		configReader.setNoLogging();
 		configReader.read(configfile.c_str(), imgaConfig);
-		imgaConfig.printAll();
-		//ConfigWriter configWriter;
+		
+		
+		return true;
+	}
+	bool UpdateConfig::update(const char* configOptionBlock, const char* configOption, const char* configValue)
+	{
+		SIAARCConfig imgaConfig;
+		if (read(imgaConfig) == false) {
+			return false;
+		}
+		ConfigWriter configWriter;
+		configWriter.load(imgaConfig);
+		configWriter.update(configOptionBlock, configOption, configValue);
 		//if (configWriter.write("C:\\Temp\\config.txt", imgaConfig) == false) {
 		//	return false;
 		//}
-		return true;
+		return false;
 	}
 };

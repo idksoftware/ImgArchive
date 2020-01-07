@@ -87,7 +87,7 @@ namespace simplearchive {
 	bool AdminApp::Configure(const char* configOptionBlock, const char* configOption, const char* configValue)
 	{
 		UpdateConfig updateConfig;
-		if (updateConfig.read() == false) {
+		if (updateConfig.update(configOptionBlock, configOption, configValue) == false) {
 			return false;
 		}
 		return true;

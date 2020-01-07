@@ -186,10 +186,10 @@ public:
 class ConfigBlockWriter {
 public:
 	/// @brief Constructor for class.
-	ConfigBlockWriter();
+	ConfigBlockWriter() = default;
 
 	/// @brief Destructor for the class.
-	virtual ~ConfigBlockWriter();
+	virtual ~ConfigBlockWriter() = default;
 
 	bool add(const char *cmd, const char *options, ConfigBlock &config);
 	bool edit(const char *cmd, const char *options, ConfigBlock &config);
@@ -209,16 +209,16 @@ public:
 };
 
 class ConfigWriter {
+	std::shared_ptr<AppConfigBase> m_config;
 public:
 	/// @brief Constructor for class.
-	ConfigWriter();
+	ConfigWriter() = default;
 
 	/// @brief Destructor for the class.
-	virtual ~ConfigWriter();
+	virtual ~ConfigWriter() = default;
 
-	bool add(const char* blockName, const char* cmd, const char* options);
-	bool edit(const char* blockName, const char* cmd, const char* options);
-
+	bool update(const char* blockName, const char* cmd, const char* options);
+	
 	/// @brief This function attempts to read a configuration file.
 	/// @param    cmd			.
 	/// @param    config		Config class to be written out.
