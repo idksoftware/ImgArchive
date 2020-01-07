@@ -37,10 +37,10 @@ namespace simplearchive {
 		// Subcommands
 
 
-		//defineOption("init", "Create Archive enviroment", ArgvParser::MasterOption);
-		//defineOption("show", "Show settings", ArgvParser::MasterOption);
-		//defineOption("version", "prints the version information", ArgvParser::MasterOption);
-		//defineOption("validate", "Validate commands", ArgvParser::MasterOption);
+		defineOption("init", "Create Archive enviroment", ArgvParser::MasterOption);
+		defineOption("show", "Show settings", ArgvParser::MasterOption);
+		defineOption("version", "prints the version information", ArgvParser::MasterOption);
+		defineOption("validate", "Validate commands", ArgvParser::MasterOption);
 		//defineOption("mirror", "Mirror commands", ArgvParser::MasterOption);
 		//defineOption("test", "test commands", ArgvParser::MasterOption);
 		defineOption("config", "Configure ImgArchive's working parameters", ArgvParser::MasterOption);
@@ -122,20 +122,17 @@ namespace simplearchive {
 		*/
 		//defineOption("workspace-path", "Location of the archive Workspace", ArgvParser::OptionRequiresValue);
 		//defineOptionAlternative("workspace-path", "w");
-		/*
-		defineOption("settup", "Show settup", ArgvParser::NoOptionAttribute);
-		*/
 		
-		//defineCommandOption("init", "archive-path");
-		//defineCommandOption("init", "workspace-path");
-		/*
+		defineOption("settup", "Show settup", ArgvParser::NoOptionAttribute);		
+		defineCommandOption("init", "archive-path");
+		defineCommandOption("init", "workspace-path");
 		defineCommandOption("show", "settup");
-		defineCommandOption("show", "checkedOut");
+		//defineCommandOption("show", "checkedOut");
 
 		defineCommandOption("validate", "scope");
 		defineCommandOption("validate", "repair");
 		defineCommandOption("validate", "archive-path");
-		*/
+		
 		//defineCommandOption("test", "settup");
 		
 		defineCommandOption("config", "general"); // imgadmin config --general.quiet=false

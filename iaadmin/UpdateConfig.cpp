@@ -1,5 +1,7 @@
 #include "UpdateConfig.h"
 #include <string>
+#include <iostream>
+#include <fstream>
 #include "SAUtils.h"
 #include "AppConfig.h"
 #include "ConfigReader.h"
@@ -8,7 +10,7 @@
 
 namespace simplearchive {
 
-	bool UpdateConfig::read(SIAARCConfig &imgaConfig)
+	bool UpdateConfig::read(AppConfigBase&imgaConfig)
 	{
 		
 		/*
@@ -59,8 +61,8 @@ namespace simplearchive {
 
 			return false;
 		}
-		std::string configfile = homePath + "/config/" + "config.dat";
-		if (SAUtils::FileExists(configfile.c_str()) == false) {
+		m_configfile = homePath + "/config/" + "config.dat";
+		if (SAUtils::FileExists(m_configfile.c_str()) == false) {
 
 			printf("ImgArchive Unable to start? No config.dat file found in the default location or"
 				" the environment variable IMGARCHIVE_HOME not set.\nUse siaadmin to initalise an archive.\n");
@@ -68,7 +70,7 @@ namespace simplearchive {
 		}
 		AppConfigReader configReader;
 		configReader.setNoLogging();
-		configReader.read(configfile.c_str(), imgaConfig);
+		configReader.read(m_configfile.c_str(), imgaConfig);
 		
 		
 		return true;
@@ -79,12 +81,17 @@ namespace simplearchive {
 		if (read(imgaConfig) == false) {
 			return false;
 		}
-		ConfigWriter configWriter;
-		configWriter.load(imgaConfig);
+		ConfigWriter configWriter(imgaConfig);
 		configWriter.update(configOptionBlock, configOption, configValue);
-		//if (configWriter.write("C:\\Temp\\config.txt", imgaConfig) == false) {
-		//	return false;
-		//}
-		return false;
+		imgaConfig.printAll();
+		std::ofstream configFile;
+		configFile.open(m_configfile.c_str());
+		if (configFile.bad()) {
+			return false;
+		}
+		configFile << imgaConfig;
+		configFile.close();
+		
+		return true;
 	}
 };

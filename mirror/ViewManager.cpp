@@ -720,7 +720,7 @@ bool ViewManager::remove(const char *name) {
 	ConfigReader configReader;
 	configReader.read(m_confpath.c_str(), config);
 
-	ConfigWriter configWriter;
+	ConfigBlockWriter configWriter;
 	if (configWriter.remove(name, config) == false) {
 		return false;
 	}
@@ -814,9 +814,9 @@ bool ViewManager::edit(const char *name, const char *locationPath, bool mode, bo
 	ConfigBlock config;
 	ConfigReader configReader;
 	configReader.read(m_confpath.c_str(), config);
-	ConfigWriter configWriter;
-	//configWriter.edit(name, line.c_str(), config);
-	//configWriter.write(m_confpath.c_str(), config);
+	ConfigBlockWriter configWriter;
+	configWriter.edit(name, line.c_str(), config);
+	configWriter.write(m_confpath.c_str(), config);
 
 	return true;
 }
@@ -828,9 +828,9 @@ bool ViewManager::create(const char *name, const char *locationPath, bool mode, 
 	ConfigBlock config;
 	ConfigReader configReader;
 	configReader.read(m_confpath.c_str(), config);
-	ConfigWriter configWriter;
-	//configWriter.add(name, line.c_str(), config);
-	//configWriter.write(m_confpath.c_str(), config);
+	ConfigBlockWriter configWriter;
+	configWriter.add(name, line.c_str(), config);
+	configWriter.write(m_confpath.c_str(), config);
 	return true;
 }
 } /* namespace simplearchive */

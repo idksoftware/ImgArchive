@@ -55,11 +55,13 @@ bool iequals(const std::string& a, const std::string& b)
 		});
 }
 
-bool isTrueFalse(std::string s) {
+bool isTrueFalse(std::string& s) {
 	if (iequals("true", s) || iequals("false", s) || iequals("on", s) ||
 		iequals("off", s) || iequals("yes", s) || iequals("no", s)) {
+		s = "True";
 		return true;
 	}
+	s = "False";
 	return false;
 }
 
@@ -112,6 +114,7 @@ bool SetConfig::processArgs(const char* ov) {
 }
 bool SetConfig::parseGeneralOptions(const char* ov)
 {
+	m_optionBlock = CONFIG_GENERAL_BLOCK;
 	if (!processArgs(ov)) {
 		return false;
 	}
@@ -120,6 +123,7 @@ bool SetConfig::parseGeneralOptions(const char* ov)
 	case Option::QUIET:
 		break;
 	case Option::SILENT:
+		m_option = "Silent";
 		return isTrueFalse(m_value);
 	case Option::LOG_LEVEL:
 		if (iequals(setLogLevel(m_option), "UNKNOWN")) {

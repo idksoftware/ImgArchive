@@ -69,6 +69,25 @@ void ConfigBlock::printAll() {
 	
 }
 
+std::ostream& operator<< (std::ostream& stream, const AppConfigBase& config) {
+	
+	stream << "# Configuration file for ImgArchive\n";
+	// &logger = CLogger::getLogger();
+	for (auto ii = config.begin(); ii != config.end(); ++ii) {
+		stream << "[" << ii->first << "]\n";
+		const ConfigBlock& block = *(ii->second);
+		stream << block;
+	}
+	return stream;
+}
+
+std::ostream& operator<< (std::ostream& stream, const ConfigBlock& block) {
+	for (auto ii = block.begin(); ii != block.end(); ++ii) {
+		stream << ii->first << '=' << ii->second << "\n";
+	}
+	return stream;
+}
+
 std::shared_ptr<ConfigBlock> AppConfigBase::getConfigBlocks(const char *name) {
 	std::map<std::string, std::shared_ptr<ConfigBlock>>::iterator it;
 	if ((it = find(name)) != end()) {
@@ -99,6 +118,8 @@ void AppConfigBase::printAll() {
 		configBlock.printAll();
 	}
 }
+
+
 
 bool ConfigBlock::value(const char *key, std::string &value) {
 	std::map<std::string, std::string>::iterator it;
@@ -433,6 +454,19 @@ ConfigReader::Token ConfigReader::parse(const char *text, ConfigBlock &config) {
 	return KeyValue;
 }
 
+bool ConfigBlockWriter::update(const char* cmd, const char* options, ConfigBlock& config) {
+	for (auto ii = config.begin(); ii != config.end(); ++ii) {
+		//std::cout << ii->first << '\n';
+		if (ii->first.compare(cmd) == 0) {
+			ii->second = options;
+			return true;
+		}
+	}
+	std::string cmdp(cmd);
+	std::string optionp(options);
+	config[(cmdp)] = (optionp);
+	return false;
+}
 
 bool ConfigBlockWriter::edit(const char *cmd, const char *options, ConfigBlock &config) {
 	for (std::map<std::string, std::string>::iterator ii = config.begin(); ii != config.end(); ++ii) {
@@ -440,8 +474,10 @@ bool ConfigBlockWriter::edit(const char *cmd, const char *options, ConfigBlock &
 		if (ii->first.compare(cmd) == 0) {
 			ii->second = options;
 		}
+		return true;
 	}
-	return true;
+	
+	return false;
 }
 
 bool ConfigBlockWriter::add(const char *cmd, const char *options, ConfigBlock &config) {
@@ -486,11 +522,15 @@ bool ConfigBlockWriter::write(const char *datafile, ConfigBlock &config) {
 
 bool ConfigWriter::update(const char* blockName, const char* cmd, const char* options)
 {
-	for (std::map<std::string, std::string>::iterator ii = config.begin(); ii != config.end(); ++ii) {
-		file << ii->first << "=" << ii->second << '\n';
-		//std::cout << ii->first << "=" << ii->second << '\n';
+	for (auto ii = m_config.begin(); ii != m_config.end(); ++ii) {
+		if (ii->first.compare(blockName) == 0) {
+			ConfigBlockWriter configBlockWriter;
+			ConfigBlock& config = *(ii->second);
+			configBlockWriter.update(cmd, options, config);
+			return true;
+		}
 	}
-	ConfigBlockWriter
+	
 	return false;
 }
 
@@ -499,12 +539,14 @@ bool ConfigWriter::remove(const char* cmd, ConfigBlock& config)
 	return false;
 }
 
+/*
 bool ConfigWriter::load(AppConfigBase& config)
 {
 	m_config.reset(&config);
 	m_config->printAll();
 	return false;
 }
+*/
 
 bool ConfigWriter::write(const char* datafile, AppConfigBase& config)
 {

@@ -79,9 +79,11 @@ public:
 
 	/// @brief This function is called by the ConfigReader to carry out any further
 	/// processing in the map.
-
+	friend std::ostream& operator<< (std::ostream& stream, const ConfigBlock& config);
 
 };
+
+std::ostream& operator<< (std::ostream& stream, const ConfigBlock& config);
 
 #define ROOT_BLOCK			"Global"
 #define GENERAL_BLOCK	    "General"
@@ -107,7 +109,10 @@ public:
 	bool setConfigBlock(const char* name, std::string &value, std::string &defaultValue, const char *configBlock);
 
 	std::shared_ptr<ConfigBlock> getConfigBlocks(const char *name);
+	friend std::ostream& operator<< (std::ostream& stream, const AppConfigBase& config);
 };
+
+std::ostream& operator<< (std::ostream& stream, const AppConfigBase& config);
 /**
  * @brief This class is the file reader for the ConfigBLock Object.
  *
@@ -184,6 +189,7 @@ public:
 };
 
 class ConfigBlockWriter {
+
 public:
 	/// @brief Constructor for class.
 	ConfigBlockWriter() = default;
@@ -191,8 +197,9 @@ public:
 	/// @brief Destructor for the class.
 	virtual ~ConfigBlockWriter() = default;
 
-	bool add(const char *cmd, const char *options, ConfigBlock &config);
-	bool edit(const char *cmd, const char *options, ConfigBlock &config);
+	bool add(const char* cmd, const char* options, ConfigBlock& config);
+	bool edit(const char* cmd, const char* options, ConfigBlock& config);
+	bool update(const char* cmd, const char* options, ConfigBlock& config);
 
 	/// @brief This function attempts to read a configuration file.
 	/// @param    cmd			.
@@ -209,10 +216,10 @@ public:
 };
 
 class ConfigWriter {
-	std::shared_ptr<AppConfigBase> m_config;
+	AppConfigBase& m_config;
 public:
 	/// @brief Constructor for class.
-	ConfigWriter() = default;
+	ConfigWriter(AppConfigBase& c) : m_config(c) {};
 
 	/// @brief Destructor for the class.
 	virtual ~ConfigWriter() = default;
@@ -229,7 +236,7 @@ public:
 	/// @param    datafile	File name to write.
 	/// @param    config		Config class to be written out.
 	/// @return	returns true if read correctly.
-	bool load(AppConfigBase& config);
+	//bool load(AppConfigBase& config);
 	bool write(const char* datafile, AppConfigBase& config);
 };
 
