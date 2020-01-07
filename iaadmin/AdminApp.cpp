@@ -388,7 +388,7 @@ bool AdminApp::CreateArchive(const char *archivePath, const char *workspacePath,
 
 	if (users == true) {
 		if (CreateArchive::IsAdmin() == false) {
-			std::cout << "Failed you need administrator privileges" << '\n';
+			std::cout << "Failed? \"All users selected\". You need administrator privileges" << '\n';
 			return false;
 		}
 	}

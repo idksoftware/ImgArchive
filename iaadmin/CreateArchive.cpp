@@ -337,7 +337,7 @@ bool CreateArchive::createUserSystem(const char *archivePath, const char *worksp
 
 	if (archivePath == nullptr || *archivePath == '\0') {
 		std::string progPath = SAUtils::GetPOSIXEnv("USERPROFILE");
-		std::string siaPath = "/IDK Software/ImageArchive1.0";
+		std::string siaPath = "/IDK-Software/ImgArchive";
 		std::string path = progPath;
 		path += siaPath;
 		if (SAUtils::FileExists(progPath.c_str()) == false) {
@@ -413,7 +413,7 @@ bool CreateArchive::createUserSystem(const char *archivePath, const char *worksp
 
 	if (master == nullptr || *master == '\0') {
 		std::string progPath = SAUtils::GetPOSIXEnv("USERPROFILE");
-		std::string siaPath = "/IDK Software/ImageArchive1.0/master";
+		std::string siaPath = "/IDK-Software/ImGArchive/master";
 
 		std::string path = progPath;
 		path += siaPath;
