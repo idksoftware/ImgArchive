@@ -176,6 +176,7 @@ namespace simplearchive {
 			appOptions.setCommandMode(AppOptions::CommandMode::CM_InitArchive);
 			appOptions.m_users = DefaultEnvironment::isInAdminMode();
 			if (DefaultEnvironment::isInAdminMode()) {
+				DefaultEnvironment::setAllUserLocations();
 			}
 			else {
 				DefaultEnvironment::setUserLocations();
@@ -186,11 +187,22 @@ namespace simplearchive {
 				std::string users = optionValue("users");
 				if (users.compare("Myself") == 0) {
 					appOptions.setAllUsers(false);
+					DefaultEnvironment::setUserLocations();
 				}
 				else {
 					appOptions.setAllUsers(true);
+					DefaultEnvironment::setAllUserLocations();
 				}
 			}
+
+			AppOptions::m_homePath = DefaultEnvironment::getHomePath();
+			AppOptions::m_workspacePath = DefaultEnvironment::getWorkspacePath();
+			AppOptions::m_masterPath = DefaultEnvironment::getMasterPath();
+			AppOptions::m_configPath = DefaultEnvironment::getMasterPath();
+			AppOptions::m_derivativePath = DefaultEnvironment::getDerivativePath();
+			AppOptions::m_repositoryPath = DefaultEnvironment::getHomePath();
+			AppOptions::m_cataloguePath = DefaultEnvironment::getHomePath();
+
 			if (foundOption("archive-path") == true) {
 				opt = optionValue("archive-path");
 				appOptions.setHomePath(opt.c_str());
