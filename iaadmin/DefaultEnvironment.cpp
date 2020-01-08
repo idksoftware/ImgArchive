@@ -6,8 +6,33 @@
 #include "EnvFunc.h"
 #include "AppBase.h"
 
+#ifdef _WIN32
+#include <Windows.h>
 
+bool IsAdminMode() {
+	bool fRet = false;
+	HANDLE hToken = NULL;
+	if (OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &hToken)) {
+		TOKEN_ELEVATION Elevation;
+		DWORD cbSize = sizeof(TOKEN_ELEVATION);
+		if (GetTokenInformation(hToken, TokenElevation, &Elevation, sizeof(Elevation), &cbSize)) {
+			fRet = Elevation.TokenIsElevated;
+		}
+	}
+	if (hToken) {
+		CloseHandle(hToken);
+	}
+	return fRet;
+}
+#endif
 namespace simplearchive {
+
+	bool DefaultEnvironment::m_configured = false;
+	bool DefaultEnvironment::m_isInAdminMode = false;
+	bool DefaultEnvironment::m_isHomePathSet = false;
+	bool DefaultEnvironment::m_isHomePathValid = false;
+
+	std::string DefaultEnvironment::m_homePath;
 
 	bool DefaultEnvironment::init()
 	{
@@ -15,44 +40,44 @@ namespace simplearchive {
 		AppConfigBase config;
 		m_configured = false;
 		bool found = false;
-		std::string homePath;
-
+		
+		m_isInAdminMode = IsAdminMode();
 #ifdef WIN32
 		// Find if the IMGARCHIVE_HOME pathe is in the windows registery 
 
 		// Looking the HKEY_LOCAL_MACHINE first
-		if (GetEnv(homePath, true) == true) {
+		if (GetEnv(m_homePath, true) == true) {
 			//printf("Found IMGARCHIVE_HOME in system variables: %s", homePath.c_str());
 			found = true;
 		}
 		// Looking the HKEY_CURRENT_USER
-		else if (GetEnv(homePath, false) == true) {
+		else if (GetEnv(m_homePath, false) == true) {
 			//printf("Found IMGARCHIVE_HOME in user variables: %s", homePath.c_str());
 			found = true;
 		}
 		else {
-			homePath = SAUtils::GetPOSIXEnv("ProgramData");
-			if (homePath.empty() == true || homePath.length() == 0) {
+			m_homePath = SAUtils::GetPOSIXEnv("ProgramData");
+			if (m_homePath.empty() == true || m_homePath.length() == 0) {
 				printf("ImgArchiveUnable to start? Cannot read user profile.");
 				
 				return false;
 			}
 			else {
-				homePath += DEFAULT_DATA_CONFIG_PATH;
-				if (SAUtils::DirExists(homePath.c_str()) == true) {
+				m_homePath += DEFAULT_DATA_CONFIG_PATH;
+				if (SAUtils::DirExists(m_homePath.c_str()) == true) {
 					//printf("Found IMGARCHIVE_HOME in user profile: %s", homePath.c_str());
 					found = true;
 				}
 			}
 			if (found == false) {
-				homePath = SAUtils::GetPOSIXEnv("USERPROFILE");
-				if (homePath.empty() == true || homePath.length() == 0) {
+				m_homePath = SAUtils::GetPOSIXEnv("USERPROFILE");
+				if (m_homePath.empty() == true || m_homePath.length() == 0) {
 					printf("ImgArchive Unable to start? Cannot read all users profile.");
 					
 					return false;
 				}
-				homePath += DEFAULT_DATA_CONFIG_PATH;
-				if (SAUtils::DirExists(homePath.c_str()) == true) {
+				m_homePath += DEFAULT_DATA_CONFIG_PATH;
+				if (SAUtils::DirExists(m_homePath.c_str()) == true) {
 					//printf("Found IMGARCHIVE_HOME in all users profile: %s", homePath.c_str());
 					found = true;
 				}
@@ -60,8 +85,8 @@ namespace simplearchive {
 		}
 #else
 		// Under Linux look for the HKEY_LOCAL_MACHINE enviroment variable
-		homePath = SAUtils::GetPOSIXEnv("IMGARCHIVE_HOME");
-		if (homePath.empty() == true || homePath.length() == 0) {
+		m_homePath = SAUtils::GetPOSIXEnv("IMGARCHIVE_HOME");
+		if (m_homePath.empty() == true || homePath.length() == 0) {
 			printf("ImgArchive Unable to start? Cannot read user profile.");
 			setError(12, "ImgArchive Unable to start? Cannot read user profile.");
 			return false;
@@ -82,10 +107,12 @@ namespace simplearchive {
 			//}
 		}
 
-		if (SAUtils::DirExists(homePath.c_str()) == false) {
+		if (SAUtils::DirExists(m_homePath.c_str()) == false) {
 			//setError(12, "ImgArchive Unable to start? Archive not found at default location and the environment variable IAHOME not set.\n"
 			//	"Use siaadmin -i to create an empty archive at the default location (see documentation).\n");
-			return false;
+			m_isHomePathSet = true;
+			m_configured = false;
+			return true;
 
 		}
 
@@ -95,20 +122,12 @@ namespace simplearchive {
 			tempPath = SAUtils::GetPOSIXEnv("TMP");
 		}
 
-		std::string configfile = homePath + "/config/" + "config.dat";
-		std::string configPath = homePath + "/config";
+		std::string configfile = m_homePath + "/config/" + "config.dat";
+		std::string configPath = m_homePath + "/config";
 		if (SAUtils::FileExists(configfile.c_str()) == true) {
-			//setConfigPath(configPath.c_str());
-			AppConfigReader configReader;
-			configReader.setNoLogging();
-			if (configReader.read(configfile.c_str(), config) == false) {
-				//setError(13, "Error found at line %d in the configuration file.\n", configReader.getCurrentLineNumber());
-				return false;
-			}
-			//config.fileBasedValues(homePath.c_str(), tempPath.c_str());
 			m_configured = true;
 		}
-
+		m_configured = false;
 
 		return true;
 	}

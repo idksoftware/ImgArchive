@@ -58,6 +58,7 @@
 #include "SIALib.h"
 #include "ShowCommand.h"
 #include "UpdateConfig.h"
+#include "DefaultEnvironment.h"
 
 #ifdef _WIN32
 #pragma comment(lib, "ws2_32.lib")
@@ -231,22 +232,6 @@ int test(const std::string key) {
 }
 
 
-bool AdminApp::doInitalise(int argc, char **argv) {
-	/*
-	AppOptions &appOptions = AppOptions::get();
-	if (appOptions.initalise(argc, argv) == false) {
-
-		return false;
-	}
-	*/
-	AdminArgvParser adminArgvParser;
-	if (adminArgvParser.initalise(argc, argv) == false) {
-
-		return false;
-	}
-	return true;
-}
-
 bool AdminApp::doRun()
 {
 	// Find if the archive exists
@@ -277,6 +262,9 @@ bool AdminApp::doRun()
 		
 		if (appOptions.getCommandMode() == AppOptions::CommandMode::CM_InitArchive) {
 			// const char *archivePath, const char *workspacePath, const char *reposPath, const char *masterPath, const char *derivativePath, bool users
+			DefaultEnvironment defaultEnvironment;
+			defaultEnvironment.init();
+
 			if (CreateArchive(appOptions.getHomePath(), appOptions.getWorkspacePath(), appOptions.getRepositoryPath(),
 							appOptions.getMasterPath(), appOptions.getDerivativePath(), appOptions.getCataloguePath(), appOptions.getUsers()) == false) {
 				return false;
@@ -670,6 +658,11 @@ bool AdminApp::initaliseHomePath() {
 }
 
 bool AdminApp::initaliseArgs(int argc, char **argv) {
+	DefaultEnvironment defaultEnvironment;
+	defaultEnvironment.init();
+	defaultEnvironment.print();
+	AppOptions& appOptions = AppOptions::get();
+	
 	if (m_argvParser->doInitalise(argc, argv) == false) {
 		return false;
 	}

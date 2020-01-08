@@ -8,7 +8,7 @@
 #include "SIAArgvParser.h"
 #include "Environment.h"
 #include "SetConfig.h"
-
+#include "DefaultEnvironment.h"
 
 using namespace CommandLineProcessing;
 namespace simplearchive {
@@ -174,7 +174,7 @@ namespace simplearchive {
 			// This command will initalise the configuration.
 			// so the the configuration need not to be initalised.
 			appOptions.setCommandMode(AppOptions::CommandMode::CM_InitArchive);
-
+			appOptions.m_users = DefaultEnvironment::isInAdminMode();
 			appOptions.m_configured = false;
 			std::string opt;
 			if (foundOption("users") == true) {

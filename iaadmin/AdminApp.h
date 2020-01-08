@@ -93,9 +93,6 @@ protected:
 	bool initaliseHomePath();
 	bool initaliseConfig();
 	bool initaliseArgs(int argc, char **argv);
-
-	virtual bool doInitalise(int argc, char **argv);
-
 	/// @brief This is the main application run function. All application processing starts here.
 	bool doRun();
 
