@@ -175,6 +175,11 @@ namespace simplearchive {
 			// so the the configuration need not to be initalised.
 			appOptions.setCommandMode(AppOptions::CommandMode::CM_InitArchive);
 			appOptions.m_users = DefaultEnvironment::isInAdminMode();
+			if (DefaultEnvironment::isInAdminMode()) {
+			}
+			else {
+				DefaultEnvironment::setUserLocations();
+			}
 			appOptions.m_configured = false;
 			std::string opt;
 			if (foundOption("users") == true) {

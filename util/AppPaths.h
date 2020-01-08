@@ -64,7 +64,7 @@
 #define BACKUP_PATH						"/backup"
 #define DEFAULT_WORKSPACE_PATH			"/IAWorkspace"
 #define DEFAULT_MASTER_CATALOGUE_PATH	"/pictures/IAPictures"
-#define DEFAULT_HOME_PATH				"/IDK-Software/IMGARCHIVE"
+
 #define MASTER_BACKUP1_PATH				"/MasterBackup1"
 #define MASTER_BACKUP2_PATH				"/MasterBackup2"
 //#define DEFAULT_MASTER_PATH				"/IDK-Software/IMGA/master"
@@ -85,6 +85,9 @@
 #define CHKSTATUS_PATH					"/chkout"
 #define SQLITE3_DB						"IASqlite3.db"
 
+#define USER_DEFAULT_HOME_PATH     ".ImgArchive"
+#define ALLUSERS_DEFAULT_HOME_PATH "IDK-Software/ImgArchive"
+#define DEFAULT_HOME_PATH		   "/IDK-Software/ImgArchive"
 
 //m_sourcePath = tempHomeDrive + tempHomePath + "/Pictures";
 //m_hookPath = m_homePath + "/hooks";

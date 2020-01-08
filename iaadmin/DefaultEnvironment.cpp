@@ -5,9 +5,12 @@
 #include "ConfigReader.h"
 #include "EnvFunc.h"
 #include "AppBase.h"
+#include "AppPaths.h"
 
 #ifdef _WIN32
 #include <Windows.h>
+
+
 
 bool IsAdminMode() {
 	bool fRet = false;
@@ -33,6 +36,13 @@ namespace simplearchive {
 	bool DefaultEnvironment::m_isHomePathValid = false;
 
 	std::string DefaultEnvironment::m_homePath;
+	std::string DefaultEnvironment::m_archivePath;
+	std::string DefaultEnvironment::m_workspacePath;
+	std::string DefaultEnvironment::m_masterPath;
+	std::string DefaultEnvironment::m_derivativePath;
+	std::string DefaultEnvironment::m_cataloguePath;
+	std::string DefaultEnvironment::m_wwwCataloguePath;
+	std::string DefaultEnvironment::m_historyPath;
 
 	bool DefaultEnvironment::init()
 	{
@@ -131,5 +141,40 @@ namespace simplearchive {
 
 		return true;
 	}
+	bool DefaultEnvironment::setAllUserLocations() {
+		m_homePath = SAUtils::GetPOSIXEnv("ProgramData");
+		m_homePath += ALLUSERS_DEFAULT_HOME_PATH;
+		if (SAUtils::DirExists(m_homePath.c_str()) == false) {
+			if (m_configured == true) {
+				return false;
+			}
+		}
+		return locations(m_homePath.c_str());
+	}
 
+	bool DefaultEnvironment::setUserLocations() {
+
+		//m_homePath = SAUtils::GetPOSIXEnv("HOMEDRIVE");
+		//m_homePath += SAUtils::GetPOSIXEnv("HOMEPATH");
+		m_homePath += SAUtils::GetPOSIXEnv("LOCALAPPDATA");
+		m_homePath += USER_DEFAULT_HOME_PATH;
+		if (SAUtils::DirExists(m_homePath.c_str()) == false) {
+			if (m_configured == true) {
+				return false;
+			}
+		}
+		return locations(m_homePath.c_str());
+	}
+
+	bool DefaultEnvironment::locations(const char *path) {
+		std::string homePath = path;
+		// Repository Archive Path
+		m_masterPath = homePath + MASTER_PATH;
+		m_derivativePath = homePath + DERIVATIVE_PATH;
+		m_historyPath = homePath + HISTORY_PATH;
+		m_cataloguePath = homePath + MASTER_WWW_CATALOGUE_PATH;
+		m_wwwCataloguePath = homePath + DEFAULT_MASTER_CATALOGUE_PATH;
+		m_workspacePath = homePath + DEFAULT_WORKSPACE_PATH;
+		return false;
+	}
 };

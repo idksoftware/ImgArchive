@@ -15,9 +15,21 @@ namespace simplearchive {
 		static std::string m_homePath;
 		static bool m_isHomePathSet;
 		static bool m_isHomePathValid;
+
+		static std::string  m_archivePath;
+		static std::string  m_workspacePath;
+		static std::string  m_masterPath;
+		static std::string  m_derivativePath;
+		static std::string  m_cataloguePath;
+		static std::string m_wwwCataloguePath;
+		static std::string  m_historyPath;
 	public:
 		DefaultEnvironment() = default;
 		~DefaultEnvironment() = default;
+		static bool setAllUserLocations();
+		static bool setUserLocations();
+		static bool locations(const char* path);
+
 		static bool init();
 		static bool isConfigured() {
 			return m_configured;
@@ -34,6 +46,35 @@ namespace simplearchive {
 		static bool isHomePathValid() {
 			return m_isHomePathValid;
 		}
+
+		static std::string  getArchivePath() {
+			return m_archivePath;
+		}
+
+		static std::string  getWorkspacePath() {
+			return  m_workspacePath;
+		}
+
+		static std::string  getMasterPath() {
+			return  m_masterPath;
+		}
+
+		static std::string  getDerivativePath() {
+			return  m_derivativePath;
+		}
+
+		static std::string  m_getCataloguePath() {
+			return  m_cataloguePath;
+		}
+
+		static std::string m_getWwwCataloguePath() {
+			return m_wwwCataloguePath;
+		}
+
+		static std::string  getHistoryPath() {
+			return  m_historyPath;
+		}
+
 
 		void print() {
 			printf("Is configured %s\n", (m_configured)?"true":"False");

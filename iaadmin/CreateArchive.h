@@ -39,18 +39,7 @@
 
 namespace simplearchive {
 
-/*
-#define CONFIG_PATH "/config"
-#define TMP_PATH "/tmp"
-#define DUPS_PATH "/dups"
-#define SQLITEDB_PATH "/sqldb"
-#define LOG_PATH "/logs"
-#define HISTORY_PATH "/history"
-#define BACKUP_PATH "/backup"
-#define MASTER_PATH "/master"
-#define TOOLS_PATH "/tools"
-#define HOOKS_PATH "/hooks"
-*/
+
 
 	class CreateArchive {
 		/**
