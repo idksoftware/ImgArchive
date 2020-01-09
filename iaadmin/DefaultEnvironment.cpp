@@ -36,6 +36,7 @@ namespace simplearchive {
 	bool DefaultEnvironment::m_isHomePathValid = false;
 
 	std::string DefaultEnvironment::m_homePath;
+	std::string DefaultEnvironment::m_picturesPath;
 	std::string DefaultEnvironment::m_archivePath;
 	std::string DefaultEnvironment::m_workspacePath;
 	std::string DefaultEnvironment::m_masterPath;
@@ -154,9 +155,8 @@ namespace simplearchive {
 
 	bool DefaultEnvironment::setUserLocations() {
 
-		//m_homePath = SAUtils::GetPOSIXEnv("HOMEDRIVE");
-		//m_homePath += SAUtils::GetPOSIXEnv("HOMEPATH");
-		m_homePath += SAUtils::GetPOSIXEnv("LOCALAPPDATA");
+		
+		m_homePath = SAUtils::GetPOSIXEnv("LOCALAPPDATA");
 		m_homePath += USER_DEFAULT_HOME_PATH;
 		if (SAUtils::DirExists(m_homePath.c_str()) == false) {
 			if (m_configured == true) {
@@ -166,15 +166,18 @@ namespace simplearchive {
 		return locations(m_homePath.c_str());
 	}
 
-	bool DefaultEnvironment::locations(const char *path) {
-		std::string homePath = path;
+	bool DefaultEnvironment::locations(const char *home) {
+		m_picturesPath = SAUtils::GetPOSIXEnv("HOMEDRIVE");
+		m_picturesPath += SAUtils::GetPOSIXEnv("HOMEPATH");
+		m_picturesPath += DEFAULT_PICTURES_PATH;
+		std::string homePath = home;
 		// Repository Archive Path
 		m_masterPath = homePath + MASTER_PATH;
 		m_derivativePath = homePath + DERIVATIVE_PATH;
 		m_historyPath = homePath + HISTORY_PATH;
-		m_cataloguePath = homePath + MASTER_WWW_CATALOGUE_PATH;
-		m_wwwCataloguePath = homePath + DEFAULT_MASTER_CATALOGUE_PATH;
-		m_workspacePath = homePath + DEFAULT_WORKSPACE_PATH;
+		m_wwwCataloguePath = homePath + MASTER_WWW_CATALOGUE_PATH;
+		m_cataloguePath = m_picturesPath + DEFAULT_MASTER_CATALOGUE_PATH;
+		m_workspacePath = m_picturesPath + DEFAULT_WORKSPACE_PATH;
 		return false;
 	}
 };

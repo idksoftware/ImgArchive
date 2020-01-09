@@ -68,6 +68,10 @@ namespace simplearchive {
 	public:
 		CreateArchive();
 		virtual ~CreateArchive();
+
+		static bool createArchive(const char* archivePath, const char* workspacePath, const char* masterPath, const char* derivativePath, const char* cataloguePath, bool users);
+
+
 		static bool createSystem(bool users, const char *archivePath, const char *workspace, const char *master, const char *derivative, const char *catalogue);
 		/**
 		/* @brief Creates the configuration folders.

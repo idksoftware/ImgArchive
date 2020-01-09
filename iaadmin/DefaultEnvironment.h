@@ -13,6 +13,7 @@ namespace simplearchive {
 		static bool m_configured;
 		static bool m_isInAdminMode;
 		static std::string m_homePath;
+		static std::string m_picturesPath;
 		static bool m_isHomePathSet;
 		static bool m_isHomePathValid;
 

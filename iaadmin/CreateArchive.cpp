@@ -51,6 +51,46 @@ static char THIS_FILE[] = __FILE__;
 bool IsElevated();
 namespace simplearchive {
 
+	bool CreateArchive::createArchive(const char* archivePath, const char* workspacePath, const char* masterPath, const char* derivativePath, const char* cataloguePath, bool users) {
+
+		
+		std::string archivePathStr = archivePath;
+		std::string workspacePathStr = workspacePath;
+		//std::string reposPathStr = reposPath;
+		std::string masterPathStr = masterPath;
+		std::string derivativePathStr = derivativePath;
+		std::string cataloguePathStr = cataloguePath;
+
+		std::string masterPathOpt = masterPath;
+		std::string derivativePathOpt = derivativePath;
+
+		if (CreateArchive::createSystem(users, archivePathStr.c_str(), workspacePathStr.c_str(), masterPathStr.c_str(), derivativePathStr.c_str(), cataloguePathStr.c_str()) == false) {
+			return false;
+		}
+		if (CreateArchive::createHomeEnvVar(CreateArchive::getArchivePath().c_str(), users) == false) {
+			std::cout << "Failed creating enviroment variable IMGARCHIVE_HOME" << '\n';
+			return false;
+		}
+
+		if (CreateArchive::makeFolders(CreateArchive::getArchivePath().c_str()) == false) {
+			std::cout << "Failed creating folders" << '\n';
+			return false;
+		}
+
+		if (CreateArchive::createHookFiles(CreateArchive::getArchivePath().c_str(), HOOKS_PATH) == false) {
+			std::cout << "Failed creating hook files" << '\n';
+			return false;
+		}
+
+		if (CreateArchive::createConfigFiles(CreateArchive::getArchivePath().c_str(), CONFIG_PATH, CreateArchive::getWorkspace().c_str(), CreateArchive::getMaster().c_str(), derivativePathStr.c_str(), cataloguePathStr.c_str()) == false) {
+			std::cout << "Failed creating configuration files" << '\n';
+			return false;
+		}
+		return true;
+	}
+
+
+
 // hook folder
 
 	const char *viewPreview1doc[] = {
@@ -333,108 +373,37 @@ bool CreateArchive::createAdminSystem(const char *archivePath, const char *works
 	return true;
 }
 
-bool CreateArchive::createUserSystem(const char *archivePath, const char *workspace, const char *master, const char *derivative, const char *catalogue) {
+bool CreateArchive::createUserSystem(const char* archivePath, const char* workspace, const char* master, const char* derivative, const char* catalogue) {
 
-	if (archivePath == nullptr || *archivePath == '\0') {
-		std::string progPath = SAUtils::GetPOSIXEnv("USERPROFILE");
-		std::string siaPath = "/IDK-Software/ImgArchive";
-		std::string path = progPath;
-		path += siaPath;
-		if (SAUtils::FileExists(progPath.c_str()) == false) {
-			return false;
-		}
-		if (SAUtils::makePath(progPath.c_str(), siaPath.c_str()) == false) {
-			return false;
-		}
-		m_archivePath = path;
-
-	}
-	else {
-		if (SAUtils::FileExists(archivePath) == false) {
-			return false;
-		}
+	if (SAUtils::FileExists(archivePath) == false) {
 		if (SAUtils::makePath(archivePath) == false) {
 			return false;
 		}
-		m_archivePath = archivePath;
 	}
+	m_archivePath = archivePath;
 
-	if (catalogue == nullptr || *catalogue == '\0') {
 
-		std::string temp = SAUtils::GetPOSIXEnv("USERPROFILE");
-		std::string path = temp;
-		path += "/Pictures";
-		if (SAUtils::FileExists(path.c_str()) == false) {
-			return false;
-		}
-		path += "/IAPictures";
-		if (SAUtils::FileExists(path.c_str()) == false) {
-			if (SAUtils::mkDir(path.c_str()) == false) {
-				return false;
-			}
-		}
-		m_catalogue = path;
-	}
-	else {
-		if (SAUtils::FileExists(catalogue) == false) {
-			return false;
-		}
+	if (SAUtils::FileExists(catalogue) == false) {
 		if (SAUtils::makePath(catalogue) == false) {
 			return false;
 		}
-		m_catalogue = catalogue;
 	}
+	m_catalogue = catalogue;
+	
 
-	if (workspace == nullptr || *workspace == '\0') {
-
-		std::string temp = SAUtils::GetPOSIXEnv("USERPROFILE");
-		std::string path = temp;
-		path += "/Documents";
-		if (SAUtils::FileExists(path.c_str()) == false) {
-			return false;
-		}
-		path += "/IAWorkspace";
-		if (SAUtils::FileExists(path.c_str()) == false) {
-			if (SAUtils::mkDir(path.c_str()) == false) {
-				return false;
-			}
-		}
-		m_workspace = path;
-	}
-	else {
-		if (SAUtils::FileExists(workspace) == false) {
-			return false;
-		}
+	if (SAUtils::FileExists(workspace) == false) {
 		if (SAUtils::makePath(workspace) == false) {
 			return false;
 		}
-		m_workspace = workspace;
 	}
+	m_workspace = workspace;
 
-	if (master == nullptr || *master == '\0') {
-		std::string progPath = SAUtils::GetPOSIXEnv("USERPROFILE");
-		std::string siaPath = "/IDK-Software/ImgArchive/master";
-
-		std::string path = progPath;
-		path += siaPath;
-		if (SAUtils::FileExists(progPath.c_str()) == false) {
-			return false;
-		}
-		if (SAUtils::makePath(progPath.c_str(), siaPath.c_str()) == false) {
-			return false;
-		}
-		m_master = path;
-	}
-	else {
-		if (SAUtils::FileExists(master) == false) {
-			return false;
-		}
+	if (SAUtils::FileExists(master) == false) {
 		if (SAUtils::makePath(master) == false) {
 			return false;
 		}
-		m_master = master;
 	}
-	
+	m_master = master;
 	return true;
 }
 

@@ -381,92 +381,17 @@ bool AdminApp::CreateArchive(const char *archivePath, const char *workspacePath,
 		}
 	}
 	
-	AppConfig &config = AppConfig::get();
-	
-	std::string archivePathStr = archivePath;
-	std::string workspacePathStr = workspacePath;
-	std::string reposPathStr = reposPath;
-	std::string masterPathStr = masterPath;
-	std::string derivativePathStr = derivativePath;
-	std::string cataloguePathStr = cataloguePath;
+	std::cout << "Using archive path \"" << archivePath << "\"\n";
+	std::cout << "Using workspace path \"" << workspacePath << "\"\n";
+	std::cout << "Using master path \"" << masterPath << "\"\n";
+	std::cout << "Using derivative path \"" << derivativePath << "\"\n";
+	std::cout << "Using catalogue path \"" << cataloguePath << "\"\n";
 
-	std::string masterPathOpt = masterPath;
-	std::string derivativePathOpt = derivativePath;
-	
-	if (archivePathStr.empty()) {
-		archivePathStr = config.getHomePath();
-	}
-	else {
-		// The root has be changed as an option i.e c:/MyPhotoArchive
-		archivePathStr = archivePath;
-	}
-
-	masterPathStr = archivePathStr;
-	masterPathStr += MASTER_PATH;
-	derivativePathStr = archivePathStr;
-	derivativePathStr += DERIVATIVE_PATH;
-
-	
-	if (!reposPathStr.empty()) {
-		masterPathStr = reposPathStr;
-		masterPathStr += MASTER_PATH;
-		derivativePathStr = reposPathStr;
-		derivativePathStr += DERIVATIVE_PATH;
-	}
-	else if (masterPathOpt.empty() && !derivativePathOpt.empty()) {
-		masterPathStr = masterPathOpt;
-		derivativePathStr = derivativePathOpt;
-	}
-
-	if (masterPathStr.empty()) {
-		masterPathStr = config.getMasterPath();
-	}
-	if (derivativePathStr.empty()) {
-		derivativePathStr = config.getDerivativePath();
-	}
-	
-	if (workspacePathStr.empty()) {
-		workspacePathStr = config.getWorkspacePath();
-	}
-
-	if (cataloguePathStr.empty()) {
-		cataloguePathStr = config.getMasterCataloguePath();
-	}
-	std::cout << "Using archive path \"" << archivePathStr << "\"\n";
-	std::cout << "Using workspace path \"" << workspacePathStr << "\"\n";
-	std::cout << "Using master path \"" << masterPathStr << "\"\n";
-	std::cout << "Using derivative path \"" << derivativePathStr << "\"\n";
-	std::cout << "Using catalogue path \"" << cataloguePathStr << "\"\n";
-	
-	AdminConfig adminConfig;
-	adminConfig.setArchivePath(archivePathStr.c_str());
-	adminConfig.setMasterPath(masterPathStr.c_str());
-	adminConfig.setDerivativePath(derivativePathStr.c_str());
-	adminConfig.setWorkspacePath(workspacePathStr.c_str());
-	adminConfig.setMasterCataloguePath(cataloguePathStr.c_str());
-
-	if (CreateArchive::createSystem(users, archivePathStr.c_str(), workspacePathStr.c_str(), masterPathStr.c_str(), derivativePathStr.c_str(), cataloguePathStr.c_str()) == false) {
-		return false;
-	}
-	if (CreateArchive::createHomeEnvVar(CreateArchive::getArchivePath().c_str(), users) == false) {
-		std::cout << "Failed creating enviroment variable IMGARCHIVE_HOME" << '\n';
+	//  const char* archivePath, const char* workspacePath, const char* reposPath, const char* masterPath, const char* derivativePath, const char* cataloguePath, bool users
+	if (CreateArchive::createArchive(archivePath, workspacePath, masterPath, derivativePath, cataloguePath, users) == false) {
 		return false;
 	}
 	
-	if (CreateArchive::makeFolders(CreateArchive::getArchivePath().c_str()) == false) {
-		std::cout << "Failed creating folders" << '\n';
-		return false;
-	}
-	
-	if (CreateArchive::createHookFiles(CreateArchive::getArchivePath().c_str(), HOOKS_PATH) == false) {
-		std::cout << "Failed creating hook files" << '\n';
-		return false;
-	}
-	
-	if (CreateArchive::createConfigFiles(CreateArchive::getArchivePath().c_str(), CONFIG_PATH, CreateArchive::getWorkspace().c_str(), CreateArchive::getMaster().c_str(), derivativePathStr.c_str(), cataloguePathStr.c_str()) == false) {
-		std::cout << "Failed creating configuration files" << '\n';
-		return false;
-	}
 	return true;
 }
 
