@@ -9,3 +9,5 @@ HomePathType HomePath::type()
 {
 	return HomePathType();
 }
+
+
