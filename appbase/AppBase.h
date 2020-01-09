@@ -9,7 +9,8 @@
 #include <string>
 #include "SIAArgvParser.h"
 
-constexpr auto DEFAULT_DATA_CONFIG_PATH = "/IDK-Software/ImgArchive";
+constexpr auto ALLUSERS_DEFAULT_CONFIG_PATH = "/IDK-Software/ImgArchive";
+constexpr auto MYSELF_DEFAULT_CONFIG_PATH = "/.ImgArchive";
 
 namespace CommandLineProcessing {
 

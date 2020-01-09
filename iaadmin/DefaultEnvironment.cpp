@@ -69,12 +69,11 @@ namespace simplearchive {
 		else {
 			m_homePath = SAUtils::GetPOSIXEnv("ProgramData");
 			if (m_homePath.empty() == true || m_homePath.length() == 0) {
-				printf("ImgArchiveUnable to start? Cannot read user profile.");
-				
+				printf("ImgArchive Unable to start? Cannot read Program Data.");
 				return false;
 			}
 			else {
-				m_homePath += DEFAULT_DATA_CONFIG_PATH;
+				m_homePath += ALLUSERS_DEFAULT_CONFIG_PATH;
 				if (SAUtils::DirExists(m_homePath.c_str()) == true) {
 					//printf("Found IMGARCHIVE_HOME in user profile: %s", homePath.c_str());
 					found = true;

@@ -39,6 +39,7 @@
 #include "stdio.h"
 #include "SIAArgvParser.h"
 #include "Environment.h"
+#include "AppPaths.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -81,7 +82,7 @@ bool AppOptions::initaliseConfig() {
 
 	AdminConfig config;
 
-	const std::string key = "IMGARCHIVE_HOME";
+	const std::string key = IMGARCHIVE_HOME;
 	std::string temp = SAUtils::GetPOSIXEnv(key);
 	std::string homePath = temp;
 	//printf("%s", homePath.c_str());

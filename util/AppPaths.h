@@ -90,6 +90,8 @@
 #define ALLUSERS_DEFAULT_HOME_PATH "/IDK-Software/ImgArchive"
 #define DEFAULT_HOME_PATH		   "/IDK-Software/ImgArchive"
 
+#define IMGARCHIVE_HOME			  "IMGARCHIVE_HOME"
+
 //m_sourcePath = tempHomeDrive + tempHomePath + "/Pictures";
 //m_hookPath = m_homePath + "/hooks";
 

@@ -228,15 +228,14 @@ bool CreateArchive::createHomeEnvVar(const char *root, bool users) {
 	if (SAUtils::DirExists(root) == false) {
 		return false;
 	}
-#ifdef WIN32
-	return SetEnv(root, users);
-#else
-#endif
+	
+	return SAUtils::SetEnv(IMGARCHIVE_HOME, root, users);
+
 }
 
 std::string CreateArchive::makeConfigFile(const char *root, const char *workspace, const char *master, const char *derivative, const char *catalogue) {
 	std::stringstream s;
-	s << "# The main configuration file #\n";
+	s << "# The main ImgArchive configuration file #\n";
 	s << "[General]\n";
 	s << "[Logging]\n";
 	s << "[Network]\n";
@@ -247,33 +246,11 @@ std::string CreateArchive::makeConfigFile(const char *root, const char *workspac
 	s << "DerivativePath=" << derivative << '\n';
 	s << "MasterCataloguePath=" << catalogue << '\n';
 	s << "[Master Archive] # This archive contains the master images.This section controls this archive\n";
-	s << "#BackupOne = \"d:/Backup Test One\" # BackupOne = <path to root backup one folder>\n";
-	s << "#BackupTwo = \"d:/Backup Test Two\" # BackupTwo = <path to root backup two folder>\n";
-	s << "#BackupOneEnabled = true # BackupOneEnabled = <true | false>\n";
-	s << "#BackupTwoEnabled = true # BackupOneEnabled = <true | false>\n";
+	//s << "#BackupOne = \"d:/Backup Test One\" # BackupOne = <path to root backup one folder>\n";
+	//s << "#BackupTwo = \"d:/Backup Test Two\" # BackupTwo = <path to root backup two folder>\n";
+	//s << "#BackupOneEnabled = true # BackupOneEnabled = <true | false>\n";
+	//s << "#BackupTwoEnabled = true # BackupOneEnabled = <true | false>\n";
 	return s.str();
-
-	/*
-	[General]
-
-	[Logging]
-	[Network]
-	[System Folders] # This contains the folder paths that the system uses.
-	RepositoryPath = D:\sia\archive
-	DevPath = D:\sia\archive
-	WorkspacePath = D:\sia\workspace
-	MasterPath = D:\sia\archive
-
-	[Master Archive] # This archive contains the master images. This section controls this archive.
-	BackupOne="d:/Backup Test One" # BackupOne=<path to root backup one folder> #
-	BackupTwo="d:/Backup Test Two" # BackupTwo=<path to root backup two folder>
-	BackupOneEnabled=true # BackupOneEnabled=<true|false>
-	BackupTwoEnabled=true # BackupOneEnabled=<true|false>
-
-	[Derivative Archive]
-	[Archive Backup]
-	[Exif Tool]
-	*/
 }
 
 bool CreateArchive::createSystem(bool users, const char *archivePath, const char *workspace, const char *master, const char *derivative, const char *catalogue) {

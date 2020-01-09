@@ -143,45 +143,48 @@ bool SIAArcApp::initaliseConfig() {
 	std::string homePath;
 #ifdef WIN32
 	// Set Windows Defaults (they can be overridden later)
+	std::string allUsersHomePath = SAUtils::GetEnv(IMGARCHIVE_HOME, true);
+	std::string myselfHomePath = SAUtils::GetEnv(IMGARCHIVE_HOME, false);
 	// Looking the HKEY_LOCAL_MACHINE first
-	if (GetEnv(homePath, true) == true) {
-		//printf("Found IMGARCHIVE_HOME in system variables: %s", homePath.c_str());
+	if (allUsersHomePath.empty() == false) {
+		if (SAUtils::DirExists(myselfHomePath.c_str()) == true) {
+			//printf("Found IMGARCHIVE_HOME in user profile: %s", homePath.c_str());
+			return false;
+		}
+		homePath = allUsersHomePath;
 		found = true;
 	}
 	// Looking the HKEY_CURRENT_USER
-	else if (GetEnv(homePath, false) == true) {
-		//printf("Found IMGARCHIVE_HOME in user variables: %s", homePath.c_str());
+	else if (myselfHomePath.empty() == false) {
+		if (SAUtils::DirExists(myselfHomePath.c_str()) == true) {
+			//printf("Found IMGARCHIVE_HOME in user profile: %s", homePath.c_str());
+			return false;
+		}
+		homePath = myselfHomePath;
 		found = true;
 	}
 	else {
-
-		homePath = SAUtils::GetPOSIXEnv("ProgramData");
-		if (homePath.empty() == true || homePath.length() == 0) {
-			printf("ImgArchive Unable to start? Cannot read user profile.");
-			setError(12, "ImgArchive Unable to start? Cannot read user profile.");
-			return false;
-}
-		else {
-			homePath += DEFAULT_DATA_CONFIG_PATH;
-			if (SAUtils::DirExists(homePath.c_str()) == true) {
-				//printf("Found IMGARCHIVE_HOME in user profile: %s", homePath.c_str());
-				found = true;
-			}
+		// All Users
+		std::string allusersHomePath = SAUtils::GetPOSIXEnv("ProgramData");
+		allusersHomePath += ALLUSERS_DEFAULT_CONFIG_PATH;
+		std::string myselfHomePath = SAUtils::GetPOSIXEnv("LOCALAPPDATA");
+		myselfHomePath += MYSELF_DEFAULT_CONFIG_PATH;
+		if (SAUtils::DirExists(allusersHomePath.c_str()) == true) {
+			//printf("ImgArchive Unable to start? Cannot read user profile.");
+			//setError(12, "ImgArchive Unable to start? Cannot read user profile.");
+			homePath = allusersHomePath;
+			found = true;
+		}
+		else if (SAUtils::DirExists(myselfHomePath.c_str()) == true) {
+			homePath = myselfHomePath;
+			found = true;
 		}
 		if (found == false) {
-			homePath = SAUtils::GetPOSIXEnv("USERPROFILE");
-			if (homePath.empty() == true || homePath.length() == 0) {
-				printf("ImgArchive Unable to start? Cannot read all users profile.");
-				setError(12, "ImgArchive Unable to start? Cannot read all users profile.");
-				return false;
-			}
-			homePath += DEFAULT_DATA_CONFIG_PATH;
-			if (SAUtils::DirExists(homePath.c_str()) == true) {
-				//printf("Found IMGARCHIVE_HOME in all users profile: %s", homePath.c_str());
-				found = true;
-			}
+			printf("ImgArchive Unable to start? Cannot read all users profile.");
+			setError(12, "ImgArchive Unable to start? Cannot read all users profile.");
+			return false;
 		}
-
+		
 	}
 #else
 	// Set Linux Defaults (they can be overridden later)

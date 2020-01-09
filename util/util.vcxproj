@@ -154,6 +154,7 @@
     <ClCompile Include="ConfigReader.cpp" />
     <ClCompile Include="CShell.cpp" />
     <ClCompile Include="CSVArgs.cpp" />
+    <ClCompile Include="HomePath.cpp" />
     <ClCompile Include="ImageEncode.cpp" />
     <ClCompile Include="History.cpp" />
     <ClCompile Include="ImageHistory.cpp" />
@@ -197,6 +198,7 @@
     <ClInclude Include="ConfigReader.h" />
     <ClInclude Include="CShell.h" />
     <ClInclude Include="CSVArgs.h" />
+    <ClInclude Include="HomePath.h" />
     <ClInclude Include="ImageEncode.h" />
     <ClInclude Include="History.h" />
     <ClInclude Include="ImageHistory.h" />

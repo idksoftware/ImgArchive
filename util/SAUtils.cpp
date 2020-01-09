@@ -642,20 +642,20 @@ int SAUtils::stricmp(const char *a, const char *b) {
 }
 
 
-#ifdef _WIN32
-bool SetEnv(const std::string& key, const std::string& value, bool all)
+bool SAUtils::SetEnv(const std::string& key, const std::string& value, bool all)
 {
+#ifdef WIN32
 	HKEY   hkey;
 	DWORD  dwDisposition;
 	DWORD dwType, dwSize;
 	LONG result;
 	if (all) {
-		char *regPath = "SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment";
+		const char *regPath = "SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment";
 		result = RegCreateKeyEx(HKEY_LOCAL_MACHINE, regPath,
 			0, NULL, 0, KEY_WRITE, NULL, &hkey, &dwDisposition);
 	}
 	else {
-		char *regPath = "Environment";
+		const char *regPath = "Environment";
 		result = RegCreateKeyEx(HKEY_CURRENT_USER, regPath,
 			0, NULL, 0, KEY_WRITE, NULL, &hkey, &dwDisposition);
 	}
@@ -664,7 +664,7 @@ bool SetEnv(const std::string& key, const std::string& value, bool all)
 	{
 		dwType = REG_SZ;
 		dwSize = value.length() + 1;
-		LONG setResult = RegSetValueEx(hkey, TEXT(key.c_str()), 0, dwType,
+		const LONG setResult = RegSetValueEx(hkey, TEXT(key.c_str()), 0, dwType,
 			(PBYTE)value.c_str(), dwSize);
 		RegCloseKey(hkey);
 		return setResult == ERROR_SUCCESS;
@@ -673,6 +673,9 @@ bool SetEnv(const std::string& key, const std::string& value, bool all)
 	{
 		return false;
 	}
+#else
+	return false;
+#endif
 }
 
 #ifdef XXXXXX
@@ -726,6 +729,9 @@ std::string SAUtils::GetPOSIXEnv(const std::string &key)
 }
 
 
+
+
+
 std::string SAUtils::GetEnv(const std::string& value, bool all) {
 	HKEY hKey = 0;
 	char buf[MAX_PATH];
@@ -757,8 +763,7 @@ std::string SAUtils::GetEnv(const std::string& value, bool all) {
 
 
 
-#else
-
+#ifdef XXXXX
 std::string SAUtils::GetEnv(const std::string &key, bool all)
 {
 	char * var = getenv(key.c_str());
