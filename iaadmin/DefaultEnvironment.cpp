@@ -6,7 +6,7 @@
 #include "EnvFunc.h"
 #include "AppBase.h"
 #include "AppPaths.h"
-
+#include "HomePath.h"
 #ifdef _WIN32
 #include <Windows.h>
 
@@ -53,6 +53,16 @@ namespace simplearchive {
 		bool found = false;
 		
 		m_isInAdminMode = IsAdminMode();
+		HomePath::init();
+		bool isFound = HomePath::isFound();
+		if (isFound) {
+			m_homePath = HomePath::get();
+		}
+		else {
+			m_configured = false;
+			return 
+		}
+#ifdef XXXXXXXXXXXXXXX
 #ifdef WIN32
 		// Find if the IMGARCHIVE_HOME pathe is in the windows registery 
 
@@ -125,7 +135,7 @@ namespace simplearchive {
 			return true;
 
 		}
-
+#endif
 		// try to set a systems temp folder 
 		std::string tempPath = SAUtils::GetPOSIXEnv("TEMP");
 		if (tempPath.empty() == true || tempPath.length() == 0) {

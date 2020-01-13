@@ -92,6 +92,9 @@
 
 #define IMGARCHIVE_HOME			  "IMGARCHIVE_HOME"
 
+constexpr auto ALLUSERS_DEFAULT_CONFIG_PATH = "/IDK-Software/ImgArchive";
+constexpr auto MYSELF_DEFAULT_CONFIG_PATH = "/.ImgArchive";
+
 //m_sourcePath = tempHomeDrive + tempHomePath + "/Pictures";
 //m_hookPath = m_homePath + "/hooks";
 
