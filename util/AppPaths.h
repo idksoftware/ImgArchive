@@ -62,7 +62,7 @@
 #define IMAGES_PATH						"/images"
 #define LOG_PATH						"/logs"
 #define BACKUP_PATH						"/backup"
-#define DEFAULT_WORKSPACE_PATH			"/IAWorkspace"
+
 #define DEFAULT_MASTER_CATALOGUE_PATH	"/IAPictures"
 #define DEFAULT_PICTURES_PATH				"/Pictures"
 
@@ -91,14 +91,16 @@
 
 #define IMGARCHIVE_HOME			  "IMGARCHIVE_HOME"
 #define IMGA_WORKSPACE			  "IMGA_WORKSPACE"
+#define IMGA_PICTURE			  "IMGA_PICTURE"
+#define IMGA_WWWIMAGE			  "IMGA_WWWIMAGE"
 
 constexpr auto ALLUSERS_DEFAULT_HOME_PATH = "/IDK-Software/ImgArchive";
 constexpr auto USER_DEFAULT_HOME_PATH = "/.ImgArchive";
 
-constexpr auto DEFAULT_WORKSPACE_PATH = "/IAWorkspace";
-constexpr auto DEFAULT_IMAGE_PATH = "/IAPictures";
 constexpr auto DEFAULT_WWWIMAGE_PATH = "/.IAWWWPictures";
-
+constexpr auto DEFAULT_PICTURE_PATH = "/ImgArchive/Pictures";
+constexpr auto DEFAULT_WORKSPACE_PATH = "/ImgArchive/Workspace";
+//constexpr autoEFAULT_WORKSPACE_PATH = "/IAWorkspace";
 //m_sourcePath = tempHomeDrive + tempHomePath + "/Pictures";
 //m_hookPath = m_homePath + "/hooks";
 

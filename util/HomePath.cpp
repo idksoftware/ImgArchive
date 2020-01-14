@@ -77,8 +77,9 @@ HomePathType HomePath::type()
 	return m_type;
 }
 
-
-
+/**
+	Workspace Path
+*/
 
 std::string WorkspacePath::m_homePath;
 bool WorkspacePath::m_found = false;	// string found
@@ -88,17 +89,17 @@ HomePathType WorkspacePath::m_type = HomePathType::Unknown;
 
 bool WorkspacePath::init()
 {
-	/*
+	
 	std::string tempHomeDrive = SAUtils::GetPOSIXEnv("HOMEDRIVE");
 	std::string tempHomePath = SAUtils::GetPOSIXEnv("HOMEPATH");
-	*/
+	
 
 	// Set Windows Defaults (they can be overridden later)
 	std::string allUsersHomeEnvironmentPath = SAUtils::GetEnv(IMGA_WORKSPACE, true);
 	std::string myselfHomeEnvironmentPath = SAUtils::GetEnv(IMGA_WORKSPACE, false);
 	
-	std::string allusersHomeDefaultPath = tempHomeDrive + tempHomePath + DEFAULT_MASTER_CATALOGUE_PATH;
-	std::string myselfHomeDefaultPath = tempHomeDrive + tempHomePath + DEFAULT_MASTER_CATALOGUE_PATH;
+	std::string allusersHomeDefaultPath = tempHomeDrive + tempHomePath + DEFAULT_WORKSPACE_PATH;
+	std::string myselfHomeDefaultPath = tempHomeDrive + tempHomePath + DEFAULT_WORKSPACE_PATH;
 	
 
 	// Looking the HKEY_LOCAL_MACHINE first
@@ -157,4 +158,164 @@ HomePathType WorkspacePath::type()
 }
 
 
+/**
+	Picture Path
+*/
+
+std::string PicturePath::m_homePath;
+bool PicturePath::m_found = false;	// string found
+bool PicturePath::m_valid = false;	// in file system
+HPError PicturePath::m_error = HPError::Unknown;
+HomePathType PicturePath::m_type = HomePathType::Unknown;
+
+bool PicturePath::init()
+{
+
+	std::string tempHomeDrive = SAUtils::GetPOSIXEnv("HOMEDRIVE");
+	std::string tempHomePath = SAUtils::GetPOSIXEnv("HOMEPATH");
+
+
+	// Set Windows Defaults (they can be overridden later)
+	std::string allUsersHomeEnvironmentPath = SAUtils::GetEnv(IMGA_PICTURE, true);
+	std::string myselfHomeEnvironmentPath = SAUtils::GetEnv(IMGA_PICTURE, false);
+
+	std::string allusersHomeDefaultPath = tempHomeDrive + tempHomePath + DEFAULT_PICTURE_PATH;
+	std::string myselfHomeDefaultPath = tempHomeDrive + tempHomePath + DEFAULT_PICTURE_PATH;
+
+
+	// Looking the HKEY_LOCAL_MACHINE first
+	if (allUsersHomeEnvironmentPath.empty() == false) {
+		m_type = HomePathType::SystemEnv;	// System Environment set
+		m_homePath = allUsersHomeEnvironmentPath;
+		m_found = true;
+	}
+	else if (myselfHomeEnvironmentPath.empty() == false) {
+		m_type = HomePathType::LocalEnv;
+		m_homePath = myselfHomeEnvironmentPath;
+		m_found = true;
+	}
+	else if (SAUtils::DirExists(allusersHomeDefaultPath.c_str()) == true) {
+		m_homePath = allusersHomeDefaultPath;
+		m_type = HomePathType::AllUsers;
+		m_found = true;
+	}
+	else if (SAUtils::DirExists(myselfHomeDefaultPath.c_str()) == true) {
+
+		m_homePath = myselfHomeDefaultPath;
+		m_type = HomePathType::UserOnly;
+		m_found = true;
+	}
+	else {
+		m_error = HPError::NotFound;
+		return false;
+	}
+
+	if (m_type == HomePathType::SystemEnv) {
+		if (SAUtils::DirExists(m_homePath.c_str()) == false) {
+			m_error = HPError::CannotLocatePath;
+			return false;
+		}
+	}
+	else if (m_type == HomePathType::LocalEnv) {
+
+		if (SAUtils::DirExists(m_homePath.c_str()) == false) {
+			m_error = HPError::CannotLocatePath;
+			return false;
+		}
+
+	}
+	m_valid = true;
+	return true;
+}
+
+std::string PicturePath::get()
+{
+	return m_homePath;
+}
+
+HomePathType PicturePath::type()
+{
+	return m_type;
+}
+
+
+/**
+	WWWImage Path
+*/
+
+std::string WWWImagePath::m_homePath;
+bool WWWImagePath::m_found = false;	// string found
+bool WWWImagePath::m_valid = false;	// in file system
+HPError WWWImagePath::m_error = HPError::Unknown;
+HomePathType WWWImagePath::m_type = HomePathType::Unknown;
+
+bool WWWImagePath::init()
+{
+
+	std::string tempHomeDrive = SAUtils::GetPOSIXEnv("HOMEDRIVE");
+	std::string tempHomePath = SAUtils::GetPOSIXEnv("HOMEPATH");
+
+
+	// Set Windows Defaults (they can be overridden later)
+	std::string allUsersHomeEnvironmentPath = SAUtils::GetEnv(IMGA_WWWIMAGE, true);
+	std::string myselfHomeEnvironmentPath = SAUtils::GetEnv(IMGA_WWWIMAGE, false);
+
+	std::string allusersHomeDefaultPath = tempHomeDrive + tempHomePath + DEFAULT_WWWIMAGE_PATH;
+	std::string myselfHomeDefaultPath = tempHomeDrive + tempHomePath + DEFAULT_WWWIMAGE_PATH;
+
+
+	// Looking the HKEY_LOCAL_MACHINE first
+	if (allUsersHomeEnvironmentPath.empty() == false) {
+		m_type = HomePathType::SystemEnv;	// System Environment set
+		m_homePath = allUsersHomeEnvironmentPath;
+		m_found = true;
+	}
+	else if (myselfHomeEnvironmentPath.empty() == false) {
+		m_type = HomePathType::LocalEnv;
+		m_homePath = myselfHomeEnvironmentPath;
+		m_found = true;
+	}
+	else if (SAUtils::DirExists(allusersHomeDefaultPath.c_str()) == true) {
+		m_homePath = allusersHomeDefaultPath;
+		m_type = HomePathType::AllUsers;
+		m_found = true;
+	}
+	else if (SAUtils::DirExists(myselfHomeDefaultPath.c_str()) == true) {
+
+		m_homePath = myselfHomeDefaultPath;
+		m_type = HomePathType::UserOnly;
+		m_found = true;
+	}
+	else {
+		m_error = HPError::NotFound;
+		return false;
+	}
+
+	if (m_type == HomePathType::SystemEnv) {
+		if (SAUtils::DirExists(m_homePath.c_str()) == false) {
+			m_error = HPError::CannotLocatePath;
+			return false;
+		}
+	}
+	else if (m_type == HomePathType::LocalEnv) {
+
+		if (SAUtils::DirExists(m_homePath.c_str()) == false) {
+			m_error = HPError::CannotLocatePath;
+			return false;
+		}
+
+	}
+	m_valid = true;
+	return true;
+}
+
+std::string WWWImagePath::get()
+{
+	return m_homePath;
+}
+
+HomePathType WWWImagePath::type()
+{
+	return m_type;
+}
 

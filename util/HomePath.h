@@ -70,3 +70,49 @@ public:
 		return m_valid;
 	}
 };
+
+class PicturePath
+{
+	static std::string m_homePath;
+	static bool m_found;	// string found
+	static bool m_valid;	// in file system
+	//static bool m_configured;
+
+	static HomePathType m_type;
+	static HPError m_error;
+public:
+	PicturePath() = default;
+	~PicturePath() = default;
+	static bool init();
+	static std::string get();
+	static HomePathType type();
+	static bool isFound() noexcept {	// string found
+		return m_found;
+	}
+	static bool isValid() noexcept {	// in file system
+		return m_valid;
+	}
+};
+
+class WWWImagePath
+{
+	static std::string m_homePath;
+	static bool m_found;	// string found
+	static bool m_valid;	// in file system
+	//static bool m_configured;
+
+	static HomePathType m_type;
+	static HPError m_error;
+public:
+	WWWImagePath() = default;
+	~WWWImagePath() = default;
+	static bool init();
+	static std::string get();
+	static HomePathType type();
+	static bool isFound() noexcept {	// string found
+		return m_found;
+	}
+	static bool isValid() noexcept {	// in file system
+		return m_valid;
+	}
+};

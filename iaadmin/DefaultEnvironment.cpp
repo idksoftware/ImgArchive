@@ -60,7 +60,7 @@ namespace simplearchive {
 		}
 		else {
 			m_configured = false;
-			return 
+			return true;
 		}
 #ifdef XXXXXXXXXXXXXXX
 #ifdef WIN32
