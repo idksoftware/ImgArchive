@@ -458,7 +458,7 @@ string ArgvParser::usageDescription(unsigned int _width) const
 string ArgvParser::commandUsage(unsigned int width) const
 {
 	string usage; // the usage description text
-	usage = formatString("usage: siaarc[--version][--help] <command>[<args>]\n", width);
+	usage = formatString("usage: imgarc[--version][--help] <command>[<args>]\n", width);
 	usage += '\n';
 	
 	return usage;
@@ -485,7 +485,7 @@ string ArgvParser::generalHelp(unsigned int _width) const
 	usage += "Image archive command line client, version 1.0.0.1\n";
 	usage += "Type 'sia help <subcommand>' for help on a specific subcommand.\n\n";
 	*/
-	string tmp = "The command siaarc is the primary command-line interface to Simple Image Archive. This interface is used to manage the control of images going in and out of the archive software. ";
+	string tmp = "The command imgarc is the primary command-line interface to ImgArchive. This interface is used to manage the control of images going in and out of the archive software. ";
 	tmp += "It has a rich set of subcommands that \"add/import\" images to the archive and \"export\" images out of the archive, In addition manages the controlled modification of images";
 	tmp += " using the \"check-in/check-out\" command set";
 	usage += '\n';

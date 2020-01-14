@@ -74,6 +74,8 @@ using namespace std;
 #include "Threads.h"
 #include "HookCmd.h"
 #include "ImagePath.h"
+#include "HomePath.h"
+
 
 #define MAJORVERSION 0
 #define MINORVERSION 2
@@ -133,7 +135,76 @@ bool SIAArcApp::initaliseArgs(int argc, char **argv) {
 	return true;
 }
 
+bool SIAArcApp::initaliseConfig() {
 
+
+	SIAARCConfig config;
+
+	bool res = HomePath::init();
+	HomePathType homePathType = HomePath::type();
+	
+	switch (homePathType) {
+	case HomePathType::LocalEnv:	// Local Environment set
+		if (res == false) {
+			printf("Found IMGARCHIVE_HOME as system profile: %s but archive not found at loacation", HomePath::get().c_str());
+			return false;
+		}
+		printf("Found IMGARCHIVE_HOME as system profile: %s. Archive found at that loacation", HomePath::get().c_str());
+		break;
+	case HomePathType::SystemEnv:	// System Environment set
+		if (res == false) {
+			printf("Found IMGARCHIVE_HOME as system profile: %s. Archive found at that loacation", HomePath::get().c_str());
+			return false;
+		}
+		break;
+	case HomePathType::UserOnly:	// user only archive
+		if (res == false) {
+			printf("Archive not found at default loacation");
+			return false;
+		}
+		printf("Archive found at default user loacation: %s.", HomePath::get().c_str());
+		break;
+	case HomePathType::AllUsers:	// all users archive
+		if (res == false) {
+			printf("Archive not found at default loacation");
+			return false;
+		}
+		printf("Archive found at default system loacation: %s.", HomePath::get().c_str());
+		break;
+	case HomePathType::Unknown:
+	default:
+		printf("Unknown error");
+		return false;
+	}
+	std::string homePath = HomePath::get();
+
+	// try to set a systems temp folder 
+	std::string tempPath = SAUtils::GetPOSIXEnv("TEMP");
+	if (tempPath.empty() == true || tempPath.length() == 0) {
+		tempPath = SAUtils::GetPOSIXEnv("TMP");
+	}
+
+	std::string configfile = homePath + "/config/" + "config.dat";
+	std::string configPath = homePath + "/config";
+	// Now set the file based configuration with the possablity of overrighting defaults set prevously. 
+	if (SAUtils::FileExists(configfile.c_str()) == true) {
+		setConfigPath(configPath.c_str());
+		AppConfigReader configReader;
+		configReader.setNoLogging();
+		if (configReader.read(configfile.c_str(), config) == false) {
+			setError(13, "Error found at line %d in the configuration file.\n", configReader.getCurrentLineNumber());
+			return false;
+		}
+		config.fileBasedValues(homePath.c_str(), tempPath.c_str());
+		m_configured = true;
+	}
+	else {
+		m_configured = false;
+	}
+
+	return true;
+}
+/*
 bool SIAArcApp::initaliseConfig() {
 
 	
@@ -251,6 +322,7 @@ bool SIAArcApp::initaliseConfig() {
 	
 	return true;
 }
+*/
 
 bool SIAArcApp::doRun()
 {
@@ -423,8 +495,8 @@ bool SIAArcApp::doRun()
 	
 	case SIAArcAppOptions::CommandMode::CM_Version:
 
-		printf("Simple Image Archive tool\n"
-			"siaarc version \"%d.%d.%d\" (build %s)\n"
+		printf("ImgArchive tool\n"
+			"imgarc version \"%d.%d.%d\" (build %s)\n"
 			"Copyright@(2010-2016) IDK Sftware Ltd.\n", MAJORVERSION, MINORVERSION, REVISION, BUILD);
 		return true;
 		return true;

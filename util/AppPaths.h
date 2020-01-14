@@ -86,14 +86,18 @@
 #define CHKSTATUS_PATH					"/chkout"
 #define SQLITE3_DB						"IASqlite3.db"
 
-#define USER_DEFAULT_HOME_PATH     "/.ImgArchive"
-#define ALLUSERS_DEFAULT_HOME_PATH "/IDK-Software/ImgArchive"
+
 #define DEFAULT_HOME_PATH		   "/IDK-Software/ImgArchive"
 
 #define IMGARCHIVE_HOME			  "IMGARCHIVE_HOME"
+#define IMGA_WORKSPACE			  "IMGA_WORKSPACE"
 
-constexpr auto ALLUSERS_DEFAULT_CONFIG_PATH = "/IDK-Software/ImgArchive";
-constexpr auto MYSELF_DEFAULT_CONFIG_PATH = "/.ImgArchive";
+constexpr auto ALLUSERS_DEFAULT_HOME_PATH = "/IDK-Software/ImgArchive";
+constexpr auto USER_DEFAULT_HOME_PATH = "/.ImgArchive";
+
+constexpr auto DEFAULT_WORKSPACE_PATH = "/IAWorkspace";
+constexpr auto DEFAULT_IMAGE_PATH = "/IAPictures";
+constexpr auto DEFAULT_WWWIMAGE_PATH = "/.IAWWWPictures";
 
 //m_sourcePath = tempHomeDrive + tempHomePath + "/Pictures";
 //m_hookPath = m_homePath + "/hooks";

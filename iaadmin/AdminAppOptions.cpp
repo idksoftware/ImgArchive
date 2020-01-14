@@ -80,76 +80,7 @@ AppOptions::AppOptions() {
 	m_configured = true;
 }
 
-/*
-bool AppOptions::initaliseConfig() {
 
-	AdminConfig config;
-
-	const std::string key = "IMGARCHIVE_HOME";
-	std::string temp = SAUtils::GetPOSIXEnv(key);
-	std::string homePath = temp;
-	//printf("%s", homePath.c_str());
-	int i = homePath.length();
-	if (homePath.empty() == true || homePath.length() == 0) {
-		homePath = SAUtils::GetPOSIXEnv("ProgramData");
-		//C:\ProgramData\IDK Software\ImageArchive1.0
-		homePath += "/IDK Software/ImageArchive1.0";
-
-	}
-	std::string configfile = homePath + "/config/" + "config.dat";
-	std::string configPath = homePath + "/config";
-	if (SAUtils::DirExists(homePath.c_str()) == false) {
-		//printf("ImgArchive Unable to start?\nArchive not found at default location and the environment variable SA_HOME not set.\n"
-		//	"Use siaadmin -i to create an empty archive at the default location (see documentation).\n");
-		//m_error = true;
-		//return false;
-		m_configured = false;
-	}
-	else {
-		
-		if (SAUtils::FileExists(configfile.c_str()) == true) {
-			setConfigPath(configPath.c_str());
-			AppConfigReader configReader;
-			configReader.setNoLogging();
-			configReader.read(configfile.c_str(), config);
-			// This is usfull to print the config
-			//config.printAll();
-			
-			if (config.value("SourcePath", temp) == true) {
-			m_sourcePath = temp;
-			}
-			if (config.value("ArchivePath", temp) == true) {
-			m_archivePath = temp;
-			}
-			if (config.value("LogLevel", temp) == true) {
-			m_logLevel = temp;
-			}
-			
-			config.setHomePath(homePath.c_str());
-			temp = SAUtils::GetPOSIXEnv("IAWORKSPACE");
-			if (temp.empty() == false) {
-				config.setWorkspacePath(temp.c_str());
-			}
-			temp = SAUtils::GetPOSIXEnv("IASOURCE");
-			if (temp.empty() == false) {
-				config.setSourcePath(temp.c_str());
-			}
-			temp = SAUtils::GetPOSIXEnv("IALOGLEVEL");
-			if (temp.empty() == false) {
-				config.setLogLevel(temp.c_str());
-			}
-			temp = SAUtils::GetPOSIXEnv("IACONSOLELEVEL");
-			if (temp.empty() == false) {
-				config.setConsoleLevel(temp.c_str());
-			}
-		}
-		else {
-			m_configured = false;
-		}
-	}
-	return true;
-}
-*/
 
 
 AppOptions::~AppOptions() {

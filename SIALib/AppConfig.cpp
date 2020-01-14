@@ -263,7 +263,7 @@ namespace simplearchive {
 			auto folders = getSystemFolders();
 			if (folders == nullptr || getRoot().value("WorkspacePath", AppConfig::m_workspacePath) == false) {
 				// if not found read from IMGA_WORKSPACE environment variable
-				std::string temp = SAUtils::GetPOSIXEnv("IMGA_WORKSPACE");
+				std::string temp = SAUtils::GetPOSIXEnv(IMGA_WORKSPACE);
 				if (temp.empty() == false) {
 					AppConfig::m_workspacePath = temp;
 				}
