@@ -154,18 +154,41 @@ namespace simplearchive {
 	bool DefaultEnvironment::setAllUserDefaultLocations() {
 		HomePath::setAllUserDefaultHome();
 		m_homePath = HomePath::get();
+
+		MasterPath::setAllUserDefaultHome();
+		m_masterPath = MasterPath::get();
+		DerivativePath::setAllUserDefaultHome();
+		m_derivativePath = DerivativePath::get();
+
 		WorkspacePath::setAllUserDefaultHome();
 		m_workspacePath = WorkspacePath::get();
+
 		PicturePath::setAllUserDefaultHome();
 		m_cataloguePath = PicturePath::get();
 		WWWImagePath::setAllUserDefaultHome();
 		m_wwwCataloguePath = WWWImagePath::get();
+
 		return locations(m_homePath.c_str());
 	}
 
 	bool DefaultEnvironment::setLocalDefaultLocations() {
+
 		HomePath::setLocalUserDefaultHome();
 		m_homePath = HomePath::get();
+
+		MasterPath::setLocalUserDefaultHome();
+		m_masterPath = MasterPath::get();
+		DerivativePath::setLocalUserDefaultHome();
+		m_derivativePath = DerivativePath::get();
+
+		WorkspacePath::setLocalUserDefaultHome();
+		m_workspacePath = WorkspacePath::get();
+
+		PicturePath::setLocalUserDefaultHome();
+		m_cataloguePath = PicturePath::get();
+		WWWImagePath::setLocalUserDefaultHome();
+		m_wwwCataloguePath = WWWImagePath::get();
+		
 		return locations(m_homePath.c_str());
 	}
 
@@ -173,8 +196,6 @@ namespace simplearchive {
 		
 		std::string homePath = home;
 		// Repository Archive Path
-		m_masterPath = homePath + MASTER_PATH;
-		m_derivativePath = homePath + DERIVATIVE_PATH;
 		m_historyPath = homePath + HISTORY_PATH;
 		return false;
 	}

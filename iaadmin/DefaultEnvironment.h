@@ -43,6 +43,7 @@ namespace simplearchive {
 		static bool isInAdminMode() {
 			return m_isInAdminMode;
 		}
+	
 		static std::string& getHomePath() {
 			return m_homePath;
 		}

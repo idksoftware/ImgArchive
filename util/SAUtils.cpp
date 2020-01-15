@@ -530,6 +530,9 @@ bool SAUtils::makePath(const char *from, const char *to) {
 bool SAUtils::makePath(const char *to) {
 
 	std::string fullPath = to;
+	if (fullPath.empty()) {
+		return false;
+	}
 	int idx = fullPath.find_first_of(':');
 	std::string drive = fullPath.substr(0, idx + 1);
 	bool last = false;
@@ -539,7 +542,7 @@ bool SAUtils::makePath(const char *to) {
 	std::string node;
 	while (last != true) {
 #ifdef _WIN32
-		if ((end = fullPath.find_first_of("\\", start + 2)) == std::string::npos) {
+		if ((end = fullPath.find_first_of("\\/", start + 2)) == std::string::npos) {
 #else
 		if ((end = fullPath.find_first_of("/", start + 2)) == std::string::npos) {
 #endif
@@ -550,7 +553,7 @@ bool SAUtils::makePath(const char *to) {
 			node = fullPath.substr(start + 1, (end)-(start + 1));
 		}
 #ifdef _WIN32
-		curPath += '\\';
+		curPath += '\\/';
 #else
 		curPath += '/';
 #endif

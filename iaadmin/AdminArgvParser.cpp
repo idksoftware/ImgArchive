@@ -9,6 +9,7 @@
 #include "Environment.h"
 #include "SetConfig.h"
 #include "DefaultEnvironment.h"
+#include "HomePath.h"
 
 using namespace CommandLineProcessing;
 namespace simplearchive {
@@ -200,13 +201,13 @@ namespace simplearchive {
 				DefaultEnvironment::setDefaultLocations();
 			}
 
-			AppOptions::m_homePath = DefaultEnvironment::getHomePath();
-			AppOptions::m_workspacePath = DefaultEnvironment::getWorkspacePath();
-			AppOptions::m_masterPath = DefaultEnvironment::getMasterPath();
-			AppOptions::m_configPath = DefaultEnvironment::getMasterPath();
-			AppOptions::m_derivativePath = DefaultEnvironment::getDerivativePath();
-			AppOptions::m_repositoryPath = DefaultEnvironment::getHomePath();
-			AppOptions::m_cataloguePath = DefaultEnvironment::getHomePath();
+			AppOptions::m_homePath = HomePath::get();
+			AppOptions::m_workspacePath = WorkspacePath::get();
+			AppOptions::m_masterPath = MasterPath::get();
+			AppOptions::m_configPath = HomePath::get();
+			AppOptions::m_derivativePath = DerivativePath::get();
+			AppOptions::m_repositoryPath = HomePath::get();
+			AppOptions::m_cataloguePath = PicturePath::get();
 
 			if (foundOption("archive-path") == true) {
 				opt = optionValue("archive-path");
