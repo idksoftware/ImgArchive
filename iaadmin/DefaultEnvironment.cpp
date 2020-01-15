@@ -151,34 +151,20 @@ namespace simplearchive {
 
 		return true;
 	}
-	bool DefaultEnvironment::setAllUserLocations() {
-		m_homePath = SAUtils::GetPOSIXEnv("ProgramData");
-		m_homePath += ALLUSERS_DEFAULT_HOME_PATH;
-		if (SAUtils::DirExists(m_homePath.c_str()) == false) {
-			if (m_configured == true) {
-				return false;
-			}
-		}
+	bool DefaultEnvironment::setAllUserDefaultLocations() {
+		HomePath::setAllUserDefaultHome();
+		m_homePath = HomePath::get();
 		return locations(m_homePath.c_str());
 	}
 
-	bool DefaultEnvironment::setUserLocations() {
-
-		
-		m_homePath = SAUtils::GetPOSIXEnv("LOCALAPPDATA");
-		m_homePath += USER_DEFAULT_HOME_PATH;
-		if (SAUtils::DirExists(m_homePath.c_str()) == false) {
-			if (m_configured == true) {
-				return false;
-			}
-		}
+	bool DefaultEnvironment::setLocalDefaultLocations() {
+		HomePath::setLocalUserDefaultHome();
+		m_homePath = HomePath::get();
 		return locations(m_homePath.c_str());
 	}
 
 	bool DefaultEnvironment::locations(const char *home) {
-		m_picturesPath = SAUtils::GetPOSIXEnv("HOMEDRIVE");
-		m_picturesPath += SAUtils::GetPOSIXEnv("HOMEPATH");
-		m_picturesPath += DEFAULT_PICTURES_PATH;
+		
 		std::string homePath = home;
 		// Repository Archive Path
 		m_masterPath = homePath + MASTER_PATH;
@@ -188,5 +174,17 @@ namespace simplearchive {
 		m_cataloguePath = m_picturesPath + DEFAULT_MASTER_CATALOGUE_PATH;
 		m_workspacePath = m_picturesPath + DEFAULT_WORKSPACE_PATH;
 		return false;
+	}
+
+	
+
+	bool DefaultEnvironment::setDefaultLocations() {
+		if (DefaultEnvironment::isInAdminMode()) {
+			DefaultEnvironment::setAllUserDefaultLocations();
+		}
+		else {
+			DefaultEnvironment::setLocalDefaultLocations();
+		}
+		return true;
 	}
 };

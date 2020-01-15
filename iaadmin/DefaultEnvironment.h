@@ -24,12 +24,17 @@ namespace simplearchive {
 		static std::string  m_cataloguePath;
 		static std::string m_wwwCataloguePath;
 		static std::string  m_historyPath;
+
+		
+		static bool locations(const char* path);
+
 	public:
 		DefaultEnvironment() = default;
 		~DefaultEnvironment() = default;
-		static bool setAllUserLocations();
-		static bool setUserLocations();
-		static bool locations(const char* path);
+		
+		static bool setAllUserDefaultLocations();
+		static bool setLocalDefaultLocations();
+		static bool setDefaultLocations();
 
 		static bool init();
 		static bool isConfigured() {

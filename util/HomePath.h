@@ -42,6 +42,9 @@ public:
 	static bool isValid() noexcept {	// in file system
 		return m_valid;
 	}
+
+	static bool setAllUserDefaultHome();
+	static bool setLocalUserDefaultHome();
 };
 
 
@@ -69,6 +72,9 @@ public:
 	static bool isValid() noexcept {	// in file system
 		return m_valid;
 	}
+
+	static bool setAllUserDefaultHome();
+	static bool setLocalUserDefaultHome();
 };
 
 class PicturePath
@@ -92,6 +98,9 @@ public:
 	static bool isValid() noexcept {	// in file system
 		return m_valid;
 	}
+
+	static bool setAllUserDefaultHome();
+	static bool setLocalUserDefaultHome();
 };
 
 class WWWImagePath
@@ -115,4 +124,7 @@ public:
 	static bool isValid() noexcept {	// in file system
 		return m_valid;
 	}
+
+	static bool setAllUserDefaultHome();
+	static bool setLocalUserDefaultHome();
 };

@@ -175,24 +175,29 @@ namespace simplearchive {
 			// so the the configuration need not to be initalised.
 			appOptions.setCommandMode(AppOptions::CommandMode::CM_InitArchive);
 			appOptions.m_users = DefaultEnvironment::isInAdminMode();
-			if (DefaultEnvironment::isInAdminMode()) {
-				DefaultEnvironment::setAllUserLocations();
-			}
-			else {
-				DefaultEnvironment::setUserLocations();
-			}
+			
+		
 			appOptions.m_configured = false;
 			std::string opt;
 			if (foundOption("users") == true) {
 				std::string users = optionValue("users");
 				if (users.compare("Myself") == 0) {
 					appOptions.setAllUsers(false);
-					DefaultEnvironment::setUserLocations();
+					DefaultEnvironment::setLocalDefaultLocations();
 				}
 				else {
+					if (DefaultEnvironment::isInAdminMode() == false) {
+						// Not in admin mode so cannot be initalised in admin mode so return with error
+						printf("Invalid operation? Not in admin mode so cannot be initalised in admin mode\n\n");
+						printf("%s", usageDescription(80).c_str());
+						return false;
+					}
 					appOptions.setAllUsers(true);
-					DefaultEnvironment::setAllUserLocations();
+					DefaultEnvironment::setAllUserDefaultLocations();
 				}
+			}
+			else {
+				DefaultEnvironment::setDefaultLocations();
 			}
 
 			AppOptions::m_homePath = DefaultEnvironment::getHomePath();
