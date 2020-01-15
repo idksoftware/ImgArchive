@@ -47,9 +47,84 @@ public:
 	static bool setLocalUserDefaultHome();
 };
 
+class MasterPath
+{
+	static std::string m_homePath;
+	static bool m_found;	// string found
+	static bool m_valid;	// in file system
+	//static bool m_configured;
+
+	static HomePathType m_type;
+	static HPError m_error;
+public:
+	MasterPath() = default;
+	~MasterPath() = default;
+	static bool init();
+	static std::string get();
+	static HomePathType type();
+	static bool isFound() noexcept {	// string found
+		return m_found;
+	}
+	static bool isValid() noexcept {	// in file system
+		return m_valid;
+	}
+
+	static bool setAllUserDefaultHome();
+	static bool setLocalUserDefaultHome();
+};
+
+class MasterPath
+{
+	static std::string m_homePath;
+	static bool m_found;	// string found
+	static bool m_valid;	// in file system
+	//static bool m_configured;
+
+	static HomePathType m_type;
+	static HPError m_error;
+public:
+	MasterPath() = default;
+	~MasterPath() = default;
+	static bool init();
+	static std::string get();
+	static HomePathType type();
+	static bool isFound() noexcept {	// string found
+		return m_found;
+	}
+	static bool isValid() noexcept {	// in file system
+		return m_valid;
+	}
+
+	static bool setAllUserDefaultHome();
+	static bool setLocalUserDefaultHome();
+};
 
 
+class DerivativePath
+{
+	static std::string m_homePath;
+	static bool m_found;	// string found
+	static bool m_valid;	// in file system
+	//static bool m_configured;
 
+	static HomePathType m_type;
+	static HPError m_error;
+public:
+	DerivativePath() = default;
+	~DerivativePath() = default;
+	static bool init();
+	static std::string get();
+	static HomePathType type();
+	static bool isFound() noexcept {	// string found
+		return m_found;
+	}
+	static bool isValid() noexcept {	// in file system
+		return m_valid;
+	}
+
+	static bool setAllUserDefaultHome();
+	static bool setLocalUserDefaultHome();
+};
 
 class WorkspacePath
 {

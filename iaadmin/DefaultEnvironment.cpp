@@ -154,6 +154,12 @@ namespace simplearchive {
 	bool DefaultEnvironment::setAllUserDefaultLocations() {
 		HomePath::setAllUserDefaultHome();
 		m_homePath = HomePath::get();
+		WorkspacePath::setAllUserDefaultHome();
+		m_workspacePath = WorkspacePath::get();
+		PicturePath::setAllUserDefaultHome();
+		m_cataloguePath = PicturePath::get();
+		WWWImagePath::setAllUserDefaultHome();
+		m_wwwCataloguePath = WWWImagePath::get();
 		return locations(m_homePath.c_str());
 	}
 
@@ -170,9 +176,6 @@ namespace simplearchive {
 		m_masterPath = homePath + MASTER_PATH;
 		m_derivativePath = homePath + DERIVATIVE_PATH;
 		m_historyPath = homePath + HISTORY_PATH;
-		m_wwwCataloguePath = homePath + MASTER_WWW_CATALOGUE_PATH;
-		m_cataloguePath = m_picturesPath + DEFAULT_MASTER_CATALOGUE_PATH;
-		m_workspacePath = m_picturesPath + DEFAULT_WORKSPACE_PATH;
 		return false;
 	}
 
