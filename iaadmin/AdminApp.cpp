@@ -389,7 +389,7 @@ bool AdminApp::initaliseConfig() {
 	//AppConfig &config = AppConfig::get();
 	AdminConfig config;
 	m_configured = false;
-	bool found = false;
+	
 	
 	
 	bool res = HomePath::init();
@@ -429,13 +429,15 @@ bool AdminApp::initaliseConfig() {
 		return false;
 	}
 	std::string homePath = HomePath::get();
-	if (found) {
+	if (HomePath::isFound()) {
+		
 		// Initalise without the config file i.e. set defaults.
 		if (config.init(homePath.c_str()) == false) {
 			setError(12, "Cannot find home path? exiting?");
 			return false;
 		}
 	}
+	/*
 	else {
 		if (config.init() == false) {
 			setError(12, "Cannot find home path? exiting?");
@@ -449,13 +451,13 @@ bool AdminApp::initaliseConfig() {
 		return false;
 
 	}
-
+	*/
 	// try to set a systems temp folder 
 	std::string tempPath = SAUtils::GetPOSIXEnv("TEMP");
 	if (tempPath.empty() == true || tempPath.length() == 0) {
 		tempPath = SAUtils::GetPOSIXEnv("TMP");
 	}
-
+	
 	std::string configfile = homePath + "/config/" + "config.dat";
 	std::string configPath = homePath + "/config";
 	if (SAUtils::FileExists(configfile.c_str()) == true) {

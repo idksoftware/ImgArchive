@@ -124,7 +124,8 @@ namespace simplearchive {
 		//defineOption("workspace-path", "Location of the archive Workspace", ArgvParser::OptionRequiresValue);
 		//defineOptionAlternative("workspace-path", "w");
 		
-		defineOption("settup", "Show settup", ArgvParser::NoOptionAttribute);		
+		defineOption("settup", "Show settup", ArgvParser::NoOptionAttribute);
+
 		defineCommandOption("init", "archive-path");
 		defineCommandOption("init", "workspace-path");
 		defineCommandOption("show", "settup");
