@@ -575,16 +575,6 @@ namespace simplearchive {
 		AppConfig::m_toolsPath = toolsPath;
 	}
 	const char *AppConfig::getToolsPath() {
-		/*
-		if (m_toolsPath.empty() == true) {
-			auto folders = getSystemFolders();
-			if (folders == nullptr || getRoot().value("ToolsPath", m_toolsPath) == false) {
-				std::string temp = m_homePath;
-				m_toolsPath = temp + TOOLS_PATH;
-
-			}
-		}
-		*/
 		return m_toolsPath.c_str();
 
 	}
@@ -610,26 +600,10 @@ namespace simplearchive {
 		return m_www_cat_on;
 	}
 	const char *AppConfig::getBackup1() {
-		/*
-		if (m_backup1.empty() == true) {
-			if (getRoot().value("BackupOne", m_backup1) == true) {
-				ArchivePath::setBackup1Path(m_backup1);
-				m_backup1Enabled = true;
-			}
-		}
-		*/
 		return m_backup1.c_str();
 	}
 
 	const char *AppConfig::getBackup2() {
-		/*
-		if (m_backup2.empty() == true) {
-			if (getRoot().value("BackupTwo", m_backup2) == true) {
-				ArchivePath::setBackup2Path(m_backup2);
-				m_backup2Enabled = true;
-			}
-		}
-		*/
 		return m_backup2.c_str();
 	}
 
@@ -649,26 +623,7 @@ namespace simplearchive {
 	}
 	/// Gets the archive path.
 	const char *AppConfig::getMasterPath() {
-		/*
-		if (m_masterPath.empty() == true) {
-			auto folders = getSystemFolders();
-			if (folders == nullptr || getRoot().value("MasterPath", m_masterPath) == false) {
-				// if not found read from IMGA_WORKSPACE environment variable
-				std::string temp = SAUtils::GetPOSIXEnv("IMGA_MASTER");
-				if (temp.empty() == false) {
-					m_masterPath = temp;
-				}
-				else {
-					std::string tempProgramData = SAUtils::GetPOSIXEnv("ProgramData");
-					tempProgramData += DEFAULT_HOME_PATH;
-					m_masterPath = tempProgramData + MASTER_PATH;
-					ArchivePath::setMasterPath(m_masterPath);
-				}
-			}
-		}
-		*/
 		return m_masterPath.c_str();
-
 	}
 
 	const char *AppConfig::getLightroomPath()
@@ -677,54 +632,20 @@ namespace simplearchive {
 	}
 	
 	const char *AppConfig::getDerivativePath() {
-		/*
-		if (m_derivativePath.empty() == true) {
-			auto folders = getSystemFolders();
-			if (folders == nullptr || getRoot().value("DerivativePath", m_derivativePath) == false) {
-				// if not found read from IMGA_WORKSPACE environment variable
-				std::string temp = SAUtils::GetPOSIXEnv("IMGA_Master");
-				if (temp.empty() == false) {
-					m_derivativePath = temp;
-				}
-				else {
-					std::string tempProgramData = SAUtils::GetPOSIXEnv("ProgramData");
-					tempProgramData += DEFAULT_HOME_PATH;
-					m_derivativePath = tempProgramData + DERIVATIVE_PATH;
-					ArchivePath::setDerivativePath(m_derivativePath);
-				}
-			}
-		}
-		*/
+		
 		return m_derivativePath.c_str();
 
 	}
 
 	
 	const char *AppConfig::getSourcePath() {
-		/*
-		if (m_sourcePath.empty() == true) {
-			auto folders = getSystemFolders();
-			if (folders == nullptr || getRoot().value("SourcePath", m_sourcePath) == false) {
-				std::string tempHomeDrive = SAUtils::GetPOSIXEnv("HOMEDRIVE");
-				std::string tempHomePath = SAUtils::GetPOSIXEnv("HOMEPATH");
-				m_sourcePath = tempHomeDrive + tempHomePath + DEFAULT_SOURCE_PATH;
-			}
-		}
-		*/
+		
 		return m_sourcePath.c_str();
 
 	}
 
 	const char *AppConfig::getHookPath() {
-		/*
-		auto folders = getSystemFolders();
-		if (folders == nullptr || m_hookPath.empty() == true) {
-			if (getRoot().value("HookPath", m_hookPath) == false) {
-				std::string temp = SAUtils::GetPOSIXEnv("HOMEPATH");
-				m_hookPath = m_homePath + HOOKS_PATH;
-			}
-		}
-		*/
+		
 		return m_hookPath.c_str();
 
 	}
@@ -801,42 +722,15 @@ namespace simplearchive {
 	}
 
 	const char *AppConfig::getBackupDestinationPath() {
-		/*
-		if (m_backupDestinationPath.empty() == true) {
-			if (getRoot().value("BackupDestinationPath", m_backupDestinationPath) == false) {
-				std::string temp = SAUtils::GetPOSIXEnv("HOMEPATH");
-				m_backupDestinationPath = temp + BACKUPS_PATH;
-			}
-		}
-		*/
 		return m_backupDestinationPath.c_str();
-
 	}
 
 	const char *AppConfig::getMasterCataloguePath() {
-		/*
-		if (m_masterViewPath.empty() == true) {
-		if (getRoot().value("BackupDestinationPath", m_masterViewPath) == false) {
-		std::string temp = SAUtils::GetPOSIXEnv("USERPROFILE");
-		m_masterViewPath = temp + MASTER_VIEW_PATH;
-		}
-		}
-		*/
 		return m_masterCataloguePath.c_str();
-
 	}
 
 	const char *AppConfig::getMasterWWWCataloguePath() {
-		/*
-		if (m_masterViewPath.empty() == true) {
-			if (getRoot().value("BackupDestinationPath", m_masterViewPath) == false) {
-				std::string temp = SAUtils::GetPOSIXEnv("USERPROFILE");
-				m_masterViewPath = temp + MASTER_VIEW_PATH;
-			}
-		}
-		*/
 		return m_masterWWWCataloguePath.c_str();
-
 	}
 
 	void AppConfig::setBackupDestinationPath(const char *path) {
@@ -844,18 +738,6 @@ namespace simplearchive {
 	}
 
 	long AppConfig::getBackupMediaSize() {
-		/*
-		if (m_backupMediaSize == 0) {
-			std::string tmp;
-		
-			if (getRoot().value("BackupMediaSize", tmp) == false) {
-					m_backupMediaSize = 700; // size of a DVD
-			}
-			else {
-				m_backupMediaSize = strtoul(tmp.c_str(), 0, 10);
-			}	
-		}
-		*/
 		return m_backupMediaSize;
 	}
 
@@ -890,25 +772,14 @@ namespace simplearchive {
 	}
 	
 	const char *AppConfig::getDatabasePath() {
-		
 		return m_DatabasePath.c_str();
 	}
 
 	const char *AppConfig::getTempPath() {
-		/*
-		if (getRoot().value("TempPath", m_tempPath) == false) {
-			m_tempPath = m_homePath + "/tmp";
-		}
-		*/
 		return m_tempPath.c_str();
 	}
 
 	const char *AppConfig::getLogPath() {
-		/*
-		if (getRoot().value("LogPath", m_logPath) == false) {
-			m_logPath = m_homePath + "/logs";
-		}
-		*/
 		return m_logPath.c_str();
 	}
 
@@ -920,16 +791,7 @@ namespace simplearchive {
 		return m_consoleLevel.c_str();
 	}
 
-	/*
-	const char *AppConfig::getSystemPath() {
-		std::shared_ptr<ConfigBlock> cb = find(FOLDERS_BLOCK)->second;
-		if (cb == nullptr && cb->value("SystemPath", m_systemPath) == true) {
-			return m_systemPath.c_str();
-		}
-		m_systemPath = m_masterPath + MASTER_SYSTEM_FOLDER;
-		
-	}
-	*/
+	
 	const char *AppConfig::getSystemPath() {
 		
 		return m_systemPath.c_str();
@@ -947,68 +809,37 @@ namespace simplearchive {
 	}
 
 	const char *AppConfig::getConfigPath() {
-		/*
-		if (getRoot().value("ConfigPath", m_configPath) == false) {
-			m_configPath = m_homePath + "/config";
-		}
-		*/
+		
 		return 	m_configPath.c_str();
 	}
 
 	const char *AppConfig::getExternalExifTool() {
-		/*
-		if (getRoot().value("ExifTool", m_ExternalExifTool) == false) {
-			m_ExternalExifTool = "exiftool.exe";
-			return m_ExternalExifTool.c_str();
-		}
-		*/
+		
 		return 	m_ExternalExifTool.c_str();
 	}
 	
 	const char *AppConfig::getExifFileDelim() {
-		/*
-		if (getRoot().value("ExifTool", m_ExternalExifTool) == false) {
-		m_ExternalExifTool = "exiftool.exe";
-		return m_ExternalExifTool.c_str();
-		}
-		*/
+		
 		return 	m_ExifFileDelim.c_str();
 	}
 
 	const char *AppConfig::getExternalCommandLine() {
-		/*
-		if (getRoot().value("ExifCommandLine", m_ExternalCommandLine) == false) {
-			m_ExternalCommandLine = EXTERAL_EXIF_COMMAND_LINE;
-			return m_ExternalCommandLine.c_str();
-		}
-		*/
+		
 		return 	m_ExternalCommandLine.c_str();
 	}
 
 	const char *AppConfig::getExifMapPath() {
-		/*
-		if (getRoot().value("ExifMapPath", m_ExternalCommandLine) == false) {
-			m_ExifMapPath = m_homePath + CONFIG_PATH;
-			return m_ExifMapPath.c_str();
-		}
-		*/
+		
 		return 	m_ExifMapPath.c_str();
 	}
 	
 	const char *AppConfig::getTemplatePath() {
-		//if (getRoot().value("TemplatePath", m_templatePath) == false) {
-		//	m_templatePath = m_homePath + "/templates";
-		//	return m_templatePath.c_str();
-		//}
+		
 		return 	m_templatePath.c_str();
 	}
 
 	const char *AppConfig::getExifMapFile() {
-		/*
-		if (getRoot().value("ExifMapFile", m_ExifMapFile) == false) {
-			return m_ExifMapFile.c_str();
-		}
-		*/
+		
 		return 	m_ExifMapFile.c_str();
 	}
 

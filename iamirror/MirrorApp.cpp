@@ -67,6 +67,7 @@ using namespace std;
 #include "MirrorAppOptions.h"
 #include "EnvFunc.h"
 #include "AppConfig.h"
+#include "HomePath.h"
 
 #define VERSION	"1.00"
 #define BUILD	"040115.1749"
@@ -315,59 +316,45 @@ bool AdminApp::initaliseConfig() {
 	AdminConfig config;
 	m_configured = false;
 	bool found = false;
-	std::string homePath;
+	
 
-#ifdef WIN32
-		// Find if the IMGARCHIVE_HOME pathe is in the windows registery
+	bool res = HomePath::init();
+	HomePathType homePathType = HomePath::type();
 
-		// Looking the HKEY_LOCAL_MACHINE first
-		if (GetEnv(homePath, true) == true) {
-			//printf("Found IMGARCHIVE_HOME in system variables: %s", homePath.c_str());
-			found = true;
-		}
-		// Looking the HKEY_CURRENT_USER
-		else if (GetEnv(homePath, false) == true) {
-			//printf("Found IMGARCHIVE_HOME in user variables: %s", homePath.c_str());
-			found = true;
-		}
-		else {
-			homePath = SAUtils::GetPOSIXEnv("ProgramData");
-			if (homePath.empty() == true || homePath.length() == 0) {
-				printf("ImgArchive Unable to start? Cannot read user profile.");
-				setError(12, "ImgArchive Unable to start? Cannot read user profile.");
-				return false;
-			}
-			else {
-				homePath += DEFAULT_DATA_CONFIG_PATH;
-				if (SAUtils::DirExists(homePath.c_str()) == true) {
-					//printf("Found IMGARCHIVE_HOME in user profile: %s", homePath.c_str());
-					found = true;
-				}
-			}
-			if (found == false) {
-				homePath = SAUtils::GetPOSIXEnv("USERPROFILE");
-				if (homePath.empty() == true || homePath.length() == 0) {
-					printf("ImgArchive Unable to start? Cannot read all users profile.");
-					setError(12, "ImgArchive Unable to start? Cannot read all users profile.");
-					return false;
-				}
-				homePath += DEFAULT_DATA_CONFIG_PATH;
-				if (SAUtils::DirExists(homePath.c_str()) == true) {
-					//printf("Found IMGARCHIVE_HOME in all users profile: %s", homePath.c_str());
-					found = true;
-				}
-			}
-		}
-#else
-		// Under Linux look for the HKEY_LOCAL_MACHINE enviroment variable
-		homePath = SAUtils::GetPOSIXEnv("IMGARCHIVE_HOME");
-		if (homePath.empty() == true || homePath.length() == 0) {
-			printf("ImgArchive Unable to start? Cannot read user profile.");
-			setError(12, "ImgArchive Unable to start? Cannot read user profile.");
+	switch (homePathType) {
+	case HomePathType::LocalEnv:	// Local Environment set
+		if (res == false) {
+			printf("Found IMGARCHIVE_HOME as system profile: %s but archive not found at loacation", HomePath::get().c_str());
 			return false;
 		}
-		found = true;
-#endif
+		printf("Found IMGARCHIVE_HOME as system profile: %s. Archive found at that loacation", HomePath::get().c_str());
+		break;
+	case HomePathType::SystemEnv:	// System Environment set
+		if (res == false) {
+			printf("Found IMGARCHIVE_HOME as system profile: %s. Archive found at that loacation", HomePath::get().c_str());
+			return false;
+		}
+		break;
+	case HomePathType::UserOnly:	// user only archive
+		if (res == false) {
+			printf("Archive not found at default loacation");
+			return false;
+		}
+		printf("Archive found at default user loacation: %s.", HomePath::get().c_str());
+		break;
+	case HomePathType::AllUsers:	// all users archive
+		if (res == false) {
+			printf("Archive not found at default loacation");
+			return false;
+		}
+		printf("Archive found at default system loacation: %s.", HomePath::get().c_str());
+		break;
+	case HomePathType::Unknown:
+	default:
+		printf("Unknown error");
+		return false;
+	}
+	std::string homePath = HomePath::get();
 	if (found) {
 		// Initalise without the config file i.e. set defaults.
 		if (config.init(homePath.c_str()) == false) {
@@ -395,9 +382,9 @@ bool AdminApp::initaliseConfig() {
 		tempPath = SAUtils::GetPOSIXEnv("TMP");
 	}
 
-
-	std::string configfile = homePath + "/config/" + "config.dat";
 	std::string configPath = homePath + "/config";
+	std::string configfile = configPath + "config.dat";
+	
 	if (SAUtils::FileExists(configfile.c_str()) == true) {
 		setConfigPath(configPath.c_str());
 		AppConfigReader configReader;

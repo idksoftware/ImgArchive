@@ -253,7 +253,7 @@ bool AdminApp::doRun()
 							appOptions.getMasterPath(), appOptions.getDerivativePath(), appOptions.getCataloguePath(), appOptions.getUsers()) == false) {
 				return false;
 			}
-			printf("\nCompleted initalising the Archive\n");
+			printf("\nCompleted Creating ImgArchive\n");
 			return true;
 		}
 		return false;
@@ -365,11 +365,14 @@ bool AdminApp::CreateArchive(const char *archivePath, const char *workspacePath,
 		}
 	}
 	
-	std::cout << "Using archive path \"" << archivePath << "\"\n";
-	std::cout << "Using workspace path \"" << workspacePath << "\"\n";
-	std::cout << "Using master path \"" << masterPath << "\"\n";
-	std::cout << "Using derivative path \"" << derivativePath << "\"\n";
-	std::cout << "Using catalogue path \"" << cataloguePath << "\"\n";
+	std::cout << "Creating ImgArchive Archives...\n";
+
+	std::cout << "Managed directories\n";
+	std::cout << "Home Configuration path    = \"" << archivePath << "\"\n";
+	std::cout << "Workspace path             = \"" << workspacePath << "\"\n";
+	std::cout << "Master Repository path     = \"" << masterPath << "\"\n";
+	std::cout << "Derivative Repository path = \"" << derivativePath << "\"\n";
+	std::cout << "Catalogue path             = \"" << cataloguePath << "\"\n";
 
 	//  const char* archivePath, const char* workspacePath, const char* reposPath, const char* masterPath, const char* derivativePath, const char* cataloguePath, bool users
 	if (CreateArchive::createArchive(archivePath, workspacePath, masterPath, derivativePath, cataloguePath, users) == false) {
@@ -554,7 +557,7 @@ bool AdminApp::initaliseHomePath() {
 bool AdminApp::initaliseArgs(int argc, char **argv) {
 	DefaultEnvironment defaultEnvironment;
 	defaultEnvironment.init();
-	defaultEnvironment.print();
+	//defaultEnvironment.print();
 	AppOptions& appOptions = AppOptions::get();
 	
 	if (m_argvParser->doInitalise(argc, argv) == false) {

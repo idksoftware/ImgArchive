@@ -27,12 +27,12 @@ namespace simplearchive {
 		AppConfig &config = AppConfig::get();
 
 		
-		logger.log(LOG_OK, CLogger::Level::INFO, "Reading configuration");
+		logger.log(LOG_OK, CLogger::Level::STATUS, "Reading configuration");
 
-		logger.log(LOG_OK, CLogger::Level::INFO, "    General");
-		logger.log(LOG_OK, CLogger::Level::INFO, "        Dry run enabled            %s", (config.isDryRun()) ? "True" : "False");
-		logger.log(LOG_OK, CLogger::Level::INFO, "        Log level:                 %s", config.getLogLevel());
-		logger.log(LOG_OK, CLogger::Level::INFO, "        Console level:             %s", config.getConsoleLevel());
+		logger.log(LOG_OK, CLogger::Level::STATUS, "    General");
+		logger.log(LOG_OK, CLogger::Level::STATUS, "        Dry run enabled            %s", (config.isDryRun()) ? "True" : "False");
+		logger.log(LOG_OK, CLogger::Level::STATUS, "        Log level:                 %s", config.getLogLevel());
+		logger.log(LOG_OK, CLogger::Level::STATUS, "        Console level:             %s", config.getConsoleLevel());
 		logger.log(LOG_OK, CLogger::Level::INFO, "        SQL database:              %s", config.isSQL() ? "True" : "False");
 		logger.log(LOG_OK, CLogger::Level::INFO, "        Silent On:                 %s", config.isSilent() ? "True" : "False");
 		logger.log(LOG_OK, CLogger::Level::INFO, "        Quiet On:                  %s", config.isQuiet() ? "True" : "False");
