@@ -38,7 +38,7 @@
 #include "SAUtils.h"
 #include "ArchivePath.h"
 #include "CLogger.h"
-
+#include "HomePath.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -157,32 +157,7 @@ namespace simplearchive {
 		logger.log(LOG_OK, CLogger::Level::INFO, "Inital values");
 		logger.log(LOG_OK, CLogger::Level::INFO, "        Home path:                 \"%s\"", AppConfig::m_homePath.c_str());
 
-		// Backup 1
-		/*
-		if (AppConfig::m_backup1.empty() == true) {
-			auto backup = getMaster();
-			if (backup == nullptr && backup->value("BackupOne", AppConfig::m_backup1) == true) {
-				ArchivePath::setBackup1Path(AppConfig::m_backup1);
-				AppConfig::m_backup1Enabled = true;
-			}
-			
-		}
-		else {
-			AppConfig::m_backup1Enabled = true;
-		}
 		
-		// Backup 2
-		if (AppConfig::m_backup2.empty() == true) {
-			auto backup = getBackup();
-			if (backup == nullptr && backup->value("BackupTwo", AppConfig::m_backup2) == true) {
-				ArchivePath::setBackup2Path(AppConfig::m_backup2);
-				AppConfig::m_backup2Enabled = true;
-			}
-		}
-		else {
-			AppConfig::m_backup2Enabled = true;
-		}
-		*/
 		// Repository Archive Path
 		if (AppConfig::m_masterPath.empty() == true) {
 			auto folders = getSystemFolders();
@@ -511,30 +486,10 @@ namespace simplearchive {
 
 		std::string m_udpPortNum = "127.0.0.1";
 		setNetwork(COMMANDS_PORT_LABEL, m_udpPortNum, m_udpPortNum);
-		//AppConfig::m_udpAddress = std::to
-
-		//AppConfig::m_udpAddress;
-		//AppConfig::m_udpPortNum;
 		
-
-		//AppConfig::m_serverOn;
-		//AppConfig::m_tcpPortNum;
-
-		//setNetwork(BACKUP_ONE_ENABLED_LABEL, backup2Enabled, backup2Enabled);
-		
-		// Workspace Path	
-		std::string wtemp = SAUtils::GetPOSIXEnv("IMGA_WORKSPACE");
-		if (wtemp.empty() == false) {
-			setSystemFolders(WORKSPACE_PATH_LABEL, AppConfig::m_workspacePath, wtemp);
-			ArchivePath::setPathToWorkspace(AppConfig::m_workspacePath);
-		}
-		// Master Catalogue path
-		std::string ctemp = SAUtils::GetPOSIXEnv("IMGA_MASTER_CATALOGUE");
-		if (ctemp.empty() == true) {
-			setSystemFolders(MASTER_VIEW_PATH_LABEL, AppConfig::m_masterCataloguePath, ctemp);
-		}
-		// todo
-
+		ArchivePath::setPathToWorkspace(AppConfig::m_workspacePath);
+		ArchivePath::setDerivativePath(AppConfig::m_derivativePath);
+		//setSystemFolders(MASTER_VIEW_PATH_LABEL, AppConfig::m_masterCataloguePath, ctemp);
 		setWorkspacePath(AppConfig::m_workspacePath.c_str());
 		setMasterPath(AppConfig::m_masterPath.c_str());
 
@@ -1238,5 +1193,27 @@ namespace simplearchive {
 	}
 
 	
+	bool AppConfig::setDefaultLocations() {
 
-}
+		m_homePath = HomePath::get();
+		m_masterPath = MasterPath::get();
+		m_derivativePath = DerivativePath::get();
+		m_workspacePath = WorkspacePath::get();
+		m_masterCataloguePath = PicturePath::get();
+		m_masterWWWCataloguePath = WWWImagePath::get();
+
+		return locations(m_homePath.c_str());
+	}
+
+	bool AppConfig::locations(const char* home) {
+
+		std::string homePath = home;
+		// Repository Archive Path
+		m_historyPath = homePath + HISTORY_PATH;
+		return false;
+	}
+
+
+};
+
+

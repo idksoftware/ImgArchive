@@ -192,10 +192,7 @@ namespace simplearchive {
 	*/
 	config.setHomePath(homePath.c_str());
 	std::string temp;
-	temp = SAUtils::GetPOSIXEnv("IMGARCHIVE_HOME");
-	if (temp.empty() == false) {
-		config.setWorkspacePath(temp.c_str());
-	}
+	
 	temp = SAUtils::GetPOSIXEnv("IASOURCE");
 	if (temp.empty() == false) {
 		config.setSourcePath(temp.c_str());
@@ -527,10 +524,7 @@ bool AdminApp::initaliseHomePath() {
 #else
 #endif
 	std::string temp;
-	temp = SAUtils::GetPOSIXEnv("IAWORKSPACE");
-	if (temp.empty() == false) {
-		config.setWorkspacePath(temp.c_str());
-	}
+	
 	temp = SAUtils::GetPOSIXEnv("IASOURCE");
 	if (temp.empty() == false) {
 		config.setSourcePath(temp.c_str());

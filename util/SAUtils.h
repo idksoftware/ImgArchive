@@ -119,7 +119,7 @@ public:
 	static std::string GetEnv(const std::string &key, bool all = true);
 	static std::string GetPOSIXEnv(const std::string &key);
 	static bool SetEnv(const std::string &key, const std::string &value, bool all = true);
-
+	static bool IsAdminMode();
 };
 
 

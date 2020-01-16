@@ -644,6 +644,21 @@ int SAUtils::stricmp(const char *a, const char *b) {
 	return ca - cb;
 }
 
+bool SAUtils::IsAdminMode() {
+	bool fRet = false;
+	HANDLE hToken = NULL;
+	if (OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &hToken)) {
+		TOKEN_ELEVATION Elevation;
+		DWORD cbSize = sizeof(TOKEN_ELEVATION);
+		if (GetTokenInformation(hToken, TokenElevation, &Elevation, sizeof(Elevation), &cbSize)) {
+			fRet = Elevation.TokenIsElevated;
+		}
+	}
+	if (hToken) {
+		CloseHandle(hToken);
+	}
+	return fRet;
+}
 
 bool SAUtils::SetEnv(const std::string& key, const std::string& value, bool all)
 {

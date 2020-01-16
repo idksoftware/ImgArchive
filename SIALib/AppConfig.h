@@ -188,11 +188,14 @@ namespace simplearchive {
 
 		static std::string m_filenaming;
 
-	
+		static bool locations(const char* path);
+
 	public:
 		AppConfig() noexcept {}
 		~AppConfig() {}
 		void settup();
+
+		static bool setDefaultLocations();
 
 		static AppConfig &get() {
 			static AppConfig    instance; // Guaranteed to be destroyed.

@@ -381,6 +381,13 @@ bool CreateArchive::createUserSystem(const char* archivePath, const char* worksp
 		}
 	}
 	m_master = master;
+
+	if (SAUtils::FileExists(derivative) == false) {
+		if (SAUtils::makePath(derivative) == false) {
+			return false;
+		}
+	}
+	m_derivative = derivative;
 	return true;
 }
 

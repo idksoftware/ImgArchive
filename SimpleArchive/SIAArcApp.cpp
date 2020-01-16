@@ -184,6 +184,7 @@ bool SIAArcApp::initaliseConfig() {
 		tempPath = SAUtils::GetPOSIXEnv("TMP");
 	}
 
+	AppConfig::setDefaultLocations();
 	std::string configfile = homePath + "/config/" + "config.dat";
 	std::string configPath = homePath + "/config";
 	// Now set the file based configuration with the possablity of overrighting defaults set prevously. 

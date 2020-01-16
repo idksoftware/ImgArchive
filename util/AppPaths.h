@@ -89,10 +89,12 @@
 
 #define DEFAULT_HOME_PATH		   "/IDK-Software/ImgArchive"
 
-#define IMGARCHIVE_HOME			  "IMGARCHIVE_HOME"
-#define IMGA_WORKSPACE			  "IMGA_WORKSPACE"
-#define IMGA_PICTURE			  "IMGA_PICTURE"
-#define IMGA_WWWIMAGE			  "IMGA_WWWIMAGE"
+#define IMGARCHIVE_HOME				"IMGARCHIVE_HOME"
+#define IMGA_WORKSPACE				"IMGA_WORKSPACE"
+#define IMGA_PICTURE				"IMGA_PICTURE"
+#define IMGA_WWWIMAGE				"IMGA_WWWIMAGE"
+#define IMGA_MASTER					"IMGA_MASTER"
+#define IMGA_DERIVATIVE				"IMGA_DERIVATIVE"
 
 constexpr auto ALLUSERS_DEFAULT_HOME_PATH = "/IDK-Software/ImgArchive";
 constexpr auto USER_DEFAULT_HOME_PATH = "/.ImgArchive";
@@ -100,6 +102,8 @@ constexpr auto USER_DEFAULT_HOME_PATH = "/.ImgArchive";
 constexpr auto DEFAULT_WWWIMAGE_PATH = "/.IAWWWPictures";
 constexpr auto DEFAULT_PICTURE_PATH = "/ImgArchive/Pictures";
 constexpr auto DEFAULT_WORKSPACE_PATH = "/ImgArchive/Workspace";
+constexpr auto DEFAULT_MASTER_PATH = "/.ImgArchive/master";
+constexpr auto DEFAULT_DERIVATIVE_PATH = "/.ImgArchive/derivative";
 //constexpr autoEFAULT_WORKSPACE_PATH = "/IAWorkspace";
 //m_sourcePath = tempHomeDrive + tempHomePath + "/Pictures";
 //m_hookPath = m_homePath + "/hooks";

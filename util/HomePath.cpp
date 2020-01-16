@@ -69,6 +69,9 @@ bool HomePath::init()
 
 std::string HomePath::get()
 {
+	if (m_found == false) {
+		init();
+	}
 	return m_homePath;
 }
 
@@ -121,8 +124,8 @@ bool MasterPath::init()
 {
 
 	// Set Windows Defaults (they can be overridden later)
-	std::string allUsersHomeEnvironmentPath = SAUtils::GetEnv(IMGARCHIVE_HOME, true);
-	std::string myselfHomeEnvironmentPath = SAUtils::GetEnv(IMGARCHIVE_HOME, false);
+	std::string allUsersHomeEnvironmentPath = SAUtils::GetEnv(IMGA_MASTER, true);
+	std::string myselfHomeEnvironmentPath = SAUtils::GetEnv(IMGA_MASTER, false);
 	// All Users
 	std::string allusersHomeDefaultPath = SAUtils::GetPOSIXEnv("ProgramData");
 	allusersHomeDefaultPath += ALLUSERS_DEFAULT_HOME_PATH;
@@ -176,6 +179,9 @@ bool MasterPath::init()
 
 std::string MasterPath::get()
 {
+	if (m_found == false) {
+		init();
+	}
 	return m_homePath;
 }
 
@@ -186,7 +192,7 @@ HomePathType MasterPath::type()
 
 bool MasterPath::setLocalUserDefaultHome() {
 	std::string myselfHomeDefaultPath = SAUtils::GetPOSIXEnv("LOCALAPPDATA");
-	myselfHomeDefaultPath += USER_DEFAULT_HOME_PATH;
+	myselfHomeDefaultPath += DEFAULT_MASTER_PATH;
 	m_homePath = myselfHomeDefaultPath;
 	m_found = true;
 	if (SAUtils::DirExists(m_homePath.c_str()) == false) {
@@ -280,6 +286,9 @@ bool DerivativePath::init()
 
 std::string DerivativePath::get()
 {
+	if (m_found == false) {
+		init();
+	}
 	return m_homePath;
 }
 
@@ -290,7 +299,7 @@ HomePathType DerivativePath::type()
 
 bool DerivativePath::setLocalUserDefaultHome() {
 	std::string myselfHomeDefaultPath = SAUtils::GetPOSIXEnv("LOCALAPPDATA");
-	myselfHomeDefaultPath += USER_DEFAULT_HOME_PATH;
+	myselfHomeDefaultPath += DEFAULT_DERIVATIVE_PATH;
 	m_homePath = myselfHomeDefaultPath;
 	m_found = true;
 	if (SAUtils::DirExists(m_homePath.c_str()) == false) {
@@ -302,7 +311,7 @@ bool DerivativePath::setLocalUserDefaultHome() {
 
 bool DerivativePath::setAllUserDefaultHome() {
 	std::string allusersHomeDefaultPath = SAUtils::GetPOSIXEnv("ProgramData");
-	allusersHomeDefaultPath += ALLUSERS_DEFAULT_HOME_PATH;
+	allusersHomeDefaultPath += DEFAULT_DERIVATIVE_PATH;
 	m_homePath = allusersHomeDefaultPath;
 	m_found = true;
 	if (SAUtils::DirExists(m_homePath.c_str()) == false) {
@@ -433,6 +442,9 @@ bool WorkspacePath::init()
 
 std::string WorkspacePath::get()
 {
+	if (m_found == false) {
+		init();
+	}
 	return m_homePath;
 }
 
@@ -564,6 +576,9 @@ bool PicturePath::init()
 
 std::string PicturePath::get()
 {
+	if (m_found == false) {
+		init();
+	}
 	return m_homePath;
 }
 
@@ -682,6 +697,9 @@ bool WWWImagePath::init()
 
 std::string WWWImagePath::get()
 {
+	if (m_found == false) {
+		init();
+	}
 	return m_homePath;
 }
 
