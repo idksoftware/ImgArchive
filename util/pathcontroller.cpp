@@ -21,7 +21,7 @@ namespace simplearchive {
 		std::unique_ptr<char> absPath(new char[1024 * 4]());
 		char *fullPath;
 		int outSize = 1024 * 4;
-#ifdef WIN32
+#ifdef _WIN64
 		fullPath = _fullpath(absPath.get(), path, outSize);
 #else
 		fullPath = realpath(path , absPath.get());
