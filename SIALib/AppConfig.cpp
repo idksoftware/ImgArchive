@@ -250,7 +250,7 @@ namespace simplearchive {
 					std::string tempHomeDrive = SAUtils::GetPOSIXEnv("HOME");
 					std::string tempHomePath = "/Pictures/IMGAWorkspace";
 #endif
-					AppConfig::m_workspacePath = tempHomeDrive + tempHomePath + DEFAULT_WORKSPACE_PATH;
+					AppConfig::m_workspacePath = tempHomeDrive + tempHomePath + DEFAULT_LOCAL_WORKSPACE_PATH;
 				}
 			}
 		}
