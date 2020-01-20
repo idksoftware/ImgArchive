@@ -81,6 +81,8 @@ private:
 	static std::string m_derivativePath;
 	static std::string m_repositoryPath;
 	static std::string m_cataloguePath;
+	static std::string m_picturePath;
+	static std::string m_wwwImagePath;
 	static std::string m_configOption;
 	static std::string m_configValue;
 	static std::string m_optionBlock;
@@ -105,6 +107,8 @@ private:
 	void setDerivativePath(const char *derivativePath);
 	void setRepositoryPath(const char *repositoryPath);
 	void setCataloguePath(const char *cataloguePath);
+	void setWWWImagePath(const char* wwwImagePath);
+	void setPicturePath(const char* picturePath);
 	void setAllUsers(bool allUsers);
 	void setConfigOption(const char* option);
 	void setConfigValue(const char* value);
@@ -129,6 +133,8 @@ public:
 	const char *getDerivativePath();
 	const char *getRepositoryPath();
 	const char *getCataloguePath();
+	const char* getWWWImagePath();
+	const char* getPicturePath();
 	const char* getConfigOption();
 	const char* getConfigValue();
 	const char* getConfigOptionBlock();

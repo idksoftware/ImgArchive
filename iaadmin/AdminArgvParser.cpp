@@ -44,21 +44,32 @@ namespace simplearchive {
 		defineOption("validate", "Validate commands", ArgvParser::MasterOption);
 		//defineOption("mirror", "Mirror commands", ArgvParser::MasterOption);
 		//defineOption("test", "test commands", ArgvParser::MasterOption);
+
+		// Init Command
+		defineOption("archive-path", "location of the archive root folder.", ArgvParser::OptionRequiresValue);
+		defineOption("workspace-path", "location of the workspace folder.", ArgvParser::OptionRequiresValue);
+		defineOption("master-path", "location of the master repository folder.", ArgvParser::OptionRequiresValue);
+		defineOption("derivative-path", "location of the derivative repository folder.", ArgvParser::OptionRequiresValue);
+		//defineOption("catalogue-path", "location of the master catalogue folder.", ArgvParser::OptionRequiresValue);
+		defineOption("picture-path", "location of the master repository folder.", ArgvParser::OptionRequiresValue);
+		defineOption("www-image-path", "location of the master repository folder.", ArgvParser::OptionRequiresValue);
+		
+		// Configure Command
 		defineOption("config", "Configure ImgArchive's working parameters", ArgvParser::MasterOption);
 		
-		defineOption("general", "image address", ArgvParser::OptionRequiresValue);
+		defineOption("general", "Configure general settings such as the the logging level", ArgvParser::OptionRequiresValue);
 		defineOptionAlternative("general", "G");
 		
-		defineOption("folders", "image address", ArgvParser::OptionRequiresValue);
+		defineOption("folders", "Configure forder paths such as the Workapace path", ArgvParser::OptionRequiresValue);
 		defineOptionAlternative("folders", "F");
 
-		defineOption("exiftool", "image address", ArgvParser::OptionRequiresValue);
+		defineOption("exiftool", "Configure exit look intergration", ArgvParser::OptionRequiresValue);
 		defineOptionAlternative("exiftool", "E");
 
-		defineOption("master", "image address", ArgvParser::OptionRequiresValue);
+		defineOption("master", "Configure the Master repository", ArgvParser::OptionRequiresValue);
 		defineOptionAlternative("master", "M");
 
-		defineOption("network", "image address", ArgvParser::OptionRequiresValue);
+		defineOption("network", "Configure network parameters", ArgvParser::OptionRequiresValue);
 		defineOptionAlternative("network", "N");
 
 		
@@ -100,20 +111,7 @@ namespace simplearchive {
 		defineOption("to-date", "to date", ArgvParser::OptionRequiresValue);
 		//defineOptionAlternative("T", "to-date");
 
-		defineOption("archive-path", "location of the archive root folder.", ArgvParser::OptionRequiresValue);
-		//defineOptionAlternative("r", "archive-path");
-
-		defineOption("workspace", "location of the workspace folder.", ArgvParser::OptionRequiresValue);
-		//defineOptionAlternative("w", "workspace");
-
-		defineOption("repository-path", "location of the master repository folder.", ArgvParser::OptionRequiresValue);
-
-		defineOption("master-path", "location of the master repository folder.", ArgvParser::OptionRequiresValue);
-		//defineOptionAlternative("w", "workspace");
-
-		defineOption("derivative-path", "location of the derivative repository folder.", ArgvParser::OptionRequiresValue);
-		//defineOptionAlternative("w", "workspace");
-		defineOption("catalogue-path", "location of the master catalogue folder.", ArgvParser::OptionRequiresValue);
+		
 
 		defineOption("logging-level", "Temporarily changes the logging level for the scope of this command session.", ArgvParser::OptionRequiresValue);
 		//defineOptionAlternative("r", "logging-level");
@@ -210,6 +208,16 @@ namespace simplearchive {
 			AppOptions::m_repositoryPath = HomePath::get();
 			AppOptions::m_cataloguePath = PicturePath::get();
 
+			/*
+			defineOption("archive-path", "location of the archive root folder.", ArgvParser::OptionRequiresValue);
+			defineOption("workspace-path", "location of the workspace folder.", ArgvParser::OptionRequiresValue);
+			defineOption("master-path", "location of the master repository folder.", ArgvParser::OptionRequiresValue);
+			defineOption("derivative-path", "location of the derivative repository folder.", ArgvParser::OptionRequiresValue);
+			//defineOption("catalogue-path", "location of the master catalogue folder.", ArgvParser::OptionRequiresValue);
+			defineOption("picture-path", "location of the master repository folder.", ArgvParser::OptionRequiresValue);
+			defineOption("www-image-path", "location of the master repository folder.", ArgvParser::OptionRequiresValue);
+			*/
+
 			if (foundOption("archive-path") == true) {
 				opt = optionValue("archive-path");
 				appOptions.setHomePath(opt.c_str());
@@ -220,11 +228,6 @@ namespace simplearchive {
 				appOptions.setWorkspacePath(opt.c_str());
 			}
 			
-			if (foundOption("repository-path") == true) {
-				opt = optionValue("derivative-path");
-				appOptions.setRepositoryPath(opt.c_str());
-			}
-
 			if (foundOption("master-path") == true) {
 				opt = optionValue("master-path");
 				appOptions.setMasterPath(opt.c_str());
@@ -235,9 +238,19 @@ namespace simplearchive {
 				appOptions.setDerivativePath(opt.c_str());
 			}
 
-			if (foundOption("catalogue-path") == true) {
-				opt = optionValue("catalogue-path");
-				appOptions.setCataloguePath(opt.c_str());
+			//if (foundOption("catalogue-path") == true) {
+			//	opt = optionValue("catalogue-path");
+			//	appOptions.setCataloguePath(opt.c_str());
+			//}
+
+			if (foundOption("picture-path") == true) {
+				opt = optionValue("picture-path");
+				appOptions.setPicturePath(opt.c_str());
+			}
+
+			if (foundOption("www-image-path") == true) {
+				opt = optionValue("www-image-path");
+				appOptions.setWWWImagePath(opt.c_str());
 			}
 
 			cmdFound = true;
