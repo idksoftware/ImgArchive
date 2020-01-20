@@ -44,7 +44,7 @@
 #include <sstream>
 
 
-#ifdef _WIN64
+#if defined  _WIN64 || defined WIN32
 	//#include <sysstat.h>
 #else
 	#include <dirent.h>
