@@ -182,6 +182,14 @@ const char *AppOptions::getDerivativePath() {
 const char *AppOptions::getCataloguePath() {
 	return m_cataloguePath.c_str();
 }
+const char* AppOptions::getWWWImagePath()
+{
+	return nullptr;
+}
+const char* AppOptions::getPicturePath()
+{
+	return nullptr;
+}
 const char* AppOptions::getConfigOption()
 {	
 	return m_configOption.c_str();
