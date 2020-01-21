@@ -50,7 +50,7 @@ namespace simplearchive {
 		defineOption("workspace-path", "location of the workspace folder.", ArgvParser::OptionRequiresValue);
 		defineOption("master-path", "location of the master repository folder.", ArgvParser::OptionRequiresValue);
 		defineOption("derivative-path", "location of the derivative repository folder.", ArgvParser::OptionRequiresValue);
-		//defineOption("catalogue-path", "location of the master catalogue folder.", ArgvParser::OptionRequiresValue);
+		defineOption("set-home-env", "Set the Home environment variable.", ArgvParser::OptionRequiresValue);
 		defineOption("picture-path", "location of the master repository folder.", ArgvParser::OptionRequiresValue);
 		defineOption("www-image-path", "location of the master repository folder.", ArgvParser::OptionRequiresValue);
 		
@@ -181,11 +181,11 @@ namespace simplearchive {
 			std::string opt;
 			if (foundOption("users") == true) {
 				std::string users = optionValue("users");
-				if (users.compare("Myself") == 0) {
+				if (users.compare("myself") == 0) {
 					appOptions.setAllUsers(false);
 					DefaultEnvironment::setLocalDefaultLocations();
 				}
-				else {
+				else if (users.compare("all") == 0) {
 					if (DefaultEnvironment::isInAdminMode() == false) {
 						// Not in admin mode so cannot be initalised in admin mode so return with error
 						printf("Invalid operation? Not in admin mode so cannot be initalised in admin mode\n\n");
@@ -193,13 +193,25 @@ namespace simplearchive {
 						return false;
 					}
 					appOptions.setAllUsers(true);
-					DefaultEnvironment::setAllUserDefaultLocations();
+					DefaultEnvironment::setLocalDefaultLocations();
+				}
+				else {
+					// Invalid option
+					printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+					return false;
 				}
 			}
 			else {
 				DefaultEnvironment::setDefaultLocations();
 			}
-
+			BoolOption setHomeEnv = BoolOption::Invalid;
+			if (foundOption("set-home-env") == true) {
+				if ((setHomeEnv = SAUtils::isTrueFalse(optionValue("set-home-env"))) == BoolOption::Invalid) {
+					printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+					return false;
+				}
+				AppOptions::m_setHomeEnv = (setHomeEnv == BoolOption::True) ? true : false;
+			}
 			AppOptions::m_homePath = HomePath::get();
 			AppOptions::m_workspacePath = WorkspacePath::get();
 			AppOptions::m_masterPath = MasterPath::get();

@@ -54,6 +54,12 @@
 
 #define DEBUG_PRINT printf
 
+enum class BoolOption {
+	False = 0,
+	True = 1,
+	Invalid = -1;
+};
+
 class SIAException : public std::exception {
 	std::string message;
 public:
@@ -95,6 +101,8 @@ public:
 	static bool fileSize(const char *filePath, unsigned long *size);
 	static bool hasExt(const char *file);
 	static bool hasExt(const std::string &file);
+	static bool isEquals(const std::string& a, const std::string& b);
+	static BoolOption isTrueFalse(std::string& s);
 	static bool mkDir(const char *path);
 	static bool isNumber(const std::string& s);
 	static bool setHidden(const char *path);

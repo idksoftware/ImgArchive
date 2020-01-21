@@ -67,11 +67,12 @@ std::string AppOptions::m_configOption;
 std::string AppOptions::m_configValue;
 std::string AppOptions::m_optionBlock;
 
+
 AppOptions::VerifyOperation AppOptions::m_verifyOperation = AppOptions::VerifyOperation::Both;
 AppOptions::ShowOperation AppOptions::m_showOperation = AppOptions::ShowOperation::CheckedOut;
 bool AppOptions::m_repair = false;
 bool AppOptions::m_users = true;
-
+bool AppOptions::m_setHomeEnv = true;
 
 AppOptions &AppOptions::get() {
 	static AppOptions _this;
@@ -225,6 +226,7 @@ const char *AppOptions::getConfigPath() {
 	return m_configPath.c_str();
 }
 
-void setConfigPath(const char *configPath);
-
+void setHomeEnv(bool b) {
+	m_setHomeEnv = b;
+}
 } /* namespace simplearchive */

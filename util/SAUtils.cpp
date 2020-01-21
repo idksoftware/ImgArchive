@@ -303,6 +303,28 @@ std::string SAUtils::to_string(int i) {
 
 }
 
+bool SAUtils::isEquals(const std::string& a, const std::string& b)
+{
+	return std::equal(a.begin(), a.end(),
+		b.begin(), b.end(),
+		[](char a, char b) {
+			return tolower(a) == tolower(b);
+		});
+}
+
+BoolOption SAUtils::isTrueFalse(std::string& s) {
+	if (isEquals("true", s) || isEquals("on", s) || isEquals("yes", s)) {
+		s = "True";
+		return BoolOption::True;
+	} else if (isEquals("true", s) || isEquals("false", s) || isEquals("on", s) ||
+		isEquals("off", s) || isEquals("yes", s) || isEquals("no", s)) {
+		s = "False";
+		return BoolOption::False;
+	}
+	s = "Invalid";
+	return BoolOption::Invalid;
+}
+
 bool SAUtils::mkDir(const char *path) {
 #ifdef _WIN32
 	if (_mkdir(path) != 0) {

@@ -90,6 +90,7 @@ private:
 	static ShowOperation m_showOperation;
 	static bool m_repair;
 	static bool m_users;
+	static bool m_setHomeEnv;
 	bool m_error;
 	/**
 		@brief Set to true if no archive configuration found. 
