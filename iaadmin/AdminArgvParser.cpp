@@ -50,10 +50,10 @@ namespace simplearchive {
 		defineOption("workspace-path", "location of the workspace folder.", ArgvParser::OptionRequiresValue);
 		defineOption("master-path", "location of the master repository folder.", ArgvParser::OptionRequiresValue);
 		defineOption("derivative-path", "location of the derivative repository folder.", ArgvParser::OptionRequiresValue);
-		defineOption("set-home-env", "Set the Home environment variable.", ArgvParser::OptionRequiresValue);
-		defineOption("picture-path", "location of the master repository folder.", ArgvParser::OptionRequiresValue);
-		defineOption("www-image-path", "location of the master repository folder.", ArgvParser::OptionRequiresValue);
+		defineOption("picture-path", "location of the picture folder.", ArgvParser::OptionRequiresValue);
+		defineOption("www-image-path", "location of the www image folder.", ArgvParser::OptionRequiresValue);
 		
+		defineOption("set-home-env", "Set the Home environment variable.", ArgvParser::OptionRequiresValue);
 		// Configure Command
 		defineOption("config", "Configure ImgArchive's working parameters", ArgvParser::MasterOption);
 		

@@ -57,7 +57,7 @@
 enum class BoolOption {
 	False = 0,
 	True = 1,
-	Invalid = -1;
+	Invalid = -1
 };
 
 class SIAException : public std::exception {
