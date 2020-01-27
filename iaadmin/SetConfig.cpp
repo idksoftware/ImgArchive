@@ -253,40 +253,40 @@ bool SetConfig::parseFolderOptions(const char* ov)
 		m_option = TOOLS_PATH_LABEL;
 		return true;
 	case Option::TEMP_PATH:
-		m_option = BACKUP_TWO_LABEL;
+		m_option = TEMP_PATH_LABEL;
 		return true;
 	case Option::SOURCE_PATH:
-		m_option = BACKUP_TWO_LABEL;
+		m_option = SOURCE_PATH_LABEL;
 		return true;
 	case Option::SYSTEM_PATH:
-		m_option = BACKUP_TWO_LABEL;
+		m_option = SYSTEM_PATH_LABEL;
 		return true;
 	case Option::MASTER_PATH:
-		m_option = BACKUP_TWO_LABEL;
+		m_option = MASTER_PATH_LABEL;
 		return true;
 	case Option::MASTER_VIEW_PATH:
-		m_option = BACKUP_TWO_LABEL;
+		m_option = MASTER_VIEW_PATH_LABEL;
 		return true;
 	case Option::DERIVATIVE_PATH:
-		m_option = BACKUP_TWO_LABEL;
+		m_option = DERIVATIVE_PATH_LABEL;
 		return true;
 	case Option::SQL_DATABASE_PATH:
-		m_option = BACKUP_TWO_LABEL;
+		m_option = SQL_DATABASE_PATH_LABEL;
 		return true;
 	case Option::LOG_PATH:
-		m_option = BACKUP_TWO_LABEL;
+		m_option = LOG_PATH_LABEL;
 		return true;
 	case Option::HOME_PATH:
-		m_option = BACKUP_TWO_LABEL;
+		m_option = HOME_PATH_LABEL;
 		return true;
 	case Option::INDEX_PATH:
-		m_option = BACKUP_TWO_LABEL;
+		m_option = INDEX_PATH_LABEL;
 		return true;
 	case Option::HISTORY_PATH:
-		m_option = BACKUP_TWO_LABEL;
+		m_option = HISTORY_PATH_LABEL;
 		return true;
 	case Option::LIGHTROOM_PATH:
-		m_option = BACKUP_TWO_LABEL;
+		m_option = LIGHTROOM_LABEL;
 		return true;
 	default:
 		return false;
@@ -299,9 +299,20 @@ bool SetConfig::parseExifToolOptions(const char* ov)
 	if (!processArgs(ov)) {
 		return false;
 	}
-	Option ret = processGeneralOptions(m_option);
+	Option ret = processExifToolOptions(m_option);
 	switch (ret) {
-	case Option::QUIET:
+	case Option::EXIF_MAP_PATH:
+		m_option = EXIF_MAP_PATH_LABEL;
+		return true;
+	case Option::EXIF_MAP_FILE:
+		m_option = EXIF_MAP_FILE_LABEL;
+		return true;
+	case Option::EXIF_TOOL:
+		m_option = EXIF_TOOL_LABEL;
+		return true;
+	case Option::EXIF_COMMANDLINE:
+		m_option = EXIF_COMMANDLINE_LABEL;
+		return true;
 		break;
 
 	default:
@@ -315,7 +326,7 @@ bool SetConfig::parseMasterOptions(const char* optionString)
 	if (!processArgs(optionString)) {
 		return false;
 	}
-	Option ret = processGeneralOptions(m_option);
+	Option ret = processMasterOptions(m_option);
 	switch (ret) {
 	case Option::QUIET:
 		break;
@@ -331,7 +342,7 @@ bool SetConfig::parseNetworkOptions(const char* ov)
 	if (!processArgs(ov)) {
 		return false;
 	}
-	Option ret = processGeneralOptions(m_option);
+	Option ret = processNetworkOptions(m_option);
 	switch (ret) {
 	case Option::QUIET:
 		break;
@@ -509,6 +520,46 @@ Option SetConfig::processFolderOptions(std::string& optionString)
 	}
 	else if (iequals(optionString, LIGHTROOM_PATH_LABEL)) {
 		return Option::LIGHTROOM_PATH;
+	}
+	return Option::UNKNOWN;
+}
+
+Option SetConfig::processExifToolOptions(std::string& optionString)
+{
+
+	if (iequals(optionString, EXIF_MAP_PATH_LABEL)) {
+		return Option::EXIF_MAP_PATH;
+	}
+	else if (iequals(optionString, EXIF_MAP_FILE_LABEL)) {
+		return Option::EXIF_MAP_FILE;	 // Main configuration path
+	}
+	else if (iequals(optionString, EXIF_TOOL_LABEL)) {
+		return Option::EXIF_TOOL;	 // Main configuration path
+	}
+	else if (iequals(optionString, EXIF_COMMANDLINE_LABEL)) {
+		return Option::EXIF_COMMANDLINE;	 // Main configuration path
+	}
+	return Option::UNKNOWN;
+}
+
+Option SetConfig::processMasterOptions(std::string& optionString)
+{
+	if (iequals(optionString, QUIET_LABEL)) {
+		return Option::HOOK_SCRIPTS_PATH;
+	}
+	else if (iequals(optionString, CONFIG_PATH_LABEL)) {
+		return Option::CONFIG_PATH;	 // Main configuration path
+	}
+	return Option::UNKNOWN;
+}
+
+Option SetConfig::processNetworkOptions(std::string& optionString)
+{
+	if (iequals(optionString, QUIET_LABEL)) {
+		return Option::HOOK_SCRIPTS_PATH;
+	}
+	else if (iequals(optionString, CONFIG_PATH_LABEL)) {
+		return Option::CONFIG_PATH;	 // Main configuration path
 	}
 	return Option::UNKNOWN;
 }

@@ -71,7 +71,6 @@ namespace simplearchive {
 		defineOption("network", "Configure network parameters", ArgvParser::OptionRequiresValue);
 		defineOptionAlternative("network", "N");
 
-		
 		defineOption("m", "Mirror commands", ArgvParser::NoOptionAttribute);
 		defineOptionAlternative("m", "mirror");
 
@@ -136,6 +135,7 @@ namespace simplearchive {
 		
 		defineCommandOption("config", "general"); // imgadmin config --general.quiet=false
 		defineCommandOption("config", "folders"); // imgadmin config --general.quiet=false
+		defineCommandOption("config", "exiftool"); // imgadmin config --general.quiet=false
 		ArgvParser::ParserResults res = parse(argc, argv);
 
 		std::string errStr;
