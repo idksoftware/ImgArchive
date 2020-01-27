@@ -226,7 +226,7 @@ const char *AppOptions::getConfigPath() {
 	return m_configPath.c_str();
 }
 
-void setHomeEnv(bool b) {
+void AppOptions::setHomeEnv(bool b) {
 	m_setHomeEnv = b;
 }
 } /* namespace simplearchive */

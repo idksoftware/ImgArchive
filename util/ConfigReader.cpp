@@ -83,7 +83,7 @@ std::ostream& operator<< (std::ostream& stream, const AppConfigBase& config) {
 
 std::ostream& operator<< (std::ostream& stream, const ConfigBlock& block) {
 	for (auto ii = block.begin(); ii != block.end(); ++ii) {
-		stream << ii->first << '=' << ii->second << "\n";
+		stream << "\t" << ii->first << '=' << ii->second << "\n";
 	}
 	return stream;
 }

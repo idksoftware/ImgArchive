@@ -39,6 +39,7 @@ namespace simplearchive {
 
 
 		defineOption("init", "Create Archive enviroment", ArgvParser::MasterOption);
+		defineOption("config", "Configure ImgArchive's working parameters", ArgvParser::MasterOption);
 		defineOption("show", "Show settings", ArgvParser::MasterOption);
 		defineOption("version", "prints the version information", ArgvParser::MasterOption);
 		defineOption("validate", "Validate commands", ArgvParser::MasterOption);
@@ -55,8 +56,6 @@ namespace simplearchive {
 		
 		defineOption("set-home-env", "Set the Home environment variable.", ArgvParser::OptionRequiresValue);
 		// Configure Command
-		defineOption("config", "Configure ImgArchive's working parameters", ArgvParser::MasterOption);
-		
 		defineOption("general", "Configure general settings such as the the logging level", ArgvParser::OptionRequiresValue);
 		defineOptionAlternative("general", "G");
 		
@@ -136,7 +135,7 @@ namespace simplearchive {
 		//defineCommandOption("test", "settup");
 		
 		defineCommandOption("config", "general"); // imgadmin config --general.quiet=false
-
+		defineCommandOption("config", "folders"); // imgadmin config --general.quiet=false
 		ArgvParser::ParserResults res = parse(argc, argv);
 
 		std::string errStr;
@@ -210,7 +209,8 @@ namespace simplearchive {
 					printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 					return false;
 				}
-				AppOptions::m_setHomeEnv = (setHomeEnv == BoolOption::True) ? true : false;
+				bool homeEnv = (setHomeEnv == BoolOption::True) ? true : false;
+				appOptions.setHomeEnv(homeEnv);
 			}
 			AppOptions::m_homePath = HomePath::get();
 			AppOptions::m_workspacePath = WorkspacePath::get();
@@ -361,6 +361,8 @@ namespace simplearchive {
 				std::string opt = optionValue("general");
 					
 				if (setConfig.parseGeneralOptions(opt.c_str()) == false) {
+					printf("Invalid argument for sub-command: %s general \"%s\"\n\n", getCurrentCommand().c_str(), opt.c_str());
+					printf("%s", usageDescription(80).c_str());
 					return false;
 				}
 					
@@ -369,6 +371,8 @@ namespace simplearchive {
 				std::string opt = optionValue("folders");
 					
 				if (setConfig.parseFolderOptions(opt.c_str()) == false) {
+					printf("Invalid argument for sub-command: %s folders \"%s\"\n\n", getCurrentCommand().c_str(), opt.c_str());
+					printf("%s", usageDescription(80).c_str());
 					return false;
 				}
 					
@@ -377,6 +381,8 @@ namespace simplearchive {
 				std::string opt = optionValue("exiftool");
 				SetConfig setConfig;
 				if (setConfig.parseExifToolOptions(opt.c_str()) == false) {
+					printf("Invalid argument for sub-command: %s exiftool \"%s\"\n\n", getCurrentCommand().c_str(), opt.c_str());
+					printf("%s", usageDescription(80).c_str());
 					return false;
 				}
 			}
@@ -384,6 +390,8 @@ namespace simplearchive {
 				std::string opt = optionValue("master");
 				SetConfig setConfig;
 				if (setConfig.parseMasterOptions(opt.c_str()) == false) {
+					printf("Invalid argument for sub-command: %s master \"%s\"\n\n", getCurrentCommand().c_str(), opt.c_str());
+					printf("%s", usageDescription(80).c_str());
 					return false;
 				}
 					
@@ -392,6 +400,8 @@ namespace simplearchive {
 				std::string opt = optionValue("network");
 					
 				if (setConfig.parseNetworkOptions(opt.c_str()) == false) {
+					printf("Invalid argument for sub-command: %s network \"%s\"\n\n", getCurrentCommand().c_str(), opt.c_str());
+					printf("%s", usageDescription(80).c_str());
 					return false;
 				}
 					

@@ -19,10 +19,11 @@ namespace simplearchive {
 		std::string temp = SAUtils::GetPOSIXEnv(key);
 		std::string homePath = temp;
 		*/
-		bool found = false;
+		
 		
 		bool res = HomePath::init();
 		HomePathType homePathType = HomePath::type();
+		bool found = HomePath::isFound();
 
 		switch (homePathType) {
 		case HomePathType::LocalEnv:	// Local Environment set
@@ -88,11 +89,13 @@ namespace simplearchive {
 		configWriter.update(configOptionBlock, configOption, configValue);
 		imgaConfig.printAll();
 		std::ofstream configFile;
-		configFile.open(m_configfile.c_str());
+		//configFile.open(m_configfile.c_str());
+		configFile.open("C:\\temp\\t.dat");
 		if (configFile.bad()) {
 			return false;
 		}
 		configFile << imgaConfig;
+		std::cout << imgaConfig;
 		configFile.close();
 		
 		return true;

@@ -114,6 +114,9 @@ private:
 	void setConfigOption(const char* option);
 	void setConfigValue(const char* value);
 	void setConfigOptionBlock(const char* optionBlock);
+
+	void setHomeEnv(bool b);
+
 	AppOptions();
 public:
 	
