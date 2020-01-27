@@ -379,7 +379,7 @@ namespace simplearchive {
 			}
 			if (foundOption("exiftool") == true) {
 				std::string opt = optionValue("exiftool");
-				SetConfig setConfig;
+				
 				if (setConfig.parseExifToolOptions(opt.c_str()) == false) {
 					printf("Invalid argument for sub-command: %s exiftool \"%s\"\n\n", getCurrentCommand().c_str(), opt.c_str());
 					printf("%s", usageDescription(80).c_str());
@@ -388,7 +388,7 @@ namespace simplearchive {
 			}
 			if (foundOption("master") == true) {
 				std::string opt = optionValue("master");
-				SetConfig setConfig;
+				
 				if (setConfig.parseMasterOptions(opt.c_str()) == false) {
 					printf("Invalid argument for sub-command: %s master \"%s\"\n\n", getCurrentCommand().c_str(), opt.c_str());
 					printf("%s", usageDescription(80).c_str());

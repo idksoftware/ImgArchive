@@ -299,6 +299,7 @@ bool SetConfig::parseExifToolOptions(const char* ov)
 	if (!processArgs(ov)) {
 		return false;
 	}
+	m_optionBlock = EXIFTOOL_BLOCK;
 	Option ret = processExifToolOptions(m_option);
 	switch (ret) {
 	case Option::EXIF_MAP_PATH:
