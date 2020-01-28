@@ -530,7 +530,12 @@ bool ConfigWriter::update(const char* blockName, const char* cmd, const char* op
 			return true;
 		}
 	}
-	
+	// block nane not found so add it.
+	auto blockPair = std::pair<std::string, std::shared_ptr<ConfigBlock >> (blockName, std::make_shared<ConfigBlock>(blockName));
+	ConfigBlock& config = *(blockPair.second);
+	ConfigBlockWriter configBlockWriter;
+	configBlockWriter.update(cmd, options, config);
+	m_config.insert(blockPair);
 	return false;
 }
 

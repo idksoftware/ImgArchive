@@ -136,6 +136,7 @@ namespace simplearchive {
 		defineCommandOption("config", "general"); // imgadmin config --general.quiet=false
 		defineCommandOption("config", "folders"); // imgadmin config --general.quiet=false
 		defineCommandOption("config", "exiftool"); // imgadmin config --general.quiet=false
+		defineCommandOption("config", "network");
 		ArgvParser::ParserResults res = parse(argc, argv);
 
 		std::string errStr;
@@ -219,16 +220,6 @@ namespace simplearchive {
 			AppOptions::m_derivativePath = DerivativePath::get();
 			AppOptions::m_repositoryPath = HomePath::get();
 			AppOptions::m_cataloguePath = PicturePath::get();
-
-			/*
-			defineOption("archive-path", "location of the archive root folder.", ArgvParser::OptionRequiresValue);
-			defineOption("workspace-path", "location of the workspace folder.", ArgvParser::OptionRequiresValue);
-			defineOption("master-path", "location of the master repository folder.", ArgvParser::OptionRequiresValue);
-			defineOption("derivative-path", "location of the derivative repository folder.", ArgvParser::OptionRequiresValue);
-			//defineOption("catalogue-path", "location of the master catalogue folder.", ArgvParser::OptionRequiresValue);
-			defineOption("picture-path", "location of the master repository folder.", ArgvParser::OptionRequiresValue);
-			defineOption("www-image-path", "location of the master repository folder.", ArgvParser::OptionRequiresValue);
-			*/
 
 			if (foundOption("archive-path") == true) {
 				opt = optionValue("archive-path");
