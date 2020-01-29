@@ -11,7 +11,7 @@ namespace simplearchive {
 		void header(std::ofstream &htmlFile);
 	public:
 		AboutHtmlPage();
-		~AboutHtmlPage();
+		virtual ~AboutHtmlPage();
 		void content(std::ofstream &htmlFile);
 	};
 
@@ -57,7 +57,7 @@ namespace simplearchive {
 		void header(std::ofstream &htmlFile);
 	public:
 		HistoryHtmlPage();
-		~HistoryHtmlPage();
+		virtual ~HistoryHtmlPage();
 		void content(std::ofstream &htmlFile);
 		void load(std::vector<SystemHistoryFileItem> &fileItems);
 	};

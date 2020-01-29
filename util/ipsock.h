@@ -299,7 +299,7 @@ public:
 	/// .
 	CIPServer();
 	/// .
-	~CIPServer();
+	virtual ~CIPServer();
 	
 	virtual std::shared_ptr<CChildConnection> MakeClient(int sock) {
 		return std::make_shared<CChildConnection>(sock);

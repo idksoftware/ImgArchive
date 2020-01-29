@@ -682,11 +682,11 @@ bool SAUtils::IsAdminMode() {
 	}
 #endif
 	if (getuid()) {
-			printf("%s", "You are not root!\n");
-			fRet = 0;
+		// You are not root!
+			fRet = false;
 	}else {
-		printf("%s", "OK, you are root.\n");
-		fRet = 0;
+		//OK, you are root.
+		fRet = true;
 	}
 	return fRet;
 }

@@ -112,10 +112,11 @@ namespace {
 		Rational val_rational;
 	};
 
-
+/* not used
 	char byte2numberChar(unsigned char b) {
 		return (b + '0');
 	}
+*/
 	// Helper functions
 	unsigned int parse32(const unsigned char *buf, bool intel) {
 		if (intel)
@@ -180,7 +181,7 @@ namespace {
 	}
 
 
-
+/* not used
 	static int Get32s(void * Long, bool intel)
 	{
 		if (!intel){
@@ -192,7 +193,7 @@ namespace {
 				| (((unsigned char *)Long)[1] << 8) | (((unsigned char *)Long)[0] << 0);
 		}
 	}
-
+*/
 	int parseEXIFNumerator(const unsigned char *buf, bool intel) {
 		return parse32(buf, intel);
 	}
@@ -295,10 +296,10 @@ JpegExif_Ptr EXIFInfo::parseFrom(const unsigned char *buf, unsigned len) {
 	// This check also ensures that the user has supplied a correct value for len.
 	JpegExif_Ptr jpegExif = std::make_shared<JpegEXIF> ();
 	jpegExif->clear();
-	unsigned char b1 = buf[0];
-	unsigned char b2 = buf[1];
-	unsigned char b3 = buf[len - 2];
-	unsigned char b4 = buf[len - 1];
+	//unsigned char b1 = buf[0];
+	//unsigned char b2 = buf[1];
+	//unsigned char b3 = buf[len - 2];
+	//unsigned char b4 = buf[len - 1];
 	if (!buf || len < 4) {
 		jpegExif->error = PARSE_EXIF_ERROR_NO_EXIF;
 		return jpegExif;

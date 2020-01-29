@@ -598,7 +598,9 @@ bool CIPServer::Send(char *pBuffer, int iSize, std::shared_ptr<CChildConnection>
 			break;
 		}
 	}
-	
+	if (found == false) {
+		return false;
+	}
 	return pChildConnection->Send(pBuffer, iSize);
 }
 

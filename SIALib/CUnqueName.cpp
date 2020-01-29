@@ -73,9 +73,9 @@ std::string CUnqueName::make(const char *name) {
 	int dotpos = filename.find_last_of(".");
 	std::string nameonly = filename.substr(0, dotpos);
 	std::string ext = filename.substr(dotpos, filename.length() - dotpos);
-	unsigned int vepos = nameonly.find_last_of(m_pre);
+	size_t vepos = nameonly.find_last_of(m_pre);
 
-	if (vepos == -1 || (vepos <= (nameonly.length() - 2))) {
+	if (vepos == (size_t)-1 || (vepos <= (nameonly.length() - 2))) {
 		nameonly = nameonly + m_pre + "1" + m_post;
 		m_dupNameCount = 1;
 		filename = nameonly + filename.substr(dotpos, filename.length() - dotpos);
@@ -84,8 +84,8 @@ std::string CUnqueName::make(const char *name) {
 		}
 
 	} else {
-		int vspos = nameonly.find_last_of(m_pre);
-		int itmp = (nameonly.length() - vspos)-1;
+		size_t vspos = nameonly.find_last_of(m_pre);
+		size_t itmp = (nameonly.length() - vspos)-1;
 		std::string numstr = nameonly.substr(vspos+1, (vepos-vspos)-1);
 		m_dupNameCount = atoi(numstr.c_str());
 		m_dupNameCount++;

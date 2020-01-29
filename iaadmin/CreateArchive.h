@@ -43,12 +43,12 @@ namespace simplearchive {
 
 	class CreateArchive {
 		/**
-		/* @brief Creates the folder using the the root and folder name.
+		* @brief Creates the folder using the the root and folder name.
 		*/
 		static bool makeFolder(const char *root, const char *folder);
 		/**
-		/* @brief Creates a file using the the folder and file name as the file path. The file is then filled
-		/* with the containts of the char array.
+		* @brief Creates a file using the the folder and file name as the file path. The file is then filled
+		* with the containts of the char array.
 		*/
 		static bool createFile(const char *root, const char *folder, const char *filename,
 			const char *array[], unsigned int size);
@@ -74,19 +74,19 @@ namespace simplearchive {
 
 		static bool createSystem(bool users, const char *archivePath, const char *workspace, const char *master, const char *derivative, const char *catalogue);
 		/**
-		/* @brief Creates the configuration folders.
+		* @brief Creates the configuration folders.
 		*/
 		static bool makeFolders(const char *root);
 		/**
-		/* @brief Creates the default configuration files.
+		* @brief Creates the default configuration files.
 		*/
 		static bool createConfigFiles(const char *root, const char *folder, const char *workspace, const char *master, const char *derivative, const char *catalogue);
 		/**
-		/* @brief Creates the default hook files.
+		* @brief Creates the default hook files.
 		*/
 		static bool createHookFiles(const char *root, const char *folder);
 		/**
-		/* @brief Creates the enviroment variable IMGARCHIVE_HOME the the path given.
+		* @brief Creates the enviroment variable IMGARCHIVE_HOME the the path given.
 		*/
 		static bool createHomeEnvVar(const char *root, bool users);
 

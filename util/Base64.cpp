@@ -53,8 +53,8 @@ int Base64::base64ToDecimal(std::string encoded)
 {
 	int ret = 0;
 	unsigned char c = 0;
-	unsigned int num;
-	int len = encoded.length();
+	int num;
+	size_t len = encoded.length();
 	for (unsigned int index = 0; index < encoded.length(); index++) {
 		c = encoded[index];
 		if (c >= sizeof(LookupDigits)) {

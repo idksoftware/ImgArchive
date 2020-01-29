@@ -20,8 +20,8 @@ namespace simplearchive {
 
 		std::unique_ptr<char> absPath(new char[1024 * 4]());
 		char *fullPath;
-		int outSize = 1024 * 4;
 #if defined _WIN64 || defined _WIN32
+		int outSize = 1024 * 4;
 		fullPath = _fullpath(absPath.get(), path, outSize);
 #else
 		fullPath = realpath(path , absPath.get());
@@ -206,7 +206,7 @@ namespace simplearchive {
 
 	bool PathController::splitPathAndFile(const char *path) {
 		std::string tmpPath = path;
-		int pos = 0;
+		size_t pos = 0;
 		if ((pos = tmpPath.find_first_of("0123456789")) == std::string::npos) {
 			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 			return false;

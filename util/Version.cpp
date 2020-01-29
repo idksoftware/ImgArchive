@@ -216,11 +216,11 @@ int Version::versionIndex(const char *name) {
 	}
 	int dotpos = filename.find_last_of(".");
 	std::string nameonly = filename.substr(0, dotpos);
-	unsigned int vepos = nameonly.find_last_of(']');
-	if (vepos == -1 || (vepos <= (nameonly.length() - 2))) {
+	size_t vepos = nameonly.find_last_of(']');
+	if (vepos == (size_t)-1 || (vepos <= (nameonly.length() - 2))) {
 		m_version = 0;
 	} else {
-		int vspos = nameonly.find_last_of('[');
+		size_t vspos = nameonly.find_last_of('[');
 		std::string numstr = nameonly.substr(vspos+1, (vepos-vspos)-1);
 		m_version = atoi(numstr.c_str());
 	}

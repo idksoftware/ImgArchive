@@ -241,6 +241,11 @@ bool AdminApp::doRun()
 		return true;
 
 		}
+
+	default:
+		printf("ImgArchive Administrator\n"
+					"siaadmin version \"%s\" (build %s)\n"
+					"Copyright@(2010-2016) IDK Sftware Ltd. This command is implemented in the version\n", VERSION, BUILD);
 	}
 	if (isConfiguratedOk() == false) {
 		
@@ -277,7 +282,7 @@ bool AdminApp::doRun()
 	{
 		SIALib siaLib;
 		siaLib.initalise();
-		AppConfig &config = AppConfig::get();
+		//AppConfig &config = AppConfig::get();
 		if (siaLib.view(appOptions.getName()) == false) {
 			return false;
 		}
@@ -289,7 +294,7 @@ bool AdminApp::doRun()
 		// make mirror
 		SIALib siaLib;
 		siaLib.initalise();
-		AppConfig &config = AppConfig::get();
+		//AppConfig &config = AppConfig::get();
 		if (siaLib.mirror(appOptions.getName()) == false) {
 			return false;
 		}
@@ -329,14 +334,21 @@ bool AdminApp::doRun()
 		
 		break;
 	}
-	
+	case AppOptions::CommandMode::CM_Version:
+			printf("Simple Image Archive Administrator\n"
+				"siaadmin version \"%s\" (build %s)\n"
+				"Copyright@(2010-2016) IDK Sftware Ltd.\n", VERSION, BUILD);
+			return true;
 	
 	case AppOptions::CommandMode::CM_Unknown:
 		break;
+	
+	default:
+			printf("ImgArchive Administrator\n"
+						"siaadmin version \"%s\" (build %s)\n"
+						"Copyright@(2010-2016) IDK Sftware Ltd. This command is implemented in the version\n", VERSION, BUILD);
+	
 	}
-
-	
-	
 	return true;
 }
 
@@ -484,9 +496,10 @@ bool AdminApp::initaliseHomePath() {
 
 	SIAARCConfig config;
 
-	bool found = false;
+
 	std::string homePath;
 #ifdef WIN32
+	bool found = false;
 	// Looking the HKEY_LOCAL_MACHINE first
 	if (GetEnv(homePath, true) == true) {
 		//printf("Found IMGARCHIVE_HOME in system variables: %s", homePath.c_str());
@@ -544,7 +557,7 @@ bool AdminApp::initaliseHomePath() {
 	temp = SAUtils::GetPOSIXEnv(key);
 	homePath = temp;
 	//printf("%s", homePath.c_str());
-	int i = homePath.length();
+	//int i = homePath.length();
 	if (homePath.empty() == true || homePath.length() == 0) {
 		homePath = SAUtils::GetPOSIXEnv("ProgramData");
 		//C:\ProgramData\IDK Software\ImageArchive1.0
@@ -558,7 +571,7 @@ bool AdminApp::initaliseArgs(int argc, char **argv) {
 	DefaultEnvironment defaultEnvironment;
 	defaultEnvironment.init();
 	//defaultEnvironment.print();
-	AppOptions& appOptions = AppOptions::get();
+	//AppOptions& appOptions = AppOptions::get();
 	
 	if (m_argvParser->doInitalise(argc, argv) == false) {
 		return false;

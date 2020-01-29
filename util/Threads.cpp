@@ -163,7 +163,7 @@ bool SIAThread::Start()
 
 	void*(*ppFunction)(void*)  = (void*(*)(void*))(SIAThread::RunThread);
 
-	return ((m_ThreadId = pthread_create(NULL, NULL, ppFunction, l_vPtr))==0);
+	return ((m_ThreadId = pthread_create(nullptr, nullptr, ppFunction, l_vPtr))==0);
 }
 
 /*
@@ -176,7 +176,7 @@ bool IDKCreateThread(void(pFunction)(void*), void* pArguments)
 {
 	
 	void*(*ppFunction)(void*)  = (void*(*)(void*))pFunction;
-	return (pthread_create(NULL, NULL, ppFunction, pArguments)==0);
+	return (pthread_create(nullptr, nullptr, ppFunction, pArguments)==0);
 }
 
 SIAThread::~SIAThread()
@@ -191,7 +191,7 @@ SIAThread::~SIAThread()
 	//{
 	//	s_Status = DeleteFailed;
 	//}
-	void* status = NULL;
+	void* status = nullptr;
 	pthread_exit(status);
 
 }
@@ -200,7 +200,7 @@ SIAThread::~SIAThread()
  */
 bool IDKEndThread()
 {
-	void* status = NULL;
+	void* status = nullptr;
 	pthread_exit(status);
 	return true; 
 }

@@ -50,8 +50,8 @@ namespace simplearchive {
 		//AppConfig &config = AppConfig::get();
 		AppConfigBase config;
 		m_configured = false;
-		bool found = false;
 		
+
 		DefaultEnvironment::m_isInAdminMode = SAUtils::IsAdminMode();
 		HomePath::init();
 		bool isFound = HomePath::isFound();
@@ -64,6 +64,7 @@ namespace simplearchive {
 		}
 #ifdef XXXXXXXXXXXXXXX
 #ifdef WIN32
+		bool found = false;
 		// Find if the IMGARCHIVE_HOME pathe is in the windows registery 
 
 		// Looking the HKEY_LOCAL_MACHINE first

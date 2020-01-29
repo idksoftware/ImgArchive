@@ -124,7 +124,7 @@ namespace simplearchive {
 		}
 #else
 #endif
-		if (found = false) {
+		if (found == false) {
 			printf("ImgArchive Unable to start? No archive found in the default location or"
 				" the environment variable IMGARCHIVE_HOME not set.\nUse siaadmin to initalise an archive.\n");
 
@@ -197,8 +197,8 @@ namespace simplearchive {
 		bool summary();
 	};
 	bool TestArchive::testFolders() {
-		CLogger &logger = CLogger::getLogger();
-		AppConfig &config = AppConfig::get();
+		//CLogger &logger = CLogger::getLogger();
+		//AppConfig &config = AppConfig::get();
 
 		
 		FoldersList foldersList;
@@ -267,8 +267,8 @@ namespace simplearchive {
 
 	bool FoldersList::process()
 	{
-		CLogger &logger = CLogger::getLogger();
-		AppConfig &config = AppConfig::get();
+		//CLogger &logger = CLogger::getLogger();
+		//AppConfig &config = AppConfig::get();
 		
 		printf("\tLocating folders...\n");
 		for (auto ii = begin(); ii != end(); ii++) {
@@ -285,8 +285,8 @@ namespace simplearchive {
 	}
 
 	bool FoldersList::summary() {
-		CLogger &logger = CLogger::getLogger();
-		AppConfig &config = AppConfig::get();
+		//CLogger &logger = CLogger::getLogger();
+		//AppConfig &config = AppConfig::get();
 
 		printf("\t\tFolders found\n\n");
 		for (auto ii = m_found.begin(); ii != m_found.end(); ii++) {

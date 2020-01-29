@@ -22,15 +22,12 @@ namespace simplearchive {
 		//define error codes
 		addErrorCode(0, "Success");
 		addErrorCode(1, "Error");
-		setIntroductoryDescription("ImgArchive provides an organised place to store images. This archiving tool is"
-			"designed to be simple in design and to use. It consists of archiving core that provides the basic archiving"
-			"functions but in addition, takes input and provides output from optional external components to provide a"
-			"tailored achieving solution and can be extended into a complete achieving system. ");
+		setIntroductoryDescription("iaadmin - Tool provides administration house keeping support for ImgArchive.");
 		setHelpOption();
 
 		setHeader("usage: imgadmin subcommand [options] [args]\n\n"
 			"ImgArchive command line administrator, version 1.0.0.1\n"
-			"Type 'siaadmin help <subcommand>' for help on a specific subcommand.\n\n"
+			"Type 'iaadmin help <subcommand>' for help on a specific subcommand.\n\n"
 			"iaadmin is the primary command-line interface to administer ImgArchive."
 			"\n");
 
@@ -38,8 +35,18 @@ namespace simplearchive {
 		// Subcommands
 
 
-		defineOption("init", "Create Archive enviroment", ArgvParser::MasterOption);
-		defineOption("config", "Configure ImgArchive's working parameters", ArgvParser::MasterOption);
+		defineOption("init", "Create ImgArchive's working enviroment", ArgvParser::MasterOption);
+		defineOption("config", "Configure ImgArchive's parameters\n\n"
+
+				"isadmin config [-q | --quiet][ --general <Option=Value>]\n"
+				" [--Logging <Option=Value>][ --Network <Option=Value>]\n"
+				" [ --Folders <Option=Value>][ --Master <Option=Value>]\n"
+				" [ --Derivative <Option=Value>][ --Backup <Option=Value>]\n"
+				" [ --ExifTool <Option=Value>]\n"
+
+
+
+				, ArgvParser::MasterOption);
 		defineOption("show", "Show settings", ArgvParser::MasterOption);
 		defineOption("version", "prints the version information", ArgvParser::MasterOption);
 		defineOption("validate", "Validate commands", ArgvParser::MasterOption);
@@ -68,10 +75,26 @@ namespace simplearchive {
 		defineOption("exiftool", "Configure exit look intergration", ArgvParser::OptionRequiresValue);
 		defineOptionAlternative("exiftool", "E");
 
-		defineOption("master", "This archive contains the master images. This section controls this archive", ArgvParser::OptionRequiresValue);
+		defineOption("master", "This section controls the master archive\n"
+									"admin config --master BackupOneEnabled=<Enabled|Disabled>\n"
+									"- Enables backup one.\n"
+									"admin config --master BackupTwoEnabled=<Enabled|Disabled>\n"
+									"- Enables backup two.\n"
+									"admin config --master BackupOne=<path>\n"
+									"- Sets the path used by backup one\n"
+									"admin config --master BackupTwo=<path>\n"
+									"- Sets the path used by backup two\n", ArgvParser::OptionRequiresValue);
 		defineOptionAlternative("master", "M");
 
-		defineOption("derivative", "This archive contains the derivative images. This section controls this archive.", ArgvParser::OptionRequiresValue);
+		defineOption("derivative", "This section controls the derivative archive."
+									"admin config --derivative BackupOneEnabled=<Enabled|Disabled>\n"
+									"- Enables backup one.\n"
+									"admin config --derivative BackupTwoEnabled=<Enabled|Disabled>\n"
+									"- Enables backup two.\n"
+									"admin config --derivative BackupOne=<path>\n"
+									"- Sets the path used by backup one\n"
+									"admin config --derivative BackupTwo=<path>\n"
+									"- Sets the path used by backup two\n", ArgvParser::OptionRequiresValue);
 		defineOptionAlternative("derivative", "D");
 
 		defineOption("network", "Configure network parameters", ArgvParser::OptionRequiresValue);
@@ -84,7 +107,7 @@ namespace simplearchive {
 		defineOptionAlternative("m", "mirror");
 
 		defineOption("b", "Goes through the motions of running the subcommand but makes no\nactual changes ether disk or repository.", ArgvParser::NoOptionAttribute);
-		defineOptionAlternative("b", "backup");
+		defineOptionAlternative("b", "backup-archive");
 		
 		
 
@@ -145,7 +168,11 @@ namespace simplearchive {
 		//defineCommandOption("test", "settup");
 		
 		defineCommandOption("config", "general");
+		defineCommandOption("config", "logging");
 		defineCommandOption("config", "folders");
+		defineCommandOption("config", "master");
+		defineCommandOption("config", "derivative");
+		defineCommandOption("config", "backup");
 		defineCommandOption("config", "exiftool");
 		defineCommandOption("config", "network");
 		ArgvParser::ParserResults res = parse(argc, argv);
@@ -554,16 +581,13 @@ namespace simplearchive {
 
 		usage += "usage: iaadmin subcommand [options] [args]\n\n";
 		usage += "ImgArchive command line Admin client, version 1.0.0.1\n";
-		usage += "Type 'sia help <subcommand>' for help on a specific subcommand.\n\n";
+		usage += "Type 'iaadmin help <subcommand>' for help on a specific subcommand.\n\n";
 
-		std::string tmp = "iaadmin is the primary command-line interface to ImgArchive. This interface is used to administer the control of ImgArchice sush as determining the location of";
-		tmp += "the repositories. forfill house keeping tasks as setting the logging levels etc.";
+		std::string tmp = "iaadmin Tool provides administration house keeping support for ImgArchive.";
 		usage += '\n';
 		usage += formatString(tmp, _width);
 		usage += '\n';
 		usage += '\n';
-		usage += "Note:\n";
-		usage += formatString("The administration of the archive is carried out by the siaadmin command-line interface.", _width) + "\n";
 
 		return usage;
 	}

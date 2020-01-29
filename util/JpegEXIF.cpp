@@ -1,7 +1,6 @@
 #include "JpegEXIF.h"
 #include <iostream>
 
-#pragma once
 
 std::ostream& operator<< (std::ostream& os, LightSourceValues type)
 {
