@@ -56,20 +56,29 @@ namespace simplearchive {
 		
 		defineOption("set-home-env", "Set the Home environment variable.", ArgvParser::OptionRequiresValue);
 		// Configure Command
-		defineOption("general", "Configure general settings such as the the logging level", ArgvParser::OptionRequiresValue);
+		defineOption("general", "General options that may be used generally in commands", ArgvParser::OptionRequiresValue);
 		defineOptionAlternative("general", "G");
+
+		defineOption("logging", "Logging option that control the logging carried out by applications", ArgvParser::OptionRequiresValue);
+		defineOptionAlternative("logging", "L");
 		
-		defineOption("folders", "Configure forder paths such as the Workapace path", ArgvParser::OptionRequiresValue);
+		defineOption("folders", "These control the folder paths that the system uses.", ArgvParser::OptionRequiresValue);
 		defineOptionAlternative("folders", "F");
 
 		defineOption("exiftool", "Configure exit look intergration", ArgvParser::OptionRequiresValue);
 		defineOptionAlternative("exiftool", "E");
 
-		defineOption("master", "Configure the Master repository", ArgvParser::OptionRequiresValue);
+		defineOption("master", "This archive contains the master images. This section controls this archive", ArgvParser::OptionRequiresValue);
 		defineOptionAlternative("master", "M");
+
+		defineOption("derivative", "This archive contains the derivative images. This section controls this archive.", ArgvParser::OptionRequiresValue);
+		defineOptionAlternative("derivative", "D");
 
 		defineOption("network", "Configure network parameters", ArgvParser::OptionRequiresValue);
 		defineOptionAlternative("network", "N");
+
+		defineOption("backup", "These options control the backup activities.", ArgvParser::OptionRequiresValue);
+		defineOptionAlternative("backup", "B");
 
 		defineOption("m", "Mirror commands", ArgvParser::NoOptionAttribute);
 		defineOptionAlternative("m", "mirror");
@@ -77,6 +86,8 @@ namespace simplearchive {
 		defineOption("b", "Goes through the motions of running the subcommand but makes no\nactual changes ether disk or repository.", ArgvParser::NoOptionAttribute);
 		defineOptionAlternative("b", "backup");
 		
+		
+
 		/* Commented to for testing
 		// Options
 		defineOption("name", "name of the item.", ArgvParser::OptionRequiresValue);
@@ -133,9 +144,9 @@ namespace simplearchive {
 		
 		//defineCommandOption("test", "settup");
 		
-		defineCommandOption("config", "general"); // imgadmin config --general.quiet=false
-		defineCommandOption("config", "folders"); // imgadmin config --general.quiet=false
-		defineCommandOption("config", "exiftool"); // imgadmin config --general.quiet=false
+		defineCommandOption("config", "general");
+		defineCommandOption("config", "folders");
+		defineCommandOption("config", "exiftool");
 		defineCommandOption("config", "network");
 		ArgvParser::ParserResults res = parse(argc, argv);
 
@@ -358,6 +369,16 @@ namespace simplearchive {
 				}
 					
 			}
+			if (foundOption("logging") == true) {
+				std::string opt = optionValue("logging");
+
+				if (setConfig.parseLoggingOptions(opt.c_str()) == false) {
+					printf("Invalid argument for sub-command: %s general \"%s\"\n\n", getCurrentCommand().c_str(), opt.c_str());
+					printf("%s", usageDescription(80).c_str());
+					return false;
+				}
+
+			}
 			if (foundOption("folders") == true) {
 				std::string opt = optionValue("folders");
 					
@@ -386,6 +407,26 @@ namespace simplearchive {
 					return false;
 				}
 					
+			}
+			if (foundOption("derivative") == true) {
+				std::string opt = optionValue("derivative");
+
+				if (setConfig.parseDerivativeOptions(opt.c_str()) == false) {
+					printf("Invalid argument for sub-command: %s derivative \"%s\"\n\n", getCurrentCommand().c_str(), opt.c_str());
+					printf("%s", usageDescription(80).c_str());
+					return false;
+				}
+
+			}
+			if (foundOption("backup") == true) {
+				std::string opt = optionValue("backup");
+
+				if (setConfig.parseBackupOptions(opt.c_str()) == false) {
+					printf("Invalid argument for sub-command: %s derivative \"%s\"\n\n", getCurrentCommand().c_str(), opt.c_str());
+					printf("%s", usageDescription(80).c_str());
+					return false;
+				}
+
 			}
 			if (foundOption("network") == true) {
 				std::string opt = optionValue("network");

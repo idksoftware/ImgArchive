@@ -130,36 +130,18 @@ bool SetConfig::parseGeneralOptions(const char* ov)
 	case Option::SILENT:
 		m_option = SILENT_LABEL;
 		return (SAUtils::isTrueFalse(m_value) != BoolOption::Invalid);
-	case Option::LOG_LEVEL:
-		m_option = LOG_LEVEL_LABEL;
-		if (iequals(setLogLevel(m_option), "UNKNOWN")) {
-			return false;
-		}
-		return true;
 	case Option::LIGHTROOM:
 		m_option = LIGHTROOM_LABEL;
 		return (SAUtils::isTrueFalse(m_value) != BoolOption::Invalid);
-	//case Option::SERVER_MODE:
-	//	m_option = SERVER_MODE_LABEL;
-	//	return (SAUtils::isTrueFalse(m_value) != BoolOption::Invalid);
-	case Option::CONSOLE_LEVEL:
-		m_option = CONSOLE_LEVEL_LABEL;
-		if (iequals(setLogLevel(m_option), "UNKNOWN")) {
-			return false;
-		}
-		break;
+
+	
 	case Option::FILE_CAT:
 		m_option = FILE_CAT_LABEL;
 		return (SAUtils::isTrueFalse(m_value) != BoolOption::Invalid);
 	case Option::WWW_CAT:
 		m_option = WWW_CAT_LABEL;
 		return (SAUtils::isTrueFalse(m_value) != BoolOption::Invalid);
-	//case Option::EVENTS_ENABLED:
-	//	m_option = EVENTS_ENABLED_LABEL;
-	//	return (SAUtils::isTrueFalse(m_value) != BoolOption::Invalid);
-	//case Option::COMMANDS_PORT:
-	//	m_option = COMMANDS_PORT_LABEL;
-	//	return (SAUtils::isTrueFalse(m_value) != BoolOption::Invalid);
+	
 	case Option::BACKUP_ONE:
 		m_option = BACKUP_ONE_LABEL;
 		return (SAUtils::isTrueFalse(m_value) != BoolOption::Invalid);
@@ -170,6 +152,36 @@ bool SetConfig::parseGeneralOptions(const char* ov)
 		m_option = SQL_LABEL;
 		return (SAUtils::isTrueFalse(m_value) != BoolOption::Invalid);
 	case Option::UNKNOWN:
+	default:
+		return false;
+	}
+	return true;
+}
+
+bool SetConfig::parseLoggingOptions(const char* optionString)
+{
+	if (!processArgs(optionString)) {
+		return false;
+	}
+	m_optionBlock = LOGGING_BLOCK;
+	Option ret = processMasterOptions(m_option);
+	switch (ret) {
+	case Option::LOG_LEVEL:
+		m_option = LOG_LEVEL_LABEL;
+		if (iequals(setLogLevel(m_option), "UNKNOWN")) {
+			return false;
+		}
+		return true;
+
+	case Option::CONSOLE_LEVEL:
+		m_option = CONSOLE_LEVEL_LABEL;
+		if (iequals(setLogLevel(m_option), "UNKNOWN")) {
+			return false;
+		}
+		break;
+	case Option::LOG_PATH:
+		m_option = LOG_PATH_LABEL;
+		return true;
 	default:
 		return false;
 	}
@@ -214,9 +226,7 @@ bool SetConfig::parseFolderOptions(const char* ov)
 	case Option::SQL_DATABASE_PATH:
 		m_option = SQL_DATABASE_PATH_LABEL;
 		return true;
-	case Option::LOG_PATH:
-		m_option = LOG_PATH_LABEL;
-		return true;
+	
 	case Option::HOME_PATH:
 		m_option = HOME_PATH_LABEL;
 		return true;
@@ -280,6 +290,40 @@ bool SetConfig::parseMasterOptions(const char* optionString)
 	return true;
 }
 
+bool SetConfig::parseDerivativeOptions(const char* optionString)
+{
+	if (!processArgs(optionString)) {
+		return false;
+	}
+	m_optionBlock = DERIVATIVE_BLOCK;
+	Option ret = processMasterOptions(m_option);
+	switch (ret) {
+	case Option::QUIET:
+		break;
+
+	default:
+		return false;
+	}
+	return true;
+}
+
+bool SetConfig::parseBackupOptions(const char* optionString)
+{
+	if (!processArgs(optionString)) {
+		return false;
+	}
+	m_optionBlock = BACKUP_BLOCK;
+	Option ret = processMasterOptions(m_option);
+	switch (ret) {
+	case Option::QUIET:
+		break;
+
+	default:
+		return false;
+	}
+	return true;
+}
+
 bool SetConfig::parseNetworkOptions(const char* ov)
 {
 	if (!processArgs(ov)) {
@@ -313,27 +357,17 @@ Option SetConfig::processGeneralOptions(std::string& optionString)
 	else if (iequals(optionString, SILENT_LABEL)) {
 		return Option::SILENT;
 	}
-	else if (iequals(optionString, LOG_LEVEL_LABEL)) {
-		return Option::LOG_LEVEL;
-	}
 	else if (iequals(optionString, LIGHTROOM_LABEL)) {
 		return Option::LIGHTROOM;
 	}
-	//else if (iequals(optionString, SERVER_MODE_LABEL)) {
-	//	return Option::SERVER_MODE;
-	//}
-	else if (iequals(optionString, CONSOLE_LEVEL_LABEL)) {
-		return Option::CONSOLE_LEVEL;
-	}
+	
 	else if (iequals(optionString, FILE_CAT_LABEL)) {
 		return Option::FILE_CAT;
 	}
 	else if (iequals(optionString, WWW_CAT_LABEL)) {
 		return Option::WWW_CAT;
 	}
-	else if (iequals(optionString, EVENTS_ENABLED_LABEL)) {
-		return Option::EVENTS_ENABLED;
-	}
+	
 	
 	else if (iequals(optionString, BACKUP_ONE_ENABLED_LABEL)) {
 		return Option::BACKUP_ONE_ENABLED;
@@ -345,6 +379,20 @@ Option SetConfig::processGeneralOptions(std::string& optionString)
 		return Option::SQL;
 	}
 	
+	return Option::UNKNOWN;
+}
+
+Option SetConfig::processLoggingOptions(std::string& optionString)
+{
+	if (iequals(optionString, LOG_LEVEL_LABEL)) {
+		return Option::LOG_LEVEL;
+	}
+	else if (iequals(optionString, CONSOLE_LEVEL_LABEL)) {
+		return Option::CONSOLE_LEVEL;
+	}
+	else if (iequals(optionString, LOG_PATH_LABEL)) {
+		return Option::LOG_PATH;
+	}
 	return Option::UNKNOWN;
 }
 
@@ -380,9 +428,7 @@ Option SetConfig::processFolderOptions(std::string& optionString)
 	else if (iequals(optionString, SQL_DATABASE_PATH_LABEL)) {
 		return Option::SQL_DATABASE_PATH;
 	}
-	else if (iequals(optionString, LOG_PATH_LABEL)) {
-		return Option::LOG_PATH;
-	}
+	
 	else if (iequals(optionString, HOME_PATH_LABEL)) {
 		return Option::HOME_PATH;
 	}
@@ -427,6 +473,28 @@ Option SetConfig::processMasterOptions(std::string& optionString)
 	return Option::UNKNOWN;
 }
 
+Option SetConfig::processDerivativeOptions(std::string& optionString)
+{
+	if (iequals(optionString, QUIET_LABEL)) {
+		return Option::HOOK_SCRIPTS_PATH;
+	}
+	else if (iequals(optionString, CONFIG_PATH_LABEL)) {
+		return Option::CONFIG_PATH;	 // Main configuration path
+	}
+	return Option::UNKNOWN;
+}
+
+Option SetConfig::processBackupOptions(std::string& optionString)
+{
+	if (iequals(optionString, QUIET_LABEL)) {
+		return Option::HOOK_SCRIPTS_PATH;
+	}
+	else if (iequals(optionString, CONFIG_PATH_LABEL)) {
+		return Option::CONFIG_PATH;	 // Main configuration path
+	}
+	return Option::UNKNOWN;
+}
+
 Option SetConfig::processNetworkOptions(std::string& optionString)
 {
 	if (iequals(optionString, COMMANDS_PORT_LABEL)) {
@@ -434,6 +502,9 @@ Option SetConfig::processNetworkOptions(std::string& optionString)
 	}
 	else if (iequals(optionString, SERVER_MODE_LABEL)) {
 		return Option::SERVER_MODE;
+	}
+	else if (iequals(optionString, EVENTS_ENABLED_LABEL)) {
+		return Option::EVENTS_ENABLED;
 	}
 	return Option::UNKNOWN;
 }
