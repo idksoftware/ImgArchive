@@ -185,7 +185,7 @@ namespace simplearchive {
 			// This command will initalise the configuration.
 			// so the the configuration need not to be initalised.
 			appOptions.setCommandMode(AppOptions::CommandMode::CM_InitArchive);
-			appOptions.m_users = DefaultEnvironment::isInAdminMode();
+			appOptions.m_users = SAUtils::IsAdminMode();
 			
 		
 			appOptions.m_configured = false;
@@ -217,7 +217,8 @@ namespace simplearchive {
 			}
 			BoolOption setHomeEnv = BoolOption::Invalid;
 			if (foundOption("set-home-env") == true) {
-				if ((setHomeEnv = SAUtils::isTrueFalse(optionValue("set-home-env"))) == BoolOption::Invalid) {
+				std::string value = optionValue("set-home-env");
+				if ((setHomeEnv = SAUtils::isTrueFalse(value)) == BoolOption::Invalid) {
 					printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 					return false;
 				}

@@ -52,7 +52,7 @@ namespace simplearchive {
 		m_configured = false;
 		bool found = false;
 		
-		m_isInAdminMode = IsAdminMode();
+		DefaultEnvironment::m_isInAdminMode = SAUtils::IsAdminMode();
 		HomePath::init();
 		bool isFound = HomePath::isFound();
 		if (isFound) {

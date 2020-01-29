@@ -668,6 +668,7 @@ int SAUtils::stricmp(const char *a, const char *b) {
 
 bool SAUtils::IsAdminMode() {
 	bool fRet = false;
+#ifdef WIN32
 	HANDLE hToken = NULL;
 	if (OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &hToken)) {
 		TOKEN_ELEVATION Elevation;
@@ -678,6 +679,14 @@ bool SAUtils::IsAdminMode() {
 	}
 	if (hToken) {
 		CloseHandle(hToken);
+	}
+#endif
+	if (getuid()) {
+			printf("%s", "You are not root!\n");
+			fRet = 0;
+	}else {
+		printf("%s", "OK, you are root.\n");
+		fRet = 0;
 	}
 	return fRet;
 }
@@ -773,6 +782,7 @@ std::string SAUtils::GetPOSIXEnv(const std::string &key)
 
 
 std::string SAUtils::GetEnv(const std::string& value, bool all) {
+#ifdef WIN32
 	HKEY hKey = 0;
 	char buf[MAX_PATH];
 	DWORD dwType = 0;
@@ -799,6 +809,10 @@ std::string SAUtils::GetEnv(const std::string& value, bool all) {
 	res = buf;
 	RegCloseKey(hKey);
 	return res;
+#else
+	std::string res;
+	return res;
+#endif
 }
 
 

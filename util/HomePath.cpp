@@ -81,9 +81,15 @@ HomePathType HomePath::type()
 }
 
 bool HomePath::setLocalUserDefaultHome() {
+#ifdef WIN32
 	std::string myselfHomeDefaultPath = SAUtils::GetPOSIXEnv("LOCALAPPDATA");
+#else
+	std::string myselfHomeDefaultPath = SAUtils::GetPOSIXEnv("HOME");
+#endif
 	myselfHomeDefaultPath += DEFAULT_LOCAL_HOME_PATH;
 	m_homePath = myselfHomeDefaultPath;
+
+
 	m_found = true;
 	if (SAUtils::DirExists(m_homePath.c_str()) == false) {
 		return false;
