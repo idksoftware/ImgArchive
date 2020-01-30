@@ -222,19 +222,19 @@ public:
     * human-readable description. In case of a help request error code the
     * usage description as returned by usageDescription() is printed.
     */
-    std::string parseErrorDescription(ParserResults _error_code) const;
+	std::string parseErrorDescription(ParserResults _error_code) const;
 
 	virtual std::string usageDescriptionHeader(unsigned int _width) const = 0;
 
     /** Returns a string with the usage descriptions for all options. The
      * description string is formated to fit into a terminal of width _width.*/
-	std::string commandUsage(unsigned int _width = 80) const;
+	virtual std::string commandUsage(unsigned int _width = 80) const = 0;
 
-    std::string usageDescription(unsigned int _width = 80) const;
+	virtual std::string usageDescription(unsigned int _width = 80) const = 0;
 
-	std::string generalHelp(unsigned int _width) const;
+	virtual std::string generalHelp(unsigned int _width) const = 0;
 
-	std::string topicUsageDescription(unsigned int topic, unsigned int _width = 80) const;
+	virtual std::string topicUsageDescription(unsigned int topic, unsigned int _width = 80) const = 0;
 
 	void setHeader(const std::string& _option);
 
@@ -244,7 +244,7 @@ public:
 		return commandLine;
 	}
 
-private:
+protected:
     /** Returns the key of a defined option with name _name or -1 if such option
      * is not defined. */
     int optionKey( const std::string& _name ) const;

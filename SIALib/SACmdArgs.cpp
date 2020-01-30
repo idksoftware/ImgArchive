@@ -55,10 +55,12 @@ namespace simplearchive {
 	}
 
 	SACmdArgs &SACmdArgs::get() {
-		if (m_this == nullptr) {
-			m_this = new SACmdArgs;
-		}
-		return *m_this;
+		static SACmdArgs saCmdArgs;
+		return saCmdArgs;
+		//if (m_this == nullptr) {
+		//	m_this = new SACmdArgs;
+		//}
+		//return *m_this;
 	}
 
 }

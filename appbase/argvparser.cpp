@@ -493,6 +493,7 @@ void ArgvParser::makeCommandline(int _argc, char ** _argv)
 	}
 }
 
+#ifdef XXXXXXXXXXXXXXXXXXXXXXXX 
 string ArgvParser::commandUsage(unsigned int width) const
 {
 	string usage; // the usage description text
@@ -502,27 +503,28 @@ string ArgvParser::commandUsage(unsigned int width) const
 	return usage;
 }
 
+
 string ArgvParser::generalHelp(unsigned int _width) const
 {
 	string usage; // the usage description text
 	usage = commandUsage(_width);
-	/*
-	if (intro_description.length())
-		usage += formatString(intro_description, _width) + "\n";
+	
+	//if (intro_description.length())
+	//	usage += formatString(intro_description, _width) + "\n";
+	//
+//	if (max_key <= 1) {// if we have some options
+//
+//		usage += formatString("No options available\n", _width) + "\n\n";
+//		return(usage);
+//	}
 
-	if (max_key <= 1) {// if we have some options
-
-		usage += formatString("No options available\n", _width) + "\n\n";
-		return(usage);
-	}
-
-	*/
+	
 	usage += '\n';
-	/*
-	usage += "usage: sia subcommand [options] [args]\n\n";
-	usage += "Image archive command line client, version 1.0.0.1\n";
-	usage += "Type 'sia help <subcommand>' for help on a specific subcommand.\n\n";
-	*/
+	
+	//usage += "usage: sia subcommand [options] [args]\n\n";
+	//usage += "Image archive command line client, version 1.0.0.1\n";
+	//usage += "Type 'sia help <subcommand>' for help on a specific subcommand.\n\n";
+	
 	string tmp = "The command imgarc is the primary command-line interface to ImgArchive. This interface is used to manage the control of images going in and out of the archive software. ";
 	tmp += "It has a rich set of subcommands that \"add/import\" images to the archive and \"export\" images out of the archive, In addition manages the controlled modification of images";
 	tmp += " using the \"check-in/check-out\" command set";
@@ -862,6 +864,7 @@ string ArgvParser::topicUsageDescription(unsigned int topic, unsigned int _width
 	}
 	return(usage);
 }
+#endif
 
 bool ArgvParser::matchOption(unsigned int topic, const char *option) const
 {

@@ -680,7 +680,7 @@ bool SAUtils::IsAdminMode() {
 	if (hToken) {
 		CloseHandle(hToken);
 	}
-#endif
+#else
 	if (getuid()) {
 		// You are not root!
 			fRet = false;
@@ -688,6 +688,7 @@ bool SAUtils::IsAdminMode() {
 		//OK, you are root.
 		fRet = true;
 	}
+#endif
 	return fRet;
 }
 

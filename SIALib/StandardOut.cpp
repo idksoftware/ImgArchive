@@ -63,10 +63,12 @@ void CStandardOut::print(const char *format) {
 }
 
 CStandardOut &CStandardOut::get() {
-	if (m_This == 0) {
-		m_This = new CStandardOut();
-	}
-	return *m_This;
+	static CStandardOut cStandardOut;
+	return cStandardOut;
+	//if (m_This == 0) {
+	//	m_This = new CStandardOut();
+	//}
+	//return *m_This;
 }
 
 CStandardOut *CStandardOut::m_This = 0;
