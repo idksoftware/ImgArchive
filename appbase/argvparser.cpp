@@ -1045,6 +1045,25 @@ bool ArgvParser::defineOptionAlternative( const string & _original,
     return(true);
 }
 
+bool ArgvParser::defineCommandSyntax(const std::string& _command, const std::string& syntax) {
+	// do nothing if there already is no option of this name
+	if (!isDefinedOption(_command))
+	{
+		cerr << "ArgvParser::defineCommandSyntax(): Command not found." << endl;
+		return(false);
+	}
+	int key = option2key.find(_command)->second;
+	command2syntax[key] = syntax;
+	return true;
+}
+
+string CommandLineProcessing::ArgvParser::getSyntax(const std::string& _command)
+{
+	int key = option2key.find(_command)->second;
+	return command2syntax.find(key)->second;
+}
+
+
 
 bool ArgvParser::setHelpOption(const string& _shortname,
                                const string& _longname,

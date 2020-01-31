@@ -84,7 +84,7 @@ public:
     typedef std::vector<std::string> ArgumentContainer;
 	typedef std::map<unsigned int, ArgumentContainer> CommandSet;
 	typedef std::vector<std::string> DefaultArgumentsContainer;
-
+	
     ArgvParser();
     ~ArgvParser();
 
@@ -134,6 +134,10 @@ public:
 
 	bool defineCommandOption(const std::string & _command,
 								const std::string& _attrs);
+
+	bool defineCommandSyntax(const std::string& _command, const std::string& syntax);
+	
+	std::string getSyntax(const std::string& _command);
 
     /** Returns whether _name is a defined option. */
     bool isDefinedOption(const std::string& _name) const;
@@ -272,6 +276,9 @@ protected:
 
     /** Vector of command line arguments. */
     ArgumentContainer argument_container;
+
+	/** May of command syntax strings */
+	Key2StringMap command2syntax;
 
     /** General description to be returned as first part of the generated help page. */
     std::string intro_description;

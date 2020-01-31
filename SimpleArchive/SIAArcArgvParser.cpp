@@ -48,6 +48,8 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 
 	// Subcommands
 	defineOption("add", "add new images to the archive.", ArgvParser::MasterOption);
+	//defineCommandSyntax("add", "iaarc add --source-path=<path>");
+	//printf("syntax: %s\n", getSyntax("add").c_str());
 	defineOption("get", "add new images to the archive.", ArgvParser::MasterOption);
 	defineOption("checkout", "Checkout images from archive.", ArgvParser::MasterOption);
 	defineOption("checkin", "Checkin images to archive.", ArgvParser::MasterOption);
@@ -543,17 +545,15 @@ std::string SIAArcArgvParser::usageDescriptionHeader(unsigned int _width) const
 		
 	usage += "usage: imgarc subcommand [options] [args]\n\n";
 	usage += "ImgArchive command line client, version 1.0.0.1\n";
-	usage += "Type 'sia help <subcommand>' for help on a specific subcommand.\n\n";
+	usage += "Type 'iaarc help <subcommand>' for help on a specific subcommand.\n\n";
 
-	std::string tmp = "imgarc is the primary command-line interface to Simple Image Archive. This interface is used to manage the control of images going in and out of the archive software. ";
-	tmp += "It has a rich set of subcommands that \"add/import\" images to the archive and \"export\" images out of the archive, In addition manages the controlled modification of images";
-	tmp += " using the \"check-in/check-out\" command set";
+	std::string tmp = "iaarc - is the command line client tool of ImgArchive. This interface is used to manage the control of images going in and out of the archive software. ";
 	usage += '\n';
 	usage += formatString(tmp, _width);
 	usage += '\n';
 	usage += '\n';
 	usage += "Note:\n";
-	usage += formatString("The administration of the archive is carried out by the imgadmin command-line interface.", _width) + "\n";
+	usage += formatString("The administration of the archive is carried out by the \"iaadmin\" command-line interface.", _width) + "\n";
 
 	return usage;
 }
@@ -603,7 +603,7 @@ std::string SIAArcArgvParser::generalHelp(unsigned int _width) const
 	usage += formatString(command_header, _width) + "\n";
 	usage += '\n';
 	usage += AVAILABLE_COMMANDS;
-	usage += ":\n";
+	usage += "-\n";
 	usage += "\n";
 	for (auto it = option2attribute.begin(); it != option2attribute.end(); ++it)
 	{
@@ -789,7 +789,7 @@ std::string SIAArcArgvParser::usageDescription(unsigned int _width) const
 			_os += _shortOpt;
 			_os += ')';
 		}
-		_os += " : ";
+		//_os += " - ";
 		usage += formatLine(_os, _width, 0, 20);
 		_os.clear();
 		_longOpt.clear();
