@@ -751,9 +751,9 @@ std::string SIAArcArgvParser::usageDescription(unsigned int _width) const
 {
 	std::string usage; // the usage description text
 
-	if (intro_description.length())
+	if (intro_description.length()) {
 		usage += formatString(intro_description, _width) + "\n";
-
+	}
 	if (max_key <= 1) {// if we have some options
 
 		usage += formatString("No options available\n", _width) + "\n\n";
