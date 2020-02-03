@@ -53,8 +53,8 @@ namespace simplearchive {
 
 	
 
-	bool SIAArcAppOptions::m_list = false;
-	bool SIAArcAppOptions::m_usingFile = false;
+bool SIAArcAppOptions::m_list = false;
+bool SIAArcAppOptions::m_usingFile = false;
 bool SIAArcAppOptions::m_peekOnly = false;
 bool SIAArcAppOptions::m_eventsOn = false; // UDP events
 bool SIAArcAppOptions::m_serverOn = true; // false;

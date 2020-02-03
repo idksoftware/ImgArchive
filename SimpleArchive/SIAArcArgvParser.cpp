@@ -1,4 +1,5 @@
 #include <sstream>
+#include <iostream>
 #include "SIAArcArgvParser.h"
 #include "ConfigReader.h"
 #include "SIAArcAppOptions.h"
@@ -212,13 +213,13 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	case ArgvParser::ParserRequiredOptionMissing:
 	case ArgvParser::ParserHelpRequested:
 		errStr = parseErrorDescription(res);
-		printf("%s", errStr.c_str());
+		std::cout << errStr;
 		return false;
 	case ArgvParser::GeneralHelpRequested:
-		printf("%s", generalHelp(80).c_str());
+		std::cout << generalHelp(80);
 		return false;
 	case ArgvParser::TopicHelpRequested:
-		printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+		std::cout << topicUsageDescription(getCurrentCommandId(), 80);
 		return false;
 	default:
 		return false;
@@ -724,7 +725,7 @@ std::string SIAArcArgvParser::generalHelp(unsigned int _width) const
 	if (!errorcode2descr.size()) // if have no errorcodes
 		return(usage);
 
-	usage += formatString("Return codes:\n", _width) + "\n";
+	usage += formatString("\n\nReturn codes:\n", _width) + "\n";
 
 	//   map<int, string>::const_iterator eit;
 	for (auto alt = errorcode2descr.begin();
@@ -822,7 +823,8 @@ std::string SIAArcArgvParser::usageDescription(unsigned int _width) const
 	if (!errorcode2descr.size()) // if have no errorcodes
 		return(usage);
 
-	usage += formatString("\nReturn codes:\n", _width) + "\n";
+	usage += "\n";
+	usage += formatString("Return codes:\n", _width) + "\n";
 
 	//   map<int, string>::const_iterator eit;
 	for (auto alt = errorcode2descr.begin();

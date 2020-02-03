@@ -389,7 +389,7 @@ namespace simplearchive {
 		if (!errorcode2descr.size()) // if have no errorcodes
 			return(usage);
 
-		usage += formatString("Return codes:\n", _width) + "\n";
+		usage += formatString("\n\nReturn codes:\n", _width) + "\n";
 
 		//   map<int, string>::const_iterator eit;
 		for (auto alt = errorcode2descr.begin();
@@ -487,7 +487,7 @@ namespace simplearchive {
 		if (!errorcode2descr.size()) // if have no errorcodes
 			return(usage);
 
-		usage += formatString("\nReturn codes:\n", _width) + "\n";
+		usage += formatString("\n\nReturn codes:\n", _width) + "\n";
 
 		//   map<int, string>::const_iterator eit;
 		for (auto alt = errorcode2descr.begin();
