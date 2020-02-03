@@ -137,7 +137,7 @@ public:
 
 	bool defineCommandSyntax(const std::string& _command, const std::string& syntax);
 	
-	std::string getSyntax(const std::string& _command);
+	
 
     /** Returns whether _name is a defined option. */
     bool isDefinedOption(const std::string& _name) const;
@@ -256,6 +256,8 @@ protected:
      * with a single key value.
      */
     std::list<std::string> getAllOptionAlternatives(unsigned int _key) const;
+
+	std::string getSyntax(const std::string& _command) const;
 
     /** The current maximum key value for an option. */
     unsigned int max_key;

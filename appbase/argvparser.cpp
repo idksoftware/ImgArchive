@@ -1057,11 +1057,13 @@ bool ArgvParser::defineCommandSyntax(const std::string& _command, const std::str
 	return true;
 }
 
-string CommandLineProcessing::ArgvParser::getSyntax(const std::string& _command)
+/*
+string ArgvParser::getSyntax(const std::string& _command)
 {
 	int key = option2key.find(_command)->second;
 	return command2syntax.find(key)->second;
 }
+*/
 
 
 
@@ -1114,6 +1116,12 @@ list<string> ArgvParser::getAllOptionAlternatives( unsigned int _key ) const
             keys.push_back(it->first);
     }
     return(keys);
+}
+
+std::string CommandLineProcessing::ArgvParser::getSyntax(const std::string& _command) const
+{
+	int key = option2key.find(_command)->second;
+	return command2syntax.find(key)->second;
 }
 
 bool CommandLineProcessing::isDigit(const char& _char)

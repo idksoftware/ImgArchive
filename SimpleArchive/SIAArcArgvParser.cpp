@@ -48,13 +48,29 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 
 	// Subcommands
 	defineOption("add", "add new images to the archive.", ArgvParser::MasterOption);
-	//defineCommandSyntax("add", "iaarc add --source-path=<path>");
-	//printf("syntax: %s\n", getSyntax("add").c_str());
-	defineOption("get", "add new images to the archive.", ArgvParser::MasterOption);
+	defineCommandSyntax("add", "iaarc add [--source-path=<path>]\n\t[--logging-level=<level>]"
+		"[--comment=<comment text>]\n\t[--archive-path=<path>][--lightroom=<On|Off>]");
+	
+	defineOption("get", "get images from the archive.", ArgvParser::MasterOption);
+	defineCommandSyntax("get", "iaarc get [--target-path=<path>]\n\t[--logging-level=<level>]"
+		"[--comment=<comment text>][--scope=<scope-address][--force=<yes|No>][--version=<vesion-num>");
+
 	defineOption("checkout", "Checkout images from archive.", ArgvParser::MasterOption);
-	defineOption("checkin", "Checkin images to archive.", ArgvParser::MasterOption);
-	defineOption("uncheckout", "Un-checkout images to archive.", ArgvParser::MasterOption);
+	defineCommandSyntax("checkout", "iaarc checkout [--target-path=<path>]\n\t[--logging-level=<level>]"
+		"[--comment=<comment text>][--scope=<scope-address][--force=<yes|No>][--version=<vesion-num>");
+
+	defineOption("checkin", "Checkin images in to archive.", ArgvParser::MasterOption);
+	defineCommandSyntax("checkin", "iaarc checkin [--target-path=<path>]\n\t[--logging-level=<level>]"
+		"[--comment=<comment text>][--scope=<scope-address][--force=<yes|No>][--version=<vesion-num>");
+
+	defineOption("uncheckout", "Un-checkout images in to archive.", ArgvParser::MasterOption);
+	defineCommandSyntax("uncheckout", "iaarc uncheckout [--target-path=<path>]\n\t[--logging-level=<level>]"
+		"[--comment=<comment text>][--scope=<scope-address][--force=<yes|No>][--version=<vesion-num>");
+
 	defineOption("export", "Export images from archive.", ArgvParser::MasterOption);
+	defineCommandSyntax("uncheckout", "iaarc uncheckout [--target-path=<path>]\n\t[--logging-level=<level>]"
+		"[--comment=<comment text>][--scope=<scope-address][--force=<yes|No>][--version=<vesion-num>");
+
 	defineOption("about", "prints the version information", ArgvParser::MasterOption);
 	defineOption("status", "show check in/out status", ArgvParser::MasterOption);
 	defineOption("view", "View commands", ArgvParser::MasterOption);
@@ -547,7 +563,7 @@ std::string SIAArcArgvParser::usageDescriptionHeader(unsigned int _width) const
 	usage += "ImgArchive command line client, version 1.0.0.1\n";
 	usage += "Type 'iaarc help <subcommand>' for help on a specific subcommand.\n\n";
 
-	std::string tmp = "iaarc - is the command line client tool of ImgArchive. This interface is used to manage the control of images going in and out of the archive software. ";
+	std::string tmp = "This command line interface is used to manage the control of images going in and out of the archive software.";
 	usage += '\n';
 	usage += formatString(tmp, _width);
 	usage += '\n';
@@ -832,7 +848,10 @@ std::string SIAArcArgvParser::usageDescription(unsigned int _width) const
 */
 std::string SIAArcArgvParser::topicUsageDescription(unsigned int topic, unsigned int _width) const
 {
-	std::string usage; // the usage description text
+	std::string usage;
+
+	usage += usageDescriptionHeader(_width);
+	usage += "\nNAME: "; // the usage description text
 
 	std::string _os; // temp string for the option
 	if (option2attribute.find(topic)->second != MasterOption) {
@@ -841,6 +860,12 @@ std::string SIAArcArgvParser::topicUsageDescription(unsigned int topic, unsigned
 	}
 	std::string _longOpt;
 	std::string _shortOpt;
+
+	
+	
+	
+	usage += formatString(_os, _width) + "\n";
+	_os.clear();
 
 	std::list<std::string> alternatives = getAllOptionAlternatives(topic);
 	for (auto alt = alternatives.begin();
@@ -871,18 +896,22 @@ std::string SIAArcArgvParser::topicUsageDescription(unsigned int topic, unsigned
 		_os += _shortOpt;
 		_os += ')';
 	}
-	_os += " : ";
+	_os += "";
+	usage += '\t';
 	usage += formatString(_os, _width) + "\n";
 	_os.clear();
 	_longOpt.clear();
 	_shortOpt.clear();
-
+	
+	usage += "\nSYNTAX:\n";
+	std::string syntax = getSyntax("add");
+	usage += formatString(syntax, _width, 4);
 	if (option2descr.find(topic) != option2descr.end())
 		usage += formatString(option2descr.find(topic)->second, _width, 4) + "\n\n";
 	else
 		usage += formatString("(no description)", _width, 4) + "\n\n";
 
-	usage += "Valid options :\n\n";
+	usage += "OPTIONS: \n\n";
 	ArgumentContainer ac = command_set.find(topic)->second;
 
 	for (auto opt = ac.begin(); opt != ac.end(); opt++) {
