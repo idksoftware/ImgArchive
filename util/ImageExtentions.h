@@ -102,7 +102,7 @@ public:
 		m_mimeType = mimeType;
 	}
 
-	ImageType &getType() {
+	ImageType getType() {
 		return m_type;
 	}
 
@@ -132,6 +132,7 @@ public:
 	std::shared_ptr <ExtentionItem> find(const char *ext);
 	bool insert(ExtentionItem& extentionItem);
 	static ImageExtentions &get();
+	bool isAllowed(const char* ext);
 	bool IsValid(const char *filename);
 	bool IsValidXML(const char *filename);
 

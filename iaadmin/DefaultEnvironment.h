@@ -12,23 +12,23 @@ namespace simplearchive {
 	{
 		static bool m_configured;
 		static bool m_isInAdminMode;
-		static std::string m_homePath;
-		static std::string m_picturesPath;
 		static bool m_isHomePathSet;
 		static bool m_isHomePathValid;
 
-		static std::string  m_archivePath;
-		static std::string  m_workspacePath;
-		static std::string  m_masterPath;
-		static std::string  m_derivativePath;
-		static std::string  m_cataloguePath;
+		static std::string m_homePath;
+		static std::string m_picturesPath;
+		static std::string m_archivePath;
+		static std::string m_workspacePath;
+		static std::string m_masterPath;
+		static std::string m_derivativePath;
+		static std::string m_cataloguePath;
 		static std::string m_wwwCataloguePath;
-		static std::string  m_historyPath;
+		static std::string m_historyPath;
 
-		
 		static bool locations(const char* path);
 
 	public:
+
 		DefaultEnvironment() = default;
 		~DefaultEnvironment() = default;
 		

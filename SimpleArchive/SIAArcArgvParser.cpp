@@ -48,8 +48,8 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 
 
 	// Subcommands
-	defineOption("add", "add new images to the archive.", ArgvParser::MasterOption);
-	defineCommandSyntax("add", "iaarc add [--source-path=<path>]\n\t[--logging-level=<level>]"
+	defineOption("import", "import new images to the archive.", ArgvParser::MasterOption);
+	defineCommandSyntax("import", "iaarc import [--source-path=<path>]\n\t[--logging-level=<level>]"
 		"[--comment=<comment text>]\n\t[--archive-path=<path>][--lightroom=<On|Off>]");
 	
 	defineOption("get", "get images from the archive.", ArgvParser::MasterOption);
@@ -163,11 +163,11 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	//defineOption("checked-out", "Show checked out", ArgvParser::OptionRequiresValue); // =all =year{2015}
 	//defineOption("unchecked-out", "Show changed images which are not checked out", ArgvParser::OptionRequiresValue);
 
-	defineCommandOption("add", "comment");
-	defineCommandOption("add", "logging-level");
-	defineCommandOption("add", "archive-path");
-	defineCommandOption("add", "source-path");
-	defineCommandOption("add", "lightroom");
+	defineCommandOption("import", "comment");
+	defineCommandOption("import", "logging-level");
+	defineCommandOption("import", "archive-path");
+	defineCommandOption("import", "source-path");
+	defineCommandOption("import", "lightroom");
 
 	defineCommandOption("get", "comment");
 	defineCommandOption("get", "scope");
@@ -233,7 +233,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 		cmdFound = true;
 	}
 
-	else if (command("add") == true) {
+	else if (command("import") == true) {
 
 		// Source of images
 		if (foundOption("source-path") == true) {
@@ -906,7 +906,7 @@ std::string SIAArcArgvParser::topicUsageDescription(unsigned int topic, unsigned
 	_shortOpt.clear();
 	
 	usage += "\nSYNTAX:\n";
-	std::string syntax = getSyntax("add");
+	std::string syntax = getSyntax("import");
 	usage += formatString(syntax, _width, 4);
 	if (option2descr.find(topic) != option2descr.end())
 		usage += formatString(option2descr.find(topic)->second, _width, 4) + "\n\n";

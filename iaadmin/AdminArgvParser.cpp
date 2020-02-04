@@ -42,15 +42,19 @@ namespace simplearchive {
 		defineOption("init", "Create ImgArchive's working enviroment", ArgvParser::MasterOption);
 		
 		defineOption("config", "Configure ImgArchive's parameters", ArgvParser::MasterOption);
-		defineCommandSyntax("config", "isadmin config [-q | --quiet][ --general <Option=Value>]\n"
-			" [--Logging <Option=Value>][ --Network <Option=Value>]\n"
-			" [ --Folders <Option=Value>][ --Master <Option=Value>]\n"
-			" [ --Derivative <Option=Value>][ --Backup <Option=Value>]\n"
-			" [ --ExifTool <Option=Value>]");
+		defineCommandSyntax("config", "isadmin config [-q | --quiet] | [ --general <Option=Value>]\n"
+			"| [--Logging <Option=Value>] | [ --Network <Option=Value>]\n"
+			"| [ --Folders <Option=Value>] | [ --Master <Option=Value>]\n"
+			"| [ --Derivative <Option=Value>] | [ --Backup <Option=Value>]\n"
+			"| [ --ExifTool <Option=Value>]");
 				
 		defineOption("show", "Show settings", ArgvParser::MasterOption);
 		defineOption("version", "prints the version information", ArgvParser::MasterOption);
 		defineOption("validate", "Validate commands", ArgvParser::MasterOption);
+		defineOption("allow", "Controls which image file extensions are allowed into the archive.", ArgvParser::MasterOption);
+		defineCommandSyntax("allow", "isadmin allow [-q | --quiet]\n"
+			"| [--add = <ext, type, mine, description>] | [--delete = <ext>]\n"
+			"| [--edit = <ext, type, mine, description>]\n");
 		//defineOption("mirror", "Mirror commands", ArgvParser::MasterOption);
 		//defineOption("test", "test commands", ArgvParser::MasterOption);
 
@@ -67,8 +71,8 @@ namespace simplearchive {
 		defineOption("general", "General options that may be used generally in commands", ArgvParser::OptionRequiresValue);
 		defineOptionAlternative("general", "G");
 		defineCommandSyntax("general", "--general <Option=Value>\n"
-			"[Quiet=<On|Off>][Silent=<On|Off>]\n"
-			"[FileCatalogue=<path>][WWWCatalogue=<path>]\n"
+			"[Quiet=<On|Off>] | [Silent=<On|Off>] |\n"
+			"[FileCatalogue=<path>] | [WWWCatalogue=<path>] |\n"
 			"[Lightroom=<On|Off>]");
 
 		defineOption("logging", "Logging option that control the logging carried out by applications", ArgvParser::OptionRequiresValue);
@@ -114,7 +118,62 @@ namespace simplearchive {
 		defineOption("b", "Goes through the motions of running the subcommand but makes no\nactual changes ether disk or repository.", ArgvParser::NoOptionAttribute);
 		defineOptionAlternative("b", "backup-archive");
 		
-		
+		defineOption("add", "Adds an extension type to file type filter. File of this type can now added to the archive.", ArgvParser::OptionRequiresValue);
+		defineOptionAlternative("add", "a");
+		defineCommandSyntax("add", "--add=<ext,type,mine,description>");
+
+		defineOption("delete", "Deletes an extension type from file type filter. File of this type will now be excluded from the archive.", ArgvParser::OptionRequiresValue);
+		defineOptionAlternative("delete", "d");
+		defineCommandSyntax("delete", "--delete=<ext>");
+
+		defineOption("edit", "Edits the extension details.", ArgvParser::OptionRequiresValue);
+		defineOptionAlternative("edit", "e");
+		defineCommandSyntax("edit", "--edit=<ext,type,mine,description>");
+		/*
+	Allow (--allow -a)
+
+Controls which image file extensions are allowed into the archive.
+
+
+Synopsis
+isadmin allow [-q | --quiet][ --add=<ext,type,mine,description>] | [ --delete=<ext>] |
+
+[ --edit=<ext,type,mine,description>]
+
+ext - Image type file extension to be include in the archive.
+
+The type of image i.e. a picture or raw.
+
+The mine type.
+
+A description of the image type.
+
+
+Description
+the command “allow” controls which image file extensions are allowed into the archive. Digital camera’s normally generates JPG files to store digital images. However camera’s can also generates RAW image file that will have different files with different extensions. For example Nikon camera’s will generate RAW image files with the extensions of *.nef for example, dsc02319.nef. To allow these types of images files into the archive you will need to Allow them using this command.
+
+
+Options
+The options are partitioned into sections. Each section contains a set of options that refer to a set of associated functions this are detailed below:
+
+
+Add
+Adds an extension type to file type filter. File of this type can now added to the archive.
+
+--add=<ext,type,mine,description>
+
+
+Delete
+Deletes an extension type from file type filter. File of this type will now be excluded from the archive.
+
+--delete=<ext>
+
+
+Edit
+Edits the extension details.
+
+--edit=<ext,type,mine,description>
+	*/
 
 		/* Commented to for testing
 		// Options

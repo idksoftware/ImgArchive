@@ -157,8 +157,8 @@ std::shared_ptr<ExtentionItem> CExtentionsFile::find(const char *ext) {
 	std::map<std::string, ExtentionItem>::iterator it;
 	if ((it = m_extentionsContainer->find(tmp)) != m_extentionsContainer->end()) {
 		ExtentionItem* item = &(it->second);
-		std::shared_ptr<ExtentionItem> ptr(item);
-		return ptr;
+		std::shared_ptr<ExtentionItem> itemPtr(item);
+		return itemPtr;
 	}
 	return nullptr;
 }
@@ -218,13 +218,26 @@ bool ImageExtentions::insert(ExtentionItem& extentionItem) {
 	return m_extentionsFile->insert(extentionItem);
 }
 
+bool ImageExtentions::isAllowed(const char* ext) {
+
+	std::string tmp = ext;
+	std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
+	std::shared_ptr<ExtentionItem> item = m_extentionsFile->find(ext);
+	if (item != nullptr) {
+		ImageType type = item->getType();
+		return type;
+	}
+	return defaultImageType;
+}
+
 ImageType &ImageExtentions::findType(const char *ext) {
 
 	std::string tmp = ext;
 	std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
 	std::shared_ptr<ExtentionItem> item = m_extentionsFile->find(ext);
 	if (item != nullptr) {
-		return item->getType();
+		ImageType type = item->getType();
+		return type;
 	}
 	return defaultImageType;
 }
