@@ -71,7 +71,8 @@ public:
 	bool read(const char *datafile);
 	bool write(const char *datafile);
 	//bool add(const char *ext, const char *name);
-	ExtentionItem *find(const char *ext);
+	bool insert(ExtentionItem &extentionItem);
+	std::shared_ptr<ExtentionItem> find(const char *ext);
 
 };
 
@@ -124,10 +125,14 @@ bool CExtentionsFile::add(const char *ext, const char *name) {
 	return true;
 }
 */
-bool CExtentionsFile::insert(const char *row) {
+bool CExtentionsFile::insert(const char* row) {
 
 
 	ExtentionItem extentionItem(row);
+	return insert(extentionItem);
+}
+
+bool CExtentionsFile::insert(ExtentionItem &extentionItem) {
 
 	std::map<std::string, ExtentionItem>::iterator it;
 	std::string ext = extentionItem.getExt();
@@ -140,7 +145,9 @@ bool CExtentionsFile::insert(const char *row) {
 
 
 
-ExtentionItem *CExtentionsFile::find(const char *ext) {
+
+
+std::shared_ptr<ExtentionItem> CExtentionsFile::find(const char *ext) {
 
 	if (m_extentionsContainer->size() == 0) {
 		return 0;
@@ -148,15 +155,12 @@ ExtentionItem *CExtentionsFile::find(const char *ext) {
 	std::string tmp = ext;
 	std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
 	std::map<std::string, ExtentionItem>::iterator it;
-	if ((it = m_extentionsContainer->find(tmp)) == m_extentionsContainer->end()) {
-		for (std::map<std::string, ExtentionItem>::iterator ii = m_extentionsContainer->begin(); ii != m_extentionsContainer->end(); ++ii) {
-			ExtentionItem &data = ii->second;
-			//printf("%s\n", data.toString());
-		}
-		return 0;
+	if ((it = m_extentionsContainer->find(tmp)) != m_extentionsContainer->end()) {
+		ExtentionItem* item = &(it->second);
+		std::shared_ptr<ExtentionItem> ptr(item);
+		return ptr;
 	}
-
-	return &(it->second);
+	return nullptr;
 }
 
 std::string ImageExtentions::m_extentionsFilePath;
@@ -203,22 +207,23 @@ bool ImageExtentions::setExtentionsFilePath(const char *extentionsFilePath) {
 	return true;
 }
 
-ExtentionItem &ImageExtentions::find(const char *filename) {
+std::shared_ptr <ExtentionItem> ImageExtentions::find(const char *filename) {
 	std::string ext = SAUtils::getExtention(filename);
 	std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
-	ExtentionItem *item = m_extentionsFile->find(ext.c_str());
-	if (item != 0) {
-		return *item;
-	}
-	return defaultExtentionItem;
+	std::shared_ptr<ExtentionItem> item = m_extentionsFile->find(ext.c_str());
+	return item;
+}
+
+bool ImageExtentions::insert(ExtentionItem& extentionItem) {
+	return m_extentionsFile->insert(extentionItem);
 }
 
 ImageType &ImageExtentions::findType(const char *ext) {
 
 	std::string tmp = ext;
 	std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
-	ExtentionItem *item = m_extentionsFile->find(ext);
-	if (item != 0) {
+	std::shared_ptr<ExtentionItem> item = m_extentionsFile->find(ext);
+	if (item != nullptr) {
 		return item->getType();
 	}
 	return defaultImageType;

@@ -214,8 +214,8 @@ namespace simplearchive {
 		basicMetadata->setRating(0);
 
 		ImageExtentions& ie = ImageExtentions::get();
-		ExtentionItem ei = ie.find(name.c_str());
-		basicMetadata->setMediaType(ei.getMimeType());
+		std::shared_ptr<ExtentionItem> ei = ie.find(name.c_str());
+		basicMetadata->setMediaType(ei->getMimeType());
 		ExifDateTime createTime;
 		createTime = SAUtils::createTime(p.c_str());
 		basicMetadata->setCreateTime(createTime);

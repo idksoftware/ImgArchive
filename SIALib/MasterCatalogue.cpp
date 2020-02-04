@@ -149,9 +149,9 @@ namespace simplearchive {
 		std::string file = m_viewWWWPath->getImageName();
 		std::string ext = SAUtils::getExtention(file);
 		ImageExtentions &ie = ImageExtentions::get();
-		ExtentionItem &extItem = ie.find(ext.c_str());
+		std::shared_ptr<ExtentionItem> extItem = ie.find(ext.c_str());
 
-		ImageType type = extItem.getType();
+		ImageType type = extItem->getType();
 		std::string fileOut = file;
 		if (type.getType() == ImageType::Type::PICTURE_EXT) {
 			if (copyFile(source, m_tempPath, file) == false) {
@@ -216,9 +216,9 @@ namespace simplearchive {
 		std::string file = m_viewFilePath->getImageName();
 		std::string ext = SAUtils::getExtention(file);
 		ImageExtentions &ie = ImageExtentions::get();
-		ExtentionItem &extItem = ie.find(ext.c_str());
+		std::shared_ptr<ExtentionItem> extItem = ie.find(ext.c_str());
 
-		ImageType type = extItem.getType();
+		ImageType type = extItem->getType();
 		std::string fileOut = file;
 		if (type.getType() == ImageType::Type::PICTURE_EXT) {
 			if (copyFile(source, m_tempPath, file) == false) {

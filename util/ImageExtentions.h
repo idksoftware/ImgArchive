@@ -129,7 +129,8 @@ public:
 	virtual ~ImageExtentions();
 	ImageType &getType(const char *filename);
 	ImageType &findType(const char *ext);
-	ExtentionItem &find(const char *ext);
+	std::shared_ptr <ExtentionItem> find(const char *ext);
+	bool insert(ExtentionItem& extentionItem);
 	static ImageExtentions &get();
 	bool IsValid(const char *filename);
 	bool IsValidXML(const char *filename);
