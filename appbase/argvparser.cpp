@@ -685,13 +685,7 @@ bool ArgvParser::defineCommandSyntax(const std::string& _command, const std::str
 	return true;
 }
 
-/*
-string ArgvParser::getSyntax(const std::string& _command)
-{
-	int key = option2key.find(_command)->second;
-	return command2syntax.find(key)->second;
-}
-*/
+
 
 
 
@@ -749,6 +743,10 @@ list<string> ArgvParser::getAllOptionAlternatives( unsigned int _key ) const
 std::string CommandLineProcessing::ArgvParser::getSyntax(const std::string& _command) const
 {
 	int key = option2key.find(_command)->second;
+	if (command2syntax.find(key) == command2syntax.end()) {
+		std::string ret;
+		return ret;
+	}
 	return command2syntax.find(key)->second;
 }
 
@@ -911,7 +909,8 @@ bool CommandLineProcessing::expandRangeStringToUInt( const std::string & _string
 std::string CommandLineProcessing::formatString(const std::string& _string,
         unsigned int _width,
         unsigned int _indent,
-		unsigned int _padend)
+		unsigned int _padend,
+		unsigned int _padplusone)
 {
     // if insane parameters do nothing
     if (_indent >= _width)
@@ -984,15 +983,29 @@ std::string CommandLineProcessing::formatString(const std::string& _string,
     string formated;
     bool first = true;
     // for all lines
-	list<string>::iterator it = lines.begin();
-    for (; it != lines.end(); ++it)
-    {
-        // prefix with newline if not first
-        if (!first)
-            formated += "\n";
-        else
-            first = false;
-
+	auto it0 = lines.begin();
+	for (; it0 != lines.end(); ++it0) {
+		// add _indentplusone
+		if (!first) {
+			if (_padplusone) {
+				it0->insert(0, _padplusone, ' ');
+			}
+		}
+		else {
+			first = false;
+		}
+	}
+	first = true;
+	auto it = lines.begin();
+	for (; it != lines.end(); ++it)
+	{
+		// prefix with newline if not first
+		if (!first) {
+			formated += "\n";
+		}
+		else {
+			first = false;
+		}
         formated += *it;
     }
 	

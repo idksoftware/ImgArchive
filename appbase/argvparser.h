@@ -14,8 +14,7 @@
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *   GNU General Public License for more details.
  */
-#ifndef __ARGVPARSER_H
-#define __ARGVPARSER_H
+#pragma once
 
 #include <string>
 #include <vector>
@@ -397,15 +396,14 @@ std::string trimmedString(const std::string& _str);
 std::string formatString(const std::string& _string,
                          unsigned int _width,
                          unsigned int _indent = 0,
-						 unsigned int _endPadding = 0);
+						 unsigned int _endPadding = 0,
+						 unsigned int _padplusone = 0);
 
 std::string formatLine(const std::string& _string,
 	unsigned int _width,
 	unsigned int _indent = 0,
 	unsigned int _endPadding = 0);
 
-}
+}; // namespace CommandLineProcessing
 
-; // namespace CommandLineProcessing
 
-#endif // __CMDLINEPARSER_H
