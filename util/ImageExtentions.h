@@ -50,16 +50,16 @@ class ExtentionItem {
 	std::string m_mimeType;
 	std::string m_desciption;
 public:
-	ExtentionItem() {
+	ExtentionItem() noexcept {
 		m_ext = "";
 		m_type = ImageType::Type::UNKNOWN_EXT;
 	}
 
-	ExtentionItem(const char *row) {
+	ExtentionItem(const char *row, char delim = ':') {
 		std::string data = row;
 		//printf("%s", data.c_str());
 		
-		CSVArgs csvArgs(':');
+		CSVArgs csvArgs(delim);
 		csvArgs.process(row);
 		m_ext = csvArgs.at(0);
 		std::string typeStr = csvArgs.at(1);
@@ -118,24 +118,24 @@ typedef std::unique_ptr<ExtentionItem> ExtentionItem_Ptr;
 class ImageExtentions {
 
 private:
-	ImageExtentions();
-	//static ImageExtentions *m_This;
+	ImageExtentions() = default;
+	~ImageExtentions() = default;
+	
 	static bool m_once;
 	static std::unique_ptr<CExtentionsFile> m_extentionsFile;
 	static std::string m_extentionsFilePath;
 	static bool m_isError;
 public:
-	ImageType fromString();
-	virtual ~ImageExtentions();
-	ImageType &getType(const char *filename);
-	ImageType &findType(const char *ext);
+	
+	ImageType getType(const char *filename);
+	ImageType findType(const char *ext);
 	std::shared_ptr <ExtentionItem> find(const char *ext);
 	bool insert(ExtentionItem& extentionItem);
 	static ImageExtentions &get();
 	bool isAllowed(const char* ext);
-	bool IsValid(const char *filename);
+	//bool IsValid(const char *filename);
 	bool IsValidXML(const char *filename);
-
+	bool write();
 	static const std::string& getExtentionsFilePath() {
 		return m_extentionsFilePath;
 	}

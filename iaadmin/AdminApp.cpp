@@ -73,6 +73,7 @@ using namespace std;
 #include "EnvFunc.h"
 #include "AppConfig.h"
 #include "HomePath.h"
+#include "SetImageExtentionFile.h"
 
 #define VERSION	"1.00"
 #define BUILD	"040115.1749"
@@ -85,6 +86,26 @@ Java HotSpot(TM) 64-Bit Server VM (build 24.51-b03, mixed mode)
 namespace simplearchive {
 	
 	AdminApp::AdminApp() : AppBase(std::make_shared<AdminArgvParser>()) {};
+
+	bool AdminApp::Allow(const char* cmd, const char* arg) {
+		SetImageExtentionFile setImageExtentionFile;
+		std::string cmdStr = cmd;
+		if (cmdStr.compare("add") == 0) {
+			ExtentionItem extentionItem(arg, ',');
+			setImageExtentionFile.update(extentionItem);
+		}
+		else if (cmdStr.compare("edit") == true) {
+			
+		}
+		else if (cmdStr.compare("delete") == true) {
+			
+		}
+		else {
+			printf("Invalid argument for sub-command: allow --%s\n\n", cmdStr.c_str());
+			
+			return false;
+		}
+	}
 
 	bool AdminApp::Configure(const char* configOptionBlock, const char* configOption, const char* configValue)
 	{
@@ -221,16 +242,19 @@ bool AdminApp::doRun()
 	// Find if the archive exists
 	AppOptions &appOptions = AppOptions::get();
 	switch (appOptions.getCommandMode()) {
-	case AppOptions::CommandMode::CM_CONFIG:
+	case AppOptions::CommandMode::CM_Allow:
+		Allow(appOptions.getConfigOption(), appOptions.getConfigValue());
+		return true;
+	case AppOptions::CommandMode::CM_Config:
 		Configure(appOptions.getConfigOptionBlock(), appOptions.getConfigOption(), appOptions.getConfigValue());
 		return true;
 	case AppOptions::CommandMode::CM_Show:
 		Show();
 		return true;
 	case AppOptions::CommandMode::CM_Version:
-		printf("Simple Image Archive Administrator\n"
-			"siaadmin version \"%s\" (build %s)\n"
-			"Copyright@(2010-2016) IDK Sftware Ltd.\n", VERSION, BUILD);
+		printf("ImgArchive Administrator tool\n"
+			"iaadmin version \"%s\" (build %s)\n"
+			"Copyright@(2010-2020) IDK Sftware Ltd.\n", VERSION, BUILD);
 		return true;
 	case AppOptions::CommandMode::CM_Test:
 		{
@@ -486,8 +510,11 @@ bool AdminApp::initaliseConfig() {
 		config.fileBasedValues(homePath.c_str(), tempPath.c_str());
 		m_configured = true;
 	}
-	
-
+	AppConfig appConfig = AppConfig::get();
+	if (ImageExtentions::setExtentionsFilePath(appConfig.getConfigPath()) == false) {
+		//logger.log(LOG_OK, CLogger::Level::INFO, "Unable to find image extensions file path: \"%s\"", config.getConfigPath());
+		return -1;
+	}
 	return true;
 }
 

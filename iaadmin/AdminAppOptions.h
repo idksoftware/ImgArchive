@@ -50,7 +50,8 @@ public:
 		CM_Validate,    //* Validate the archive.
         CM_Fix,         //* Fix the archive
 		CM_Test,        //* Test the archive
-		CM_CONFIG,		//* Configure the system
+		CM_Config,		//* Configure the system
+		CM_Allow,		//* Set which file extension are allow into the archive.
 		CM_Unknown
 	};
 

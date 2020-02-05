@@ -85,7 +85,7 @@ public:
 	virtual ~AdminApp();
 	
 	
-	
+	bool Allow(const char* cmd, const char* arg);
 	bool Configure(const char *configOptionBlock, const char* configOption, const char* configValue);
 	/// @brief Shows the configuration of the archive. All application processing starts here.
 	bool Show();

@@ -54,35 +54,26 @@ std::string ExtentionItem::toString() {
 	return s.str();
 }
 
-class CExtentionsContainer : public std::map<std::string, ExtentionItem> {
+typedef std::map<std::string, std::shared_ptr<ExtentionItem>> ExtentionsContainer;
 
-public:
-
-};
 
 class CExtentionsFile {
-	std::unique_ptr<CExtentionsContainer> m_extentionsContainer;
-
+	ExtentionsContainer m_extentionsContainer;
 	bool insert(const char *row);
 public:
-	CExtentionsFile();
+	CExtentionsFile() = default;
+	virtual ~CExtentionsFile() = default;
 
-	virtual ~CExtentionsFile();
 	bool read(const char *datafile);
 	bool write(const char *datafile);
-	//bool add(const char *ext, const char *name);
+	bool remove(const char *ext);
+	bool edit(ExtentionItem& extentionItem);
 	bool insert(ExtentionItem &extentionItem);
 	std::shared_ptr<ExtentionItem> find(const char *ext);
 
 };
 
-CExtentionsFile::CExtentionsFile() : m_extentionsContainer(std::make_unique<CExtentionsContainer>())
-{
-}
 
-CExtentionsFile::~CExtentionsFile() {
-	
-}
 
 bool CExtentionsFile::read(const char *datafile) {
 	std::string text;
@@ -103,14 +94,25 @@ bool CExtentionsFile::write(const char *datafile) {
 	if (file.is_open() == false) {
 		return false;
 	}
-	for (std::map<std::string, ExtentionItem>::iterator ii = m_extentionsContainer->begin(); ii != m_extentionsContainer->end(); ++ii) {
-		ExtentionItem &data = ii->second;
-		file << data.toString() << '\n';
-
+	for (auto ii = m_extentionsContainer.begin(); ii != m_extentionsContainer.end(); ++ii) {
+		std::shared_ptr<ExtentionItem> data = ii->second;
+		file << data->toString() << '\n';
 	}
 
 	file.close();
 	return true;
+}
+bool CExtentionsFile::remove(const char* ext)
+{
+	return (m_extentionsContainer.erase(ext)) ? true : false;
+}
+bool CExtentionsFile::edit(ExtentionItem& extentionItem)
+{
+	auto i = m_extentionsContainer.find(extentionItem.getExt());
+	bool replaced = (i != m_extentionsContainer.end());
+	std::shared_ptr<ExtentionItem> extentionItem_ptr = std::make_shared<ExtentionItem>(extentionItem);
+	m_extentionsContainer[extentionItem.getExt()] = extentionItem_ptr;
+	return replaced;
 }
 /*
 bool CExtentionsFile::add(const char *ext, const char *name) {
@@ -127,17 +129,17 @@ bool CExtentionsFile::add(const char *ext, const char *name) {
 */
 bool CExtentionsFile::insert(const char* row) {
 
-
 	ExtentionItem extentionItem(row);
 	return insert(extentionItem);
 }
 
 bool CExtentionsFile::insert(ExtentionItem &extentionItem) {
-
-	std::map<std::string, ExtentionItem>::iterator it;
-	std::string ext = extentionItem.getExt();
-	if (m_extentionsContainer->empty() == true || (it = m_extentionsContainer->find(ext)) == m_extentionsContainer->end()) {
-		m_extentionsContainer->insert(std::make_pair(extentionItem.getExt(), extentionItem));
+	
+	auto i = m_extentionsContainer.find(extentionItem.getExt());
+	if (i == m_extentionsContainer.end()) {
+		// insert if failed to find
+		std::shared_ptr<ExtentionItem> extentionItem_ptr = std::make_shared<ExtentionItem>(extentionItem);
+		m_extentionsContainer[extentionItem.getExt()] = extentionItem_ptr;
 		return true;
 	}
 	return false;
@@ -149,17 +151,16 @@ bool CExtentionsFile::insert(ExtentionItem &extentionItem) {
 
 std::shared_ptr<ExtentionItem> CExtentionsFile::find(const char *ext) {
 
-	if (m_extentionsContainer->size() == 0) {
-		return 0;
-	}
+	
 	std::string tmp = ext;
 	std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
-	std::map<std::string, ExtentionItem>::iterator it;
-	if ((it = m_extentionsContainer->find(tmp)) != m_extentionsContainer->end()) {
-		ExtentionItem* item = &(it->second);
-		std::shared_ptr<ExtentionItem> itemPtr(item);
+	auto it = m_extentionsContainer.find(tmp);
+	bool found = (it != m_extentionsContainer.end());
+	if (found) {
+		std::shared_ptr<ExtentionItem> itemPtr(it->second);
 		return itemPtr;
 	}
+	
 	return nullptr;
 }
 
@@ -173,9 +174,7 @@ static ExtentionItem defaultExtentionItem;
 
 
 
-ImageExtentions::ImageExtentions() {
 
-}
 
 ImageExtentions &ImageExtentions::get() {
 	static ImageExtentions INSTANCE;
@@ -193,8 +192,16 @@ ImageExtentions &ImageExtentions::get() {
 	return INSTANCE;
 }
 
-ImageExtentions::~ImageExtentions() {
-	
+bool ImageExtentions::write() {
+
+	std::string path = m_extentionsFilePath + "/ext.dat";
+	if (SAUtils::FileExists(path.c_str()) == false) {
+		m_isError = true;
+		throw std::exception();
+
+	}
+
+	return m_extentionsFile->write(path.c_str());
 }
 
 bool ImageExtentions::setExtentionsFilePath(const char *extentionsFilePath) {
@@ -223,14 +230,15 @@ bool ImageExtentions::isAllowed(const char* ext) {
 	std::string tmp = ext;
 	std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
 	std::shared_ptr<ExtentionItem> item = m_extentionsFile->find(ext);
-	if (item != nullptr) {
-		ImageType type = item->getType();
-		return type;
+	if (item == nullptr) {
+		return false;
 	}
-	return defaultImageType;
+	ImageType& type = item->getType();
+	return true;
+	
 }
 
-ImageType &ImageExtentions::findType(const char *ext) {
+ImageType ImageExtentions::findType(const char *ext) {
 
 	std::string tmp = ext;
 	std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
@@ -242,11 +250,12 @@ ImageType &ImageExtentions::findType(const char *ext) {
 	return defaultImageType;
 }
 
-ImageType &ImageExtentions::getType(const char *filename) {
+ImageType ImageExtentions::getType(const char *filename) {
 	std::string ext = SAUtils::getExtention(filename);
 	return findType(ext.c_str());
 }
 
+/*
 bool ImageExtentions::IsValid(const char *filename) {
 
 	if (SAUtils::hasExt(filename) == false) {
@@ -259,7 +268,7 @@ bool ImageExtentions::IsValid(const char *filename) {
 	}
 	return true;
 }
-
+*/
 bool ImageExtentions::IsValidXML(const char *filename) {
 	if (SAUtils::hasExt(filename) == false) {
 		return false;

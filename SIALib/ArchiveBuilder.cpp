@@ -116,7 +116,8 @@ namespace simplearchive {
 			}
 			ImageExtentions& ie = ImageExtentions::get();
 			std::string file = SAUtils::getFilename(filePath);
-			if (ie.IsValid(file.c_str()) == false) {
+			std::string ext = SAUtils::getExtention(filePath);
+			if (ie.isAllowed(ext.c_str()) == false) {
 				logger.log(LOG_OK, CLogger::Level::WARNING, "Not a valid file type \"%s\" rejecting ", file.c_str());
 				return false;
 			}
@@ -184,14 +185,14 @@ namespace simplearchive {
 			m_csvDatabase = CSVDatabase::get();
 
 			if (m_curImageSet->getError() < 0) {
-				logger.log(LOG_OK, CLogger::Level::ERR, "Error processing image not archiving: \"%s\"", m_curImageSet->getName().c_str());
+				logger.log(LOG_OK, CLogger::Level::ERR, "Not archiving image: \"%s\"", m_curImageSet->getName().c_str());
 				return false;
 			}
 			m_curImageSet->PostProcess();
 
 			m_archiveDate = std::make_unique<ArchiveDate>();
 			if (m_archiveDate->process(*m_curImageSet) == false) {
-				logger.log(LOG_OK, CLogger::Level::WARNING, "Error processing image capture date, not found: \"%s\" using another date", m_curImageSet->getName().c_str());	
+				logger.log(LOG_OK, CLogger::Level::WARNING, "Image capture date, not found: \"%s\" using another date", m_curImageSet->getName().c_str());	
 			}
 			
 			// using another date
@@ -202,7 +203,7 @@ namespace simplearchive {
 			m_imagePath = std::make_unique<ImagePath>(archiveDate.getTime());
 			
 			if (m_curImageSet->getError() < 0) {
-				logger.log(LOG_OK, CLogger::Level::ERR, "Error processing image not archiving: \"%s\"", m_curImageSet->getName().c_str());
+				logger.log(LOG_OK, CLogger::Level::ERR, "Not archiving image: \"%s\"", m_curImageSet->getName().c_str());
 				return false;
 			}
 
@@ -589,7 +590,8 @@ namespace simplearchive {
 					continue;
 				}
 				ImageExtentions& ie = ImageExtentions::get();
-				if (ie.IsValid(imageItem->getFilename().c_str()) == false) {
+				std::string ext = SAUtils::getExtention(imageItem->getFilename());
+				if (ie.isAllowed(ext.c_str()) == false) {
 					logger.log(LOG_INVALID_FILE_TYPE, CLogger::Level::WARNING, "Not a valid file type \"%s\" rejecting ", imageItem->getFilename().c_str());
 					m_imageFilesRejected++;
 					continue;

@@ -77,8 +77,8 @@ namespace simplearchive {
 	bool ImportImageList::onFile(const char *path) {
 		ImageExtentions& ie = ImageExtentions::get();
 		std::string tmp = path;
-		std::string filename = SAUtils::getFilename(tmp);
-		if (ie.IsValid(filename.c_str()) == false) {
+		std::string ext = SAUtils::getExtention(tmp);
+		if (ie.isAllowed(ext.c_str()) == false) {
 			return false;
 		}
 		std::shared_ptr<ImageItem> imageItem = std::make_shared<ImageItem>(path);

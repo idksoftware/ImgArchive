@@ -11,6 +11,7 @@
 #include "SetConfig.h"
 #include "DefaultEnvironment.h"
 #include "HomePath.h"
+#include "SetImageExtentionFile.h"
 
 using namespace CommandLineProcessing;
 namespace simplearchive {
@@ -54,7 +55,11 @@ namespace simplearchive {
 		defineOption("allow", "Controls which image file extensions are allowed into the archive.", ArgvParser::MasterOption);
 		defineCommandSyntax("allow", "isadmin allow [-q | --quiet]\n"
 			"| [--add = <ext, type, mine, description>] | [--delete = <ext>]\n"
-			"| [--edit = <ext, type, mine, description>]\n");
+			"| [--edit = <ext, type, mine, description>]\n"
+			"ext         - Image type file extension to be include in the archive.\n"
+			"type        - The type of image i.e.a picture or raw.\n"
+			"mine        - The mine type.\n"
+			"description - A description of the image type.");
 		//defineOption("mirror", "Mirror commands", ArgvParser::MasterOption);
 		//defineOption("test", "test commands", ArgvParser::MasterOption);
 
@@ -129,51 +134,7 @@ namespace simplearchive {
 		defineOption("edit", "Edits the extension details.", ArgvParser::OptionRequiresValue);
 		defineOptionAlternative("edit", "e");
 		defineCommandSyntax("edit", "--edit=<ext,type,mine,description>");
-		/*
-	Allow (--allow -a)
-
-Controls which image file extensions are allowed into the archive.
-
-
-Synopsis
-isadmin allow [-q | --quiet][ --add=<ext,type,mine,description>] | [ --delete=<ext>] |
-
-[ --edit=<ext,type,mine,description>]
-
-ext - Image type file extension to be include in the archive.
-
-The type of image i.e. a picture or raw.
-
-The mine type.
-
-A description of the image type.
-
-
-Description
-the command “allow” controls which image file extensions are allowed into the archive. Digital camera’s normally generates JPG files to store digital images. However camera’s can also generates RAW image file that will have different files with different extensions. For example Nikon camera’s will generate RAW image files with the extensions of *.nef for example, dsc02319.nef. To allow these types of images files into the archive you will need to Allow them using this command.
-
-
-Options
-The options are partitioned into sections. Each section contains a set of options that refer to a set of associated functions this are detailed below:
-
-
-Add
-Adds an extension type to file type filter. File of this type can now added to the archive.
-
---add=<ext,type,mine,description>
-
-
-Delete
-Deletes an extension type from file type filter. File of this type will now be excluded from the archive.
-
---delete=<ext>
-
-
-Edit
-Edits the extension details.
-
---edit=<ext,type,mine,description>
-	*/
+		
 
 		/* Commented to for testing
 		// Options
@@ -222,6 +183,7 @@ Edits the extension details.
 
 		defineCommandOption("init", "archive-path");
 		defineCommandOption("init", "workspace-path");
+
 		defineCommandOption("show", "settup");
 		//defineCommandOption("show", "checkedOut");
 
@@ -239,6 +201,10 @@ Edits the extension details.
 		defineCommandOption("config", "backup");
 		defineCommandOption("config", "exiftool");
 		defineCommandOption("config", "network");
+
+		defineCommandOption("allow", "add");
+		defineCommandOption("allow", "edit");
+		defineCommandOption("allow", "delete");
 		ArgvParser::ParserResults res = parse(argc, argv);
 
 		std::string errStr;
@@ -271,8 +237,41 @@ Edits the extension details.
 		//testHelpOptionDetection();
 		bool cmdFound = false;
 		AdminConfig config;
+		if (command("allow") == true) {
+			std::string opt;
+			std::string value;
+			if (foundOption("add") == true) {
+				opt = "add";
+				value = optionValue("add");
+				if (!SetImageExtentionFile::validateOptions(value.c_str())) {
+					printf("Invalid argument for sub-command: %s \"%s=%s\"\n\n", getCurrentCommand().c_str(), opt.c_str(), value.c_str());
+					printf("%s", usageDescription(80).c_str());
+					return false;
+				}
+			} else if (foundOption("edit") == true) {
+				opt = "edit";
+				value = optionValue("edit");
+				if (!SetImageExtentionFile::validateOptions(value.c_str())) {
+					printf("Invalid argument for sub-command: %s \"%s=%s\"\n\n", getCurrentCommand().c_str(), opt.c_str(), value.c_str());
+					printf("%s", usageDescription(80).c_str());
+					return false;
+				}
+			}
+			else if (foundOption("delete") == true) {
+				opt = "delete";
+				value = optionValue("delete");
+			}
+			else {
+				printf("Invalid argument for sub-command: %s \"%s\"\n\n", getCurrentCommand().c_str(), opt.c_str());
+				printf("%s", usageDescription(80).c_str());
+				return false;
+			}
 
-		if (command("init") == true) {
+			appOptions.setConfigOption(opt.c_str());
+			appOptions.setConfigValue(value.c_str());
+			appOptions.setCommandMode(AppOptions::CommandMode::CM_Allow);
+			cmdFound = true;
+		} else if (command("init") == true) {
 			// This command will initalise the configuration.
 			// so the the configuration need not to be initalised.
 			appOptions.setCommandMode(AppOptions::CommandMode::CM_InitArchive);
@@ -533,7 +532,7 @@ Edits the extension details.
 			appOptions.setConfigOptionBlock(setConfig.getOptionBlock().c_str());
 			appOptions.setConfigOption(setConfig.getOption().c_str());
 			appOptions.setConfigValue(setConfig.getValue().c_str());
-			appOptions.setCommandMode(AppOptions::CommandMode::CM_CONFIG);
+			appOptions.setCommandMode(AppOptions::CommandMode::CM_Config);
 			cmdFound = true;
 		}
 		else if (command("test") == true) {
@@ -659,7 +658,7 @@ Edits the extension details.
 	std::string AdminArgvParser::commandUsage(unsigned int width) const
 	{
 		std::string usage; // the usage description text
-		usage = formatString("usage: imgarc[--version][--help] <command>[<args>]\n", width);
+		usage = formatString("usage: iaadmin [--version][--help] <command>[<args>]\n", width);
 		usage += '\n';
 
 		return usage;
@@ -923,245 +922,7 @@ Edits the extension details.
 		usage += '\n';
 		return(usage);
 	}
-	/*
+	
 
-
-
-	*/
-	std::string AdminArgvParser::topicUsageDescription(unsigned int topic, unsigned int _width) const
-	{
-		std::string usage;
-
-		usage += usageDescriptionHeader(_width);
-		usage += "\nNAME: "; // the usage description text
-
-		std::string _os; // temp string for the option
-		if (option2attribute.find(topic)->second != MasterOption) {
-			usage = "error";
-			return usage;
-		}
-		std::string _longOpt;
-		std::string _shortOpt;
-
-		usage += formatString(_os, _width) + "\n";
-		_os.clear();
-
-		std::list<std::string> alternatives = getAllOptionAlternatives(topic);
-		for (auto alt = alternatives.begin();
-			alt != alternatives.end();
-			++alt)
-		{
-			if (option2attribute.find(topic)->second == MasterOption) {
-				int option = option2attribute.find(topic)->second;
-				_os.clear();
-				if (alt->length() > 1) {
-					_longOpt += *alt;
-				}
-				else {
-					_shortOpt += *alt;
-				}
-
-
-			}
-
-		}
-
-		if (!_longOpt.empty()) {
-			_os += ' ';
-			_os += _longOpt;
-		}
-		if (!_shortOpt.empty()) {
-			_os += " (";
-			_os += _shortOpt;
-			_os += ')';
-		}
-		_os += "";
-		usage += '\t';
-		usage += formatString(_os, _width) + "\n";
-		
-
-		if (!_longOpt.empty()) {
-			usage += "\nSYNTAX:\n";
-			std::string syntax = getSyntax(_longOpt);
-			usage += formatString(syntax, _width, 4, 0, 4);
-			usage += '\n';
-		}
-		else {
-			usage += formatString("(no description)", _width, 4) + "\n\n";
-		}
-		_os.clear();
-		_longOpt.clear();
-		_shortOpt.clear();
-		if (option2descr.find(topic) != option2descr.end()) {
-			usage += "\nDescription:\n";
-			usage += formatString(option2descr.find(topic)->second, _width, 4) + "\n\n";
-		}
-		else {
-			usage += formatString("(no description)", _width, 4) + "\n\n";
-		}
-		
-		usage += "OPTIONS: \n\n";
-		ArgumentContainer ac = command_set.find(topic)->second;
-
-		for (auto opt = ac.begin(); opt != ac.end(); opt++) {
-			//printf("%s\n", opt->c_str());
-			unsigned int key = option2key.find(opt->c_str())->second;
-			std::list<std::string> alternatives = getAllOptionAlternatives(key);
-			for (auto alt = alternatives.begin();
-				alt != alternatives.end();
-				++alt)
-			{
-				int option = option2attribute.find(key)->second;
-				_os.clear();
-				if (alt->length() > 1) {
-
-					_longOpt += *alt;
-				}
-				else {
-					_shortOpt += *alt;
-				}
-			}
-
-			if (!_longOpt.empty()) {
-				_os += "\t--";
-				_os += _longOpt;
-			}
-			if (!_shortOpt.empty()) {
-				_os += " (-";
-				_os += _shortOpt;
-				_os += ')';
-			}
-			_os += " : ";
-			usage += formatString(_os, _width) + "\n";
-			if (option2descr.find(key) != option2descr.end()) {
-				std::string desc = "\t";
-				desc += option2descr.find(key)->second;
-				usage += formatString(desc, _width, 4) + "\n";
-			}
-			else {
-				usage += formatString("\t(no description)", _width, 4) + "\n\n";
-			}
-			if (!_longOpt.empty()) {
-				
-				std::string syntax = getSyntax(_longOpt);
-				if (!syntax.empty()) {
-					usage += formatString("\tSyntax:", _width, 4) + "\n";
-					usage += formatString(syntax, _width, 4, 0, 4);
-					usage += "\n\n";
-				}
-				else {
-					usage += '\n\n';
-				}
-			}
-			_os.clear();
-			_longOpt.clear();
-			_shortOpt.clear();
-
-			
-		}
-		return(usage);
-	}
-
-	/*
-	std::string AdminArgvParser::topicUsageDescription(unsigned int topic, unsigned int _width) const
-	{
-		std::string usage; // the usage description text
-
-		std::string _os; // temp string for the option
-		if (option2attribute.find(topic)->second != MasterOption) {
-			usage = "error";
-			return usage;
-		}
-		std::string _longOpt;
-		std::string _shortOpt;
-
-		std::list<std::string> alternatives = getAllOptionAlternatives(topic);
-		for (auto alt = alternatives.begin();
-			alt != alternatives.end();
-			++alt)
-		{
-			if (option2attribute.find(topic)->second == MasterOption) {
-				int option = option2attribute.find(topic)->second;
-				_os.clear();
-				if (alt->length() > 1) {
-					_longOpt += *alt;
-				}
-				else {
-					_shortOpt += *alt;
-				}
-
-
-			}
-
-		}
-
-		if (!_longOpt.empty()) {
-			_os += ' ';
-			_os += _longOpt;
-		}
-		if (!_shortOpt.empty()) {
-			_os += " (";
-			_os += _shortOpt;
-			_os += ')';
-		}
-		_os += " : ";
-		usage += formatString(_os, _width) + "\n";
-		_os.clear();
-		_longOpt.clear();
-		_shortOpt.clear();
-
-		if (option2descr.find(topic) != option2descr.end())
-			usage += formatString(option2descr.find(topic)->second, _width, 4) + "\n\n";
-		else
-			usage += formatString("(no description)", _width, 4) + "\n\n";
-
-		usage += "Valid options :\n\n";
-		ArgumentContainer ac = command_set.find(topic)->second;
-
-		for (auto opt = ac.begin(); opt != ac.end(); opt++) {
-			//printf("%s\n", opt->c_str());
-			unsigned int key = option2key.find(opt->c_str())->second;
-			std::list<std::string> alternatives = getAllOptionAlternatives(key);
-			for (auto alt = alternatives.begin();
-				alt != alternatives.end();
-				++alt)
-			{
-				int option = option2attribute.find(key)->second;
-				_os.clear();
-				if (alt->length() > 1) {
-
-					_longOpt += *alt;
-				}
-				else {
-					_shortOpt += *alt;
-				}
-			}
-
-			if (!_longOpt.empty()) {
-				_os += "\t--";
-				_os += _longOpt;
-			}
-			if (!_shortOpt.empty()) {
-				_os += " (-";
-				_os += _shortOpt;
-				_os += ')';
-			}
-			_os += " : ";
-			usage += formatString(_os, _width) + "\n";
-			_os.clear();
-			_longOpt.clear();
-			_shortOpt.clear();
-
-			if (option2descr.find(key) != option2descr.end()) {
-				std::string desc = "\t";
-				desc += option2descr.find(key)->second;
-				usage += formatString(desc, _width, 4) + "\n\n";
-			}
-			else
-				usage += formatString("\t(no description)", _width, 4) + "\n\n";
-		}
-		return(usage);
-	}
-	*/
 
 } /* namespace simplearchive */

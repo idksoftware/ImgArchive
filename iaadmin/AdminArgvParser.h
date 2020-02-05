@@ -36,7 +36,7 @@ namespace simplearchive {
 
 		virtual std::string generalHelp(unsigned int _width) const;
 
-		virtual std::string topicUsageDescription(unsigned int topic, unsigned int _width = 80) const;
+		//virtual std::string topicUsageDescription(unsigned int topic, unsigned int _width = 80) const;
 	};
 
 } /* namespace CommandLineProcessing */

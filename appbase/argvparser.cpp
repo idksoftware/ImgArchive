@@ -405,6 +405,139 @@ const vector<string>& ArgvParser::allArguments() const
     return(argument_container);
 }
 
+std::string ArgvParser::topicUsageDescription(unsigned int topic, unsigned int _width) const
+{
+	std::string usage;
+
+	usage += usageDescriptionHeader(_width);
+	usage += "\nNAME: "; // the usage description text
+
+	std::string _os; // temp string for the option
+	if (option2attribute.find(topic)->second != MasterOption) {
+		usage = "error";
+		return usage;
+	}
+	std::string _longOpt;
+	std::string _shortOpt;
+
+	usage += formatString(_os, _width) + "\n";
+	_os.clear();
+
+	std::list<std::string> alternatives = getAllOptionAlternatives(topic);
+	for (auto alt = alternatives.begin();
+		alt != alternatives.end();
+		++alt)
+	{
+		if (option2attribute.find(topic)->second == MasterOption) {
+			int option = option2attribute.find(topic)->second;
+			_os.clear();
+			if (alt->length() > 1) {
+				_longOpt += *alt;
+			}
+			else {
+				_shortOpt += *alt;
+			}
+
+
+		}
+
+	}
+
+	if (!_longOpt.empty()) {
+		_os += ' ';
+		_os += _longOpt;
+	}
+	if (!_shortOpt.empty()) {
+		_os += " (";
+		_os += _shortOpt;
+		_os += ')';
+	}
+	_os += "";
+	usage += '\t';
+	usage += formatString(_os, _width) + "\n";
+
+
+	if (!_longOpt.empty()) {
+		usage += "\nSYNTAX:\n";
+		std::string syntax = getSyntax(_longOpt);
+		usage += formatString(syntax, _width, 4, 0, 4);
+		usage += '\n';
+	}
+	else {
+		usage += formatString("(no description)", _width, 4) + "\n\n";
+	}
+	_os.clear();
+	_longOpt.clear();
+	_shortOpt.clear();
+	if (option2descr.find(topic) != option2descr.end()) {
+		usage += "\nDescription:\n";
+		usage += formatString(option2descr.find(topic)->second, _width, 4) + "\n\n";
+	}
+	else {
+		usage += formatString("(no description)", _width, 4) + "\n\n";
+	}
+
+	usage += "OPTIONS: \n\n";
+	ArgumentContainer ac = command_set.find(topic)->second;
+
+	for (auto opt = ac.begin(); opt != ac.end(); opt++) {
+		//printf("%s\n", opt->c_str());
+		unsigned int key = option2key.find(opt->c_str())->second;
+		std::list<std::string> alternatives = getAllOptionAlternatives(key);
+		for (auto alt = alternatives.begin();
+			alt != alternatives.end();
+			++alt)
+		{
+			int option = option2attribute.find(key)->second;
+			_os.clear();
+			if (alt->length() > 1) {
+
+				_longOpt += *alt;
+			}
+			else {
+				_shortOpt += *alt;
+			}
+		}
+
+		if (!_longOpt.empty()) {
+			_os += "\t--";
+			_os += _longOpt;
+		}
+		if (!_shortOpt.empty()) {
+			_os += " (-";
+			_os += _shortOpt;
+			_os += ')';
+		}
+		_os += " : ";
+		usage += formatString(_os, _width) + "\n";
+		if (option2descr.find(key) != option2descr.end()) {
+			std::string desc = "\t";
+			desc += option2descr.find(key)->second;
+			usage += formatString(desc, _width, 4) + "\n";
+		}
+		else {
+			usage += formatString("\t(no description)", _width, 4) + "\n\n";
+		}
+		if (!_longOpt.empty()) {
+
+			std::string syntax = getSyntax(_longOpt);
+			if (!syntax.empty()) {
+				usage += formatString("\tSyntax:", _width, 4) + "\n";
+				usage += formatString(syntax, _width, 4, 0, 4);
+				usage += "\n\n";
+			}
+			else {
+				usage += '\n\n';
+			}
+		}
+		_os.clear();
+		_longOpt.clear();
+		_shortOpt.clear();
+
+
+	}
+	return(usage);
+}
 /*
 string ArgvParser::usageDescription(unsigned int _width) const
 {

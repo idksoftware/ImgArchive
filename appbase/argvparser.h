@@ -237,7 +237,7 @@ public:
 
 	virtual std::string generalHelp(unsigned int _width) const = 0;
 
-	virtual std::string topicUsageDescription(unsigned int topic, unsigned int _width = 80) const = 0;
+	virtual std::string topicUsageDescription(unsigned int topic, unsigned int _width = 80) const;
 
 	void setHeader(const std::string& _option);
 
