@@ -89,8 +89,8 @@ namespace simplearchive {
 		configWriter.update(configOptionBlock, configOption, configValue);
 		imgaConfig.printAll();
 		std::ofstream configFile;
-		//configFile.open(m_configfile.c_str());
-		configFile.open("C:\\temp\\t.dat");
+		configFile.open(m_configfile.c_str());
+		//configFile.open("C:\\temp\\t.dat");
 		if (configFile.bad()) {
 			return false;
 		}

@@ -99,6 +99,9 @@ namespace simplearchive {
 									"admin config --master BackupTwo=<path>\n"
 									"- Sets the path used by backup two\n" */
 		defineOptionAlternative("master", "M");
+		defineCommandSyntax("master", "--master <Option=Value>\n"
+			"[BackupOneEnabled=<Enabled|Disabled>] | [BackupTwoEnabled=<Enabled|Disabled>] |\n"
+			"[BackupOne=<path>] | [BackupTwo=<path>]");
 
 		defineOption("derivative", "This section controls the derivative archive.", ArgvParser::OptionRequiresValue);
 									/* "admin config --derivative BackupOneEnabled=<Enabled|Disabled>\n"
@@ -455,7 +458,7 @@ namespace simplearchive {
 					
 				if (setConfig.parseGeneralOptions(opt.c_str()) == false) {
 					printf("Invalid argument for sub-command: %s general \"%s\"\n\n", getCurrentCommand().c_str(), opt.c_str());
-					printf("%s", usageDescription(80).c_str());
+					printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 					return false;
 				}
 					
@@ -465,7 +468,7 @@ namespace simplearchive {
 
 				if (setConfig.parseLoggingOptions(opt.c_str()) == false) {
 					printf("Invalid argument for sub-command: %s general \"%s\"\n\n", getCurrentCommand().c_str(), opt.c_str());
-					printf("%s", usageDescription(80).c_str());
+					printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 					return false;
 				}
 
@@ -474,8 +477,8 @@ namespace simplearchive {
 				std::string opt = optionValue("folders");
 					
 				if (setConfig.parseFolderOptions(opt.c_str()) == false) {
-					printf("Invalid argument for sub-command: %s folders \"%s\"\n\n", getCurrentCommand().c_str(), opt.c_str());
-					printf("%s", usageDescription(80).c_str());
+					printf("Invalid argument for sub-command: %s folders \"%s\" %s\n\n", getCurrentCommand().c_str(), opt.c_str(), setConfig.errorString());
+					printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 					return false;
 				}
 					
@@ -485,7 +488,7 @@ namespace simplearchive {
 				
 				if (setConfig.parseExifToolOptions(opt.c_str()) == false) {
 					printf("Invalid argument for sub-command: %s exiftool \"%s\"\n\n", getCurrentCommand().c_str(), opt.c_str());
-					printf("%s", usageDescription(80).c_str());
+					printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 					return false;
 				}
 			}
@@ -493,8 +496,8 @@ namespace simplearchive {
 				std::string opt = optionValue("master");
 				
 				if (setConfig.parseMasterOptions(opt.c_str()) == false) {
-					printf("Invalid argument for sub-command: %s master \"%s\"\n\n", getCurrentCommand().c_str(), opt.c_str());
-					printf("%s", usageDescription(80).c_str());
+					printf("Invalid argument for sub-command: %s master \"%s\" %s\n\n", getCurrentCommand().c_str(), opt.c_str(), setConfig.errorString());
+					printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 					return false;
 				}
 					
@@ -504,7 +507,7 @@ namespace simplearchive {
 
 				if (setConfig.parseDerivativeOptions(opt.c_str()) == false) {
 					printf("Invalid argument for sub-command: %s derivative \"%s\"\n\n", getCurrentCommand().c_str(), opt.c_str());
-					printf("%s", usageDescription(80).c_str());
+					printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 					return false;
 				}
 
@@ -514,7 +517,7 @@ namespace simplearchive {
 
 				if (setConfig.parseBackupOptions(opt.c_str()) == false) {
 					printf("Invalid argument for sub-command: %s derivative \"%s\"\n\n", getCurrentCommand().c_str(), opt.c_str());
-					printf("%s", usageDescription(80).c_str());
+					printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 					return false;
 				}
 

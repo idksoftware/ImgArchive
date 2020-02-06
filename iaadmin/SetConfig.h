@@ -7,6 +7,14 @@ enum class Option;
 
 class SetConfig
 {
+public:
+	enum class Error {
+		Ok,
+		Invalid_argument,
+		Path_not_found,
+		Unknown
+	};
+private:
 	std::string m_optionBlock;
 	std::string m_option;
 	std::string m_value;
@@ -18,8 +26,11 @@ class SetConfig
 	Option processDerivativeOptions(std::string& optionString);
 	Option processBackupOptions(std::string& optionString);
 	Option processNetworkOptions(std::string& optionString);
-
+	Error m_error;
 	bool processArgs(const char* ov);
+	bool checkPath(const char* path);
+	bool checkBool();
+	bool checkPath();
 public:
 	SetConfig() = default;
 	bool parseGeneralOptions(const char* optionString);
@@ -39,6 +50,26 @@ public:
 	}
 	std::string& getOptionBlock() {
 		return m_optionBlock;
+	}
+
+	Error getError() {
+		return m_error;
+	}
+
+	const char* errorString() {
+		switch (m_error) {
+		case Error::Ok:
+			return "Ok";
+		case Error::Invalid_argument:
+			return "Invalid argument";
+		case Error::Path_not_found:
+			return "Path not found";
+		case Error::Unknown:
+			return "Unknown";
+		default:
+			break;
+		}
+		return "Unknown";
 	}
 };
 

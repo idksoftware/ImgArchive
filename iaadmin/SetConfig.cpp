@@ -142,12 +142,7 @@ bool SetConfig::parseGeneralOptions(const char* ov)
 		m_option = WWW_CAT_LABEL;
 		return (SAUtils::isTrueFalse(m_value) != BoolOption::Invalid);
 	
-	case Option::BACKUP_ONE:
-		m_option = BACKUP_ONE_LABEL;
-		return (SAUtils::isTrueFalse(m_value) != BoolOption::Invalid);
-	case Option::BACKUP_TWO:
-		m_option = BACKUP_TWO_LABEL;
-		return (SAUtils::isTrueFalse(m_value) != BoolOption::Invalid);
+	
 	case Option::SQL:
 		m_option = SQL_LABEL;
 		return (SAUtils::isTrueFalse(m_value) != BoolOption::Invalid);
@@ -273,6 +268,31 @@ bool SetConfig::parseExifToolOptions(const char* ov)
 	return true;
 }
 
+bool SetConfig::checkPath(const char *path) {
+	
+	if (SAUtils::FileExists(path) == false) {
+		return false;
+	}
+	return true;
+}
+
+bool SetConfig::checkPath() {
+
+	if (SAUtils::FileExists(m_value.c_str()) == false) {
+		m_error = Error::Path_not_found;
+		return false;
+	}
+	return true;
+}
+
+bool SetConfig::checkBool() {
+	bool ret = (SAUtils::isTrueFalse(m_value) != BoolOption::Invalid);
+	if (ret) {
+		m_error = Error::Invalid_argument;
+	}
+	return ret;
+}
+
 bool SetConfig::parseMasterOptions(const char* optionString)
 {
 	if (!processArgs(optionString)) {
@@ -281,9 +301,18 @@ bool SetConfig::parseMasterOptions(const char* optionString)
 	m_optionBlock = MASTER_BLOCK;
 	Option ret = processMasterOptions(m_option);
 	switch (ret) {
-	case Option::QUIET:
-		break;
-
+	case Option::BACKUP_ONE_ENABLED:
+		m_option = BACKUP_ONE_ENABLED_LABEL;
+		return checkBool();
+	case Option::BACKUP_TWO_ENABLED:
+		m_option = BACKUP_TWO_ENABLED_LABEL;
+		return checkBool();
+	case Option::BACKUP_ONE:
+		m_option = BACKUP_ONE_LABEL;
+		return checkPath();
+	case Option::BACKUP_TWO:
+		m_option = BACKUP_TWO_LABEL;
+		return checkPath();
 	default:
 		return false;
 	}
@@ -298,9 +327,18 @@ bool SetConfig::parseDerivativeOptions(const char* optionString)
 	m_optionBlock = DERIVATIVE_BLOCK;
 	Option ret = processMasterOptions(m_option);
 	switch (ret) {
-	case Option::QUIET:
-		break;
-
+	case Option::BACKUP_ONE_ENABLED:
+		m_option = BACKUP_ONE_ENABLED_LABEL;
+		return checkBool();
+	case Option::BACKUP_TWO_ENABLED:
+		m_option = BACKUP_TWO_ENABLED_LABEL;
+		return checkBool();
+	case Option::BACKUP_ONE:
+		m_option = BACKUP_ONE_LABEL;
+		return checkPath();
+	case Option::BACKUP_TWO:
+		m_option = BACKUP_TWO_LABEL;
+		return checkPath();
 	default:
 		return false;
 	}
@@ -464,22 +502,34 @@ Option SetConfig::processExifToolOptions(std::string& optionString)
 
 Option SetConfig::processMasterOptions(std::string& optionString)
 {
-	if (iequals(optionString, QUIET_LABEL)) {
-		return Option::HOOK_SCRIPTS_PATH;
+	if (iequals(optionString, BACKUP_ONE_ENABLED_LABEL)) {
+		return Option::BACKUP_ONE_ENABLED;
 	}
-	else if (iequals(optionString, CONFIG_PATH_LABEL)) {
-		return Option::CONFIG_PATH;	 // Main configuration path
+	else if (iequals(optionString, BACKUP_TWO_ENABLED_LABEL)) {
+		return Option::BACKUP_TWO_ENABLED;
+	}
+	else if (iequals(optionString, BACKUP_ONE_LABEL)) {
+		return Option::BACKUP_ONE;	 
+	}
+	else if (iequals(optionString, BACKUP_TWO_LABEL)) {
+		return Option::BACKUP_TWO;	
 	}
 	return Option::UNKNOWN;
 }
 
 Option SetConfig::processDerivativeOptions(std::string& optionString)
 {
-	if (iequals(optionString, QUIET_LABEL)) {
-		return Option::HOOK_SCRIPTS_PATH;
+	if (iequals(optionString, BACKUP_ONE_ENABLED_LABEL)) {
+		return Option::BACKUP_ONE_ENABLED;
 	}
-	else if (iequals(optionString, CONFIG_PATH_LABEL)) {
-		return Option::CONFIG_PATH;	 // Main configuration path
+	else if (iequals(optionString, BACKUP_TWO_ENABLED_LABEL)) {
+		return Option::BACKUP_TWO_ENABLED;
+	}
+	else if (iequals(optionString, BACKUP_ONE_LABEL)) {
+		return Option::BACKUP_ONE;
+	}
+	else if (iequals(optionString, BACKUP_TWO_LABEL)) {
+		return Option::BACKUP_TWO;
 	}
 	return Option::UNKNOWN;
 }

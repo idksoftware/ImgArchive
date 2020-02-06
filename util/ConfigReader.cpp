@@ -83,7 +83,7 @@ std::ostream& operator<< (std::ostream& stream, const AppConfigBase& config) {
 
 std::ostream& operator<< (std::ostream& stream, const ConfigBlock& block) {
 	for (auto ii = block.begin(); ii != block.end(); ++ii) {
-		stream << "\t" << ii->first << '=' << ii->second << "\n";
+		stream << "  " << ii->first << '=' << ii->second << "\n";
 	}
 	return stream;
 }
@@ -456,8 +456,9 @@ ConfigReader::Token ConfigReader::parse(const char *text, ConfigBlock &config) {
 
 bool ConfigBlockWriter::update(const char* cmd, const char* options, ConfigBlock& config) {
 	for (auto ii = config.begin(); ii != config.end(); ++ii) {
-		//std::cout << ii->first << '\n';
-		if (ii->first.compare(cmd) == 0) {
+		std::string item = trim(ii->first);
+		
+		if (item.compare(cmd) == 0) {
 			ii->second = options;
 			return true;
 		}
