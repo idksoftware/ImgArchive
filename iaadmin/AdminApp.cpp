@@ -92,13 +92,20 @@ namespace simplearchive {
 		std::string cmdStr = cmd;
 		if (cmdStr.compare("add") == 0) {
 			ExtentionItem extentionItem(arg, ',');
+			if (!extentionItem.isValid()) {
+				return false;
+			}
+			setImageExtentionFile.add(extentionItem);
+		}
+		else if (cmdStr.compare("edit") == 0) {
+			ExtentionItem extentionItem(arg, ',');
+			if (!extentionItem.isValid()) {
+				return false;
+			}
 			setImageExtentionFile.update(extentionItem);
 		}
-		else if (cmdStr.compare("edit") == true) {
-			
-		}
-		else if (cmdStr.compare("delete") == true) {
-			
+		else if (cmdStr.compare("delete") == 0) {
+			setImageExtentionFile.remove(arg);
 		}
 		else {
 			printf("Invalid argument for sub-command: allow --%s\n\n", cmdStr.c_str());

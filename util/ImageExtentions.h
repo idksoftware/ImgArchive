@@ -82,6 +82,20 @@ public:
 		return m_desciption;
 	}
 
+	bool isValid() {
+		
+		if (m_type.getType() == ImageType::Type::UNKNOWN_EXT) {
+			return false;
+		}
+		if (m_ext.empty()) {
+			return false;
+		}
+		if (m_mimeType.empty()) {
+			return false;
+		}
+		return true;
+	}
+
 	void setDesciption(const std::string& desciption) {
 		m_desciption = desciption;
 	}
@@ -131,6 +145,8 @@ public:
 	ImageType findType(const char *ext);
 	std::shared_ptr <ExtentionItem> find(const char *ext);
 	bool insert(ExtentionItem& extentionItem);
+	bool update(ExtentionItem& extentionItem);
+	bool remove(const char *ext);
 	static ImageExtentions &get();
 	bool isAllowed(const char* ext);
 	//bool IsValid(const char *filename);

@@ -18,7 +18,7 @@ namespace simplearchive {
 		return ret;
 	}
 
-	bool SetImageExtentionFile::update(ExtentionItem &extentionItem)
+	bool SetImageExtentionFile::add(ExtentionItem& extentionItem)
 	{
 		ImageExtentions& imageExtentions = ImageExtentions::get();
 		bool ret = imageExtentions.insert(extentionItem);
@@ -28,14 +28,33 @@ namespace simplearchive {
 		return ret;
 	}
 
+	bool SetImageExtentionFile::update(ExtentionItem &extentionItem)
+	{
+		ImageExtentions& imageExtentions = ImageExtentions::get();
+		bool ret = imageExtentions.update(extentionItem);
+		if (ret) {
+			return imageExtentions.write();
+		}
+		return ret;
+	}
+
+	bool SetImageExtentionFile::remove(const char *ext)
+	{
+		ImageExtentions& imageExtentions = ImageExtentions::get();
+		bool ret = imageExtentions.remove(ext);
+		if (ret) {
+			return imageExtentions.write();
+		}
+		return ret;
+	}
+
 	bool SetImageExtentionFile::validateOptions(const char *opts)
 	{
-		CSVArgs csvArgs(',');
-		csvArgs.process(opts);
-		if (csvArgs.size() == 4) {
-			return true;
+		ExtentionItem extentionItem(opts, ',');
+		if (!extentionItem.isValid()) {
+			return false;
 		}
-		return false;
+		return true;
 	}
 
 };

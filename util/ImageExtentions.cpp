@@ -172,10 +172,6 @@ bool ImageExtentions::m_isError = false;
 static ImageType defaultImageType;
 static ExtentionItem defaultExtentionItem;
 
-
-
-
-
 ImageExtentions &ImageExtentions::get() {
 	static ImageExtentions INSTANCE;
 	if (m_once) {
@@ -223,6 +219,14 @@ std::shared_ptr <ExtentionItem> ImageExtentions::find(const char *filename) {
 
 bool ImageExtentions::insert(ExtentionItem& extentionItem) {
 	return m_extentionsFile->insert(extentionItem);
+}
+
+bool ImageExtentions::update(ExtentionItem& extentionItem) {
+	return m_extentionsFile->edit(extentionItem);
+}
+
+bool ImageExtentions::remove(const char* ext) {
+	return m_extentionsFile->remove(ext);
 }
 
 bool ImageExtentions::isAllowed(const char* ext) {
