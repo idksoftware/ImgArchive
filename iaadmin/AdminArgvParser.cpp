@@ -44,10 +44,10 @@ namespace simplearchive {
 		
 		defineOption("config", "Configure ImgArchive's parameters", ArgvParser::MasterOption);
 		defineCommandSyntax("config", "isadmin config [-q | --quiet] | [ --general <Option=Value>]\n"
-			"| [--Logging <Option=Value>] | [ --Network <Option=Value>]\n"
-			"| [ --Folders <Option=Value>] | [ --Master <Option=Value>]\n"
-			"| [ --Derivative <Option=Value>] | [ --Backup <Option=Value>]\n"
-			"| [ --ExifTool <Option=Value>]");
+			"| [--logging <Option=Value>] | [--network <Option=Value>]\n"
+			"| [--folders <Option=Value>] | [--master <Option=Value>]\n"
+			"| [--derivative <Option=Value>] | [--backup <Option=Value>]\n"
+			"| [--exiftool <Option=Value>]");
 				
 		defineOption("show", "Show settings", ArgvParser::MasterOption);
 		defineOption("version", "prints the version information", ArgvParser::MasterOption);
@@ -90,29 +90,18 @@ namespace simplearchive {
 		defineOptionAlternative("exiftool", "E");
 
 		defineOption("master", "This section controls the master archive", ArgvParser::OptionRequiresValue);
-								/*	"admin config --master BackupOneEnabled=<Enabled|Disabled>\n"
-									"- Enables backup one.\n"
-									"admin config --master BackupTwoEnabled=<Enabled|Disabled>\n"
-									"- Enables backup two.\n"
-									"admin config --master BackupOne=<path>\n"
-									"- Sets the path used by backup one\n"
-									"admin config --master BackupTwo=<path>\n"
-									"- Sets the path used by backup two\n" */
+								
 		defineOptionAlternative("master", "M");
 		defineCommandSyntax("master", "--master <Option=Value>\n"
 			"[BackupOneEnabled=<Enabled|Disabled>] | [BackupTwoEnabled=<Enabled|Disabled>] |\n"
 			"[BackupOne=<path>] | [BackupTwo=<path>]");
 
 		defineOption("derivative", "This section controls the derivative archive.", ArgvParser::OptionRequiresValue);
-									/* "admin config --derivative BackupOneEnabled=<Enabled|Disabled>\n"
-									"- Enables backup one.\n"
-									"admin config --derivative BackupTwoEnabled=<Enabled|Disabled>\n"
-									"- Enables backup two.\n"
-									"admin config --derivative BackupOne=<path>\n"
-									"- Sets the path used by backup one\n"
-									"admin config --derivative BackupTwo=<path>\n"
-									"- Sets the path used by backup two\n", ArgvParser::OptionRequiresValue); */
+									
 		defineOptionAlternative("derivative", "D");
+		defineCommandSyntax("derivative", "--derivative <Option=Value>\n"
+			"[BackupOneEnabled=<Enabled|Disabled>] | [BackupTwoEnabled=<Enabled|Disabled>] |\n"
+			"[BackupOne=<path>] | [BackupTwo=<path>]");
 
 		defineOption("network", "Configure network parameters", ArgvParser::OptionRequiresValue);
 		defineOptionAlternative("network", "N");

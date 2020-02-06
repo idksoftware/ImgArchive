@@ -118,6 +118,7 @@ ArgvParser::parse(int _argc, char ** _argv)
 			return(ParserCommandNotFound);
 		}
 		key = option2key.find(_command)->second;
+		// current command to the first argument
 		current_command_id = key;
 		if (key == help_option) {// if help is requested return error code
 			if (_argc < 3) {	// General help
@@ -128,7 +129,9 @@ ArgvParser::parse(int _argc, char ** _argv)
 				if (isValidCommandString(_command) == false) {
 					return(GeneralHelpRequested);
 				}
-				
+				// current command is the second argument not the first
+				key = option2key.find(_command)->second;
+				current_command_id = key;
 				return(TopicHelpRequested);
 			}
 			else {

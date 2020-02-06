@@ -325,7 +325,7 @@ bool SetConfig::parseDerivativeOptions(const char* optionString)
 		return false;
 	}
 	m_optionBlock = DERIVATIVE_BLOCK;
-	Option ret = processMasterOptions(m_option);
+	Option ret = processDerivativeOptions(m_option);
 	switch (ret) {
 	case Option::BACKUP_ONE_ENABLED:
 		m_option = BACKUP_ONE_ENABLED_LABEL;
