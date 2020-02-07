@@ -68,6 +68,8 @@
 
 #define MASTER_BACKUP1_PATH				"/MasterBackup1"
 #define MASTER_BACKUP2_PATH				"/MasterBackup2"
+#define DERIVATIVE_BACKUP1_PATH				"/DerivativeBackup1"
+#define DERIVATIVE_BACKUP2_PATH				"/DerivativeBackup2"
 //#define DEFAULT_MASTER_PATH				"/IDK-Software/IMGA/master"
 //#define DEFAULT_DERIVATIVE_PATH			"/IDK-Software/IMGA/derivative"
 //#define DEFAULT_TOOLS_PATH				"/IDK-Software/IMGA/tools"

@@ -79,9 +79,10 @@ namespace simplearchive {
 	bool AppConfig::m_masterViewPreview1On = false; // Previews Enabled
 	bool AppConfig::m_masterViewThumbnailOn = false;
 
-	bool AppConfig::m_backup1Enabled = false;
-	bool AppConfig::m_backup2Enabled = false;
-
+	bool AppConfig::m_masterBackup1Enabled = false;
+	bool AppConfig::m_masterBackup2Enabled = false;
+	bool AppConfig::m_derivativeBackup1Enabled = false;
+	bool AppConfig::m_derivativeBackup2Enabled = false;
 
 	bool AppConfig::m_eventsOn = false; // UDP events
 	bool AppConfig::m_serverOn = false;
@@ -459,25 +460,39 @@ namespace simplearchive {
 		std::string externalExifToolEnabledStr;
 		emptyString = "False";
 		setExternalExifTool(ENABLED_LABEL, externalExifToolEnabledStr, emptyString);
-		AppConfig::m_externalExifToolEnabled = (STRICMP(externalExifToolEnabledStr.c_str(), "false") == 0);
+		AppConfig::m_externalExifToolEnabled = (STRICMP(externalExifToolEnabledStr.c_str(), "true") == 0);
 		AppConfig::m_ExternalExifTool = "None";
 		setExternalExifTool(EXIF_TOOL_LABEL, AppConfig::m_ExternalExifTool, AppConfig::m_ExternalExifTool);
 		AppConfig::m_ExternalCommandLine = "None";
 		setExternalExifTool(EXIF_COMMANDLINE_LABEL, AppConfig::m_ExternalCommandLine, AppConfig::m_ExternalCommandLine);
 		setExternalExifTool(EXIF_COMMANDLINE_LABEL, AppConfig::m_ExifFileDelim, AppConfig::m_ExternalCommandLine);
-	// Master
-		std::string backup1Enabled = "false";
-		setMaster(BACKUP_ONE_ENABLED_LABEL, backup1Enabled, backup1Enabled);
-		AppConfig::m_backup1Enabled = (STRICMP(backup1Enabled.c_str(), "false") == 0);
+	// Master backup
+		std::string masterBackup1Enabled = "false";
+		setMaster(BACKUP_ONE_ENABLED_LABEL, masterBackup1Enabled, masterBackup1Enabled);
+		AppConfig::m_masterBackup1Enabled = (STRICMP(masterBackup1Enabled.c_str(), "true") == 0);
 		
-		std::string backup2Enabled = "false";
-		setMaster(BACKUP_ONE_ENABLED_LABEL, backup2Enabled, backup2Enabled);
-		AppConfig::m_backup2Enabled = (STRICMP(backup2Enabled.c_str(), "false") == 0);
+		std::string masterBackup2Enabled = "false";
+		setMaster(BACKUP_ONE_ENABLED_LABEL, masterBackup2Enabled, masterBackup2Enabled);
+		AppConfig::m_masterBackup2Enabled = (STRICMP(masterBackup2Enabled.c_str(), "true") == 0);
 
 		std::string masterBackupPath = homePath + BACKUPS_PATH + MASTER_BACKUP1_PATH;
-		setMaster(MASTER_PATH_LABEL, AppConfig::m_backup1, masterBackupPath);
+		setMaster(BACKUP_ONE_LABEL, AppConfig::m_backup1, masterBackupPath);
 		masterBackupPath = homePath + BACKUPS_PATH + MASTER_BACKUP2_PATH;
-		setMaster(MASTER_PATH_LABEL, AppConfig::m_backup2, masterBackupPath);
+		setMaster(BACKUP_TWO_LABEL, AppConfig::m_backup2, masterBackupPath);
+
+	// Derivative bACKUP
+		std::string backup1Enabled = "false";
+		setDerivative(BACKUP_ONE_ENABLED_LABEL, backup1Enabled, backup1Enabled);
+		AppConfig::m_derivativeBackup1Enabled = (STRICMP(backup1Enabled.c_str(), "true") == 0);
+
+		std::string backup2Enabled = "false";
+		setDerivative(BACKUP_ONE_ENABLED_LABEL, backup2Enabled, backup2Enabled);
+		AppConfig::m_derivativeBackup2Enabled = (STRICMP(backup2Enabled.c_str(), "true") == 0);
+
+		std::string derivativeBackupPath = homePath + BACKUPS_PATH + DERIVATIVE_BACKUP1_PATH;
+		setDerivative(BACKUP_ONE_LABEL, AppConfig::m_backup1, derivativeBackupPath);
+		derivativeBackupPath = homePath + BACKUPS_PATH + DERIVATIVE_BACKUP2_PATH;
+		setDerivative(BACKUP_TWO_LABEL, AppConfig::m_backup2, derivativeBackupPath);
 
 	// Network
 		std::string eventsOn = "false";
@@ -508,8 +523,8 @@ namespace simplearchive {
 		logger.log(LOG_OK, CLogger::Level::INFO, "        Lightroom:                  %s", (AppConfig::m_lightroom) ? "True" : "False");
 		logger.log(LOG_OK, CLogger::Level::INFO, "        External Exif tool enabled: %s", (AppConfig::m_externalExifToolEnabled) ? "True" : "False");
 		logger.log(LOG_OK, CLogger::Level::INFO, "        RemoteServerMode:           %s", (AppConfig::m_serverMode) ? "True" : "False");
-		logger.log(LOG_OK, CLogger::Level::INFO, "        Backup One Enabled:         %s", (AppConfig::m_backup1Enabled) ? "True" : "False");
-		logger.log(LOG_OK, CLogger::Level::INFO, "        Backup Two Enabled:         %s", (AppConfig::m_backup2Enabled) ? "True" : "False");
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Master Backup One Enabled:  %s", (AppConfig::m_masterBackup1Enabled) ? "True" : "False");
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Master Backup Two Enabled:  %s", (AppConfig::m_masterBackup2Enabled) ? "True" : "False");
 		logger.log(LOG_OK, CLogger::Level::INFO, "        File Cataloging Enabled:    %s", (AppConfig::m_file_cat_on) ? "True" : "False");
 		logger.log(LOG_OK, CLogger::Level::INFO, "        WWW Cataloging Enabled:     %s", (AppConfig::m_www_cat_on) ? "True" : "False");
 		logger.log(LOG_OK, CLogger::Level::INFO, "        Workspace Enabled:          %s", (AppConfig::m_workspaceEnabled) ? "True" : "False");
@@ -546,7 +561,7 @@ namespace simplearchive {
 			ArchivePath::setBackup1Path(AppConfig::m_backup1);
 		}
 		else {
-			AppConfig::m_backup1Enabled = false;
+			AppConfig::m_masterBackup1Enabled = false;
 		}
 
 		// Backup 2
@@ -554,7 +569,7 @@ namespace simplearchive {
 			ArchivePath::setBackup2Path(AppConfig::m_backup2);	
 		}
 		else {
-			AppConfig::m_backup2Enabled = true;
+			AppConfig::m_masterBackup2Enabled = true;
 		}
 		
 	}

@@ -116,8 +116,10 @@ namespace simplearchive {
 		static bool m_lightroom;				// Lightroom intergration On/Off
 		static bool m_serverMode;				// Server mode On/Off
 		static bool m_dry_run;					// Dry run		On/Off
-		static bool m_backup1Enabled;			// Backup 1 Enabled
-		static bool m_backup2Enabled;			// Backup 2 Enabled
+		static bool m_masterBackup1Enabled;	    // Backup 1 Enabled
+		static bool m_masterBackup2Enabled;	    // Backup 2 Enabled
+		static bool m_derivativeBackup1Enabled;	// Backup 1 Enabled
+		static bool m_derivativeBackup2Enabled;	// Backup 2 Enabled
 		static bool m_workspaceEnabled;			// Workspace Enabled
 		static bool m_externalExifToolEnabled;	// External Exif Tool Enabled
 		
@@ -281,8 +283,8 @@ namespace simplearchive {
 		bool isSilent() const;
 		bool isQuiet() const;
 		bool isVerbose() const;
-		bool isBackup1Enabled() { return m_backup1Enabled; };
-		bool isBackup2Enabled() { return m_backup2Enabled; };
+		bool isBackup1Enabled() { return m_masterBackup1Enabled; };
+		bool isBackup2Enabled() { return m_masterBackup2Enabled; };
 		bool isMasterCatalogueEnabled();
 		bool isMasterWWWCatalogueEnabled();
 
@@ -412,6 +414,10 @@ namespace simplearchive {
 
 		bool setMaster(const char* name, std::string &value, std::string &defaultValue) {
 			return setConfigBlock(name, value, defaultValue, MASTER_BLOCK);
+		}
+
+		bool setDerivative(const char* name, std::string& value, std::string& defaultValue) {
+			return setConfigBlock(name, value, defaultValue, DERIVATIVE_BLOCK);
 		}
 
 		bool setNetwork(const char* name, std::string &value, std::string &defaultValue) {
