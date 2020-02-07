@@ -288,12 +288,12 @@ MirrorDB::MirrorDB(const char *rootPath) {
 	if (ArchivePath::isMasterEnabled() == true) {
 		m_master = ArchivePath::getMaster().getCSVDatabasePath();
 	}
-	if (ArchivePath::isBackup1Enabled() == true) {
-		m_backup1 = ArchivePath::getBackup1().getCSVDatabasePath();
+	if (ArchivePath::isMasterBackup1Enabled() == true) {
+		m_backup1 = ArchivePath::getMasterBackup1().getCSVDatabasePath();
 		
 	}
-	if (ArchivePath::isBackup2Enabled() == true) {
-		m_backup2 = ArchivePath::getBackup2().getCSVDatabasePath();;
+	if (ArchivePath::isMasterBackup2Enabled() == true) {
+		m_backup2 = ArchivePath::getMasterBackup2().getCSVDatabasePath();;
 	}
 
 }
@@ -356,13 +356,13 @@ bool MirrorDB::process(std::string &relPath) {
 			return false;
 		}
 	}
-	if (ArchivePath::isBackup1Enabled() == true) {
+	if (ArchivePath::isMasterBackup1Enabled() == true) {
 		std::string fullPath = makeFolders(m_backup1, relPath);
 		if (copy(fromfull, fullPath) == false) {
 			return false;
 		}
 	}
-	if (ArchivePath::isBackup2Enabled() == true) {
+	if (ArchivePath::isMasterBackup2Enabled() == true) {
 		std::string fullPath = makeFolders(m_backup2, relPath);
 		if (copy(fromfull, fullPath) == false) {
 			return false;

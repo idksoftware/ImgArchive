@@ -179,9 +179,10 @@ namespace simplearchive {
 		static ExifDateTime m_toDate;
 		static bool m_isToDate;
 
-		static std::string m_backup1;
-		static std::string m_backup2;
-		
+		static std::string m_masterBackup1;
+		static std::string m_masterBackup2;
+		static std::string m_derivativeBackup1;
+		static std::string m_derivativeBackup2;
 		
 
 		static int m_tcpPortNum;

@@ -340,7 +340,8 @@ std::string ArchivePath::m_workspaceMetadataPath;
 
 RepositoryPath ArchivePath::m_master;
 RepositoryPath ArchivePath::m_derivative;
-RepositoryPath ArchivePath::m_backupPath[2];
+RepositoryPath ArchivePath::m_masterBackupPath[2];
+RepositoryPath ArchivePath::m_derivativeBackupPath[2];
 PrimaryIndexPath ArchivePath::m_primaryIndex;
 
 std::string ArchivePath::m_backup1;
@@ -348,26 +349,33 @@ std::string ArchivePath::m_backup2;
 
 
 
-std::string ArchivePath::getBackup1Path() {
-	return m_backupPath[0].getRepositoryPath();
+std::string ArchivePath::getMasterBackup1Path() {
+	return m_masterBackupPath[0].getRepositoryPath();
 }
-void ArchivePath::setBackup1Path(std::string &pathToBackup) {
-	m_backupPath[0].setRepositoryPath(pathToBackup);
+void ArchivePath::setMasterBackup1Path(std::string &pathToBackup) {
+	m_masterBackupPath[0].setRepositoryPath(pathToBackup);
 //	m_backupPath[0].setEnabled(true);
 }
-std::string ArchivePath::getBackup2Path() {
-	return m_backupPath[1].getRepositoryPath();
+std::string ArchivePath::getMasterBackup2Path() {
+	return m_masterBackupPath[1].getRepositoryPath();
 }
-void ArchivePath::setBackup2Path(std::string &pathToBackup) {
-	m_backupPath[1].setRepositoryPath(pathToBackup);
+void ArchivePath::setMasterBackup2Path(std::string &pathToBackup) {
+	m_masterBackupPath[1].setRepositoryPath(pathToBackup);
 //	m_backupPath[1].setEnabled(true);
 }
 
-bool ArchivePath::isBackup1Enabled() {
-	return m_backupPath[0].isEnabled();
+void ArchivePath::setMasterBackup1Enabled(bool b) {
+	m_masterBackupPath[0].setEnabled(b);
 }
-bool ArchivePath::isBackup2Enabled() {
-	return m_backupPath[1].isEnabled();
+void ArchivePath::setMasterBackup2Enabled(bool b) {
+	m_masterBackupPath[1].setEnabled(b);
+}
+
+bool ArchivePath::isMasterBackup1Enabled() {
+	return m_masterBackupPath[0].isEnabled();
+}
+bool ArchivePath::isMasterBackup2Enabled() {
+	return m_masterBackupPath[1].isEnabled();
 }
 
 bool ArchivePath::isMasterEnabled() {
@@ -378,12 +386,12 @@ bool ArchivePath::isDerivativeEnabled() {
 	return m_derivative.isEnabled();
 }
 
-RepositoryPath& ArchivePath::getBackup1() {
-	return m_backupPath[0];
+RepositoryPath& ArchivePath::getMasterBackup1() {
+	return m_masterBackupPath[0];
 }
 
-RepositoryPath& ArchivePath::getBackup2() {
-	return m_backupPath[1];
+RepositoryPath& ArchivePath::getMasterBackup2() {
+	return m_masterBackupPath[1];
 }
 
 RepositoryPath& ArchivePath::getMaster() {

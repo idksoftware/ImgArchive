@@ -610,12 +610,12 @@ MirrorIdxDB::MirrorIdxDB() {
 	if (ArchivePath::isMasterEnabled() == true) {
 		m_master = ArchivePath::getMaster().getIdxDBPath();
 	}
-	if (ArchivePath::isBackup1Enabled() == true) {
-		m_backup1 = ArchivePath::getBackup1().getIdxDBPath();
+	if (ArchivePath::isMasterBackup1Enabled() == true) {
+		m_backup1 = ArchivePath::getMasterBackup1().getIdxDBPath();
 
 	}
-	if (ArchivePath::isBackup2Enabled() == true) {
-		m_backup2 = ArchivePath::getBackup2().getIdxDBPath();;
+	if (ArchivePath::isMasterBackup2Enabled() == true) {
+		m_backup2 = ArchivePath::getMasterBackup2().getIdxDBPath();;
 	}
 	
 }
@@ -658,13 +658,13 @@ bool MirrorIdxDB::process(unsigned int idx) {
 	}
 	*/
 	
-	if (ArchivePath::isBackup1Enabled() == true) {
+	if (ArchivePath::isMasterBackup1Enabled() == true) {
 		std::string fullPath = makeFolders(m_backup1, idx);
 		if (SAUtils::copy(source.c_str(), fullPath.c_str()) == false) {
 			return false;
 		}
 	}
-	if (ArchivePath::isBackup2Enabled() == true) {
+	if (ArchivePath::isMasterBackup2Enabled() == true) {
 		std::string fullPath = makeFolders(m_backup2, idx);
 		if (SAUtils::copy(source.c_str(), fullPath.c_str()) == false) {
 			return false;

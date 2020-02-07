@@ -365,12 +365,12 @@ bool MirrorImageIndex::init(const char *rootPath) {
 	if (ArchivePath::isMasterEnabled() == true) {
 		m_Master = ArchivePath::getMaster().getImageIdxPath();
 	}
-	if (ArchivePath::isBackup1Enabled() == true) {
-		m_backup1 = ArchivePath::getBackup1().getImageIdxPath();
+	if (ArchivePath::isMasterBackup1Enabled() == true) {
+		m_backup1 = ArchivePath::getMasterBackup1().getImageIdxPath();
 
 	}
-	if (ArchivePath::isBackup2Enabled() == true) {
-		m_backup2 = ArchivePath::getBackup2().getImageIdxPath();;
+	if (ArchivePath::isMasterBackup2Enabled() == true) {
+		m_backup2 = ArchivePath::getMasterBackup2().getImageIdxPath();;
 	}
 	return true;
 }
@@ -420,13 +420,13 @@ bool MirrorImageIndex::process(unsigned long idx) {
 	}
 	}
 	*/
-	if (ArchivePath::isBackup1Enabled() == true) {
+	if (ArchivePath::isMasterBackup1Enabled() == true) {
 		std::string fullPath = makeFolders(m_backup1, idx);
 		if (SAUtils::copy(source.c_str(), fullPath.c_str()) == false) {
 			return false;
 		}
 	}
-	if (ArchivePath::isBackup2Enabled() == true) {
+	if (ArchivePath::isMasterBackup2Enabled() == true) {
 		std::string fullPath = makeFolders(m_backup2, idx);
 		if (SAUtils::copy(source.c_str(), fullPath.c_str()) == false) {
 			return false;

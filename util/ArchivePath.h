@@ -118,7 +118,8 @@ class ArchivePath {
 	static std::string m_backup2;
 	static RepositoryPath m_master;
 	static RepositoryPath m_derivative;
-	static RepositoryPath m_backupPath[2];
+	static RepositoryPath m_masterBackupPath[2];
+	static RepositoryPath m_derivativeBackupPath[2];
 	static PrimaryIndexPath m_primaryIndex;
 
 public:
@@ -154,19 +155,21 @@ public:
 	static void setMasterMetadataPath(std::string &MasterMetadataPath);
 	static std::string getIdxDBPath();
 	static void setIdxDBPath(std::string &idxDBPath);
-	static std::string getBackup1Path();
-	static void setBackup1Path(std::string &pathToBackup1);
-	static std::string getBackup2Path();
-	static void setBackup2Path(std::string &pathToBackup2);
+	static std::string getMasterBackup1Path();
+	static void setMasterBackup1Path(std::string &pathToBackup1);
+	static std::string getMasterBackup2Path();
+	static void setMasterBackup2Path(std::string &pathToBackup2);
+	static void setMasterBackup1Enabled(bool b);
+	static void setMasterBackup2Enabled(bool b);
 	static RepositoryPath& getMaster();
 	static RepositoryPath& getDerivative();
-	static RepositoryPath& getBackup1();
-	static RepositoryPath& getBackup2();
+	static RepositoryPath& getMasterBackup1();
+	static RepositoryPath& getMasterBackup2();
 	static PrimaryIndexPath& getPrimaryIndex();
 	static bool isMasterEnabled();
 	static bool isDerivativeEnabled();
-	static bool isBackup1Enabled();
-	static bool isBackup2Enabled();
+	static bool isMasterBackup1Enabled();
+	static bool isMasterBackup2Enabled();
 
 	static ArchivePath& getArchivePath();
 };

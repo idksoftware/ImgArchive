@@ -115,8 +115,10 @@ namespace simplearchive {
 	std::string AppConfig::m_backupDestinationPath;
 	
 	std::string AppConfig::m_DatabasePath;
-	std::string AppConfig::m_backup1;
-	std::string AppConfig::m_backup2;
+	std::string AppConfig::m_masterBackup1;
+	std::string AppConfig::m_masterBackup2;
+	std::string AppConfig::m_derivativeBackup1;
+	std::string AppConfig::m_derivativeBackup2;
 
 	std::string AppConfig::m_masterCataloguePath;
 	std::string AppConfig::m_masterWWWCataloguePath;
@@ -476,9 +478,9 @@ namespace simplearchive {
 		AppConfig::m_masterBackup2Enabled = (STRICMP(masterBackup2Enabled.c_str(), "true") == 0);
 
 		std::string masterBackupPath = homePath + BACKUPS_PATH + MASTER_BACKUP1_PATH;
-		setMaster(BACKUP_ONE_LABEL, AppConfig::m_backup1, masterBackupPath);
+		setMaster(BACKUP_ONE_LABEL, AppConfig::m_masterBackup1, masterBackupPath);
 		masterBackupPath = homePath + BACKUPS_PATH + MASTER_BACKUP2_PATH;
-		setMaster(BACKUP_TWO_LABEL, AppConfig::m_backup2, masterBackupPath);
+		setMaster(BACKUP_TWO_LABEL, AppConfig::m_masterBackup2, masterBackupPath);
 
 	// Derivative bACKUP
 		std::string backup1Enabled = "false";
@@ -490,9 +492,9 @@ namespace simplearchive {
 		AppConfig::m_derivativeBackup2Enabled = (STRICMP(backup2Enabled.c_str(), "true") == 0);
 
 		std::string derivativeBackupPath = homePath + BACKUPS_PATH + DERIVATIVE_BACKUP1_PATH;
-		setDerivative(BACKUP_ONE_LABEL, AppConfig::m_backup1, derivativeBackupPath);
+		setDerivative(BACKUP_ONE_LABEL, AppConfig::m_derivativeBackup1, derivativeBackupPath);
 		derivativeBackupPath = homePath + BACKUPS_PATH + DERIVATIVE_BACKUP2_PATH;
-		setDerivative(BACKUP_TWO_LABEL, AppConfig::m_backup2, derivativeBackupPath);
+		setDerivative(BACKUP_TWO_LABEL, AppConfig::m_derivativeBackup2, derivativeBackupPath);
 
 	// Network
 		std::string eventsOn = "false";
@@ -547,8 +549,8 @@ namespace simplearchive {
 		logger.log(LOG_OK, CLogger::Level::INFO, "        SQL Database path:         \"%s\"", AppConfig::m_DatabasePath.c_str());
 
 		logger.log(LOG_OK, CLogger::Level::INFO, "    Master Archive");
-		logger.log(LOG_OK, CLogger::Level::INFO, "        Backup One path:           \"%s\"", AppConfig::m_backup1.c_str());
-		logger.log(LOG_OK, CLogger::Level::INFO, "        Backup Two path:           \"%s\"", AppConfig::m_backup2.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Backup One path:           \"%s\"", AppConfig::m_masterBackup1.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Backup Two path:           \"%s\"", AppConfig::m_masterBackup2.c_str());
 		logger.log(LOG_OK, CLogger::Level::INFO, "    External Exif Tool");
 		
 		logger.log(LOG_OK, CLogger::Level::INFO, "        Exif map path:             \"%s\"", AppConfig::m_ExifMapPath.c_str());
@@ -557,21 +559,21 @@ namespace simplearchive {
 		logger.log(LOG_OK, CLogger::Level::INFO, "        Exif command line:         \"%s\"", AppConfig::m_ExternalCommandLine.c_str());
 		
 		// Backup 1
-		if (AppConfig::m_backup1.empty() == false) {
-			ArchivePath::setBackup1Path(AppConfig::m_backup1);
+		if (AppConfig::m_masterBackup1.empty() == false) {
+			ArchivePath::setMasterBackup1Path(AppConfig::m_masterBackup1);
 		}
 		else {
 			AppConfig::m_masterBackup1Enabled = false;
 		}
-
+		ArchivePath::setMasterBackup1Enabled(AppConfig::m_masterBackup1Enabled);
 		// Backup 2
-		if (AppConfig::m_backup2.empty() == false) {
-			ArchivePath::setBackup2Path(AppConfig::m_backup2);	
+		if (AppConfig::m_masterBackup2.empty() == false) {
+			ArchivePath::setMasterBackup2Path(AppConfig::m_masterBackup2);
 		}
 		else {
 			AppConfig::m_masterBackup2Enabled = true;
 		}
-		
+		ArchivePath::setMasterBackup2Enabled(AppConfig::m_masterBackup2Enabled);
 	}
 
 	void SharedConfig::setWorkspacePath(const char *path) {
@@ -615,11 +617,11 @@ namespace simplearchive {
 		return m_www_cat_on;
 	}
 	const char *AppConfig::getBackup1() {
-		return m_backup1.c_str();
+		return m_masterBackup1.c_str();
 	}
 
 	const char *AppConfig::getBackup2() {
-		return m_backup2.c_str();
+		return m_masterBackup2.c_str();
 	}
 
 	

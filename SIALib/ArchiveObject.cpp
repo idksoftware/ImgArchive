@@ -203,13 +203,13 @@ namespace simplearchive {
 
 		m_masterIndexTable->setPath(repositoryPath.getCSVDatabasePath().c_str());
 
-		if (ArchivePath::isBackup1Enabled() == true) {
-			logger.log(LOG_OK, CLogger::Level::SUMMARY, "Backup 1 enabled, using folder: \"%s\"", ArchivePath::getBackup1Path().c_str());
-			if (SAUtils::DirExists(ArchivePath::getBackup1Path().c_str()) == false) {
-				logger.log(LOG_OK, CLogger::Level::FATAL, "Backup 1 folder: \"%s\" not accessable?", ArchivePath::getBackup1Path().c_str());
+		if (ArchivePath::isMasterBackup1Enabled() == true) {
+			logger.log(LOG_OK, CLogger::Level::SUMMARY, "Backup 1 enabled, using folder: \"%s\"", ArchivePath::getMasterBackup1Path().c_str());
+			if (SAUtils::DirExists(ArchivePath::getMasterBackup1Path().c_str()) == false) {
+				logger.log(LOG_OK, CLogger::Level::FATAL, "Backup 1 folder: \"%s\" not accessable?", ArchivePath::getMasterBackup1Path().c_str());
 				return false;
 			}
-			RepositoryPath& backupPath1 = ArchivePath::getBackup1();
+			RepositoryPath& backupPath1 = ArchivePath::getMasterBackup1();
 			if (backupPath1.settup() == false) {
 				return false;
 			}
@@ -218,13 +218,13 @@ namespace simplearchive {
 		else {
 			logger.log(LOG_OK, CLogger::Level::INFO, "Backup 1 not enabled");
 		}
-		if (ArchivePath::isBackup2Enabled() == true) {
-			logger.log(LOG_OK, CLogger::Level::INFO, "Backup 2 enabled, using folder: \"%s\"", ArchivePath::getBackup2Path().c_str());
-			if (SAUtils::DirExists(ArchivePath::getBackup2Path().c_str()) == false) {
-				logger.log(LOG_OK, CLogger::Level::FATAL, "Backup 2 folder: \"%s\" not accessable?", ArchivePath::getBackup2Path().c_str());
+		if (ArchivePath::isMasterBackup2Enabled() == true) {
+			logger.log(LOG_OK, CLogger::Level::SUMMARY, "Backup 2 enabled, using folder: \"%s\"", ArchivePath::getMasterBackup2Path().c_str());
+			if (SAUtils::DirExists(ArchivePath::getMasterBackup2Path().c_str()) == false) {
+				logger.log(LOG_OK, CLogger::Level::FATAL, "Backup 2 folder: \"%s\" not accessable?", ArchivePath::getMasterBackup2Path().c_str());
 				return false;
 			}
-			RepositoryPath& backupPath2 = ArchivePath::getBackup2();
+			RepositoryPath& backupPath2 = ArchivePath::getMasterBackup2();
 			if (backupPath2.settup() == false) {
 				return false;
 			}
@@ -239,12 +239,12 @@ namespace simplearchive {
 	bool MasterRepositoryObject::settupRelative(std::string &yyyymmddStr) {
 		RepositoryObject::settupRelative(yyyymmddStr);
 		
-		if (ArchivePath::isBackup1Enabled() == true) {
+		if (ArchivePath::isMasterBackup1Enabled() == true) {
 			if (m_backup[0].settupRelative(yyyymmddStr) == false) {
 				return false;
 			}
 		}
-		if (ArchivePath::isBackup2Enabled() == true) {
+		if (ArchivePath::isMasterBackup2Enabled() == true) {
 			if (m_backup[1].settupRelative(yyyymmddStr) == false) {
 				return false;
 			}
@@ -692,7 +692,7 @@ namespace simplearchive {
 		primaryIndexPath.settup();
 		try {
 			if (!getPrimaryIndexObject().init(primaryIndexPath)) {
-				logger.log(LOG_OK, CLogger::Level::FATAL, "Failed to initalise the primary index", ArchivePath::getBackup2Path().c_str());
+				logger.log(LOG_OK, CLogger::Level::FATAL, "Failed to initalise the primary index", ArchivePath::getMasterBackup2Path().c_str());
 				return false;
 			}
 			if (SAUtils::DirExists(ArchivePath::getPathToWorkspace().c_str()) == false) {
@@ -1089,13 +1089,13 @@ namespace simplearchive {
 				return false;
 			}
 		}
-		if (ArchivePath::isBackup1Enabled() == true) {
+		if (ArchivePath::isMasterBackup1Enabled() == true) {
 			std::string path = m_master.getBackup1Object().getRepositoryPath().getMetadataPath();
 			if (writeMetadata(path, imageName, metadataObject) == false) {
 				return false;
 			}
 		}
-		if (ArchivePath::isBackup2Enabled() == true) {
+		if (ArchivePath::isMasterBackup2Enabled() == true) {
 			std::string path = m_master.getBackup2Object().getRepositoryPath().getMetadataPath();
 			if (writeMetadata(path, imageName, metadataObject) == false) {
 				return false;

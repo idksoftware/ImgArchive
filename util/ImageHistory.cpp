@@ -152,8 +152,8 @@ bool ImageHistory::init() {
 	m_index = ArchivePath::getPrimaryIndex().getHistoryPath();
 	m_index += '/'; m_index += logName.getFilename();
 
-	if (ArchivePath::isBackup1Enabled() == true) {
-		m_backup1 = ArchivePath::getBackup1().getImageHistory();
+	if (ArchivePath::isMasterBackup1Enabled() == true) {
+		m_backup1 = ArchivePath::getMasterBackup1().getImageHistory();
 		if (SAUtils::DirExists(m_backup1.c_str()) == false) {
 			if (SAUtils::mkDir(m_backup1.c_str()) == false) {
 				return false;
@@ -161,8 +161,8 @@ bool ImageHistory::init() {
 		}
 		
 	}
-	if (ArchivePath::isBackup2Enabled() == true) {
-		m_backup2 = ArchivePath::getBackup2().getImageHistory();
+	if (ArchivePath::isMasterBackup2Enabled() == true) {
+		m_backup2 = ArchivePath::getMasterBackup2().getImageHistory();
 		if (SAUtils::DirExists(m_backup2.c_str()) == false) {
 			if (SAUtils::mkDir(m_backup2.c_str()) == false) {
 				return false;
