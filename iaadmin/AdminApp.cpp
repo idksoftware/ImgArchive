@@ -112,6 +112,7 @@ namespace simplearchive {
 			
 			return false;
 		}
+		return true;
 	}
 
 	bool AdminApp::Configure(const char* configOptionBlock, const char* configOption, const char* configValue)

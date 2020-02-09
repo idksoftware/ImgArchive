@@ -237,7 +237,6 @@ bool ImageExtentions::isAllowed(const char* ext) {
 	if (item == nullptr) {
 		return false;
 	}
-	ImageType& type = item->getType();
 	return true;
 	
 }
