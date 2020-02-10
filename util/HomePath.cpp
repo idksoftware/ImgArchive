@@ -197,7 +197,12 @@ HomePathType MasterPath::type()
 }
 
 bool MasterPath::setLocalUserDefaultHome() {
+
+#ifdef WIN32
 	std::string myselfHomeDefaultPath = SAUtils::GetPOSIXEnv("LOCALAPPDATA");
+#else
+	std::string myselfHomeDefaultPath = SAUtils::GetPOSIXEnv("HOME");
+#endif
 	myselfHomeDefaultPath += DEFAULT_LOCAL_MASTER_PATH;
 	m_homePath = myselfHomeDefaultPath;
 	m_found = true;
@@ -242,7 +247,12 @@ bool DerivativePath::init()
 	// All Users
 	std::string allusersHomeDefaultPath = SAUtils::GetPOSIXEnv("ProgramData");
 	allusersHomeDefaultPath += DEFAULT_ALLUSER_DERIVATIVE_PATH;
+#ifdef WIN32
 	std::string myselfHomeDefaultPath = SAUtils::GetPOSIXEnv("LOCALAPPDATA");
+#else
+	std::string myselfHomeDefaultPath = SAUtils::GetPOSIXEnv("HOME");
+#endif
+
 	myselfHomeDefaultPath += DEFAULT_LOCAL_DERIVATIVE_PATH;
 
 	// Looking the HKEY_LOCAL_MACHINE first
@@ -304,7 +314,11 @@ HomePathType DerivativePath::type()
 }
 
 bool DerivativePath::setLocalUserDefaultHome() {
+#ifdef WIN32
 	std::string myselfHomeDefaultPath = SAUtils::GetPOSIXEnv("LOCALAPPDATA");
+#else
+	std::string myselfHomeDefaultPath = SAUtils::GetPOSIXEnv("HOME");
+#endif
 	myselfHomeDefaultPath += DEFAULT_LOCAL_DERIVATIVE_PATH;
 	m_homePath = myselfHomeDefaultPath;
 	m_found = true;
@@ -483,7 +497,7 @@ bool PicturePath::setLocalUserDefaultHome() {
 	// Set Windows Defaults (they can be overridden later)
 	std::string myselfHomeEnvironmentPath = SAUtils::GetEnv(IMGA_PICTURE, false);
 	std::string myselfHomeDefaultPath = tempHomeDrive + tempHomePath + DEFAULT_LOCAL_PICTURE_PATH;
-	myselfHomeDefaultPath += DEFAULT_ALLUSER_PICTURE_PATH;
+
 	if (myselfHomeEnvironmentPath.empty()) {
 		m_homePath = myselfHomeDefaultPath;
 	}
@@ -610,7 +624,12 @@ HomePathType WWWImagePath::m_type = HomePathType::Unknown;
 
 bool WWWImagePath::setLocalUserDefaultHome() {
 	std::string myselfHomeEnvironmentPath = SAUtils::GetEnv(IMGA_WWWIMAGE, false);
-	std::string myselfHomeDefaultPath = SAUtils::GetPOSIXEnv("LOCALAPPDATA") + DEFAULT_LOCAL_WWWIMAGE_PATH;
+
+#ifdef WIN32
+	std::string myselfHomeDefaultPath = SAUtils::GetPOSIXEnv("LOCALAPPDATA") + DEFAULT_LOCAL_WWWIMAGE_PATH;;
+#else
+	std::string myselfHomeDefaultPath = SAUtils::GetPOSIXEnv("HOME") + DEFAULT_LOCAL_WWWIMAGE_PATH;;
+#endif
 	// Set Windows Defaults (they can be overridden later)
 	if (myselfHomeEnvironmentPath.empty()) {
 		m_homePath = myselfHomeDefaultPath;
@@ -630,6 +649,11 @@ bool WWWImagePath::setAllUserDefaultHome() {
 
 	std::string allUsersHomeEnvironmentPath = SAUtils::GetEnv(IMGA_WWWIMAGE, true);
 	std::string allusersHomeDefaultPath = SAUtils::GetPOSIXEnv("LOCALAPPDATA") + DEFAULT_ALLUSER_WWWIMAGE_PATH;
+#ifdef WIN32
+	std::string myselfHomeDefaultPath = SAUtils::GetPOSIXEnv("LOCALAPPDATA") + DEFAULT_LOCAL_WWWIMAGE_PATH;
+#else
+	std::string myselfHomeDefaultPath = SAUtils::GetPOSIXEnv("HOME") + DEFAULT_LOCAL_WWWIMAGE_PATH;
+#endif
 	if (allUsersHomeEnvironmentPath.empty()) {
 		m_homePath = allusersHomeDefaultPath;
 	}
@@ -654,8 +678,12 @@ bool WWWImagePath::init()
 	std::string myselfHomeEnvironmentPath = SAUtils::GetEnv(IMGA_WWWIMAGE, false);
 
 	std::string allusersHomeDefaultPath = SAUtils::GetPOSIXEnv("LOCALAPPDATA") + DEFAULT_ALLUSER_WWWIMAGE_PATH;
+
+#ifdef WIN32
 	std::string myselfHomeDefaultPath = SAUtils::GetPOSIXEnv("LOCALAPPDATA") + DEFAULT_LOCAL_WWWIMAGE_PATH;
-	
+#else
+	std::string myselfHomeDefaultPath = SAUtils::GetPOSIXEnv("HOME") + DEFAULT_LOCAL_WWWIMAGE_PATH;
+#endif
 	// Looking the HKEY_LOCAL_MACHINE first
 	if (allUsersHomeEnvironmentPath.empty() == false) {
 		m_type = HomePathType::SystemEnv;	// System Environment set

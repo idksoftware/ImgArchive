@@ -42,6 +42,11 @@ namespace simplearchive {
 
 
 		defineOption("init", "Create ImgArchive's working enviroment", ArgvParser::MasterOption);
+		defineCommandSyntax("init", "isadmin init [-q | --quiet] | [--user <all|self>]\n"
+			"| [--set-home-env <yes | no>] | [ --archive-path <path>]\n"
+			"| [ --workspace-path <path>] | [ --master-path <path>]\n"
+			"| [ --derivative-path <path>] | [ --catalogue-path <path>]\n"
+			"| [ --picture-path <path>] | [ --www-image-path <path>]");
 		
 		defineOption("config", "Configure ImgArchive's parameters", ArgvParser::MasterOption);
 		defineCommandSyntax("config", "isadmin config [-q | --quiet] | [ --general <Option=Value>]\n"
@@ -73,6 +78,7 @@ namespace simplearchive {
 		defineOption("www-image-path", "location of the www image folder.", ArgvParser::OptionRequiresValue);
 		
 		defineOption("set-home-env", "Set the Home environment variable.", ArgvParser::OptionRequiresValue);
+		defineOption("user", "Sets user to local or all users.", ArgvParser::OptionRequiresValue);
 		// Configure Command
 		defineOption("general", "General options that may be used generally in commands", ArgvParser::OptionRequiresValue);
 		defineOptionAlternative("general", "G");
@@ -176,6 +182,12 @@ namespace simplearchive {
 
 		defineCommandOption("init", "archive-path");
 		defineCommandOption("init", "workspace-path");
+		defineCommandOption("init", "master-path");
+		defineCommandOption("init", "derivative-path");
+		defineCommandOption("init", "picture-path");
+		defineCommandOption("init", "www-image-path");
+		defineCommandOption("init", "set-home-env");
+		defineCommandOption("init", "user");
 
 		defineCommandOption("show", "settup");
 		//defineCommandOption("show", "checkedOut");
