@@ -12,6 +12,9 @@ enum class Option {
 	FILE_CAT,
 	WWW_CAT,
 	EVENTS_ENABLED,
+	COMMANDS_ENABLED,
+	EVENTS_PORT,
+	EVENTS_ADDRESS,
 	COMMANDS_PORT,
 	BACKUP_ONE,
 	BACKUP_TWO,
@@ -43,7 +46,6 @@ enum class Option {
 	CATALOG_PATH,
 	WORKSPACE_PATH,
 	DRY_RUN,
-	
 	UNKNOWN
 };
 
@@ -268,6 +270,71 @@ bool SetConfig::parseExifToolOptions(const char* ov)
 	return true;
 }
 
+#include <iostream>
+#include <vector>
+#include <string>
+using namespace std;
+
+// check if given string is a numeric string or not
+bool isNumber(const string& str)
+{
+	// std::find_first_not_of searches the string for the first character 
+	// that does not match any of the characters specified in its arguments
+	return !str.empty() &&
+		(str.find_first_not_of("[0123456789]") == std::string::npos);
+}
+
+// Function to split string str using given delimiter
+vector<string> split(const string& str, char delim)
+{
+	auto i = 0;
+	vector<string> list;
+
+	auto pos = str.find(delim);
+
+	while (pos != string::npos)
+	{
+		list.push_back(str.substr(i, pos - i));
+		i = ++pos;
+		pos = str.find(delim, pos);
+	}
+
+	list.push_back(str.substr(i, str.length()));
+
+	return list;
+}
+
+// Function to validate an IP address
+bool validateIP(string ip)
+{
+	// split the string into tokens
+	vector<string> list = split(ip, '.');
+
+	// if token size is not equal to four
+	if (list.size() != 4)
+		return false;
+
+	// validate each token
+	for (string str : list)
+	{
+		// verify that string is number or not and the numbers 
+		// are in the valid range
+		if (!isNumber(str) || stoi(str) > 255 || stoi(str) < 0)
+			return false;
+	}
+
+	return true;
+}
+
+bool SetConfig::checkIPAddress(const char* ip) {
+
+	if (validateIP(ip) == false) {
+		return false;
+	}
+	return true;
+}
+
+
 bool SetConfig::checkPath(const char *path) {
 	
 	if (SAUtils::FileExists(path) == false) {
@@ -292,6 +359,24 @@ bool SetConfig::checkBool() {
 	}
 	return ret;
 }
+
+bool SetConfig::checkNumber() {
+	bool ret = SAUtils::isNumber(m_value);
+	if (!ret) {
+		m_error = Error::Invalid_argument;
+	}
+	return ret;
+}
+
+bool SetConfig::checkIPAddress()
+{
+	bool ret = validateIP(m_value);
+	if (ret) {
+		m_error = Error::Invalid_argument;
+	}
+	return ret;
+}
+
 
 bool SetConfig::parseMasterOptions(const char* optionString)
 {
@@ -370,15 +455,21 @@ bool SetConfig::parseNetworkOptions(const char* ov)
 	m_optionBlock = NETWORK_BLOCK;
 	Option ret = processNetworkOptions(m_option);
 	switch (ret) {
-	case Option::SERVER_MODE:
-		m_option = SERVER_MODE_LABEL;
-		return (SAUtils::isTrueFalse(m_value) != BoolOption::Invalid);
-	case Option::EVENTS_ENABLED:
-		m_option = EVENTS_ENABLED_LABEL;
-		return (SAUtils::isTrueFalse(m_value) != BoolOption::Invalid);
+	case Option::COMMANDS_ENABLED:
+		m_option = COMMANDS_ENABLED_LABEL;
+		return checkBool();
 	case Option::COMMANDS_PORT:
 		m_option = COMMANDS_PORT_LABEL;
-		return (SAUtils::isNumber(m_value));
+		return checkNumber();
+	case Option::EVENTS_ENABLED:
+		m_option = EVENTS_ENABLED_LABEL;
+		return checkBool();
+	case Option::EVENTS_PORT:
+		m_option = EVENTS_PORT_LABEL;
+		return checkNumber();
+	case Option::EVENTS_ADDRESS:
+		m_option = EVENTS_ADDRESS_LABEL;
+		return checkIPAddress();
 	default:
 		return false;
 	}
@@ -550,11 +641,17 @@ Option SetConfig::processNetworkOptions(std::string& optionString)
 	if (iequals(optionString, COMMANDS_PORT_LABEL)) {
 	return Option::COMMANDS_PORT;
 	}
-	else if (iequals(optionString, SERVER_MODE_LABEL)) {
-		return Option::SERVER_MODE;
+	else if (iequals(optionString, COMMANDS_ENABLED_LABEL)) {
+		return Option::COMMANDS_ENABLED;
 	}
 	else if (iequals(optionString, EVENTS_ENABLED_LABEL)) {
 		return Option::EVENTS_ENABLED;
+	}
+	else if (iequals(optionString, EVENTS_PORT_LABEL)) {
+		return Option::EVENTS_PORT;
+	}
+	else if (iequals(optionString, EVENTS_ADDRESS_LABEL)) {
+		return Option::EVENTS_ADDRESS;
 	}
 	return Option::UNKNOWN;
 }

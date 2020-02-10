@@ -337,20 +337,7 @@ namespace simplearchive {
 		// Home Path (The path to this file will be based on the home path)
 		std::string homePath = home;
 		setHomePath(home);
-		/*
-		// Backup 1
-		if (getRoot().value("BackupOne", AppConfig::m_backup1) == true) {
-			ArchivePath::setBackup1Path(AppConfig::m_backup1);
-			AppConfig::m_backup1Enabled = true;
-		}
-		// Backup 2
-		if (getRoot().value("BackupTwo", AppConfig::m_backup2) == true) {
-			ArchivePath::setBackup2Path(AppConfig::m_backup2);
-			AppConfig::m_backup2Enabled = true;
-		}
-		*/
-		// This prints all the contents of the config file
-		// printAll();
+		
 	// General	
 		std::string quiet = "false";
 		setGeneral(QUIET_LABEL, quiet, quiet);
@@ -381,7 +368,7 @@ namespace simplearchive {
 		AppConfig::m_lightroom = (STRICMP(lightroom.c_str(), "true") == 0);
 
 		std::string serverMode = "false";
-		setGeneral(SERVER_MODE_LABEL, serverMode, serverMode);
+		setGeneral(REMOTE_SERVER_MODE_LABEL, serverMode, serverMode);
 		AppConfig::m_serverMode = (STRICMP(serverMode.c_str(), "true") == 0);
 		
 		std::string file_cat_on = "false";
@@ -407,7 +394,6 @@ namespace simplearchive {
 		}
 		setSystemFolders(TEMP_PATH_LABEL, AppConfig::m_tempPath, defauleValue);
 
-//#define SOURCE_PATH_LABEL         		"SourcePath"
 		defauleValue = homePath + SYSTEM_PATH;
 		setSystemFolders(SYSTEM_PATH_LABEL, AppConfig::m_systemPath, defauleValue);
 
@@ -432,25 +418,15 @@ namespace simplearchive {
 		defauleValue = homePath + SQLITEDB_PATH;
 		setSystemFolders(SQL_DATABASE_PATH_LABEL, AppConfig::m_DatabasePath, defauleValue);
 
-//#define HOME_PATH_LABEL					"HomePath"
 		defauleValue = homePath + HISTORY_PATH;
 		setSystemFolders(HISTORY_PATH_LABEL, AppConfig::m_historyPath, defauleValue);
-		/*
-		if (m_historyPath.empty() == true) {
-		if (getRoot().value("HistoryPath", m_logPath) == false) {
-		std::string temp = SAUtils::GetEnv("HOMEPATH");
-		m_historyPath = m_homePath + HISTORY_PATH;
-		ArchivePath::setMainHistory(m_historyPath);
-		}
-		}
-		*/
+		
 		defauleValue = homePath + TEMPLATE_PATH;
 		setSystemFolders(TEMPLATE_PATH_LABEL, AppConfig::m_templatePath, defauleValue);
 
 		defauleValue = homePath + TOOLS_PATH;
 		setSystemFolders(CATALOG_PATH_LABEL, AppConfig::m_catalogPath, defauleValue);
 		
-
 	// External Exif Tool
 
 		defauleValue = homePath + CONFIG_PATH;
@@ -501,8 +477,11 @@ namespace simplearchive {
 		setNetwork(EVENTS_ENABLED_LABEL, eventsOn, eventsOn);
 		AppConfig::m_eventsOn = (STRICMP(eventsOn.c_str(), "true") == 0);
 
-		std::string m_udpPortNum = "127.0.0.1";
+		std::string m_udpPortNum = "1234";
 		setNetwork(COMMANDS_PORT_LABEL, m_udpPortNum, m_udpPortNum);
+
+
+
 		
 		ArchivePath::setPathToWorkspace(AppConfig::m_workspacePath);
 		ArchivePath::setDerivativePath(AppConfig::m_derivativePath);

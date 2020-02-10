@@ -541,84 +541,105 @@ std::string ArgvParser::topicUsageDescription(unsigned int topic, unsigned int _
 	}
 	return(usage);
 }
-/*
-string ArgvParser::usageDescription(unsigned int _width) const
+
+std::string ArgvParser::usageDescription(unsigned int _width) const
 {
-	string usage; // the usage description text
+	std::string usage; // the usage description text
 
-	if (intro_description.length())
-		usage += formatString(intro_description, _width) + "\n\n";
+	/*
+	if (intro_description.length()) {
+		usage += formatString(intro_description, _width) + "\n";
+	}
+	if (max_key <= 1) {// if we have some options
 
-	if (max_key>1) // if we have some options
-		usage += formatString("Available options\n-----------------", _width) + "\n\n";
+		usage += formatString("No options available\n", _width) + "\n\n";
+		return(usage);
+	}
+	*/
 
-	// loop over all option attribute entries (which equals looping over all
-	// different options (not option names)
-	for (Key2AttributeMap::const_iterator it = option2attribute.begin();
-		it != option2attribute.end();
-		++it)
+	usage += '\n';
+
+	usage += usageDescriptionHeader(_width);
+
+	usage += formatString(command_header, _width) + "\n";
+	usage += '\n';
+	usage += AVAILABLE_COMMANDS;
+	usage += ":\n\n";
+
+	for (auto it = option2attribute.begin(); it != option2attribute.end(); ++it)
 	{
-		string os; // temp string for the option
-
-		// get the list of alternative names for this option
-		list<string> alternatives = getAllOptionAlternatives(it->first);
-
-		unsigned int count = 0;
-		for (list<string>::const_iterator alt = alternatives.begin();
+		std::string _os; // temp string for the option
+		if (option2attribute.find(it->first)->second != MasterOption) {
+			continue;
+		}
+		std::string _longOpt;
+		std::string _shortOpt;
+		std::list<std::string> alternatives = getAllOptionAlternatives(it->first);
+		for (auto alt = alternatives.begin();
 			alt != alternatives.end();
 			++alt)
 		{
-			++count;
-			// additional '-' for long options
-			if (alt->length() > 1)
-				os += "-";
+			if (option2attribute.find(it->first)->second == MasterOption) {
+				int option = option2attribute.find(it->first)->second;
+				_os.clear();
+				if (alt->length() > 1) {
+					_longOpt += *alt;
+				}
+				else {
+					_shortOpt += *alt;
+				}
 
-			os += "-" + *alt;
 
-			// note if the option requires a value
-			if (option2attribute.find(it->first)->second & OptionRequiresValue)
-				os += " <value>";
-
-			// alternatives to come?
-			if (count < alternatives.size())
-				os += ", "; // add separator
+			}
 		}
 
-		// note if the option is required
-		if (option2attribute.find(it->first)->second & OptionRequired)
-			os += " [required]";
-
-		usage += formatString(os, _width) + "\n";
-
+		if (!_longOpt.empty()) {
+			_os += ' ';
+			_os += _longOpt;
+		}
+		if (!_shortOpt.empty()) {
+			_os += " (";
+			_os += _shortOpt;
+			_os += ')';
+		}
+		//_os += " - ";
+		usage += formatLine(_os, _width, 0, 20);
+		_os.clear();
+		_longOpt.clear();
+		_shortOpt.clear();
 		if (option2descr.find(it->first) != option2descr.end())
-			usage += formatString(option2descr.find(it->first)->second, _width, 4);
+			//usage += formatString(option2descr.find(it->first)->second, _width, _os.length() + 2) + "\n";
+			usage += formatString(option2descr.find(it->first)->second, _width) + "\n";
 		else
-			usage += formatString("(no description)", _width, 4);
+			usage += formatString("(no description)", _width, 4) + "\n";
 
-		// finally a little gap
-		usage += "\n\n";
 	}
+
 
 	if (!errorcode2descr.size()) // if have no errorcodes
 		return(usage);
 
-	usage += formatString("Return codes\n-----------------", _width) + "\n";
+	usage += "\n";
+	usage += formatString("Return codes:\n", _width) + "\n";
 
 	//   map<int, string>::const_iterator eit;
-	for (std::map<int, std::string>::const_iterator alt = errorcode2descr.begin();
+	for (auto alt = errorcode2descr.begin();
 		alt != errorcode2descr.end();
 		++alt)
 	{
-		ostringstream code;
+		std::ostringstream code;
 		code << alt->first;
-		string label = formatString(code.str(), _width, 4);
-		string descr = formatString(alt->second, _width, 10);
+		std::string label = formatString(code.str(), _width, 4);
+		std::string descr = formatString(alt->second, _width, 10);
 		usage += label + descr.substr(label.length()) + "\n";
 	}
-
+	usage += '\n';
+	usage += "Image Archive is a tool for image archiving and version control system.\n";
+	usage += "For additional information, see \"http://www.idk-software.com/\"";
+	usage += '\n';
 	return(usage);
 }
-*/
+
 
 void ArgvParser::makeCommandline(int _argc, char ** _argv)
 {

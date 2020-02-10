@@ -233,7 +233,7 @@ public:
      * description string is formated to fit into a terminal of width _width.*/
 	virtual std::string commandUsage(unsigned int _width = 80) const = 0;
 
-	virtual std::string usageDescription(unsigned int _width = 80) const = 0;
+	virtual std::string usageDescription(unsigned int _width = 80) const;
 
 	virtual std::string generalHelp(unsigned int _width) const = 0;
 

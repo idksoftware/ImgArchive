@@ -29,8 +29,11 @@ private:
 	Error m_error;
 	bool processArgs(const char* ov);
 	bool checkPath(const char* path);
+	bool checkIPAddress(const char* ip);
 	bool checkBool();
 	bool checkPath();
+	bool checkNumber();
+	bool checkIPAddress();
 public:
 	SetConfig() = default;
 	bool parseGeneralOptions(const char* optionString);

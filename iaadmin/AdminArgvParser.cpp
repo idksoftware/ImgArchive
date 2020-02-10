@@ -30,6 +30,7 @@ namespace simplearchive {
 		setIntroductoryDescription("iaadmin - Tool provides administrative house keeping support for ImgArchive.");
 		setHelpOption();
 
+		
 		setHeader("usage: iaadmin subcommand [options] [args]\n\n"
 			"ImgArchive command line administrator, version 1.0.0.1\n"
 			"Type 'iaadmin help <subcommand>' for help on a specific subcommand.\n\n"
@@ -634,10 +635,11 @@ namespace simplearchive {
 	{
 		std::string usage;
 
+		/*
 		usage += "usage: iaadmin subcommand [options] [args]\n\n";
 		usage += "ImgArchive command line Admin client, version 1.0.0.1\n";
 		usage += "Type 'iaadmin help <subcommand>' for help on a specific subcommand.\n\n";
-
+		*/
 		std::string tmp = "iaadmin Tool provides administration house keeping support for ImgArchive.";
 		usage += '\n';
 		usage += formatString(tmp, _width);
@@ -816,105 +818,5 @@ namespace simplearchive {
 		usage += '\n';
 		return(usage);
 	}
-
-
-
-	std::string AdminArgvParser::usageDescription(unsigned int _width) const
-	{
-		std::string usage; // the usage description text
-
-		if (intro_description.length())
-			usage += formatString(intro_description, _width) + "\n";
-
-		if (max_key <= 1) {// if we have some options
-
-			usage += formatString("No options available\n", _width) + "\n\n";
-			return(usage);
-		}
-
-
-		usage += '\n';
-
-		usage += usageDescriptionHeader(_width);
-
-		usage += formatString(command_header, _width) + "\n";
-		usage += '\n';
-		usage += AVAILABLE_COMMANDS;
-		usage += ":\n\n";
-
-		for (auto it = option2attribute.begin(); it != option2attribute.end(); ++it)
-		{
-			std::string _os; // temp string for the option
-			if (option2attribute.find(it->first)->second != MasterOption) {
-				continue;
-			}
-			std::string _longOpt;
-			std::string _shortOpt;
-			std::list<std::string> alternatives = getAllOptionAlternatives(it->first);
-			for (auto alt = alternatives.begin();
-				alt != alternatives.end();
-				++alt)
-			{
-				if (option2attribute.find(it->first)->second == MasterOption) {
-					int option = option2attribute.find(it->first)->second;
-					_os.clear();
-					if (alt->length() > 1) {
-						_longOpt += *alt;
-					}
-					else {
-						_shortOpt += *alt;
-					}
-
-
-				}
-			}
-
-			if (!_longOpt.empty()) {
-				_os += ' ';
-				_os += _longOpt;
-			}
-			if (!_shortOpt.empty()) {
-				_os += " (";
-				_os += _shortOpt;
-				_os += ')';
-			}
-			_os += " : ";
-			usage += formatLine(_os, _width, 0, 20);
-			_os.clear();
-			_longOpt.clear();
-			_shortOpt.clear();
-			if (option2descr.find(it->first) != option2descr.end())
-				//usage += formatString(option2descr.find(it->first)->second, _width, _os.length() + 2) + "\n";
-				usage += formatString(option2descr.find(it->first)->second, _width) + "\n";
-			else
-				usage += formatString("(no description)", _width, 4) + "\n";
-
-		}
-
-
-		if (!errorcode2descr.size()) // if have no errorcodes
-			return(usage);
-
-		usage += formatString("\n\nReturn codes:\n", _width) + "\n";
-
-		//   map<int, string>::const_iterator eit;
-		for (auto alt = errorcode2descr.begin();
-			alt != errorcode2descr.end();
-			++alt)
-		{
-			std::ostringstream code;
-			code << alt->first;
-			std::string label = formatString(code.str(), _width, 4);
-			std::string descr = formatString(alt->second, _width, 10);
-			usage += label + descr.substr(label.length()) + "\n";
-		}
-		usage += '\n';
-		usage += "Image Archive is a tool for image archiving and version control system.\n";
-		usage += "For additional information, see \"http://www.idk-software.com/\"";
-		usage += '\n';
-		return(usage);
-	}
-	
-
 
 } /* namespace simplearchive */
