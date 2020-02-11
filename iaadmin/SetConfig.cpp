@@ -194,7 +194,7 @@ bool SetConfig::parseFolderOptions(const char* ov)
 	Option ret = processFolderOptions(m_option);
 	switch (ret) {
 	case Option::HOOK_SCRIPTS_PATH: // Path to hook scripts
-		m_option = BACKUP_TWO_LABEL;
+		m_option = HOOK_SCRIPTS_PATH_LABEL;
 		return true;
 	case Option::CONFIG_PATH:	 // Main configuration path
 		m_option = CONFIG_PATH_LABEL;
@@ -223,7 +223,6 @@ bool SetConfig::parseFolderOptions(const char* ov)
 	case Option::SQL_DATABASE_PATH:
 		m_option = SQL_DATABASE_PATH_LABEL;
 		return true;
-	
 	case Option::HOME_PATH:
 		m_option = HOME_PATH_LABEL;
 		return true;

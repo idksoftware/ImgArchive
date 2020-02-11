@@ -89,22 +89,33 @@ namespace simplearchive {
 
 		defineOption("logging", "Logging option that control the logging carried out by applications", ArgvParser::OptionRequiresValue);
 		defineOptionAlternative("logging", "L");
-		
+		defineCommandSyntax("logging", "--logging <Option=Value>\n"
+			"[LogLevel=<level>] | [ConsoleLevel=<level>]\n"
+			"[LogPath=<path>]");
+
 		defineOption("folders", "These control the folder paths that the system uses.", ArgvParser::OptionRequiresValue);
 		defineOptionAlternative("folders", "F");
+		defineCommandSyntax("folders", "--folders <Option=Value>\n"
+			"[HookScripsPath=<path>] | [ToolsPath=<path>]\n"
+			"[TempPath=<path>] | [SystemPath=<path>]\n"
+			"[MasterPath=<path>] | [MasterCataloguePath=<path>]\n"
+			"[DerivativePath=<path>] | [SQLDatabasePath=<path>]\n"
+			"[LogPath=<path>] | [HistoryPath=<path>]\n"
+			"[LightroomPath=<path>]");
 
 		defineOption("exiftool", "Configure exit look intergration", ArgvParser::OptionRequiresValue);
 		defineOptionAlternative("exiftool", "E");
+		defineCommandSyntax("exiftool", "--exiftool <Option=Value>\n"
+			"[ExifMapPath=<path>] | [ExifMapFile=<filename>]\n"
+			"[ExifTool=<path>] | [ExifCommandLine=<argumentlist>]");
 
-		defineOption("master", "This section controls the master archive", ArgvParser::OptionRequiresValue);
-								
+		defineOption("master", "This section controls the master archive", ArgvParser::OptionRequiresValue);					
 		defineOptionAlternative("master", "M");
 		defineCommandSyntax("master", "--master <Option=Value>\n"
 			"[BackupOneEnabled=<Enabled|Disabled>] | [BackupTwoEnabled=<Enabled|Disabled>] |\n"
 			"[BackupOne=<path>] | [BackupTwo=<path>]");
 
-		defineOption("derivative", "This section controls the derivative archive.", ArgvParser::OptionRequiresValue);
-									
+		defineOption("derivative", "This section controls the derivative archive.", ArgvParser::OptionRequiresValue);						
 		defineOptionAlternative("derivative", "D");
 		defineCommandSyntax("derivative", "--derivative <Option=Value>\n"
 			"[BackupOneEnabled=<Enabled|Disabled>] | [BackupTwoEnabled=<Enabled|Disabled>] |\n"
@@ -112,9 +123,17 @@ namespace simplearchive {
 
 		defineOption("network", "Configure network parameters", ArgvParser::OptionRequiresValue);
 		defineOptionAlternative("network", "N");
+		defineCommandSyntax("network", "--network <Option=Value>\n"
+			"[EventsEnabled=<Enabled|Disabled>] | [CommandsEnabled=<Enabled|Disabled>] |\n"
+			"[EventsPort=<path>] | [EventsAddress=<path>] |\n"
+			"[CommandPort=<path>]");
 
 		defineOption("backup", "These options control the backup activities.", ArgvParser::OptionRequiresValue);
 		defineOptionAlternative("backup", "B");
+		defineCommandSyntax("backup", "--backup <Option=Value>\n"
+			"[media-size=<number>] | [media-path=<path>]\n"
+		    "[from-date=<date>] | [to-date=date]");
+
 
 		defineOption("m", "Mirror commands", ArgvParser::NoOptionAttribute);
 		defineOptionAlternative("m", "mirror");
@@ -134,28 +153,10 @@ namespace simplearchive {
 		defineOptionAlternative("edit", "e");
 		defineCommandSyntax("edit", "--edit=<ext,type,mine,description>");
 		
-
-		/* Commented to for testing
-		// Options
-		defineOption("name", "name of the item.", ArgvParser::OptionRequiresValue);
-		//defineOptionAlternative("n", "name");
-
-		defineOption("repair", "Validate and repair.", ArgvParser::NoOptionAttribute);
-		//defineOptionAlternative("r", "repair");
-
-		defineOption("checkedOut", "Show images checkedOut.", ArgvParser::NoOptionAttribute);
-		defineOptionAlternative("o", "checkedOut");
-
-		defineOption("scope", "Scope validate. i.e. Workspace/Master or both", ArgvParser::OptionRequiresValue);
-		//defineOptionAlternative("s", "scope");
-
-		defineOption("users", "Make archive available to you only or everyone with a logon to this computer (Myself/All).", ArgvParser::OptionRequiresValue);
-		//defineOptionAlternative("u", "users");
-
-
-		defineOption("dist-path", "destination of the images", ArgvParser::OptionRequiresValue);
+		//defineOption("dist-path", "destination of the images", ArgvParser::OptionRequiresValue);
 		//defineOptionAlternative("d", "dist-path");
-
+		// backup
+		
 		defineOption("media-size", "size of media", ArgvParser::OptionRequiresValue);
 		//defineOptionAlternative("S", "media-size");
 
@@ -166,6 +167,22 @@ namespace simplearchive {
 
 		defineOption("to-date", "to date", ArgvParser::OptionRequiresValue);
 		//defineOptionAlternative("T", "to-date");
+
+		/* Commented to for testing
+		// Options
+		defineOption("name", "name of the item.", ArgvParser::OptionRequiresValue);
+		//defineOptionAlternative("n", "name");
+
+		defineOption("repair", "Validate and repair.", ArgvParser::NoOptionAttribute);
+		//defineOptionAlternative("r", "repair");
+
+		
+
+		defineOption("users", "Make archive available to you only or everyone with a logon to this computer (Myself/All).", ArgvParser::OptionRequiresValue);
+		//defineOptionAlternative("u", "users");
+
+
+		
 
 		
 
