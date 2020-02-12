@@ -7,21 +7,15 @@
 
 namespace simplearchive {
 
-	ShowCommand::ShowCommand()
-	{
-	}
+	ShowCommand::ShowCommand() : m_error(Error::Unknown) {}
 
-
-	ShowCommand::~ShowCommand()
-	{
-	}
-
-	bool ShowCommand::process(const char *str) {
+	bool ShowCommand::parseOptions(const char *str) {
 		std::string arg = str;
 		if (arg.compare("settup") == 0) {
-			showSettup();
+			return showSettup();
 		}
-		return true;
+		m_error = Error::ParseError;
+		return false;
 	}
 
 	bool ShowCommand::showSettup()
@@ -68,6 +62,7 @@ namespace simplearchive {
 		config.printAll();
 		return false;
 		*/
+		m_error = Error::Ok;
 		return true;
 	}
 	

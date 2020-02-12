@@ -124,8 +124,8 @@ namespace simplearchive {
 		return true;
 	}
 
-	bool AdminApp::Show() {
-
+	bool AdminApp::Show(const char* configOption, const char* configValue) {
+		/*
 		AdminConfig config;
 		m_configured = false;
 		bool found = false;
@@ -208,17 +208,17 @@ namespace simplearchive {
 			m_configured = true;
 		}
 	//config.printAll();
-	/*
-	if (config.value("SourcePath", temp) == true) {
-	m_sourcePath = temp;
-	}
-	if (config.value("ArchivePath", temp) == true) {
-	m_archivePath = temp;
-	}
-	if (config.value("LogLevel", temp) == true) {
-	m_logLevel = temp;
-	}
-	*/
+	
+	//if (config.value("SourcePath", temp) == true) {
+	//m_sourcePath = temp;
+	//}
+	//if (config.value("ArchivePath", temp) == true) {
+	//m_archivePath = temp;
+	//}
+	//if (config.value("LogLevel", temp) == true) {
+	//m_logLevel = temp;
+	//}
+	
 	config.setHomePath(homePath.c_str());
 	std::string temp;
 	
@@ -235,8 +235,21 @@ namespace simplearchive {
 		config.setConsoleLevel(temp.c_str());
 	}
 	CreateArchive::checkFolders(homePath.c_str());
-	return true;
+	*/
+	ShowCommand showCommand;
+	if (showCommand.parseOptions(configOption) == false) {
+		switch (showCommand.getError()) {
+		case ShowCommand::Error::Ok:
+			return true;
+		case ShowCommand::Error::ParseError:
+		case ShowCommand::Error::CommandError:
+		default:
+		}
+		return false
+	}
+		
 
+	return true;
 }
 
 
@@ -249,38 +262,43 @@ bool AdminApp::doRun()
 {
 	// Find if the archive exists
 	AppOptions &appOptions = AppOptions::get();
-	switch (appOptions.getCommandMode()) {
-	case AppOptions::CommandMode::CM_Allow:
-		Allow(appOptions.getConfigOption(), appOptions.getConfigValue());
-		return true;
-	case AppOptions::CommandMode::CM_Config:
-		Configure(appOptions.getConfigOptionBlock(), appOptions.getConfigOption(), appOptions.getConfigValue());
-		return true;
-	case AppOptions::CommandMode::CM_Show:
-		Show();
-		return true;
-	case AppOptions::CommandMode::CM_Version:
-		printf("ImgArchive Administrator tool\n"
-			"iaadmin version \"%s\" (build %s)\n"
-			"Copyright@(2010-2020) IDK Sftware Ltd.\n", VERSION, BUILD);
-		return true;
-	case AppOptions::CommandMode::CM_Test:
+	if (isConfiguratedOk() == true) {
+		switch (appOptions.getCommandMode()) {
+		case AppOptions::CommandMode::CM_Allow:
+			Allow(appOptions.getConfigOption(), appOptions.getConfigValue());
+			return true;
+		case AppOptions::CommandMode::CM_Config:
+			Configure(appOptions.getConfigOptionBlock(), appOptions.getConfigOption(), appOptions.getConfigValue());
+			return true;
+		case AppOptions::CommandMode::CM_Show:
+			Show(appOptions.getConfigOption(), appOptions.getConfigValue());
+			return true;
+
+		case AppOptions::CommandMode::CM_Test:
 		{
 
-		TestArchive testArchive;
-		testArchive.readingConfigFile();
-		testArchive.testFolders();
-		return true;
+			TestArchive testArchive;
+			testArchive.readingConfigFile();
+			testArchive.testFolders();
+			return true;
 
 		}
+		case AppOptions::CommandMode::CM_Version:
+			printf("ImgArchive Administrator tool\n"
+				"iaadmin version \"%s\" (build %s)\n"
+				"Copyright@(2010-2016) IDK Solutions Ltd.\n", VERSION, BUILD);
+			return true;
 
-	default:
-		printf("ImgArchive Administrator\n"
-					"siaadmin version \"%s\" (build %s)\n"
-					"Copyright@(2010-2016) IDK Sftware Ltd. This command is implemented in the version\n", VERSION, BUILD);
-	}
-	if (isConfiguratedOk() == false) {
-		
+		case AppOptions::CommandMode::CM_Unknown:
+			break;
+
+		default:
+			printf("ImgArchive Administrator\n"
+				"siaadmin version \"%s\" (build %s)\n"
+				"Copyright@(2010-2016) IDK Sftware Ltd. This command is implemented in the version\n", VERSION, BUILD);
+
+		}
+	} else {
 		if (appOptions.getCommandMode() == AppOptions::CommandMode::CM_InitArchive) {
 			// const char *archivePath, const char *workspacePath, const char *reposPath, const char *masterPath, const char *derivativePath, bool users
 			DefaultEnvironment defaultEnvironment;
@@ -295,8 +313,9 @@ bool AdminApp::doRun()
 		}
 		return false;
 	}
-
+	return true;
 	
+/*
 	//CompletedSummary ;
 
 	switch (appOptions.getCommandMode()) {
@@ -306,7 +325,7 @@ bool AdminApp::doRun()
 	{
 		//Show();
 		ShowCommand show;
-		if (show.process(appOptions.getName())) {
+		if (show.parseOptions(appOptions.getName())) {
 		}
 		break;
 	}
@@ -352,7 +371,7 @@ bool AdminApp::doRun()
 				return false;
 			}
 			break;
-		case AppOptions::VerifyOperation::Master:			//* Show
+		case AppOptions::VerifyOperation::Master:			
 			if (siaLib.validate(config.getMasterPath(), config.getWorkspacePath(), config.getHomePath(), SIALib::Master, appOptions.repair()) == false) {
 				return false;
 			}
@@ -382,6 +401,7 @@ bool AdminApp::doRun()
 	
 	}
 	return true;
+*/
 }
 
 AdminApp::~AdminApp() {
