@@ -55,7 +55,12 @@ namespace simplearchive {
 			"| [--derivative <Option=Value>] | [--backup <Option=Value>]\n"
 			"| [--exiftool <Option=Value>]");
 				
-		defineOption("show", "Show settings", ArgvParser::MasterOption);
+		defineOption("show", "Show how the system is configured.", ArgvParser::MasterOption);
+		defineCommandSyntax("show", "--show <Option>\n"
+			"Option = <[general] | [logging] | [network]\n"
+			"| [folders] | [master] | | [derivative] | [backup] | [exiftool]");
+
+
 		defineOption("version", "prints the version information", ArgvParser::MasterOption);
 		defineOption("validate", "Validate commands", ArgvParser::MasterOption);
 		defineOption("allow", "Controls which image file extensions are allowed into the archive.", ArgvParser::MasterOption);
@@ -195,7 +200,8 @@ namespace simplearchive {
 		//defineOption("workspace-path", "Location of the archive Workspace", ArgvParser::OptionRequiresValue);
 		//defineOptionAlternative("workspace-path", "w");
 		
-		defineOption("settup", "Show settup", ArgvParser::NoOptionAttribute);
+		defineOption("s", "Show setting", ArgvParser::OptionRequiresValue);
+		defineOptionAlternative("s", "setting");
 
 		defineCommandOption("init", "archive-path");
 		defineCommandOption("init", "workspace-path");
@@ -206,7 +212,7 @@ namespace simplearchive {
 		defineCommandOption("init", "set-home-env");
 		defineCommandOption("init", "user");
 
-		defineCommandOption("show", "settup");
+		defineCommandOption("show", "setting");
 		//defineCommandOption("show", "checkedOut");
 
 		defineCommandOption("validate", "scope");
@@ -387,16 +393,62 @@ namespace simplearchive {
 				cmdFound = true;
 		}
 		else if (command("show") == true) {
+			bool argFound = false;
+			std::string subOption;
 			appOptions.setCommandMode(AppOptions::CommandMode::CM_Show);
-			if (foundOption("settup") == true) {
-					
-				appOptions.setName("settup");
-			}
-			if (foundOption("checkedOut") == true) {
+			/*
+			 general logging network folders master derivative backup exiftool
+			*/
+			SetSettings setSettings;
 
-				appOptions.m_showOperation = AppOptions::ShowOperation::CheckedOut;
+			if (foundOption("setting") == true) {
+				std::string opt = optionValue("setting");
+				if (setSettings.parseSettingsOptions(optionValue("setting").c_str()) == true) {
+					subOption = "setting";
+					argFound = true;
+				}
 			}
-			cmdFound = true;
+			/*
+			if (foundOption("logging") == true) {
+				appOptions.setName("general");
+				argFound = true;
+			}
+			if (foundOption("network") == true) {
+				appOptions.setName("general");
+				argFound = true;
+			}
+			if (foundOption("folders") == true) {
+				appOptions.setName("general");
+				argFound = true;
+			}
+			if (foundOption("master") == true) {
+				appOptions.setName("master");
+				argFound = true;
+			}
+			if (foundOption("derivative") == true) {
+				appOptions.setName("derivative");
+				argFound = true;
+			}
+			if (foundOption("backup") == true) {
+				appOptions.setName("backup");
+				argFound = true;
+			}
+			if (foundOption("exiftool") == true) {
+				appOptions.setName("exiftool");
+				argFound = true;
+			}
+			if (argFound == false) {
+				printf("No argument for sub-command: %s\n\n", getCurrentCommand().c_str());
+				printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+				return false;
+			}
+			*/
+			if (argFound == true) {
+				appOptions.setConfigOption(subOption.c_str());
+				appOptions.setConfigValue(setSettings.getValue().c_str());
+				cmdFound = true;
+			}
+			
 		}
 		else if (command("validate") == true) {
 			appOptions.setCommandMode(AppOptions::CommandMode::CM_Validate);
@@ -558,9 +610,9 @@ namespace simplearchive {
 			cmdFound = true;
 		}
 		else if (command("test") == true) {
-			if (foundOption("settup") == true) {
-
-				appOptions.setName("settup");
+			
+			if (foundOption("settings") == true) {
+				appOptions.setConfigOption("settings");
 			}
 			appOptions.setCommandMode(AppOptions::CommandMode::CM_Test);
 			cmdFound = true;

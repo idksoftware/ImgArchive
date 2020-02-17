@@ -9,16 +9,47 @@ namespace simplearchive {
 
 	ShowCommand::ShowCommand() : m_error(Error::Unknown) {}
 
-	bool ShowCommand::parseOptions(const char *str) {
+	bool ShowCommand::parseOptions(const char* str) {
 		std::string arg = str;
 		if (arg.compare("settup") == 0) {
-			return showSettup();
+			return true;
 		}
 		m_error = Error::ParseError;
 		return false;
 	}
 
-	bool ShowCommand::showSettup()
+	bool ShowCommand::process(const char* str) {
+		std::string arg = str;
+
+		if (arg.compare("general") == 0) {
+			return showGeneral();
+		}
+		if (arg.compare("logging") == 0) {
+			return showLogging();
+		}
+		if (arg.compare("network") == 0) {
+			return showNetwork();
+		}
+		if (arg.compare("folders") == 0) {
+			return showFolders();
+		}
+		if (arg.compare("master") == 0) {
+			return showMaster();
+		}
+		if (arg.compare("derivative") == 0) {
+			return showDerivative();
+		}
+		if (arg.compare("backup") == 0) {
+			return showBackup();
+		}
+		if (arg.compare("exiftool") == 0) {
+			return showExiftool();
+		}
+		m_error = Error::ParseError;
+		return false;
+	}
+
+	bool ShowCommand::showGeneral()
 	{
 		AppConfig appConfig;
 		std::stringstream str;
@@ -29,6 +60,26 @@ namespace simplearchive {
 		str << "        SQL database:              " << ((appConfig.isSQL()) ? "True" : "False") << '\n';
 		str << "        Silent On:                 " << ((appConfig.isSilent()) ? "True" : "False") << '\n';
 		str << "        Quiet On:                  " << ((appConfig.isQuiet()) ? "True" : "False") << '\n';
+
+		std::string s = str.str();
+		std::cout << s;
+		return true;
+	}
+
+	bool ShowCommand::showLogging()
+	{
+		return false;
+	}
+
+	bool ShowCommand::showNetwork()
+	{
+		return false;
+	}
+
+	bool ShowCommand::showFolders()
+	{
+		AppConfig appConfig;
+		std::stringstream str;
 		str << "    Application paths" << '\n';
 		str << "        System path:               " << appConfig.getSystemPath() << '\n';
 		str << "        Log path:                  " << appConfig.getLogPath() << '\n';
@@ -43,11 +94,40 @@ namespace simplearchive {
 		str << "        SQL Database path:         " << appConfig.getDatabasePath() << '\n';
 		str << "        Temp path:                 " << appConfig.getTempPath() << '\n';
 
-		str << "    Master Archive Backups";
+		std::string s = str.str();
+		std::cout << s;
+		return true;
+	}
+
+	bool ShowCommand::showMaster()
+	{
+		AppConfig appConfig;
+		std::stringstream str;
+		str << "    Master Archive Backups\n";
 		str << "        Backup One Enabled:        " << ((appConfig.isBackup1Enabled()) ? "True" : "False") << '\n';
 		str << "        Backup One path:           " << appConfig.getBackup1() << '\n';
 		str << "        Backup Two Enabled:        " << ((appConfig.isBackup2Enabled()) ? "True" : "False") << '\n';
 		str << "        Backup Two path:           " << appConfig.getBackup2() << '\n';
+
+		std::string s = str.str();
+		std::cout << s;
+		return true;
+	}
+
+	bool ShowCommand::showDerivative()
+	{
+		return false;
+	}
+
+	bool ShowCommand::showBackup()
+	{
+		return false;
+	}
+
+	bool ShowCommand::showExiftool()
+	{
+		AppConfig appConfig;
+		std::stringstream str;
 		str << "    External Exif Tool" << '\n';
 		str << "        External Exif tool enabled:" << ((appConfig.isExternalExifToolEnabled()) ? "True" : "False") << '\n';
 		str << "        Exif map path:             " << appConfig.getExifMapPath() << '\n';
@@ -57,13 +137,9 @@ namespace simplearchive {
 
 		std::string s = str.str();
 		std::cout << s;
-		/*
-		AdminConfig config;
-		config.printAll();
-		return false;
-		*/
-		m_error = Error::Ok;
 		return true;
 	}
+
+}; // namespace
 	
-} // simplearchive
+	

@@ -41,7 +41,15 @@
 #define MASTER_ARCHIVE			"Master Archive"	 /*< Main configuration path */ 
 //#define TOOLS_PATH_LABEL           		"ToolsPath"
 
-
+#define GENERAL_LABEL			"general"
+#define LOGGING_LABEL			"logging"
+#define NETWORK_LABEL			"network"
+#define FOLDERS_LABEL			"folders"
+#define MASTER_LABEL			"master"
+#define DERIVATIVE_LABEL		"derivative"
+#define BACKUP_LABEL			"backup"
+#define EXIFTOOL_LABEL			"exiftool"
+#define ALL_LABEL				"all"
 /**
 	@brief These #defines define the labels the hook files will use
 	to reference envronment varibles.

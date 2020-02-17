@@ -237,18 +237,9 @@ namespace simplearchive {
 	CreateArchive::checkFolders(homePath.c_str());
 	*/
 	ShowCommand showCommand;
-	if (showCommand.parseOptions(configOption) == false) {
-		switch (showCommand.getError()) {
-		case ShowCommand::Error::Ok:
-			return true;
-		case ShowCommand::Error::ParseError:
-		case ShowCommand::Error::CommandError:
-		default:
-		}
-		return false
+	if (showCommand.process(configValue) == false) {
+		return false;
 	}
-		
-
 	return true;
 }
 
