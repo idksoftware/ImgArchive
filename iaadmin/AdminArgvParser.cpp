@@ -203,6 +203,9 @@ namespace simplearchive {
 		defineOption("s", "Show setting", ArgvParser::OptionRequiresValue);
 		defineOptionAlternative("s", "setting");
 
+		defineOption("scope", "Scope of validation.", ArgvParser::OptionRequiresValue);
+		//defineOptionAlternative("u", "users");
+
 		defineCommandOption("init", "archive-path");
 		defineCommandOption("init", "workspace-path");
 		defineCommandOption("init", "master-path");

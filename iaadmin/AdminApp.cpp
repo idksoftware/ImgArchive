@@ -279,7 +279,37 @@ bool AdminApp::doRun()
 				"iaadmin version \"%s\" (build %s)\n"
 				"Copyright@(2010-2016) IDK Solutions Ltd.\n", VERSION, BUILD);
 			return true;
+		case AppOptions::CommandMode::CM_Validate:
+		{
+			SIALib siaLib;
+			siaLib.initalise();
+			AppConfig& config = AppConfig::get();
+			if (appOptions.isConfiguratedOk() == false) {
+				// Do not create a new archive. The old one needs to be deleted?
+				return false;
+			}
 
+			CompletedSummary completedSummary;
+			switch (appOptions.getVerifyOperation()) {
+			case AppOptions::VerifyOperation::Workspace:
+				if (siaLib.validate(config.getMasterPath(), config.getWorkspacePath(), config.getHomePath(), SIALib::Workspace, appOptions.repair()) == false) {
+					return false;
+				}
+				break;
+			case AppOptions::VerifyOperation::Master:
+				if (siaLib.validate(config.getMasterPath(), config.getWorkspacePath(), config.getHomePath(), SIALib::Master, appOptions.repair()) == false) {
+					return false;
+				}
+				break;
+			default:
+				if (siaLib.validate(config.getMasterPath(), config.getWorkspacePath(), config.getHomePath(), SIALib::Both, appOptions.repair()) == false) {
+					return false;
+				}
+			}
+			siaLib.complete();
+
+			return true;
+		}
 		case AppOptions::CommandMode::CM_Unknown:
 			break;
 

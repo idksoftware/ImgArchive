@@ -736,28 +736,28 @@ bool SetSettings::parseSettingsOptions(const char* s)
 		m_value = GENERAL_LABEL;
 		return true;
 	case Option::LOGGING:
-		m_value = GENERAL_LABEL;
+		m_value = LOGGING_LABEL;
 		return true;
 	case Option::NETWORK:
-		m_value = GENERAL_LABEL;
+		m_value = NETWORK_LABEL;
 		return true;
 	case Option::FOLDERS:
-		m_value = GENERAL_LABEL;
+		m_value = FOLDERS_LABEL;
 		return true;
 	case Option::MASTER:
 		m_value = MASTER_LABEL;
 		return true;
 	case Option::DERIVATIVE:
-		m_value = GENERAL_LABEL;
+		m_value = DERIVATIVE_LABEL;
 		return true;
 	case Option::BACKUP:
-		m_value = GENERAL_LABEL;
+		m_value = BACKUP_LABEL;
 		return true;
 	case Option::EXIFTOOL:
-		m_value = GENERAL_LABEL;
+		m_value = EXIFTOOL_LABEL;
 		return true;
 	case Option::ALL:
-		m_value = GENERAL_LABEL;
+		m_value = ALL_LABEL;
 		return true;
 	default:
 		return false;
