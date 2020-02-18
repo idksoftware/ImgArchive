@@ -3,6 +3,9 @@
 #include "CLogger.h"
 #include "siaglobal.h"
 #include "SAUtils.h"
+#include "ImageExtentions.h"
+#include "SAUtils.h"
+#include "CSVArgs.h"
 #include <sstream>
 
 namespace simplearchive {
@@ -18,7 +21,64 @@ namespace simplearchive {
 		return false;
 	}
 
-	bool ShowCommand::process(const char* str) {
+	bool ShowCommand::process(const char* configOption, const char* configValue)
+	{
+		std::string arg = configOption;
+
+		if (arg.compare("setting") == 0) {
+			return processSettings(configValue);
+		}
+		if (arg.compare("allowed") == 0) {
+			return processAllowed(configValue);
+		}
+		return false;
+	}
+
+	bool ShowCommand::processAllowed(const char* str) {
+		std::string arg = str;
+
+		if (arg.compare("raw") == 0) {
+			return showAllowedRaw();
+		}
+		if (arg.compare("picture") == 0) {
+			return showAllowedPicture();
+		}
+		if (arg.compare("all") == 0) {
+			return showAllowedAll();
+		}
+		m_error = Error::ParseError;
+		return false;
+	}
+
+	bool ShowCommand::showAllowedRaw()
+	{
+		AppConfig appConfig;
+		std::stringstream str;
+
+		ImageExtentions& imageExtentions = ImageExtentions::get();
+		std::vector<std::shared_ptr<ExtentionItem>> list;
+		imageExtentions.getList(list);
+		for (auto ii = list.begin(); ii != list.end(); ++ii) {
+			std::shared_ptr<ExtentionItem> data = *ii;
+			str << data->toString() << '\n';
+		}
+
+		std::string s = str.str();
+		std::cout << s;
+		return true;
+	}
+
+	bool ShowCommand::showAllowedPicture()
+	{
+		return showAllowedRaw();
+	}
+
+	bool ShowCommand::showAllowedAll()
+	{
+		return showAllowedRaw();
+	}
+
+	bool ShowCommand::processSettings(const char* str) {
 		std::string arg = str;
 
 		if (arg.compare("general") == 0) {

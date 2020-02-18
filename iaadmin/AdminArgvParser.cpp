@@ -56,8 +56,8 @@ namespace simplearchive {
 			"| [--exiftool <Option=Value>]");
 				
 		defineOption("show", "Show how the system is configured.", ArgvParser::MasterOption);
-		defineCommandSyntax("show", "--show <Option>\n"
-			"Option = <[general] | [logging] | [network]\n"
+		defineCommandSyntax("show", "isadmin show [--setting=<Option>] | [--allowed=[raw|picture|all]]\n"
+			"SettingOption = <[general] | [logging] | [network]\n"
 			"| [folders] | [master] | | [derivative] | [backup] | [exiftool]");
 
 
@@ -202,11 +202,16 @@ namespace simplearchive {
 		
 		defineOption("s", "Show setting", ArgvParser::OptionRequiresValue);
 		defineOptionAlternative("s", "setting");
+		defineCommandSyntax("setting", "--setting=<[general] | [logging] | [network]\n"
+			"| [folders] | [master] | | [derivative] | [backup] | [exiftool]");
 
-		defineOption("scope", "Scope of validation.", ArgvParser::OptionRequiresValue);
-		//defineOptionAlternative("u", "users");
+		defineOption("allowed", "Shows which file type are allowed into the archive.", ArgvParser::OptionRequiresValue);
+		defineCommandSyntax("allowed", "--allowed=[ raw | picture | all ]");
 
 		defineOption("out", "Output type: text, xml, json or html.", ArgvParser::OptionRequiresValue);
+		//defineOptionAlternative("u", "users");
+
+		defineOption("scope", "Scope of validation.", ArgvParser::OptionRequiresValue);
 		//defineOptionAlternative("u", "users");
 
 		defineCommandOption("init", "archive-path");
@@ -219,6 +224,7 @@ namespace simplearchive {
 		defineCommandOption("init", "user");
 
 		defineCommandOption("show", "setting");
+		defineCommandOption("show", "allowed");
 		defineCommandOption("show", "out");
 
 		defineCommandOption("validate", "scope");
@@ -412,44 +418,23 @@ namespace simplearchive {
 					subOption = "setting";
 					argFound = true;
 				}
-				OutputType outputType;
-				std::string outType = optionValue("out");
-				if (outputType.parse(optionValue("out").c_str()) == true) {
-					printf("Option for argument \"out\" for sub-command: %s is invalid: %s\n\n", getCurrentCommand().c_str(), optionValue("out").c_str());
-					printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
-					return false;
+				if (foundOption("out") == true) {
+					OutputType outputType;
+					std::string outType = optionValue("out");
+					if (outputType.parse(optionValue("out").c_str()) == true) {
+						printf("Option for argument \"out\" for sub-command: %s is invalid: %s\n\n", getCurrentCommand().c_str(), optionValue("out").c_str());
+						printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+						return false;
+					}
+				}
+			} else if (foundOption("allowed") == true) {
+				if (setSettings.parseAllowedOptions(optionValue("allowed").c_str()) == true) {
+					subOption = "allowed";
+					argFound = true;
 				}
 			}
-			/*
-			if (foundOption("logging") == true) {
-				appOptions.setName("general");
-				argFound = true;
-			}
-			if (foundOption("network") == true) {
-				appOptions.setName("general");
-				argFound = true;
-			}
-			if (foundOption("folders") == true) {
-				appOptions.setName("general");
-				argFound = true;
-			}
-			if (foundOption("master") == true) {
-				appOptions.setName("master");
-				argFound = true;
-			}
-			if (foundOption("derivative") == true) {
-				appOptions.setName("derivative");
-				argFound = true;
-			}
-			if (foundOption("backup") == true) {
-				appOptions.setName("backup");
-				argFound = true;
-			}
-			if (foundOption("exiftool") == true) {
-				appOptions.setName("exiftool");
-				argFound = true;
-			}
-			*/
+			
+			
 			if (argFound == false) {
 				printf("No argument for sub-command: %s\n\n", getCurrentCommand().c_str());
 				printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());

@@ -87,6 +87,8 @@ enum class Option {
 	BACKUP,
 	EXIFTOOL,
 	ALL,
+	RAW,
+	PICTURE,
 	UNKNOWN
 };
 
@@ -793,7 +795,6 @@ bool SetSettings::parseSettingsOptions(const char* s)
 	return true;
 }
 
-
 Option SetSettings::processSettingsOptions(std::string& optionString)
 {
 	if (iequals(optionString, GENERAL_LABEL)) {
@@ -819,6 +820,39 @@ Option SetSettings::processSettingsOptions(std::string& optionString)
 	}
 	if (iequals(optionString, EXIFTOOL_LABEL)) {
 		return Option::EXIFTOOL;
+	}
+	if (iequals(optionString, ALL_LABEL)) {
+		return Option::ALL;
+	}
+	return Option::UNKNOWN;
+}
+
+bool SetSettings::parseAllowedOptions(const char* s)
+{
+	std::string optionString = s;
+
+	Option ret = processAllowedOptions(optionString);
+	switch (ret) {
+	case Option::RAW:
+		m_value = RAW_LABEL;
+		return true;
+	case Option::PICTURE:
+		m_value = PICTURE_LABEL;
+	case Option::ALL:
+		m_value = ALL_LABEL;
+	default:
+		return false;
+	}
+	return true;
+}
+
+Option SetSettings::processAllowedOptions(std::string& optionString)
+{
+	if (iequals(optionString, RAW_LABEL)) {
+		return Option::RAW;
+	}
+	if (iequals(optionString, PICTURE_LABEL)) {
+		return Option::PICTURE;
 	}
 	if (iequals(optionString, ALL_LABEL)) {
 		return Option::ALL;

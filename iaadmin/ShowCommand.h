@@ -21,14 +21,20 @@ namespace simplearchive {
 		bool showDerivative();
 		bool showBackup();
 		bool showExiftool();
-	
+		bool processSettings(const char* str);
+		bool processAllowed(const char* str);
+
+		bool showAllowedRaw();
+		bool showAllowedPicture();
+		bool showAllowedAll();
 		Error m_error;
 	public:
 		ShowCommand();
 		~ShowCommand() = default;
 		
 		bool parseOptions(const char* optionString);
-		bool process(const char* str);
+		bool process(const char* configOption, const char* configValue);
+		
 		Error getError() { return m_error; };
 	};
 

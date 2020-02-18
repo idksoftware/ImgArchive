@@ -156,6 +156,8 @@ public:
 		return m_extentionsFilePath;
 	}
 
+	bool getList(std::vector<std::shared_ptr<ExtentionItem>>& list);
+
 	static bool setExtentionsFilePath(const char *extentionsFilePath);
 
 	static bool isError() {

@@ -50,6 +50,8 @@
 #define BACKUP_LABEL			"backup"
 #define EXIFTOOL_LABEL			"exiftool"
 #define ALL_LABEL				"all"
+#define RAW_LABEL			    "raw"
+#define PICTURE_LABEL			"picture"
 /**
 	@brief These #defines define the labels the hook files will use
 	to reference envronment varibles.

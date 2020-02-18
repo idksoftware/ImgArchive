@@ -70,7 +70,7 @@ public:
 	bool edit(ExtentionItem& extentionItem);
 	bool insert(ExtentionItem &extentionItem);
 	std::shared_ptr<ExtentionItem> find(const char *ext);
-
+	bool getList(std::vector<std::shared_ptr<ExtentionItem>>& list);
 };
 
 
@@ -102,6 +102,16 @@ bool CExtentionsFile::write(const char *datafile) {
 	file.close();
 	return true;
 }
+
+bool CExtentionsFile::getList(std::vector<std::shared_ptr<ExtentionItem>> &list) {
+	
+	for (auto ii = m_extentionsContainer.begin(); ii != m_extentionsContainer.end(); ++ii) {
+		std::shared_ptr<ExtentionItem> data = ii->second;
+		list.push_back(data);
+	}
+	return true;
+}
+
 bool CExtentionsFile::remove(const char* ext)
 {
 	return (m_extentionsContainer.erase(ext)) ? true : false;
@@ -186,6 +196,10 @@ ImageExtentions &ImageExtentions::get() {
 		m_once = false;
 	}
 	return INSTANCE;
+}
+
+bool ImageExtentions::getList(std::vector<std::shared_ptr<ExtentionItem>> &list) {
+	return m_extentionsFile->getList(list);
 }
 
 bool ImageExtentions::write() {
