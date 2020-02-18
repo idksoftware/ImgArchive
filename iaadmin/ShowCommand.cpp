@@ -3,7 +3,7 @@
 #include "CLogger.h"
 #include "siaglobal.h"
 #include "SAUtils.h"
-#include "ImageExtentions.h"
+
 #include "SAUtils.h"
 #include "CSVArgs.h"
 #include <sstream>
@@ -50,14 +50,14 @@ namespace simplearchive {
 		return false;
 	}
 
-	bool ShowCommand::showAllowedRaw()
+	bool ShowCommand::showAllowed(SelectionType type)
 	{
 		AppConfig appConfig;
 		std::stringstream str;
 
 		ImageExtentions& imageExtentions = ImageExtentions::get();
 		std::vector<std::shared_ptr<ExtentionItem>> list;
-		imageExtentions.getList(list);
+		imageExtentions.getList(list, type);
 		for (auto ii = list.begin(); ii != list.end(); ++ii) {
 			std::shared_ptr<ExtentionItem> data = *ii;
 			str << data->toString() << '\n';
@@ -68,14 +68,19 @@ namespace simplearchive {
 		return true;
 	}
 
+	bool ShowCommand::showAllowedRaw()
+	{
+		return showAllowed(SelectionType::Raw);
+	}
+
 	bool ShowCommand::showAllowedPicture()
 	{
-		return showAllowedRaw();
+		return showAllowed(SelectionType::Picture);
 	}
 
 	bool ShowCommand::showAllowedAll()
 	{
-		return showAllowedRaw();
+		return showAllowed(SelectionType::All);
 	}
 
 	bool ShowCommand::processSettings(const char* str) {

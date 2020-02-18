@@ -838,8 +838,10 @@ bool SetSettings::parseAllowedOptions(const char* s)
 		return true;
 	case Option::PICTURE:
 		m_value = PICTURE_LABEL;
+		return true;
 	case Option::ALL:
 		m_value = ALL_LABEL;
+		return true;
 	default:
 		return false;
 	}
@@ -848,13 +850,13 @@ bool SetSettings::parseAllowedOptions(const char* s)
 
 Option SetSettings::processAllowedOptions(std::string& optionString)
 {
-	if (iequals(optionString, RAW_LABEL)) {
+	if (iequals(RAW_LABEL, optionString)) {
 		return Option::RAW;
 	}
-	if (iequals(optionString, PICTURE_LABEL)) {
+	if (iequals(PICTURE_LABEL, optionString)) {
 		return Option::PICTURE;
 	}
-	if (iequals(optionString, ALL_LABEL)) {
+	if (iequals(ALL_LABEL, optionString)) {
 		return Option::ALL;
 	}
 	return Option::UNKNOWN;

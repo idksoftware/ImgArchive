@@ -1,5 +1,5 @@
 #pragma once
-
+#include "ImageExtentions.h"
 namespace simplearchive {
 
 	class ShowCommand
@@ -24,6 +24,7 @@ namespace simplearchive {
 		bool processSettings(const char* str);
 		bool processAllowed(const char* str);
 
+		bool showAllowed(SelectionType type);
 		bool showAllowedRaw();
 		bool showAllowedPicture();
 		bool showAllowedAll();

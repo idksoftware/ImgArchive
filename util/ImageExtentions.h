@@ -44,6 +44,13 @@ namespace simplearchive {
 
 class CExtentionsFile;
 
+enum class SelectionType {
+	Raw,
+	Picture,
+	All
+};
+
+
 class ExtentionItem {
 	std::string m_ext;
 	ImageType m_type;
@@ -156,7 +163,7 @@ public:
 		return m_extentionsFilePath;
 	}
 
-	bool getList(std::vector<std::shared_ptr<ExtentionItem>>& list);
+	bool getList(std::vector<std::shared_ptr<ExtentionItem>>& list, SelectionType selectionType);
 
 	static bool setExtentionsFilePath(const char *extentionsFilePath);
 

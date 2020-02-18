@@ -88,7 +88,7 @@ bool ImageContainer::add(std::unique_ptr<BasicMetadata> &BasicMetadata, std::uni
 	ImageType type = imageExtentions.getType(imagefile);
 	switch (type.getType()) {
 	// Found Picture Image
-	case ImageType::PICTURE_EXT:
+	case ImageType::Type::PICTURE_EXT:
 		logger.log(LOG_OK, CLogger::Level::INFO, "found pic: %s", imagefile);
 		if (m_PictureNode == nullptr) {
 			/* not sure needed
@@ -117,7 +117,7 @@ bool ImageContainer::add(std::unique_ptr<BasicMetadata> &BasicMetadata, std::uni
 		
 		break;
 	// Found RAW Image
-	case ImageType::RAW_EXT:
+	case ImageType::Type::RAW_EXT:
 	
 		logger.log(LOG_OK, CLogger::Level::INFO, "found raw: %s", imagefile);
 		if (m_RawNode == nullptr) {
@@ -128,7 +128,7 @@ bool ImageContainer::add(std::unique_ptr<BasicMetadata> &BasicMetadata, std::uni
 		
 		//m_RawFile = imagefile;
 		break;
-	case ImageType::UNKNOWN_EXT:
+	case ImageType::Type::UNKNOWN_EXT:
 	default:
 		logger.log(LOG_OK, CLogger::Level::ERR, "No extention found for this file type %s", imagefile);
 		m_error = -1;
