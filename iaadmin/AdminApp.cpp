@@ -562,7 +562,7 @@ bool AdminApp::initaliseConfig() {
 	AppConfig appConfig = AppConfig::get();
 	if (ImageExtentions::setExtentionsFilePath(appConfig.getConfigPath()) == false) {
 		//logger.log(LOG_OK, CLogger::Level::INFO, "Unable to find image extensions file path: \"%s\"", config.getConfigPath());
-		return -1;
+		return false;
 	}
 	return true;
 }

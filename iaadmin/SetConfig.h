@@ -1,6 +1,24 @@
 #pragma once
 #include <string>
 
+class OutputType {
+public:
+	enum class Type {
+		plain,
+		xml,
+		json,
+		html,
+		unknown
+	};
+private:
+	Type m_type;
+public:
+	OutputType() = default;
+	virtual ~OutputType() = default;
+	bool parse(const char* str);
+	Type get();
+};
+
 enum class Option;
 
 class ParseOptions

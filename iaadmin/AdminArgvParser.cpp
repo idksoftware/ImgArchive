@@ -206,6 +206,9 @@ namespace simplearchive {
 		defineOption("scope", "Scope of validation.", ArgvParser::OptionRequiresValue);
 		//defineOptionAlternative("u", "users");
 
+		defineOption("out", "Output type: text, xml, json or html.", ArgvParser::OptionRequiresValue);
+		//defineOptionAlternative("u", "users");
+
 		defineCommandOption("init", "archive-path");
 		defineCommandOption("init", "workspace-path");
 		defineCommandOption("init", "master-path");
@@ -216,7 +219,7 @@ namespace simplearchive {
 		defineCommandOption("init", "user");
 
 		defineCommandOption("show", "setting");
-		//defineCommandOption("show", "checkedOut");
+		defineCommandOption("show", "out");
 
 		defineCommandOption("validate", "scope");
 		defineCommandOption("validate", "repair");
@@ -403,12 +406,18 @@ namespace simplearchive {
 			 general logging network folders master derivative backup exiftool
 			*/
 			SetSettings setSettings;
-
 			if (foundOption("setting") == true) {
 				std::string opt = optionValue("setting");
 				if (setSettings.parseSettingsOptions(optionValue("setting").c_str()) == true) {
 					subOption = "setting";
 					argFound = true;
+				}
+				OutputType outputType;
+				std::string outType = optionValue("out");
+				if (outputType.parse(optionValue("out").c_str()) == true) {
+					printf("Option for argument \"out\" for sub-command: %s is invalid: %s\n\n", getCurrentCommand().c_str(), optionValue("out").c_str());
+					printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+					return false;
 				}
 			}
 			/*
@@ -440,12 +449,13 @@ namespace simplearchive {
 				appOptions.setName("exiftool");
 				argFound = true;
 			}
+			*/
 			if (argFound == false) {
 				printf("No argument for sub-command: %s\n\n", getCurrentCommand().c_str());
 				printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 				return false;
 			}
-			*/
+			
 			if (argFound == true) {
 				appOptions.setConfigOption(subOption.c_str());
 				appOptions.setConfigValue(setSettings.getValue().c_str());

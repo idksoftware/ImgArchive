@@ -161,6 +161,7 @@
     <ClInclude Include="SetImageExtentionFile.h" />
     <ClInclude Include="ShowCommand.h" />
     <ClInclude Include="TestArchive.h" />
+    <ClInclude Include="TextOut.h" />
     <ClInclude Include="UpdateConfig.h" />
   </ItemGroup>
   <ItemGroup>
@@ -173,6 +174,7 @@
     <ClCompile Include="SetImageExtentionFile.cpp" />
     <ClCompile Include="ShowCommand.cpp" />
     <ClCompile Include="TestArchive.cpp" />
+    <ClCompile Include="TextOut.cpp" />
     <ClCompile Include="UpdateConfig.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

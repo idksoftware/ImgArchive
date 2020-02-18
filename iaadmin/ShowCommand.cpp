@@ -49,6 +49,7 @@ namespace simplearchive {
 		return false;
 	}
 
+
 	bool ShowCommand::showGeneral()
 	{
 		AppConfig appConfig;

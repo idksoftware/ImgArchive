@@ -6,6 +6,34 @@
 #include "AppConfig.h"
 #include "SAUtils.h"
 
+OutputType::Type OutputType::get() {
+	return m_type;
+}
+
+bool OutputType::parse(const char* str) {
+	std::string arg = str;
+
+	if (arg.compare("text") == 0) {
+		m_type = Type::plain;
+		return true;
+	}
+	if (arg.compare("xml") == 0) {
+		m_type = Type::xml;
+		return true;
+	}
+	if (arg.compare("json") == 0) {
+		m_type = Type::json;
+		return true;
+	}
+	if (arg.compare("html") == 0) {
+		m_type = Type::html;
+		return true;
+	}
+	m_type = Type::unknown;
+	return false;
+}
+
+
 enum class Option {
 	QUIET,
 	SILENT,
