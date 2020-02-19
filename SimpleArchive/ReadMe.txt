@@ -24,7 +24,6 @@ SimpleArchive.vcxproj.filters
 SimpleArchive.cpp
     This is the main application source file.
 
-
 /////////////////////////////////////////////////////////////////////////////
 Other standard files:
 
