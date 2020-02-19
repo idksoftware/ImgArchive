@@ -121,6 +121,7 @@ bool CExtentionsFile::getList(std::vector<std::shared_ptr<ExtentionItem>> &list,
 			break;
 		case SelectionType::All:
 			list.push_back(data);
+			break;
 		default:
 			return false;
 		}

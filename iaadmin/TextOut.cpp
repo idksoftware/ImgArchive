@@ -55,9 +55,7 @@ std::string TextOut::writeJsonTag(const char* tag, const std::string& value) {
 	if (!value.empty()) {
 		jason << "\"" << tag << "\":\"" << value << "\"\n";
 	}
-	else {
-		//xml << "<" << tag << "/>\n";
-	}
+	
 	return jason.str();
 }
 

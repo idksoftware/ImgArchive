@@ -60,8 +60,80 @@ namespace simplearchive {
 		return false;
 	}
 
+	class ShowAllowedTextOut : public TextOut {
+		SelectionType m_type;
+	public:
+		ShowAllowedTextOut(SelectionType type) : m_type(type) {};
+		std::string writePlain();
+		std::string writeXML();
+		std::string writeJson();
+		std::string writeHtml();
+	};
+
+	std::string ShowAllowedTextOut ::writePlain() {
+		return std::string();
+	}
+	std::string ShowAllowedTextOut::writeXML() {
+		AppConfig appConfig;
+		std::stringstream str;
+
+		ImageExtentions& imageExtentions = ImageExtentions::get();
+		std::vector<std::shared_ptr<ExtentionItem>> list;
+		str << XML_HEATER << '\n';
+		str << "<AllowedTypes>" << '\n';
+		imageExtentions.getList(list, m_type);
+		for (auto ii = list.begin(); ii != list.end(); ++ii) {
+			std::shared_ptr<ExtentionItem> data = *ii;
+			str << "\t" << "<Item>" << '\n';
+			str << "\t\t" << writeXMLTag("Ext", data->getExt());
+			str << "\t\t" << writeXMLTag("ImageType", data->getType().toString());
+			str << "\t\t" << writeXMLTag("Mime", data->getMimeType());
+			str << "\t\t" << writeXMLTag("Description", data->getDesciption());
+			str << "\t" << "</Item>" << '\n';
+		}
+		str << "</AllowedTypes>" << '\n';
+		std::string s = str.str();
+		return s;
+	}
+	std::string ShowAllowedTextOut::writeJson() {
+		AppConfig appConfig;
+		std::stringstream str;
+
+		ImageExtentions& imageExtentions = ImageExtentions::get();
+		std::vector<std::shared_ptr<ExtentionItem>> list;
+		str << "{" << '\n';
+		str << "\tAllowedTypes : [" << '\n';
+		imageExtentions.getList(list, m_type);
+		for (auto ii = list.begin(); ii != list.end(); ++ii) {
+			std::shared_ptr<ExtentionItem> data = *ii;
+			str << "\t\t" << "Item : {" << '\n';
+			str << "\t\t\t" << writeJsonTag("Ext", data->getExt());
+			str << "\t\t\t" << writeJsonTag("ImageType", data->getType().toString());
+			str << "\t\t\t" << writeJsonTag("Mime", data->getMimeType());
+			str << "\t\t\t" << writeJsonTag("Description", data->getDesciption());
+			str << "\t\t" << "}" << '\n';
+		}
+		str << "\t]" << '\n';
+		str << "}" << '\n';
+		std::string s = str.str();
+		return s;
+	}
+	std::string ShowAllowedTextOut::writeHtml() {
+		return std::string();
+	}
+
 	bool ShowCommand::showAllowed(SelectionType type)
 	{
+		//m_outputFile;
+		
+		ShowAllowedTextOut showAllowedTextOut(type);
+		if (showAllowedTextOut.parseTextOutType(m_textOutputType.c_str()) == false) {
+			return false;
+		}
+
+		std::cout << showAllowedTextOut.process();
+		return true;
+		/*
 		AppConfig appConfig;
 		std::stringstream str;
 
@@ -75,6 +147,7 @@ namespace simplearchive {
 
 		std::string s = str.str();
 		std::cout << s;
+		*/
 		return true;
 	}
 
