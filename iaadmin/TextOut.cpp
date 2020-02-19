@@ -7,7 +7,12 @@
 #include <iostream>
 #include <fstream>
 
-std::string writePlainTag(const char* tag, const std::string& value) {
+std::string TextOut::writePlainTag(const char* tag, const char* v) {
+	const std::string& value = v;
+	return writePlainTag(tag, value);
+}
+
+std::string TextOut::writePlainTag(const char* tag, const std::string& value) {
 	std::ostringstream text;
 	if (!value.empty()) {
 		text <<  tag << " = " << value << "\n";
@@ -16,6 +21,16 @@ std::string writePlainTag(const char* tag, const std::string& value) {
 		text << tag << " = none\n";
 	}
 	return text.str();
+}
+
+std::string TextOut::writeXMLTag(const char* tag, bool b) {
+	const std::string& value = (b)? "true" : "false";
+	return writeXMLTag(tag, value);
+}
+
+std::string TextOut::writeXMLTag(const char* tag, const char* v) {
+	const std::string& value = v;
+	return writeXMLTag(tag, value);
 }
 
 std::string TextOut::writeXMLTag(const char* tag, const std::string& value) {
@@ -29,7 +44,13 @@ std::string TextOut::writeXMLTag(const char* tag, const std::string& value) {
 	return xml.str();
 }
 
-std::string writeJsonTag(const char* tag, const std::string& value) {
+std::string TextOut::writeJsonTag(const char* tag, const char* v) {
+	const std::string& value = v;
+	return writeJsonTag(tag, value);
+}
+
+
+std::string TextOut::writeJsonTag(const char* tag, const std::string& value) {
 	std::ostringstream jason;
 	if (!value.empty()) {
 		jason << "\"" << tag << "\":\"" << value << "\"\n";
@@ -40,7 +61,12 @@ std::string writeJsonTag(const char* tag, const std::string& value) {
 	return jason.str();
 }
 
-std::string writeHtmlTag(const char* tag, const std::string& value) {
+std::string TextOut::writeHtmlTag(const char* tag, const char* v) {
+	const std::string& value = v;
+	return writeHtmlTag(tag, value);
+}
+
+std::string TextOut::writeHtmlTag(const char* tag, const std::string& value) {
 	std::ostringstream html;
 	if (!value.empty()) {
 		html << "\"" << tag << "\":\"" << value << "\"\n";

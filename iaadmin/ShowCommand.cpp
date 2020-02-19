@@ -147,13 +147,47 @@ namespace simplearchive {
 		return s;
 	}
 	std::string GeneralTextOut::writeXML() {
-		return std::string();
+		AppConfig appConfig;
+		std::stringstream str;
+
+		str << XML_HEATER << '\n';
+		str << "<GeneralSettings>" << '\n';
+		str << writeXMLTag("Loglevel", appConfig.getLogLevel());
+		str << writeXMLTag("Consolelevel", appConfig.getConsoleLevel());
+		str << writeXMLTag("SQLDatabase", appConfig.isSQL());
+		str << writeXMLTag("SilentOn", appConfig.isSilent());
+		str << writeXMLTag("QuietOn", appConfig.isQuiet());
+		str << "</GeneralSettings>" << '\n';
+		std::string s = str.str();
+		return s;
 	}
 	std::string GeneralTextOut::writeJson() {
-		return std::string();
+		AppConfig appConfig;
+		std::stringstream str;
+
+		str << "    General" << '\n';
+		str << "        Log level:                 " << appConfig.getLogLevel() << '\n';
+		str << "        Console level:             " << appConfig.getConsoleLevel() << '\n';
+		str << "        SQL database:              " << ((appConfig.isSQL()) ? "True" : "False") << '\n';
+		str << "        Silent On:                 " << ((appConfig.isSilent()) ? "True" : "False") << '\n';
+		str << "        Quiet On:                  " << ((appConfig.isQuiet()) ? "True" : "False") << '\n';
+
+		std::string s = str.str();
+		return s;
 	}
 	std::string GeneralTextOut::writeHtml() {
-		return std::string();
+		AppConfig appConfig;
+		std::stringstream str;
+		/*
+		str << "    General" << '\n';
+		str << "        Log level:                 " << appConfig.getLogLevel();
+		str << "        Console level:             " << appConfig.getConsoleLevel();
+		str << "        SQL database:              " << appConfig.isSQL();
+		str << "        Silent On:                 " << appConfig.isSilent();
+		str << "        Quiet On:                  " << appConfig.isQuiet();
+		*/
+		std::string s = str.str();
+		return s;
 	}
 
 	bool ShowCommand::showGeneral(const char* filename, const char* textOutType)

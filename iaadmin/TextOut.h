@@ -8,15 +8,24 @@ enum class TextOutType {
 	html,
 	unknown
 };
+
+#define XML_HEATER "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+
 class TextOut
 {	
-private:
+protected:
 	std::string m_filename;
 	std::string writePlainTag(const char* tag, const std::string& value);
 	std::string writeXMLTag(const char* tag, const std::string& value);
 	std::string writeJsonTag(const char* tag, const std::string& value);
 	std::string writeHtmlTag(const char* tag, const std::string& value);
 
+	std::string TextOut::writeXMLTag(const char* tag, bool b);
+
+	std::string writePlainTag(const char* tag, const char* value);
+	std::string writeXMLTag(const char* tag, const char* value);
+	std::string writeJsonTag(const char* tag, const char* value);
+	std::string writeHtmlTag(const char* tag, const char* value);
 	TextOutType m_textOutType;
 public:
 	TextOut() : m_textOutType(TextOutType::plain) {};
