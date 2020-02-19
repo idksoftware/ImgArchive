@@ -89,6 +89,8 @@ private:
 	static std::string m_optionBlock;
 	static VerifyOperation m_verifyOperation;
 	static ShowOperation m_showOperation;
+	static std::string m_outputFile;
+	static std::string m_textOutputType;
 	static bool m_repair;
 	static bool m_users;
 	static bool m_setHomeEnv;
@@ -143,6 +145,8 @@ public:
 	const char* getConfigOption();
 	const char* getConfigValue();
 	const char* getConfigOptionBlock();
+	const char* getOutputFile();
+	const char* getTextOutputType();
 
 	bool isAllUsers();
 

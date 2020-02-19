@@ -1,5 +1,7 @@
 #pragma once
 #include "ImageExtentions.h"
+#include "TextOut.h"
+
 namespace simplearchive {
 
 	class ShowCommand
@@ -13,7 +15,7 @@ namespace simplearchive {
 		};
 	private:
 		
-		bool showGeneral();
+		bool showGeneral(const char* filename, const char* textOutType);
 		bool showLogging();
 		bool showNetwork();
 		bool showFolders();
@@ -29,10 +31,13 @@ namespace simplearchive {
 		bool showAllowedPicture();
 		bool showAllowedAll();
 		Error m_error;
+		std::string m_outputFile;
+		std::string m_textOutputType;
 	public:
 		ShowCommand();
 		~ShowCommand() = default;
-		
+		void setOutputFile(const char* s);
+		void setTextOutputType(const char* s);
 		bool parseOptions(const char* optionString);
 		bool process(const char* configOption, const char* configValue);
 		

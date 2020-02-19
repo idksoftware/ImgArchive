@@ -52,6 +52,10 @@
 #define ALL_LABEL				"all"
 #define RAW_LABEL			    "raw"
 #define PICTURE_LABEL			"picture"
+#define PLAIN_TEXT_LABEL		"plain"
+#define XML_LABEL				"xml"
+#define JSON_LABEL				"json"
+#define HTML_LABEL				"html"
 /**
 	@brief These #defines define the labels the hook files will use
 	to reference envronment varibles.

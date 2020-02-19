@@ -13,7 +13,7 @@ OutputType::Type OutputType::get() {
 bool OutputType::parse(const char* str) {
 	std::string arg = str;
 
-	if (arg.compare("text") == 0) {
+	if (arg.compare("plain") == 0) {
 		m_type = Type::plain;
 		return true;
 	}

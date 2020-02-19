@@ -124,7 +124,7 @@ namespace simplearchive {
 		return true;
 	}
 
-	bool AdminApp::Show(const char* configOption, const char* configValue) {
+	bool AdminApp::Show(const char* configOption, const char* configValue, const char* outputType, const char* filename) {
 		/*
 		AdminConfig config;
 		m_configured = false;
@@ -237,6 +237,9 @@ namespace simplearchive {
 	CreateArchive::checkFolders(homePath.c_str());
 	*/
 	ShowCommand showCommand;
+	showCommand.setOutputFile(filename);
+	showCommand.setTextOutputType(outputType);
+	
 	if (showCommand.process(configOption, configValue) == false) {
 		return false;
 	}
@@ -262,9 +265,9 @@ bool AdminApp::doRun()
 			Configure(appOptions.getConfigOptionBlock(), appOptions.getConfigOption(), appOptions.getConfigValue());
 			return true;
 		case AppOptions::CommandMode::CM_Show:
-			Show(appOptions.getConfigOption(), appOptions.getConfigValue());
+			Show(appOptions.getConfigOption(), appOptions.getConfigValue(), appOptions.getTextOutputType(), appOptions.getOutputFile());
 			return true;
-
+			
 		case AppOptions::CommandMode::CM_Test:
 		{
 

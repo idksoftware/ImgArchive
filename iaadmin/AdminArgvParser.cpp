@@ -211,6 +211,9 @@ namespace simplearchive {
 		defineOption("out", "Output type: text, xml, json or html.", ArgvParser::OptionRequiresValue);
 		//defineOptionAlternative("u", "users");
 
+		defineOption("file", "output file name.", ArgvParser::OptionRequiresValue);
+		//defineOptionAlternative("u", "users");
+
 		defineOption("scope", "Scope of validation.", ArgvParser::OptionRequiresValue);
 		//defineOptionAlternative("u", "users");
 
@@ -226,6 +229,7 @@ namespace simplearchive {
 		defineCommandOption("show", "setting");
 		defineCommandOption("show", "allowed");
 		defineCommandOption("show", "out");
+		defineCommandOption("show", "file");
 
 		defineCommandOption("validate", "scope");
 		defineCommandOption("validate", "repair");
@@ -421,16 +425,37 @@ namespace simplearchive {
 				if (foundOption("out") == true) {
 					OutputType outputType;
 					std::string outType = optionValue("out");
-					if (outputType.parse(optionValue("out").c_str()) == true) {
+					if (outputType.parse(optionValue("out").c_str()) == false) {
 						printf("Option for argument \"out\" for sub-command: %s is invalid: %s\n\n", getCurrentCommand().c_str(), optionValue("out").c_str());
 						printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 						return false;
 					}
+					else {
+						appOptions.m_textOutputType = optionValue("out");
+					}
+				}
+				if (foundOption("file") == true) {
+					appOptions.m_outputFile = optionValue("file");
 				}
 			} else if (foundOption("allowed") == true) {
 				if (setSettings.parseAllowedOptions(optionValue("allowed").c_str()) == true) {
 					subOption = "allowed";
 					argFound = true;
+				}
+				if (foundOption("out") == true) {
+					OutputType outputType;
+					std::string outType = optionValue("out");
+					if (outputType.parse(optionValue("out").c_str()) == false) {
+						printf("Option for argument \"out\" for sub-command: %s is invalid: %s\n\n", getCurrentCommand().c_str(), optionValue("out").c_str());
+						printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+						return false;
+					}
+					else {
+						appOptions.m_textOutputType = optionValue("out");
+					}
+				}
+				if (foundOption("file") == true) {
+					appOptions.m_outputFile = optionValue("file");
 				}
 			}
 			

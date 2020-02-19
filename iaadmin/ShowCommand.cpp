@@ -3,7 +3,7 @@
 #include "CLogger.h"
 #include "siaglobal.h"
 #include "SAUtils.h"
-
+#include "TextOut.h"
 #include "SAUtils.h"
 #include "CSVArgs.h"
 #include <sstream>
@@ -11,6 +11,16 @@
 namespace simplearchive {
 
 	ShowCommand::ShowCommand() : m_error(Error::Unknown) {}
+
+	void ShowCommand::setOutputFile(const char* s)
+	{
+		m_outputFile = s;
+	}
+
+	void ShowCommand::setTextOutputType(const char* s)
+	{
+		m_textOutputType = s;
+	}
 
 	bool ShowCommand::parseOptions(const char* str) {
 		std::string arg = str;
@@ -87,7 +97,7 @@ namespace simplearchive {
 		std::string arg = str;
 
 		if (arg.compare("general") == 0) {
-			return showGeneral();
+			return showGeneral(m_outputFile.c_str(), m_textOutputType.c_str());
 		}
 		if (arg.compare("logging") == 0) {
 			return showLogging();
@@ -114,9 +124,15 @@ namespace simplearchive {
 		return false;
 	}
 
+	class GeneralTextOut : public TextOut {
+	public:
+		std::string writePlain();
+		std::string writeXML();
+		std::string writeJson();
+		std::string writeHtml();
+	};
 
-	bool ShowCommand::showGeneral()
-	{
+	std::string GeneralTextOut::writePlain() {
 		AppConfig appConfig;
 		std::stringstream str;
 
@@ -128,7 +144,39 @@ namespace simplearchive {
 		str << "        Quiet On:                  " << ((appConfig.isQuiet()) ? "True" : "False") << '\n';
 
 		std::string s = str.str();
-		std::cout << s;
+		return s;
+	}
+	std::string GeneralTextOut::writeXML() {
+		return std::string();
+	}
+	std::string GeneralTextOut::writeJson() {
+		return std::string();
+	}
+	std::string GeneralTextOut::writeHtml() {
+		return std::string();
+	}
+
+	bool ShowCommand::showGeneral(const char* filename, const char* textOutType)
+	{
+		GeneralTextOut generalTextOut;
+		if (generalTextOut.parseTextOutType(textOutType) == false) {
+			return false;
+		}
+		
+		/*
+		AppConfig appConfig;
+		std::stringstream str;
+
+		str << "    General" << '\n';
+		str << "        Log level:                 " << appConfig.getLogLevel() << '\n';
+		str << "        Console level:             " << appConfig.getConsoleLevel() << '\n';
+		str << "        SQL database:              " << ((appConfig.isSQL()) ? "True" : "False") << '\n';
+		str << "        Silent On:                 " << ((appConfig.isSilent()) ? "True" : "False") << '\n';
+		str << "        Quiet On:                  " << ((appConfig.isQuiet()) ? "True" : "False") << '\n';
+
+		std::string s = str.str();
+		*/
+		std::cout << generalTextOut.process();
 		return true;
 	}
 

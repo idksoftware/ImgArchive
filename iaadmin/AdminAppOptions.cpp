@@ -66,7 +66,8 @@ std::string AppOptions::m_wwwImagePath;
 std::string AppOptions::m_configOption;
 std::string AppOptions::m_configValue;
 std::string AppOptions::m_optionBlock;
-
+std::string AppOptions::m_outputFile;
+std::string AppOptions::m_textOutputType;
 
 AppOptions::VerifyOperation AppOptions::m_verifyOperation = AppOptions::VerifyOperation::Both;
 AppOptions::ShowOperation AppOptions::m_showOperation = AppOptions::ShowOperation::CheckedOut;
@@ -215,6 +216,14 @@ const char* AppOptions::getConfigValue()
 const char* AppOptions::getConfigOptionBlock()
 {
 	return m_optionBlock.c_str();
+}
+const char* AppOptions::getOutputFile()
+{
+	return m_outputFile.c_str();
+}
+const char* AppOptions::getTextOutputType()
+{
+	return m_textOutputType.c_str();
 }
 const char *AppOptions::getRepositoryPath() {
 	return m_repositoryPath.c_str();

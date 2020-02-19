@@ -1,4 +1,7 @@
+
 #include "TextOut.h"
+#include "AppConfig.h"
+#include "SAUtils.h"
 #include <stdio.h>
 #include <sstream>
 #include <iostream>
@@ -46,4 +49,44 @@ std::string writeHtmlTag(const char* tag, const std::string& value) {
 		//xml << "<" << tag << "/>\n";
 	}
 	return html.str();
+}
+
+bool TextOut::parseTextOutType(const char *s)
+{
+	std::string optionString = s;
+	if (SAUtils::isEquals(PLAIN_TEXT_LABEL, optionString)) {
+		m_textOutType = TextOutType::plain;
+		return true;
+	}
+	if (SAUtils::isEquals(XML_LABEL, optionString)) {
+		m_textOutType = TextOutType::xml;
+		return true;
+	}
+	if (SAUtils::isEquals(JSON_LABEL, optionString)) {
+		m_textOutType = TextOutType::json;
+		return true;
+	}
+	if (SAUtils::isEquals(HTML_LABEL, optionString)) {
+		m_textOutType = TextOutType::html;
+		return true; 
+	}
+	m_textOutType = TextOutType::unknown;
+	return false;
+}
+
+std::string TextOut::process() {
+	switch (m_textOutType) {
+	case TextOutType::plain:
+		return writePlain();
+	case TextOutType::xml:
+		return writeXML();
+	case TextOutType::json:
+		return writeJson();
+	case TextOutType::html:
+		return writeHtml();
+	case TextOutType::unknown:
+	default:
+		return std::string();
+	}
+	return std::string();
 }
