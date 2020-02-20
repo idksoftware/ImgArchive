@@ -27,6 +27,7 @@ protected:
 	std::string writeJsonTag(const char* tag, const char* value);
 	std::string writeHtmlTag(const char* tag, const char* value);
 	TextOutType m_textOutType;
+	std::string toString();
 public:
 	TextOut() : m_textOutType(TextOutType::plain) {};
 	virtual ~TextOut() = default;
@@ -34,7 +35,7 @@ public:
 		m_filename = fn;
 	}
 	bool parseTextOutType(const char* s);
-	std::string TextOut::process();
+	void process();
 	virtual std::string writePlain() = 0;
 	virtual std::string writeXML() = 0;
 	virtual std::string writeJson() = 0;

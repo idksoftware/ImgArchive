@@ -130,8 +130,7 @@ namespace simplearchive {
 		if (showAllowedTextOut.parseTextOutType(m_textOutputType.c_str()) == false) {
 			return false;
 		}
-
-		std::cout << showAllowedTextOut.process();
+		showAllowedTextOut.process();
 		return true;
 		/*
 		AppConfig appConfig;
@@ -269,21 +268,7 @@ namespace simplearchive {
 		if (generalTextOut.parseTextOutType(textOutType) == false) {
 			return false;
 		}
-		
-		/*
-		AppConfig appConfig;
-		std::stringstream str;
-
-		str << "    General" << '\n';
-		str << "        Log level:                 " << appConfig.getLogLevel() << '\n';
-		str << "        Console level:             " << appConfig.getConsoleLevel() << '\n';
-		str << "        SQL database:              " << ((appConfig.isSQL()) ? "True" : "False") << '\n';
-		str << "        Silent On:                 " << ((appConfig.isSilent()) ? "True" : "False") << '\n';
-		str << "        Quiet On:                  " << ((appConfig.isQuiet()) ? "True" : "False") << '\n';
-
-		std::string s = str.str();
-		*/
-		std::cout << generalTextOut.process();
+		generalTextOut.process();
 		return true;
 	}
 

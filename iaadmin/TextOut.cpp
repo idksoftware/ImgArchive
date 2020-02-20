@@ -53,7 +53,7 @@ std::string TextOut::writeJsonTag(const char* tag, const char* v) {
 std::string TextOut::writeJsonTag(const char* tag, const std::string& value) {
 	std::ostringstream jason;
 	if (!value.empty()) {
-		jason << "\"" << tag << "\":\"" << value << "\"\n";
+		jason << tag << ":\"" << value << "\"";
 	}
 	
 	return jason.str();
@@ -98,7 +98,7 @@ bool TextOut::parseTextOutType(const char *s)
 	return false;
 }
 
-std::string TextOut::process() {
+std::string TextOut::toString() {
 	switch (m_textOutType) {
 	case TextOutType::plain:
 		return writePlain();
@@ -113,4 +113,15 @@ std::string TextOut::process() {
 		return std::string();
 	}
 	return std::string();
+}
+
+void TextOut::process() {
+	if (m_filename.empty()) {
+		std::cout << toString();
+	}
+	std::ofstream file(m_filename.c_str());
+	if (file.is_open() == true) {
+		file << toString();
+	}
+	file.close();
 }

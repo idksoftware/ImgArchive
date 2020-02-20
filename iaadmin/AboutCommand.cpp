@@ -41,24 +41,8 @@ bool AboutCommand::process()
 	if (aboutTextOut.parseTextOutType(m_textOutputType.c_str()) == false) {
 		return false;
 	}
-
-	std::cout << aboutTextOut.process();
-	return true;
-	/*
-	AppConfig appConfig;
-	std::stringstream str;
-
-	ImageExtentions& imageExtentions = ImageExtentions::get();
-	std::vector<std::shared_ptr<ExtentionItem>> list;
-	imageExtentions.getList(list, type);
-	for (auto ii = list.begin(); ii != list.end(); ++ii) {
-		std::shared_ptr<ExtentionItem> data = *ii;
-		str << data->toString() << '\n';
-	}
-
-	std::string s = str.str();
-	std::cout << s;
-	*/
+	aboutTextOut.setFilename(m_outputFile.c_str());
+	aboutTextOut.process();
 	return true;
 }
 
@@ -82,14 +66,24 @@ std::string AboutTextOut::writeXML() {
 	str << "\t" << writeXMLTag("Version", m_version);
 	str << "\t" << writeXMLTag("Build", m_build);
 	str << "\t" << writeXMLTag("Copyright", "Copyright@(2010-2016) IDK Solutions Ltd");
-	str << "<About>" << '\n';
+	str << "</About>" << '\n';
 
 	std::string s = str.str();
 	return s;
 }
 
 std::string AboutTextOut::writeJson() {
-	return std::string();
+	std::stringstream str;
+	str << "{" << '\n';
+	str << "\t" << writeJsonTag("Application", "iaadmin") << ",\n";
+	str << "\t" << writeJsonTag("Description", "ImgArchive Administrator tool") << ",\n";
+	str << "\t" << writeJsonTag("Version", m_version) << ",\n";
+	str << "\t" << writeJsonTag("Build", m_build) << ",\n";
+	str << "\t" << writeJsonTag("Copyright", "Copyright@(2010-2016) IDK Solutions Ltd") << "\n";
+	str << "}" << '\n';
+
+	std::string s = str.str();
+	return s;
 }
 
 std::string AboutTextOut::writeHtml() {
