@@ -61,7 +61,9 @@ namespace simplearchive {
 			"| [folders] | [master] | | [derivative] | [backup] | [exiftool]");
 
 
-		defineOption("version", "prints the version information", ArgvParser::MasterOption);
+		defineOption("about", "prints the version information", ArgvParser::MasterOption);
+		defineCommandSyntax("about", "about [--out] [--file]\n");
+
 		defineOption("validate", "Validate commands", ArgvParser::MasterOption);
 		defineOption("allow", "Controls which image file extensions are allowed into the archive.", ArgvParser::MasterOption);
 		defineCommandSyntax("allow", "isadmin allow [-q | --quiet]\n"
@@ -209,9 +211,11 @@ namespace simplearchive {
 		defineCommandSyntax("allowed", "--allowed=[ raw | picture | all ]");
 
 		defineOption("out", "Output type: text, xml, json or html.", ArgvParser::OptionRequiresValue);
+		defineCommandSyntax("out", "out=[plain] | [xml] | [json] | [html]\n");
 		//defineOptionAlternative("u", "users");
 
 		defineOption("file", "output file name.", ArgvParser::OptionRequiresValue);
+		defineCommandSyntax("file", "file=<filename>\n");
 		//defineOptionAlternative("u", "users");
 
 		defineOption("scope", "Scope of validation.", ArgvParser::OptionRequiresValue);
@@ -249,6 +253,10 @@ namespace simplearchive {
 		defineCommandOption("allow", "add");
 		defineCommandOption("allow", "edit");
 		defineCommandOption("allow", "delete");
+
+		defineCommandOption("about", "out");
+		defineCommandOption("about", "file");
+
 		ArgvParser::ParserResults res = parse(argc, argv);
 
 		std::string errStr;
@@ -404,9 +412,24 @@ namespace simplearchive {
 
 			cmdFound = true;
 		}
-		else if (command("version") == true) {
-				appOptions.setCommandMode(AppOptions::CommandMode::CM_Version);
-				cmdFound = true;
+		else if (command("about") == true) {
+			if (foundOption("out") == true) {
+				OutputType outputType;
+				std::string outType = optionValue("out");
+				if (outputType.parse(optionValue("out").c_str()) == false) {
+					printf("Option for argument \"out\" for sub-command: %s is invalid: %s\n\n", getCurrentCommand().c_str(), optionValue("out").c_str());
+					printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+					return false;
+				}
+				else {
+					appOptions.m_textOutputType = optionValue("out");
+				}
+			}
+			if (foundOption("file") == true) {
+				appOptions.m_outputFile = optionValue("file");
+			}
+			appOptions.setCommandMode(AppOptions::CommandMode::CM_About);
+			cmdFound = true;
 		}
 		else if (command("show") == true) {
 			bool argFound = false;
@@ -640,7 +663,7 @@ namespace simplearchive {
 			appOptions.setCommandMode(AppOptions::CommandMode::CM_Test);
 			cmdFound = true;
 		}
-		else if (foundOption("backup") == true) {
+		else if (command("backup") == true) {
 			appOptions.setCommandMode(AppOptions::CommandMode::CM_Archive);
 
 			if (foundOption("archive-path") == true) {
@@ -680,49 +703,12 @@ namespace simplearchive {
 			}
 			cmdFound = true;
 		}
-		else if (foundOption("version") == true) {
-			appOptions.setCommandMode(AppOptions::CommandMode::CM_Version);
-			cmdFound = true;
-		}
+		
 		else {
 			appOptions.setCommandMode(AppOptions::CommandMode::CM_Unknown);
 			cmdFound = true;
 		}
 		
-		
-		if (foundOption("logging-level") == true) {
-
-			std::string opt = optionValue("logging-level");
-//			printf(opt.c_str()); printf("\n");
-			config.setLogLevel(opt.c_str());
-		}
-		if (foundOption("console-level") == true) {
-
-			std::string opt = optionValue("console-level");
-//			printf(opt.c_str()); printf("\n");
-			config.setConsoleLevel(opt.c_str());
-		}
-		if (foundOption("dry-run") == true) {
-
-			std::string opt = optionValue("dry-run");
-//			printf(opt.c_str()); printf("\n");
-			config.setDryRun(opt.c_str());
-		}
-
-		if (foundOption("media-path") == true) {
-
-			std::string opt = optionValue("media-path");
-//			printf(opt.c_str()); printf("\n");
-			//config.setDryRun(opt.c_str());
-		}
-
-		if (foundOption("media-size") == true) {
-
-			std::string opt = optionValue("media-size");
-//			printf(opt.c_str()); printf("\n");
-			//config.setDryRun(opt.c_str());
-		}
-
 		if (res != ArgvParser::NoParserError) {
 			printf("%s\n", parseErrorDescription(res).c_str());
 			printf("%s\n", usageDescription().c_str());
@@ -756,7 +742,7 @@ namespace simplearchive {
 	std::string AdminArgvParser::commandUsage(unsigned int width) const
 	{
 		std::string usage; // the usage description text
-		usage = formatString("usage: iaadmin [--version][--help] <command>[<args>]\n", width);
+		usage = formatString("usage: iaadmin [--about][--help] <command>[<args>]\n", width);
 		usage += '\n';
 
 		return usage;

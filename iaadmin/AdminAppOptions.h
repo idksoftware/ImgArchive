@@ -43,7 +43,7 @@ public:
 	enum class CommandMode {
 		CM_InitArchive, //* Initalise an archive with the default prameter
 		CM_Show,        //* Show
-		CM_Version,     //* show version
+		CM_About,       //* show version
 		CM_View,        //* View
 		CM_Mirror,      //* Mirror
 		CM_Archive,     //*

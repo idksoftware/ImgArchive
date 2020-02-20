@@ -480,64 +480,71 @@ std::string ArgvParser::topicUsageDescription(unsigned int topic, unsigned int _
 		usage += formatString("(no description)", _width, 4) + "\n\n";
 	}
 
-	usage += "OPTIONS: \n\n";
-	ArgumentContainer ac = command_set.find(topic)->second;
+	
+	auto it = command_set.find(topic);
+	if (it == command_set.end()) {
+		usage += "Note: No options for this command\n\n";
+	}
+	else {
+		usage += "OPTIONS: \n\n";
+		ArgumentContainer ac = it->second;
 
-	for (auto opt = ac.begin(); opt != ac.end(); opt++) {
-		//printf("%s\n", opt->c_str());
-		unsigned int key = option2key.find(opt->c_str())->second;
-		std::list<std::string> alternatives = getAllOptionAlternatives(key);
-		for (auto alt = alternatives.begin();
-			alt != alternatives.end();
-			++alt)
-		{
-			int option = option2attribute.find(key)->second;
+		for (auto opt = ac.begin(); opt != ac.end(); opt++) {
+			//printf("%s\n", opt->c_str());
+			unsigned int key = option2key.find(opt->c_str())->second;
+			std::list<std::string> alternatives = getAllOptionAlternatives(key);
+			for (auto alt = alternatives.begin();
+				alt != alternatives.end();
+				++alt)
+			{
+				int option = option2attribute.find(key)->second;
+				_os.clear();
+				if (alt->length() > 1) {
+
+					_longOpt += *alt;
+				}
+				else {
+					_shortOpt += *alt;
+				}
+			}
+
+			if (!_longOpt.empty()) {
+				_os += "\t--";
+				_os += _longOpt;
+			}
+			if (!_shortOpt.empty()) {
+				_os += " (-";
+				_os += _shortOpt;
+				_os += ')';
+			}
+			_os += " : ";
+			usage += formatString(_os, _width) + "\n";
+			if (option2descr.find(key) != option2descr.end()) {
+				std::string desc = "\t";
+				desc += option2descr.find(key)->second;
+				usage += formatString(desc, _width, 4) + "\n";
+			}
+			else {
+				usage += formatString("\t(no description)", _width, 4) + "\n\n";
+			}
+			if (!_longOpt.empty()) {
+
+				std::string syntax = getSyntax(_longOpt);
+				if (!syntax.empty()) {
+					usage += formatString("\tSyntax:", _width, 4) + "\n";
+					usage += formatString(syntax, _width, 4, 0, 4);
+					usage += "\n\n";
+				}
+				else {
+					usage += '\n\n';
+				}
+			}
 			_os.clear();
-			if (alt->length() > 1) {
-
-				_longOpt += *alt;
-			}
-			else {
-				_shortOpt += *alt;
-			}
-		}
-
-		if (!_longOpt.empty()) {
-			_os += "\t--";
-			_os += _longOpt;
-		}
-		if (!_shortOpt.empty()) {
-			_os += " (-";
-			_os += _shortOpt;
-			_os += ')';
-		}
-		_os += " : ";
-		usage += formatString(_os, _width) + "\n";
-		if (option2descr.find(key) != option2descr.end()) {
-			std::string desc = "\t";
-			desc += option2descr.find(key)->second;
-			usage += formatString(desc, _width, 4) + "\n";
-		}
-		else {
-			usage += formatString("\t(no description)", _width, 4) + "\n\n";
-		}
-		if (!_longOpt.empty()) {
-
-			std::string syntax = getSyntax(_longOpt);
-			if (!syntax.empty()) {
-				usage += formatString("\tSyntax:", _width, 4) + "\n";
-				usage += formatString(syntax, _width, 4, 0, 4);
-				usage += "\n\n";
-			}
-			else {
-				usage += '\n\n';
-			}
-		}
-		_os.clear();
-		_longOpt.clear();
-		_shortOpt.clear();
+			_longOpt.clear();
+			_shortOpt.clear();
 
 
+		}
 	}
 	return(usage);
 }

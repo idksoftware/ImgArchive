@@ -152,6 +152,7 @@
     <Text Include="ReadMe.md" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AboutCommand.h" />
     <ClInclude Include="AdminApp.h" />
     <ClInclude Include="AdminAppOptions.h" />
     <ClInclude Include="AdminArgvParser.h" />
@@ -165,6 +166,7 @@
     <ClInclude Include="UpdateConfig.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AboutCommand.cpp" />
     <ClCompile Include="AdminApp.cpp" />
     <ClCompile Include="AdminAppOptions.cpp" />
     <ClCompile Include="AdminArgvParser.cpp" />

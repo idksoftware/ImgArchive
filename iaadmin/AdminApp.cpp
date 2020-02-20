@@ -74,6 +74,7 @@ using namespace std;
 #include "AppConfig.h"
 #include "HomePath.h"
 #include "SetImageExtentionFile.h"
+#include "AboutCommand.h"
 
 #define VERSION	"1.00"
 #define BUILD	"040115.1749"
@@ -125,127 +126,27 @@ namespace simplearchive {
 	}
 
 	bool AdminApp::Show(const char* configOption, const char* configValue, const char* outputType, const char* filename) {
-		/*
-		AdminConfig config;
-		m_configured = false;
-		bool found = false;
+
+		ShowCommand showCommand;
+		showCommand.setOutputFile(filename);
+		showCommand.setTextOutputType(outputType);
+	
+		if (showCommand.process(configOption, configValue) == false) {
+			return false;
+		}
+		return true;
+	}
+
+	bool AdminApp::About(const char* outputType, const char* filename) {
+		AboutCommand aboutCommand(VERSION, BUILD);
+		aboutCommand.setOutputFile(filename);
+		aboutCommand.setTextOutputType(outputType);
 		
-		bool res = HomePath::init();
-		HomePathType homePathType = HomePath::type();
-
-		switch (homePathType) {
-		case HomePathType::LocalEnv:	// Local Environment set
-			if (res == false) {
-				printf("Found IMGARCHIVE_HOME as system profile: %s but archive not found at loacation", HomePath::get().c_str());
-				return false;
-			}
-			printf("Found IMGARCHIVE_HOME as system profile: %s. Archive found at that loacation", HomePath::get().c_str());
-			break;
-		case HomePathType::SystemEnv:	// System Environment set
-			if (res == false) {
-				printf("Found IMGARCHIVE_HOME as system profile: %s. Archive found at that loacation", HomePath::get().c_str());
-				return false;
-			}
-			break;
-		case HomePathType::UserOnly:	// user only archive
-			if (res == false) {
-				printf("Archive not found at default loacation");
-				return false;
-			}
-			printf("Archive found at default user loacation: %s.", HomePath::get().c_str());
-			break;
-		case HomePathType::AllUsers:	// all users archive
-			if (res == false) {
-				printf("Archive not found at default loacation");
-				return false;
-			}
-			printf("Archive found at default system loacation: %s.", HomePath::get().c_str());
-			break;
-		case HomePathType::Unknown:
-		default:
-			printf("Unknown error");
+		if (aboutCommand.process() == false) {
 			return false;
 		}
-		std::string homePath = HomePath::get();
-		if (found) {
-			// Initalise without the config file i.e. set defaults.
-			if (config.init(homePath.c_str()) == false) {
-				setError(12, "Cannot find home path? exiting?");
-				return false;
-			}
-		}
-		else {
-			if (config.init() == false) {
-				setError(12, "Cannot find home path? exiting?");
-				return false;
-			}
-		}
-
-		if (SAUtils::DirExists(homePath.c_str()) == false) {
-			setError(12, "ImgArchive Unable to start? Archive not found at default location and the environment variable IAHOME not set.\n"
-				"Use siaadmin -i to create an empty archive at the default location (see documentation).\n");
-			return false;
-
-		}
-
-		// try to set a systems temp folder 
-		std::string tempPath = SAUtils::GetPOSIXEnv("TEMP");
-		if (tempPath.empty() == true || tempPath.length() == 0) {
-			tempPath = SAUtils::GetPOSIXEnv("TMP");
-		}
-
-		std::string configfile = homePath + "/config/" + "config.dat";
-		std::string configPath = homePath + "/config";
-		if (SAUtils::FileExists(configfile.c_str()) == true) {
-			setConfigPath(configPath.c_str());
-			AppConfigReader configReader;
-			configReader.setNoLogging();
-			if (configReader.read(configfile.c_str(), config) == false) {
-				setError(13, "Error found at line %d in the configuration file.\n", configReader.getCurrentLineNumber());
-				return false;
-			}
-			config.fileBasedValues(homePath.c_str(), tempPath.c_str());
-			m_configured = true;
-		}
-	//config.printAll();
-	
-	//if (config.value("SourcePath", temp) == true) {
-	//m_sourcePath = temp;
-	//}
-	//if (config.value("ArchivePath", temp) == true) {
-	//m_archivePath = temp;
-	//}
-	//if (config.value("LogLevel", temp) == true) {
-	//m_logLevel = temp;
-	//}
-	
-	config.setHomePath(homePath.c_str());
-	std::string temp;
-	
-	temp = SAUtils::GetPOSIXEnv("IASOURCE");
-	if (temp.empty() == false) {
-		config.setSourcePath(temp.c_str());
+		return true;
 	}
-	temp = SAUtils::GetPOSIXEnv("IALOGLEVEL");
-	if (temp.empty() == false) {
-		config.setLogLevel(temp.c_str());
-	}
-	temp = SAUtils::GetPOSIXEnv("IACONSOLELEVEL");
-	if (temp.empty() == false) {
-		config.setConsoleLevel(temp.c_str());
-	}
-	CreateArchive::checkFolders(homePath.c_str());
-	*/
-	ShowCommand showCommand;
-	showCommand.setOutputFile(filename);
-	showCommand.setTextOutputType(outputType);
-	
-	if (showCommand.process(configOption, configValue) == false) {
-		return false;
-	}
-	return true;
-}
-
 
 int test(const std::string key) {
 	return 0;
@@ -259,15 +160,11 @@ bool AdminApp::doRun()
 	if (isConfiguratedOk() == true) {
 		switch (appOptions.getCommandMode()) {
 		case AppOptions::CommandMode::CM_Allow:
-			Allow(appOptions.getConfigOption(), appOptions.getConfigValue());
-			return true;
+			return Allow(appOptions.getConfigOption(), appOptions.getConfigValue());
 		case AppOptions::CommandMode::CM_Config:
-			Configure(appOptions.getConfigOptionBlock(), appOptions.getConfigOption(), appOptions.getConfigValue());
-			return true;
+			return Configure(appOptions.getConfigOptionBlock(), appOptions.getConfigOption(), appOptions.getConfigValue());
 		case AppOptions::CommandMode::CM_Show:
-			Show(appOptions.getConfigOption(), appOptions.getConfigValue(), appOptions.getTextOutputType(), appOptions.getOutputFile());
-			return true;
-			
+			return Show(appOptions.getConfigOption(), appOptions.getConfigValue(), appOptions.getTextOutputType(), appOptions.getOutputFile());
 		case AppOptions::CommandMode::CM_Test:
 		{
 
@@ -277,11 +174,8 @@ bool AdminApp::doRun()
 			return true;
 
 		}
-		case AppOptions::CommandMode::CM_Version:
-			printf("ImgArchive Administrator tool\n"
-				"iaadmin version \"%s\" (build %s)\n"
-				"Copyright@(2010-2016) IDK Solutions Ltd.\n", VERSION, BUILD);
-			return true;
+		case AppOptions::CommandMode::CM_About:
+			return About(appOptions.getTextOutputType(), appOptions.getOutputFile());
 		case AppOptions::CommandMode::CM_Validate:
 		{
 			SIALib siaLib;
