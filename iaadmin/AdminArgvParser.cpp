@@ -39,8 +39,6 @@ namespace simplearchive {
 
 
 		// Subcommands
-
-
 		defineOption("init", "Create ImgArchive's working enviroment", ArgvParser::MasterOption);
 		defineCommandSyntax("init", "isadmin init [-q | --quiet] | [--user <all|self>]\n"
 			"| [--set-home-env <yes | no>] | [ --archive-path <path>]\n"
@@ -60,6 +58,10 @@ namespace simplearchive {
 			"SettingOption = <[general] | [logging] | [network]\n"
 			"| [folders] | [master] | | [derivative] | [backup] | [exiftool]");
 
+		defineOption("archive", "These options control the backup activities.", ArgvParser::MasterOption);
+		//defineOptionAlternative("archive", "a");
+		defineCommandSyntax("archive", "isadmin archive [--media-size=<number>] | [--media-path=<path>]\n"
+			"[--from-date=<date>] | [--to-date=date]");
 
 		defineOption("about", "prints the version information", ArgvParser::MasterOption);
 		defineCommandSyntax("about", "about [--out] [--file]\n");
@@ -73,9 +75,7 @@ namespace simplearchive {
 			"type        - The type of image i.e.a picture or raw.\n"
 			"mine        - The mine type.\n"
 			"description - A description of the image type.");
-		//defineOption("mirror", "Mirror commands", ArgvParser::MasterOption);
-		//defineOption("test", "test commands", ArgvParser::MasterOption);
-
+		
 		// Init Command
 		defineOption("archive-path", "location of the archive root folder.", ArgvParser::OptionRequiresValue);
 		defineOption("workspace-path", "location of the workspace folder.", ArgvParser::OptionRequiresValue);
@@ -135,19 +135,9 @@ namespace simplearchive {
 			"[EventsPort=<path>] | [EventsAddress=<path>] |\n"
 			"[CommandPort=<path>]");
 
-		defineOption("backup", "These options control the backup activities.", ArgvParser::OptionRequiresValue);
-		defineOptionAlternative("backup", "B");
-		defineCommandSyntax("backup", "--backup <Option=Value>\n"
-			"[media-size=<number>] | [media-path=<path>]\n"
-		    "[from-date=<date>] | [to-date=date]");
-
-
 		defineOption("m", "Mirror commands", ArgvParser::NoOptionAttribute);
 		defineOptionAlternative("m", "mirror");
 
-		defineOption("b", "Goes through the motions of running the subcommand but makes no\nactual changes ether disk or repository.", ArgvParser::NoOptionAttribute);
-		defineOptionAlternative("b", "backup-archive");
-		
 		defineOption("add", "Adds an extension type to file type filter. File of this type can now added to the archive.", ArgvParser::OptionRequiresValue);
 		defineOptionAlternative("add", "a");
 		defineCommandSyntax("add", "--add=<ext,type,mine,description>");
@@ -160,48 +150,19 @@ namespace simplearchive {
 		defineOptionAlternative("edit", "e");
 		defineCommandSyntax("edit", "--edit=<ext,type,mine,description>");
 		
-		//defineOption("dist-path", "destination of the images", ArgvParser::OptionRequiresValue);
-		//defineOptionAlternative("d", "dist-path");
-		// backup
-		
-		defineOption("media-size", "size of media", ArgvParser::OptionRequiresValue);
+		defineOption("media-size", "size of media in GBytes", ArgvParser::OptionRequiresValue);
 		//defineOptionAlternative("S", "media-size");
+		defineCommandSyntax("media-size", "--media-size=<SizeInGBytes>\n");
 
-		defineOption("media-path", "Goes through the motions of running the subcommand but makes no\nactual changes ether disk or repository.", ArgvParser::OptionRequiresValue);
+		defineOption("media-path", "Path where media is located", ArgvParser::OptionRequiresValue);
+		defineCommandSyntax("media-path", "--media-path=<path>\n");
 
-		defineOption("from-date", "from date", ArgvParser::OptionRequiresValue);
-		//defineOptionAlternative("F", "from-date");
+		defineOption("from-date", "from date, Date from which to start the archiving. If none given will be from the bebining of the archive", ArgvParser::OptionRequiresValue);
+		defineCommandSyntax("from-date", "--from-date=<<day>/<month>/<year>> example: --from-date=02/09/2011\n");
 
-		defineOption("to-date", "to date", ArgvParser::OptionRequiresValue);
-		//defineOptionAlternative("T", "to-date");
+		defineOption("to-date", "to date, Date to shop archiving. If none given will be to the end (lastest item).", ArgvParser::OptionRequiresValue);
+		defineCommandSyntax("to-date", "--to-date=<<day>/<month>/<year>> example: --to-date=05/12/2019\n");
 
-		/* Commented to for testing
-		// Options
-		defineOption("name", "name of the item.", ArgvParser::OptionRequiresValue);
-		//defineOptionAlternative("n", "name");
-
-		defineOption("repair", "Validate and repair.", ArgvParser::NoOptionAttribute);
-		//defineOptionAlternative("r", "repair");
-
-		
-
-		defineOption("users", "Make archive available to you only or everyone with a logon to this computer (Myself/All).", ArgvParser::OptionRequiresValue);
-		//defineOptionAlternative("u", "users");
-
-
-		
-
-		
-
-		defineOption("logging-level", "Temporarily changes the logging level for the scope of this command session.", ArgvParser::OptionRequiresValue);
-		//defineOptionAlternative("r", "logging-level");
-
-		defineOption("comment", "Comment to be included in command", ArgvParser::OptionRequiresValue);
-		//defineOptionAlternative("C", "comment");
-		*/
-		//defineOption("workspace-path", "Location of the archive Workspace", ArgvParser::OptionRequiresValue);
-		//defineOptionAlternative("workspace-path", "w");
-		
 		defineOption("s", "Show setting", ArgvParser::OptionRequiresValue);
 		defineOptionAlternative("s", "setting");
 		defineCommandSyntax("setting", "--setting=<[general] | [logging] | [network]\n"
@@ -253,6 +214,11 @@ namespace simplearchive {
 		defineCommandOption("allow", "add");
 		defineCommandOption("allow", "edit");
 		defineCommandOption("allow", "delete");
+
+		defineCommandOption("archive", "media-size");
+		defineCommandOption("archive", "media-path");
+		defineCommandOption("archive", "from-date");
+		defineCommandOption("archive", "to-date");
 
 		defineCommandOption("about", "out");
 		defineCommandOption("about", "file");
@@ -528,6 +494,7 @@ namespace simplearchive {
 				appOptions.m_repair = true;
 			}
 		}
+		/*
 		else if (command("mirror") == true) {
 			appOptions.setCommandMode(AppOptions::CommandMode::CM_Mirror);
 
@@ -537,7 +504,7 @@ namespace simplearchive {
 //					printf(opt.c_str()); printf("\n");
 				config.setWorkspacePath(opt.c_str());
 			}
-			/*
+			
 			if (foundOption("dist-path") == true) {
 
 			std::string opt = optionValue("dist-path");
@@ -559,7 +526,7 @@ namespace simplearchive {
 			config.setFromDate(opt.c_str());
 
 			}
-			*/
+			
 			if (foundOption("name") == true) {
 				std::string opt = optionValue("name");
 //					printf(opt.c_str()); printf("\n");
@@ -568,6 +535,7 @@ namespace simplearchive {
 
 			cmdFound = true;
 		}
+		*/
 		else if (command("config") == true) {
 			SetConfig setConfig;
 			if (foundOption("general") == true) {
@@ -663,42 +631,34 @@ namespace simplearchive {
 			appOptions.setCommandMode(AppOptions::CommandMode::CM_Test);
 			cmdFound = true;
 		}
-		else if (command("backup") == true) {
-			appOptions.setCommandMode(AppOptions::CommandMode::CM_Archive);
+		else if (command("archive") == true) {
+			appOptions.setCommandMode(AppOptions::CommandMode::CM_Backup);
+			if (foundOption("media-path") == true) {
 
-			if (foundOption("archive-path") == true) {
-
-				std::string opt = optionValue("archive-path");
+				appOptions.m_mediaPath = optionValue("media-path");
 //					printf(opt.c_str()); printf("\n");
-				config.setWorkspacePath(opt.c_str());
+				//config.setBackupDestinationPath(opt.c_str());
+				appOptions.m_toDate;
 			}
+			if (foundOption("media-size") == true) {
 
-			if (foundOption("dist-path") == true) {
-
-				std::string opt = optionValue("dist-path");
+				appOptions.m_mediaSize = optionValue("media-size");
 //					printf(opt.c_str()); printf("\n");
-				config.setBackupDestinationPath(opt.c_str());
-
-			}
-			if (foundOption("size") == true) {
-
-				std::string opt = optionValue("size");
-//					printf(opt.c_str()); printf("\n");
-				config.setBackupMediaSize(opt.c_str());
+				//config.setBackupMediaSize(opt.c_str());
 
 			}
 			if (foundOption("from-date") == true) {
 
-				std::string opt = optionValue("from-date");
+				appOptions.m_fromDate = optionValue("from-date");
 //					printf(opt.c_str()); printf("\n");
-				config.setFromDate(opt.c_str());
+				//config.setFromDate(opt.c_str());
 
 			}
 			if (foundOption("to-date") == true) {
 
-				std::string opt = optionValue("to-date");
+				appOptions.m_toDate = optionValue("to-date");
 //					printf(opt.c_str()); printf("\n");
-				config.setToDate(opt.c_str());
+				//config.setToDate(opt.c_str());
 
 			}
 			cmdFound = true;

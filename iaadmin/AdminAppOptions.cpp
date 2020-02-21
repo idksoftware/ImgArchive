@@ -74,6 +74,10 @@ AppOptions::ShowOperation AppOptions::m_showOperation = AppOptions::ShowOperatio
 bool AppOptions::m_repair = false;
 bool AppOptions::m_users = true;
 bool AppOptions::m_setHomeEnv = true;
+std::string AppOptions::m_mediaSize;
+std::string AppOptions::m_mediaPath;
+std::string AppOptions::m_fromDate;
+std::string AppOptions::m_toDate;
 
 AppOptions &AppOptions::get() {
 	static AppOptions _this;
@@ -238,4 +242,21 @@ const char *AppOptions::getConfigPath() {
 void AppOptions::setHomeEnv(bool b) {
 	m_setHomeEnv = b;
 }
+
+const char* AppOptions::getMediaSize() {
+	return m_mediaSize.c_str();
+}
+
+const char* AppOptions::getMediaPath() {
+	return m_mediaPath.c_str();
+}
+
+const char* AppOptions::getFromDate() {
+	return m_fromDate.c_str();
+}
+
+const char* AppOptions::getToDate() {
+	return m_toDate.c_str();
+}
+
 } /* namespace simplearchive */

@@ -137,6 +137,10 @@ namespace simplearchive {
 		return true;
 	}
 
+	bool AdminApp::Backup(const char* mediaSize, const char* mediaPath, const char* fromDate, const char* toDate) {
+		return true;
+	}
+
 	bool AdminApp::About(const char* outputType, const char* filename) {
 		AboutCommand aboutCommand(VERSION, BUILD);
 		aboutCommand.setOutputFile(filename);
@@ -207,6 +211,8 @@ bool AdminApp::doRun()
 
 			return true;
 		}
+		case AppOptions::CommandMode::CM_Backup:
+			return Backup(appOptions.getMediaSize(), appOptions.getMediaPath(), appOptions.getFromDate(), appOptions.getToDate());
 		case AppOptions::CommandMode::CM_Unknown:
 			break;
 

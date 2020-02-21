@@ -44,12 +44,10 @@ public:
 		CM_InitArchive, //* Initalise an archive with the default prameter
 		CM_Show,        //* Show
 		CM_About,       //* show version
-		CM_View,        //* View
-		CM_Mirror,      //* Mirror
-		CM_Archive,     //*
+		//CM_Mirror,      //* Mirror
 		CM_Validate,    //* Validate the archive.
-        CM_Fix,         //* Fix the archive
 		CM_Test,        //* Test the archive
+		CM_Backup,		//* Backup archive to exteral media
 		CM_Config,		//* Configure the system
 		CM_Allow,		//* Set which file extension are allow into the archive.
 		CM_Unknown
@@ -94,6 +92,11 @@ private:
 	static bool m_repair;
 	static bool m_users;
 	static bool m_setHomeEnv;
+	static std::string m_mediaSize;
+	static std::string m_mediaPath;
+	static std::string m_fromDate;
+	static std::string m_toDate;
+
 	bool m_error;
 	/**
 		@brief Set to true if no archive configuration found. 
@@ -147,6 +150,10 @@ public:
 	const char* getConfigOptionBlock();
 	const char* getOutputFile();
 	const char* getTextOutputType();
+	const char* getMediaSize();
+	const char* getMediaPath();
+	const char* getFromDate();
+	const char* getToDate();
 
 	bool isAllUsers();
 
