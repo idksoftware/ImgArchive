@@ -237,6 +237,7 @@ namespace simplearchive {
 		case ArgvParser::ParserHelpRequested:
 			errStr = parseErrorDescription(res);
 			printf("%s", errStr.c_str());
+			printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 			return false;
 		case ArgvParser::GeneralHelpRequested:
 			printf("%s", usageDescription(80).c_str());

@@ -462,7 +462,10 @@ bool FolderList::validateOnlyMaster(IMCompletedSummary& imCompletedSummar) {
 	return ret;
 }
 
-bool FolderList::validateMaster(ValidateReportingObject &validateReportingObject) {
+bool FolderList::validateMaster(ValidateReportingObject& validateReportingObject) {
+	return FolderList::validateDatabase(validateReportingObject);
+}
+bool FolderList::validateDatabase(ValidateReportingObject &validateReportingObject) {
 	
 	std::string fpath = makeDBPathCSV();
 	if (SAUtils::FileExists(fpath.c_str()) == false) {
@@ -481,7 +484,7 @@ bool FolderList::validateMaster(ValidateReportingObject &validateReportingObject
 			
 		std::string year = dataString.substr(0, 4);
 			
-		if (year.compare("syst") == 0) {
+		if (year.compare("system") == 0) {
 			continue;
 		}
 //		printf("Year found %s\n", year.c_str());

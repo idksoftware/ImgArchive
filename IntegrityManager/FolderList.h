@@ -87,6 +87,8 @@ namespace simplearchive {
 		bool validateOnlyWorkspace(IMCompletedSummary& imCompletedSummar);
 
 		bool validateMaster(ValidateReportingObject &validateReportingObject);
+		bool validateDatabase(ValidateReportingObject& validateReportingObject);
+
 		bool validateWorkspace(ValidateReportingObject &validateReportingObject);
 
 		bool fixWorkspace(const char *jouralFile);

@@ -491,59 +491,60 @@ std::string ArgvParser::topicUsageDescription(unsigned int topic, unsigned int _
 
 		for (auto opt = ac.begin(); opt != ac.end(); opt++) {
 			//printf("%s\n", opt->c_str());
-			unsigned int key = option2key.find(opt->c_str())->second;
-			std::list<std::string> alternatives = getAllOptionAlternatives(key);
-			for (auto alt = alternatives.begin();
-				alt != alternatives.end();
-				++alt)
-			{
-				int option = option2attribute.find(key)->second;
+			if (option2key.find(opt->c_str()) != option2key.end()) {
+				unsigned int key = option2key.find(opt->c_str())->second;
+				std::list<std::string> alternatives = getAllOptionAlternatives(key);
+				for (auto alt = alternatives.begin();
+					alt != alternatives.end();
+					++alt)
+				{
+					int option = option2attribute.find(key)->second;
+					_os.clear();
+					if (alt->length() > 1) {
+
+						_longOpt += *alt;
+					}
+					else {
+						_shortOpt += *alt;
+					}
+				}
+
+				if (!_longOpt.empty()) {
+					_os += "\t--";
+					_os += _longOpt;
+				}
+				if (!_shortOpt.empty()) {
+					_os += " (-";
+					_os += _shortOpt;
+					_os += ')';
+				}
+				_os += " : ";
+				usage += formatString(_os, _width) + "\n";
+				if (option2descr.find(key) != option2descr.end()) {
+					std::string desc = "\t";
+					desc += option2descr.find(key)->second;
+					usage += formatString(desc, _width, 4) + "\n";
+				}
+				else {
+					usage += formatString("\t(no description)", _width, 4) + "\n\n";
+				}
+				if (!_longOpt.empty()) {
+
+					std::string syntax = getSyntax(_longOpt);
+					if (!syntax.empty()) {
+						usage += formatString("\tSyntax:", _width, 4) + "\n";
+						usage += formatString(syntax, _width, 4, 0, 4);
+						usage += "\n\n";
+					}
+					else {
+						usage += '\n\n';
+					}
+				}
 				_os.clear();
-				if (alt->length() > 1) {
+				_longOpt.clear();
+				_shortOpt.clear();
 
-					_longOpt += *alt;
-				}
-				else {
-					_shortOpt += *alt;
-				}
 			}
-
-			if (!_longOpt.empty()) {
-				_os += "\t--";
-				_os += _longOpt;
-			}
-			if (!_shortOpt.empty()) {
-				_os += " (-";
-				_os += _shortOpt;
-				_os += ')';
-			}
-			_os += " : ";
-			usage += formatString(_os, _width) + "\n";
-			if (option2descr.find(key) != option2descr.end()) {
-				std::string desc = "\t";
-				desc += option2descr.find(key)->second;
-				usage += formatString(desc, _width, 4) + "\n";
-			}
-			else {
-				usage += formatString("\t(no description)", _width, 4) + "\n\n";
-			}
-			if (!_longOpt.empty()) {
-
-				std::string syntax = getSyntax(_longOpt);
-				if (!syntax.empty()) {
-					usage += formatString("\tSyntax:", _width, 4) + "\n";
-					usage += formatString(syntax, _width, 4, 0, 4);
-					usage += "\n\n";
-				}
-				else {
-					usage += '\n\n';
-				}
-			}
-			_os.clear();
-			_longOpt.clear();
-			_shortOpt.clear();
-
-
 		}
 	}
 	return(usage);
@@ -671,6 +672,9 @@ bool ArgvParser::matchOption(unsigned int topic, const char *option) const
 
 	for (vector<string>::const_iterator opt = ac.begin(); opt != ac.end(); opt++) {
 		//printf("%s\n", opt->c_str());
+		if (option2key.find(opt->c_str()) == option2key.end()) {
+			continue;
+		}
 		unsigned int key = option2key.find(opt->c_str())->second;
 		list<string> alternatives = getAllOptionAlternatives(key);
 		for (list<string>::const_iterator alt = alternatives.begin();
