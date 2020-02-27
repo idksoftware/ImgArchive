@@ -527,7 +527,7 @@ bool FolderList::validateDatabase(ValidateReportingObject &validateReportingObje
 	return true;
 }
 
-
+/*
 bool FolderList::validate(IMCompletedSummary& imCompletedSummary) {
 	switch (m_action) {
 	case READING_MASTER:
@@ -552,7 +552,9 @@ bool FolderList::validate(IMCompletedSummary& imCompletedSummary) {
 	}
 	return false;
 }
+*/
 
+/*
 bool FolderList::validateAndRepair(IMCompletedSummary& imCompletedSummar) {
 	switch (m_action) {
 	case READING_MASTER:
@@ -576,7 +578,7 @@ bool FolderList::validateAndRepair(IMCompletedSummary& imCompletedSummar) {
 	}
 	return false;
 }
-
+*/
 bool FolderList::fix() {
 	return fixWorkspace(m_workspaceJournalName.c_str());
 }

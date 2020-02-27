@@ -66,7 +66,9 @@ namespace simplearchive {
 		typedef enum {
 			Workspace,		//* Initalise an archive with the default 
 			Master,			//* Show
-			Both			//* show version
+			Derivative,			//* Show
+			All,			//* Show
+			Main			//* show version
 		} Scope;
 	private:
 		std::string m_HomePath;

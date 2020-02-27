@@ -50,7 +50,21 @@ public:
 };
 
 class IntegrityManager {
-	
+public:
+	enum class Scope {
+		Workspace,		//* Initalise an archive with the default 
+		Master,			//* Show
+		Derivative,			//* Show
+		All,			//* Show
+		Main			//* show version
+	};
+	enum class VerifyBackups {
+		Backup_1,		//* Initalise an archive with the default 
+		Backup_2,			//* Show
+		Both		//* Show
+
+	};
+private:
 	std::string m_archivePath;
 	std::string m_derivativePath;
 	std::string m_workspacePath;
@@ -73,8 +87,8 @@ public:
 	bool addMasterFile(const char *folderPath, const char *fileName);
 	
 	bool makeList();
-	bool validate(IMCompletedSummary& imCompletedSummary, bool workspace, bool Master);
-	bool repair(IMCompletedSummary& imCompletedSummary, bool workspace, bool Master);
+	bool validate(IMCompletedSummary& imCompletedSummary, Scope scope, bool main, VerifyBackups verifyBackups, bool repair);
+	//bool repair(IMCompletedSummary& imCompletedSummary, bool workspace, bool Master);
 	
 	static IntegrityManager &get();
 	void setPaths(const char* archivePath, const char *derivativePath, const char* workspacePath, const char* homePath);

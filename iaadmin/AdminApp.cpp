@@ -189,9 +189,10 @@ bool AdminApp::doRun()
 				// Do not create a new archive. The old one needs to be deleted?
 				return false;
 			}
-
+			
 			CompletedSummary completedSummary;
 			switch (appOptions.getVerifyOperation()) {
+				/*
 			case AppOptions::VerifyOperation::Workspace:
 				if (siaLib.validate(config.getMasterPath(), config.getWorkspacePath(), config.getHomePath(), SIALib::Workspace, appOptions.repair()) == false) {
 					return false;
@@ -202,8 +203,20 @@ bool AdminApp::doRun()
 					return false;
 				}
 				break;
+			case AppOptions::VerifyOperation::Derivative:
+				if (siaLib.validate(config.getMasterPath(), config.getWorkspacePath(), config.getHomePath(), SIALib::Derivative, appOptions.repair()) == false) {
+					return false;
+				}
+				break;
+			case AppOptions::VerifyOperation::Main:
+				if (siaLib.validate(config.getMasterPath(), config.getWorkspacePath(), config.getHomePath(), SIALib::Main, appOptions.repair()) == false) {
+					return false;
+				}
+				break;
+			case AppOptions::VerifyOperation::All:
+			*/
 			default:
-				if (siaLib.validate(config.getMasterPath(), config.getWorkspacePath(), config.getHomePath(), SIALib::Both, appOptions.repair()) == false) {
+				if (siaLib.validate(config.getMasterPath(), config.getWorkspacePath(), config.getHomePath(), SIALib::All, appOptions.repair()) == false) {
 					return false;
 				}
 			}

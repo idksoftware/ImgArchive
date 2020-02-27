@@ -94,7 +94,7 @@ bool IntegrityManager::addFile(const char *rootPath, const char *folderPath, con
 	return true;
 }
 
-bool IntegrityManager::validate(IMCompletedSummary& imCompletedSummary, bool workspace, bool Master) {
+bool IntegrityManager::validate(IMCompletedSummary& imCompletedSummary, Scope scope, bool main, VerifyBackups verifyBackups, bool repair) {
 //	FolderList folderList(m_archivePath.c_str());
 	std::string tmp = m_archivePath;
 	if (SAUtils::DirExists(tmp.c_str()) == false) {
@@ -113,24 +113,35 @@ bool IntegrityManager::validate(IMCompletedSummary& imCompletedSummary, bool wor
 	}
 	ValidateReportingObject::setPath(tmp.c_str());
 	FolderList folderList(m_archivePath.c_str(), m_workspacePath.c_str());
-	if (workspace && Master) {
-		folderList.SetAction(FolderList::READING_BOTH);
-	}
-	else if (workspace) {
+	
+	switch(scope) {
+	case Scope::Workspace:
+		folderList.SetAction(FolderList::READING_WORKSPACE);
+		if (folderList.validate(imCompletedSummary) == false) {
+			return false;
+		}
+		return true;
+	case Scope::Master:			//* Show
+		folderList.SetAction(FolderList::READING_MASTER);
+		if (folderList.validate(imCompletedSummary) == false) {
+			return false;
+		}
+		return true;
+	case Scope::Derivative:			//* Show
+		folderList.SetAction(FolderList::READING_MASTER);
+		if (folderList.validate(imCompletedSummary) == false) {
+			return false;
+		}
+		return true;
+	case Scope::All:			//* Show
+	case Scope::Main:			//* 
 		folderList.SetAction(FolderList::READING_WORKSPACE);
 	}
-	else if (Master) {
-		folderList.SetAction(FolderList::READING_MASTER);
-	}
-	else {
-		return false;
-	}
-	if (folderList.validate(imCompletedSummary) == false) {
-		return false;
-	}
+	
 	return true;
 }
 
+/*
 bool IntegrityManager::repair(IMCompletedSummary& imCompletedSummary, bool workspace, bool Master) {
 	//	FolderList folderList(m_archivePath.c_str());
 	std::string tmp = m_archivePath;
@@ -164,7 +175,7 @@ bool IntegrityManager::repair(IMCompletedSummary& imCompletedSummary, bool works
 	}
 	return true;
 }
-
+*/
 
 bool IntegrityManager::makeList() {
 	FolderList folderList(m_archivePath.c_str());
