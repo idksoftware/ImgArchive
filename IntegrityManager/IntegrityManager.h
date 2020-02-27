@@ -32,8 +32,7 @@
 **
 ** #$$@@$$# */
 
-#ifndef INTEGRITYMANAGER_H_
-#define INTEGRITYMANAGER_H_
+#pragma once
 #include <string>
 
 namespace simplearchive {
@@ -76,10 +75,10 @@ public:
 	bool makeList();
 	bool validate(IMCompletedSummary& imCompletedSummary, bool workspace, bool Master);
 	bool repair(IMCompletedSummary& imCompletedSummary, bool workspace, bool Master);
-	//static IntegrityManager &get(const char *archivePath, const char* workspacePath, const char* homePath);
+	
 	static IntegrityManager &get();
 	void setPaths(const char* archivePath, const char *derivativePath, const char* workspacePath, const char* homePath);
 };
 
 } /* namespace simplearchive */
-#endif /* INTEGRITYMANAGER_H_ */
+

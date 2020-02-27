@@ -67,6 +67,25 @@ namespace simplearchive {
 		defineCommandSyntax("about", "about [--out] [--file]\n");
 
 		defineOption("validate", "Validate commands", ArgvParser::MasterOption);
+		defineCommandSyntax("validate", "validate [-q | --quiet]\n"
+			"| [--scope=<archive>] | [--validate-backup=<option>]\n"
+			"| [--validate-main=<yes|no>]\n"
+			"| [--repair=<yesno>|\n");
+
+		defineOption("scope", "Scope of validation. This defines which archives will be validated", ArgvParser::OptionRequiresValue);
+		defineCommandSyntax("scope", "--scope=<Value>\n"
+			"value=[master] | [derivative] | [workspace] | [all] | [main]");
+		
+		defineOption("validate-backup", "validate backup. Note: both backups will be validate by default if avalible.", ArgvParser::OptionRequiresValue);
+		defineCommandSyntax("validate-backup", "--validate-backup=<Value>\n"
+			"value=[1] | [2] | [both]");
+
+		defineOption("validate-main", "validate main archive. Note: The main archive (master/will be validate by default.", ArgvParser::OptionRequiresValue);
+		defineCommandSyntax("validate-main", "--validate-main=<yes|no>\n");
+
+		defineOption("repair", "repairs the archive if damaged. Will not be repaired by default", ArgvParser::OptionRequiresValue);
+		defineCommandSyntax("repair", "--repair=<yes|no>");
+
 		defineOption("allow", "Controls which image file extensions are allowed into the archive.", ArgvParser::MasterOption);
 		defineCommandSyntax("allow", "isadmin allow [-q | --quiet]\n"
 			"| [--add = <ext, type, mine, description>] | [--delete = <ext>]\n"
@@ -179,9 +198,6 @@ namespace simplearchive {
 		defineCommandSyntax("file", "file=<filename>\n");
 		//defineOptionAlternative("u", "users");
 
-		defineOption("scope", "Scope of validation.", ArgvParser::OptionRequiresValue);
-		//defineOptionAlternative("u", "users");
-
 		defineCommandOption("init", "archive-path");
 		defineCommandOption("init", "workspace-path");
 		defineCommandOption("init", "master-path");
@@ -197,8 +213,10 @@ namespace simplearchive {
 		defineCommandOption("show", "file");
 
 		defineCommandOption("validate", "scope");
+		defineCommandOption("validate", "validate-backup");
+		defineCommandOption("validate", "validate-main");
 		defineCommandOption("validate", "repair");
-		defineCommandOption("validate", "archive-path");
+		
 		
 		//defineCommandOption("test", "settup");
 		
@@ -466,24 +484,56 @@ namespace simplearchive {
 		else if (command("validate") == true) {
 			appOptions.setCommandMode(AppOptions::CommandMode::CM_Validate);
 			cmdFound = true;
-			if (foundOption("archive-path") == true) {
 
-				std::string opt = optionValue("archive-path");
-//					printf(opt.c_str()); printf("\n");
-				config.setWorkspacePath(opt.c_str());
-			}
+			/*
+			"value=[master] | [derivative] | [workspace] | [all] | [main]");
+
+		defineOption("validate-backup", "validate backup. Note: both backups will be validate by default if avalible.", ArgvParser::OptionRequiresValue);
+		defineCommandSyntax("validate-backup", "--validate-backup=<Value>\n"
+			"value=[1] | [2] | [both]");
+			*/
+
 			if (foundOption("scope") == true) {
 
 				std::string opt = optionValue("scope");
 //					printf(opt.c_str()); printf("\n");
-				if (opt.compare("workspace") == 0) {
-					appOptions.m_verifyOperation = AppOptions::VerifyOperation::Workspace;
-				}
-				else if (opt.compare("master") == 0) {
+				if (opt.compare("master") == 0) {
 					appOptions.m_verifyOperation = AppOptions::VerifyOperation::Master;
 				}
+				else if (opt.compare("derivative") == 0) {
+					appOptions.m_verifyOperation = AppOptions::VerifyOperation::Derivative;
+				}
+				else if (opt.compare("workspace") == 0) {
+					appOptions.m_verifyOperation = AppOptions::VerifyOperation::Workspace;
+				}
+				else if (opt.compare("all") == 0) {
+					appOptions.m_verifyOperation = AppOptions::VerifyOperation::All;
+				}
+				else if (opt.compare("main") == 0) {
+					appOptions.m_verifyOperation = AppOptions::VerifyOperation::Main;
+				}
+				else {
+					printf("Invalid argument for sub-command: %s \"%s\"\n\n", getCurrentCommand().c_str(), opt.c_str());
+					printf("%s", usageDescription(80).c_str());
+					return false;
+				}
+			}
+			if (foundOption("validate-main") == true) {
+
+				std::string opt = optionValue("validate-main");
+				SAUtils::isTrueFalse(opt);
+				appOptions.m_validateMain = (opt.compare("True") == 0);
+			}
+			if (foundOption("validate-backup") == true) {
+				std::string opt = optionValue("validate-backup");
+				if (opt.compare("1") == 0) {
+					appOptions.m_verifyBackups = AppOptions::VerifyBackups::Backup_1;
+				}
+				else if (opt.compare("2") == 0) {
+					appOptions.m_verifyBackups = AppOptions::VerifyBackups::Backup_2;
+				}
 				else if (opt.compare("both") == 0) {
-					appOptions.m_verifyOperation = AppOptions::VerifyOperation::Both;
+					appOptions.m_verifyBackups = AppOptions::VerifyBackups::Both;
 				}
 				else {
 					printf("Invalid argument for sub-command: %s \"%s\"\n\n", getCurrentCommand().c_str(), opt.c_str());
@@ -492,51 +542,12 @@ namespace simplearchive {
 				}
 			}
 			if (foundOption("repair") == true) {
-				appOptions.m_repair = true;
+				std::string opt = optionValue("repair");
+				SAUtils::isTrueFalse(opt);
+				appOptions.m_repair = (opt.compare("True") == 0);
 			}
 		}
-		/*
-		else if (command("mirror") == true) {
-			appOptions.setCommandMode(AppOptions::CommandMode::CM_Mirror);
-
-			if (foundOption("archive-path") == true) {
-
-				std::string opt = optionValue("archive-path");
-//					printf(opt.c_str()); printf("\n");
-				config.setWorkspacePath(opt.c_str());
-			}
-			
-			if (foundOption("dist-path") == true) {
-
-			std::string opt = optionValue("dist-path");
-			printf(opt.c_str()); printf("\n");
-			config.setBackupDestinationPath(opt.c_str());
-
-			}
-			if (foundOption("size") == true) {
-
-			std::string opt = optionValue("size");
-			printf(opt.c_str()); printf("\n");
-			config.setBackupMediaSize(opt.c_str());
-
-			}
-			if (foundOption("from-date") == true) {
-
-			std::string opt = optionValue("from-date");
-			printf(opt.c_str()); printf("\n");
-			config.setFromDate(opt.c_str());
-
-			}
-			
-			if (foundOption("name") == true) {
-				std::string opt = optionValue("name");
-//					printf(opt.c_str()); printf("\n");
-				appOptions.setName(opt.c_str());
-			}
-
-			cmdFound = true;
-		}
-		*/
+		
 		else if (command("config") == true) {
 			SetConfig setConfig;
 			if (foundOption("general") == true) {

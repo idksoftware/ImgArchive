@@ -56,7 +56,16 @@ public:
 	enum class VerifyOperation {
 		Workspace,		//* Initalise an archive with the default 
 		Master,			//* Show
-		Both			//* show version
+		Derivative,			//* Show
+		All,			//* Show
+		Main			//* show version
+	};
+
+	enum class VerifyBackups {
+		Backup_1,		//* Initalise an archive with the default 
+		Backup_2,			//* Show
+		Both		//* Show
+		
 	};
 
 	enum class ShowOperation {
@@ -86,10 +95,12 @@ private:
 	static std::string m_configValue;
 	static std::string m_optionBlock;
 	static VerifyOperation m_verifyOperation;
+	static VerifyBackups m_verifyBackups;
 	static ShowOperation m_showOperation;
 	static std::string m_outputFile;
 	static std::string m_textOutputType;
 	static bool m_repair;
+	static bool m_validateMain;
 	static bool m_users;
 	static bool m_setHomeEnv;
 	static std::string m_mediaSize;

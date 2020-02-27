@@ -69,9 +69,11 @@ std::string AppOptions::m_optionBlock;
 std::string AppOptions::m_outputFile;
 std::string AppOptions::m_textOutputType;
 
-AppOptions::VerifyOperation AppOptions::m_verifyOperation = AppOptions::VerifyOperation::Both;
+AppOptions::VerifyOperation AppOptions::m_verifyOperation = AppOptions::VerifyOperation::All;
+AppOptions::VerifyBackups AppOptions::m_verifyBackups = AppOptions::VerifyBackups::Both;
 AppOptions::ShowOperation AppOptions::m_showOperation = AppOptions::ShowOperation::CheckedOut;
 bool AppOptions::m_repair = false;
+bool AppOptions::m_validateMain = true;
 bool AppOptions::m_users = true;
 bool AppOptions::m_setHomeEnv = true;
 std::string AppOptions::m_mediaSize;

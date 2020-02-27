@@ -32,8 +32,7 @@
 **
 ** #$$@@$$# */
 
-#ifndef FOLDERLIST_H_
-#define FOLDERLIST_H_
+#pragma once
 
 #include <string>
 #include "ArchiveProcessor.h"
@@ -105,8 +104,7 @@ namespace simplearchive {
 		bool incFolders(const char *folderName = "fdata");
 		bool incFiles(const char *folderName);
 		bool makeList();
-		bool validate(IMCompletedSummary& imCompletedSummary);
-		bool validateAndRepair(IMCompletedSummary& imCompletedSummar);
+		
 		bool fix();
 		void SetAction(Action action) {
 			m_action = action;
@@ -114,7 +112,10 @@ namespace simplearchive {
 
 		bool showCheckedOut(const char *addressScope);
 		bool showUncheckedOutChanges(const char *addressScope);
+
+		bool validate(IMCompletedSummary& imCompletedSummary);
+		bool validateAndRepair(IMCompletedSummary& imCompletedSummar);
 	};
 
 } /* namespace simplearchive */
-#endif /* FOLDERLIST_H_ */
+
