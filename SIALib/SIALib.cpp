@@ -628,18 +628,38 @@ namespace simplearchive {
 		
 		switch (scope) {
 		case Scope::Workspace:
-			return im.validate(imCompletedSummary, IntegrityManager::Scope::Workspace, main, imVerifyBackups, repair);
+			if (im.validate(imCompletedSummary, IntegrityManager::Scope::Workspace, main, imVerifyBackups, repair) == false) {
+				return false;
+			}
+			break;
 		case Scope::Master:
-			return im.validate(imCompletedSummary, IntegrityManager::Scope::Master, main, imVerifyBackups, repair);
+			if (im.validate(imCompletedSummary, IntegrityManager::Scope::Master, main, imVerifyBackups, repair) == false) {
+				return false;
+			}
+			break;
 		case Scope::Derivative:
-			return im.validate(imCompletedSummary, IntegrityManager::Scope::Derivative, main, imVerifyBackups, repair);
+			if (im.validate(imCompletedSummary, IntegrityManager::Scope::Derivative, main, imVerifyBackups, repair) == false) {
+				return false;
+			}
+			break;
 		case Scope::All:
-			return im.validate(imCompletedSummary, IntegrityManager::Scope::All, main, imVerifyBackups, repair);
+			if (im.validate(imCompletedSummary, IntegrityManager::Scope::All, main, imVerifyBackups, repair) == false) {
+				return false;
+			}
+			break;
 		case Scope::Main:
-			return im.validate(imCompletedSummary, IntegrityManager::Scope::Main, main, imVerifyBackups, repair);
+			if (im.validate(imCompletedSummary, IntegrityManager::Scope::Main, main, imVerifyBackups, repair) == false) {
+				return false;
+			}
+			break;
 		default:
-			return im.validate(imCompletedSummary, IntegrityManager::Scope::All, main, imVerifyBackups, repair);
+			if (im.validate(imCompletedSummary, IntegrityManager::Scope::All, main, imVerifyBackups, repair) == false) {
+				return false;
+			}
 		}
+		CompletedSummary completedSummary;
+		completedSummary.setSummary(imCompletedSummary.getSummary());
+		completedSummary.setResult(imCompletedSummary.getResult());
 		return true;
 		
 		/*

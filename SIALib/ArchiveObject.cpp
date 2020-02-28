@@ -233,6 +233,9 @@ namespace simplearchive {
 		else {
 			logger.log(LOG_OK, CLogger::Level::INFO, "Backup 2 not enabled");
 		}
+		IntegrityManager& integrityManager = IntegrityManager::get();
+		integrityManager.setMasterBackupPaths(ArchivePath::getMasterBackup1Path().c_str(), ArchivePath::getMasterBackup2Path().c_str(),
+									ArchivePath::isMasterBackup1Enabled(), ArchivePath::isMasterBackup2Enabled());
 		return true;
 	}
 
@@ -387,6 +390,9 @@ namespace simplearchive {
 		//if (!m_imageIndex->init(repositoryPath.getImageIndexPath().c_str())) {
 		//	return false;
 		//}
+		IntegrityManager& integrityManager = IntegrityManager::get();
+		//integrityManager.setMasterBackupPaths(ArchivePath::getMasterBackup1Path().c_str(), ArchivePath::getMasterBackup2Path().c_str(),
+		//	ArchivePath::isMasterBackup1Enabled(), ArchivePath::isMasterBackup2Enabled());
 	}
 
 	bool DerivativesObject::checkin(FileInfo &fileInfo, const char *comment) {

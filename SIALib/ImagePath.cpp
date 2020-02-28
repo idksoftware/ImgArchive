@@ -77,7 +77,7 @@ bool ImagePath::settupMainArchiveFolders(const char *pathToWorkspace, const char
 	m_pathToMaster = pathToMaster;
 	IntegrityManager &integrityManager = IntegrityManager::get();
 	integrityManager.setPaths(pathToMaster, pathToDerivative, pathToWorkspace, pathToHome);
-
+	
 	// Master Archive
 	std::string m_dataFolder = m_pathToMaster;
 	m_dataFolder += SYSTEM_PATH;

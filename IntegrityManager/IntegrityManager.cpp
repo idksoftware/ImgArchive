@@ -62,6 +62,30 @@ void IntegrityManager::setPaths(const char* archivePath, const char *derivativeP
 	
 }
 
+void IntegrityManager::setMasterBackupPaths(const char* backupPath1, const char* backupPath2, bool backup1enabled, bool backup2enabled)
+{
+	m_masterBackup1enabled = backup1enabled;
+	m_masterBackup2enabled = backup2enabled;
+	if (backup1enabled) {
+		m_masterBackupPath1 = backupPath1;
+	}
+	if (backup2enabled) {
+		m_masterbackupPath2 = backupPath2;
+	}
+}
+
+void IntegrityManager::setDerivativeBackupPaths(const char* backupPath1, const char* backupPath2, bool backup1enabled, bool backup2enabled)
+{
+	m_derivativeBackup1enabled = backup1enabled;
+	m_derivativeBackup2enabled = backup2enabled;
+	if (backup1enabled) {
+		m_derivativeBackupPath1 = backupPath1;
+	}
+	if (backup2enabled) {
+		m_derivativebackupPath2 = backupPath2;
+	}
+}
+
 bool IntegrityManager::addDerivativeDayFolder(const char *folderName) {
 	return addDayFolder(m_derivativePath.c_str(), folderName);
 }

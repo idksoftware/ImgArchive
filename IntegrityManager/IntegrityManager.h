@@ -70,7 +70,25 @@ private:
 	std::string m_workspacePath;
 	std::string m_homePath;
 	
-	IntegrityManager() = default;
+	std::string m_masterBackupPath1;
+	std::string m_masterbackupPath2;
+
+	bool m_masterBackup1enabled;
+	bool m_masterBackup2enabled;
+
+	std::string m_derivativeBackupPath1;
+	std::string m_derivativebackupPath2;
+
+	bool m_derivativeBackup1enabled;
+	bool m_derivativeBackup2enabled;
+
+	IntegrityManager()
+		: m_masterBackup1enabled(false),
+		m_masterBackup2enabled(false),
+		m_derivativeBackup1enabled(false),
+		m_derivativeBackup2enabled(false)
+	{};
+
 public:
 	IntegrityManager(IntegrityManager const&) = delete;
 	void operator=(IntegrityManager const&) = delete;
@@ -92,6 +110,8 @@ public:
 	
 	static IntegrityManager &get();
 	void setPaths(const char* archivePath, const char *derivativePath, const char* workspacePath, const char* homePath);
+	void setMasterBackupPaths(const char* backupPath1, const char* backupPath2, bool backup1enabled, bool backup2enabled);
+	void setDerivativeBackupPaths(const char* backupPath1, const char* backupPath2, bool backup1enabled, bool backup2enabled);
 };
 
 } /* namespace simplearchive */

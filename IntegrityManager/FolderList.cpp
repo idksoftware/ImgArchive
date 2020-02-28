@@ -504,15 +504,18 @@ bool FolderList::validateDatabase(ValidateReportingObject &validateReportingObje
 				printf("File not found %s\n", dataString.c_str());
 			}
 			else {
-				std::string yearDayPath = yearPath;
-				yearDayPath += '/';
-				yearDayPath += dataString;
+				// Path to images 
+				std::string yearDayPath = yearPath; yearDayPath += '/';
+				yearDayPath += dataString; yearDayPath += '/';
+				yearDayPath += "images";
 //				printf("Day found %s\n", dataString.c_str());
-				std::string tmp = yearDayPath;
-				// Master
-				yearDayPath += "/images";
-				tmp += "/chdsk";
-
+				// Path to check file 
+				std::string tmp = dataPath; tmp += '/';
+				tmp += "system"; tmp += '/';
+				tmp += "chdsk"; tmp += '/';
+				tmp += year; tmp += '/';
+				tmp += dataString;
+			
 				CheckDisk checkDisk;
 				if (checkDisk.check(yearDayPath.c_str(), tmp.c_str(), dataString.c_str(), validateReportingObject) == false) {
 					return false;
