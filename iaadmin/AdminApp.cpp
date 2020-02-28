@@ -189,37 +189,30 @@ bool AdminApp::doRun()
 				// Do not create a new archive. The old one needs to be deleted?
 				return false;
 			}
-			
-			CompletedSummary completedSummary;
-			switch (appOptions.getVerifyOperation()) {
-				/*
-			case AppOptions::VerifyOperation::Workspace:
-				if (siaLib.validate(config.getMasterPath(), config.getWorkspacePath(), config.getHomePath(), SIALib::Workspace, appOptions.repair()) == false) {
-					return false;
-				}
-				break;
-			case AppOptions::VerifyOperation::Master:
-				if (siaLib.validate(config.getMasterPath(), config.getWorkspacePath(), config.getHomePath(), SIALib::Master, appOptions.repair()) == false) {
-					return false;
-				}
-				break;
-			case AppOptions::VerifyOperation::Derivative:
-				if (siaLib.validate(config.getMasterPath(), config.getWorkspacePath(), config.getHomePath(), SIALib::Derivative, appOptions.repair()) == false) {
-					return false;
-				}
-				break;
-			case AppOptions::VerifyOperation::Main:
-				if (siaLib.validate(config.getMasterPath(), config.getWorkspacePath(), config.getHomePath(), SIALib::Main, appOptions.repair()) == false) {
-					return false;
-				}
-				break;
-			case AppOptions::VerifyOperation::All:
-			*/
-			default:
-				if (siaLib.validate(config.getMasterPath(), config.getWorkspacePath(), config.getHomePath(), SIALib::All, appOptions.repair()) == false) {
-					return false;
-				}
+			SIALib::VerifyBackups slVerifyBackups;
+			switch (appOptions.getVerifyBackups()) {
+			case AppOptions::VerifyBackups::Backup_1: slVerifyBackups = SIALib::VerifyBackups::Backup_1; break;
+			case AppOptions::VerifyBackups::Backup_2: slVerifyBackups = SIALib::VerifyBackups::Backup_1; break;
+			case AppOptions::VerifyBackups::Both: slVerifyBackups = SIALib::VerifyBackups::Backup_1; break;
+			case AppOptions::VerifyBackups::None: slVerifyBackups = SIALib::VerifyBackups::Backup_1; break;
 			}
+			//CompletedSummary completedSummary;
+			switch (appOptions.getVerifyOperation()) {
+				
+			case AppOptions::VerifyOperation::Workspace:
+					return siaLib.validate(SIALib::Scope::Workspace, appOptions.validateMain(), slVerifyBackups, appOptions.repair());
+			case AppOptions::VerifyOperation::Master:
+					return siaLib.validate(SIALib::Scope::Master, appOptions.validateMain(), slVerifyBackups, appOptions.repair());
+			case AppOptions::VerifyOperation::Derivative:
+					return siaLib.validate(SIALib::Scope::Derivative, appOptions.validateMain(), slVerifyBackups, appOptions.repair());
+			case AppOptions::VerifyOperation::All:
+					return siaLib.validate(SIALib::Scope::All, appOptions.validateMain(), slVerifyBackups, appOptions.repair());
+			case AppOptions::VerifyOperation::Main:
+					return siaLib.validate(SIALib::Scope::Main, appOptions.validateMain(), slVerifyBackups, appOptions.repair());
+			default:
+					return siaLib.validate(SIALib::Scope::All, appOptions.validateMain(), slVerifyBackups, appOptions.repair());
+			}
+			
 			siaLib.complete();
 
 			return true;

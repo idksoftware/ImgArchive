@@ -65,12 +65,13 @@ namespace simplearchive {
 	 */
 	class FolderList {
 	public:
-		typedef enum {
+		enum class Action {
 			READING_MASTER,
 			READING_WORKSPACE,
-			READING_BOTH,
-			UNKNOWN
-		} Action;
+			READING_DERIVATIVE,
+			READING_ALL,
+			READING_MAIN
+		};
 	private:
 		std::string m_archivePath;
 		std::string m_workspacePath;
@@ -113,8 +114,8 @@ namespace simplearchive {
 		bool showCheckedOut(const char *addressScope);
 		bool showUncheckedOutChanges(const char *addressScope);
 
-		bool validate(IMCompletedSummary& imCompletedSummary);
-		bool validateAndRepair(IMCompletedSummary& imCompletedSummar);
+		bool validate(IMCompletedSummary& imCompletedSummary, bool repair);
+		//bool validateAndRepair(IMCompletedSummary& imCompletedSummary);
 	};
 
 } /* namespace simplearchive */

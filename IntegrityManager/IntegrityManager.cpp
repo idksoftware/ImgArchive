@@ -116,26 +116,36 @@ bool IntegrityManager::validate(IMCompletedSummary& imCompletedSummary, Scope sc
 	
 	switch(scope) {
 	case Scope::Workspace:
-		folderList.SetAction(FolderList::READING_WORKSPACE);
-		if (folderList.validate(imCompletedSummary) == false) {
+		folderList.SetAction(FolderList::Action::READING_WORKSPACE);
+		if (folderList.validate(imCompletedSummary, repair) == false) {
 			return false;
 		}
 		return true;
 	case Scope::Master:			//* Show
-		folderList.SetAction(FolderList::READING_MASTER);
-		if (folderList.validate(imCompletedSummary) == false) {
+		folderList.SetAction(FolderList::Action::READING_MASTER);
+		if (folderList.validate(imCompletedSummary, repair) == false) {
 			return false;
 		}
 		return true;
 	case Scope::Derivative:			//* Show
-		folderList.SetAction(FolderList::READING_MASTER);
-		if (folderList.validate(imCompletedSummary) == false) {
+		folderList.SetAction(FolderList::Action::READING_MASTER);
+		if (folderList.validate(imCompletedSummary, repair) == false) {
 			return false;
 		}
 		return true;
-	case Scope::All:			//* Show
+	case Scope::All:
+		folderList.SetAction(FolderList::Action::READING_ALL);
+		if (folderList.validate(imCompletedSummary, repair) == false) {
+			return false;
+		}
+		
+		return true;
 	case Scope::Main:			//* 
-		folderList.SetAction(FolderList::READING_WORKSPACE);
+		folderList.SetAction(FolderList::Action::READING_MAIN);
+		if (folderList.validate(imCompletedSummary, repair) == false) {
+			return false;
+		}
+		return true;
 	}
 	
 	return true;

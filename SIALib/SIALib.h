@@ -63,13 +63,21 @@ namespace simplearchive {
 	class SIALib
 	{
 	public:
-		typedef enum {
+		enum class Scope {
 			Workspace,		//* Initalise an archive with the default 
 			Master,			//* Show
 			Derivative,			//* Show
 			All,			//* Show
 			Main			//* show version
-		} Scope;
+		};
+
+		enum class VerifyBackups {
+			Backup_1,		//* Initalise an archive with the default 
+			Backup_2,			//* Show
+			Both,		//* Show
+			None
+		};
+
 	private:
 		std::string m_HomePath;
 		std::shared_ptr<ArchiveBuilder> m_ArchiveBuilder;
@@ -137,7 +145,7 @@ namespace simplearchive {
 
 		bool checkDisk();
 
-		bool validate(const char *archivePath, const char *workspacePath, const char *homePath, Scope, bool repair = false);
+		bool validate(Scope scope, bool main, VerifyBackups verifyBackups, bool repair);
 
 		bool log(const char *filepath, LogDocument::FormatType& formatType);
 

@@ -613,31 +613,36 @@ namespace simplearchive {
 		return true;
 	}
 
-	/*
-	bool SIALib::validate(const char *archivePath, const char *workspacePath, const char *homePath, Scope scope, bool repair) {
+	
+	bool SIALib::validate(Scope scope, bool main, VerifyBackups verifyBackups, bool repair) {
 		CLogger &logger = CLogger::getLogger();
 		IntegrityManager &im = IntegrityManager::get();
 		IMCompletedSummary imCompletedSummary;
-		if (repair) {
-			switch (scope) {
-			case Workspace:
-				if (im.repair(imCompletedSummary, true, false) == false) {
-					return false;
-				}
-				break;
-			case Master:
-				if (im.repair(imCompletedSummary, false, true) == false) {
-					return false;
-				}
-				break;
-			
-			default:
-				if (im.repair(imCompletedSummary, true, true) == false) {
-					return false;
-				}
-			}
-			return true;
+		IntegrityManager::VerifyBackups imVerifyBackups;
+		switch (verifyBackups) {
+		case SIALib::VerifyBackups::Backup_1: imVerifyBackups = IntegrityManager::VerifyBackups::Backup_1; break;
+		case SIALib::VerifyBackups::Backup_2: imVerifyBackups = IntegrityManager::VerifyBackups::Backup_1; break;
+		case SIALib::VerifyBackups::Both: imVerifyBackups = IntegrityManager::VerifyBackups::Backup_1; break;
+		case SIALib::VerifyBackups::None: imVerifyBackups = IntegrityManager::VerifyBackups::Backup_1; break;
 		}
+		
+		switch (scope) {
+		case Scope::Workspace:
+			return im.validate(imCompletedSummary, IntegrityManager::Scope::Workspace, main, imVerifyBackups, repair);
+		case Scope::Master:
+			return im.validate(imCompletedSummary, IntegrityManager::Scope::Master, main, imVerifyBackups, repair);
+		case Scope::Derivative:
+			return im.validate(imCompletedSummary, IntegrityManager::Scope::Derivative, main, imVerifyBackups, repair);
+		case Scope::All:
+			return im.validate(imCompletedSummary, IntegrityManager::Scope::All, main, imVerifyBackups, repair);
+		case Scope::Main:
+			return im.validate(imCompletedSummary, IntegrityManager::Scope::Main, main, imVerifyBackups, repair);
+		default:
+			return im.validate(imCompletedSummary, IntegrityManager::Scope::All, main, imVerifyBackups, repair);
+		}
+		return true;
+		
+		/*
 		else {
 			switch (scope) {
 			case Workspace:
@@ -668,9 +673,10 @@ namespace simplearchive {
 			//completedSummary.setResult(imCompletedSummary.getResult());
 			return true;
 		}
+		*/
 		return true;
 	}
-	*/
+	
 
 	bool SIALib::remoteServer() {
 		RemoteServer remoteServer;

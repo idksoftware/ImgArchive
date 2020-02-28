@@ -64,12 +64,12 @@ namespace simplearchive {
 
 FolderList::FolderList(const char *archivePath) : m_archivePath(archivePath) {
 	
-	m_action = READING_WORKSPACE;
+	m_action = Action::READING_WORKSPACE;
 }
 
 FolderList::FolderList(const char *archivePath, const char *workspacePath) :
 									m_archivePath(archivePath), m_workspacePath(workspacePath) {
-	m_action = READING_WORKSPACE;
+	m_action = Action::READING_WORKSPACE;
 }
 
 FolderList::~FolderList() {
@@ -469,7 +469,7 @@ bool FolderList::validateDatabase(ValidateReportingObject &validateReportingObje
 	
 	std::string fpath = makeDBPathCSV();
 	if (SAUtils::FileExists(fpath.c_str()) == false) {
-		throw std::exception();
+		return false; // may be an emplty archive
 	}
 	FileDataContainer fileDataContainer;
 	fileDataContainer.read(fpath.c_str());
@@ -527,14 +527,16 @@ bool FolderList::validateDatabase(ValidateReportingObject &validateReportingObje
 	return true;
 }
 
-/*
-bool FolderList::validate(IMCompletedSummary& imCompletedSummary) {
+
+bool FolderList::validate(IMCompletedSummary& imCompletedSummary, bool repair) {
 	switch (m_action) {
-	case READING_MASTER:
+	case Action::READING_MASTER:
+		if (repair) return validateAndRepairMaster(imCompletedSummary);
 		return validateOnlyMaster(imCompletedSummary);
-	case READING_WORKSPACE:
+	case Action::READING_WORKSPACE:
+		if (repair) return validateAndRepairWorkspace(imCompletedSummary);
 		return validateOnlyWorkspace(imCompletedSummary);
-	case READING_BOTH:
+	case Action::READING_ALL:
 	{
 		bool ret = validateOnlyMaster(imCompletedSummary);
 		if (!ret) {
@@ -544,7 +546,6 @@ bool FolderList::validate(IMCompletedSummary& imCompletedSummary) {
 		if (!ret) {
 			return false;
 		}
-		
 		return ret;
 	}
 	default:
@@ -552,7 +553,7 @@ bool FolderList::validate(IMCompletedSummary& imCompletedSummary) {
 	}
 	return false;
 }
-*/
+
 
 /*
 bool FolderList::validateAndRepair(IMCompletedSummary& imCompletedSummar) {

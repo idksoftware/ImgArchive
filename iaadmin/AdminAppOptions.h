@@ -64,8 +64,8 @@ public:
 	enum class VerifyBackups {
 		Backup_1,		//* Initalise an archive with the default 
 		Backup_2,			//* Show
-		Both		//* Show
-		
+		Both,		//* Show
+		None
 	};
 
 	enum class ShowOperation {
@@ -174,6 +174,14 @@ public:
 
 	bool repair() {
 		return m_repair;
+	}
+
+	bool validateMain() {
+		return m_validateMain;
+	}
+
+	VerifyBackups getVerifyBackups() {
+		return m_verifyBackups;
 	}
 
 	VerifyOperation getVerifyOperation() {
