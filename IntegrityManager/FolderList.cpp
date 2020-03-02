@@ -278,20 +278,20 @@ bool FolderList::makeList(const char *archivePath) {
 }
 
 
-bool FolderList::validateAndRepairWorkspace(const char* archivePath, IMCompletedSummary& imCompletedSummar, VerifyBackups verifyBackups) {
+bool FolderList::validateAndRepairWorkspace(const char* archivePath, IMCompletedSummary& imCompletedSummar) {
 	ValidateAndRepairingWorkspaceObject validateAndRepairingObject(archivePath, m_workspacePath.c_str());
-	return validateWorkspace(archivePath, validateAndRepairingObject, verifyBackups);
+	return validateWorkspace(archivePath, validateAndRepairingObject);
 }
 
-bool FolderList::validateOnlyWorkspace(const char* archivePath, IMCompletedSummary& imCompletedSummar, VerifyBackups verifyBackups) {
+bool FolderList::validateOnlyWorkspace(const char* archivePath, IMCompletedSummary& imCompletedSummar) {
 	ValidateReportingObject validateReportingObject;
-	bool ret = validateWorkspace(archivePath, validateReportingObject, verifyBackups);
+	bool ret = validateWorkspace(archivePath, validateReportingObject);
 	CheckDiskSummaryJounal& jounal = validateReportingObject.GetCheckDiskSummaryJounal();
 	imCompletedSummar.setSummary(jounal.getTotalSummary().toSummary().c_str());
 	imCompletedSummar.setResult(jounal.getTotalSummary().toResult().c_str());
 	return ret;
 }
-bool FolderList::validateWorkspace(const char* archivePath, ValidateReportingObject &validateReportingObject, VerifyBackups verifyBackups) {
+bool FolderList::validateWorkspace(const char* archivePath, ValidateReportingObject &validateReportingObject) {
 	
 	std::string fpath = makeDBPathCSV(archivePath);
 	if (SAUtils::FileExists(fpath.c_str()) == false) {
@@ -447,24 +447,24 @@ bool FolderList::showUncheckedOutChanges(const char* archivePath, const char* wo
 	return true;
 }
 
-bool FolderList::validateAndRepairMaster(const char* archivePath, const char* workspacePath, IMCompletedSummary& imCompletedSummar, VerifyBackups verifyBackups) {
+bool FolderList::validateAndRepairMaster(const char* archivePath, const char* workspacePath, IMCompletedSummary& imCompletedSummar) {
 	ValidateAndRepairingMasterObject validateAndRepairingObject(archivePath, workspacePath);
-	return validateMaster(archivePath, validateAndRepairingObject, verifyBackups);
+	return validateMaster(archivePath, validateAndRepairingObject);
 }
 
-bool FolderList::validateOnlyMaster(const char* archivePath, IMCompletedSummary& imCompletedSummar, VerifyBackups verifyBackups) {
+bool FolderList::validateOnlyMaster(const char* archivePath, IMCompletedSummary& imCompletedSummar) {
 	ValidateReportingObject validateReportingObject;
-	bool ret = validateMaster(archivePath, validateReportingObject, verifyBackups);
+	bool ret = validateMaster(archivePath, validateReportingObject);
 	CheckDiskSummaryJounal& jounal = validateReportingObject.GetCheckDiskSummaryJounal();
 	imCompletedSummar.setSummary(jounal.getTotalSummary().toSummary().c_str());
 	imCompletedSummar.setResult(jounal.getTotalSummary().toResult().c_str());
 	return ret;
 }
 
-bool FolderList::validateMaster(const char* archivePath, ValidateReportingObject& validateReportingObject, VerifyBackups verifyBackups) {
-	return FolderList::validateDatabase(archivePath, validateReportingObject, verifyBackups);
+bool FolderList::validateMaster(const char* archivePath, ValidateReportingObject& validateReportingObject) {
+	return FolderList::validateDatabase(archivePath, validateReportingObject);
 }
-bool FolderList::validateDatabase(const char* archivePath, ValidateReportingObject &validateReportingObject, VerifyBackups verifyBackups) {
+bool FolderList::validateDatabase(const char* archivePath, ValidateReportingObject &validateReportingObject) {
 	
 	std::string fpath = makeDBPathCSV(archivePath);
 	if (SAUtils::FileExists(fpath.c_str()) == false) {
@@ -530,27 +530,27 @@ bool FolderList::validateDatabase(const char* archivePath, ValidateReportingObje
 }
 
 
-bool FolderList::validate(const char* archivePath, IMCompletedSummary& imCompletedSummary, VerifyBackups verifyBackups, bool repair) {
+bool FolderList::validate(const char* archivePath, IMCompletedSummary& imCompletedSummary, bool repair) {
 	switch (m_action) {
 	case Action::READING_MASTER:
 		//if (repair) return validateAndRepairMaster(archivePath, imCompletedSummary, verifyBackups);
-		return validateOnlyMaster(archivePath, imCompletedSummary, verifyBackups);
+		return validateOnlyMaster(archivePath, imCompletedSummary);
 	case Action::READING_WORKSPACE:
-		if (repair) return validateAndRepairWorkspace(archivePath, imCompletedSummary, verifyBackups);
-		return validateOnlyWorkspace(archivePath, imCompletedSummary, verifyBackups);
+		if (repair) return validateAndRepairWorkspace(archivePath, imCompletedSummary);
+		return validateOnlyWorkspace(archivePath, imCompletedSummary);
 	case Action::READING_DERIVATIVE:
-		if (repair) return validateAndRepairWorkspace(archivePath, imCompletedSummary, verifyBackups);
-		return validateOnlyWorkspace(archivePath, imCompletedSummary, verifyBackups);
+		if (repair) return validateAndRepairWorkspace(archivePath, imCompletedSummary);
+		return validateOnlyWorkspace(archivePath, imCompletedSummary);
 	case Action::READING_MAIN:
-		if (repair) return validateAndRepairWorkspace(archivePath, imCompletedSummary, verifyBackups);
-		return validateOnlyWorkspace(archivePath, imCompletedSummary, verifyBackups);
+		if (repair) return validateAndRepairWorkspace(archivePath, imCompletedSummary);
+		return validateOnlyWorkspace(archivePath, imCompletedSummary);
 	case Action::READING_ALL:
 	{
-		bool ret = validateOnlyMaster(archivePath, imCompletedSummary, verifyBackups);
+		bool ret = validateOnlyMaster(archivePath, imCompletedSummary);
 		if (!ret) {
 			return false;
 		}
-		ret = validateOnlyWorkspace(archivePath, imCompletedSummary, verifyBackups);
+		ret = validateOnlyWorkspace(archivePath, imCompletedSummary);
 		if (!ret) {
 			return false;
 		}

@@ -70,7 +70,7 @@ void IntegrityManager::setMasterBackupPaths(const char* backupPath1, const char*
 		m_masterBackupPath1 = backupPath1;
 	}
 	if (backup2enabled) {
-		m_masterbackupPath2 = backupPath2;
+		m_masterBackupPath2 = backupPath2;
 	}
 }
 
@@ -82,7 +82,7 @@ void IntegrityManager::setDerivativeBackupPaths(const char* backupPath1, const c
 		m_derivativeBackupPath1 = backupPath1;
 	}
 	if (backup2enabled) {
-		m_derivativebackupPath2 = backupPath2;
+		m_derivativeBackupPath2 = backupPath2;
 	}
 }
 
@@ -138,49 +138,113 @@ bool IntegrityManager::validate(IMCompletedSummary& imCompletedSummary, Scope sc
 	ValidateReportingObject::setPath(tmp.c_str());
 	FolderList folderList(m_workspacePath.c_str());
 	
-	FolderList::VerifyBackups flVerifyBackups;
+	bool m_validateMaster = false;
+	bool m_validateDerivative = false;
+	bool m_valideteWorkspace = false;
+	
+	bool m_validateBackup_1 = false;
+	bool m_validateBackup_2 = false;
+	bool m_validateMasterBackup_1 = false;
+	bool m_validateMasterBackup_2 = false;
+	bool m_validateDerivativeBackup_1 = false;
+	bool m_validateDerivativeBackup_2 = false;
+	
 	switch (verifyBackups) {
-	case IntegrityManager::VerifyBackups::Backup_1: flVerifyBackups = FolderList::VerifyBackups::Backup_1; break;
-	case IntegrityManager::VerifyBackups::Backup_2: flVerifyBackups = FolderList::VerifyBackups::Backup_2; break;
-	case IntegrityManager::VerifyBackups::Both: flVerifyBackups = FolderList::VerifyBackups::Both; break;		//* Show
-	case IntegrityManager::VerifyBackups::None: flVerifyBackups = FolderList::VerifyBackups::None; break;
+	case IntegrityManager::VerifyBackups::Backup_1:
+		m_validateBackup_1 = true;
+		break;
+	case IntegrityManager::VerifyBackups::Backup_2:
+		m_validateBackup_2 = true;
+		break;
+	case IntegrityManager::VerifyBackups::Both:
+		m_validateBackup_1 = true;
+		m_validateBackup_2 = true;
+		break;
+	case IntegrityManager::VerifyBackups::None:
+		break;
 	};
 
-
 	switch(scope) {
-	case Scope::Workspace:
-		folderList.SetAction(FolderList::Action::READING_WORKSPACE);
-		if (folderList.validate(m_archivePath.c_str(), imCompletedSummary, flVerifyBackups, repair) == false) {
-			return false;
-		}
-		return true;
-	case Scope::Master:			//* Show
-		folderList.SetAction(FolderList::Action::READING_MASTER);
-		if (folderList.validate(m_archivePath.c_str(), imCompletedSummary, flVerifyBackups, repair) == false) {
-			return false;
-		}
-		return true;
-	case Scope::Derivative:			//* Show
-		folderList.SetAction(FolderList::Action::READING_DERIVATIVE);
-		if (folderList.validate(m_archivePath.c_str(), imCompletedSummary, flVerifyBackups, repair) == false) {
-			return false;
-		}
-		return true;
+	case Scope::Workspace:	
+		m_valideteWorkspace = true;
+		break;
+	case Scope::Master:
+		m_validateMaster = true;
+		break;
+	case Scope::Derivative:
+		m_validateDerivative = true;
+		break;
 	case Scope::All:
-		folderList.SetAction(FolderList::Action::READING_ALL);
-		if (folderList.validate(m_archivePath.c_str(), imCompletedSummary, flVerifyBackups, repair) == false) {
-			return false;
-		}
-		
-		return true;
-	case Scope::Main:			//* 
-		folderList.SetAction(FolderList::Action::READING_MAIN);
-		if (folderList.validate(m_archivePath.c_str(), imCompletedSummary, flVerifyBackups, repair) == false) {
-			return false;
-		}
-		return true;
+		m_validateMaster = true;
+		m_validateDerivative = true;
+		m_valideteWorkspace = true;
+		break;
+	case Scope::Main:
+		m_validateMaster = true;
+		m_validateDerivative = true;
+		break;
 	}
 	
+	if (m_validateMaster == true) {
+		if (m_validateBackup_1 == true) {
+			if (m_masterBackup1enabled) {
+				m_validateMasterBackup_1 = true;
+			}
+		}
+		else if (m_validateBackup_2 == true) {
+			if (m_masterBackup2enabled) {
+				m_validateMasterBackup_2 = true;
+			}
+		}
+	} 
+	else if (m_validateDerivative == true) {
+		if (m_validateBackup_1 == true) {
+			if (m_derivativeBackup1enabled) {
+				m_validateDerivativeBackup_1 = true;
+			}
+		}
+		else if (m_validateBackup_2 == true) {
+			if (m_derivativeBackup2enabled) {
+				m_validateDerivativeBackup_2 = true;
+			}
+		}
+	}
+	
+	if (m_validateMaster == true) {
+		if (folderList.validate(m_archivePath.c_str(), imCompletedSummary, repair) == false) {
+			return false;
+		}
+	} 
+	else if (m_validateDerivative == true) {
+		if (folderList.validate(m_derivativePath.c_str(), imCompletedSummary, repair) == false) {
+			return false;
+		}
+	}
+	else if (m_valideteWorkspace == true) {
+		if (folderList.validate(m_workspacePath.c_str(), imCompletedSummary, repair) == false) {
+			return false;
+		}
+	}
+	else if (m_validateMasterBackup_1 == true) {
+		if (folderList.validate(m_masterBackupPath1.c_str(), imCompletedSummary, repair) == false) {
+			return false;
+		}
+	}
+	else if (m_validateMasterBackup_2 == true) {
+		if (folderList.validate(m_masterBackupPath2.c_str(), imCompletedSummary, repair) == false) {
+			return false;
+		}
+	}
+	else if (m_validateDerivativeBackup_1 == true) {
+		if (folderList.validate(m_derivativeBackupPath1.c_str(), imCompletedSummary, repair) == false) {
+			return false;
+		}
+	}
+	else if (m_validateDerivativeBackup_2 == true) {
+		if (folderList.validate(m_derivativeBackupPath2.c_str(), imCompletedSummary, repair) == false) {
+			return false;
+		}
+	}
 	return true;
 }
 

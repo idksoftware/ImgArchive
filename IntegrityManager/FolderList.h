@@ -86,17 +86,17 @@ namespace simplearchive {
 		
 		bool makeXML(const char* archivePath);
 
-		bool validateAndRepairMaster(const char* archivePath, const char* workspacePath, IMCompletedSummary& imCompletedSummar, VerifyBackups verifyBackups);
-		bool validateOnlyMaster(const char* archivePath, IMCompletedSummary& imCompletedSummar, VerifyBackups verifyBackups);
+		bool validateAndRepairMaster(const char* archivePath, const char* workspacePath, IMCompletedSummary& imCompletedSummar);
+		bool validateOnlyMaster(const char* archivePath, IMCompletedSummary& imCompletedSummar);
 
 		
 
-		bool validateMaster(const char* archivePath, ValidateReportingObject &validateReportingObject, VerifyBackups verifyBackups);
-		bool validateDatabase(const char* archivePath, ValidateReportingObject& validateReportingObject, VerifyBackups verifyBackups);
+		bool validateMaster(const char* archivePath, ValidateReportingObject &validateReportingObject);
+		bool validateDatabase(const char* archivePath, ValidateReportingObject& validateReportingObject);
 
-		bool validateAndRepairWorkspace(const char* archivePath, IMCompletedSummary& imCompletedSummar, VerifyBackups verifyBackups);
-		bool validateOnlyWorkspace(const char* archivePath, IMCompletedSummary& imCompletedSummar, VerifyBackups verifyBackups);
-		bool validateWorkspace(const char* archivePath, ValidateReportingObject &validateReportingObject, VerifyBackups verifyBackups);
+		bool validateAndRepairWorkspace(const char* archivePath, IMCompletedSummary& imCompletedSummar);
+		bool validateOnlyWorkspace(const char* archivePath, IMCompletedSummary& imCompletedSummar);
+		bool validateWorkspace(const char* archivePath, ValidateReportingObject &validateReportingObject);
 
 		bool fixWorkspace(const char* archivePath, const char *jouralFile);
 		Action m_action;
@@ -121,7 +121,7 @@ namespace simplearchive {
 		bool showCheckedOut(const char* archivePath, const char *addressScope);
 		bool showUncheckedOutChanges(const char* archivePath, const char* workspacePath, const char *addressScope);
 
-		bool validate(const char *archivePath, IMCompletedSummary& imCompletedSummary, VerifyBackups verifyBackups, bool repair);
+		bool validate(const char *archivePath, IMCompletedSummary& imCompletedSummary, bool repair);
 		//bool validateAndRepair(IMCompletedSummary& imCompletedSummary);
 	};
 

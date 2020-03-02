@@ -73,13 +73,13 @@ private:
 	std::string m_homePath;
 	
 	std::string m_masterBackupPath1;
-	std::string m_masterbackupPath2;
+	std::string m_masterBackupPath2;
 
 	bool m_masterBackup1enabled;
 	bool m_masterBackup2enabled;
 
 	std::string m_derivativeBackupPath1;
-	std::string m_derivativebackupPath2;
+	std::string m_derivativeBackupPath2;
 
 	bool m_derivativeBackup1enabled;
 	bool m_derivativeBackup2enabled;
