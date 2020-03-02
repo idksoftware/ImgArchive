@@ -96,7 +96,7 @@ bool IntegrityManager::addMasterDayFolder(const char *folderName) {
 
 bool IntegrityManager::addDayFolder(const char *rootName, const char *folderName) {
 	FolderList folderList(rootName);
-	folderList.addDayFolder(folderName);
+	folderList.addDayFolder(m_archivePath.c_str(), folderName);
 	return true;
 }
 
@@ -114,7 +114,7 @@ bool IntegrityManager::addFile(const char *rootPath, const char *folderPath, con
 		return false;
 	}
 	FolderList folderList(rootPath);
-	folderList.incFiles(folderPath);
+	folderList.incFiles(m_archivePath.c_str(), folderPath);
 	return true;
 }
 
@@ -136,37 +136,46 @@ bool IntegrityManager::validate(IMCompletedSummary& imCompletedSummary, Scope sc
 		}
 	}
 	ValidateReportingObject::setPath(tmp.c_str());
-	FolderList folderList(m_archivePath.c_str(), m_workspacePath.c_str());
+	FolderList folderList(m_workspacePath.c_str());
 	
+	FolderList::VerifyBackups flVerifyBackups;
+	switch (verifyBackups) {
+	case IntegrityManager::VerifyBackups::Backup_1: flVerifyBackups = FolderList::VerifyBackups::Backup_1; break;
+	case IntegrityManager::VerifyBackups::Backup_2: flVerifyBackups = FolderList::VerifyBackups::Backup_2; break;
+	case IntegrityManager::VerifyBackups::Both: flVerifyBackups = FolderList::VerifyBackups::Both; break;		//* Show
+	case IntegrityManager::VerifyBackups::None: flVerifyBackups = FolderList::VerifyBackups::None; break;
+	};
+
+
 	switch(scope) {
 	case Scope::Workspace:
 		folderList.SetAction(FolderList::Action::READING_WORKSPACE);
-		if (folderList.validate(imCompletedSummary, repair) == false) {
+		if (folderList.validate(m_archivePath.c_str(), imCompletedSummary, flVerifyBackups, repair) == false) {
 			return false;
 		}
 		return true;
 	case Scope::Master:			//* Show
 		folderList.SetAction(FolderList::Action::READING_MASTER);
-		if (folderList.validate(imCompletedSummary, repair) == false) {
+		if (folderList.validate(m_archivePath.c_str(), imCompletedSummary, flVerifyBackups, repair) == false) {
 			return false;
 		}
 		return true;
 	case Scope::Derivative:			//* Show
-		folderList.SetAction(FolderList::Action::READING_MASTER);
-		if (folderList.validate(imCompletedSummary, repair) == false) {
+		folderList.SetAction(FolderList::Action::READING_DERIVATIVE);
+		if (folderList.validate(m_archivePath.c_str(), imCompletedSummary, flVerifyBackups, repair) == false) {
 			return false;
 		}
 		return true;
 	case Scope::All:
 		folderList.SetAction(FolderList::Action::READING_ALL);
-		if (folderList.validate(imCompletedSummary, repair) == false) {
+		if (folderList.validate(m_archivePath.c_str(), imCompletedSummary, flVerifyBackups, repair) == false) {
 			return false;
 		}
 		
 		return true;
 	case Scope::Main:			//* 
 		folderList.SetAction(FolderList::Action::READING_MAIN);
-		if (folderList.validate(imCompletedSummary, repair) == false) {
+		if (folderList.validate(m_archivePath.c_str(), imCompletedSummary, flVerifyBackups, repair) == false) {
 			return false;
 		}
 		return true;
@@ -213,7 +222,7 @@ bool IntegrityManager::repair(IMCompletedSummary& imCompletedSummary, bool works
 
 bool IntegrityManager::makeList() {
 	FolderList folderList(m_archivePath.c_str());
-	if (folderList.makeList() == false) {
+	if (folderList.makeList(m_archivePath.c_str()) == false) {
 		return false;
 	}
 	// make file list

@@ -62,22 +62,20 @@ namespace simplearchive {
 
 
 
-FolderList::FolderList(const char *archivePath) : m_archivePath(archivePath) {
-	
-	m_action = Action::READING_WORKSPACE;
-}
+FolderList::FolderList()
+	: m_action(Action::READING_WORKSPACE)
+{}
 
-FolderList::FolderList(const char *archivePath, const char *workspacePath) :
-									m_archivePath(archivePath), m_workspacePath(workspacePath) {
-	m_action = Action::READING_WORKSPACE;
-}
+FolderList::FolderList(const char* workspacePath)
+	: m_workspacePath(workspacePath), m_action(Action::READING_WORKSPACE)
+{};
 
 FolderList::~FolderList() {
 	// TODO Auto-generated destructor stub
 }
 
-std::string FolderList::makeDBPathCSV() const {
-	std::string path = m_archivePath + std::string("/system");
+std::string FolderList::makeDBPathCSV(const char * archivePath) const {
+	std::string path = archivePath + std::string("/system");
 	if (SAUtils::DirExists(path.c_str()) == false) {
 		if (SAUtils::mkDir(path.c_str()) == false) {
 			throw std::exception();
@@ -97,8 +95,8 @@ std::string FolderList::makeDBPathCSV() const {
 	return path;
 }
 
-std::string FolderList::makeDBPathXML() const {
-	std::string path = m_archivePath + std::string("/system");
+std::string FolderList::makeDBPathXML(const char *archivePath) const {
+	std::string path = archivePath + std::string("/system");
 	if (SAUtils::DirExists(path.c_str()) == false) {
 		if (SAUtils::mkDir(path.c_str()) == false) {
 			throw std::exception();
@@ -118,9 +116,9 @@ std::string FolderList::makeDBPathXML() const {
 	return path;
 }
 
-bool FolderList::addDayFolder(const char *folderName) {
+bool FolderList::addDayFolder(const char * archivePath, const char* folderName) {
 	
-	std::string fpath = makeDBPathCSV();
+	std::string fpath = makeDBPathCSV(archivePath);
     FileDataContainer fileDataContainer;
     fileDataContainer.read(fpath.c_str());
     fileDataContainer.add(folderName);
@@ -128,8 +126,8 @@ bool FolderList::addDayFolder(const char *folderName) {
     return true;
 }
 
-bool FolderList::incFolders(const char *folderName) {
-	std::string path = m_archivePath;
+bool FolderList::incFolders(const char* archivePath, const char *folderName) {
+	std::string path = archivePath;
 	path += "/chdsk";
 	if (SAUtils::DirExists(path.c_str()) == false) {
 		if (SAUtils::mkDir(path.c_str()) == false) {
@@ -151,30 +149,31 @@ bool FolderList::incFolders(const char *folderName) {
     return true;
 }
 
-bool FolderList::incFiles(const char *folderName) {
+bool FolderList::incFiles(const char* archivePath, const char *folderName) {
 	
 	//if (SAUtils::FileExists(fpath.c_str()) == false) {
     //	throw std::exception();
     //}
-	std::string fpath = makeDBPathCSV();
+
+	std::string fpath = makeDBPathCSV(archivePath);
     FileDataContainer fileDataContainer;
     fileDataContainer.read(fpath.c_str());
     fileDataContainer.incFiles(folderName);
     fileDataContainer.write(fpath.c_str());
-    if (makeXML() == false) {
+    if (makeXML(archivePath) == false) {
     	return false;
     }
     return true;
 }
 
-bool FolderList::makeXML() {
+bool FolderList::makeXML(const char* archivePath) {
 	
-	std::string fpathcsv = makeDBPathCSV();
+	std::string fpathcsv = makeDBPathCSV(archivePath);
 	if (SAUtils::FileExists(fpathcsv.c_str()) == false) {
 		throw std::exception();
 	}
 	// do files
-	std::string fpathxml = makeDBPathXML();
+	std::string fpathxml = makeDBPathXML(archivePath);
 	
 	std::ofstream filexml(fpathxml.c_str());
 	if (filexml.is_open() == false) {
@@ -221,14 +220,14 @@ bool FolderList::makeXML() {
 	return true;
 }
 
-bool FolderList::makeList() {
+bool FolderList::makeList(const char *archivePath) {
 	
-	std::string fpath = makeDBPathCSV();
+	std::string fpath = makeDBPathCSV(archivePath);
 	std::ofstream filedat(fpath.c_str());
 	if (filedat.is_open() == false) {
 		return false;
 	}
-	fpath = makeDBPathXML();
+	fpath = makeDBPathXML(archivePath);
 	std::ofstream filexml(fpath.c_str());
 	if (filexml.is_open() == false) {
 		return false;
@@ -237,7 +236,7 @@ bool FolderList::makeList() {
 	time(&timeValue);
 	filexml <<	"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 					<<	"<FolderList>\n";
-	FileList_Ptr filelist = SAUtils::getFiles_(m_archivePath.c_str());
+	FileList_Ptr filelist = SAUtils::getFiles_(archivePath);
 	for (auto i = filelist->begin(); i != filelist->end(); i++) {
 		std::string year = *i;
 		
@@ -249,7 +248,7 @@ bool FolderList::makeList() {
 		//printf("%s: \n", year->c_str());
 		filexml <<	"\t<YearFolder Name=\"" << year << "\" >\n";
 
-		std::string yearfolder = m_archivePath + '/' + year;
+		std::string yearfolder = archivePath + '/' + year;
 		FileList_Ptr dayList = SAUtils::getFiles_(yearfolder.c_str());
 
 		for (auto i = dayList->begin(); i != dayList->end(); i++) {
@@ -279,22 +278,22 @@ bool FolderList::makeList() {
 }
 
 
-bool FolderList::validateAndRepairWorkspace(IMCompletedSummary& imCompletedSummar) {
-	ValidateAndRepairingWorkspaceObject validateAndRepairingObject(m_archivePath.c_str(), m_workspacePath.c_str());
-	return validateWorkspace(validateAndRepairingObject);
+bool FolderList::validateAndRepairWorkspace(const char* archivePath, IMCompletedSummary& imCompletedSummar, VerifyBackups verifyBackups) {
+	ValidateAndRepairingWorkspaceObject validateAndRepairingObject(archivePath, m_workspacePath.c_str());
+	return validateWorkspace(archivePath, validateAndRepairingObject, verifyBackups);
 }
 
-bool FolderList::validateOnlyWorkspace(IMCompletedSummary& imCompletedSummar) {
+bool FolderList::validateOnlyWorkspace(const char* archivePath, IMCompletedSummary& imCompletedSummar, VerifyBackups verifyBackups) {
 	ValidateReportingObject validateReportingObject;
-	bool ret = validateWorkspace(validateReportingObject);
+	bool ret = validateWorkspace(archivePath, validateReportingObject, verifyBackups);
 	CheckDiskSummaryJounal& jounal = validateReportingObject.GetCheckDiskSummaryJounal();
 	imCompletedSummar.setSummary(jounal.getTotalSummary().toSummary().c_str());
 	imCompletedSummar.setResult(jounal.getTotalSummary().toResult().c_str());
 	return ret;
 }
-bool FolderList::validateWorkspace(ValidateReportingObject &validateReportingObject) {
+bool FolderList::validateWorkspace(const char* archivePath, ValidateReportingObject &validateReportingObject, VerifyBackups verifyBackups) {
 	
-	std::string fpath = makeDBPathCSV();
+	std::string fpath = makeDBPathCSV(archivePath);
 	if (SAUtils::FileExists(fpath.c_str()) == false) {
 		return false;
 	}
@@ -336,7 +335,7 @@ bool FolderList::validateWorkspace(ValidateReportingObject &validateReportingObj
 				//printf("File found %s\n", dataString.c_str());
 				validateReportingObject.startDay(dataString.c_str());
 				
-				std::string archivePath = m_archivePath;
+				std::string archivePath = archivePath;
 					// Master
 				archivePath += "/system/chdsk/"; archivePath += year;
 				archivePath += '/'; archivePath += dataString;
@@ -436,44 +435,44 @@ bool ValidateWorkspace::doWork(const char *targetdir, const char *checkFilePath,
 	return true;
 }
 
-bool FolderList::showCheckedOut(const char *addressScope) {
-	ShowCheckedOut showCheckedOut(m_archivePath.c_str());
+bool FolderList::showCheckedOut(const char* archivePath, const char *addressScope) {
+	ShowCheckedOut showCheckedOut(archivePath);
 	showCheckedOut.process(addressScope);
 	return true;
 }
 
-bool FolderList::showUncheckedOutChanges(const char *addressScope) {
-	ShowUncheckedOutChanges showUncheckedOutChanges(m_archivePath.c_str(), m_workspacePath.c_str());
+bool FolderList::showUncheckedOutChanges(const char* archivePath, const char* workspacePath, const char *addressScope) {
+	ShowUncheckedOutChanges showUncheckedOutChanges(archivePath, workspacePath);
 	showUncheckedOutChanges.process(addressScope);
 	return true;
 }
 
-bool FolderList::validateAndRepairMaster(IMCompletedSummary& imCompletedSummar) {
-	ValidateAndRepairingMasterObject validateAndRepairingObject(m_archivePath.c_str(), m_workspacePath.c_str());
-	return validateMaster(validateAndRepairingObject);
+bool FolderList::validateAndRepairMaster(const char* archivePath, const char* workspacePath, IMCompletedSummary& imCompletedSummar, VerifyBackups verifyBackups) {
+	ValidateAndRepairingMasterObject validateAndRepairingObject(archivePath, workspacePath);
+	return validateMaster(archivePath, validateAndRepairingObject, verifyBackups);
 }
 
-bool FolderList::validateOnlyMaster(IMCompletedSummary& imCompletedSummar) {
+bool FolderList::validateOnlyMaster(const char* archivePath, IMCompletedSummary& imCompletedSummar, VerifyBackups verifyBackups) {
 	ValidateReportingObject validateReportingObject;
-	bool ret = validateMaster(validateReportingObject);
+	bool ret = validateMaster(archivePath, validateReportingObject, verifyBackups);
 	CheckDiskSummaryJounal& jounal = validateReportingObject.GetCheckDiskSummaryJounal();
 	imCompletedSummar.setSummary(jounal.getTotalSummary().toSummary().c_str());
 	imCompletedSummar.setResult(jounal.getTotalSummary().toResult().c_str());
 	return ret;
 }
 
-bool FolderList::validateMaster(ValidateReportingObject& validateReportingObject) {
-	return FolderList::validateDatabase(validateReportingObject);
+bool FolderList::validateMaster(const char* archivePath, ValidateReportingObject& validateReportingObject, VerifyBackups verifyBackups) {
+	return FolderList::validateDatabase(archivePath, validateReportingObject, verifyBackups);
 }
-bool FolderList::validateDatabase(ValidateReportingObject &validateReportingObject) {
+bool FolderList::validateDatabase(const char* archivePath, ValidateReportingObject &validateReportingObject, VerifyBackups verifyBackups) {
 	
-	std::string fpath = makeDBPathCSV();
+	std::string fpath = makeDBPathCSV(archivePath);
 	if (SAUtils::FileExists(fpath.c_str()) == false) {
 		return false; // may be an emplty archive
 	}
 	FileDataContainer fileDataContainer;
 	fileDataContainer.read(fpath.c_str());
-	std::string dataPath = m_archivePath;
+	std::string dataPath = archivePath;
 	
 	FileList_Ptr filelist = SAUtils::getFiles_(dataPath.c_str());
 	for (auto i = filelist->begin(); i != filelist->end(); i++) {
@@ -531,21 +530,27 @@ bool FolderList::validateDatabase(ValidateReportingObject &validateReportingObje
 }
 
 
-bool FolderList::validate(IMCompletedSummary& imCompletedSummary, bool repair) {
+bool FolderList::validate(const char* archivePath, IMCompletedSummary& imCompletedSummary, VerifyBackups verifyBackups, bool repair) {
 	switch (m_action) {
 	case Action::READING_MASTER:
-		if (repair) return validateAndRepairMaster(imCompletedSummary);
-		return validateOnlyMaster(imCompletedSummary);
+		//if (repair) return validateAndRepairMaster(archivePath, imCompletedSummary, verifyBackups);
+		return validateOnlyMaster(archivePath, imCompletedSummary, verifyBackups);
 	case Action::READING_WORKSPACE:
-		if (repair) return validateAndRepairWorkspace(imCompletedSummary);
-		return validateOnlyWorkspace(imCompletedSummary);
+		if (repair) return validateAndRepairWorkspace(archivePath, imCompletedSummary, verifyBackups);
+		return validateOnlyWorkspace(archivePath, imCompletedSummary, verifyBackups);
+	case Action::READING_DERIVATIVE:
+		if (repair) return validateAndRepairWorkspace(archivePath, imCompletedSummary, verifyBackups);
+		return validateOnlyWorkspace(archivePath, imCompletedSummary, verifyBackups);
+	case Action::READING_MAIN:
+		if (repair) return validateAndRepairWorkspace(archivePath, imCompletedSummary, verifyBackups);
+		return validateOnlyWorkspace(archivePath, imCompletedSummary, verifyBackups);
 	case Action::READING_ALL:
 	{
-		bool ret = validateOnlyMaster(imCompletedSummary);
+		bool ret = validateOnlyMaster(archivePath, imCompletedSummary, verifyBackups);
 		if (!ret) {
 			return false;
 		}
-		ret = validateOnlyWorkspace(imCompletedSummary);
+		ret = validateOnlyWorkspace(archivePath, imCompletedSummary, verifyBackups);
 		if (!ret) {
 			return false;
 		}
@@ -583,11 +588,11 @@ bool FolderList::validateAndRepair(IMCompletedSummary& imCompletedSummar) {
 	return false;
 }
 */
-bool FolderList::fix() {
-	return fixWorkspace(m_workspaceJournalName.c_str());
+bool FolderList::fix(const char* archivePath) {
+	return fixWorkspace(archivePath, m_workspaceJournalName.c_str());
 }
 
-bool FolderList::fixWorkspace(const char *jouralFile) {
+bool FolderList::fixWorkspace(const char* archivePath, const char *jouralFile) {
 	CheckDiskJournal checkDiskJournal;
 
 	if (checkDiskJournal.read(jouralFile) == false) {
@@ -599,7 +604,7 @@ bool FolderList::fixWorkspace(const char *jouralFile) {
 		std::string imagePath = checkDiskJournal.getImageAt(i);
 		
 		std::string year = imagePath.substr(0, 4);
-		std::string archiveImagePath = m_archivePath;
+		std::string archiveImagePath = archivePath;
 		archiveImagePath += '/'; archiveImagePath += year;
 		std::string yearday = imagePath.substr(0, 10);
 		archiveImagePath += '/'; archiveImagePath += yearday;

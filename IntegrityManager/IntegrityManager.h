@@ -49,6 +49,8 @@ public:
 	const char *getResult() { return m_result.c_str(); };
 };
 
+
+
 class IntegrityManager {
 public:
 	enum class Scope {
@@ -61,8 +63,8 @@ public:
 	enum class VerifyBackups {
 		Backup_1,		//* Initalise an archive with the default 
 		Backup_2,			//* Show
-		Both		//* Show
-
+		Both,		//* Show
+		None
 	};
 private:
 	std::string m_archivePath;

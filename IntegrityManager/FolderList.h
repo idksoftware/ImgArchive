@@ -72,49 +72,56 @@ namespace simplearchive {
 			READING_ALL,
 			READING_MAIN
 		};
+		enum class VerifyBackups {
+			Backup_1,		//* Initalise an archive with the default 
+			Backup_2,			//* Show
+			Both,		//* Show
+			None
+		};
 	private:
-		std::string m_archivePath;
+		//std::string m_archivePath;
 		std::string m_workspacePath;
 		std::string m_workspaceJournalName;
 		std::string m_MasterJournalName;
 		
-		bool makeXML();
+		bool makeXML(const char* archivePath);
 
-		bool validateAndRepairMaster(IMCompletedSummary& imCompletedSummar);
-		bool validateOnlyMaster(IMCompletedSummary& imCompletedSummar);
+		bool validateAndRepairMaster(const char* archivePath, const char* workspacePath, IMCompletedSummary& imCompletedSummar, VerifyBackups verifyBackups);
+		bool validateOnlyMaster(const char* archivePath, IMCompletedSummary& imCompletedSummar, VerifyBackups verifyBackups);
 
-		bool validateAndRepairWorkspace(IMCompletedSummary& imCompletedSummar);
-		bool validateOnlyWorkspace(IMCompletedSummary& imCompletedSummar);
+		
 
-		bool validateMaster(ValidateReportingObject &validateReportingObject);
-		bool validateDatabase(ValidateReportingObject& validateReportingObject);
+		bool validateMaster(const char* archivePath, ValidateReportingObject &validateReportingObject, VerifyBackups verifyBackups);
+		bool validateDatabase(const char* archivePath, ValidateReportingObject& validateReportingObject, VerifyBackups verifyBackups);
 
-		bool validateWorkspace(ValidateReportingObject &validateReportingObject);
+		bool validateAndRepairWorkspace(const char* archivePath, IMCompletedSummary& imCompletedSummar, VerifyBackups verifyBackups);
+		bool validateOnlyWorkspace(const char* archivePath, IMCompletedSummary& imCompletedSummar, VerifyBackups verifyBackups);
+		bool validateWorkspace(const char* archivePath, ValidateReportingObject &validateReportingObject, VerifyBackups verifyBackups);
 
-		bool fixWorkspace(const char *jouralFile);
+		bool fixWorkspace(const char* archivePath, const char *jouralFile);
 		Action m_action;
 
-		std::string makeDBPathCSV() const;
-		std::string makeDBPathXML() const;
+		std::string makeDBPathCSV(const char *archivePath) const;
+		std::string makeDBPathXML(const char* archivePath) const;
 	public:
-		explicit FolderList(const char *archivePath);
-		FolderList(const char *archivePath, const char *workspacePath);
+		explicit FolderList();
+		FolderList(const char *workspacePath);
 		virtual ~FolderList();
 
-		bool addDayFolder(const char *folderName);
-		bool incFolders(const char *folderName = "fdata");
-		bool incFiles(const char *folderName);
-		bool makeList();
+		bool addDayFolder(const char* archivePath, const char *folderName);
+		bool incFolders(const char* archivePath, const char *folderName = "fdata");
+		bool incFiles(const char* archivePath, const char *folderName);
+		bool makeList(const char* archivePath);
 		
-		bool fix();
+		bool fix(const char* archivePath);
 		void SetAction(Action action) {
 			m_action = action;
 		}
 
-		bool showCheckedOut(const char *addressScope);
-		bool showUncheckedOutChanges(const char *addressScope);
+		bool showCheckedOut(const char* archivePath, const char *addressScope);
+		bool showUncheckedOutChanges(const char* archivePath, const char* workspacePath, const char *addressScope);
 
-		bool validate(IMCompletedSummary& imCompletedSummary, bool repair);
+		bool validate(const char *archivePath, IMCompletedSummary& imCompletedSummary, VerifyBackups verifyBackups, bool repair);
 		//bool validateAndRepair(IMCompletedSummary& imCompletedSummary);
 	};
 
