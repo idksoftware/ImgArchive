@@ -211,37 +211,37 @@ bool IntegrityManager::validate(IMCompletedSummary& imCompletedSummary, Scope sc
 	}
 	
 	if (m_validateMaster == true) {
-		if (folderList.validate(m_archivePath.c_str(), imCompletedSummary, repair) == false) {
+		if (folderList.validateArchiveOnly(FolderList::ValidatedArchive::Master, m_archivePath.c_str(), imCompletedSummary, repair) == false) {
 			return false;
 		}
 	} 
-	else if (m_validateDerivative == true) {
-		if (folderList.validate(m_derivativePath.c_str(), imCompletedSummary, repair) == false) {
+	if (m_validateDerivative == true) {
+		if (folderList.validateArchiveOnly(FolderList::ValidatedArchive::Derivative, m_derivativePath.c_str(), imCompletedSummary, repair) == false) {
 			return false;
 		}
 	}
-	else if (m_valideteWorkspace == true) {
-		if (folderList.validate(m_workspacePath.c_str(), imCompletedSummary, repair) == false) {
+	if (m_valideteWorkspace == true) {
+		if (folderList.validateWorkspaceOnly(m_workspacePath.c_str(), imCompletedSummary, repair) == false) {
 			return false;
 		}
 	}
-	else if (m_validateMasterBackup_1 == true) {
-		if (folderList.validate(m_masterBackupPath1.c_str(), imCompletedSummary, repair) == false) {
+	if (m_validateMasterBackup_1 == true) {
+		if (folderList.validateArchiveOnly(FolderList::ValidatedArchive::MasterBackup_1, m_masterBackupPath1.c_str(), imCompletedSummary, repair) == false) {
 			return false;
 		}
 	}
-	else if (m_validateMasterBackup_2 == true) {
-		if (folderList.validate(m_masterBackupPath2.c_str(), imCompletedSummary, repair) == false) {
+	if (m_validateMasterBackup_2 == true) {
+		if (folderList.validateArchiveOnly(FolderList::ValidatedArchive::MasterBackup_2, m_masterBackupPath2.c_str(), imCompletedSummary, repair) == false) {
 			return false;
 		}
 	}
-	else if (m_validateDerivativeBackup_1 == true) {
-		if (folderList.validate(m_derivativeBackupPath1.c_str(), imCompletedSummary, repair) == false) {
+	if (m_validateDerivativeBackup_1 == true) {
+		if (folderList.validateArchiveOnly(FolderList::ValidatedArchive::DerivativeBackup_1, m_derivativeBackupPath1.c_str(), imCompletedSummary, repair) == false) {
 			return false;
 		}
 	}
-	else if (m_validateDerivativeBackup_2 == true) {
-		if (folderList.validate(m_derivativeBackupPath2.c_str(), imCompletedSummary, repair) == false) {
+	if (m_validateDerivativeBackup_2 == true) {
+		if (folderList.validateArchiveOnly(FolderList::ValidatedArchive::DerivativeBackup_2, m_derivativeBackupPath2.c_str(), imCompletedSummary, repair) == false) {
 			return false;
 		}
 	}

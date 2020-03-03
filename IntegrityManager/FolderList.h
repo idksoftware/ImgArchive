@@ -65,19 +65,17 @@ namespace simplearchive {
 	 */
 	class FolderList {
 	public:
-		enum class Action {
-			READING_MASTER,
-			READING_WORKSPACE,
-			READING_DERIVATIVE,
-			READING_ALL,
-			READING_MAIN
+		
+		enum class ValidatedArchive {
+			Workspace,
+			Master,
+			Derivative,
+			MasterBackup_1,
+			MasterBackup_2,
+			DerivativeBackup_1,
+			DerivativeBackup_2
 		};
-		enum class VerifyBackups {
-			Backup_1,		//* Initalise an archive with the default 
-			Backup_2,			//* Show
-			Both,		//* Show
-			None
-		};
+		
 	private:
 		//std::string m_archivePath;
 		std::string m_workspacePath;
@@ -87,19 +85,17 @@ namespace simplearchive {
 		bool makeXML(const char* archivePath);
 
 		bool validateAndRepairMaster(const char* archivePath, const char* workspacePath, IMCompletedSummary& imCompletedSummar);
-		bool validateOnlyMaster(const char* archivePath, IMCompletedSummary& imCompletedSummar);
+		bool validateArchiveSummary(const char* archivePath, IMCompletedSummary& imCompletedSummary);
+		bool validateArchive(const char* archivePath, ValidateReportingObject &validateReportingObject);
 
-		
 
-		bool validateMaster(const char* archivePath, ValidateReportingObject &validateReportingObject);
-		bool validateDatabase(const char* archivePath, ValidateReportingObject& validateReportingObject);
-
+		bool validateWorkspaceSummary(const char* archivePath, IMCompletedSummary& imCompletedSummar);
 		bool validateAndRepairWorkspace(const char* archivePath, IMCompletedSummary& imCompletedSummar);
-		bool validateOnlyWorkspace(const char* archivePath, IMCompletedSummary& imCompletedSummar);
+		
 		bool validateWorkspace(const char* archivePath, ValidateReportingObject &validateReportingObject);
 
 		bool fixWorkspace(const char* archivePath, const char *jouralFile);
-		Action m_action;
+		//Action m_action;
 
 		std::string makeDBPathCSV(const char *archivePath) const;
 		std::string makeDBPathXML(const char* archivePath) const;
@@ -114,14 +110,16 @@ namespace simplearchive {
 		bool makeList(const char* archivePath);
 		
 		bool fix(const char* archivePath);
-		void SetAction(Action action) {
-			m_action = action;
-		}
+		//void SetAction(Action action) {
+		//	m_action = action;
+		//}
 
 		bool showCheckedOut(const char* archivePath, const char *addressScope);
 		bool showUncheckedOutChanges(const char* archivePath, const char* workspacePath, const char *addressScope);
 
-		bool validate(const char *archivePath, IMCompletedSummary& imCompletedSummary, bool repair);
+		
+		bool validateArchiveOnly(ValidatedArchive validatedArchive, const char *archivePath, IMCompletedSummary& imCompletedSummary, bool repair);
+		bool validateWorkspaceOnly(const char* archivePath, IMCompletedSummary& imCompletedSummary, bool repair);
 		//bool validateAndRepair(IMCompletedSummary& imCompletedSummary);
 	};
 
