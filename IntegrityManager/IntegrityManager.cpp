@@ -41,6 +41,7 @@
 #include "ValidateReportingObject.h"
 #include "CheckoutStatus.h"
 #include "CheckDiskJournal.h"
+#include "ImageEncode.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -100,8 +101,12 @@ bool IntegrityManager::addDayFolder(const char *rootName, const char *folderName
 	return true;
 }
 
-bool IntegrityManager::addDerivativeFile(const char *folderPath, const char *fileName) {
-	return addFile(m_derivativePath.c_str(), folderPath, fileName);
+bool IntegrityManager::addDerivativeFile(const char *folderPath, const char * imageEncodedFilename) {
+	//std::string ext = SAUtils::getExtention(fileName);
+	//std::string name = SAUtils::getFilenameNoExt(fileName);
+	//ImageEncode imageEncode(folderPath, name.c_str(), version, ext.c_str());
+	//std::string imageEncodeFilename = imageEncode.getEncodedString();
+	return addFile(m_derivativePath.c_str(), folderPath, imageEncodedFilename);
 }
 
 bool IntegrityManager::addMasterFile(const char *folderPath, const char *fileName) {

@@ -334,12 +334,12 @@ void CLogger::log(int code, Level level, const char *format, ...) {
 		if (m_isSilent == false) {
 			if (IsConsoleOut(level)) {
 				if (m_isQuiet) {
-					std::cout << message << '\n';
+					std::cout << message << std::endl;;
 				}
 				else {
-					std::cout << "\n"; // << setfill('0') << setw(6) << code << ": " << date.toLogString() << '.' << count << "\t";
-					std::cout << '[' << levelStr(level) << "]\t";
-					std::cout << message;
+					//std::cout << std::endl; // << setfill('0') << setw(6) << code << ": " << date.toLogString() << '.' << count << "\t";
+					//std::cout << '[' << levelStr(level) << "]\t";
+					//std::cout << message;
 				}
 			}
 		}

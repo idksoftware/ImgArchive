@@ -141,10 +141,11 @@ namespace simplearchive {
 		if (scopeStr.empty()) {
 			m_addressScope->scopeAll();
 		}
-		else {
-			if (!m_addressScope->scope(scope)) {
-				return false;
-			}
+		else if (scopeStr.compare("all") == 0) {
+			m_addressScope->scopeAll();
+		}
+		else if (!m_addressScope->scope(scope)) {
+			return false;
 		}
 		return true;
 	}

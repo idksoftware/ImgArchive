@@ -506,7 +506,7 @@ namespace simplearchive {
 
 		IntegrityManager &integrityManager = IntegrityManager::get();
 		integrityManager.addDerivativeDayFolder(m_repositoryPath->getYYYYMMDD().c_str());
-		integrityManager.addDerivativeFile(m_repositoryPath->getYYYYMMDD().c_str(), versionControl.getCurrentVersion().getVersionName().c_str());
+		integrityManager.addDerivativeFile(m_repositoryPath->getYYYYMMDD().c_str(), versionObj.makeEncodedVersion());
 		return true;
 	}
 

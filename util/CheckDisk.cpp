@@ -856,12 +856,20 @@ bool CheckDisk::update(const char *rootPath, const char *targetdir, const char *
 	std::string m_archivePath = rootPath;
 	std::string targetStr = targetdir;
 	std::string yearStr = targetStr.substr(0, 4);
-	std::string chkdskFolderPath = m_archivePath + "/system/chdsk/" + yearStr + '/';
+	std::string chkdskFolderPath = m_archivePath + "/system/chdsk";
 	if (SAUtils::DirExists(chkdskFolderPath.c_str()) == false) {
 		if (SAUtils::mkDir(chkdskFolderPath.c_str()) == false) {
 			throw std::exception();
 		}
 	}
+	chkdskFolderPath += '/';
+	chkdskFolderPath += yearStr;
+	if (SAUtils::DirExists(chkdskFolderPath.c_str()) == false) {
+		if (SAUtils::mkDir(chkdskFolderPath.c_str()) == false) {
+			throw std::exception();
+		}
+	}
+	chkdskFolderPath += '/';
 	chkdskFolderPath += targetdir;
 	if (SAUtils::DirExists(chkdskFolderPath.c_str()) == false) {
 		if (SAUtils::mkDir(chkdskFolderPath.c_str()) == false) {

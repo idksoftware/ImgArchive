@@ -103,7 +103,7 @@ public:
 	virtual ~IntegrityManager() = default;
 	bool addMasterDayFolder(const char *folderName);
 	bool addDerivativeDayFolder(const char *folderName);
-	bool addDerivativeFile(const char *folderPath, const char *fileName);
+	bool addDerivativeFile(const char* folderPath, const char* imageEncodedFilename);
 	bool addMasterFile(const char *folderPath, const char *fileName);
 	
 	bool makeList();
