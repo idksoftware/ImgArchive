@@ -164,8 +164,8 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	//defineOption("unchecked-out", "Show changed images which are not checked out", ArgvParser::OptionRequiresValue);
 
 	defineCommandOption("import", "comment");
-	defineCommandOption("import", "logging-level");
-	defineCommandOption("import", "archive-path");
+	//defineCommandOption("import", "logging-level");
+	//defineCommandOption("import", "archive-path");
 	defineCommandOption("import", "source-path");
 	defineCommandOption("import", "lightroom");
 

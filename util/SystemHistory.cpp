@@ -158,9 +158,9 @@ bool SystemHistory::add(const char *filepath, const char *version, const char *c
 	const char *event = he.getString();
 	ImageHistoryItem historyItem(date.toLogString().c_str(), filepath, version, comment, event);
 
-	if (add(historyItem, m_currentFilename.c_str()) == false) {
-		return false;
-	}
+	//if (add(historyItem, m_currentFilename.c_str()) == false) {
+	//	return false;
+	//}
 	
 	if (ArchivePath::isMasterEnabled() == true) {
 		if (add(historyItem, m_index.c_str()) == false) {
