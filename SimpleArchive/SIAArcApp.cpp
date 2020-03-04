@@ -425,8 +425,6 @@ bool failed()
 
 int main(int argc, char **argv)
 {
-	
-
 	bool error = false;
 	simplearchive::SIAArcApp app;
 	if (app.initalise(argc, argv) == false) {

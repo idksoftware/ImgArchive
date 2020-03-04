@@ -57,11 +57,6 @@ static char THIS_FILE[] = __FILE__;
 
 namespace simplearchive {
 
-
-
-
-
-
 	//FolderList::FolderList()
 	//	: m_action(Action::READING_WORKSPACE)
 	//{}
@@ -70,10 +65,7 @@ namespace simplearchive {
 		: m_workspacePath(workspacePath) //, m_action(Action::READING_WORKSPACE)
 	{};
 
-	FolderList::~FolderList() {
-		// TODO Auto-generated destructor stub
-	}
-
+	
 	std::string FolderList::makeDBPathCSV(const char* archivePath) const {
 		std::string path = archivePath + std::string("/system");
 		if (SAUtils::DirExists(path.c_str()) == false) {

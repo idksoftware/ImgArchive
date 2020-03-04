@@ -100,9 +100,9 @@ namespace simplearchive {
 		std::string makeDBPathCSV(const char *archivePath) const;
 		std::string makeDBPathXML(const char* archivePath) const;
 	public:
-		explicit FolderList();
+		explicit FolderList() = default;
 		FolderList(const char *workspacePath);
-		virtual ~FolderList();
+		virtual ~FolderList() = default;
 
 		bool addDayFolder(const char* archivePath, const char *folderName);
 		bool incFolders(const char* archivePath, const char *folderName = "fdata");
@@ -110,13 +110,9 @@ namespace simplearchive {
 		bool makeList(const char* archivePath);
 		
 		bool fix(const char* archivePath);
-		//void SetAction(Action action) {
-		//	m_action = action;
-		//}
 
 		bool showCheckedOut(const char* archivePath, const char *addressScope);
 		bool showUncheckedOutChanges(const char* archivePath, const char* workspacePath, const char *addressScope);
-
 		
 		bool validateArchiveOnly(ValidatedArchive validatedArchive, const char *archivePath, IMCompletedSummary& imCompletedSummary, bool repair);
 		bool validateWorkspaceOnly(const char* archivePath, IMCompletedSummary& imCompletedSummary, bool repair);
