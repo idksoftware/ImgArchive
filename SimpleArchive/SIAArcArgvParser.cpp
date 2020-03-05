@@ -44,9 +44,6 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 
 	setHelpOption();
 
-
-
-
 	// Subcommands
 	defineOption("import", "import new images to the archive.", ArgvParser::MasterOption);
 	defineCommandSyntax("import", "iaarc import [--source-path=<path>]\n\t[--logging-level=<level>]"
@@ -197,9 +194,10 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	
 	defineCommandOption("show", "setup");
 
-	defineCommandOption("log", "image-address");
-	defineCommandOption("log", "format-type");
+	defineCommandOption("log",  "image-address");
+	defineCommandOption("log",  "format-type");
 	defineCommandOption("mode", "remote-server");
+
 	ArgvParser::ParserResults res = parse(argc, argv);
 
 	std::string errStr;

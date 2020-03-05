@@ -233,7 +233,6 @@ namespace simplearchive {
 
 	bool onDayFolder(const char *name)
 	{
-		
 		return true;
 	};
 	

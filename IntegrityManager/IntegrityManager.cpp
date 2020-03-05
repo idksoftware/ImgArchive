@@ -102,10 +102,6 @@ bool IntegrityManager::addDayFolder(const char *rootName, const char *folderName
 }
 
 bool IntegrityManager::addDerivativeFile(const char *folderPath, const char * imageEncodedFilename) {
-	//std::string ext = SAUtils::getExtention(fileName);
-	//std::string name = SAUtils::getFilenameNoExt(fileName);
-	//ImageEncode imageEncode(folderPath, name.c_str(), version, ext.c_str());
-	//std::string imageEncodeFilename = imageEncode.getEncodedString();
 	return addFile(m_derivativePath.c_str(), folderPath, imageEncodedFilename);
 }
 
