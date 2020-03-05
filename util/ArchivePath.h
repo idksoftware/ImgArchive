@@ -114,8 +114,8 @@ class ArchivePath {
 	static std::string m_pathToDerivitive;
 	static std::string m_workspaceYyyymmddPath;
 	static std::string m_workspaceMetadataPath;
-	static std::string m_backup1;
-	static std::string m_backup2;
+	//static std::string m_backup1;
+	//static std::string m_backup2;
 	static RepositoryPath m_master;
 	static RepositoryPath m_derivative;
 	static RepositoryPath m_masterBackupPath[2];
@@ -155,12 +155,23 @@ public:
 	static void setMasterMetadataPath(std::string &MasterMetadataPath);
 	static std::string getIdxDBPath();
 	static void setIdxDBPath(std::string &idxDBPath);
+
 	static std::string getMasterBackup1Path();
 	static void setMasterBackup1Path(std::string &pathToBackup1);
 	static std::string getMasterBackup2Path();
 	static void setMasterBackup2Path(std::string &pathToBackup2);
+
+	static std::string getDerivativeBackup1Path();
+	static void setDerivativeBackup1Path(std::string &pathToBackup1);
+	static std::string getDerivativeBackup2Path();
+	static void setDerivativeBackup2Path(std::string &pathToBackup2);
+
 	static void setMasterBackup1Enabled(bool b);
 	static void setMasterBackup2Enabled(bool b);
+
+	static void setDerivativeBackup1Enabled(bool b);
+	static void setDerivativeBackup2Enabled(bool b);
+
 	static RepositoryPath& getMaster();
 	static RepositoryPath& getDerivative();
 	static RepositoryPath& getMasterBackup1();
@@ -168,8 +179,12 @@ public:
 	static PrimaryIndexPath& getPrimaryIndex();
 	static bool isMasterEnabled();
 	static bool isDerivativeEnabled();
+
 	static bool isMasterBackup1Enabled();
 	static bool isMasterBackup2Enabled();
+
+	static bool isDerivativeBackup1Enabled();
+	static bool isDerivativeBackup2Enabled();
 
 	static ArchivePath& getArchivePath();
 };

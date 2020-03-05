@@ -378,13 +378,31 @@ namespace simplearchive {
 
 	
 
-	void DerivativesObject::init(RepositoryPath &repositoryPath, const char *workspacePath) {
+	bool DerivativesObject::init(RepositoryPath &repositoryPath, const char *workspacePath) {
+		CLogger& logger = CLogger::getLogger();
+
 		*m_repositoryPath = repositoryPath;
 		m_derivativeIndexTable->setPath(repositoryPath.getCSVDatabasePath().c_str());
 		m_workspacePath = workspacePath;
 
 		CSVDerivativeDatabase &derivativeRepository = CSVDerivativeDatabase::get();
 		derivativeRepository.setDBPath(m_repositoryPath->getRepositoryPath().c_str());
+
+		if (ArchivePath::isDerivativeBackup1Enabled() == true) {
+			logger.log(LOG_OK, CLogger::Level::SUMMARY, "Backup 1 enabled, using folder: \"%s\"", ArchivePath::getMasterBackup1Path().c_str());
+			if (SAUtils::DirExists(ArchivePath::getDerivativeBackup1Path().c_str()) == false) {
+				logger.log(LOG_OK, CLogger::Level::FATAL, "Backup 1 folder: \"%s\" not accessable?", ArchivePath::getMasterBackup1Path().c_str());
+				return false;
+			}
+			RepositoryPath& backupPath1 = ArchivePath::getDerivativeBackup1();
+			if (backupPath1.settup() == false) {
+				return false;
+			}
+			m_backup[0].init(backupPath1);
+		}
+		else {
+			logger.log(LOG_OK, CLogger::Level::INFO, "Backup 1 not enabled");
+		}
 
 		//derivativeRepository.setPathToActiveRoot(workspacePath);
 		//if (!m_imageIndex->init(repositoryPath.getImageIndexPath().c_str())) {
@@ -393,6 +411,7 @@ namespace simplearchive {
 		IntegrityManager& integrityManager = IntegrityManager::get();
 		//integrityManager.setMasterBackupPaths(ArchivePath::getMasterBackup1Path().c_str(), ArchivePath::getMasterBackup2Path().c_str(),
 		//	ArchivePath::isMasterBackup1Enabled(), ArchivePath::isMasterBackup2Enabled());
+		return true;
 	}
 
 	bool DerivativesObject::checkin(FileInfo &fileInfo, const char *comment) {

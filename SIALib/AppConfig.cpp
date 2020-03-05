@@ -595,12 +595,22 @@ namespace simplearchive {
 	{
 		return m_www_cat_on;
 	}
-	const char *AppConfig::getBackup1() {
+	const char *AppConfig::getMasterBackup1() {
 		return m_masterBackup1.c_str();
 	}
 
-	const char *AppConfig::getBackup2() {
+	const char *AppConfig::getMasterBackup2() {
 		return m_masterBackup2.c_str();
+	}
+
+	const char* AppConfig::getDerivativeBackup1()
+	{
+		return m_derivativeBackup2.c_str();
+	}
+
+	const char* AppConfig::getDerivativeBackup2()
+	{
+		return m_derivativeBackup2.c_str();
 	}
 
 	

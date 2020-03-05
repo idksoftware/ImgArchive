@@ -50,10 +50,15 @@ namespace simplearchive {
 		logger.log(LOG_OK, CLogger::Level::INFO, "        SQL Database path:        \"%s\"", config.getDatabasePath());
 		logger.log(LOG_OK, CLogger::Level::INFO, "        Temp path:                \"%s\"", config.getTempPath());
 		logger.log(LOG_OK, CLogger::Level::INFO, "    Master Archive Backups");
-		logger.log(LOG_OK, CLogger::Level::INFO, "        Backup One Enabled:       \"%s\"", ((config.isBackup1Enabled()) ? "True" : "False"));
-		logger.log(LOG_OK, CLogger::Level::INFO, "        Backup One path:          \"%s\"", config.getBackup1());
-		logger.log(LOG_OK, CLogger::Level::INFO, "        Backup Two Enabled:       \"%s\"", ((config.isBackup2Enabled()) ? "True" : "False"));
-		logger.log(LOG_OK, CLogger::Level::INFO, "        Backup Two path:          \"%s\"", config.getBackup2());
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Backup One Enabled:       \"%s\"", ((config.isMasterBackup1Enabled()) ? "True" : "False"));
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Backup One path:          \"%s\"", config.getMasterBackup1());
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Backup Two Enabled:       \"%s\"", ((config.isMasterBackup2Enabled()) ? "True" : "False"));
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Backup Two path:          \"%s\"", config.getMasterBackup2());
+		logger.log(LOG_OK, CLogger::Level::INFO, "    Derivative Archive Backups");
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Backup One Enabled:       \"%s\"", ((config.isDerivativeBackup1Enabled()) ? "True" : "False"));
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Backup One path:          \"%s\"", config.getDerivativeBackup1());
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Backup Two Enabled:       \"%s\"", ((config.isDerivativeBackup2Enabled()) ? "True" : "False"));
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Backup Two path:          \"%s\"", config.getDerivativeBackup2());
 		logger.log(LOG_OK, CLogger::Level::INFO, "    External Exif Tool");
 		bool isExternalExifTool = (config.getExternalExifTool() != nullptr)? true : false;
 		logger.log(LOG_OK, CLogger::Level::INFO, "        External Exif tool enabled:\"%s\"", isExternalExifTool ? "True" : "False");
@@ -220,14 +225,26 @@ namespace simplearchive {
 	bool FoldersList::init() {
 		AppConfig &config = AppConfig::get();
 		printf("\tMaster Archive Backups\n");
-		printf("\t\tBackup One Enabled: %s\n", config.isBackup1Enabled() ? "True" : "False");
-		if (config.isBackup1Enabled()) {
-			FolderItem folderItemBackup1("Backup One path:       ", config.getBackup1());
+		printf("\t\tBackup One Enabled: %s\n", config.isMasterBackup1Enabled() ? "True" : "False");
+		if (config.isMasterBackup1Enabled()) {
+			FolderItem folderItemBackup1("Master Backup One path:       ", config.getMasterBackup1());
 			push_back(folderItemBackup1);
 		}
-		printf("\t\tBackup Two Enabled: %s\n", config.isBackup2Enabled() ? "True" : "False");
-		if (config.isBackup2Enabled()) {
-			FolderItem folderItemBackup2("Backup Two path:       ", config.getBackup2());
+		printf("\t\tBackup Two Enabled: %s\n", config.isMasterBackup2Enabled() ? "True" : "False");
+		if (config.isMasterBackup2Enabled()) {
+			FolderItem folderItemBackup2("Master Backup Two path:       ", config.getMasterBackup2());
+			push_back(folderItemBackup2);
+		}
+		
+		printf("\tDerivative Archive Backups\n");
+		printf("\t\tBackup One Enabled: %s\n", config.isDerivativeBackup1Enabled() ? "True" : "False");
+		if (config.isMasterBackup1Enabled()) {
+			FolderItem folderItemBackup1("Master Backup One path:       ", config.getDerivativeBackup1());
+			push_back(folderItemBackup1);
+		}
+		printf("\t\tBackup Two Enabled: %s\n", config.isDerivativeBackup2Enabled() ? "True" : "False");
+		if (config.isMasterBackup2Enabled()) {
+			FolderItem folderItemBackup2("Master Backup Two path:       ", config.getDerivativeBackup2());
 			push_back(folderItemBackup2);
 		}
 		bool isExternalExifTool = (config.getExternalExifTool() != nullptr) ? true : false;

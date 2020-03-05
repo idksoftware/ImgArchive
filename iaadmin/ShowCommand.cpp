@@ -310,10 +310,10 @@ namespace simplearchive {
 		AppConfig appConfig;
 		std::stringstream str;
 		str << "    Master Archive Backups\n";
-		str << "        Backup One Enabled:        " << ((appConfig.isBackup1Enabled()) ? "True" : "False") << '\n';
-		str << "        Backup One path:           " << appConfig.getBackup1() << '\n';
-		str << "        Backup Two Enabled:        " << ((appConfig.isBackup2Enabled()) ? "True" : "False") << '\n';
-		str << "        Backup Two path:           " << appConfig.getBackup2() << '\n';
+		str << "        Backup One Enabled:        " << ((appConfig.isMasterBackup1Enabled()) ? "True" : "False") << '\n';
+		str << "        Backup One path:           " << appConfig.getMasterBackup1() << '\n';
+		str << "        Backup Two Enabled:        " << ((appConfig.isMasterBackup2Enabled()) ? "True" : "False") << '\n';
+		str << "        Backup Two path:           " << appConfig.getMasterBackup2() << '\n';
 
 		std::string s = str.str();
 		std::cout << s;
@@ -322,7 +322,17 @@ namespace simplearchive {
 
 	bool ShowCommand::showDerivative()
 	{
-		return false;
+		AppConfig appConfig;
+		std::stringstream str;
+		str << "    Derivative Archive Backups\n";
+		str << "        Backup One Enabled:        " << ((appConfig.isDerivativeBackup1Enabled()) ? "True" : "False") << '\n';
+		str << "        Backup One path:           " << appConfig.getDerivativeBackup1() << '\n';
+		str << "        Backup Two Enabled:        " << ((appConfig.isDerivativeBackup2Enabled()) ? "True" : "False") << '\n';
+		str << "        Backup Two path:           " << appConfig.getDerivativeBackup2() << '\n';
+
+		std::string s = str.str();
+		std::cout << s;
+		return true;
 	}
 
 	bool ShowCommand::showBackup()

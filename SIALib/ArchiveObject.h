@@ -113,7 +113,7 @@ namespace simplearchive {
 			//m_derivativeTable(std::make_unique<DerivativeTable>())
 		{}
 		~DerivativesObject() {}
-		void init(RepositoryPath &repositoryPath, const char *workspace);
+		bool init(RepositoryPath &repositoryPath, const char *workspace);
 		RepositoryPath &getRepositoryPath() {
 			return *m_repositoryPath;
 		}

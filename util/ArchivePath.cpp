@@ -344,8 +344,8 @@ RepositoryPath ArchivePath::m_masterBackupPath[2];
 RepositoryPath ArchivePath::m_derivativeBackupPath[2];
 PrimaryIndexPath ArchivePath::m_primaryIndex;
 
-std::string ArchivePath::m_backup1;
-std::string ArchivePath::m_backup2;
+//std::string ArchivePath::m_backup1;
+//std::string ArchivePath::m_backup2;
 
 
 

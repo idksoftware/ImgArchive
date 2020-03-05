@@ -275,10 +275,11 @@ namespace simplearchive {
 		const char *getMasterPath();
 		const char *getLightroomPath();
 
-		const char *getBackup1();
-		const char *getBackup2();
+		const char *getMasterBackup1();
+		const char *getMasterBackup2();
 
-		
+		const char* getDerivativeBackup1();
+		const char* getDerivativeBackup2();
 
 		
 
@@ -301,8 +302,10 @@ namespace simplearchive {
 		bool isSilent() const;
 		bool isQuiet() const;
 		bool isVerbose() const;
-		bool isBackup1Enabled() { return m_masterBackup1Enabled; };
-		bool isBackup2Enabled() { return m_masterBackup2Enabled; };
+		bool isMasterBackup1Enabled() { return m_masterBackup1Enabled; };
+		bool isMasterBackup2Enabled() { return m_masterBackup2Enabled; };
+		bool isDerivativeBackup1Enabled() { return m_derivativeBackup1Enabled; };
+		bool isDerivativeBackup2Enabled() { return m_derivativeBackup2Enabled; };
 		bool isMasterCatalogueEnabled();
 		bool isMasterWWWCatalogueEnabled();
 
