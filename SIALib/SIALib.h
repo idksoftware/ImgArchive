@@ -63,6 +63,13 @@ namespace simplearchive {
 	class SIALib
 	{
 	public:
+
+		enum class MainArchives {
+			Master,			//* Show
+			Derivative,			//* Show
+			Both
+		};
+
 		enum class Scope {
 			Workspace,		//* Initalise an archive with the default 
 			Master,			//* Show
@@ -76,6 +83,12 @@ namespace simplearchive {
 			Backup_2,			//* Show
 			Both,		//* Show
 			None
+		};
+
+		enum class Backups {
+			Backup_1,		//* Initalise an archive with the default 
+			Backup_2,			//* Show
+			Both
 		};
 
 	private:
@@ -146,6 +159,8 @@ namespace simplearchive {
 		bool checkDisk();
 
 		bool validate(Scope scope, bool main, VerifyBackups verifyBackups, bool repair);
+
+		bool sync(MainArchives mainArchives, Backups backups);
 
 		bool log(const char *filepath, LogDocument::FormatType& formatType);
 

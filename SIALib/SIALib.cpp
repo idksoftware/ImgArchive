@@ -696,6 +696,25 @@ namespace simplearchive {
 		*/
 		return true;
 	}
+
+	bool SIALib::sync(MainArchives mainArchives, Backups Backups)
+	{
+		IntegrityManager::MainArchives imArchives;
+		IntegrityManager::Backups imBackups;
+		switch (mainArchives) {
+		case SIALib::MainArchives::Derivative: imArchives = IntegrityManager::MainArchives::Derivative; break;
+		case SIALib::MainArchives::Master: imArchives = IntegrityManager::MainArchives::Master; break;
+		case SIALib::MainArchives::Both: imArchives = IntegrityManager::MainArchives::Both; break;
+		}
+		switch (Backups) {
+		case SIALib::Backups::Backup_1: imBackups = IntegrityManager::Backups::Backup_1; break;
+		case SIALib::Backups::Backup_2: imBackups = IntegrityManager::Backups::Backup_1; break;
+		case SIALib::Backups::Both: imBackups = IntegrityManager::Backups::Backup_1; break;
+		}
+		IntegrityManager& im = IntegrityManager::get();
+		bool ret = im.sync(imArchives, imBackups);
+		return ret;
+	}
 	
 
 	bool SIALib::remoteServer() {

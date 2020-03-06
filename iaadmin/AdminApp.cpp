@@ -59,6 +59,7 @@
 #include "ShowCommand.h"
 #include "UpdateConfig.h"
 #include "DefaultEnvironment.h"
+#include "SyncCommand.h"
 
 #ifdef _WIN32
 #pragma comment(lib, "ws2_32.lib")
@@ -141,6 +142,28 @@ namespace simplearchive {
 		return true;
 	}
 
+	bool AdminApp::Sync(const char* archive, const char* backups)
+	{
+		AppOptions& appOptions = AppOptions::get();
+		SyncCommand syncCommand;
+		if (syncCommand.setArchive(archive) == false) {
+			return false;
+		}
+		if (syncCommand.setBackup(backups) == false) {
+			return false;
+		}
+		SIALib siaLib;
+		siaLib.initalise();
+		AppConfig& config = AppConfig::get();
+		if (appOptions.isConfiguratedOk() == false) {
+			// Do not create a new archive. The old one needs to be deleted?
+			return false;
+		}
+		bool ret = siaLib.sync(syncCommand.getArchive(), syncCommand.getBackup());
+		siaLib.complete();
+		return ret;
+	}
+
 	bool AdminApp::About(const char* outputType, const char* filename) {
 		AboutCommand aboutCommand(VERSION, BUILD);
 		aboutCommand.setOutputFile(filename);
@@ -217,6 +240,8 @@ bool AdminApp::doRun()
 
 			return true;
 		}
+		case AppOptions::CommandMode::CM_Sync:
+			return Sync(appOptions.getConfigOption(), appOptions.getConfigValue());
 		case AppOptions::CommandMode::CM_Backup:
 			return Backup(appOptions.getMediaSize(), appOptions.getMediaPath(), appOptions.getFromDate(), appOptions.getToDate());
 		case AppOptions::CommandMode::CM_Unknown:

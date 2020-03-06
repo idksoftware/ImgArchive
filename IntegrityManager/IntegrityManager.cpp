@@ -87,6 +87,27 @@ void IntegrityManager::setDerivativeBackupPaths(const char* backupPath1, const c
 	}
 }
 
+bool IntegrityManager::sync(MainArchives mainArchives, Backups Backups)
+{
+	std::string tmp = m_archivePath;
+	if (SAUtils::DirExists(tmp.c_str()) == false) {
+		throw std::exception(); //"Archive path not found");
+	}
+	tmp += "/system/journal";
+	if (SAUtils::DirExists(tmp.c_str()) == false) {
+		throw std::exception(); //"Journal path not found");
+		return false;
+	}
+	tmp += "/checkdisk";
+	if (SAUtils::DirExists(tmp.c_str()) == false) {
+		if (SAUtils::mkDir(tmp.c_str()) == false) {
+			throw std::exception(); //"checkdisk path not found");
+		}
+	}
+	ValidateReportingObject::setPath(tmp.c_str());
+	return false;
+}
+
 bool IntegrityManager::addDerivativeDayFolder(const char *folderName) {
 	return addDayFolder(m_derivativePath.c_str(), folderName);
 }

@@ -12,7 +12,7 @@
 #include "DefaultEnvironment.h"
 #include "HomePath.h"
 #include "SetImageExtentionFile.h"
-
+#include "SyncCommand.h"
 using namespace CommandLineProcessing;
 namespace simplearchive {
 
@@ -643,13 +643,48 @@ namespace simplearchive {
 			cmdFound = true;
 		}
 		else if (command("sync") == true) {
+			SyncCommand syncCommand;
+			bool ok = false;
 			std::string opt;
 			if (foundOption("master-with") == true) {
 				opt = optionValue("master-with");
+				appOptions.setConfigOption("master");
+				if (syncCommand.setBackup(opt.c_str()) == true) {
+					ok = true;
+				}
+				
 			}
-			if (foundOption("derivative-with") == true) {
+			else if (foundOption("derivative-with") == true) {
 				opt = optionValue("derivative-with");
+				appOptions.setConfigOption("derivative");
+				if (syncCommand.setBackup(opt.c_str()) == true) {
+					ok = true;
+				}
+				
 			}
+			else if (foundOption("both-with") == true) {
+				opt = optionValue("both-with");
+				appOptions.setConfigOption("both");
+				if (syncCommand.setBackup(opt.c_str()) == true) {
+					ok = true;
+				}
+				
+			}
+			else {
+				printf("Invalid argument for sub-command: %s folders \"%s\" %s\n\n", getCurrentCommand().c_str(), appOptions.getConfigOption(), opt.c_str());
+				printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+				return false;
+			}
+			if (ok) {
+				appOptions.setConfigValue(opt.c_str());
+			}
+			else {
+				printf("Invalid argument for sub-command: %s folders \"%s\"\n\n", getCurrentCommand().c_str(), opt.c_str());
+				printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+				return false;
+			}
+			appOptions.setCommandMode(AppOptions::CommandMode::CM_Sync);
+			cmdFound = true;
 		}
 		else if (command("test") == true) {
 			

@@ -53,6 +53,19 @@ public:
 
 class IntegrityManager {
 public:
+
+	enum class MainArchives {
+		Master,			//* Show
+		Derivative,			//* Show
+		Both
+	};
+
+	enum class Backups {
+		Backup_1,		//* Initalise an archive with the default 
+		Backup_2,			//* Show
+		Both
+	};
+
 	enum class Scope {
 		Workspace,		//* Initalise an archive with the default 
 		Master,			//* Show
@@ -114,6 +127,8 @@ public:
 	void setPaths(const char* archivePath, const char *derivativePath, const char* workspacePath, const char* homePath);
 	void setMasterBackupPaths(const char* backupPath1, const char* backupPath2, bool backup1enabled, bool backup2enabled);
 	void setDerivativeBackupPaths(const char* backupPath1, const char* backupPath2, bool backup1enabled, bool backup2enabled);
+
+	bool sync(MainArchives mainArchives, Backups Backups);
 };
 
 } /* namespace simplearchive */

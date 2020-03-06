@@ -1,18 +1,22 @@
 #pragma once
-class SyncCommand
-{
-public:
-	enum class SyncBackup {
-		Backup1,
-		Backup2,
-		Both
-	};
-private:
-	SyncBackup m_syncBackup;
-public:
-	SyncCommand() = default;
-	~SyncCommand() = default;
+#include "SIALib.h"
 
-	bool parseOptions(const char* str);
+namespace simplearchive {
+
+	class SyncCommand
+	{
+		SIALib::Backups m_syncBackup;
+		SIALib::MainArchives m_archive;
+	public:
+		SyncCommand() = default;
+		~SyncCommand() = default;
+
+		bool setArchive(const char* str);
+		bool setBackup(const char* str);
+
+		SIALib::MainArchives getArchive();
+		SIALib::Backups getBackup();
+	};
+
 };
 

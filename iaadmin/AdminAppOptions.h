@@ -44,7 +44,7 @@ public:
 		CM_InitArchive, //* Initalise an archive with the default prameter
 		CM_Show,        //* Show
 		CM_About,       //* show version
-		//CM_Mirror,      //* Mirror
+		CM_Sync,		//* Sync archive to backup(s)
 		CM_Validate,    //* Validate the archive.
 		CM_Test,        //* Test the archive
 		CM_Backup,		//* Backup archive to exteral media
