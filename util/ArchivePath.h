@@ -174,8 +174,13 @@ public:
 
 	static RepositoryPath& getMaster();
 	static RepositoryPath& getDerivative();
+
 	static RepositoryPath& getMasterBackup1();
 	static RepositoryPath& getMasterBackup2();
+
+	static RepositoryPath& getDerivativeBackup1();
+	static RepositoryPath& getDerivativeBackup2();
+
 	static PrimaryIndexPath& getPrimaryIndex();
 	static bool isMasterEnabled();
 	static bool isDerivativeEnabled();

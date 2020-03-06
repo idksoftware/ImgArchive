@@ -348,20 +348,48 @@ PrimaryIndexPath ArchivePath::m_primaryIndex;
 //std::string ArchivePath::m_backup2;
 
 
+bool ArchivePath::isMasterEnabled() {
+	return m_master.isEnabled();
+}
+
+bool ArchivePath::isDerivativeEnabled() {
+	return m_derivative.isEnabled();
+}
 
 std::string ArchivePath::getMasterBackup1Path() {
 	return m_masterBackupPath[0].getRepositoryPath();
 }
-void ArchivePath::setMasterBackup1Path(std::string &pathToBackup) {
-	m_masterBackupPath[0].setRepositoryPath(pathToBackup);
-//	m_backupPath[0].setEnabled(true);
-}
+
 std::string ArchivePath::getMasterBackup2Path() {
 	return m_masterBackupPath[1].getRepositoryPath();
 }
+
+void ArchivePath::setMasterBackup1Path(std::string &pathToBackup) {
+	m_masterBackupPath[0].setRepositoryPath(pathToBackup);
+}
+
 void ArchivePath::setMasterBackup2Path(std::string &pathToBackup) {
 	m_masterBackupPath[1].setRepositoryPath(pathToBackup);
-//	m_backupPath[1].setEnabled(true);
+}
+
+std::string ArchivePath::getDerivativeBackup1Path()
+{
+	return m_derivativeBackupPath[0].getRepositoryPath();
+}
+
+void ArchivePath::setDerivativeBackup1Path(std::string& pathToBackup1)
+{
+	m_derivativeBackupPath[0].setRepositoryPath(pathToBackup1);
+}
+
+std::string ArchivePath::getDerivativeBackup2Path()
+{
+	return m_derivativeBackupPath[1].getRepositoryPath();
+}
+
+void ArchivePath::setDerivativeBackup2Path(std::string& pathToBackup2)
+{
+	m_derivativeBackupPath[1].setRepositoryPath(pathToBackup2);
 }
 
 void ArchivePath::setMasterBackup1Enabled(bool b) {
@@ -371,6 +399,16 @@ void ArchivePath::setMasterBackup2Enabled(bool b) {
 	m_masterBackupPath[1].setEnabled(b);
 }
 
+void ArchivePath::setDerivativeBackup1Enabled(bool b)
+{
+	m_derivativeBackupPath[0].setEnabled(b);
+}
+
+void ArchivePath::setDerivativeBackup2Enabled(bool b)
+{
+	m_derivativeBackupPath[1].setEnabled(b);
+}
+
 bool ArchivePath::isMasterBackup1Enabled() {
 	return m_masterBackupPath[0].isEnabled();
 }
@@ -378,13 +416,16 @@ bool ArchivePath::isMasterBackup2Enabled() {
 	return m_masterBackupPath[1].isEnabled();
 }
 
-bool ArchivePath::isMasterEnabled() {
-	return m_master.isEnabled();
+bool ArchivePath::isDerivativeBackup1Enabled()
+{
+	return m_derivativeBackupPath[0].isEnabled();
 }
 
-bool ArchivePath::isDerivativeEnabled() {
-	return m_derivative.isEnabled();
+bool ArchivePath::isDerivativeBackup2Enabled()
+{
+	return m_derivativeBackupPath[1].isEnabled();
 }
+
 
 RepositoryPath& ArchivePath::getMasterBackup1() {
 	return m_masterBackupPath[0];
@@ -392,6 +433,14 @@ RepositoryPath& ArchivePath::getMasterBackup1() {
 
 RepositoryPath& ArchivePath::getMasterBackup2() {
 	return m_masterBackupPath[1];
+}
+
+RepositoryPath& ArchivePath::getDerivativeBackup1() {
+	return m_derivativeBackupPath[0];
+}
+
+RepositoryPath& ArchivePath::getDerivativeBackup2() {
+	return m_derivativeBackupPath[1];
 }
 
 RepositoryPath& ArchivePath::getMaster() {

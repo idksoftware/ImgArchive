@@ -404,13 +404,32 @@ namespace simplearchive {
 			logger.log(LOG_OK, CLogger::Level::INFO, "Backup 1 not enabled");
 		}
 
+		if (ArchivePath::isDerivativeBackup2Enabled() == true) {
+			logger.log(LOG_OK, CLogger::Level::SUMMARY, "Backup 2 enabled, using folder: \"%s\"", ArchivePath::getMasterBackup1Path().c_str());
+			if (SAUtils::DirExists(ArchivePath::getDerivativeBackup1Path().c_str()) == false) {
+				logger.log(LOG_OK, CLogger::Level::FATAL, "Backup 2 folder: \"%s\" not accessable?", ArchivePath::getMasterBackup1Path().c_str());
+				return false;
+			}
+			RepositoryPath& backupPath2 = ArchivePath::getDerivativeBackup2();
+			if (backupPath2.settup() == false) {
+				return false;
+			}
+			m_backup[1].init(backupPath2);
+		}
+		else {
+			logger.log(LOG_OK, CLogger::Level::INFO, "Backup 2 not enabled");
+		}
+
 		//derivativeRepository.setPathToActiveRoot(workspacePath);
 		//if (!m_imageIndex->init(repositoryPath.getImageIndexPath().c_str())) {
 		//	return false;
 		//}
+
 		IntegrityManager& integrityManager = IntegrityManager::get();
-		//integrityManager.setMasterBackupPaths(ArchivePath::getMasterBackup1Path().c_str(), ArchivePath::getMasterBackup2Path().c_str(),
-		//	ArchivePath::isMasterBackup1Enabled(), ArchivePath::isMasterBackup2Enabled());
+		integrityManager.setMasterBackupPaths(ArchivePath::getMasterBackup1Path().c_str(),
+											ArchivePath::getMasterBackup2Path().c_str(),
+											ArchivePath::isMasterBackup1Enabled(),
+											ArchivePath::isMasterBackup2Enabled());
 		return true;
 	}
 
