@@ -75,4 +75,3 @@ add --source-path="C:\local\Lightroom\2019"
 add --lightroom
 
 mode --remote-server
-
