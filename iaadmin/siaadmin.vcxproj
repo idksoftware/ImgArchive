@@ -161,6 +161,7 @@
     <ClInclude Include="SetConfig.h" />
     <ClInclude Include="SetImageExtentionFile.h" />
     <ClInclude Include="ShowCommand.h" />
+    <ClInclude Include="SyncCommand.h" />
     <ClInclude Include="TestArchive.h" />
     <ClInclude Include="TextOut.h" />
     <ClInclude Include="UpdateConfig.h" />
@@ -175,6 +176,7 @@
     <ClCompile Include="SetConfig.cpp" />
     <ClCompile Include="SetImageExtentionFile.cpp" />
     <ClCompile Include="ShowCommand.cpp" />
+    <ClCompile Include="SyncCommand.cpp" />
     <ClCompile Include="TestArchive.cpp" />
     <ClCompile Include="TextOut.cpp" />
     <ClCompile Include="UpdateConfig.cpp" />

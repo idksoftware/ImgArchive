@@ -19,9 +19,7 @@ namespace simplearchive {
 	bool AdminArgvParser::doInitalise(int argc, char **argv) {
 
 		AppOptions &appOptions = AppOptions::get();
-
-
-		//define error codes
+		
 		addErrorCode(0, "Success");
 		addErrorCode(1, "Warnings");
 		addErrorCode(2, "Errors");
@@ -30,13 +28,11 @@ namespace simplearchive {
 		setIntroductoryDescription("iaadmin - Tool provides administrative house keeping support for ImgArchive.");
 		setHelpOption();
 
-		
 		setHeader("usage: iaadmin subcommand [options] [args]\n\n"
 			"ImgArchive command line administrator, version 1.0.0.1\n"
 			"Type 'iaadmin help <subcommand>' for help on a specific subcommand.\n\n"
 			"iaadmin is the primary command-line interface to administer ImgArchive."
 			"\n");
-
 
 		// Subcommands
 		defineOption("init", "Create ImgArchive's working enviroment", ArgvParser::MasterOption);
@@ -62,6 +58,14 @@ namespace simplearchive {
 		//defineOptionAlternative("archive", "a");
 		defineCommandSyntax("archive", "isadmin archive [--media-size=<number>] | [--media-path=<path>]\n"
 			"[--from-date=<date>] | [--to-date=date]");
+
+		defineOption("sync", "This command synchronises the primary archives with there associated backups.", ArgvParser::MasterOption);
+		//defineOptionAlternative("archive", "a");
+		defineCommandSyntax("sync", "isadmin sync --master-with=[backup1] | [backup2] | [Both]\n"
+											 "--derivative-with=[backup1] | [backup2] | [Both]\n");
+
+		defineOption("master-with", "Sync this archive with named backup or both", ArgvParser::MasterOption);
+		defineOption("derivative-with", "Sync this archive with named backup or both", ArgvParser::MasterOption);
 
 		defineOption("about", "prints the version information", ArgvParser::MasterOption);
 		defineCommandSyntax("about", "about [--out] [--file]\n");
@@ -232,6 +236,9 @@ namespace simplearchive {
 		defineCommandOption("allow", "add");
 		defineCommandOption("allow", "edit");
 		defineCommandOption("allow", "delete");
+
+		defineCommandOption("sync", "master-with");
+		defineCommandOption("sync", "derivative-with");
 
 		defineCommandOption("archive", "media-size");
 		defineCommandOption("archive", "media-path");
@@ -634,6 +641,15 @@ namespace simplearchive {
 			appOptions.setConfigValue(setConfig.getValue().c_str());
 			appOptions.setCommandMode(AppOptions::CommandMode::CM_Config);
 			cmdFound = true;
+		}
+		else if (command("sync") == true) {
+			std::string opt;
+			if (foundOption("master-with") == true) {
+				opt = optionValue("master-with");
+			}
+			if (foundOption("derivative-with") == true) {
+				opt = optionValue("derivative-with");
+			}
 		}
 		else if (command("test") == true) {
 			
