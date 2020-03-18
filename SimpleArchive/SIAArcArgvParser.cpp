@@ -69,7 +69,9 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineCommandSyntax("uncheckout", "iaarc uncheckout [--target-path=<path>]\n\t[--logging-level=<level>]"
 		"[--comment=<comment text>][--scope=<scope-address][--force=<yes|No>][--version=<vesion-num>");
 
-	defineOption("about", "prints the version information", ArgvParser::MasterOption);
+	defineOption("about", "prints this version information", ArgvParser::MasterOption);
+	defineCommandSyntax("about", "about [--out] [--file]\n");
+
 	defineOption("status", "show check in/out status", ArgvParser::MasterOption);
 	defineOption("view", "View commands", ArgvParser::MasterOption);
 	defineOption("show", "Show details", ArgvParser::MasterOption);
@@ -153,6 +155,13 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 
 	defineOption("U", "Show setup", ArgvParser::NoOptionAttribute);
 	defineOptionAlternative("U", "setup");
+
+	defineOption("out", "Output type: text, xml, json or html.", ArgvParser::OptionRequiresValue);
+	defineCommandSyntax("out", "out=[plain] | [xml] | [json] | [html]\n");
+	//defineOptionAlternative("u", "users");
+
+	defineOption("file", "output file name.", ArgvParser::OptionRequiresValue);
+	defineCommandSyntax("file", "file=<filename>\n");
 
 	defineOption("force-date", "Overrides all dates found associated with the images in the selection", ArgvParser::OptionRequiresValue);
 	defineOption("default-date", "Uses this date if none found associated with an image", ArgvParser::OptionRequiresValue);
