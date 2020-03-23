@@ -168,11 +168,11 @@ public:
 	}
 
 	static void setConsoleLevel(Level level) {
-		m_isConsoleOut = level;
+		m_consoleLevel = level;
 	}
 
 	static bool setConsoleLevel(const std::string &level) {
-		return setLevel(m_isConsoleOut, level);
+		return setLevel(m_consoleLevel, level);
 	}
 
 	static void setLogLevel(Level level) {
@@ -211,7 +211,6 @@ private:
 	static std::ofstream m_logfile;
 	static Level m_logLevel;
 	static Level m_consoleLevel;
-	static Level m_isConsoleOut;
 	static std::string m_logpath;
 	static int m_size;
 	static int m_cursize;

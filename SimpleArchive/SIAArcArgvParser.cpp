@@ -83,8 +83,8 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineOptionAlternative("b", "backup");
 	*/
 	// Options
-	defineOption("i", "image address.", ArgvParser::OptionRequiresValue);
-	defineOptionAlternative("i", "image-address");
+	defineOption("I", "image address.", ArgvParser::OptionRequiresValue);
+	defineOptionAlternative("I", "image-address");
 
 	defineOption("n", "name of the view.", ArgvParser::OptionRequiresValue);
 	defineOptionAlternative("n", "name");
@@ -122,8 +122,8 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineOption("fd", "from date", ArgvParser::OptionRequiresValue);
 	defineOptionAlternative("fd", "from-date");
 
-	defineOption("f", "Specifies a file", ArgvParser::OptionRequiresValue);
-	defineOptionAlternative("f", "file");
+	defineOption("image", "Specifies a image file name", ArgvParser::OptionRequiresValue);
+	//defineOptionAlternative("i", "image");
 
 	defineOption("F", "no output is sent to the terminal.", ArgvParser::NoOptionAttribute);
 	defineOptionAlternative("F", "force");
@@ -183,17 +183,17 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineCommandOption("checkin", "comment");
 	defineCommandOption("checkin", "scope");
 	defineCommandOption("checkin", "force");
-	defineCommandOption("checkin", "file");
+	defineCommandOption("checkin", "image");
 
 	defineCommandOption("checkout", "comment");
 	defineCommandOption("checkout", "scope");
 	defineCommandOption("checkout", "force");
-	defineCommandOption("checkout", "file");
+	defineCommandOption("checkout", "image");
 
 	defineCommandOption("uncheckout", "comment");
 	defineCommandOption("uncheckout", "scope");
 	defineCommandOption("uncheckout", "force");
-	defineCommandOption("uncheckout", "file");
+	defineCommandOption("uncheckout", "image");
 
 	defineCommandOption("export", "comment");
 	defineCommandOption("export", "logging-level");
@@ -848,6 +848,7 @@ std::string SIAArcArgvParser::usageDescription(unsigned int _width) const
 
 
 */
+/*
 std::string SIAArcArgvParser::topicUsageDescription(unsigned int topic, unsigned int _width) const
 {
 	std::string usage;
@@ -960,7 +961,7 @@ std::string SIAArcArgvParser::topicUsageDescription(unsigned int topic, unsigned
 	}
 	return(usage);
 }
-
+*/
 
 
 } /* name*/

@@ -571,7 +571,7 @@ namespace simplearchive {
 				std::string opt = optionValue("logging");
 
 				if (setConfig.parseLoggingOptions(opt.c_str()) == false) {
-					printf("Invalid argument for sub-command: %s general \"%s\"\n\n", getCurrentCommand().c_str(), opt.c_str());
+					printf("Invalid argument for sub-command: %s logging \"%s\"\n\n", getCurrentCommand().c_str(), opt.c_str());
 					printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 					return false;
 				}

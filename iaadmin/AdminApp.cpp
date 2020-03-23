@@ -415,6 +415,10 @@ bool AdminApp::initaliseConfig() {
 	
 	
 	bool res = HomePath::init();
+	if (res == false) {
+		printf("Cannot localate home path. IMGARCHIVE_HOME not set and imgarchive not found at default locations.");
+		return false;
+	}
 	HomePathType homePathType = HomePath::type();
 
 	switch (homePathType) {

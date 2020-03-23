@@ -351,12 +351,12 @@ namespace simplearchive {
 		setGeneral(DRY_RUN_LABEL, dry_run, dry_run);
 		AppConfig::m_dry_run = (STRICMP(dry_run.c_str(), "true") == 0);
 
-		std::string logLevel = "SUMMARY";
-		setGeneral(LOG_LEVEL_LABEL, logLevel, logLevel);
+		std::string logLevel = "STATUS";
+		setLogging(LOG_LEVEL_LABEL, logLevel, logLevel);
 		AppConfig::m_logLevel = logLevel;
 
-		std::string consoleLevel = "SUMMARY";
-		setGeneral(CONSOLE_LEVEL_LABEL, consoleLevel, consoleLevel);
+		std::string consoleLevel = "STATUS";
+		setLogging(CONSOLE_LEVEL_LABEL, consoleLevel, consoleLevel);
 		AppConfig::m_consoleLevel = consoleLevel;
 
 		std::string sql_on = "false";

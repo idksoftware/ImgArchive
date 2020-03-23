@@ -318,18 +318,18 @@ bool SetConfig::parseLoggingOptions(const char* optionString)
 		return false;
 	}
 	m_optionBlock = LOGGING_BLOCK;
-	Option ret = processMasterOptions(m_option);
+	Option ret = processLoggingOptions(m_option);
 	switch (ret) {
 	case Option::LOG_LEVEL:
 		m_option = LOG_LEVEL_LABEL;
-		if (iequals(setLogLevel(m_option), "UNKNOWN")) {
+		if (iequals(setLogLevel(m_value), "UNKNOWN")) {
 			return false;
 		}
 		return true;
 
 	case Option::CONSOLE_LEVEL:
 		m_option = CONSOLE_LEVEL_LABEL;
-		if (iequals(setLogLevel(m_option), "UNKNOWN")) {
+		if (iequals(setLogLevel(m_value), "UNKNOWN")) {
 			return false;
 		}
 		break;

@@ -62,7 +62,6 @@ std::unique_ptr<CLogger> CLogger::m_this(nullptr);
 std::ofstream CLogger::m_logfile;
 CLogger::Level CLogger::m_logLevel = CLogger::Level::SUMMARY;
 CLogger::Level CLogger::m_consoleLevel = CLogger::Level::SUMMARY;
-CLogger::Level CLogger::m_isConsoleOut = CLogger::Level::FATAL;
 std::string CLogger::m_logpath;
 int CLogger::m_size = 10000;
 int CLogger::m_cursize = 0;
@@ -333,8 +332,9 @@ void CLogger::log(int code, Level level, const char *format, ...) {
 		}
 		if (m_isSilent == false) {
 			if (IsConsoleOut(level)) {
-				if (m_isQuiet) {
-					std::cout << message << std::endl;;
+				if (!m_isQuiet) { // if isQuiet is false then send out the log message
+					std::cout << '[' << levelStr(level) << "]\t";
+					std::cout << message << std::endl;
 				}
 				else {
 					//std::cout << std::endl; // << setfill('0') << setw(6) << code << ": " << date.toLogString() << '.' << count << "\t";

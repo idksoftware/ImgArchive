@@ -425,6 +425,10 @@ namespace simplearchive {
 			return setConfigBlock(name, value, defaultValue, GENERAL_BLOCK);
 		}
 
+		bool setLogging(const char* name, std::string& value, std::string& defaultValue) {
+			return setConfigBlock(name, value, defaultValue, LOGGING_BLOCK);
+		}
+
 		bool setSystemFolders(const char* name, std::string &value, std::string &defaultValue) {
 			return setConfigBlock(name, value, defaultValue, FOLDERS_BLOCK);
 		}

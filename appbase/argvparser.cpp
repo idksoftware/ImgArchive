@@ -537,7 +537,7 @@ std::string ArgvParser::topicUsageDescription(unsigned int topic, unsigned int _
 						usage += "\n\n";
 					}
 					else {
-						usage += '\n\n';
+						usage += "\n\n";
 					}
 				}
 				_os.clear();
@@ -757,7 +757,7 @@ bool ArgvParser::defineOption( const string & _name,
     // do nothing if there already is an option of this name
     if (isDefinedOption(_name))
     {
-        cerr << "ArgvParser::defineOption(): The option label equals an already defined option." << endl;
+        cerr << "ArgvParser::defineOption(): The option label: \"" << _name << "\" equals an already defined option." << endl;
         return(false);
     }
 
@@ -818,7 +818,7 @@ bool ArgvParser::defineOptionAlternative( const string & _original,
     // do nothing if there already is no option of this name
     if (!isDefinedOption(_original))
     {
-        cerr << "ArgvParser::defineOptionAlternative(): Original option label is not a defined option." << endl;
+        cerr << "ArgvParser::defineOptionAlternative(): Original option label: \"" << _original << "\" is not a defined option." << endl;
         return(false);
     }
 
