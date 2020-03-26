@@ -23,6 +23,7 @@ using namespace CommandLineProcessing;
 
 ArgvParser::ArgvParser()
         : max_key(1),
+		current_command_id(-1),
         help_option(0) // must be smaller than max_key initially
 
 {
@@ -416,6 +417,10 @@ std::string ArgvParser::topicUsageDescription(unsigned int topic, unsigned int _
 	usage += "\nNAME: "; // the usage description text
 
 	std::string _os; // temp string for the option
+	if (option2attribute.find(topic) == option2attribute.end()) {
+		usage = "error";
+		return usage;
+	}
 	if (option2attribute.find(topic)->second != MasterOption) {
 		usage = "error";
 		return usage;

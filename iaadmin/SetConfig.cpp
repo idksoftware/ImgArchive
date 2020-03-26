@@ -454,7 +454,7 @@ bool SetConfig::checkPath() {
 
 bool SetConfig::checkBool() {
 	bool ret = (SAUtils::isTrueFalse(m_value) != BoolOption::Invalid);
-	if (ret) {
+	if (!ret) {
 		m_error = Error::Invalid_argument;
 	}
 	return ret;

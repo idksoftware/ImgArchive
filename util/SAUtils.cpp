@@ -313,11 +313,10 @@ bool SAUtils::isEquals(const std::string& a, const std::string& b)
 }
 
 BoolOption SAUtils::isTrueFalse(std::string& s) {
-	if (isEquals("true", s) || isEquals("on", s) || isEquals("yes", s)) {
+	if (isEquals("enabled", s) || isEquals("true", s) || isEquals("on", s) || isEquals("yes", s)) {
 		s = "True";
 		return BoolOption::True;
-	} else if (isEquals("true", s) || isEquals("false", s) || isEquals("on", s) ||
-		isEquals("off", s) || isEquals("yes", s) || isEquals("no", s)) {
+	} else if (isEquals("disabled", s) || isEquals("false", s) || isEquals("off", s) || isEquals("no", s)) {
 		s = "False";
 		return BoolOption::False;
 	}

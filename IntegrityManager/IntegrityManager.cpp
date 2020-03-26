@@ -105,6 +105,8 @@ bool IntegrityManager::sync(MainArchives mainArchives, Backups Backups)
 		}
 	}
 	ValidateReportingObject::setPath(tmp.c_str());
+	FolderList folderList;
+	folderList.sync(m_archivePath.c_str(), m_masterBackupPath1.c_str());
 	return false;
 }
 

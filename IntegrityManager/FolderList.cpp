@@ -528,7 +528,36 @@ namespace simplearchive {
 	bool FolderList::validateWorkspaceOnly(const char* archivePath, IMCompletedSummary& imCompletedSummary, bool repair) {
 		//if (repair) return validateAndRepairWorkspace(archivePath, imCompletedSummary);
 		return validateWorkspaceSummary(archivePath, imCompletedSummary);
-	}	
+	}
+	bool FolderList::sync(const char* source, const char* destination)
+	{
+		std::string sourceCkdskRoot = source;
+		sourceCkdskRoot += "/";
+		sourceCkdskRoot += "system";
+		sourceCkdskRoot += "/";
+		sourceCkdskRoot += "chdsk";
+		if (SAUtils::DirExists(sourceCkdskRoot.c_str()) == false) {
+			throw std::exception(); //"checkdisk path not found");
+		}
+
+		std::string destinationCkdskRoot = destination;
+		destinationCkdskRoot += "/";
+		destinationCkdskRoot += "system";
+		if (SAUtils::DirExists(destinationCkdskRoot.c_str()) == false) {
+			if (SAUtils::mkDir(destinationCkdskRoot.c_str()) == false) {
+				throw std::exception(); //"checkdisk path not found");
+			}
+		}
+		destinationCkdskRoot += "/";
+		destinationCkdskRoot += "chdsk";
+		if (SAUtils::DirExists(destinationCkdskRoot.c_str()) == false) {
+			if (SAUtils::mkDir(destinationCkdskRoot.c_str()) == false) {
+				throw std::exception(); //"checkdisk path not found");
+			}
+		}
+		return false;
+	}
+
 	/*
 	switch (m_action) {
 	case Action::READING_MASTER:

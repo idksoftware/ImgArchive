@@ -566,8 +566,7 @@ namespace simplearchive {
 					return false;
 				}
 					
-			}
-			if (foundOption("logging") == true) {
+			} else if (foundOption("logging") == true) {
 				std::string opt = optionValue("logging");
 
 				if (setConfig.parseLoggingOptions(opt.c_str()) == false) {
@@ -576,8 +575,7 @@ namespace simplearchive {
 					return false;
 				}
 
-			}
-			if (foundOption("folders") == true) {
+			} else if (foundOption("folders") == true) {
 				std::string opt = optionValue("folders");
 					
 				if (setConfig.parseFolderOptions(opt.c_str()) == false) {
@@ -586,8 +584,7 @@ namespace simplearchive {
 					return false;
 				}
 					
-			}
-			if (foundOption("exiftool") == true) {
+			} else if (foundOption("exiftool") == true) {
 				std::string opt = optionValue("exiftool");
 				
 				if (setConfig.parseExifToolOptions(opt.c_str()) == false) {
@@ -595,8 +592,7 @@ namespace simplearchive {
 					printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 					return false;
 				}
-			}
-			if (foundOption("master") == true) {
+			} else if (foundOption("master") == true) {
 				std::string opt = optionValue("master");
 				
 				if (setConfig.parseMasterOptions(opt.c_str()) == false) {
@@ -605,8 +601,7 @@ namespace simplearchive {
 					return false;
 				}
 					
-			}
-			if (foundOption("derivative") == true) {
+			} else if (foundOption("derivative") == true) {
 				std::string opt = optionValue("derivative");
 
 				if (setConfig.parseDerivativeOptions(opt.c_str()) == false) {
@@ -615,8 +610,7 @@ namespace simplearchive {
 					return false;
 				}
 
-			}
-			if (foundOption("backup") == true) {
+			} else if (foundOption("backup") == true) {
 				std::string opt = optionValue("backup");
 
 				if (setConfig.parseBackupOptions(opt.c_str()) == false) {
@@ -625,8 +619,7 @@ namespace simplearchive {
 					return false;
 				}
 
-			}
-			if (foundOption("network") == true) {
+			} else if (foundOption("network") == true) {
 				std::string opt = optionValue("network");
 					
 				if (setConfig.parseNetworkOptions(opt.c_str()) == false) {
@@ -635,6 +628,10 @@ namespace simplearchive {
 					return false;
 				}
 					
+			} else {
+				printf("No argument for sub-command: %s\n", getCurrentCommand().c_str());
+				printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+				return false;
 			}
 			appOptions.setConfigOptionBlock(setConfig.getOptionBlock().c_str());
 			appOptions.setConfigOption(setConfig.getOption().c_str());
