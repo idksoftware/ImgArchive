@@ -146,6 +146,7 @@
     <ClCompile Include="FolderData.cpp" />
     <ClCompile Include="FolderList.cpp" />
     <ClCompile Include="IntegrityManager.cpp" />
+    <ClCompile Include="SyncArchive.cpp" />
     <ClCompile Include="ValidateReportingObject.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -156,6 +157,7 @@
     <ClInclude Include="FolderList.h" />
     <ClInclude Include="IntegrityManager.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="SyncArchive.h" />
     <ClInclude Include="ValidateReportingObject.h" />
   </ItemGroup>
   <ItemGroup>

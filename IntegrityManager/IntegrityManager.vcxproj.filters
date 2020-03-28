@@ -39,6 +39,9 @@
     <ClCompile Include="FolderData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SyncArchive.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FolderList.h">
@@ -63,6 +66,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FolderData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SyncArchive.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

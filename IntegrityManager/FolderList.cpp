@@ -58,110 +58,7 @@ static char THIS_FILE[] = __FILE__;
 
 namespace simplearchive {
 
-	class FileOperations {
-	public:
-		FileOperations() = delete;
-		~FileOperations() = delete;
-
-		bool isEqual(const char* source, const char* target);
-	};
-
-
-	bool FileOperations::isEqual(const char* source, const char* target)
-	{
-		std::string sourceBuf;
-		int sourceSize = SAUtils::getFileContents(source, sourceBuf);
-		
-		std::string targetBuf;
-		int targetSize = SAUtils::getFileContents(target, targetBuf);
-
-		if (sourceSize != targetSize) {
-			return false;
-		}
-		CIDKCrc Crc;
-
-		unsigned long sourceCrc = Crc.crc((unsigned char*)sourceBuf.c_str(), sourceSize);
-		unsigned long targetCrc = Crc.crc((unsigned char*)targetBuf.c_str(), targetSize);
-
-		if (sourceCrc != targetCrc) {
-			return false;
-		}
-		return false;
-	}
-
-	class SyncArchive {
-		std::string sourcePath;
-		std::string targetPath;
-	public:
-		SyncArchive(const char* source, const char* target);
-		~SyncArchive();
-		bool process();
-	};
-
-	SyncArchive::SyncArchive(const char* source, const char* target) : sourcePath(source), targetPath(target) {};
-	SyncArchive::~SyncArchive() {};
-
-	bool SyncArchive::process() {
-
-
-		std::string sourceCkdskPath = sourcePath;
-		sourceCkdskPath += "/system/chdsk";
-		FileList_Ptr filelist = SAUtils::getFiles_(sourceCkdskPath.c_str());
-		for (auto i = filelist->begin(); i != filelist->end(); i++) {
-			std::string dataString = *i;
-			if (dataString[0] == '.') {
-				continue;
-			}
-
-			std::string year = dataString.substr(0, 4);
-
-			if (year.compare("fdata.csv") == 0) {
-				continue;
-			}
-			if (year.compare("fdata.xml") == 0) {
-				continue;
-			}
-			//printf("Year found %s\n", year.c_str());
-			//validateReportingObject.startYear(year.c_str());
-			std::string yearPath = sourceCkdskPath + '/';
-			yearPath += year;
-
-			FileList_Ptr yearlist = SAUtils::getFiles_(yearPath.c_str());
-			for (auto i = yearlist->begin(); i != yearlist->end(); i++) {
-				std::string dataString = *i;
-				if (dataString[0] == '.') {
-					continue;
-				}
-
-				/*
-				if (fileDataContainer.find(dataString.c_str()) == false) {
-					printf("File not found %s\n", dataString.c_str());
-				}
-				else {
-					std::string yearDayPath = yearPath;
-					yearDayPath += '/';
-					yearDayPath += dataString;
-					//printf("File found %s\n", dataString.c_str());
-					validateReportingObject.startDay(dataString.c_str());
-
-					std::string archivePath = archivePath;
-					// Master
-					archivePath += "/system/chdsk/"; archivePath += year;
-					archivePath += '/'; archivePath += dataString;
-					archivePath += '/';
-					CheckDisk checkDisk;
-					if (checkDisk.check(yearDayPath.c_str(), archivePath.c_str(), dataString.c_str(), validateReportingObject) == false) {
-						return false;
-					}
-				}
-				validateReportingObject.endDay(dataString.c_str());
-				*/
-			}
-			//validateReportingObject.endYear(year.c_str());
-
-		}
-	}
-
+	
 	//FolderList::FolderList()
 	//	: m_action(Action::READING_WORKSPACE)
 	//{}
@@ -634,34 +531,7 @@ namespace simplearchive {
 		//if (repair) return validateAndRepairWorkspace(archivePath, imCompletedSummary);
 		return validateWorkspaceSummary(archivePath, imCompletedSummary);
 	}
-	bool FolderList::sync(const char* source, const char* destination)
-	{
-		std::string sourceCkdskRoot = source;
-		sourceCkdskRoot += "/";
-		sourceCkdskRoot += "system";
-		sourceCkdskRoot += "/";
-		sourceCkdskRoot += "chdsk";
-		if (SAUtils::DirExists(sourceCkdskRoot.c_str()) == false) {
-			throw std::exception(); //"checkdisk path not found");
-		}
-
-		std::string destinationCkdskRoot = destination;
-		destinationCkdskRoot += "/";
-		destinationCkdskRoot += "system";
-		if (SAUtils::DirExists(destinationCkdskRoot.c_str()) == false) {
-			if (SAUtils::mkDir(destinationCkdskRoot.c_str()) == false) {
-				throw std::exception(); //"checkdisk path not found");
-			}
-		}
-		destinationCkdskRoot += "/";
-		destinationCkdskRoot += "chdsk";
-		if (SAUtils::DirExists(destinationCkdskRoot.c_str()) == false) {
-			if (SAUtils::mkDir(destinationCkdskRoot.c_str()) == false) {
-				throw std::exception(); //"checkdisk path not found");
-			}
-		}
-		return false;
-	}
+	
 
 	/*
 	switch (m_action) {

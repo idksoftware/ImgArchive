@@ -36,6 +36,7 @@
 #include <time.h>
 #include "IntegrityManager.h"
 #include "FolderList.h"
+#include "SyncArchive.h"
 #include "CheckDisk.h"
 #include "SAUtils.h"
 #include "ValidateReportingObject.h"
@@ -105,8 +106,8 @@ bool IntegrityManager::sync(MainArchives mainArchives, Backups Backups)
 		}
 	}
 	ValidateReportingObject::setPath(tmp.c_str());
-	FolderList folderList;
-	folderList.sync(m_archivePath.c_str(), m_masterBackupPath1.c_str());
+	SyncArchive syncArchive(m_archivePath.c_str(), m_masterBackupPath1.c_str());
+	syncArchive.sync();
 	return false;
 }
 

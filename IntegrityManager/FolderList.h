@@ -117,7 +117,7 @@ namespace simplearchive {
 		bool validateArchiveOnly(ValidatedArchive validatedArchive, const char *archivePath, IMCompletedSummary& imCompletedSummary, bool repair);
 		bool validateWorkspaceOnly(const char* archivePath, IMCompletedSummary& imCompletedSummary, bool repair);
 
-		bool sync(const char* source, const char* destination);
+		
 		//bool validateAndRepair(IMCompletedSummary& imCompletedSummary);
 	};
 
