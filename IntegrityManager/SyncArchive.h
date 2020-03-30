@@ -18,13 +18,15 @@ namespace simplearchive {
 		std::string m_sourceCkdskRoot;
 		std::string m_destinationCkdskRoot;
 		std::string m_curDate;
+		int m_imagesUpdated;
 		bool process();
 		bool process(std::string &dateString);
 	public:
 		SyncArchive(const char* source, const char* target);
 		~SyncArchive();
 		bool sync();
-		
+		int imagesUpdated() { return m_imagesUpdated; }
+	
 	};
 
 	

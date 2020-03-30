@@ -450,7 +450,7 @@ namespace simplearchive {
 		AppConfig::m_masterBackup1Enabled = (STRICMP(masterBackup1Enabled.c_str(), "true") == 0);
 		
 		std::string masterBackup2Enabled = "false";
-		setMaster(BACKUP_ONE_ENABLED_LABEL, masterBackup2Enabled, masterBackup2Enabled);
+		setMaster(BACKUP_TWO_ENABLED_LABEL, masterBackup2Enabled, masterBackup2Enabled);
 		AppConfig::m_masterBackup2Enabled = (STRICMP(masterBackup2Enabled.c_str(), "true") == 0);
 
 		std::string masterBackupPath = homePath + BACKUPS_PATH + MASTER_BACKUP1_PATH;

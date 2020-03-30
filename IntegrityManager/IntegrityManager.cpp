@@ -107,8 +107,11 @@ bool IntegrityManager::sync(MainArchives mainArchives, Backups Backups)
 	}
 	ValidateReportingObject::setPath(tmp.c_str());
 	SyncArchive syncArchive(m_archivePath.c_str(), m_masterBackupPath1.c_str());
-	syncArchive.sync();
-	return false;
+	if (syncArchive.sync() == false) {
+		return false;
+	}
+	m_imagesUpdated = syncArchive.imagesUpdated();
+	return true;
 }
 
 bool IntegrityManager::addDerivativeDayFolder(const char *folderName) {

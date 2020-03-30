@@ -427,7 +427,7 @@ bool AdminApp::initaliseConfig() {
 			printf("Found IMGARCHIVE_HOME as system profile: %s but archive not found at loacation", HomePath::get().c_str());
 			return false;
 		}
-		printf("Found IMGARCHIVE_HOME as system profile: %s. Archive found at that loacation", HomePath::get().c_str());
+		//printf("Found IMGARCHIVE_HOME as system profile: %s. Archive found at that loacation", HomePath::get().c_str());
 		break;
 	case HomePathType::SystemEnv:	// System Environment set
 		if (res == false) {
@@ -440,14 +440,14 @@ bool AdminApp::initaliseConfig() {
 			printf("Archive not found at default loacation");
 			return false;
 		}
-		printf("Archive found at default user loacation: %s.", HomePath::get().c_str());
+		//printf("Archive found at default user loacation: %s.", HomePath::get().c_str());
 		break;
 	case HomePathType::AllUsers:	// all users archive
 		if (res == false) {
 			printf("Archive not found at default loacation");
 			return false;
 		}
-		printf("Archive found at default system loacation: %s.", HomePath::get().c_str());
+		//printf("Archive found at default system loacation: %s.", HomePath::get().c_str());
 		break;
 	case HomePathType::Unknown:
 	default:
@@ -459,6 +459,7 @@ bool AdminApp::initaliseConfig() {
 		
 		// Initalise without the config file i.e. set defaults.
 		if (config.init(homePath.c_str()) == false) {
+			printf("Cannot find home path: %s", homePath.c_str());
 			setError(12, "Cannot find home path? exiting?");
 			return false;
 		}

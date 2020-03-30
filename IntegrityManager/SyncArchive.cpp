@@ -9,16 +9,19 @@ namespace simplearchive {
 		std::string m_sourceDateRoot;
 		std::string m_destinationDateRoot;
 		std::string m_dateString;
+		int m_imagesUpdated;
 	public:
 		ProcessImages(std::string &sourceDateRoot, std::string &destinationDateRoot, std::string& dateString);
 		~ProcessImages();
 		bool sync();
+		int imagesUpdated() { return m_imagesUpdated; };
 	};
 
 	ProcessImages::ProcessImages(std::string& sourceDateRoot, std::string& destinationDateRoot, std::string& dateString)
 		: m_sourceDateRoot(sourceDateRoot),
 		m_destinationDateRoot(destinationDateRoot),
-		m_dateString(dateString)
+		m_dateString(dateString),
+		m_imagesUpdated(0)
 		{};
 
 	ProcessImages::~ProcessImages() {};
@@ -72,7 +75,7 @@ namespace simplearchive {
 			if (imageString[0] == '.') {
 				continue;
 			}
-			printf("Image: %s\n", imageString.c_str());
+			//printf("Image: %s\n", imageString.c_str());
 			std::string sourceDateRootImage = sourceDateRootImages;
 			sourceDateRootImage += '/'; sourceDateRootImage += imageString;
 
@@ -80,11 +83,13 @@ namespace simplearchive {
 			destinationRootImage += '/'; destinationRootImage += imageString;
 
 			if (SAUtils::FileExists(destinationRootImage.c_str()) == false) {
-				printf("%s does not exist \n", imageString.c_str());
-				printf("  copy %s\n   to %s\n", sourceDateRootImage.c_str(), destinationRootImage.c_str());
+				//printf("%s does not exist \n", imageString.c_str());
+				//printf("  copy %s\n   to %s\n", sourceDateRootImage.c_str(), destinationRootImage.c_str());
+
 				if (SAUtils::copy(sourceDateRootImage.c_str(), destinationRootImage.c_str()) == false) {
 					return false;
 				}
+				m_imagesUpdated++;
 				std::string sourceRootMetadata = sourceRootMetadataList;
 				sourceRootMetadata += '/'; sourceRootMetadata += imageString;
 
@@ -139,7 +144,12 @@ namespace simplearchive {
 		return false;
 	}
 
-	SyncArchive::SyncArchive(const char* source, const char* target) : m_sourcePath(source), m_targetPath(target) {};
+	SyncArchive::SyncArchive(const char* source, const char* target)
+		: m_sourcePath(source),
+		m_targetPath(target),
+		m_imagesUpdated(0)
+	{};
+
 	SyncArchive::~SyncArchive() {};
 
 	bool SyncArchive::sync()
@@ -192,7 +202,6 @@ namespace simplearchive {
 			if (year.compare("fdata.xml") == 0) {
 				continue;
 			}
-			//printf("Year found %s\n", year.c_str());
 			//validateReportingObject.startYear(year.c_str());
 			std::string yearPath = sourceCkdskPath + '/';
 			yearPath += year;
@@ -204,7 +213,7 @@ namespace simplearchive {
 					continue;
 				}
 
-				printf("month %s\n", dateString.c_str());
+				//printf("month %s\n", dateString.c_str());
 				std::string fullDateString = yearPath;
 				if (process(dateString) == false) {
 					return false;
@@ -212,15 +221,25 @@ namespace simplearchive {
 
 			}
 
-			std::string sourceCkdskPathXml = sourceCkdskPath;
-			sourceCkdskPathXml += '/'; sourceCkdskPathXml += "fdata.xml";
+			
+		}
+		std::string sourceCkdskPathCsv = sourceCkdskPath;
+		sourceCkdskPathCsv += '/'; sourceCkdskPathCsv += "fdata.csv";
 
-			std::string destinationCkdskRootXml = m_destinationCkdskRoot;
-			destinationCkdskRootXml += '/'; destinationCkdskRootXml += "fdata.xml";
+		std::string destinationCkdskCsv = m_destinationCkdskRoot;
+		destinationCkdskCsv += '/'; destinationCkdskCsv += "fdata.csv";
 
-			if (SAUtils::copy(sourceCkdskPathXml.c_str(), destinationCkdskRootXml.c_str()) == false) {
-				return false;
-			}
+		if (SAUtils::copy(sourceCkdskPathCsv.c_str(), destinationCkdskCsv.c_str()) == false) {
+			return false;
+		}
+		std::string sourceCkdskPathXml = sourceCkdskPath;
+		sourceCkdskPathXml += '/'; sourceCkdskPathXml += "fdata.xml";
+
+		std::string destinationCkdskRootXml = m_destinationCkdskRoot;
+		destinationCkdskRootXml += '/'; destinationCkdskRootXml += "fdata.xml";
+
+		if (SAUtils::copy(sourceCkdskPathXml.c_str(), destinationCkdskRootXml.c_str()) == false) {
+			return false;
 		}
 		return true;
 	}
@@ -263,6 +282,7 @@ namespace simplearchive {
 			if (processImages.sync() == false) {
 				return false;
 			}
+			m_imagesUpdated += processImages.imagesUpdated();
 			std::string curSourceCkdskFile = curSourceDateRoot;
 			curSourceCkdskFile += '/'; curSourceCkdskFile += "fdata.csv";
 			//printf("  copy %s\n   to %s\n", curSourceCkdskFile.c_str(), curDestinationCkdskFile.c_str());

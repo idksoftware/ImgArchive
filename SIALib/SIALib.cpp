@@ -699,20 +699,80 @@ namespace simplearchive {
 
 	bool SIALib::sync(MainArchives mainArchives, Backups Backups)
 	{
+		CLogger& logger = CLogger::getLogger();
+
 		IntegrityManager::MainArchives imArchives;
 		IntegrityManager::Backups imBackups;
+
+		bool master = false;
+		bool derivative = false;
 		switch (mainArchives) {
-		case SIALib::MainArchives::Derivative: imArchives = IntegrityManager::MainArchives::Derivative; break;
-		case SIALib::MainArchives::Master: imArchives = IntegrityManager::MainArchives::Master; break;
-		case SIALib::MainArchives::Both: imArchives = IntegrityManager::MainArchives::Both; break;
+		case SIALib::MainArchives::Derivative: 
+			imArchives = IntegrityManager::MainArchives::Derivative;
+			logger.log(LOG_COMPLETED, CLogger::Level::SUMMARY, "Syncing Derivative archive");
+			derivative = true;
+			break;
+		case SIALib::MainArchives::Master:
+			logger.log(LOG_COMPLETED, CLogger::Level::SUMMARY, "Syncing Master archive");
+			imArchives = IntegrityManager::MainArchives::Master;
+			master = true;
+			break;
+		case SIALib::MainArchives::Both:
+			logger.log(LOG_COMPLETED, CLogger::Level::SUMMARY, "Syncing Both Master and Derivative archives");
+			imArchives = IntegrityManager::MainArchives::Both;
+			master = true;
+			derivative = true;
+			break;
 		}
-		switch (Backups) {
-		case SIALib::Backups::Backup_1: imBackups = IntegrityManager::Backups::Backup_1; break;
-		case SIALib::Backups::Backup_2: imBackups = IntegrityManager::Backups::Backup_1; break;
-		case SIALib::Backups::Both: imBackups = IntegrityManager::Backups::Backup_1; break;
-		}
+
+		
 		IntegrityManager& im = IntegrityManager::get();
+
+		switch (Backups) {
+		case SIALib::Backups::Backup_1:
+			imBackups = IntegrityManager::Backups::Backup_1;
+			logger.log(LOG_COMPLETED, CLogger::Level::SUMMARY, "Syncing archive with Backup 1");
+			if ((master && !im.isMasterBackup1enabled()) || (derivative && !im.isDerivativeBackup1enabled())) {
+				logger.log(LOG_COMPLETED, CLogger::Level::ERR, "Backup 1 not enabled cannot continue;");
+					return false;
+			}
+			break;
+		case SIALib::Backups::Backup_2:
+			imBackups = IntegrityManager::Backups::Backup_2;
+			logger.log(LOG_COMPLETED, CLogger::Level::SUMMARY, "Syncing archive with Backup 2");
+			if ((master && !im.isMasterBackup2enabled()) || (derivative && !im.isDerivativeBackup2enabled())) {
+				logger.log(LOG_COMPLETED, CLogger::Level::ERR, "Backup 2 not enabled cannot continue;");
+					return false;
+			}
+			break;
+		case SIALib::Backups::Both:
+			imBackups = IntegrityManager::Backups::Both;
+			logger.log(LOG_COMPLETED, CLogger::Level::SUMMARY, "Syncing archive with Both Backups");
+			if ((master && !im.isMasterBackup1enabled()) || (derivative && !im.isDerivativeBackup1enabled())) {
+				logger.log(LOG_COMPLETED, CLogger::Level::ERR, "Backup 1 not enabled cannot continue;");
+					return false;
+			}
+			if ((master && !im.isMasterBackup2enabled()) || (derivative && !im.isDerivativeBackup2enabled())) {
+				logger.log(LOG_COMPLETED, CLogger::Level::ERR, "Backup 2 not enabled cannot continue;");
+					return false;
+			}
+			break;
+		default:
+			return false;
+		}
+		
+
 		bool ret = im.sync(imArchives, imBackups);
+
+		
+		int imagesUpdated = im.imagesUpdated();
+		if (imagesUpdated) {
+			logger.log(LOG_COMPLETED, CLogger::Level::SUMMARY, "Sync: updated %d images", imagesUpdated);
+		}
+		else {
+			logger.log(LOG_COMPLETED, CLogger::Level::SUMMARY, "Sync: no images updated, backup was found to be up-to-date");
+		}
+		
 		return ret;
 	}
 	

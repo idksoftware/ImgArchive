@@ -97,11 +97,14 @@ private:
 	bool m_derivativeBackup1enabled;
 	bool m_derivativeBackup2enabled;
 
+	int m_imagesUpdated;
+
 	IntegrityManager()
 		: m_masterBackup1enabled(false),
 		m_masterBackup2enabled(false),
 		m_derivativeBackup1enabled(false),
-		m_derivativeBackup2enabled(false)
+		m_derivativeBackup2enabled(false),
+		m_imagesUpdated(0)
 	{};
 
 public:
@@ -129,6 +132,14 @@ public:
 	void setDerivativeBackupPaths(const char* backupPath1, const char* backupPath2, bool backup1enabled, bool backup2enabled);
 
 	bool sync(MainArchives mainArchives, Backups Backups);
+
+	int imagesUpdated() { return m_imagesUpdated; }
+
+	bool isMasterBackup1enabled() { return m_masterBackup1enabled; }
+	bool isMasterBackup2enabled() { return m_masterBackup2enabled; }
+
+	bool isDerivativeBackup1enabled() { return m_derivativeBackup1enabled; }
+	bool isDerivativeBackup2enabled() { return m_derivativeBackup2enabled; }
 };
 
 } /* namespace simplearchive */
