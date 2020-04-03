@@ -166,8 +166,8 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineOption("force-date", "Overrides all dates found associated with the images in the selection", ArgvParser::OptionRequiresValue);
 	defineOption("default-date", "Uses this date if none found associated with an image", ArgvParser::OptionRequiresValue);
 
-	//defineOption("checked-out", "Show checked out", ArgvParser::OptionRequiresValue); // =all =year{2015}
-	//defineOption("unchecked-out", "Show changed images which are not checked out", ArgvParser::OptionRequiresValue);
+	defineOption("checked-out", "Show checked out images", ArgvParser::OptionRequiresValue); // =all =year{2015}
+	defineOption("unchecked-out", "Show changed images which are not checked out", ArgvParser::OptionRequiresValue);
 
 	defineCommandOption("import", "comment");
 	//defineCommandOption("import", "logging-level");
@@ -200,7 +200,11 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineCommandOption("export", "dist-path");
 
 	defineCommandOption("status", "scope");
+	defineCommandOption("status", "checked-out");
+	defineCommandOption("status", "unchecked-out");
 	
+
+
 	defineCommandOption("show", "setup");
 
 	defineCommandOption("log",  "image-address");
@@ -490,11 +494,9 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 		}
 		if (foundOption("checked-out") == true) {
 			appOptions.m_showCommandOption = SIAArcAppOptions::ShowCommandOption::SC_ShowUncheckedOutChanges;
-			appOptions.m_imageAddress = optionValue("checked-out");
 		}
 		if (foundOption("unchecked-out") == true) {
-			appOptions.m_showCommandOption = SIAArcAppOptions::ShowCommandOption::SC_ShowUncheckedOutChanges;
-			appOptions.m_imageAddress = optionValue("checked-out");
+			appOptions.m_showCommandOption = SIAArcAppOptions::ShowCommandOption::SC_ShowUncheckedOutChanges;	
 		}
 		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Status);
 		cmdFound = true;

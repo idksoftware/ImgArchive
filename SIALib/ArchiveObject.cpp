@@ -426,10 +426,10 @@ namespace simplearchive {
 		//}
 
 		IntegrityManager& integrityManager = IntegrityManager::get();
-		integrityManager.setMasterBackupPaths(ArchivePath::getMasterBackup1Path().c_str(),
-											ArchivePath::getMasterBackup2Path().c_str(),
-											ArchivePath::isMasterBackup1Enabled(),
-											ArchivePath::isMasterBackup2Enabled());
+		integrityManager.setDerivativeBackupPaths(ArchivePath::getDerivativeBackup1Path().c_str(),
+											ArchivePath::getDerivativeBackup2Path().c_str(),
+											ArchivePath::isDerivativeBackup1Enabled(),
+											ArchivePath::isDerivativeBackup2Enabled());
 		return true;
 	}
 

@@ -88,7 +88,10 @@ string ArgvParser::optionValue(const string& _option) const
         cerr << "ArgvParser::optionValue(): Requested value of an option the parser did not find or does not know." << endl;
         return("");
     }
-
+	if (option2value.find(key) == option2value.end()) {
+		cerr << "ArgvParser::optionValue(): Requested value of an option the parser did not find or does not know." << endl;
+		return std::string();
+	}
     return(option2value.find(key)->second);
 }
 

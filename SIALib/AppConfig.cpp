@@ -537,6 +537,7 @@ namespace simplearchive {
 		logger.log(LOG_OK, CLogger::Level::INFO, "        Exif Tool:                 \"%s\"", AppConfig::m_ExternalExifTool.c_str());
 		logger.log(LOG_OK, CLogger::Level::INFO, "        Exif command line:         \"%s\"", AppConfig::m_ExternalCommandLine.c_str());
 		
+		// Master
 		// Backup 1
 		if (AppConfig::m_masterBackup1.empty() == false) {
 			ArchivePath::setMasterBackup1Path(AppConfig::m_masterBackup1);
@@ -553,6 +554,24 @@ namespace simplearchive {
 			AppConfig::m_masterBackup2Enabled = true;
 		}
 		ArchivePath::setMasterBackup2Enabled(AppConfig::m_masterBackup2Enabled);
+
+		// Derivative
+		// Backup 1
+		if (AppConfig::m_derivativeBackup1.empty() == false) {
+			ArchivePath::setDerivativeBackup1Path(AppConfig::m_derivativeBackup1);
+		}
+		else {
+			AppConfig::m_derivativeBackup1Enabled = false;
+		}
+		ArchivePath::setDerivativeBackup1Enabled(AppConfig::m_derivativeBackup1Enabled);
+		// Backup 2
+		if (AppConfig::m_derivativeBackup2.empty() == false) {
+			ArchivePath::setDerivativeBackup2Path(AppConfig::m_derivativeBackup2);
+		}
+		else {
+			AppConfig::m_derivativeBackup2Enabled = true;
+		}
+		ArchivePath::setDerivativeBackup2Enabled(AppConfig::m_derivativeBackup2Enabled);
 	}
 
 	void SharedConfig::setWorkspacePath(const char *path) {
