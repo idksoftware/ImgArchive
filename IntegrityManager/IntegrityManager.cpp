@@ -106,11 +106,42 @@ bool IntegrityManager::sync(MainArchives mainArchives, Backups Backups)
 		}
 	}
 	ValidateReportingObject::setPath(tmp.c_str());
-	SyncArchive syncArchive(m_archivePath.c_str(), m_masterBackupPath1.c_str());
-	if (syncArchive.sync() == false) {
-		return false;
+	
+
+	if (mainArchives == MainArchives::Master || mainArchives == MainArchives::Both) {
+		if (Backups == Backups::Backup_1 || Backups == Backups::Both) {
+			SyncArchive syncArchive(m_archivePath.c_str(), m_masterBackupPath1.c_str());
+			if (syncArchive.sync() == false) {
+				return false;
+			}
+			m_imagesUpdated = syncArchive.imagesUpdated();
+		}
+		if (Backups == Backups::Backup_2 || Backups == Backups::Both) {
+			SyncArchive syncArchive(m_archivePath.c_str(), m_masterBackupPath2.c_str());
+			if (syncArchive.sync() == false) {
+				return false;
+			}
+			m_imagesUpdated = syncArchive.imagesUpdated();
+		}
 	}
-	m_imagesUpdated = syncArchive.imagesUpdated();
+	if (mainArchives == MainArchives::Derivative || mainArchives == MainArchives::Both) {
+		if (Backups == Backups::Backup_1 || Backups == Backups::Both) {
+			SyncArchive syncArchive(m_derivativePath.c_str(), m_derivativeBackupPath1.c_str());
+			if (syncArchive.sync() == false) {
+				return false;
+			}
+			m_imagesUpdated = syncArchive.imagesUpdated();
+		}
+		if (Backups == Backups::Backup_2 || Backups == Backups::Both) {
+			SyncArchive syncArchive(m_derivativePath.c_str(), m_derivativeBackupPath2.c_str());
+			if (syncArchive.sync() == false) {
+				return false;
+			}
+			m_imagesUpdated = syncArchive.imagesUpdated();
+		}
+	}
+
+	
 	return true;
 }
 

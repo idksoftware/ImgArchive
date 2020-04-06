@@ -256,6 +256,7 @@ bool AdminApp::doRun()
 			return false;
 		}
 	
+		/*
 		CompletedSummary completedSummary;
 		switch (appOptions.getVerifyOperation()) {
 		case AppOptions::VerifyOperation::Workspace:
@@ -274,7 +275,7 @@ bool AdminApp::doRun()
 			}
 		}
 		siaLib.complete();
-		
+		*/
 		break;
 	}
 	
