@@ -497,7 +497,7 @@ bool CIPServer::ConnectToPB(int iPort)
 #else
 	unsigned int namelen;
 #endif
-	u_short dynamic_port;
+//	u_short dynamic_port;
 //	u_long actual_protocol;
 //	bool broker_connected = false;
 //	struct hostent *hostent;
@@ -576,10 +576,10 @@ bool CIPServer::ConnectToPB(int iPort)
 		{
 			ok = false;
 		}
-		else
-		{
-			dynamic_port = sockaddr_in.sin_port;
-		}
+		//else may be useed in the future
+		//{
+		//	dynamic_port = sockaddr_in.sin_port;
+		//}
 	}
 	return ok;
 }

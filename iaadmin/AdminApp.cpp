@@ -154,7 +154,7 @@ namespace simplearchive {
 		}
 		SIALib siaLib;
 		siaLib.initalise();
-		AppConfig& config = AppConfig::get();
+		//AppConfig& config = AppConfig::get();
 		if (appOptions.isConfiguratedOk() == false) {
 			// Do not create a new archive. The old one needs to be deleted?
 			return false;
@@ -207,7 +207,7 @@ bool AdminApp::doRun()
 		{
 			SIALib siaLib;
 			siaLib.initalise();
-			AppConfig& config = AppConfig::get();
+			//AppConfig& config = AppConfig::get();
 			if (appOptions.isConfiguratedOk() == false) {
 				// Do not create a new archive. The old one needs to be deleted?
 				return false;

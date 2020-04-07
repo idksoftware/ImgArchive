@@ -175,7 +175,7 @@ public:
 
 	void doMirrorInSync() {
 		verifyDir(m_path.c_str());
-		Mirror &mirror = Mirror::get();
+		//Mirror &mirror = Mirror::get();
 		for (std::vector<MirrorNode *>::iterator i = this->begin(); i != this->end(); i++) {
 			MirrorNode *data = (MirrorNode*)*i;
 			data->doMirrorInSync();
@@ -184,7 +184,7 @@ public:
 
 	void doSourceInSync() {
 		verifyDir(m_path.c_str());
-		Mirror &mirror = Mirror::get();
+		//Mirror &mirror = Mirror::get();
 		for (std::vector<MirrorNode *>::iterator i = this->begin(); i != this->end(); i++) {
 			MirrorNode *data = (MirrorNode*)*i;
 			data->doSourceInSync();

@@ -272,7 +272,7 @@ bool Version::setToVersion(const char *name, int idx) {
 
 			const char *tmp = filenameItem.c_str();
 			std::string cname(nameOnly(tmp));
-			const char *s = cname.c_str();
+
 
 			if (m_nameonly.compare(cname.c_str()) == 0) {
 				int ix = versionIndex(tmp);

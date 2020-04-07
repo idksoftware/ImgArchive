@@ -99,6 +99,7 @@ bool GetEnv(std::string& value, bool all) {
 #else
 bool SetEnv(const char *szIAHome)
 {
+	return false;
 }
 #endif
 

@@ -153,7 +153,7 @@ ArgvParser::parse(int _argc, char ** _argv)
 	// This is used to test if the arguments are valid for this command
 	CommandSet::iterator ii = command_set.find(key);
 	bool commandListFound = false;
-	ArgumentContainer *commandList = nullptr;
+	//ArgumentContainer *commandList = nullptr;
 	if (ii != command_set.end()) {
 		commandListFound = true;	
 	}
@@ -440,7 +440,7 @@ std::string ArgvParser::topicUsageDescription(unsigned int topic, unsigned int _
 		++alt)
 	{
 		if (option2attribute.find(topic)->second == MasterOption) {
-			int option = option2attribute.find(topic)->second;
+			//int option = option2attribute.find(topic)->second;
 			_os.clear();
 			if (alt->length() > 1) {
 				_longOpt += *alt;
@@ -506,7 +506,7 @@ std::string ArgvParser::topicUsageDescription(unsigned int topic, unsigned int _
 					alt != alternatives.end();
 					++alt)
 				{
-					int option = option2attribute.find(key)->second;
+					//int option = option2attribute.find(key)->second;
 					_os.clear();
 					if (alt->length() > 1) {
 
@@ -596,7 +596,7 @@ std::string ArgvParser::usageDescription(unsigned int _width) const
 			++alt)
 		{
 			if (option2attribute.find(it->first)->second == MasterOption) {
-				int option = option2attribute.find(it->first)->second;
+				//int option = option2attribute.find(it->first)->second;
 				_os.clear();
 				if (alt->length() > 1) {
 					_longOpt += *alt;
@@ -689,7 +689,7 @@ bool ArgvParser::matchOption(unsigned int topic, const char *option) const
 			alt != alternatives.end();
 			++alt)
 		{
-			int option = option2attribute.find(key)->second;
+			//int option = option2attribute.find(key)->second;
 			
 			if (alt->length() > 1) {
 
@@ -960,7 +960,7 @@ bool CommandLineProcessing::isValidOptionString(const string& _string)
 }
 
 bool CommandLineProcessing::isValidCommandString(const string& _string) {
-	unsigned int key = 0;
+	//unsigned int key = 0;
 	// is it an option (check for '--')
 	if (!_string.compare(0, 2, "--")) {
 		return false;
@@ -1210,7 +1210,7 @@ std::string CommandLineProcessing::formatLine(const std::string& _string,
 	
 
 	// current position in the string
-	unsigned int pos = 0;
+	//unsigned int pos = 0;
 
 	// till the end of the string
 	

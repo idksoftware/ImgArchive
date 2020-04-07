@@ -9,7 +9,7 @@ namespace simplearchive {
 
 	bool SyncCommand::setArchive(const char* str)
 	{
-		AppOptions& appOptions = AppOptions::get();
+		//AppOptions& appOptions = AppOptions::get();
 
 		std::string arg = str;
 		if (arg.compare("master") == 0) {

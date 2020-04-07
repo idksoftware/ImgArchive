@@ -176,7 +176,8 @@ bool IDKCreateThread(void(pFunction)(void*), void* pArguments)
 {
 	
 	void*(*ppFunction)(void*)  = (void*(*)(void*))pFunction;
-	return (pthread_create(nullptr, nullptr, ppFunction, pArguments)==0);
+	bool ret = (pthread_create(nullptr, nullptr, ppFunction, pArguments)) == 0;
+	return ret;
 }
 
 SIAThread::~SIAThread()

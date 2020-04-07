@@ -106,7 +106,7 @@ public:
 		std::string opt3;
 		std::string mode;
 
-		bool complete = false;
+		//bool complete = false;
 		CSVArgs csvArgs(',');
 		csvArgs.process(dataString);
 		int size = csvArgs.size();
@@ -444,7 +444,7 @@ bool Mirror::verifyMirrorName(const char *to) {
 
 bool Mirror::verifySourceName(const char *to) {
 	for (std::vector<MirrorItem>::iterator i = m_pContainer->begin(); i != m_pContainer->end(); i++) {
-		MirrorItem &data = *i;
+		//MirrorItem &data = *i;
 		std::string fromFull = m_root + '/' + to;
 		//std::string toFull = data.getPath() + '/' + to;
 		//if (data.getMode() == MirrorItem::MM_Direct) {

@@ -20,7 +20,7 @@ protected:
 	std::string writeJsonTag(const char* tag, const std::string& value);
 	std::string writeHtmlTag(const char* tag, const std::string& value);
 
-	std::string TextOut::writeXMLTag(const char* tag, bool b);
+	std::string writeXMLTag(const char* tag, bool b);
 
 	std::string writePlainTag(const char* tag, const char* value);
 	std::string writeXMLTag(const char* tag, const char* value);

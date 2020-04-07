@@ -698,7 +698,7 @@ namespace simplearchive {
 				appOptions.m_mediaPath = optionValue("media-path");
 //					printf(opt.c_str()); printf("\n");
 				//config.setBackupDestinationPath(opt.c_str());
-				appOptions.m_toDate;
+				//appOptions.m_toDate;
 			}
 			if (foundOption("media-size") == true) {
 
@@ -820,7 +820,7 @@ namespace simplearchive {
 				++alt)
 			{
 				if (option2attribute.find(it->first)->second == MasterOption) {
-					int option = option2attribute.find(it->first)->second;
+					//int option = option2attribute.find(it->first)->second;
 					_os.clear();
 					if (alt->length() > 1) {
 						_longOpt += *alt;

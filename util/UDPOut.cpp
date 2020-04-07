@@ -12,7 +12,9 @@
 #define SOCKET_ERROR -1
 #endif
 
+#ifdef _WIN32
 #pragma comment(lib,"ws2_32.lib") //Winsock Library
+#endif
 
 #define BUFLEN 512	//Max length of buffer
 

@@ -155,7 +155,7 @@ public:
 		m_archivePath = root;
 		m_error = false;
 		m_name = name;
-		bool complete = false;
+		//bool complete = false;
 
 		m_eMode = VM_SnapShot;
 		m_eType = VT_Unknown;
@@ -171,7 +171,7 @@ public:
 		std::string mode = csvArgs.at(0);
 		m_path = csvArgs.at(1);
 		type = csvArgs.at(2);
-		int size = csvArgs.size();
+		//int size = csvArgs.size();
 		if (csvArgs.size() >= 4) {
 			access = csvArgs.at(3);
 		}
@@ -324,7 +324,7 @@ public:
 	//bool add2Master(const char *relPath, const char *name);
 	bool add(int id);
 	bool add(const char *imagePath) {
-
+		return false;
 	}
 
 	const std::string& getIncludeName() const {
@@ -439,6 +439,8 @@ bool ViewItem::add(int id) {
 		return true;
 	case VT_Unknown:
 		break;
+	default:
+		return false;
 	}
 	return false;
 	//findImage();
@@ -560,7 +562,7 @@ bool ViewItem::processAll() {
 	csvDBFile.setPath(indexPath.c_str());
 	int max = csvDBFile.getMaxIndex();
 	printf("max: %d\n", max);
-	int size = 0;
+	//int size = 0;
 	int current = 0;
 
 	for (;current <= max; current++) {
@@ -585,6 +587,8 @@ bool ViewItem::copyFile(const char *source, const char *distfile) {
 			return false;
 		}
 		break;
+	default:
+		return false;
 	}
 	return true;
 }

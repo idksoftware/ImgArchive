@@ -93,8 +93,11 @@ public:
 			strcat_s(m_szUuid,tbuffer);
 		}
 #else
-		sprintf(m_szUuid, "%8.8x-%4.4x-%4.4x-%2.2x%2.2x-", u.time_low, u.time_mid,
-										u.time_hi_and_version, u.clock_seq_hi_and_reserved,
+		sprintf(m_szUuid, "%8.8x-%4.4x-%4.4x-%2.2x%2.2x-",
+										(unsigned int)u.time_low,
+										(unsigned int)u.time_mid,
+										(unsigned int)u.time_hi_and_version,
+										(unsigned int)u.clock_seq_hi_and_reserved,
 										(unsigned int)u.clock_seq_low);
 		for (i = 0; i < 6; i++)
 		{

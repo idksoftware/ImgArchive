@@ -76,17 +76,18 @@ bool ManagedMirror::initalise(const char *rootFolder, const char *configFile) {
 	if (SAUtils::FileExists(configFile) == false) {
 		return false;
 	}
+	bool ret = false;
 	try {
-		bool ret = Mirror::initalise(rootFolder, configFile);
+		ret = Mirror::initalise(rootFolder, configFile);
 
 	} catch (MirrorException &e) {
 		printf("Error: %s\n", e.what());
 	}
-	return true;
+	return ret;
 }
 
 bool ManagedMirror::process() {
-	int volume = 1;
+	//int volume = 1;
 
 	std::string indexPath = m_rootFolder;
 	indexPath += "/.sia/index";

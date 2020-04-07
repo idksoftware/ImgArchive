@@ -54,6 +54,7 @@
 
 // Version 12341234
 #include <memory>
+#include <cinttypes>
 
 #ifndef _IPSOCK_
 #define _IPSOCK_
@@ -64,7 +65,7 @@
  */
 class CIPPacket
 {
-	void *m_Data;
+	int8_t *m_Data;
 	int m_iSize;
 
 public:
@@ -78,7 +79,7 @@ public:
 	CIPPacket(CIPPacket &r)
 	{
 		
-		m_Data = new unsigned char[r.m_iSize];
+		m_Data = new int8_t[r.m_iSize];
 		memcpy(m_Data, r.m_Data, r.m_iSize);
 		m_iSize = r.m_iSize;
 	};
@@ -93,7 +94,7 @@ public:
 		if (m_Data != nullptr) {
 			delete[] m_Data;
 		}
-		m_Data = new unsigned char[iSize];
+		m_Data = new int8_t[iSize];
 		m_iSize = iSize;
 	}
 /* do this if needed
@@ -113,7 +114,7 @@ public:
 	void Empty()
 	{
 		if (m_Data != nullptr) {
-			delete[](char *)m_Data;
+			delete[](int8_t *)m_Data;
 		}
 		m_Data = nullptr;
 		m_iSize = 0;
