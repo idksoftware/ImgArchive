@@ -11,6 +11,7 @@
 #include "Environment.h"
 #include "EnvFunc.h"
 
+// beyond compare
 using namespace CommandLineProcessing;
 namespace simplearchive {
 
@@ -18,66 +19,54 @@ namespace simplearchive {
 bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 
 	SIAArcAppOptions &appOptions = SIAArcAppOptions::get();
-	/*
-	m_error = false;
-	m_verbose = false;
-	m_quiet = false;
-	m_logLevel = "INFO";
-	m_dry_run = false;
-	*/
-	//AppConfig &config = AppConfig::get();
+	
 	SIAARCConfig config;
-		
-
-
-	//define error codes
-	//define error codes
+	
 	addErrorCode(0, "Success");
 	addErrorCode(1, "Warnings");
 	addErrorCode(2, "Errors");
 	addErrorCode(3, "Fatal");
 
-	//setIntroductoryDescription("Image archive provides an organized place to store images. This archive is"
-	//	" designed to be simple in design and to use. It consists of archiving core that provides the basic archiving"
-	//	" functions but in addition, takes input and provides output from optional external components to provide a"
-	//	" tailored achieving solution and can be extended into a complete achieving system. ");
+	setIntroductoryDescription("iaarc - Image archive client provides the means to operate ImgArchive from the command line");
 
 	setHelpOption();
 
 	// Subcommands
 	defineOption("import", "import new images to the archive.", ArgvParser::MasterOption);
-	defineCommandSyntax("import", "iaarc import [--source-path=<path>]\n\t[--logging-level=<level>]"
-		"[--comment=<comment text>]\n\t[--archive-path=<path>][--lightroom=<On|Off>]");
+	defineCommandSyntax("import", "iaarc import [--source-path=<path>]\n\t"
+		"[--comment=<comment text>]\n\t[--archive-path=<path>]\n\t[--lightroom=<On|Off>]");
 	
 	defineOption("get", "get images from the archive.", ArgvParser::MasterOption);
-	defineCommandSyntax("get", "iaarc get [--target-path=<path>]\n\t[--logging-level=<level>]"
-		"[--comment=<comment text>][--scope=<scope-address][--force=<yes|No>][--version=<vesion-num>");
+	defineCommandSyntax("get", "iaarc get [--target-path=<path>]\n\t"
+		"[--comment=<comment text>]\n\t[--scope=<scope-address]\n\t[--force=<yes|No>]\n\t[--version=<vesion-num>");
 
 	defineOption("checkout", "Checkout images from archive.", ArgvParser::MasterOption);
-	defineCommandSyntax("checkout", "iaarc checkout [--target-path=<path>]\n\t[--logging-level=<level>]"
-		"[--comment=<comment text>][--scope=<scope-address][--force=<yes|No>][--version=<vesion-num>");
+	defineCommandSyntax("checkout", "iaarc checkout [--target-path=<path>]\n\t"
+		"[--comment=<comment text>]\n\t[--scope=<scope-address]\n\t[--force=<yes|No>]\n\t[--version=<vesion-num>");
 
 	defineOption("checkin", "Checkin images in to archive.", ArgvParser::MasterOption);
 	defineCommandSyntax("checkin", "iaarc checkin [--target-path=<path>]\n\t[--logging-level=<level>]"
-		"[--comment=<comment text>][--scope=<scope-address][--force=<yes|No>][--version=<vesion-num>");
+		"[--comment=<comment text>]\n\t[--scope=<scope-address]\n\t[--force=<yes|No>]\n\t[--version=<vesion-num>");
 
 	defineOption("uncheckout", "Un-checkout images in to archive.", ArgvParser::MasterOption);
 	defineCommandSyntax("uncheckout", "iaarc uncheckout [--target-path=<path>]\n\t[--logging-level=<level>]"
-		"[--comment=<comment text>][--scope=<scope-address][--force=<yes|No>][--version=<vesion-num>");
+		"[--comment=<comment text>]\n\t[--scope=<scope-address]\n\t[--force=<yes|No>]\n\t[--version=<vesion-num>");
 
 	defineOption("export", "Export images from archive.", ArgvParser::MasterOption);
 	defineCommandSyntax("uncheckout", "iaarc uncheckout [--target-path=<path>]\n\t[--logging-level=<level>]"
-		"[--comment=<comment text>][--scope=<scope-address][--force=<yes|No>][--version=<vesion-num>");
+		"[--comment=<comment text>]\n\t[--scope=<scope-address]\n\t[--force=<yes|No>]\n\t[--version=<vesion-num>");
 
-	defineOption("about", "prints this version information", ArgvParser::MasterOption);
-	defineCommandSyntax("about", "about [--out] [--file]\n");
-
+	
 	defineOption("status", "show check in/out status", ArgvParser::MasterOption);
 	defineOption("view", "View commands", ArgvParser::MasterOption);
 	defineOption("show", "Show details", ArgvParser::MasterOption);
 	defineOption("prop", "Manage image properties", ArgvParser::MasterOption);
 	defineOption("log", "Show history log", ArgvParser::MasterOption);
-	defineOption("mode", "Sets the mode in which imgarchive will be operating", ArgvParser::MasterOption);
+	//defineOption("mode", "Sets the mode in which imgarchive will be operating", ArgvParser::MasterOption);
+
+	defineOption("about", "prints this version information", ArgvParser::MasterOption);
+	defineCommandSyntax("about", "about [--out]\n\t[--file]\n");
+
 	/*
 	defineOption("b", "Goes through the motions of running the subcommand but makes no\nactual changes ether disk or repository.", ArgvParser::NoOptionAttribute);
 	defineOptionAlternative("b", "backup");
@@ -114,7 +103,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineOptionAlternative("d", "dist-path");
 
 	defineOption("M", "size of media", ArgvParser::OptionRequiresValue);
-	defineOptionAlternative("S", "media-size");
+	defineOptionAlternative("M", "media-size");
 
 	defineOption("m", "Goes through the motions of running the subcommand but makes no\nactual changes ether disk or repository.", ArgvParser::OptionRequiresValue);
 	defineOptionAlternative("m", "media-path");
@@ -209,7 +198,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 
 	defineCommandOption("log",  "image-address");
 	defineCommandOption("log",  "format-type");
-	defineCommandOption("mode", "remote-server");
+//	defineCommandOption("mode", "remote-server");
 
 	ArgvParser::ParserResults res = parse(argc, argv);
 
@@ -224,13 +213,20 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	case ArgvParser::ParserRequiredOptionMissing:
 	case ArgvParser::ParserHelpRequested:
 		errStr = parseErrorDescription(res);
-		std::cout << errStr;
+		printf("%s", errStr.c_str());
+		printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 		return false;
 	case ArgvParser::GeneralHelpRequested:
-		std::cout << generalHelp(80);
+		std::cout << generalHelp(80); // this is printf("%s", usageDescription(80).c_str()); in iaadmin
 		return false;
 	case ArgvParser::TopicHelpRequested:
+		printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+		return false;
 		std::cout << topicUsageDescription(getCurrentCommandId(), 80);
+		return false;
+	case ArgvParser::ParserCommandNotFound:
+		printf("Invalid command: %s\n\n", getCurrentCommand().c_str());
+		printf("%s", usageDescription(80).c_str());
 		return false;
 	default:
 		return false;
@@ -568,12 +564,13 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 std::string SIAArcArgvParser::usageDescriptionHeader(unsigned int _width) const
 {
 	std::string usage;
-		
+	/*
 	usage += "usage: imgarc subcommand [options] [args]\n\n";
 	usage += "ImgArchive command line client, version 1.0.0.1\n";
 	usage += "Type 'iaarc help <subcommand>' for help on a specific subcommand.\n\n";
-
-	std::string tmp = "This command line interface is used to manage the control of images going in and out of the archive software.";
+	*/
+	// setIntroductoryDescription("iaarc - Image archive client provides the means to operate ImgArchive from the command line");
+	std::string tmp = "iaarc - Image archive client provides the means to operate ImgArchive from the command line";
 	usage += '\n';
 	usage += formatString(tmp, _width);
 	usage += '\n';
@@ -587,7 +584,7 @@ std::string SIAArcArgvParser::usageDescriptionHeader(unsigned int _width) const
 std::string SIAArcArgvParser::commandUsage(unsigned int width) const
 {
 	std::string usage; // the usage description text
-	usage = formatString("usage: imgarc[--version][--help] <command>[<args>]\n", width);
+	usage = formatString("usage: iaarc[--version][--help] <command>[<args>]\n", width);
 	usage += '\n';
 
 	return usage;

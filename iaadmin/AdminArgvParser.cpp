@@ -13,12 +13,16 @@
 #include "HomePath.h"
 #include "SetImageExtentionFile.h"
 #include "SyncCommand.h"
+
+// beyond compare
+
 using namespace CommandLineProcessing;
 namespace simplearchive {
 
 	bool AdminArgvParser::doInitalise(int argc, char **argv) {
 
 		AppOptions &appOptions = AppOptions::get();
+		
 		
 		addErrorCode(0, "Success");
 		addErrorCode(1, "Warnings");
@@ -265,7 +269,7 @@ namespace simplearchive {
 			printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 			return false;
 		case ArgvParser::GeneralHelpRequested:
-			printf("%s", usageDescription(80).c_str());
+			printf("%s", usageDescription(80).c_str()); // this may need generalHelp(80);
 			return false;
 		case ArgvParser::TopicHelpRequested:
 			printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
