@@ -46,7 +46,7 @@
 #include "ErrorCode.h"
 #include "IndexVisitor.h"
 #include "SQLiteDB.h"
-#include "SequenceFileManager.h"
+#include "ImageFileNameManager.h"
 
 #include <stdio.h>
 #include <sstream>
@@ -669,7 +669,7 @@ namespace simplearchive {
 		m_master.init(master);
 
 		// Settup the file renaming manager with the master path 
-		SequenceFileManager::setMasterPath(master.getRepositoryPath().c_str());
+		ImageFileNameManager::setMasterPath(master.getRepositoryPath().c_str());
 
 
 		RepositoryPath& derivative = ArchivePath::getDerivative();
@@ -872,6 +872,7 @@ namespace simplearchive {
 	}
 
 	bool ArchiveObject::CreateImage(const BasicMetadata &BasicMetadata, ImagePath &imagePath, MetadataObject &metadataObject) {
+
 		CLogger &logger = CLogger::getLogger();
 		PrimaryIndexTable& primaryIndexTable = getPrimaryIndexObject().getPrimaryIndexTable();
 		MasterRepositoryObject& masterObject = getMasterObject();
@@ -882,9 +883,6 @@ namespace simplearchive {
 
 		// Primary Index Object
 		unsigned long primarySeqNumber = primaryIndexTable.getNextIndex();
-		std::string seqNumberStr = std::to_string(primarySeqNumber);
-
-
 		// Master Database Object
 		unsigned long masterSeqNumber = masterIndexTable.getNextIndex();
 		metadataObject.setSequenceId(primarySeqNumber);
@@ -894,12 +892,14 @@ namespace simplearchive {
 
 		
 		// This is adding the sequence file name
-		SequenceFileManager& sequenceFileManager = SequenceFileManager::get();
-		std::string sequenceName = sequenceFileManager.sequenceFile(imagePath.getYyyymmddStr().c_str(), primarySeqNumber, imagePath.getImageName().c_str());
-		BasicMetadata.columnAt(DB_FILENAME) = sequenceName.c_str();
+		ImageFileNameManager& imageFileNameManager = ImageFileNameManager::get();
+		std::string encodedImage = imageFileNameManager.getFileName(imagePath.getYyyymmddStr().c_str(), primarySeqNumber, imagePath.getImageName().c_str());
+		imagePath.setEncodedImageName(encodedImage.c_str());
+
+		BasicMetadata.columnAt(DB_FILENAME) = encodedImage.c_str();
 		BasicMetadata.columnAt(DB_ORGINALNAME) = imagePath.getImageName().c_str();
-		imagePath.switchOrginalName(sequenceName.c_str());
-		metadataObject.columnAt(DB_FILENAME) = sequenceName.c_str();
+		imagePath.switchOrginalName(encodedImage.c_str());
+		metadataObject.columnAt(DB_FILENAME) = encodedImage.c_str();
 		
 
 		unsigned long n = BasicMetadata.getSize();
@@ -949,10 +949,18 @@ namespace simplearchive {
 			BasicMetadata.getUuid().c_str(), 0, date) == false) {
 			return false;
 		}
+		// processing file name
+	
 		std::string filepath = imagePath.getRelativePath() + '/' + imagePath.getImageName();
 		std::string shortFilePath = imagePath.getYyyymmddStr() + "/" + imagePath.getImageName();
+
+		
+
+		//std::string filepath = imagePath.getRelativePath() + '/' + encodedImage;
+		//std::string shortFilePath = imagePath.getYyyymmddStr() + "/" + encodedImage;
+
 		// main
-		if (copyFile2Master(imagePath.getCurrentSourcePath(), imagePath.getYyyymmddStr(), imagePath.getOrginalName(), imagePath.getImageName()) == false) {
+		if (copyFile2Master(imagePath.getCurrentSourcePath(), imagePath.getYyyymmddStr(), imagePath.getOrginalName(), imagePath.getEncodedImageName()) == false) {
 			logger.log(LOG_OK, CLogger::Level::FATAL, "Fataled to copy image \"%s\" to Master Archive", imagePath.getImageName().c_str());
 			return false;
 		}

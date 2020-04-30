@@ -183,7 +183,7 @@
     <ClInclude Include="MenuPagesMaker.h" />
     <ClInclude Include="MetadataUpdate.h" />
     <ClInclude Include="RemoteServer.h" />
-    <ClInclude Include="SequenceFileManager.h" />
+    <ClInclude Include="ImageFileNameManager.h" />
     <ClInclude Include="SQLiteDB.h" />
     <ClInclude Include="VersionControl.h" />
     <ClInclude Include="VersionIndex.h" />
@@ -230,7 +230,7 @@
     <ClCompile Include="MenuPagesMaker.cpp" />
     <ClCompile Include="MetadataUpdate.cpp" />
     <ClCompile Include="RemoteServer.cpp" />
-    <ClCompile Include="SequenceFileManager.cpp" />
+    <ClCompile Include="ImageFileNameManager.cpp" />
     <ClCompile Include="SQLiteDB.cpp" />
     <ClCompile Include="VersionIndex.cpp" />
     <ClCompile Include="SACmdArgs.cpp" />

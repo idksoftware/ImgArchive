@@ -157,6 +157,7 @@
     <ClCompile Include="HomePath.cpp" />
     <ClCompile Include="ImageEncode.cpp" />
     <ClCompile Include="History.cpp" />
+    <ClCompile Include="ImageEncodeBase32.cpp" />
     <ClCompile Include="ImageHistory.cpp" />
     <ClCompile Include="SequenceNumber.cpp" />
     <ClCompile Include="tinyxml2.cpp" />
@@ -185,6 +186,7 @@
     <ClCompile Include="Threads.cpp" />
     <ClCompile Include="UDPOut.cpp" />
     <ClCompile Include="pathcontroller.cpp" />
+    <ClCompile Include="Base32.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AddressScope.h" />
@@ -201,6 +203,7 @@
     <ClInclude Include="HomePath.h" />
     <ClInclude Include="ImageEncode.h" />
     <ClInclude Include="History.h" />
+    <ClInclude Include="ImageEncodeBase32.h" />
     <ClInclude Include="ImageHistory.h" />
     <ClInclude Include="SequenceNumber.h" />
     <ClInclude Include="tinyxml2.h" />
@@ -235,6 +238,7 @@
     <ClInclude Include="Threads.h" />
     <ClInclude Include="UDPOut.h" />
     <ClInclude Include="pathcontroller.h" />
+    <ClInclude Include="Base32.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />

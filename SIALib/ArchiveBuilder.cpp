@@ -251,7 +251,7 @@ namespace simplearchive {
 				logger.log(LOG_OK, CLogger::Level::FATAL, "Failed to import the image: \"%s\"", picName.c_str());
 				return false;
 			}
-			std::string shortFilePath = m_imagePath->getYyyymmddStr() + "/" + m_imagePath->getImageName();
+			std::string shortFilePath = m_imagePath->getYyyymmddStr() + "/" + m_imagePath->getEncodedImageName();
 			
 			//std::string shortPath = 
 			//m_csvDatabase.add(temp, shortFilePath.c_str());

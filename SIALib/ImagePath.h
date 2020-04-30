@@ -63,6 +63,7 @@ class ImagePath {
 	std::string m_relpath;
 	std::string m_imagePath;
 	std::string m_imageName;
+	std::string m_encodedImageName;
 	std::string m_orginalName;
 	std::string m_yearStr;
 	std::string m_yyyymmddStr;
@@ -116,6 +117,10 @@ public:
 		m_imageName = imageName;
 	}
 
+	void setEncodedImageName(const char* imageName) {
+		m_encodedImageName = imageName;
+	}
+
 	void setOrginalName(const char *imageName) {
 		m_orginalName = imageName;
 	}
@@ -127,6 +132,10 @@ public:
 
 	const std::string& getImageName() const noexcept {
 		return m_imageName;
+	}
+
+	const std::string& getEncodedImageName() const noexcept {
+		return m_encodedImageName;
 	}
 
 	const std::string& getOrginalName() const noexcept {

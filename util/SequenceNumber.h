@@ -3,7 +3,9 @@
 #include <cctype>
 #include <sstream>
 #include <iomanip>
+#include "Base32.h"
 
+/*
 class Base32 {
 	std::string m_str;
 	unsigned long m_int;
@@ -21,7 +23,7 @@ public:
 		return m_str.c_str();
 	}
 };
-
+*/
 
 
 class ImageSequence {

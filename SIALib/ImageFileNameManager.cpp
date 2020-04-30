@@ -1,28 +1,30 @@
-#include "SequenceFileManager.h"
+#include "ImageFileNameManager.h"
 #include "SequenceNumber.h"
+#include "ImageEncodeBase32.h"
+
 #include <string>
 #include <vector>
 #include "SAUtils.h"
 
-ImageSequenceOption SequenceFileManager::m_option = ImageSequenceOption::NoRename;
-std::string SequenceFileManager::m_masterPath;
+ImageFileNameOption ImageFileNameManager::m_option = ImageFileNameOption::Default;
+std::string ImageFileNameManager::m_masterPath;
 
-SequenceFileManager::SequenceFileManager()
+ImageFileNameManager::ImageFileNameManager()
 {
 }
 
 
-SequenceFileManager::~SequenceFileManager()
+ImageFileNameManager::~ImageFileNameManager()
 {
 }
 
 
-SequenceFileManager& SequenceFileManager::get() {
-	static SequenceFileManager sequenceFileManager;
-	return sequenceFileManager;
+ImageFileNameManager& ImageFileNameManager::get() {
+	static ImageFileNameManager imageFileNameManager;
+	return imageFileNameManager;
 }
 
-const char *SequenceFileManager::sequenceFile(const char *yearDay, long seq, const char * orginalName)
+const char * ImageFileNameManager::getFileName(const char *yearDay, long seq, const char * orginalName)
 {
 	std::string yearDayStr = yearDay;
 	int y = atoi(yearDayStr.substr(2,2).c_str());
@@ -37,28 +39,33 @@ const char *SequenceFileManager::sequenceFile(const char *yearDay, long seq, con
 	imagePath += '/';
 	imagePath += yearDayStr;
 	imagePath += "/images";
-	return sequenceFile(y, m, d, seq, imagePath, orginalName);
+	return getFileName(y, m, d, seq, imagePath, orginalName);
 	//return orginalName;
 }
 
-const char *SequenceFileManager::sequenceFile(int y, int m, int d, long seq, const std::string& imagePath, const char * orginalName)
+const char * ImageFileNameManager::getFileName(int y, int m, int d, long seq, const std::string& imagePath, const char * orginalName)
 {
 	std::string ext = SAUtils::getExtention(orginalName);
 	std::string name = SAUtils::getFilenameNoExt(orginalName);
 	std::shared_ptr<ImageSequence> sequence;
 	switch (m_option) {
-	case ImageSequenceOption::NoRename:
+	case ImageFileNameOption::NoRename:
 		sequence = std::make_shared<NoRenameSequence>(name.c_str(), imagePath.c_str());
 		break;
-	case ImageSequenceOption::UseNumber:
+	case ImageFileNameOption::UseNumber:
 		sequence = std::make_shared<NumberSequence>(y, m, d, seq, imagePath.c_str());
 		break;
-	case ImageSequenceOption::UseDate:
+	case ImageFileNameOption::UseDate:
 		sequence = std::make_shared<DateSequence>(y, m, d, seq, imagePath.c_str());
 		break;
-	case ImageSequenceOption::Unknown:
+	case ImageFileNameOption::Unknown:
+	case ImageFileNameOption::Default:
 	default:
-		return nullptr;
+		{
+			ImageEncodeBase32 imageEncode((long)seq, name.c_str(), 0, ext.c_str());
+			m_name = imageEncode.getEncodedString();
+			return m_name.c_str();
+		}
 	}
 	//NumberSequence numberSequence(y, m, d, seq, m_masterPath.c_str());
 	m_name = sequence->toSequence();
