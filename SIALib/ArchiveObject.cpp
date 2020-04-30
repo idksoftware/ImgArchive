@@ -949,21 +949,15 @@ namespace simplearchive {
 			BasicMetadata.getUuid().c_str(), 0, date) == false) {
 			return false;
 		}
-		// processing file name
-	
 		std::string filepath = imagePath.getRelativePath() + '/' + imagePath.getImageName();
 		std::string shortFilePath = imagePath.getYyyymmddStr() + "/" + imagePath.getImageName();
-
-		
-
-		//std::string filepath = imagePath.getRelativePath() + '/' + encodedImage;
-		//std::string shortFilePath = imagePath.getYyyymmddStr() + "/" + encodedImage;
 
 		// main
 		if (copyFile2Master(imagePath.getCurrentSourcePath(), imagePath.getYyyymmddStr(), imagePath.getOrginalName(), imagePath.getEncodedImageName()) == false) {
 			logger.log(LOG_OK, CLogger::Level::FATAL, "Fataled to copy image \"%s\" to Master Archive", imagePath.getImageName().c_str());
 			return false;
 		}
+
 		if (imagePath.copyFile2Workspace(imagePath.getCurrentSourcePath(), imagePath.getOrginalName(), imagePath.getImageName()) == false) {
 			logger.log(LOG_OK, CLogger::Level::FATAL, "Fataled to copy image \"%s\" to current Workspace", imagePath.getImageName().c_str());
 			return false;
@@ -973,6 +967,7 @@ namespace simplearchive {
 		try {
 			csvDatabase.add(metadataObject, shortFilePath.c_str());
 		}
+
 		catch (std::exception /*&e*/) {
 
 			logger.log(LOG_OK, CLogger::Level::FATAL, "Unable to read database: \"%s\" Error: %s", filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
