@@ -176,6 +176,7 @@ namespace simplearchive {
 	}
 
 	bool History::logImageHistory(const char *filepath, LogDocument::FormatType formatType) {
+		
 		std::shared_ptr<ImageHistoryLog> log;
 		if ((log = imageHistory->getEntries(filepath)) == nullptr) {
 			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
@@ -254,7 +255,7 @@ namespace simplearchive {
 		std::cout << "Date Time             version     Event      Comment\n\n";
 		for (std::list<std::string>::iterator i = begin(); i != end(); i++) {
 			//std::cout << *i << '\n';
-			CSVArgs csvArgs(':');
+			CSVArgs csvArgs(',');
 			if (csvArgs.process(i->c_str()) == false) {
 				return false;
 			}

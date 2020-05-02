@@ -197,7 +197,7 @@ namespace simplearchive {
 				if (!m_addressScope->isInScope(dateStr.c_str())) {
 					continue;
 				}
-				PathController pathController(dayfolder.c_str());
+				PathController pathController(dayfolder.c_str(), false);
 				m_indexAction->onDayFolder(dayfolder.c_str());
 			
 				std::string filenameStr = yearMaster;

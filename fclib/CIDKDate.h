@@ -220,7 +220,7 @@ public:
 
 	CIDKDate(unsigned long nNumberOfDays,unsigned long nNumberOfSeconds)
 	{
-		m_nTime = nNumberOfDays * IDK_DATE_SECONDS_IN_DAY + nNumberOfSeconds;
+		m_nTime = nNumberOfDays * (unsigned long)IDK_DATE_SECONDS_IN_DAY + nNumberOfSeconds;
 	}
 
 	bool SetSeconds(long nSeconds = 0)

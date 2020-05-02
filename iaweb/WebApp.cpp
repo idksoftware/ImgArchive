@@ -249,6 +249,7 @@ bool AdminApp::doRun()
 	}
 	case AppOptions::CommandMode::CM_Validate:
 	{
+		/*
 		SIALib siaLib;
 		siaLib.initalise();
 		AppConfig &config = AppConfig::get();
@@ -260,7 +261,7 @@ bool AdminApp::doRun()
 		CompletedSummary completedSummary;
 		switch (appOptions.getVerifyOperation()) {
 		case AppOptions::VerifyOperation::Workspace:
-			if (siaLib.validate(config.getMasterPath(), config.getWorkspacePath(), config.getHomePath(), SIALib::Workspace, appOptions.repair()) == false) {
+			if (siaLib.validate(config.getMasterPath(), config.getWorkspacePath(), config.getHomePath(), SIALib::MainArchives::Workspace, appOptions.repair()) == false) {
 				return false;
 			}
 			break;
@@ -289,7 +290,7 @@ bool AdminApp::doRun()
 	}
 
 	
-	
+	*/
 	return true;
 }
 

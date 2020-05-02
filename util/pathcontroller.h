@@ -19,7 +19,7 @@ namespace simplearchive {
 		std::string m_root;
 		
 	public:
-		PathController(const char *path, bool valid = true);
+		PathController(const char *path, bool valid = false);
 		PathController();
 		~PathController();
 
@@ -168,7 +168,6 @@ namespace simplearchive {
 			}
 			else {
 				m_isValid = false;
-				ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 			}
 			m_fullPath = path;
 			return m_isValid;

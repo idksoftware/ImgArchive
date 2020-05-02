@@ -756,7 +756,7 @@ namespace simplearchive {
 
 		std::string csvpdbPath = primaryIndexPath.getCSVDatabasePath();
 		CSVDatabase::setDBPath(csvpdbPath.c_str());
-		History::setPaths(ArchivePath::getIndexHistory().c_str(), ArchivePath::getPathToWorkspace().c_str(), ArchivePath::getMainHistory().c_str());
+		History::setPaths(ArchivePath::getIndexHistory().c_str(), ArchivePath::getPathToWorkspace().c_str(), config.getHistoryPath());
 
 		History& history = History::getHistory();
 		history.init();
@@ -1439,8 +1439,26 @@ namespace simplearchive {
 		CLogger &logger = CLogger::getLogger();
 
 		VersionControl& versionControl = VersionControl::getInstance();
+		std::string commentWithWarning = comment;
 
 		if (versionControl.checkoutFile(filepath, comment, force) == false) {
+			if (ErrorCode::getErrorCode() == IMGA_ERROR::ALREADY_CHECKED_OUT && !force) {
+				commentWithWarning += ErrorCode::toString(ErrorCode::getErrorCode());
+			}
+			else if (ErrorCode::getErrorCode() == IMGA_ERROR::TARGET_NOT_FOUND) {
+				commentWithWarning += ErrorCode::toString(ErrorCode::getErrorCode());
+			}
+			else if (ErrorCode::getErrorCode() == IMGA_ERROR::WILL_OVERWRITE_CHANGES) {
+				commentWithWarning += ErrorCode::toString(ErrorCode::getErrorCode());
+			}
+			else {
+				logger.log(LOG_UNABLE_TO_CHECKOUT_GENERAL, CLogger::Level::INFO, "Unable to checkout: \"%s\" Error: %s", filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
+				commentWithWarning += ErrorCode::toString(ErrorCode::getErrorCode());
+			}
+			History& history = History::getHistory();
+			if (history.checkoutImage(filepath, versionControl.getVersion(), commentWithWarning.c_str()) == false) {
+				logger.log(LOG_UNABLE_TO_CHECKOUT_GENERAL, CLogger::Level::FATAL, "Unable to update checkout history for image: \"%s\" Error: %s", filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
+			}
 			return false;
 		}
 		
@@ -1464,8 +1482,9 @@ namespace simplearchive {
 			return false;
 		}
 		*/
+		commentWithWarning += " Successful";
 		History& history = History::getHistory();
-		if (history.checkoutImage(filepath, versionControl.getVersion(), comment) == false) {
+		if (history.checkoutImage(filepath, versionControl.getVersion(), commentWithWarning.c_str()) == false) {
 			logger.log(LOG_UNABLE_TO_CHECKOUT_GENERAL, CLogger::Level::FATAL, "Unable to update checkout history for image: \"%s\" Error: %s", filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
 			return false;
 		}
@@ -1511,24 +1530,41 @@ namespace simplearchive {
 		// Fill-in the details of the checkedin image
 		std::string ddmmyy = pathController.getFullPath();
 		FileInfo fileInfo(ddmmyy);
+
+		std::string commentWithWarning = comment;
 		if (!force) {
 			if (checkoutStatus.isChanged(filepath, versionControl.getCRC(), versionControl.getMD5().c_str()) == false) {
+
+				
+
 				if (alreadyCheckedIn) {
 					ErrorCode::setErrorCode(IMGA_ERROR::ALREADY_CHECKED_IN_NO_CHANGES);
-					return false; // Just return now as not changes found.
+					commentWithWarning += " Warning: Already checked in";
+					History& history = History::getHistory();
+					history.checkinImage(filepath, version, commentWithWarning.c_str());
+					return false; // Just return now as no changes found.
 				}
 				// not checked in but no changes so just change state to checked-in
 				logger.log(LOG_OK, CLogger::Level::INFO, "Already checked in and No changes have been made to image: \"%s\" Warning: %s", filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
 				if (checkoutStatus.checkinUpdate(filepath, comment) == false) {
 					logger.log(LOG_OK, CLogger::Level::FATAL, "Unable to checkin: \"%s\" Warning: %s", filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
+					commentWithWarning += " Fatal: Unable to checkin";
+					History& history = History::getHistory();
+					history.checkinImage(filepath, version, commentWithWarning.c_str());
 					return false;
 				}
+				commentWithWarning += " Warning: No changes found";
+				History& history = History::getHistory();
+				history.checkinImage(filepath, version, commentWithWarning.c_str());
 				return false;
 			}
 			else {
 				if (alreadyCheckedIn) {
 					ErrorCode::setErrorCode(IMGA_ERROR::ALREADY_CHECKED_IN_CHANGES);
 					logger.log(LOG_UNABLE_TO_CHECKOUT_GENERAL, CLogger::Level::WARNING, "Already checked in: \"%s\" Reason: %s", filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
+					commentWithWarning += " Warning: Already checked in";
+					History& history = History::getHistory();
+					history.checkinImage(filepath, version, commentWithWarning.c_str());
 					return false; // changes found.
 				}
 			}
@@ -1638,8 +1674,9 @@ namespace simplearchive {
 		return false;
 		}
 		*/
+		commentWithWarning += " Successful";
 		History& history = History::getHistory();
-		history.checkinImage(pathController.getShortRelativePath().c_str(), version, comment);
+		history.checkinImage(filepath, version, comment);
 
 		return true;
 	}

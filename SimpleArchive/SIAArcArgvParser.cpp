@@ -60,9 +60,15 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	
 	defineOption("status", "show check in/out status", ArgvParser::MasterOption);
 	defineOption("view", "View commands", ArgvParser::MasterOption);
+
 	defineOption("show", "Show details", ArgvParser::MasterOption);
+	defineCommandSyntax("show", "iaarc show [--history=<image-address>]\n\t");
+
 	defineOption("prop", "Manage image properties", ArgvParser::MasterOption);
-	defineOption("log", "Show history log", ArgvParser::MasterOption);
+
+	defineOption("log", "Show logs", ArgvParser::MasterOption);
+	defineCommandSyntax("log", "iaarc log [--image=<image-address]");
+
 	//defineOption("mode", "Sets the mode in which imgarchive will be operating", ArgvParser::MasterOption);
 
 	defineOption("about", "prints this version information", ArgvParser::MasterOption);
@@ -73,8 +79,6 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineOptionAlternative("b", "backup");
 	*/
 	// Options
-	defineOption("I", "image address.", ArgvParser::OptionRequiresValue);
-	defineOptionAlternative("I", "image-address");
 
 	defineOption("n", "name of the view.", ArgvParser::OptionRequiresValue);
 	defineOptionAlternative("n", "name");
@@ -112,7 +116,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineOption("fd", "from date", ArgvParser::OptionRequiresValue);
 	defineOptionAlternative("fd", "from-date");
 
-	defineOption("image", "Specifies a image file name", ArgvParser::OptionRequiresValue);
+	defineOption("image", "Specifies a image address in the form \"<date>/<image name>", ArgvParser::OptionRequiresValue);
 	//defineOptionAlternative("i", "image");
 
 	defineOption("F", "no output is sent to the terminal.", ArgvParser::NoOptionAttribute);
@@ -131,8 +135,8 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineOption("r", "location of the archive root folder.", ArgvParser::NoOptionAttribute);
 	defineOptionAlternative("r", "root");
 
-	defineOption("ft", "text output format type. Can be \"Humam\", \"XML\" \"Json\" or \"cvs\" i.e format-type=XML.", ArgvParser::OptionRequiresValue);
-	defineOptionAlternative("ft", "format-type");
+	defineOption("format-type", "text output format type. Can be \"Humam\", \"XML\" \"Json\" or \"cvs\" i.e format-type=XML.", ArgvParser::OptionRequiresValue);
+	//defineOptionAlternative("ft", "format-type");
 
 	defineOption("l", "Temporarily changes the logging level for the scope of this command session.", ArgvParser::OptionRequiresValue);
 	defineOptionAlternative("l", "logging-level");
@@ -143,8 +147,8 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineOption("li", "List items", ArgvParser::OptionRequiresValue);
 	defineOptionAlternative("li", "list");
 
-	defineOption("U", "Show setup", ArgvParser::NoOptionAttribute);
-	defineOptionAlternative("U", "setup");
+	defineOption("U", "Show settup", ArgvParser::NoOptionAttribute);
+	defineOptionAlternative("U", "settup");
 
 	defineOption("out", "Output type: text, xml, json or html.", ArgvParser::OptionRequiresValue);
 	defineCommandSyntax("out", "out=[plain] | [xml] | [json] | [html]\n");
@@ -195,9 +199,9 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	
 
 
-	defineCommandOption("show", "setup");
+	defineCommandOption("show", "settup");
 
-	defineCommandOption("log",  "image-address");
+	defineCommandOption("log",  "image");
 	defineCommandOption("log",  "format-type");
 //	defineCommandOption("mode", "remote-server");
 
@@ -221,8 +225,6 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 		std::cout << generalHelp(80); // this is printf("%s", usageDescription(80).c_str()); in iaadmin
 		return false;
 	case ArgvParser::TopicHelpRequested:
-		printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
-		return false;
 		std::cout << topicUsageDescription(getCurrentCommandId(), 80);
 		return false;
 	case ArgvParser::ParserCommandNotFound:
@@ -312,6 +314,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 		cmdFound = true;
 	}
 	else if (command("get") == true) {
+
 		if (foundOption("scope") == true) {
 			appOptions.m_imageAddress = optionValue("scope");
 		}
@@ -337,6 +340,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 		cmdFound = true;
 	}
 	else if (command("checkout") == true) {
+
 		if (foundOption("scope") == true) {
 			appOptions.m_imageAddress = optionValue("scope");
 		}
@@ -391,9 +395,13 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 		cmdFound = true;
 	}
 	else if (command("uncheckout") == true) {
-		if (foundOption("image-address") == true) {
-			appOptions.m_imageAddress = optionValue("image-address");
+
+		bool gotImageAddress = false;
+		if (foundOption("image") == true) {
+			appOptions.m_imageAddress = optionValue("image");
+			gotImageAddress = true;
 		}
+
 		if (foundOption("comment") == true) {
 			appOptions.m_comment = optionValue("comment");
 		}
@@ -470,8 +478,10 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 
 	else if (command("log") == true) {
 
-		if (foundOption("image-address") == true) {
-			appOptions.m_imageAddress = optionValue("image-address");
+		bool gotImageAddress = false;
+		if (foundOption("image") == true) {
+			appOptions.m_imageAddress = optionValue("image");
+			gotImageAddress = true;
 		}
 		
 		if (foundOption("archive-path") == true) {
@@ -487,6 +497,11 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 		const auto& args = ArgvParser::getDefaultArgumentsContainer();
 		for (auto i = args.begin(); i != args.end(); i++) {
 			appOptions.setDefaultArguments(*i);
+		}
+		if (gotImageAddress == false) {
+			printf("log: Needs image address\n\n");
+			printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+			return false;
 		}
 
 		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Log);
@@ -761,215 +776,7 @@ std::string SIAArcArgvParser::generalHelp(unsigned int _width) const
 }
 
 
-/*
-std::string SIAArcArgvParser::usageDescription(unsigned int _width) const
-{
-	std::string usage; // the usage description text
 
-	
-
-	usage += '\n';
-
-	usage += usageDescriptionHeader(_width);
-
-	usage += formatString(command_header, _width) + "\n";
-	usage += '\n';
-	usage += AVAILABLE_COMMANDS;
-	usage += ":\n\n";
-
-	for (auto it = option2attribute.begin(); it != option2attribute.end(); ++it)
-	{
-		std::string _os; // temp string for the option
-		if (option2attribute.find(it->first)->second != MasterOption) {
-			continue;
-		}
-		std::string _longOpt;
-		std::string _shortOpt;
-		std::list<std::string> alternatives = getAllOptionAlternatives(it->first);
-		for (auto alt = alternatives.begin();
-			alt != alternatives.end();
-			++alt)
-		{
-			if (option2attribute.find(it->first)->second == MasterOption) {
-				int option = option2attribute.find(it->first)->second;
-				_os.clear();
-				if (alt->length() > 1) {
-					_longOpt += *alt;
-				}
-				else {
-					_shortOpt += *alt;
-				}
-
-
-			}
-		}
-
-		if (!_longOpt.empty()) {
-			_os += ' ';
-			_os += _longOpt;
-		}
-		if (!_shortOpt.empty()) {
-			_os += " (";
-			_os += _shortOpt;
-			_os += ')';
-		}
-		//_os += " - ";
-		usage += formatLine(_os, _width, 0, 20);
-		_os.clear();
-		_longOpt.clear();
-		_shortOpt.clear();
-		if (option2descr.find(it->first) != option2descr.end())
-			//usage += formatString(option2descr.find(it->first)->second, _width, _os.length() + 2) + "\n";
-			usage += formatString(option2descr.find(it->first)->second, _width) + "\n";
-		else
-			usage += formatString("(no description)", _width, 4) + "\n";
-
-	}
-
-
-	if (!errorcode2descr.size()) // if have no errorcodes
-		return(usage);
-
-	usage += "\n";
-	usage += formatString("Return codes:\n", _width) + "\n";
-
-	//   map<int, string>::const_iterator eit;
-	for (auto alt = errorcode2descr.begin();
-		alt != errorcode2descr.end();
-		++alt)
-	{
-		std::ostringstream code;
-		code << alt->first;
-		std::string label = formatString(code.str(), _width, 4);
-		std::string descr = formatString(alt->second, _width, 10);
-		usage += label + descr.substr(label.length()) + "\n";
-	}
-	usage += '\n';
-	usage += "Image Archive is a tool for image archiving and version control system.\n";
-	usage += "For additional information, see \"http://www.idk-software.com/\"";
-	usage += '\n';
-	return(usage);
-}
-*/
-/*
-
-
-
-*/
-/*
-std::string SIAArcArgvParser::topicUsageDescription(unsigned int topic, unsigned int _width) const
-{
-	std::string usage;
-
-	usage += usageDescriptionHeader(_width);
-	usage += "\nNAME: "; // the usage description text
-
-	std::string _os; // temp string for the option
-	if (option2attribute.find(topic)->second != MasterOption) {
-		usage = "error";
-		return usage;
-	}
-	std::string _longOpt;
-	std::string _shortOpt;
-
-	
-	
-	
-	usage += formatString(_os, _width) + "\n";
-	_os.clear();
-
-	std::list<std::string> alternatives = getAllOptionAlternatives(topic);
-	for (auto alt = alternatives.begin();
-		alt != alternatives.end();
-		++alt)
-	{
-		if (option2attribute.find(topic)->second == MasterOption) {
-			int option = option2attribute.find(topic)->second;
-			_os.clear();
-			if (alt->length() > 1) {
-				_longOpt += *alt;
-			}
-			else {
-				_shortOpt += *alt;
-			}
-
-
-		}
-
-	}
-
-	if (!_longOpt.empty()) {
-		_os += ' ';
-		_os += _longOpt;
-	}
-	if (!_shortOpt.empty()) {
-		_os += " (";
-		_os += _shortOpt;
-		_os += ')';
-	}
-	_os += "";
-	usage += '\t';
-	usage += formatString(_os, _width) + "\n";
-	_os.clear();
-	_longOpt.clear();
-	_shortOpt.clear();
-	
-	usage += "\nSYNTAX:\n";
-	std::string syntax = getSyntax("import");
-	usage += formatString(syntax, _width, 4);
-	if (option2descr.find(topic) != option2descr.end())
-		usage += formatString(option2descr.find(topic)->second, _width, 4) + "\n\n";
-	else
-		usage += formatString("(no description)", _width, 4) + "\n\n";
-
-	usage += "OPTIONS: \n\n";
-	ArgumentContainer ac = command_set.find(topic)->second;
-
-	for (auto opt = ac.begin(); opt != ac.end(); opt++) {
-		//printf("%s\n", opt->c_str());
-		unsigned int key = option2key.find(opt->c_str())->second;
-		std::list<std::string> alternatives = getAllOptionAlternatives(key);
-		for (auto alt = alternatives.begin();
-			alt != alternatives.end();
-			++alt)
-		{
-			int option = option2attribute.find(key)->second;
-			_os.clear();
-			if (alt->length() > 1) {
-
-				_longOpt += *alt;
-			}
-			else {
-				_shortOpt += *alt;
-			}
-		}
-
-		if (!_longOpt.empty()) {
-			_os += "\t--";
-			_os += _longOpt;
-		}
-		if (!_shortOpt.empty()) {
-			_os += " (-";
-			_os += _shortOpt;
-			_os += ')';
-		}
-		_os += " : ";
-		usage += formatString(_os, _width) + "\n";
-		_os.clear();
-		_longOpt.clear();
-		_shortOpt.clear();
-
-		if (option2descr.find(key) != option2descr.end()) {
-			std::string desc = "\t";
-			desc += option2descr.find(key)->second;
-			usage += formatString(desc, _width, 4) + "\n\n";
-		}
-		else
-			usage += formatString("\t(no description)", _width, 4) + "\n\n";
-	}
-	return(usage);
-}
-*/
 
 
 } /* name*/

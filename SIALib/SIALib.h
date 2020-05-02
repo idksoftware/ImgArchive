@@ -138,12 +138,12 @@ namespace simplearchive {
 
 		bool get(const char *filepath, const char *comment, bool force);
 
-		bool checkout(const char *filepath, const char *comment, bool force);
-
-		bool checkin(const char *filepath, const char *comment, bool force);
-			
-		bool uncheckout(const char *filepath, const char *comment, bool force);
-
+		bool checkout(const char *scope, const char *comment, bool force);
+		
+		bool checkin(const char * scope, const char *comment, bool force);
+		
+		bool uncheckout(const char* scope, const char* comment, bool force);
+		
 		bool exportImage(const char *distpath);
 
 		bool view(const char *name);

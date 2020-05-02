@@ -51,8 +51,6 @@ namespace simplearchive {
 		bool uncheckoutFile(const char *filepath, const char *comment, bool force);
 		bool getVersions(const char *filepath, const char *versions, bool force);
 
-		
-
 		std::string &getCurrentVersionPath() {
 			return m_currentVersionPath;
 		}

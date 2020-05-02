@@ -61,7 +61,6 @@ namespace simplearchive {
 		int ret = access(path, 0);
 #endif
 		if (ret == -1) {
-			ErrorCode::setErrorCode(IMGA_ERROR::FILE_NOT_FOUND);
 			return false;
 		}
 		return true;

@@ -486,22 +486,23 @@ namespace simplearchive {
 		return true;
 	}
 
-	bool SIALib::checkin(const char *scope, const char *comment, bool force) {
+	bool SIALib::checkin(const char* scope, const char* comment, bool force) {
 		if (ArchiveObject::getInstance().checkin(scope, comment, force) == false) {
 			return false;
 		}
 		return true;
 	}
 
-	bool SIALib::uncheckout(const char *scope, const char *comment, bool force) {
+	bool SIALib::uncheckout(const char* scope, const char* comment, bool force) {
 		if (ArchiveObject::getInstance().uncheckout(scope, comment, force) == false) {
 			return false;
 		}
 		return true;
-		
+
 	}
 
 	bool SIALib::log(const char *filepath, LogDocument::FormatType& formatType) {
+		
 		if (ArchiveObject::getInstance().imageHistory(filepath, formatType) == false) {
 			return false;
 		}

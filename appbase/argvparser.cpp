@@ -918,6 +918,10 @@ list<string> ArgvParser::getAllOptionAlternatives( unsigned int _key ) const
 
 std::string CommandLineProcessing::ArgvParser::getSyntax(const std::string& _command) const
 {
+	if (option2key.find(_command) == option2key.end()) {
+		// application error
+		return false;
+	}
 	int key = option2key.find(_command)->second;
 	if (command2syntax.find(key) == command2syntax.end()) {
 		std::string ret;

@@ -81,238 +81,239 @@ static char THIS_FILE[] = __FILE__;
 
 namespace simplearchive {
 
-std::string VersionControl::m_pathToPrimary;
-std::string VersionControl::m_pathToMaster;
-std::string VersionControl::m_pathToDerivative;
-std::string VersionControl::m_workspace;
+	std::string VersionControl::m_pathToPrimary;
+	std::string VersionControl::m_pathToMaster;
+	std::string VersionControl::m_pathToDerivative;
+	std::string VersionControl::m_workspace;
 
-void VersionControl::setPaths(const char *primary, const char *master, const char *derivative, const char *workspace) {
-	m_pathToPrimary = primary;
-	m_pathToMaster = master;
-	m_pathToDerivative = derivative;
-	m_workspace = workspace;
-}
-
-VersionControl &VersionControl::getInstance() {
-	static VersionControl versionControl;
-	return versionControl;
-}
-
-bool VersionControl::setCurrentVersion(const char *filepath) {
-	CLogger &logger = CLogger::getLogger();
-	PathController pathController;
-	if (pathController.splitShort(filepath) == false) {
-		return false;
+	void VersionControl::setPaths(const char* primary, const char* master, const char* derivative, const char* workspace) {
+		m_pathToPrimary = primary;
+		m_pathToMaster = master;
+		m_pathToDerivative = derivative;
+		m_workspace = workspace;
 	}
-	std::string fullWS = m_workspace;
-	fullWS += '/';
-	fullWS += pathController.getYear();
-	fullWS += '/';
-	fullWS += filepath;
 
-	// Note the file in the workspace may not exist
-	//if (!SAUtils::FileExists(fullWS.c_str())) {
-	//	return false;
-	//}
-	m_relativeWorkspacePath = filepath;
-	if (m_versionIndex->setRowCursor(filepath) == false) {
-		//logger.log(LOG_UNABLE_TO_CHECKOUT_GENERAL, CLogger::Level::FATAL, "Unable to checkout: \"%s\" Error: %s", filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
-		return false;
+	VersionControl& VersionControl::getInstance() {
+		static VersionControl versionControl;
+		return versionControl;
 	}
-	SharedMTRow row = m_versionIndex->getCurrentRow();
-	m_version = row->columnAt(DB_VERSION).getInt();
-	m_currentVersionPath = row->columnAt(DB_VERSIONPATH).getString();
-	m_crc = row->columnAt(DB_CRC).getInt();
-	m_md5 = row->columnAt(DB_MD5).getString();
-	return true;
-}
 
-void VersionControl::setCurrentVersion(const char *repositoryPath, const char *sourceRelPath, const char *fileName, int version) {
-	m_currentVersion = std::make_shared<Version>(repositoryPath, sourceRelPath, fileName, version);
-}
-
-bool VersionControl::createDerivativeVersion(FileInfo& fileInfo, int derivativeSeqNumber, int primarySeqNumber) {
-	
-	VersionMetadataObject vmo;
-	PathController pathController(fileInfo.getPath().c_str());
-	if (pathController.split() == false) {
-		return false;
-	}
-	ExifDate addDate;
-	vmo.columnAt(DB_SEQUENCEID) = primarySeqNumber;
-	vmo.columnAt(DB_VERSION) = m_currentVersion->getVersion();
-	vmo.columnAt(DB_DATABASEID) = derivativeSeqNumber;
-	vmo.columnAt(DB_FILENAME) = m_currentVersion->getVersionName().c_str();
-	vmo.columnAt(DB_ORGINALNAME) = fileInfo.getName().c_str();
-	std::string shortRelPath = m_currentVersion->getShortRelPath();
-	shortRelPath += '/';
-	shortRelPath += m_currentVersion->makeEncodedVersion();
-	vmo.columnAt(DB_VERSIONPATH) = shortRelPath.c_str();
-	//vmo.columnAt(DB_VERSIONPATH) = version.getVersionPath().c_str();
-	vmo.columnAt(DB_CRC) = fileInfo.getCrc();
-	vmo.columnAt(DB_MD5) = fileInfo.getMd5().c_str();
-	vmo.columnAt(DB_UUID) = fileInfo.getUuid().c_str();
-	vmo.columnAt(DB_FILESIZE) = fileInfo.getSize();
-	vmo.columnAt(DB_DATEMODIFIED) = fileInfo.getModTime();
-	vmo.columnAt(DB_DATECREATE) = fileInfo.getCreateTime();
-	ExifDateTime addTime;
-
-	vmo.columnAt(DB_DATEADDED) = addTime;
-
-	if (m_versionIndex->createDerivativeVersion(vmo, pathController.getYearday().c_str(), vmo.columnAt(DB_DATABASEID).getInt(), vmo.columnAt(DB_SEQUENCEID).getInt(), fileInfo.getName().c_str()) == false) {
-		return false;
-	}
-	return true;
-}
-
-bool VersionControl::checkoutFile(const char *filepath, const char *comment, bool force) {
-	CLogger &logger = CLogger::getLogger();
-	
-	
-	std::string targetRootPath = m_workspace;
-	PathController pathController;
-	if (pathController.splitShort(filepath) == false) {
-		ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
-		logger.log(LOG_UNABLE_TO_CHECKOUT_GENERAL, CLogger::Level::FATAL, "Unable to checkout: \"%s\" Error: %s", filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
-		return false;
-	}
-	pathController.makeImagePath();
-	if (setCurrentVersion(filepath) == false) {
-		logger.log(LOG_UNABLE_TO_CHECKOUT_GENERAL, CLogger::Level::FATAL, "Unable to checkout: \"%s\" Error: %s", filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
-		return false;
-	}
-	std::string versionPath = getCurrentVersionPath();
-	int version = getVersion();
-
-	CheckoutStatus checkoutStatus;
-	// It should be checked in so to be checked out.
-	if (checkoutStatus.isCheckedIn(filepath) == false) {
-
-		if (ErrorCode::getErrorCode() == IMGA_ERROR::ALREADY_CHECKED_OUT && !force) {
-			// return after not checkinh out as checked out already and not forced to check out
+	bool VersionControl::setCurrentVersion(const char* filepath) {
+		CLogger& logger = CLogger::getLogger();
+		PathController pathController;
+		if (pathController.splitShort(filepath) == false) {
 			return false;
 		}
-		if (ErrorCode::getErrorCode() == IMGA_ERROR::TARGET_NOT_FOUND) {
-			// Not an error but the image needs to be copied form the repository to the workspace
+		std::string fullWS = m_workspace;
+		fullWS += '/';
+		fullWS += pathController.getYear();
+		fullWS += '/';
+		fullWS += filepath;
+
+		// Note the file in the workspace may not exist
+		//if (!SAUtils::FileExists(fullWS.c_str())) {
+		//	return false;
+		//}
+		m_relativeWorkspacePath = filepath;
+		if (m_versionIndex->setRowCursor(filepath) == false) {
+			//logger.log(LOG_UNABLE_TO_CHECKOUT_GENERAL, CLogger::Level::FATAL, "Unable to checkout: \"%s\" Error: %s", filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
 			return false;
 		}
-
-		else if (ErrorCode::getErrorCode() == IMGA_ERROR::WILL_OVERWRITE_CHANGES) {
-			// This may be an option
-
-			return false;
-		}
-		else {
-			logger.log(LOG_UNABLE_TO_CHECKOUT_GENERAL, CLogger::Level::INFO, "Unable to checkout: \"%s\" Error: %s", filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
-			return false;
-		}
-
-		return false;
+		SharedMTRow row = m_versionIndex->getCurrentRow();
+		m_version = row->columnAt(DB_VERSION).getInt();
+		m_currentVersionPath = row->columnAt(DB_VERSIONPATH).getString();
+		m_crc = row->columnAt(DB_CRC).getInt();
+		m_md5 = row->columnAt(DB_MD5).getString();
+		return true;
 	}
-	if (getVersion() == 0) {
-		// Original
-		if (checkoutFromMaster(filepath, comment, force) == false) {
-			if (ErrorCode::getErrorCode() != IMGA_ERROR::CHANGE_MAY_BE_LOST) {
-				logger.log((LOG_OK + 1), CLogger::Level::FATAL, "Unable to checkout: \"%s\" Error: %s", filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
+
+	void VersionControl::setCurrentVersion(const char* repositoryPath, const char* sourceRelPath, const char* fileName, int version) {
+		m_currentVersion = std::make_shared<Version>(repositoryPath, sourceRelPath, fileName, version);
+	}
+
+	bool VersionControl::createDerivativeVersion(FileInfo& fileInfo, int derivativeSeqNumber, int primarySeqNumber) {
+
+		VersionMetadataObject vmo;
+		PathController pathController(fileInfo.getPath().c_str());
+		if (pathController.split() == false) {
+			return false;
+		}
+		ExifDate addDate;
+		vmo.columnAt(DB_SEQUENCEID) = primarySeqNumber;
+		vmo.columnAt(DB_VERSION) = m_currentVersion->getVersion();
+		vmo.columnAt(DB_DATABASEID) = derivativeSeqNumber;
+		vmo.columnAt(DB_FILENAME) = m_currentVersion->getVersionName().c_str();
+		vmo.columnAt(DB_ORGINALNAME) = fileInfo.getName().c_str();
+		std::string shortRelPath = m_currentVersion->getShortRelPath();
+		shortRelPath += '/';
+		shortRelPath += m_currentVersion->makeEncodedVersion();
+		vmo.columnAt(DB_VERSIONPATH) = shortRelPath.c_str();
+		//vmo.columnAt(DB_VERSIONPATH) = version.getVersionPath().c_str();
+		vmo.columnAt(DB_CRC) = fileInfo.getCrc();
+		vmo.columnAt(DB_MD5) = fileInfo.getMd5().c_str();
+		vmo.columnAt(DB_UUID) = fileInfo.getUuid().c_str();
+		vmo.columnAt(DB_FILESIZE) = fileInfo.getSize();
+		vmo.columnAt(DB_DATEMODIFIED) = fileInfo.getModTime();
+		vmo.columnAt(DB_DATECREATE) = fileInfo.getCreateTime();
+		ExifDateTime addTime;
+
+		vmo.columnAt(DB_DATEADDED) = addTime;
+
+		if (m_versionIndex->createDerivativeVersion(vmo, pathController.getYearday().c_str(), vmo.columnAt(DB_DATABASEID).getInt(), vmo.columnAt(DB_SEQUENCEID).getInt(), fileInfo.getName().c_str()) == false) {
+			return false;
+		}
+		return true;
+	}
+
+	bool VersionControl::checkoutFile(const char* filepath, const char* comment, bool force) {
+		CLogger& logger = CLogger::getLogger();
+
+
+		std::string targetRootPath = m_workspace;
+		//PathController pathController;
+		//if (pathController.splitShort(filepath) == false) {
+		//	ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
+		//	logger.log(LOG_UNABLE_TO_CHECKOUT_GENERAL, CLogger::Level::FATAL, "Unable to checkout: \"%s\" Error: %s", filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
+		//	return false;
+		//}
+		//pathController.makeImagePath();
+		if (setCurrentVersion(filepath) == false) {
+			logger.log(LOG_UNABLE_TO_CHECKOUT_GENERAL, CLogger::Level::FATAL, "Unable to checkout: \"%s\" Error: %s", filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
+			return false;
+		}
+		std::string versionPath = getCurrentVersionPath();
+		int version = getVersion();
+
+		CheckoutStatus checkoutStatus;
+		// It should be checked in so to be checked out.
+		if (checkoutStatus.isCheckedIn(filepath) == false) {
+
+			if (ErrorCode::getErrorCode() == IMGA_ERROR::ALREADY_CHECKED_OUT && !force) {
+				// return after not checkinh out as checked out already and not forced to check out
 				return false;
 			}
-			// if changes may be lost then not copied but need checkin out.
-		}
-		
-	}
-	else {
-		if (checkoutFromDerivatives(filepath, comment, force) == false) {
-
-			if (ErrorCode::getErrorCode() == IMGA_ERROR::CHANGE_MAY_BE_LOST && !force) {
-				logger.log(LOG_OK, CLogger::Level::INFO, "checked out but image not copied\"%s\" Error: %s?", filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
-				// check out;
+			if (ErrorCode::getErrorCode() == IMGA_ERROR::TARGET_NOT_FOUND) {
+				// Not an error but the image needs to be copied form the repository to the workspace
+				return false;
 			}
-			else if (ErrorCode::getErrorCode() == IMGA_ERROR::NO_CHANGE_IN_IMAGE && !force) {
-				logger.log(LOG_OK, CLogger::Level::INFO, "image not copied \"%s\"? Error: %s", filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
-				// check out;
+
+			else if (ErrorCode::getErrorCode() == IMGA_ERROR::WILL_OVERWRITE_CHANGES) {
+				// This may be an option
+
+				return false;
+			}
+			else {
+				logger.log(LOG_UNABLE_TO_CHECKOUT_GENERAL, CLogger::Level::INFO, "Unable to checkout: \"%s\" Error: %s", filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
+				return false;
+			}
+
+			return false;
+		}
+		if (getVersion() == 0) {
+			// Original
+			if (checkoutFromMaster(filepath, comment, force) == false) {
+				if (ErrorCode::getErrorCode() != IMGA_ERROR::CHANGE_MAY_BE_LOST) {
+					logger.log((LOG_OK + 1), CLogger::Level::FATAL, "Unable to checkout: \"%s\" Error: %s", filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
+					return false;
+				}
+				// if changes may be lost then not copied but need checkin out.
+			}
+
+		}
+		else {
+			if (checkoutFromDerivatives(filepath, comment, force) == false) {
+
+				if (ErrorCode::getErrorCode() == IMGA_ERROR::CHANGE_MAY_BE_LOST && !force) {
+					logger.log(LOG_OK, CLogger::Level::INFO, "checked out but image not copied\"%s\" Error: %s?", filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
+					// check out;
+				}
+				else if (ErrorCode::getErrorCode() == IMGA_ERROR::NO_CHANGE_IN_IMAGE && !force) {
+					logger.log(LOG_OK, CLogger::Level::INFO, "image not copied \"%s\"? Error: %s", filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
+					// check out;
+				}
+				else {
+					logger.log(LOG_UNABLE_TO_CHECKOUT_GENERAL, CLogger::Level::FATAL, "Unable to checkout: \"%s\" Error: %s", filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
+					return false;
+				}
+
+
+			}
+		}
+
+
+
+		if (checkoutStatus.checkoutUpdate(filepath, comment) == false) {
+			if (ErrorCode::getErrorCode() == IMGA_ERROR::ALREADY_CHECKED_OUT && !force) {
+				// return after not checkinh out as checked out already and not forced to check out
+				return false;
+			}
+			if (ErrorCode::getErrorCode() == IMGA_ERROR::TARGET_NOT_FOUND) {
+				// Not an error but the image needs to be copied form the repository to the workspace
+				return false;
+			}
+
+			else if (ErrorCode::getErrorCode() == IMGA_ERROR::WILL_OVERWRITE_CHANGES) {
+				// This may be an option
+				logger.log(LOG_UNABLE_TO_CHECKOUT_GENERAL, CLogger::Level::INFO, "Unable to checkout: \"%s\" Error: %s", filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
+				return false;
 			}
 			else {
 				logger.log(LOG_UNABLE_TO_CHECKOUT_GENERAL, CLogger::Level::FATAL, "Unable to checkout: \"%s\" Error: %s", filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
 				return false;
 			}
-
-
 		}
+		return true;
 	}
 
-	
-
-	if (checkoutStatus.checkoutUpdate(filepath, comment) == false) {
-		if (ErrorCode::getErrorCode() == IMGA_ERROR::ALREADY_CHECKED_OUT && !force) {
-			// return after not checkinh out as checked out already and not forced to check out
+	bool VersionControl::checkin(const char* relWorkspace, const char* relDb, bool force)
+	{
+		if (makeVersionsList(relWorkspace) == false) {
 			return false;
 		}
-		if (ErrorCode::getErrorCode() == IMGA_ERROR::TARGET_NOT_FOUND) {
-			// Not an error but the image needs to be copied form the repository to the workspace
-			return false;
-		}
-
-		else if (ErrorCode::getErrorCode() == IMGA_ERROR::WILL_OVERWRITE_CHANGES) {
-			// This may be an option
-			logger.log(LOG_UNABLE_TO_CHECKOUT_GENERAL, CLogger::Level::INFO, "Unable to checkout: \"%s\" Error: %s", filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
-			return false;
-		}
-		else {
-			logger.log(LOG_UNABLE_TO_CHECKOUT_GENERAL, CLogger::Level::FATAL, "Unable to checkout: \"%s\" Error: %s", filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
-			return false;
-		}
-	}
-	return true;
-}
-
-bool VersionControl::checkin(const char * relWorkspace, const char * relDb, bool force)
-{
-	if (makeVersionsList(relWorkspace) == false) {
 		return false;
 	}
-	return false;
-}
 
-bool VersionControl::checkout(const char *relWorkspace, const char *relDb, bool force) {
+	bool VersionControl::checkout(const char* relWorkspace, const char* relDb, bool force) {
 
 
-	
-	std::string from = m_pathToMaster;
-	from += '/';
-	from += relDb;
 
-	std::string to = m_pathToMaster;
-	to += '/';
-	to += relWorkspace;
+		std::string from = m_pathToMaster;
+		from += '/';
+		from += relDb;
 
-	CLogger &logger = CLogger::getLogger();
+		std::string to = m_pathToMaster;
+		to += '/';
+		to += relWorkspace;
 
-	if (!force) {
-		if (SAUtils::FileExists(to.c_str()) == true) {
+		CLogger& logger = CLogger::getLogger();
 
-			FileInfo fileInfoFrom(from);
-			FileInfo fileInfoTo(to);
-			if (fileInfoFrom.getCrc() != fileInfoTo.getCrc()) {
-				logger.log(LOG_OK, CLogger::Level::FATAL, "Changes may be lost by Checkout \"%s\"?", to.c_str());
-				return false;
+		if (!force) {
+			if (SAUtils::FileExists(to.c_str()) == true) {
+
+				FileInfo fileInfoFrom(from);
+				FileInfo fileInfoTo(to);
+				if (fileInfoFrom.getCrc() != fileInfoTo.getCrc()) {
+					logger.log(LOG_OK, CLogger::Level::FATAL, "Changes may be lost by Checkout \"%s\"?", to.c_str());
+					return false;
+				}
+				logger.log(LOG_OK, CLogger::Level::INFO, "Target image is the same as checked in image: \"%s\"?", from.c_str());
+				return true;
 			}
-			logger.log(LOG_OK, CLogger::Level::INFO, "Target image is the same as checked in image: \"%s\"?", from.c_str());
-			return true;
 		}
+
+		if (SAUtils::FileExists(from.c_str()) == false) {
+			logger.log(LOG_OK, CLogger::Level::FATAL, "Invalid database path: \"%s\"?", from.c_str());
+			return false;
+		}
+
+		if (SAUtils::copy(from.c_str(), to.c_str()) == false) {
+			logger.log(LOG_OK, CLogger::Level::FATAL, "Failed to copy version to destination: \"%s\"?", to.c_str());
+			return false;
+		}
+
+		return true;
 	}
 
-	if (SAUtils::FileExists(from.c_str()) == false) {
-		logger.log(LOG_OK, CLogger::Level::FATAL, "Invalid database path: \"%s\"?", from.c_str());
-		return false;
-	}
-
-	if (SAUtils::copy(from.c_str(), to.c_str()) == false) {
-		logger.log(LOG_OK, CLogger::Level::FATAL, "Failed to copy version to destination: \"%s\"?", to.c_str());
-		return false;
-	}
-	
-	return true;
-}
 
 bool VersionControl::checkoutFromMaster(const char *targetRelPath, const char *comment, bool force) {
 	CLogger &logger = CLogger::getLogger();
