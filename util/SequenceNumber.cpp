@@ -53,7 +53,7 @@ const char * NumberSequence::toSequence()
 
 	
 		Base32 base32;
-		m_str = base32.decimal2Base32(dec, 3);
+		m_str = base32.toBase32(dec, 3);
 
 	}
 	
@@ -71,7 +71,7 @@ int NumberSequence::toDecimal()
 		return -1;
 	}
 	Base32 base32;
-	int high_num = base32.Base32ToDecimal(high_string);
+	int high_num = base32.toDecimal(high_string);
 	std::string lower_string = m_str.substr(4, 9);
 	if (isNumber(lower_string) == false) {
 		return -1;

@@ -1,5 +1,6 @@
 #include <sstream>
 #include <iostream>
+#include <filesystem>
 #include "SIAArcArgvParser.h"
 #include "ConfigReader.h"
 #include "SIAArcAppOptions.h"
@@ -34,7 +35,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	// Subcommands
 	defineOption("import", "import new images to the archive.", ArgvParser::MasterOption);
 	defineCommandSyntax("import", "iaarc import [--source-path=<path>]\n\t"
-		"[--comment=<comment text>]\n\t[--archive-path=<path>]\n\t[--lightroom=<On|Off>]");
+		"[--comment=<comment text>]\n\t[--lightroom=<On|Off>]");
 	
 	defineOption("get", "get images from the archive.", ArgvParser::MasterOption);
 	defineCommandSyntax("get", "iaarc get [--target-path=<path>]\n\t"
@@ -242,26 +243,34 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 
 	else if (command("import") == true) {
 
+		bool isSourePathSet = false;
 		// Source of images
 		if (foundOption("source-path") == true) {
 			std::string opt = optionValue("source-path");
 			config.setSourcePath(opt.c_str());
+			isSourePathSet = true;
 		}
-
+		if (isSourePathSet == false) {
+			config.setSourcePath(SAUtils::getCurrentDirectory().c_str());
+		}
 		if (foundOption("lightroom") == true) {
 			std::string opt = optionValue("lightroom");
 			config.setLightroom();
 		}
 
+		/*
 		if (foundOption("file") == true) {
 			appOptions.m_filePath = optionValue("file");
 			appOptions.m_usingFile = true;
 		}
+		*/
 
+		/*
 		if (foundOption("archive-path") == true) {
 			std::string opt = optionValue("archive-path");
 			config.setWorkspacePath(opt.c_str());
 		}
+		*/
 		
 		if (foundOption("peek") == true) {
 			appOptions.m_peekOnly = true;

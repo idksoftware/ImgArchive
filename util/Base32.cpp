@@ -29,7 +29,7 @@ static int LookupDigits[] = {
 
 
 
-const char* Base32::decimal2Base32(long dec, int padding) {
+const char* Base32::toBase32(long dec, int padding) {
 	std::vector<char> list;
 	m_str.clear();
 	int rem = 0;
@@ -54,7 +54,7 @@ const char* Base32::decimal2Base32(long dec, int padding) {
 	return m_str.c_str();
 }
 
-int Base32::Base32ToDecimal(std::string encoded)
+int Base32::toDecimal(std::string encoded)
 {
 	int ret = 0;
 	unsigned char c = 0;
@@ -101,7 +101,7 @@ static int LookupDigitsHex[] = {
 
 
 
-const char* Base32Hex::decimal2Base32(long dec, int padding) {
+const char* Base32Hex::toBase32(long dec, int padding) {
 	std::vector<char> list;
 	m_str.clear();
 	
@@ -128,7 +128,7 @@ const char* Base32Hex::decimal2Base32(long dec, int padding) {
 	return m_str.c_str();
 }
 
-int Base32Hex::Base32ToDecimal(std::string encoded)
+int Base32Hex::toDecimal(std::string encoded)
 {
 	int ret = 0;
 	unsigned char c = 0;

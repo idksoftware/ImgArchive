@@ -2,27 +2,36 @@
 #include "ImageEncodeBase32.h"
 #include "Base32.h"
 
+bool ImageEncodeBase32::m_includeVersion = false;
+
 ImageEncodeBase32::ImageEncodeBase32(long index, const char* imageName, int version, const char* ext)
 {
 	std::string ver;
-	if (version < 10) {
-		ver += "0";
+
+	if (m_includeVersion) {
+		
+		if (version < 10) {
+			ver += "0";
+		}
+		ver += std::to_string(version);
 	}
-	ver += std::to_string(version);
-	
+
 	Base32Hex base32Hex;
 	m_encodedString = imageName;
 	m_encodedString += "_";
-	m_encodedString += base32Hex.decimal2Base32(index, 6);
-	m_encodedString += "[";
-	m_encodedString += ver;
-	m_encodedString += "]";
+	m_encodedString += base32Hex.toBase32(index, 6);
+	if (m_includeVersion) {
+		m_encodedString += "[";
+		m_encodedString += ver;
+		m_encodedString += "]";
+	}
 	m_encodedString += ".";
 	m_encodedString += ext;
 
 	m_imageName = imageName;
 	m_version = version;
 }
+
 ImageEncodeBase32::ImageEncodeBase32(const char* encodedString)
 {
 	m_encodedString = encodedString;

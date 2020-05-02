@@ -44,6 +44,7 @@
 #include <cstdlib>
 #include <istream>
 #include <fstream>
+#include <iostream>
 #include <sys/types.h>
 //#include <sys/stat.h>
 //#include <dirent.h>
@@ -60,11 +61,13 @@
 #include <windows.h>
 #include <direct.h>
 #include <stdarg.h>
+#define getcwd _getcwd // stupid MSFT "deprecation" warning
 #else
 #include <sys/stat.h>
 #include <unistd.h>
 #include <stdarg.h>
 #endif
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <cstdio>
@@ -295,6 +298,10 @@ std::string SAUtils::getFilenameNoExt(const char *file) {
 	return getFilenameNoExt(filestr);
 }
 
+std::string SAUtils::getCurrentDirectory() {
+	std::string s_cwd(getcwd(NULL, 0));
+	return s_cwd;
+}
 
 std::string SAUtils::to_string(int i) {
 	std::stringstream tmp;

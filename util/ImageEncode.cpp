@@ -2,12 +2,14 @@
 #include "time.h"
 #include "ImageEncode.h"
 #include "Base64.h"
+#include "Base32.h"
 
 ImageEncode::ImageEncode(const char *shortRelPath, const char *imageName, int version, const char *ext) {
 
 	m_shortRelPath = shortRelPath;
 
 	Base64 base64;
+	Base32Hex base32hex;
 	std::string date = m_shortRelPath;
 
 	if (date[4] != '-' && date[7] != 7 && 10) {
@@ -22,11 +24,11 @@ ImageEncode::ImageEncode(const char *shortRelPath, const char *imageName, int ve
 
 	int days = days_from_civil(y, m, d);
 
-	m_encodedString = base64.decimal2base64(days);
+	m_encodedString = base32hex.toBase32(days);
 	m_encodedString += "@";
 	m_encodedString += imageName;
 	m_encodedString += "@";
-	m_encodedString += base64.decimal2base64(version);
+	m_encodedString += base32hex.toBase32(version);
 	m_encodedString += ".";
 	m_encodedString += ext;
 
@@ -39,10 +41,13 @@ ImageEncode::ImageEncode(const char *encodedString) {
 	//m_shortRelPath = shortRelPath;
 	//m_imageName = imageName;
 	//m_version = version;
+	Base64 base64;
+	Base32Hex base32hex;
+
 	m_encodedString = encodedString;
 	std::string ds = m_encodedString.substr(0, 3);
-	Base64 base64;
-	int days = base64.base64ToDecimal(ds);
+	
+	int days = base32hex.toDecimal(ds);
 	const time_t secs = days * IDK_DATE_SECONDS_IN_DAY;
 	tm* now = localtime(&secs);
 	tm today = { 0 };
@@ -56,7 +61,7 @@ ImageEncode::ImageEncode(const char *encodedString) {
 	m_imageName = m_encodedString.substr(4, pos - 4);
 	std::string vs = m_encodedString.substr(pos + 1, 1);
 
-	m_version = base64.base64ToDecimal(vs);
+	m_version = base32hex.toDecimal(vs);
 	m_error = false;
 }
 
