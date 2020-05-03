@@ -52,7 +52,7 @@ namespace simplearchive {
 		/// @brief This will get an optional argument empty if no argument
 		/// found.
 		std::string getOptional(int pos) {
-			if ((unsigned int)pos >= size()) {
+			if ((size_t)pos >= size()) {
 				return "";
 			}
 			else {

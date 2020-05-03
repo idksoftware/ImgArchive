@@ -175,14 +175,14 @@ namespace simplearchive {
 		return true;
 	}
 
-	bool History::logImageHistory(const char *filepath, LogDocument::FormatType formatType) {
+	bool History::logImageHistory(const char *imagepath, LogDocument::FormatType formatType, const char* filepath) {
 		
 		std::shared_ptr<ImageHistoryLog> log;
-		if ((log = imageHistory->getEntries(filepath)) == nullptr) {
+		if ((log = imageHistory->getEntries(imagepath)) == nullptr) {
 			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 			return false;
 		}
-		
+		log->setFilename(filepath);
 		if (!log->write(formatType)) {
 			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 			return false;
@@ -201,6 +201,54 @@ namespace simplearchive {
 	}
 
 	bool HistoryLog::writeHuman() {
+		std::ofstream file;
+		if (!m_filename.empty()) {
+			file.open(m_filename.c_str());
+			if (file.is_open() == false) {
+				return false;
+			}
+			file << "\n---------------------------------------------------\n";
+			file << "Image: " << m_title << '\n';
+			file << "Path : " << m_description << '\n';
+			file << "=====================================================\n";
+			file << "Date Time             version     Event      Comment\n\n";
+			for (std::list<std::string>::iterator i = begin(); i != end(); i++) {
+				//std::cout << *i << '\n';
+				CSVArgs csvArgs(',');
+				if (csvArgs.process(i->c_str()) == false) {
+					return false;
+				}
+
+				file << csvArgs.at(0) << "    ";
+				file << csvArgs.at(1) << "      ";
+				file << csvArgs.at(4) << "  ";
+				file << csvArgs.at(3) << "\n\n";
+			}
+		}
+		else {
+			file.open(m_filename.c_str());
+			if (file.is_open() == false) {
+				return false;
+			}
+			std::cout << "\n---------------------------------------------------\n";
+			std::cout << "Image: " << m_title << '\n';
+			std::cout << "Path : " << m_description << '\n';
+			std::cout << "=====================================================\n";
+			std::cout << "Date Time             version     Event      Comment\n\n";
+			for (std::list<std::string>::iterator i = begin(); i != end(); i++) {
+				//std::cout << *i << '\n';
+				CSVArgs csvArgs(',');
+				if (csvArgs.process(i->c_str()) == false) {
+					return false;
+				}
+
+				std::cout << csvArgs.at(0) << "    ";
+				std::cout << csvArgs.at(1) << "      ";
+				std::cout << csvArgs.at(4) << "  ";
+				std::cout << csvArgs.at(3) << "\n\n";
+			}
+		}
+		return true;
 		return true;
 	}
 
@@ -220,7 +268,7 @@ namespace simplearchive {
 			<< "<History ordering=\"date\" from=\"2015-03-6 12.10.45\" to=\"2015-03-6 12.10.45\">\n";
 
 		for (std::list<std::string>::iterator i = begin(); i != end(); i++) {
-			std::cout << *i << '\n';
+			//std::cout << *i << '\n';
 			CSVArgs csvArgs(':');
 			if (csvArgs.process(i->c_str()) == false) {
 				return false;
@@ -237,6 +285,9 @@ namespace simplearchive {
 		return true;
 	}
 
+	bool HistoryLog::writeHtml() {
+		return true;
+	}
 	
 	ImageHistoryLog::ImageHistoryLog() : LogDocument(std::make_shared<ImageHistorySchema>()) {
 		// TODO Auto-generated constructor stub
@@ -248,60 +299,245 @@ namespace simplearchive {
 	}
 
 	bool ImageHistoryLog::writeHuman() {
-		std::cout << "\n---------------------------------------------------\n";
-		std::cout << "Image: " << m_title << '\n';
-		std::cout << "Path : " << m_description << '\n';
-		std::cout << "=====================================================\n";
-		std::cout << "Date Time             version     Event      Comment\n\n";
-		for (std::list<std::string>::iterator i = begin(); i != end(); i++) {
-			//std::cout << *i << '\n';
-			CSVArgs csvArgs(',');
-			if (csvArgs.process(i->c_str()) == false) {
+		std::ofstream file;
+		if (!m_filename.empty()) {
+			file.open(m_filename.c_str());
+			if (file.is_open() == false) {
 				return false;
 			}
+			file << "\n---------------------------------------------------\n";
+			file << "Image: " << m_title << '\n';
+			file << "Path : " << m_description << '\n';
+			file << "=====================================================\n";
+			file << "Date Time             version     Event      Comment\n\n";
+			for (std::list<std::string>::iterator i = begin(); i != end(); i++) {
+				//std::cout << *i << '\n';
+				CSVArgs csvArgs(',');
+				if (csvArgs.process(i->c_str()) == false) {
+					return false;
+				}
 
-			std::cout << csvArgs.at(0) << "    ";
-			std::cout << csvArgs.at(1) << "      ";
-			//std::cout << csvArgs.at(2) << "  ";
-			std::cout << csvArgs.at(4) << "  ";
-			std::cout << csvArgs.at(3) << '\n';
-			std::cout << "---------------------------------------------------\n";
+				file << csvArgs.at(0) << "    ";
+				file << csvArgs.at(1) << "      ";
+				file << csvArgs.at(4) << "  ";
+				file << csvArgs.at(3) << "\n\n";
+			}
+		}
+		else {
+			file.open(m_filename.c_str());
+			if (file.is_open() == false) {
+				return false;
+			}
+			std::cout << "\n---------------------------------------------------\n";
+			std::cout << "Image: " << m_title << '\n';
+			std::cout << "Path : " << m_description << '\n';
+			std::cout << "=====================================================\n";
+			std::cout << "Date Time             version     Event      Comment\n\n";
+			for (std::list<std::string>::iterator i = begin(); i != end(); i++) {
+				//std::cout << *i << '\n';
+				CSVArgs csvArgs(',');
+				if (csvArgs.process(i->c_str()) == false) {
+					return false;
+				}
+
+				std::cout << csvArgs.at(0) << "    ";
+				std::cout << csvArgs.at(1) << "      ";
+				std::cout << csvArgs.at(4) << "  ";
+				std::cout << csvArgs.at(3) << "\n\n";
+			}
 		}
 		return true;
 	}
 	
 	bool ImageHistoryLog::writeJson() {
+		std::ofstream file;
+		if (!m_filename.empty()) {
+			file.open(m_filename.c_str());
+			if (file.is_open() == false) {
+				return false;
+			}
+			file << "{\n\"name\":\"" << m_title << "\",\n";
+			file << "\"path\":\"" << m_description << "\",\n";
+			file << "\"History\": [\n";
+			bool first = true;
+			for (std::list<std::string>::iterator i = begin(); i != end(); i++) {
+				//file << *i << '\n';
+
+				CSVArgs csvArgs(',');
+				if (csvArgs.process(i->c_str()) == false) {
+					return false;
+				}
+				if (first) first = false; else file << ",\n";
+				file << "{";
+				file << "\"DateTime\":\"" << csvArgs.at(0) << "\",";
+				file << "\"Version\":\"" << csvArgs.at(1) << "\",";
+				file << "\"Event\":\"" << csvArgs.at(4) << "\",";
+				file << "\"Comment\":\"" << csvArgs.at(3) << "\"";
+				file << "}";
+			}
+			file << "\n]}\n";
+			file.close();
+		}
+		else {
+			std::cout << "{\n\"name\":\"" << m_title << "\",\n";
+			std::cout << "\"path\":\"" << m_description << "\",\n";
+			std::cout << "\"History\": [\n";
+			bool first = true;
+			for (std::list<std::string>::iterator i = begin(); i != end(); i++) {
+				//file << *i << '\n';
+
+				CSVArgs csvArgs(',');
+				if (csvArgs.process(i->c_str()) == false) {
+					return false;
+				}
+				if (first) first = false; else file << ",\n";
+				std::cout << "{";
+				std::cout << "\"DateTime\":\"" << csvArgs.at(0) << "\",";
+				std::cout << "\"Version\":\"" << csvArgs.at(1) << "\",";
+				std::cout << "\"Event\":\"" << csvArgs.at(4) << "\",";
+				std::cout << "\"Comment\":\"" << csvArgs.at(3) << "\"";
+				std::cout << "}";
+			}
+			std::cout << "\n]}\n";
+		}
 		return true;
 	}
 
 	bool ImageHistoryLog::writeCSV() {
-		for (std::list<std::string>::iterator i = begin(); i != end(); i++) {
-			std::cout << *i << '\n';
+		std::ofstream file;
+		if (!m_filename.empty()) {
+			file.open(m_filename.c_str());
+			if (file.is_open() == false) {
+				return false;
+			}
+			for (std::list<std::string>::iterator i = begin(); i != end(); i++) {
+				file << *i << '\n';
+			}
+		}
+		else {
+			for (std::list<std::string>::iterator i = begin(); i != end(); i++) {
+				std::cout << *i << '\n';
+			}
 		}
 		return true;
 	}
 
 	bool ImageHistoryLog::writeXML() {
-		std::cout << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-			<< "<History ordering=\"date\" from=\"2015-03-6 12.10.45\" to=\"2015-03-6 12.10.45\">\n";
 
-		for (std::list<std::string>::iterator i = begin(); i != end(); i++) {
-			std::cout << *i << '\n';
-			CSVArgs csvArgs(',');
-			if (csvArgs.process(i->c_str()) == false) {
+		std::ofstream file;
+		if (!m_filename.empty()) {
+			file.open(m_filename.c_str());
+			if (file.is_open() == false) {
 				return false;
 			}
-			std::cout << "\t<Event>\n";
-			std::cout << writeTag("DateTime", csvArgs.at(0), 2);
-			std::cout << writeTag("ImagePage", csvArgs.at(1), 2);
-			std::cout << writeTag("Value", csvArgs.at(2), 2);
-			std::cout << writeTag("Comment", csvArgs.at(3), 2);
-			std::cout << writeTag("Event", csvArgs.at(4), 2);
-			std::cout << "\t</Event>\n";
+			file << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+				<< "<History Image=\"" << m_title << "\" Path=\"" << m_description << "\">\n";
+
+			for (std::list<std::string>::iterator i = begin(); i != end(); i++) {
+				//std::cout << *i << '\n';
+				CSVArgs csvArgs(',');
+				if (csvArgs.process(i->c_str()) == false) {
+					return false;
+				}
+				file << "\t<Event>\n";
+				file << writeTag("DateTime", csvArgs.at(0), 2);
+				file << writeTag("Version", csvArgs.at(1), 2);
+				file << writeTag("Event", csvArgs.at(4), 2);
+				file << writeTag("Comment", csvArgs.at(3), 2);
+				file << "\t</Event>\n";
+			}
+			file << "</History>\n";
+			file.close();
+			return true;
 		}
-		std::cout << "</Catalog>\n";
-		return true;
+		else {
+			std::cout << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+				<< "<History Image=\"" << m_title << "\" Path=\"" << m_description << "\">\n";
+
+			for (std::list<std::string>::iterator i = begin(); i != end(); i++) {
+				//std::cout << *i << '\n';
+				CSVArgs csvArgs(',');
+				if (csvArgs.process(i->c_str()) == false) {
+					return false;
+				}
+				std::cout << "\t<Event>\n";
+				std::cout << writeTag("DateTime", csvArgs.at(0), 2);
+				std::cout << writeTag("Version", csvArgs.at(1), 2);
+				std::cout << writeTag("Event", csvArgs.at(4), 2);
+				std::cout << writeTag("Comment", csvArgs.at(3), 2);
+				std::cout << "\t</Event>\n";
+			}
+			std::cout << "</History>\n";
+			return true;
+		}
 	}
+
+	bool ImageHistoryLog::writeHtml() {
+
+		std::ofstream file;
+		if (!m_filename.empty()) {
+			file.open(m_filename.c_str());
+			if (file.is_open() == false) {
+				return false;
+			}
+			file << "<!DOCTYPE html><html><head><style>\n";
+			file << "table{ font-family: arial, sans-serif; border-collapse: collapse; width: 100 %;}\n";
+			file << "td, th{ border: 1px solid #dddddd; text-align: left; padding: 8px;}\n";
+			file << "tr:nth-child(even) {background-color: #dddddd;}\n";
+			file << "</style></head><body>\n";
+
+			file << "<h2>" << m_title << "</h2>\n";
+			file << "<table><tr><td>Path:</td><td>\n";
+			file << m_description;	
+			file << "</td><tr></table>\n";
+
+			file << "<table>\n";
+			file << "<tr><th>Date/Time</th><th>Version</th><th>Action</th><th>Comment</th></tr>";
+			for (std::list<std::string>::iterator i = begin(); i != end(); i++) {
+				//std::cout << *i << '\n';
+				CSVArgs csvArgs(',');
+				if (csvArgs.process(i->c_str()) == false) {
+					return false;
+				}
+				file << "<tr>\n";
+				file << "<td>" << csvArgs.at(0) << "</td>\n";
+				file << "<td>" << csvArgs.at(1) << "</td>\n";
+				file << "<td>" << csvArgs.at(4) << "</td>\n";
+				file << "<td>" << csvArgs.at(3) << "</td>\n"; 
+				file << "</tr>\n";
+			}
+			file << "</table></body></html>\n";
+			file.close();
+		}
+		else {
+			std::cout << "<!DOCTYPE html><html><head><style>\n";
+			std::cout << "table{ font-family: arial, sans-serif; border-collapse: collapse; width: 100 %;}\n";
+			std::cout << "td, th{ border: 1px solid #dddddd; text-align: left; padding: 8px;}\n";
+			std::cout << "tr:nth-child(even) {background-color: #dddddd;}\n";
+			std::cout << "</style></head><body>\n";
+
+			std::cout << "<h2>HTML Table</h2>\n";
+
+			std::cout << "<table>\n";
+			std::cout << "<tr><th>Date/Time</th><th>Version</th><th>Action</th><th>Comment</th></tr>";
+			for (std::list<std::string>::iterator i = begin(); i != end(); i++) {
+				//std::cout << *i << '\n';
+				CSVArgs csvArgs(',');
+				if (csvArgs.process(i->c_str()) == false) {
+					return false;
+				}
+				std::cout << "<tr>\n";
+				std::cout << "<td>" << csvArgs.at(0) << "</td>\n";
+				std::cout << "<td>" << csvArgs.at(1) << "</td>\n";
+				std::cout << "<td>" << csvArgs.at(4) << "</td>\n";
+				std::cout << "<td>" << csvArgs.at(3) << "</td>\n"; std::cout << "</tr>\n";
+			}
+			std::cout << "</table></body></html>\n";
+		}
+			return true;
+	}
+	
 	
 
 } //namespace simplearchive
+

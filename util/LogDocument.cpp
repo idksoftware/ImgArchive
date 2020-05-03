@@ -65,6 +65,9 @@ bool LogDocument::write(FormatType formatType) {
 		return writeHuman();
 	case FormatType::csv:
 		return writeCSV();
+	case FormatType::Html:
+		return writeHtml();
+		
 	case FormatType::unknown:
 	default:
 		break;
@@ -97,6 +100,9 @@ LogDocument::FormatType LogDocument::parse(const char *str) {
 	}
 	else if (iequals(typeStr, "human")) {
 		return FormatType::Human;
+	}
+	else if (iequals(typeStr, "html")) {
+		return FormatType::Html;
 	}
 	return FormatType::unknown;
 }

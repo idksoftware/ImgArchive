@@ -162,7 +162,7 @@ namespace simplearchive {
 
 		bool sync(MainArchives mainArchives, Backups backups);
 
-		bool log(const char *filepath, LogDocument::FormatType& formatType);
+		bool log(const char *filepath, LogDocument::FormatType& formatType, const char* filename);
 
 		bool remoteServer();
 	

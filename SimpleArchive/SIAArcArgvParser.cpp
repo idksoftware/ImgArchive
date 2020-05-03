@@ -137,6 +137,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 
 	defineOption("format-type", "text output format type. Can be \"Humam\", \"XML\" \"Json\" or \"cvs\" i.e format-type=XML.", ArgvParser::OptionRequiresValue);
 	//defineOptionAlternative("ft", "format-type");
+	defineCommandSyntax("format-type", "format-type=[Human] | [xml] | [json] | [html] | [csv]\n");
 
 	defineOption("l", "Temporarily changes the logging level for the scope of this command session.", ArgvParser::OptionRequiresValue);
 	defineOptionAlternative("l", "logging-level");
@@ -201,8 +202,9 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 
 	defineCommandOption("show", "settup");
 
-	defineCommandOption("log",  "image");
-	defineCommandOption("log",  "format-type");
+	defineCommandOption("log", "image");
+	defineCommandOption("log", "format-type");
+	defineCommandOption("log", "file");
 //	defineCommandOption("mode", "remote-server");
 
 	ArgvParser::ParserResults res = parse(argc, argv);
@@ -484,9 +486,9 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 			gotImageAddress = true;
 		}
 		
-		if (foundOption("archive-path") == true) {
-			std::string opt = optionValue("archive-path");
-			config.setWorkspacePath(opt.c_str());
+		if (foundOption("file") == true) {
+			std::string opt = optionValue("file");
+			appOptions.m_filePath = opt;
 		}
 
 		if (foundOption("format-type") == true) {
@@ -494,10 +496,6 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 			appOptions.m_formatType = LogDocument::parse(opt.c_str());
 		}
 
-		const auto& args = ArgvParser::getDefaultArgumentsContainer();
-		for (auto i = args.begin(); i != args.end(); i++) {
-			appOptions.setDefaultArguments(*i);
-		}
 		if (gotImageAddress == false) {
 			printf("log: Needs image address\n\n");
 			printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());

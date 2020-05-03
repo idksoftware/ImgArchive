@@ -76,11 +76,12 @@ namespace simplearchive {
 		bool writeHuman();
 		bool writeXML();
 		bool writeCSV();
-		bool writeJson() ;
+		bool writeJson();
+		bool writeHtml();
 	};
 
 	class ImageHistoryLog : public LogDocument {
-
+		std::string m_filename;
 	public:
 		ImageHistoryLog();
 		virtual ~ImageHistoryLog();
@@ -88,6 +89,10 @@ namespace simplearchive {
 		bool writeXML();
 		bool writeCSV();
 		bool writeJson();
+		bool writeHtml();
+		void setFilename(const char* f) {
+			m_filename = f;
+		}
 	};
 
 	class History
@@ -120,7 +125,7 @@ namespace simplearchive {
 		static History &getHistory();
 
 		// This will write out the image histroy log
-		bool logImageHistory(const char *filepath, LogDocument::FormatType formatType);
+		bool logImageHistory(const char *imagepath, LogDocument::FormatType formatType, const char* filepath);
 	};
 
 } // namespace simplearchive

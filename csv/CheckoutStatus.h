@@ -101,6 +101,9 @@ namespace simplearchive {
 		bool writeXML();
 		bool writeCSV();
 		bool writeJson();
+		bool writeHtml() {
+			return true;
+		};
 	};
 
 };

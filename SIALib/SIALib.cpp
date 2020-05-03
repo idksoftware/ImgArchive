@@ -501,9 +501,9 @@ namespace simplearchive {
 
 	}
 
-	bool SIALib::log(const char *filepath, LogDocument::FormatType& formatType) {
+	bool SIALib::log(const char *filepath, LogDocument::FormatType& formatType, const char *filename) {
 		
-		if (ArchiveObject::getInstance().imageHistory(filepath, formatType) == false) {
+		if (ArchiveObject::getInstance().imageHistory(filepath, formatType, filename) == false) {
 			return false;
 		}
 		return true;

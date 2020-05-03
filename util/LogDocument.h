@@ -54,6 +54,7 @@ public:
 		Json,
 		Human,
 		csv,
+		Html,
 		unknown
 	};
 protected:
@@ -72,6 +73,7 @@ public:
 	virtual bool writeXML() = 0;
 	virtual bool writeCSV() = 0;
 	virtual bool writeJson() = 0;
+	virtual bool writeHtml() = 0;
 
 	void setTitle(const char *t) {
 		m_title = t;

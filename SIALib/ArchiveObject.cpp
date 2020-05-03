@@ -1759,11 +1759,12 @@ namespace simplearchive {
 		return true;
 	}
 	
-	bool ArchiveObject::imageHistory(const char *filepath, const LogDocument::FormatType& formatType) {
+	bool ArchiveObject::imageHistory(const char *imagePath, const LogDocument::FormatType& formatType, const char* outFile) {
 		CLogger &logger = CLogger::getLogger();
 		History& history = History::getHistory();
-		if (history.logImageHistory(filepath, formatType) == false) {
-			logger.log(LOG_OK, CLogger::Level::FATAL, "Unable to process image history for image: \"%s\" Error: %s", filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
+		
+		if (history.logImageHistory(imagePath, formatType, outFile) == false) {
+			logger.log(LOG_OK, CLogger::Level::FATAL, "Unable to process image history for image: \"%s\" Error: %s", imagePath, ErrorCode::toString(ErrorCode::getErrorCode()));
 			return false;
 		}
 		

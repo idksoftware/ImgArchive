@@ -357,7 +357,7 @@ bool SIAArcApp::doRun()
 
 	case SIAArcAppOptions::CommandMode::CM_Log:
 	{
-		if (siaLib.log(appOptions.getImageAddress(), appOptions.getFormatType()) == false) {
+		if (siaLib.log(appOptions.getImageAddress(), appOptions.getFormatType(), appOptions.getFilePath()) == false) {
 			setError(CLogger::getLastCode(), CLogger::getLastMessage());
 			return false;
 		}
