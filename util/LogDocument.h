@@ -49,7 +49,7 @@ class MTTableSchema;
 
 class LogDocument : public std::list<std::string> {
 public:
-	enum FormatType {
+	enum class FormatType {
 		XML,
 		Json,
 		Human,
