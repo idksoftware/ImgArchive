@@ -93,146 +93,40 @@ namespace simplearchive {
 		}
 
 		bool split();
-		/**
-		split from form <yyyy>/<yy>-<mm>-<dd>/<imagename.ext>
-		*/
-		bool split(const char *img) {
-			std::string imagePath = img;
-			size_t pos = imagePath.find('-');
-			if (pos != 4) {
-				pos = imagePath.find("\\/");
-				return splitLong(img);
-			}
-			return splitShort(img);
-		}
+
+		bool split(const char* img);
 
 		/**
-		split from form /<yyyy/<yyyy>-<mm>-<dd>/<imagename.ext>
+			split from form /<yyyy/<yyyy>-<mm>-<dd>/<imagename.ext>
 		*/
-		bool splitLong(const char *img) {
-			std::string imagePath = img;
-
-			m_year = imagePath.substr(0, 4);
-			m_yearday = imagePath.substr(5, 10);
-			m_image = imagePath.substr(16, imagePath.length() - 16);
-			return true;
-		}
+		bool splitLong(const char* img);
 
 		/**
-		split from form <yyyy>-<mm>-<dd>/<imagename.ext>
+			split from form <yyyy>-<mm>-<dd>/<imagename.ext>
 		*/
-		bool splitShort(const char *img) {
-			std::string imagePath = img;
-			m_year = imagePath.substr(0, 4);
-			m_yearday = imagePath.substr(0, 10);
-			if (imagePath.length() <= 10)  {
-				// no image
-				ErrorCode::setErrorCode(IMGA_ERROR::NO_IMAGE);
-				return false;
-			}
-			m_image = imagePath.substr(11, imagePath.length() - 9);
-			return true;
-		}
+		bool splitShort(const char* img);
 
-		bool setRoot(const char *rootPath) {
-			if (doValidate(rootPath)) {
-				m_root = rootPath;
-				return true;
-			}
-			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
-			return false;
-		}
+		bool setRoot(const char* rootPath);
 
 		/**
-		This creates a full image path in the form <root>/<year>/<year-month-day>/<image.ext>.
-		from the path components.
+			This creates a full image path in the form <root>/<year>/<year-month-day>/<image.ext>.
+			from the path components.
 		*/
-		bool makeImagePath(const char *ext = nullptr) {
-
-			std::string path = m_root;
-			if (m_year.empty() == true) {
-				if (m_relativePath.empty()) {
-					return false;
-				}
-				if (split(m_relativePath.c_str()) == false) {
-					return false;
-				}
-			}
-			std::string pathr = m_year;
-			pathr += '/'; pathr += m_yearday;
-			pathr += '/'; pathr += m_image;
-			path += '/'; path += pathr;
-			m_relativePath = pathr;
-			if (ext != nullptr) {
-				path += "."; path += ext;
-			}
-			if (doValidate(path.c_str())) {
-				m_isValid = true;
-			}
-			else {
-				m_isValid = false;
-			}
-			m_fullPath = path;
-			return m_isValid;
-		}
-
-		
-		/**
-		This creates a full image path in the form <root>/<year>/<year-month-day>.
-		from the path components.
-		*/
-		bool makePath(bool validate = true) {
-
-			std::string path = m_root;
-			path += '/'; path += m_year;
-			path += '/'; path += m_yearday;
-			std::string imagepath = path;
-			imagepath += '/'; imagepath += m_image;
-			if (validate) {
-				if (doValidate(imagepath.c_str())) {
-					m_isValid = true;
-				}
-				else {
-					m_isValid = false;
-					ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
-				}
-			} 
-			m_fullPath = path;
-			return m_isValid;
-		}
-
+		bool makeImagePath(const char* ext = nullptr);
 
 		/**
-		This creates a Relative image path in the form <year>/<year-month-day>/<image.ext>.
-		from the path <year-month-day>/<image.ext>.
+			This creates a full image path in the form <root>/<year>/<year-month-day>.
+			from the path components.
 		*/
-		bool makeRelativePath(const char *p) {
-			splitShort(p);
+		bool makePath(bool validate = true);
 
-			std::string path = "/"; path += m_year;
-			path += '/'; path += m_yearday;
-			m_relativePath = path;
-			return true;
-		}
-
-		bool makeRelativeImagePath(const char *p) {
-			splitShort(p);
-
-			std::string path = "/"; path += m_year;
-			path += '/'; path += m_yearday;
-			path += '/'; path += m_image;
-			m_relativePath += path;
-			return true;
-		}
 		/**
-		Validate relative path using the path passed
+			This creates a Relative image path in the form <year>/<year-month-day>/<image.ext>.
+			from the path <year-month-day>/<image.ext>.
 		*/
-		bool validateRelative(const char *path) {
-			std::string tmp = path;
-			tmp += '/';
-			tmp += m_relativePath;
-			return true;
-		}
+		bool makeRelativePath(const char* p);
+
+		bool makeRelativeImagePath(const char* p);
 
 		/**
 		 * Validate full path 
@@ -240,6 +134,8 @@ namespace simplearchive {
 		bool ValidateFull() {
 			return doValidate(m_fullPath.c_str());
 		}
+
+		bool validateRelative(const char* path);
 
 		bool splitPathAndFile(const char *path);
 		/**

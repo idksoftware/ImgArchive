@@ -26,10 +26,10 @@ public:
 		add(MTSchema(MTSchema::Integer, DB_DATABASEID));	// The database ID in Master databease or the Derivitives database. 
 		add(MTSchema(MTSchema::Text, DB_FILENAME));			// The file name in the form NameYYYYMMDDVVV.ext
 		add(MTSchema(MTSchema::Text, DB_ORGINALNAME));		// The orginal file name
-		add(MTSchema(MTSchema::Text, DB_VERSIONPATH));			// The file path in the database
-		add(MTSchema(MTSchema::Integer, DB_CRC));
-		add(MTSchema(MTSchema::Text, DB_MD5));
-		add(MTSchema(MTSchema::Text, DB_UUID));
+		add(MTSchema(MTSchema::Text, DB_VERSIONPATH));		// The file path in the database
+		add(MTSchema(MTSchema::Integer, DB_CRC));			// CRC of the current version image file
+		add(MTSchema(MTSchema::Text, DB_MD5));				// MD5 of the current version image file
+		add(MTSchema(MTSchema::Text, DB_UUID));				// UUID 
 		
 		
 		add(MTSchema(MTSchema::Integer, DB_FILESIZE));
@@ -37,7 +37,7 @@ public:
 		add(MTSchema(MTSchema::Date, DB_DATECREATE));
 		add(MTSchema(MTSchema::Date, DB_DATEADDED));
 		
-		add(MTSchema(MTSchema::Text, DB_COMMENT));
+		add(MTSchema(MTSchema::Text, DB_COMMENT));			// 
 		add(MTSchema(MTSchema::Text, DB_AUTHOR));
 		add(MTSchema(MTSchema::Text, DB_DESCRIPTION));
 		

@@ -113,9 +113,6 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineOption("m", "Goes through the motions of running the subcommand but makes no\nactual changes ether disk or repository.", ArgvParser::OptionRequiresValue);
 	defineOptionAlternative("m", "media-path");
 
-	defineOption("fd", "from date", ArgvParser::OptionRequiresValue);
-	defineOptionAlternative("fd", "from-date");
-
 	defineOption("image", "Specifies a image address in the form \"<date>/<image name>", ArgvParser::OptionRequiresValue);
 	//defineOptionAlternative("i", "image");
 
@@ -363,10 +360,6 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 
 		if (foundOption("comment") == true) {
 			appOptions.m_comment = optionValue("comment");
-		}
-		if (foundOption("archive-path") == true) {
-			std::string opt = optionValue("archive-path");
-			config.setWorkspacePath(opt.c_str());
 		}
 
 		if (foundOption("force") == true) {

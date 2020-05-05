@@ -256,10 +256,7 @@ namespace simplearchive {
 			}
 		}
 		else {
-			file.open(m_filename.c_str());
-			if (file.is_open() == false) {
-				return false;
-			}
+			
 			std::cout << "\n---------------------------------------------------\n";
 			std::cout << "Image: " << m_title << '\n';
 			std::cout << "Path : " << m_description << '\n';
@@ -354,10 +351,7 @@ namespace simplearchive {
 			}
 		}
 		else {
-			file.open(m_filename.c_str());
-			if (file.is_open() == false) {
-				return false;
-			}
+			
 			std::cout << "\n---------------------------------------------------\n";
 			std::cout << "Image: " << m_title << '\n';
 			std::cout << "Path : " << m_description << '\n';

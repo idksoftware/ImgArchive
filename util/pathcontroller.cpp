@@ -54,6 +54,145 @@ namespace simplearchive {
 	}
 
 
+	bool PathController::split(const char* img) {
+		std::string imagePath = img;
+		size_t pos = imagePath.find('-');
+		if (pos != 4) {
+			pos = imagePath.find("\\/");
+			return splitLong(img);
+		}
+		return splitShort(img);
+	}
+
+	/**
+	split from form /<yyyy/<yyyy>-<mm>-<dd>/<imagename.ext>
+	*/
+	bool PathController::splitLong(const char* img) {
+		std::string imagePath = img;
+
+		m_year = imagePath.substr(0, 4);
+		m_yearday = imagePath.substr(5, 10);
+		m_image = imagePath.substr(16, imagePath.length() - 16);
+		return true;
+	}
+
+	/**
+	split from form <yyyy>-<mm>-<dd>/<imagename.ext>
+	*/
+	bool PathController::splitShort(const char* img) {
+		std::string imagePath = img;
+		m_year = imagePath.substr(0, 4);
+		m_yearday = imagePath.substr(0, 10);
+		if (imagePath.length() <= 10) {
+			// no image
+			ErrorCode::setErrorCode(IMGA_ERROR::NO_IMAGE);
+			return false;
+		}
+		m_image = imagePath.substr(11, imagePath.length() - 9);
+		return true;
+	}
+
+	bool PathController::setRoot(const char* rootPath) {
+		if (doValidate(rootPath)) {
+			m_root = rootPath;
+			return true;
+		}
+		ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
+		return false;
+	}
+
+	/**
+	This creates a full image path in the form <root>/<year>/<year-month-day>/<image.ext>.
+	from the path components.
+	*/
+	bool PathController::makeImagePath(const char* ext) {
+
+		std::string path = m_root;
+		if (m_year.empty() == true) {
+			if (m_relativePath.empty()) {
+				return false;
+			}
+			if (split(m_relativePath.c_str()) == false) {
+				return false;
+			}
+		}
+		std::string pathr = m_year;
+		pathr += '/'; pathr += m_yearday;
+		pathr += '/'; pathr += m_image;
+		path += '/'; path += pathr;
+		m_relativePath = pathr;
+		if (ext != nullptr) {
+			path += "."; path += ext;
+		}
+		if (doValidate(path.c_str())) {
+			m_isValid = true;
+		}
+		else {
+			m_isValid = false;
+		}
+		m_fullPath = path;
+		return m_isValid;
+	}
+
+
+	/**
+	This creates a full image path in the form <root>/<year>/<year-month-day>.
+	from the path components.
+	*/
+	bool PathController::makePath(bool validate) {
+
+		std::string path = m_root;
+		path += '/'; path += m_year;
+		path += '/'; path += m_yearday;
+		std::string imagepath = path;
+		imagepath += '/'; imagepath += m_image;
+		if (validate) {
+			if (doValidate(imagepath.c_str())) {
+				m_isValid = true;
+			}
+			else {
+				m_isValid = false;
+				ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
+			}
+		}
+		m_fullPath = path;
+		return m_isValid;
+	}
+
+
+	/**
+	This creates a Relative image path in the form <year>/<year-month-day>/<image.ext>.
+	from the path <year-month-day>/<image.ext>.
+	*/
+	bool PathController::makeRelativePath(const char* p) {
+		splitShort(p);
+
+		std::string path = "/"; path += m_year;
+		path += '/'; path += m_yearday;
+		m_relativePath = path;
+		return true;
+	}
+
+	bool PathController::makeRelativeImagePath(const char* p) {
+		splitShort(p);
+
+		std::string path = "/"; path += m_year;
+		path += '/'; path += m_yearday;
+		path += '/'; path += m_image;
+		m_relativePath += path;
+		return true;
+	}
+	/**
+	Validate relative path using the path passed
+	*/
+	bool PathController::validateRelative(const char* path) {
+		std::string tmp = path;
+		tmp += '/';
+		tmp += m_relativePath;
+		return true;
+	}
+
+
 	bool PathController::doValidate(const char *path) {
 #ifdef WIN32
 		int ret = _access(path, 0);
