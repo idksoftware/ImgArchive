@@ -64,6 +64,7 @@ class ImagePath {
 	std::string m_imagePath;
 	std::string m_imageName;
 	std::string m_encodedImageName;
+	std::string m_imageAddress;
 	std::string m_orginalName;
 	std::string m_yearStr;
 	std::string m_yyyymmddStr;
@@ -152,6 +153,13 @@ public:
 
 	const std::string& getDataPath() const noexcept {
 		return m_localMasterDataPath;
+	}
+
+	const std::string& getImageAddress() {
+		m_imageAddress = m_relpath.substr(5, 10);
+		m_imageAddress += '/';
+		m_imageAddress += m_imageName;
+		return m_imageAddress;
 	}
 
 	const std::string& getImagePath() {

@@ -41,10 +41,12 @@
 #include "SystemHistory.h"
 #include "HistoryEvent.h"
 #include "LogName.h"
+#include "History.h"
 //#include "CIDKDate.h"
 #include "ExifDateTime.h"
 #include "CSVArgs.h"
 #include "ArchivePath.h"
+#include "pathcontroller.h"
 #ifdef _DEBUG
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
@@ -119,7 +121,7 @@ bool SystemHistory::init() {
 	LogName logName;
 	m_currentFilename = logName.makeName(m_primary.c_str(), "", "hst", 256);
 		
-	m_index = ArchivePath::getPrimaryIndex().getHistoryPath();
+	m_index = m_primary;
 	m_index += '/'; m_index += logName.getFilename();
 		
 	if (ArchivePath::isMasterBackup1Enabled() == true) {
@@ -189,6 +191,47 @@ bool SystemHistory::add(ImageHistoryItem &historyItem, const char *historyFile) 
 	m_hstfile << historyItem.toString() << '\n';
 	m_hstfile.close();
 
+	return true;
+}
+
+std::shared_ptr<SystemHistoryLog>  SystemHistory::getEntries() {
+
+	/*
+	PathController indexController;
+	indexController.setRoot(m_index.c_str());
+	indexController.split(filepath);
+	indexController.makeImagePath("hst");
+	*/
+
+	//std::string indexPath = indexController.getFullPath();;
+
+	std::shared_ptr<SystemHistoryLog> log = std::make_shared<SystemHistoryLog>();
+
+	
+	if (readLog(m_primary.c_str(), *log) == false) {
+		log = nullptr;
+		return log;
+	}
+	/*
+	log->setTitle(indexController.getImageName().c_str());
+	log->setDescription(filepath);
+	*/
+	return log;
+}
+
+bool SystemHistory::readLog(const char* logFile, SystemHistoryLog& historyLog) {
+
+	std::ifstream file(logFile);
+	//file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+	if (!file.is_open()) {
+		return false;
+	}
+	std::string line;
+	while (getline(file, line)) {
+		//std::cout << line << '\n';
+		historyLog.push_back(line);
+	}
+	//HistoryLog
 	return true;
 }
 

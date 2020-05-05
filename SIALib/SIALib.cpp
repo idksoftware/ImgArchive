@@ -501,10 +501,20 @@ namespace simplearchive {
 
 	}
 
-	bool SIALib::log(const char *filepath, LogDocument::FormatType& formatType, const char *filename) {
+	bool SIALib::log(const char* filepath, const char* fromDate, const char* toDate, LogDocument::FormatType& formatType, const char* filename) {
 		
-		if (ArchiveObject::getInstance().imageHistory(filepath, formatType, filename) == false) {
-			return false;
+		if (filepath == nullptr || filepath[0] == '\0') {  // System History log
+			
+			if (ArchiveObject::getInstance().systemHistory(fromDate, toDate, formatType, filename) == false) {
+				return false;
+			}
+
+		}
+		else { // Image History log 
+
+			if (ArchiveObject::getInstance().imageHistory(filepath, formatType, filename) == false) {
+				return false;
+			}
 		}
 		return true;
 

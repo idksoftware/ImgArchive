@@ -106,6 +106,9 @@ namespace simplearchive {
 			return splitShort(img);
 		}
 
+		/**
+		split from form /<yyyy/<yyyy>-<mm>-<dd>/<imagename.ext>
+		*/
 		bool splitLong(const char *img) {
 			std::string imagePath = img;
 

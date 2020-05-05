@@ -266,6 +266,7 @@ namespace simplearchive {
 		MasterCatalogue& getMasterCatalogue();
 
 		bool imageHistory(const char *imageFilepath, const LogDocument::FormatType& formatType, const char* filepath);
+		bool systemHistory(const char* from, const char* to, LogDocument::FormatType formatType, const char* filepath);
 	};
 
 } // simplearchive

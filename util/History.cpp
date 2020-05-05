@@ -48,9 +48,9 @@ namespace simplearchive {
 	std::string History::m_systemHisteryPath;
 	std::string History::m_changeLogPath;
 
-	History::History() : systemHistory(std::make_unique<SystemHistory>()),
-						imageHistory(std::make_unique<ImageHistory>()),
-						changeLog(std::make_unique<ChangeLog>())
+	History::History() : m_systemHistory(std::make_unique<SystemHistory>()),
+						m_imageHistory(std::make_unique<ImageHistory>()),
+						m_changeLog(std::make_unique<ChangeLog>())
 	{
 		
 	}
@@ -61,10 +61,10 @@ namespace simplearchive {
 	}
 
 	bool History::init() {
-		if (systemHistory->init() == false) {
+		if (m_systemHistory->init() == false) {
 			return false;
 		}
-		if (imageHistory->init() == false) {
+		if (m_imageHistory->init() == false) {
 			return false;
 		}
 		
@@ -93,12 +93,12 @@ namespace simplearchive {
 
 	bool History::newImage(const char *filepath, const char *comment) {
 		
-		if (systemHistory->add(filepath, "0000", comment, HistoryEvent::Event::ADDED) == false) {
+		if (m_systemHistory->add(filepath, "0000", comment, HistoryEvent::Event::ADDED) == false) {
 			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 			return false;
 		}
 	
-		if (imageHistory->add(filepath, "0000", comment, HistoryEvent::Event::ADDED) == false) {
+		if (m_imageHistory->add(filepath, "0000", comment, HistoryEvent::Event::ADDED) == false) {
 			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 			return false;
 		}
@@ -117,12 +117,12 @@ namespace simplearchive {
 	bool History::checkinImage(const char *filepath, int version, const char *comment) { 
 		std::string versionString = Version2String(version);
 
-		if (systemHistory->add(filepath, versionString.c_str(), comment, HistoryEvent::Event::CHECKIN) == false) {
+		if (m_systemHistory->add(filepath, versionString.c_str(), comment, HistoryEvent::Event::CHECKIN) == false) {
 			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 			return false;
 		}
 
-		if (imageHistory->add(filepath, versionString.c_str(), comment, HistoryEvent::Event::CHECKIN) == false) {
+		if (m_imageHistory->add(filepath, versionString.c_str(), comment, HistoryEvent::Event::CHECKIN) == false) {
 			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 			return false;
 		}
@@ -131,12 +131,12 @@ namespace simplearchive {
 
 	bool History::checkoutImage(const char *filepath, int version, const char *comment) {
 		std::string versionString = Version2String(version);
-		if (systemHistory->add(filepath, versionString.c_str(), comment, HistoryEvent::Event::CHECKOUT) == false) {
+		if (m_systemHistory->add(filepath, versionString.c_str(), comment, HistoryEvent::Event::CHECKOUT) == false) {
 			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 			return false;
 		}
 
-		if (imageHistory->add(filepath, versionString.c_str(), comment, HistoryEvent::Event::CHECKOUT) == false) {
+		if (m_imageHistory->add(filepath, versionString.c_str(), comment, HistoryEvent::Event::CHECKOUT) == false) {
 			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 			return false;
 		}
@@ -147,12 +147,12 @@ namespace simplearchive {
 
 	bool History::uncheckoutImage(const char *filepath, int version, const char *comment) {
 		std::string versionString = Version2String(version);
-		if (systemHistory->add(filepath, versionString.c_str(), comment, HistoryEvent::Event::UNCHECKOUT) == false) {
+		if (m_systemHistory->add(filepath, versionString.c_str(), comment, HistoryEvent::Event::UNCHECKOUT) == false) {
 			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 			return false;
 		}
 
-		if (imageHistory->add(filepath, versionString.c_str(), comment, HistoryEvent::Event::UNCHECKOUT) == false) {
+		if (m_imageHistory->add(filepath, versionString.c_str(), comment, HistoryEvent::Event::UNCHECKOUT) == false) {
 			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 			return false;
 		}
@@ -162,12 +162,12 @@ namespace simplearchive {
 
 	bool History::exportImage(const char *filepath, int version, const char *comment) {
 		std::string versionString = Version2String(version);
-		if (systemHistory->add(filepath, versionString.c_str(), comment, HistoryEvent::Event::EXPORT) == false) {
+		if (m_systemHistory->add(filepath, versionString.c_str(), comment, HistoryEvent::Event::EXPORT) == false) {
 			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 			return false;
 		}
 
-		if (imageHistory->add(filepath, versionString.c_str(), comment, HistoryEvent::Event::EXPORT) == false) {
+		if (m_imageHistory->add(filepath, versionString.c_str(), comment, HistoryEvent::Event::EXPORT) == false) {
 			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 			return false;
 		}
@@ -177,8 +177,12 @@ namespace simplearchive {
 
 	bool History::logImageHistory(const char *imagepath, LogDocument::FormatType formatType, const char* filepath) {
 		
+		if (imagepath == nullptr || imagepath[0] == '\0') {
+			return false;
+		}
+
 		std::shared_ptr<ImageHistoryLog> log;
-		if ((log = imageHistory->getEntries(imagepath)) == nullptr) {
+		if ((log = m_imageHistory->getEntries(imagepath)) == nullptr) {
 			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 			return false;
 		}
@@ -190,17 +194,43 @@ namespace simplearchive {
 		return true;
 	}
 
+	bool History::logSystemHistory(const char* from, const char* to, LogDocument::FormatType formatType, const char* filepath)
+	{
+		ExifDateTime dateFrom;
+		ExifDateTime dateTo;
 
-	HistoryLog::HistoryLog() : LogDocument(std::make_shared<ImageHistorySchema>()) {
+		if (from != nullptr || from[0] != '\0') {
+			dateFrom.fromString(from);
+		}
+		else {
+			// start of logging
+		}
+		if (to != nullptr || to[0] != '\0') {
+			dateTo.fromString(to);
+		}
+		else {
+			// start of logging
+		}
+		std::shared_ptr<SystemHistoryLog> log;
+		if ((log = m_systemHistory->getEntries()) == nullptr) {
+			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
+			return false;
+		}
+
+		return true;
+	}
+
+
+	SystemHistoryLog::SystemHistoryLog() : LogDocument(std::make_shared<SystemHistorySchema>()) {
 		// TODO Auto-generated constructor stub
 
 	}
 
-	HistoryLog::~HistoryLog() {
+	SystemHistoryLog::~SystemHistoryLog() {
 		// TODO Auto-generated destructor stub
 	}
 
-	bool HistoryLog::writeHuman() {
+	bool SystemHistoryLog::writeHuman() {
 		std::ofstream file;
 		if (!m_filename.empty()) {
 			file.open(m_filename.c_str());
@@ -252,18 +282,18 @@ namespace simplearchive {
 		return true;
 	}
 
-	bool HistoryLog::writeJson() {
+	bool SystemHistoryLog::writeJson() {
 		return true;
 	}
 
-	bool HistoryLog::writeCSV() {
+	bool SystemHistoryLog::writeCSV() {
 		for (std::list<std::string>::iterator i = begin(); i != end(); i++) {
 			std::cout << *i << '\n';
 		}
 		return true;
 	}
 
-	bool HistoryLog::writeXML() {
+	bool SystemHistoryLog::writeXML() {
 		std::cout << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 			<< "<History ordering=\"date\" from=\"2015-03-6 12.10.45\" to=\"2015-03-6 12.10.45\">\n";
 
@@ -285,7 +315,7 @@ namespace simplearchive {
 		return true;
 	}
 
-	bool HistoryLog::writeHtml() {
+	bool SystemHistoryLog::writeHtml() {
 		return true;
 	}
 	

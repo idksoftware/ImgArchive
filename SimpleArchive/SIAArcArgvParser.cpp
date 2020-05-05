@@ -129,6 +129,9 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineOption("td", "to date", ArgvParser::OptionRequiresValue);
 	defineOptionAlternative("td", "to-date");
 
+	defineOption("fd", "From date", ArgvParser::OptionRequiresValue);
+	defineOptionAlternative("fd", "from-date");
+
 	defineOption("a", "location of the archive root folder.", ArgvParser::OptionRequiresValue);
 	defineOptionAlternative("a", "archive-path");
 
@@ -205,6 +208,8 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineCommandOption("log", "image");
 	defineCommandOption("log", "format-type");
 	defineCommandOption("log", "file");
+	defineCommandOption("log", "from-date");
+	defineCommandOption("log", "to-date");
 //	defineCommandOption("mode", "remote-server");
 
 	ArgvParser::ParserResults res = parse(argc, argv);
@@ -497,9 +502,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 		}
 
 		if (gotImageAddress == false) {
-			printf("log: Needs image address\n\n");
-			printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
-			return false;
+			// must be system history
 		}
 
 		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Log);

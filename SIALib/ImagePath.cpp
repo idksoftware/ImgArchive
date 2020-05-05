@@ -201,6 +201,7 @@ ImagePath::ImagePath(const char *filepath) {
 	//IntegrityManager &m_integrityManager = IntegrityManager::get();
 	PathController pathController;
 	pathController.splitShort(filepath);
+	//m_imageAddress = pathController.
 	m_imageName = pathController.getImage();
 	std::string path = pathController.getYearday();
 	init(path);

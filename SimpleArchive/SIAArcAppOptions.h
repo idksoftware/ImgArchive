@@ -214,6 +214,8 @@ private:
 	static std::string m_filePath;
 	static LogDocument::FormatType m_formatType;
 	static std::string m_version;
+    static std::string m_FromDate;
+    static std::string m_ToDate;
 
 	ShowCommandOption m_showCommandOption;
 
@@ -251,6 +253,9 @@ public:
 	const char *getDistinationPath();
 	//* return the pathe to an options file
 	const char *getFilePath();
+    const char* getFromDate();
+    const char* getToDate();
+
     //* Is the list option valid
 	bool isEnventsOn();
 	int eventPort();

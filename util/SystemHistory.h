@@ -45,6 +45,7 @@ namespace simplearchive {
 class ImageHistoryItem;
 class HistoryEvent;
 class EventList;
+class SystemHistoryLog;
 /**
 This is the rolling system history log.
 */
@@ -82,12 +83,17 @@ public:
 		m_primary = primaryPath;
 		m_index = indexPath;
 	}
+
+	std::shared_ptr<SystemHistoryLog> getEntries();
+
 	static void setBackup1Path(const char *path) {
 		m_backup1 = path;
 	}
 	static void setBackup2Path(const char *path) {
 		m_backup2 = path;
 	}
+
+	bool readLog(const char* logFile, SystemHistoryLog& historyLog);
 };
 
 } /* namespace simplearchive */

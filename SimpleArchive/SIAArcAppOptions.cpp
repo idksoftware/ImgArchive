@@ -72,6 +72,9 @@ std::string SIAArcAppOptions::m_imageAddress;
 std::string SIAArcAppOptions::m_distinationPath;
 std::string SIAArcAppOptions::m_filePath;
 std::string SIAArcAppOptions::m_version = "last";
+std::string SIAArcAppOptions::m_FromDate;
+std::string SIAArcAppOptions::m_ToDate;
+
 int SIAArcAppOptions::m_udpPortNum = 64321;
 std::string SIAArcAppOptions::m_udpAddress = "127.0.0.1";
 int SIAArcAppOptions::m_tcpPortNum = 64322;
@@ -146,6 +149,16 @@ const char *SIAArcAppOptions::getDistinationPath() {
 }
 const char *SIAArcAppOptions::getFilePath() {
 	return m_filePath.c_str();
+}
+
+const char* SIAArcAppOptions::getFromDate()
+{
+	return m_FromDate.c_str();
+}
+
+const char* SIAArcAppOptions::getToDate()
+{
+	return m_ToDate.c_str();
 }
 
 bool SIAArcAppOptions::isEnventsOn() {

@@ -48,6 +48,7 @@ class MTTableSchema;
 
 
 class LogDocument : public std::list<std::string> {
+	
 public:
 	enum class FormatType {
 		XML,
@@ -64,6 +65,9 @@ protected:
 	std::string m_title;
 	std::string m_description;
 	std::string m_image;
+
+	std::string m_filename;
+
 public:
 	LogDocument(std::shared_ptr<MTTableSchema> tableSchema);
 	virtual ~LogDocument();
@@ -74,6 +78,10 @@ public:
 	virtual bool writeCSV() = 0;
 	virtual bool writeJson() = 0;
 	virtual bool writeHtml() = 0;
+
+	void setFilename(const char* f) {
+		m_filename = f;
+	}
 
 	void setTitle(const char *t) {
 		m_title = t;

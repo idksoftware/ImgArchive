@@ -56,7 +56,8 @@ public:
 
 	bool isExifDateTime(const char *str);
 
-	std::string toString() const; 
+	std::string toString() const;
+	bool fromString(const char* str);
 	std::string current();
 	std::string toLogString();
 	void setDateTime(time_t time);

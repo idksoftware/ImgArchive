@@ -1174,7 +1174,7 @@ namespace simplearchive {
 
 	bool ArchiveObject::processHistory(ImagePath &imagePath, const char *comment) {
 		History& history = History::getHistory();
-		if (history.newImage(imagePath.getImagePath().c_str(), comment) == false) {
+		if (history.newImage(imagePath.getImageAddress().c_str(), comment) == false) {
 			return false;
 		}
 
@@ -1759,18 +1759,31 @@ namespace simplearchive {
 		return true;
 	}
 	
-	bool ArchiveObject::imageHistory(const char *imagePath, const LogDocument::FormatType& formatType, const char* outFile) {
+	bool ArchiveObject::systemHistory(const char* from, const char* to, LogDocument::FormatType formatType, const char* filepath) {
 		CLogger &logger = CLogger::getLogger();
 		History& history = History::getHistory();
 		
-		if (history.logImageHistory(imagePath, formatType, outFile) == false) {
-			logger.log(LOG_OK, CLogger::Level::FATAL, "Unable to process image history for image: \"%s\" Error: %s", imagePath, ErrorCode::toString(ErrorCode::getErrorCode()));
+		if (history.logSystemHistory(from, to, formatType, filepath) == false) {
+			logger.log(LOG_OK, CLogger::Level::FATAL, "Unable to process system history Error: %s", ErrorCode::toString(ErrorCode::getErrorCode()));
 			return false;
 		}
 		
 		return true;
 	}
 	
+	bool ArchiveObject::imageHistory(const char* imagePath, const LogDocument::FormatType& formatType, const char* outFile) {
+		CLogger& logger = CLogger::getLogger();
+		History& history = History::getHistory();
+
+		if (history.logImageHistory(imagePath, formatType, outFile) == false) {
+			logger.log(LOG_OK, CLogger::Level::FATAL, "Unable to process image history for image: \"%s\" Error: %s", imagePath, ErrorCode::toString(ErrorCode::getErrorCode()));
+			return false;
+		}
+
+		return true;
+	}
+
+
 	bool ArchiveObject::exportImages(const char *dispPath) {
 		ExportImages exportImages(m_masterPath.c_str());
 		exportImages.process();
