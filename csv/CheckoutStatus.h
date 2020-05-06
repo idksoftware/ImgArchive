@@ -59,7 +59,7 @@ namespace simplearchive {
 			add(MTSchema(MTSchema::Integer, DB_EVENT));
 			add(MTSchema(MTSchema::Integer, DB_VERSION));
 			add(MTSchema(MTSchema::Date, DB_DATEADDED));
-			add(MTSchema(MTSchema::Date, DB_COMMENT));
+			add(MTSchema(MTSchema::Text, DB_COMMENT));
 		} ;
 	};
 

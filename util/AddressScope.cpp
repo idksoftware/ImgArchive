@@ -104,7 +104,11 @@ public:
 };
 
 void AddressScopeItem::init(std::string &pattern) {
+	std::string s = pattern;
+	m_begin = DataString(s);
+	m_range = false;
 	// begin-2009
+	/*
 	std::string s = pattern;
 	int pos = s.find('-');
 	if (pos < 0) {
@@ -118,7 +122,7 @@ void AddressScopeItem::init(std::string &pattern) {
 		m_range = false;
 	}
 	std::string begin = s.substr(0, pos);
-
+	*/
 }
 
 AddressScopeItem::AddressScopeItem(std::string &pattern) {
