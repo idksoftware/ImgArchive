@@ -261,16 +261,7 @@ bool ImageHistory::add(const char *filepath, const char *version, const char *co
 	}
 	*/
 	return true;
-	/*
-	std::ofstream file;
-	file.open(filepathstr.c_str(), std::ios::out | std::ios::app);
-	if (file.is_open() == false) {
-		return false;
-	}
-	file << historyItem.toString().c_str() << '\n';
-	file.close();
-	return true;
-	*/
+	
 }
 
 bool ImageHistory::writeLog(HistoryItem &item, const char *path) {
@@ -285,15 +276,6 @@ bool ImageHistory::writeLog(HistoryItem &item, const char *path) {
 	return true;
 }
 
-
-
-
-/*
-std::string History::getHistory(CDate from, CDate to) {
-	std::string str;
-	return str;
-}
-*/
 
 std::shared_ptr<ImageHistoryLog>  ImageHistory::getEntries(const char *filepath) {
 	
@@ -330,13 +312,5 @@ bool ImageHistory::readLog(const char *logFile, ImageHistoryLog &historyLog) {
 	//HistoryLog
 	return true;
 }
-
-/*
-std::string History::getHistory(int entrys) {
-	std::string str;
-	return str;
-}
-*/
-
 
 } /* namespace simplearchive */

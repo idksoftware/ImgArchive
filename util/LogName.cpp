@@ -90,11 +90,12 @@ std::string LogName::makeName(const char *logPath, const char *preName, const ch
 	std::string fileMatch = fileTemplate(preName);
 	bool found = false;
 	int version = 0;
+	std::string filenameItem;
 	FileList_Ptr filelist = SAUtils::getFiles_(logPath);
 	if (filelist == nullptr || filelist->empty() == false) {
 
 		for (std::vector<std::string>::iterator i = filelist->begin(); i != filelist->end(); i++) {
-			std::string filenameItem = *i;
+			filenameItem = *i;
 			//printf("File \"%s\"\n", filenameItem->c_str());
 			std::string tmpExt = SAUtils::getExtention(filenameItem);
 			//printf("Ext \"%s\"\n", tmpExt.c_str());
@@ -127,11 +128,16 @@ std::string LogName::makeName(const char *logPath, const char *preName, const ch
 	if (found == false) {
 
 		s << fileMatch << "_0001." << ext;
+		
 	} else {
 
 		s << fileMatch << '_' << std::setw(4) << std::setfill('0') << version << '.' << ext;
+		std::string fullpath = logPath;
+		fullpath += '/';
+		fullpath += s.str().c_str();
+
 		if (maxSize != ALWAYS_CREATE) { // always create new filename.
-			int res = checkLogSize(s.str().c_str(), maxSize * 1024);
+			int res = checkLogSize(fullpath.c_str(), maxSize * 1024);
 			if (res == 1) {
 				// less than max size
 				result = s.str();
@@ -142,13 +148,8 @@ std::string LogName::makeName(const char *logPath, const char *preName, const ch
 		version++;
 		s << fileMatch << '_' << std::setw(4) << std::setfill('0') << version << '.' << ext;
 	}
-
-	m_filename = s.str();
-	result = logPath;
-	result += '/'; result += m_filename;
+	result = s.str();
 	return result;
-
-
 }
 
 // Date string from filename

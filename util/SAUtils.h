@@ -97,7 +97,7 @@ public:
 	static std::string getFilenameNoExt(const char *file);
 	static std::string getFilename(const std::string &filepath);
 	static std::string getFolder(const std::string &filepath);
-	static std::string SAUtils::getCurrentDirectory();
+	static std::string getCurrentDirectory();
 	static bool fileCompare(const char *file1, const char *file2);
 	static bool fileSize(const char *filePath, unsigned long *size);
 	static bool hasExt(const char *file);

@@ -98,6 +98,9 @@ public:
 		return m_data;
 	}
 
+	const char* getDateString() {
+		return m_date.c_str();
+	}
 };
 
 
@@ -117,13 +120,12 @@ SystemHistory::~SystemHistory() {
 
 bool SystemHistory::init() {
 
-	
-	LogName logName;
-	m_currentFilename = logName.makeName(m_primary.c_str(), "", "hst", 256);
+	//LogName logName;
+	//m_currentFilename = logName.makeName(m_primary.c_str(), "", "hst", 256);
+	//m_index = m_primary;
+	//m_index += '/'; m_index += logName.getFilename();
 		
-	m_index = m_primary;
-	m_index += '/'; m_index += logName.getFilename();
-		
+	/*
 	if (ArchivePath::isMasterBackup1Enabled() == true) {
 		m_backup1 = ArchivePath::getMasterBackup1().getSystemHistory();
 		if (SAUtils::DirExists(m_backup1.c_str()) == false) {
@@ -142,16 +144,19 @@ bool SystemHistory::init() {
 		}
 		m_backup2 += '/'; m_backup2 += logName.getFilename();
 	}
+	*/
 	return true;
 }
 /**
  * This function adds history to an image.
  */
+/*
 bool SystemHistory::add(const char *filepath, int version, const char *comment, const HistoryEvent &he) {
 	std::string buff = SAUtils::sprintf("%.4d", version);
 	add(filepath, buff.c_str(), comment, he);
 	return true;
 }
+*/
 
 bool SystemHistory::add(const char *filepath, const char *version, const char *comment, const HistoryEvent &he) {
 
@@ -165,26 +170,63 @@ bool SystemHistory::add(const char *filepath, const char *version, const char *c
 	//}
 	
 	if (ArchivePath::isMasterEnabled() == true) {
-		if (add(historyItem, m_index.c_str()) == false) {
+		if (add(historyItem) == false) {
 			return false;
 		}
 	}
+	/*
 	if (ArchivePath::isMasterBackup1Enabled() == true) {
-		if (add(historyItem, m_backup1.c_str()) == false) {
+		if (add(historyItem) == false) {
 			return false;
 		}
 	}
 	if (ArchivePath::isMasterBackup2Enabled() == true) {
-		if (add(historyItem, m_backup2.c_str()) == false) {
+		if (add(historyItem) == false) {
 			return false;
 		}
 	}
+	*/
 	return true;
 }
 
-bool SystemHistory::add(ImageHistoryItem &historyItem, const char *historyFile) {
+bool SystemHistory::add(ImageHistoryItem &historyItem) {
 	
-	m_hstfile.open(historyFile, std::ios::out | std::ios::app);
+	ExifDateTime date;
+	date.now();
+	std::string dateStr = date.toLogString();
+
+	std::string yearStr = dateStr.substr(0, 4);
+	std::string monthStr = dateStr.substr(5, 2);
+	std::string dayStr = dateStr.substr(8, 2);
+	
+	std::string addressStr = yearStr + monthStr + dayStr;
+
+	if (SAUtils::DirExists(m_primary.c_str()) == false) {
+			return false;
+	}
+
+	std::string indexPath = m_primary + '/' + yearStr;
+
+	if (SAUtils::DirExists(indexPath.c_str()) == false) {
+		if (SAUtils::mkDir(indexPath.c_str()) == false) {
+			return false;
+		}
+	}
+
+	indexPath += '/' + addressStr;
+
+	if (SAUtils::DirExists(indexPath.c_str()) == false) {
+		if (SAUtils::mkDir(indexPath.c_str()) == false) {
+			return false;
+		}
+	}
+
+	LogName logName;
+	std::string currentFilename = logName.makeName(indexPath.c_str(), "", "hst", 1);
+
+	indexPath += '/' + currentFilename;
+
+	m_hstfile.open(indexPath.c_str(), std::ios::out | std::ios::app);
 	if (m_hstfile.is_open() == false) {
 		return false;
 	}

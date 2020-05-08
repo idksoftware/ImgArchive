@@ -70,11 +70,11 @@ private:
 	SystemHistory(const SystemHistory&);
 	SystemHistory& operator = (const SystemHistory&) { return *this; }
 	
-	bool add(ImageHistoryItem &historyItem, const char *historyFile);
+	bool add(ImageHistoryItem &historyItem);
 public:
 	SystemHistory();
 	virtual ~SystemHistory();
-	bool add(const char *filepath, int version, const char *comment, const HistoryEvent &he);
+	//bool add(const char *filepath, int version, const char *comment, const HistoryEvent &he);
 	bool add(const char *filepath, const char *version, const char *comment, const HistoryEvent &he);
 	std::unique_ptr<ImageHistoryItem> get();
 	bool init();
