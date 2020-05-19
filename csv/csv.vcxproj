@@ -140,22 +140,34 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ArchiveHistory.cpp" />
     <ClCompile Include="CheckoutStatus.cpp" />
     <ClCompile Include="CSVDatabase.cpp" />
     <ClCompile Include="CSVDBFile.cpp" />
     <ClCompile Include="CSVDBVisitor.cpp" />
+    <ClCompile Include="CSVIndexAction.cpp" />
+    <ClCompile Include="CSVIndexVisitor.cpp" />
     <ClCompile Include="CSVMasterDatabase.cpp" />
     <ClCompile Include="CSVDerivativeDatabase.cpp" />
+    <ClCompile Include="CSVTAble.cpp" />
     <ClCompile Include="IndexVisitor.cpp" />
+    <ClCompile Include="ResultsList.cpp" />
+    <ClCompile Include="ResultsPresentation.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ArchiveHistory.h" />
     <ClInclude Include="CheckoutStatus.h" />
     <ClInclude Include="CSVDatabase.h" />
     <ClInclude Include="CSVDBFile.h" />
     <ClInclude Include="CSVDBVisitor.h" />
+    <ClInclude Include="CSVIndexAction.h" />
+    <ClInclude Include="CSVIndexVisitor.h" />
     <ClInclude Include="CSVMasterDatabase.h" />
     <ClInclude Include="CSVDerivativeDatabase.h" />
+    <ClInclude Include="CSVTAble.h" />
     <ClInclude Include="IndexVisitor.h" />
+    <ClInclude Include="ResultsList.h" />
+    <ClInclude Include="ResultsPresentation.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="csvmain.dox" />

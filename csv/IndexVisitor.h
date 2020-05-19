@@ -37,6 +37,8 @@
 #include <string>
 #include <vector>
 #include <memory>
+
+#include "MetaType.h"
 #include "AddressScope.h"
 #include "HistoryEvent.h"
 
@@ -76,12 +78,15 @@ namespace simplearchive {
 		friend class IndexVisitor;
 		
 	protected:
+		
 		std::shared_ptr<CheckoutRow> m_currentRow;
 		std::shared_ptr<CheckoutPartition> m_currentPartition;
 		
-		std::string m_Master;
-		std::string m_workspace;
-		std::string m_primaryIndex;
+		virtual bool onMetadata(const char* path, const char* name) { return true; };
+		/// This function is a factory function used to create new FolderVisitor objects.
+		AddressScope* m_addressScope { nullptr };
+
+	public:
 		/// On the start of each directory found, this function is run.
 		virtual bool onStart() { return true; };
 		/// At the end of each directory found, this function is run.
@@ -95,77 +100,65 @@ namespace simplearchive {
 		/// On finding a directory, this function is run.
 		virtual bool onDayEnd() { return true; };
 		/// On finding a directory, this function is run.
-		virtual bool onImage() { return true; };
+		virtual bool onImage(const char* name) { return true; };
 
-		virtual bool onMetadata(const char *path, const char *name) { return true; };
-		/// This function is a factory function used to create new FolderVisitor objects.
+		//virtual bool action(std::unique_ptr<AddressScope> scope, std::shared_ptr<MTRow> row) { return true; };
+
 		
 	public:
 		/// Constructor
 		IndexAction() = default;
-		
-		void init(const char *master, const char *workspace, const char *primaryIndex) {
-			m_Master = master;
-			m_workspace = workspace;
-			m_primaryIndex = primaryIndex;
-		};
 		/// Distructor
 		virtual ~IndexAction() = default;
-		
-	};
-
-	class StatusAction : public IndexAction {
-		std::shared_ptr<CheckoutStatusLog> log;
-	protected:
-		
-		/// On the start of each directory found, this function is run.
-		virtual bool onStart();
-		/// At the end of each directory found, this function is run.
-		virtual bool onEnd();
-		/// On finding a file, this function is run.
-		virtual bool onYearFolder(const char *name) { return true; };
-		/// On finding a file, this function is run.
-		virtual bool onYearEnd() { return true; };
-		/// On finding a directory, this function is run.
-		virtual bool onDayFolder(const char *name) { return true; };
-		/// On finding a directory, this function is run.
-		virtual bool onDayEnd() { return true; };
-		/// On finding a directory, this function is run.
-		virtual bool onImage();
-
-		virtual bool onMetadata(const char *path, const char *name) { return true; };
-		/// This function is a factory function used to create new FolderVisitor objects.
-		
-	public:
-		/// Constructor
-		StatusAction() {};
-		/// Distructor
-		virtual ~StatusAction() {};
-
+		void setAddressScope(AddressScope& addressScope) {
+			m_addressScope = &addressScope;
+		}
 	};
 
 	
+	
 	class IndexVisitor {
-		static std::string m_master;
-		static std::string m_workspace;
-		static std::string m_primaryIndex;
+	protected:
 		std::shared_ptr<IndexAction> m_indexAction;
-		std::unique_ptr<AddressScope> m_addressScope;
-		bool process(const char *rootFolder);
+		AddressScope m_addressScope;
+		std::string m_indexPath;
 	public:
 		/// Constructor
 		/// @parm folderVisitor - pointer to FolderVisitor
 		IndexVisitor(std::shared_ptr<IndexAction> indexAction);
-		static bool Init(const char *Master, const char *workspace, const char *primaryIndex);
-		bool setScope(const char *scope);
 		// Destructor
 		virtual ~IndexVisitor();
+
+		void setPath(const char* indexPath);
+		
+		bool setScope(const char *scope);
+		
 		/// This Function processes the files under the root using the
 		/// FolderVisitor class passed in the constructor
-		bool process();
-		
-		
+		virtual bool process(const char* rootFolder);
+		virtual bool process();
 	};
 
-	
+	/*
+
+	class CheckoutTableIndex : public IndexVisitor {
+	protected:
+		static std::string m_primaryIndex;
+		AddressScope m_addressScope;
+	public:
+		/// Constructor
+		/// @parm folderVisitor - pointer to FolderVisitor
+		CheckoutTableIndex(std::shared_ptr<IndexAction> indexAction) : IndexVisitor(indexAction) {};
+		// Destructor
+		virtual ~CheckoutTableIndex() = default;
+
+		static bool Init(const char* primaryIndex);
+		
+		/// This Function processes the files under the root using the
+		/// FolderVisitor class passed in the constructor
+		bool process(const char* rootFolder);
+		bool process();
+	};
+
+	*/
 };

@@ -155,13 +155,16 @@ class AddressSTokenList : public std::vector<AddressScopeItem> {};
 
 AddressScope::AddressScope()
 {
-	m_list = new AddressSTokenList;
+	m_list = std::make_shared<AddressSTokenList>();
 }
 
-
+AddressScope::AddressScope(AddressScope& as) {
+	m_pattern = as.m_pattern;
+	//m_list = std::make_shared<AddressSTokenList>(as.m_list);
+	m_matchAll = as.m_matchAll;
+}
 AddressScope::~AddressScope()
 {
-	delete m_list;
 }
 
 /*

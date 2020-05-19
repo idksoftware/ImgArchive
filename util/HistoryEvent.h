@@ -53,9 +53,7 @@ public:
 
 	const char *getString() const;
 	static const char getChar(HistoryEvent::Event evt);
-	Event get() {
-		return m_event;
-	}
+	
 	void set(const char *he);
 	void set(Event &he) {
 		m_event = he;

@@ -73,6 +73,7 @@
 #include "ArchivePath.h"
 #include "CheckoutStatus.h"
 #include "IndexVisitor.h"
+#include "ArchiveHistory.h"
 #include "RemoteServer.h"
 #include <stdio.h>
 #include <sstream>
@@ -503,6 +504,11 @@ namespace simplearchive {
 
 	bool SIALib::log(const char* filepath, const char* fromDate, const char* toDate, LogDocument::FormatType& formatType, const char* filename) {
 		
+		
+		ArchiveHistory archiveHistory = ArchiveHistory::get();
+		const char* scope = nullptr;
+		archiveHistory.scopedStatus(scope);
+		/*
 		if (filepath == nullptr || filepath[0] == '\0') {  // System History log
 			
 			if (ArchiveObject::getInstance().systemHistory(fromDate, toDate, formatType, filename) == false) {
@@ -516,6 +522,7 @@ namespace simplearchive {
 				return false;
 			}
 		}
+		*/
 		return true;
 
 	}

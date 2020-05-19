@@ -4,6 +4,7 @@
 #include "LogDocument.h"
 #include "DBDefines.h"
 #include "MetaType.h"
+#include "IndexVisitor.h"
 
 class AddressScope;
 
@@ -106,4 +107,61 @@ namespace simplearchive {
 		};
 	};
 
+	class StatusAction : public IndexAction {
+		std::shared_ptr<CheckoutStatusLog> log;
+
+	protected:
+
+		//std::shared_ptr<CheckoutRow> m_currentRow;
+		//std::shared_ptr<CheckoutPartition> m_currentPartition;
+
+		/// On the start of each directory found, this function is run.
+		virtual bool onStart();
+		/// At the end of each directory found, this function is run.
+		virtual bool onEnd();
+		/// On finding a file, this function is run.
+		virtual bool onYearFolder(const char* name) { return true; };
+		/// On finding a file, this function is run.
+		virtual bool onYearEnd() { return true; };
+		/// On finding a directory, this function is run.
+		virtual bool onDayFolder(const char* name);
+		/// On finding a directory, this function is run.
+		virtual bool onDayEnd() { return true; };
+		/// On finding a directory, this function is run.
+		virtual bool onImage();
+
+		//virtual bool action(std::unique_ptr<AddressScope> scope, std::shared_ptr<MTRow> row);
+
+		virtual bool onMetadata(const char* path, const char* name) { return true; };
+		/// This function is a factory function used to create new FolderVisitor objects.
+
+	public:
+		/// Constructor
+		StatusAction() {};
+		/// Distructor
+		virtual ~StatusAction() {};
+
+
+	};
+
+
+
+	class CheckoutTableIndex : public IndexVisitor {
+	protected:
+		static std::string m_primaryIndex;
+		AddressScope m_addressScope;
+	public:
+		/// Constructor
+		/// @parm folderVisitor - pointer to FolderVisitor
+		CheckoutTableIndex(std::shared_ptr<IndexAction> indexAction) : IndexVisitor(indexAction) {};
+		// Destructor
+		virtual ~CheckoutTableIndex() = default;
+
+		static bool Init(const char* primaryIndex);
+
+		/// This Function processes the files under the root using the
+		/// FolderVisitor class passed in the constructor
+		bool process(const char* rootFolder);
+		bool process();
+	};
 };

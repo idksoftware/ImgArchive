@@ -87,6 +87,7 @@ namespace simplearchive {
 		m_indexPath = index;
 		m_workspacePath = workspace;
 		m_systemHisteryPath = system;
+		
 		SystemHistory::setPath(system, index);
 		ImageHistory::setPath(workspace, index);
 	}
@@ -97,7 +98,7 @@ namespace simplearchive {
 			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 			return false;
 		}
-	
+
 		if (m_imageHistory->add(filepath, "0000", comment, HistoryEvent::Event::ADDED) == false) {
 			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 			return false;
@@ -130,6 +131,7 @@ namespace simplearchive {
 	}
 
 	bool History::checkoutImage(const char *filepath, int version, const char *comment) {
+
 		std::string versionString = Version2String(version);
 		if (m_systemHistory->add(filepath, versionString.c_str(), comment, HistoryEvent::Event::CHECKOUT) == false) {
 			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);

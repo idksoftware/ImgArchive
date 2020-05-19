@@ -6,11 +6,12 @@ class AddressSTokenList;
 class AddressScope
 {
 	std::string m_pattern;
-	AddressSTokenList *m_list;
+	std::shared_ptr<AddressSTokenList> m_list;
 	bool m_matchAll;
 public:
 	AddressScope();
 	~AddressScope();
+	AddressScope(AddressScope& as);
 	bool isInScope(const char *date);
 	bool isImageInScope(const char *image);
 	bool scope(const char *str);

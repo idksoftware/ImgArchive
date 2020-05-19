@@ -537,7 +537,15 @@ void MTColumn::boundUpdate() {
 }
 */
 
-MTRow::MTRow(MTTableSchema &schemaTable) : m_schema(schemaTable), m_delim(',')
+MTRow::MTRow(MTTableSchema& schemaTable) : m_schema(schemaTable), m_delim(':')
+{
+	for (auto i = m_schema.begin(); i != m_schema.end(); i++) {
+		std::shared_ptr<MTColumn> col = std::make_shared<MTColumn>(*i);
+		this->emplace_back(col);
+	}
+}
+
+MTRow::MTRow(MTTableSchema &schemaTable, char delim) : m_schema(schemaTable), m_delim(delim)
 {
 	for (auto i = m_schema.begin(); i != m_schema.end(); i++) {
 		std::shared_ptr<MTColumn> col = std::make_shared<MTColumn>(*i);

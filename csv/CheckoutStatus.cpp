@@ -501,11 +501,13 @@ namespace simplearchive {
 
 	bool CheckoutStatus::scopedStatus(const char * scope)
 	{
-		IndexVisitor IndexVisitor(std::make_shared<StatusAction>());
-		if (!IndexVisitor.setScope(scope)) {
+
+		CheckoutTableIndex checkoutTableIndex(std::make_shared<StatusAction>());
+		//checkoutTableIndex.setIndexPath(m_primaryIndex.c_str());
+		if (!checkoutTableIndex.setScope(scope)) {
 			return false;
 		}
-		IndexVisitor.process();
+		checkoutTableIndex.process(m_primaryIndex.c_str());
 		return true;
 	}
 
@@ -760,6 +762,137 @@ namespace simplearchive {
 		return true;
 	}
 	*/
+std::string CheckoutTableIndex::m_primaryIndex;
+
+bool CheckoutTableIndex::Init(const char* primaryIndex) {
+	m_primaryIndex = primaryIndex;
+
+	return true;
+}
+
+bool CheckoutTableIndex::process() {
+	if (!CheckoutTableIndex::process(m_primaryIndex.c_str())) {
+		return false;
+	}
+	return true;
+}
+
+
+bool CheckoutTableIndex::process(const char* rootFolder) {
+	std::string path = rootFolder;
+
+	m_indexAction->onStart();
+	// read years in Master folder
+	FileList_Ptr filelist = SAUtils::getFiles_(path.c_str());
+	for (auto i = filelist->begin(); i != filelist->end(); i++) {
+		std::string year = *i;
+		char c = (year)[0];
+		if (c == '.') {
+			continue;
+		}
+
+		std::string yearMaster = path;
+		try {
+			m_indexAction->onYearFolder(year.c_str());
+		}
+		catch (std::exception /*e*/) {
+			return false;
+		}
+
+		yearMaster += '/';
+		yearMaster += year;
+
+		if (!m_addressScope.isInScope(year.c_str())) {
+			continue;
+		}
+
+
+		FileList_Ptr filelist = SAUtils::getFiles_(yearMaster.c_str());
+		for (auto i = filelist->begin(); i != filelist->end(); i++) {
+			std::string dayfolder = *i;
+			char c = (dayfolder)[0];
+			if (c == '.') {
+				continue;
+			}
+			std::string dateStr = dayfolder.substr(0, 10);
+			if (!m_addressScope.isInScope(dateStr.c_str())) {
+				continue;
+			}
+
+			PathController pathController(dayfolder.c_str(), false);
+
+			std::string filenameStr = yearMaster;
+			filenameStr += '/';
+			filenameStr += dayfolder;
+
+
+			m_indexAction->onDayFolder(filenameStr.c_str());
+
+			m_indexAction->onDayEnd();
+		}
+		m_indexAction->onYearEnd();
+
+	}
+	m_indexAction->onEnd();
+	return true;
+}
+
+bool onDayFolder(const char* name)
+{
+	return true;
+};
+
+bool StatusAction::onEnd()
+{
+	if (!log->write(LogDocument::FormatType::Human)) {
+		ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
+		return false;
+	}
+	return true;
+};
+
+bool StatusAction::onDayFolder(const char* name)
+{
+	m_currentPartition = std::make_shared<CheckoutPartition>();
+
+	if (m_currentPartition->read(name) == false) {
+		return false;
+	}
+
+	for (auto i = m_currentPartition->begin(); i != m_currentPartition->end(); i++) {
+		std::shared_ptr<MTRow> row = *i;
+
+		m_currentRow = std::static_pointer_cast<CheckoutRow>(row);
+		const char* fileName = m_currentRow->getFileName();
+		if (!m_addressScope->isImageInScope(fileName)) {
+			continue;
+		}
+		if (onImage() == false) {
+			return false;
+		}
+
+	}
+
+	return false;
+}
+
+bool StatusAction::onImage()
+{
+	std::string s = m_currentRow->toString();
+	log->push_back(s);
+	return true;
+}
+
+
+bool StatusAction::onStart()
+{
+	log = std::make_shared<CheckoutStatusLog>();
+	return true;
+};
+
+
+
+
 
 	CheckoutStatusLog::CheckoutStatusLog() : LogDocument(std::make_shared<CheckoutSchema>()) {
 		// TODO Auto-generated constructor stub

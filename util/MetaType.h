@@ -105,7 +105,7 @@ public:
 	int getSize();
 };
 
-class MTTableSchema : private std::vector<MTSchema> {
+class MTTableSchema : public std::vector<MTSchema> {
 	std::map<std::string, int> m_index;
 int m_count;
 protected:
@@ -326,6 +326,7 @@ public:
 
 
 using SharedMTColumn = std::shared_ptr<MTColumn>;
+
 class MTRow : public std::vector<SharedMTColumn> {
 	MTTableSchema &m_schema;
 	//std::string m_text;
@@ -339,6 +340,7 @@ protected:
 public:
 	
 	MTRow(MTTableSchema &ts);
+	MTRow(MTTableSchema& ts, char delim);
 	MTRow(const MTRow &row);
 	MTRow &operator=(const MTRow &row);
 	virtual ~MTRow();
@@ -473,13 +475,21 @@ class MTTable : public std::vector<SharedMTRow> {
 	int m_rowCursor;
 public:
 	const int NOT_FOUND = -1;
-	MTTable(MTTableSchema *pSchemaTable) {
-		m_TableSchema = std::make_shared<MTTableSchema>(*pSchemaTable);
-		m_rowCursor = NOT_FOUND;
-	};
+	MTTable(MTTableSchema* pSchemaTable)
+		: m_TableSchema(std::make_shared<MTTableSchema>(*pSchemaTable)),
+		m_rowCursor(NOT_FOUND) {};
+
+	MTTable(std::shared_ptr<MTTableSchema> pSchemaTable)
+		: m_TableSchema(pSchemaTable),
+		m_rowCursor(NOT_FOUND) {};
+	
 	virtual ~MTTable() {};
 	MTTableSchema &getSchema() const {
 		return *m_TableSchema;
+	}
+
+	std::shared_ptr<MTTableSchema> getSchemaPtr() const {
+		return m_TableSchema;
 	}
 	
 	SharedMTRow makeRow();

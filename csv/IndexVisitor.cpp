@@ -53,7 +53,7 @@
 #include "CIDKFileFind.h"
 #include "IndexVisitor.h"
 #include "SAUtils.h"
-#include "CheckoutStatus.h"
+
 #include "pathcontroller.h"
 #include "DBDefines.h"
 #include "MetaType.h"
@@ -68,9 +68,7 @@ static char THIS_FILE[] = __FILE__;
 
 namespace simplearchive {
 
-	std::string IndexVisitor::m_master;
-	std::string IndexVisitor::m_workspace;
-	std::string IndexVisitor::m_primaryIndex;
+	
 
 	/*
 	ReporterItem::ReporterItem(ReporterItem::Status status, std::string & message) : m_message(message), m_status(status)
@@ -117,47 +115,124 @@ namespace simplearchive {
 
 	IndexVisitor::IndexVisitor(std::shared_ptr<IndexAction> indexAction) {
 		m_indexAction = indexAction;
-		m_addressScope = std::make_unique<AddressScope>();
-		indexAction->init(m_master.c_str(), m_workspace.c_str(), m_primaryIndex.c_str());
+		m_indexAction->setAddressScope(m_addressScope);
 	}
 
 	IndexVisitor::~IndexVisitor() {
 
 	}
 
-	bool IndexVisitor::Init(const char *master, const char *workspace, const char *primaryIndex) {
-		m_master = master;
-		m_workspace = workspace;
-		m_primaryIndex = primaryIndex;
-		
-		return true;
-	}
+	
 
 
 	bool IndexVisitor::setScope(const char *scope) {
 		
-		std::string scopeStr = scope;
+		std::string scopeStr;
+		if (scope != nullptr) {
+			std::string scopeStr = scope;
+		}
 
 		if (scopeStr.empty()) {
-			m_addressScope->scopeAll();
+			m_addressScope.scopeAll();
 		}
 		else if (scopeStr.compare("all") == 0) {
-			m_addressScope->scopeAll();
+			m_addressScope.scopeAll();
 		}
-		else if (!m_addressScope->scope(scope)) {
+		else if (!m_addressScope.scope(scope)) {
 			return false;
 		}
 		return true;
+	}
+
+	void IndexVisitor::setPath(const char* indexPath) {
+		m_indexPath = indexPath;
 	}
 
 	bool IndexVisitor::process() {
-		if (!IndexVisitor::process(m_primaryIndex.c_str())) {
+		if (!IndexVisitor::process(m_indexPath.c_str())) {
 			return false;
 		}
 		return true;
 	}
 
-	bool IndexVisitor::process(const char *rootFolder) {
+	bool IndexVisitor::process(const char* rootFolder) {
+		std::string path = rootFolder;
+
+		m_indexAction->onStart();
+		// read years in Master folder
+		FileList_Ptr filelist = SAUtils::getFiles_(path.c_str());
+		for (auto i = filelist->begin(); i != filelist->end(); i++) {
+			std::string year = *i;
+			char c = (year)[0];
+			if (c == '.') {
+				continue;
+			}
+
+			std::string yearMaster = path;
+			try {
+				m_indexAction->onYearFolder(year.c_str());
+			}
+			catch (std::exception /*e*/) {
+				return false;
+			}
+
+			yearMaster += '/';
+			yearMaster += year;
+
+			if (!m_addressScope.isInScope(year.c_str())) {
+				continue;
+			}
+
+
+			FileList_Ptr filelist = SAUtils::getFiles_(yearMaster.c_str());
+			for (auto i = filelist->begin(); i != filelist->end(); i++) {
+				std::string dayfolder = *i;
+				char c = (dayfolder)[0];
+				if (c == '.') {
+					continue;
+				}
+				std::string dateStr = dayfolder.substr(0, 10);
+				if (!m_addressScope.isInScope(dateStr.c_str())) {
+					continue;
+				}
+
+				PathController pathController(dayfolder.c_str(), false);
+
+				std::string filenameStr = yearMaster;
+				filenameStr += '/';
+				filenameStr += dayfolder;
+
+
+				m_indexAction->onDayFolder(filenameStr.c_str());
+
+				m_indexAction->onDayEnd();
+			}
+			m_indexAction->onYearEnd();
+
+		}
+		m_indexAction->onEnd();
+		return true;
+	}
+
+	/*
+
+	std::string CheckoutTableIndex::m_primaryIndex;
+
+	bool CheckoutTableIndex::Init(const char* primaryIndex) {
+		m_primaryIndex = primaryIndex;
+
+		return true;
+	}
+
+	bool CheckoutTableIndex::process() {
+		if (!CheckoutTableIndex::process(m_primaryIndex.c_str())) {
+			return false;
+		}
+		return true;
+	}
+
+	
+	bool CheckoutTableIndex::process(const char *rootFolder) {
 		std::string path = rootFolder;
 
 		m_indexAction->onStart();
@@ -174,14 +249,14 @@ namespace simplearchive {
 			try {
 				m_indexAction->onYearFolder(year.c_str());
 			}
-			catch (std::exception /*e*/) {
+			catch (std::exception) { //e) {
 				return false;
 			}
 
 			yearMaster += '/';
 			yearMaster += year;
 
-			if (!m_addressScope->isInScope(year.c_str())) {
+			if (!m_addressScope.isInScope(year.c_str())) {
 				continue;
 			}
 
@@ -194,34 +269,19 @@ namespace simplearchive {
 					continue;
 				}
 				std::string dateStr = dayfolder.substr(0, 10);
-				if (!m_addressScope->isInScope(dateStr.c_str())) {
+				if (!m_addressScope.isInScope(dateStr.c_str())) {
 					continue;
 				}
+
 				PathController pathController(dayfolder.c_str(), false);
-				m_indexAction->onDayFolder(dayfolder.c_str());
-			
+				
 				std::string filenameStr = yearMaster;
 				filenameStr += '/';
 				filenameStr += dayfolder;
-				m_indexAction->m_currentPartition = std::make_shared<CheckoutPartition>();
-				m_indexAction->onDayFolder(dayfolder.c_str());
-				if (m_indexAction->m_currentPartition->read(filenameStr.c_str()) == false) {
-					return false;
-				}
 				
-				for (auto i = m_indexAction->m_currentPartition->begin(); i != m_indexAction->m_currentPartition->end(); i++) {
-					std::shared_ptr<MTRow> row = *i;
-					m_indexAction->m_currentRow = std::static_pointer_cast<CheckoutRow>(row);
-					const char *fileName = m_indexAction->m_currentRow->getFileName();
-					if (!m_addressScope->isImageInScope(fileName)) {
-						continue;
-					}
-					if (m_indexAction->onImage() == false) {
-						return false;
-					}
-				}
+
+				m_indexAction->onDayFolder(filenameStr.c_str());
 				
-				//checkoutPartition.write(filenameStr.c_str());
 				m_indexAction->onDayEnd();
 			}
 			m_indexAction->onYearEnd();
@@ -245,6 +305,31 @@ namespace simplearchive {
 		return true;
 	};
 
+	bool StatusAction::onDayFolder(const char* name)
+	{
+		m_currentPartition = std::make_shared<CheckoutPartition>();
+
+		if (m_currentPartition->read(name) == false) {
+			return false;
+		}
+
+		for (auto i = m_currentPartition->begin(); i != m_currentPartition->end(); i++) {
+			std::shared_ptr<MTRow> row = *i;
+
+			m_currentRow = std::static_pointer_cast<CheckoutRow>(row);
+			const char *fileName = m_currentRow->getFileName();
+			if (!m_addressScope->isImageInScope(fileName)) {
+				continue;
+			}
+			if (onImage() == false) {
+				return false;
+			}
+
+		}
+		
+		return false;
+	}
+
 	bool StatusAction::onImage()
 	{
 		std::string s = m_currentRow->toString();
@@ -252,13 +337,15 @@ namespace simplearchive {
 		return true;
 	}
 
+	
 	bool StatusAction::onStart()
 	{
 		log = std::make_shared<CheckoutStatusLog>();
 		return true;
 	};
 
-	
+	*/
+
 	/*
 	const char * ReporterItem::statusString()
 	{

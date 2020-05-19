@@ -24,7 +24,7 @@
 #include "JSONWriter.h"
 #include "HTMLWriter.h"
 #include "ImagePath.h"
-//#include "CSVDBFile.h"
+#include "ArchiveHistory.h"
 #include "Database.h"
 #include "SQLiteDB.h"
 #include "HistoryEvent.h"
@@ -757,11 +757,11 @@ namespace simplearchive {
 		std::string csvpdbPath = primaryIndexPath.getCSVDatabasePath();
 		CSVDatabase::setDBPath(csvpdbPath.c_str());
 		History::setPaths(ArchivePath::getIndexHistory().c_str(), ArchivePath::getPathToWorkspace().c_str(), config.getHistoryPath());
-
+		ArchiveHistory::setPath(config.getHistoryPath());
 		History& history = History::getHistory();
 		history.init();
 
-		IndexVisitor::Init(ArchivePath::getMasterPath().c_str(), ArchivePath::getPathToWorkspace().c_str(), primaryIndexPath.getCheckoutStatusPath().c_str());
+		//IndexVisitor::Init(ArchivePath::getMasterPath().c_str(), ArchivePath::getPathToWorkspace().c_str(), primaryIndexPath.getCheckoutStatusPath().c_str());
 		CheckoutStatus::Init(ArchivePath::getMasterPath().c_str(), ArchivePath::getPathToWorkspace().c_str(), primaryIndexPath.getCheckoutStatusPath().c_str());
 		VersionControl::setPaths(primaryIndexPath.getPathToRepository().c_str(), ArchivePath::getMasterPath().c_str(), ArchivePath::getDerivativePath().c_str(), ArchivePath::getPathToWorkspace().c_str());
 		MasterCatalogue& masterView = getMasterCatalogue();
@@ -1173,6 +1173,15 @@ namespace simplearchive {
 	
 
 	bool ArchiveObject::processHistory(ImagePath &imagePath, const char *comment) {
+
+		ArchiveHistory::setPath("C:\\ProgramData\\IDK-Software\\ImgArchive\\tmp");
+		ArchiveHistory& archiveHistory = ArchiveHistory::get();
+
+		if (archiveHistory.newImage(imagePath.getImageAddress().c_str(), comment) == false) {
+			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
+			return false;
+		}
+
 		History& history = History::getHistory();
 		if (history.newImage(imagePath.getImageAddress().c_str(), comment) == false) {
 			return false;
@@ -1455,6 +1464,15 @@ namespace simplearchive {
 				logger.log(LOG_UNABLE_TO_CHECKOUT_GENERAL, CLogger::Level::INFO, "Unable to checkout: \"%s\" Error: %s", filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
 				commentWithWarning += ErrorCode::toString(ErrorCode::getErrorCode());
 			}
+
+			ArchiveHistory::setPath("C:\\ProgramData\\IDK-Software\\ImgArchive\\tmp");
+			ArchiveHistory& archiveHistory = ArchiveHistory::get();
+
+			if (archiveHistory.add(filepath, versionControl.getVersion(), commentWithWarning.c_str(), HistoryEvent::Event::CHECKOUT) == false) {
+				ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
+				return false;
+			}
+
 			History& history = History::getHistory();
 			if (history.checkoutImage(filepath, versionControl.getVersion(), commentWithWarning.c_str()) == false) {
 				logger.log(LOG_UNABLE_TO_CHECKOUT_GENERAL, CLogger::Level::FATAL, "Unable to update checkout history for image: \"%s\" Error: %s", filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
@@ -1483,6 +1501,15 @@ namespace simplearchive {
 		}
 		*/
 		commentWithWarning += " Successful";
+
+		ArchiveHistory::setPath("C:\\ProgramData\\IDK-Software\\ImgArchive\\tmp");
+		ArchiveHistory& archiveHistory = ArchiveHistory::get();
+
+		if (archiveHistory.add(filepath, versionControl.getVersion(), comment, HistoryEvent::Event::CHECKOUT) == false) {
+			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
+			return false;
+		}
+
 		History& history = History::getHistory();
 		if (history.checkoutImage(filepath, versionControl.getVersion(), commentWithWarning.c_str()) == false) {
 			logger.log(LOG_UNABLE_TO_CHECKOUT_GENERAL, CLogger::Level::FATAL, "Unable to update checkout history for image: \"%s\" Error: %s", filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
