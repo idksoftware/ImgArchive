@@ -85,6 +85,7 @@ bool MetadataTemplate::read(const char *datafile) {
 	}
 	return true;
 }
+
 MetadataObject_ptr MetadataTemplate::getMetadataObject() {
 	MetadataObject_ptr metadataObject = std::make_unique<MetadataObject>();
 	

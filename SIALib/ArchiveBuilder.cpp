@@ -518,6 +518,7 @@ namespace simplearchive {
 
 	bool ArchiveBuilder::processImageGroupSets(std::shared_ptr<ImageSets> imageSets, ImportJournal& importJournal) {
 		CLogger &logger = CLogger::getLogger();
+
 #if defined( _MSC_VER ) && defined( IMGA_DEBUG )
 		_CrtMemCheckpoint(&startMemState);
 		// Enable MS Visual C++ debug heap memory leaks dump on exit
@@ -528,8 +529,6 @@ namespace simplearchive {
 		}
 #endif
 
-
-		
 		SACmdArgs &saCmdArgs = SACmdArgs::get();
 		
 		//const char *seqPath = ImagePath::getMasterSequenceNumberPath().c_str();
@@ -538,10 +537,10 @@ namespace simplearchive {
 		ImageIndex& imageIndex = primaryIndexObject.getimageIndex();
 
 		std::string metatemplatePath = m_templatePath;
-		metatemplatePath += "/default.tpl";
+		metatemplatePath += "/master.tpl";
 
 		if (MetadataTemplate::read(metatemplatePath.c_str()) == false) {
-			logger.log(LOG_OK, CLogger::Level::INFO, "Cannot read default template file \"%s\"", metatemplatePath.c_str());
+			logger.log(LOG_OK, CLogger::Level::INFO, "Cannot read master template file \"%s\"", metatemplatePath.c_str());
 		}
 		logger.log(LOG_OK, CLogger::Level::INFO, "Completed reading metadata template file \"%s\"", metatemplatePath.c_str());
 		// Creating metadata object with bulk data

@@ -61,14 +61,90 @@ class MetadataObject;
 typedef std::unique_ptr<MetadataObject> MetadataObject_ptr;
 typedef std::unique_ptr<ConfigBlock> Config_ptr;
 //class Config;
+
+
+class MetadataTemplateSchema : public MTTableSchema {
+public:
+	MetadataTemplateSchema() noexcept : MTTableSchema(TABLE_METADATA_TEMPLATE) {
+
+		// Description
+		add(MTSchema(MTSchema::Text, DB_DESCRIPTION));
+		add(MTSchema(MTSchema::Text, DB_LABEL));
+		add(MTSchema(MTSchema::Text, DB_TITLE));
+		add(MTSchema(MTSchema::Text, DB_SUBJECT));
+		add(MTSchema(MTSchema::Integer, DB_RATING));
+		add(MTSchema(MTSchema::Integer, DB_RATINGPERCENT));
+		add(MTSchema(MTSchema::Text, DB_TAGS));// template
+		add(MTSchema(MTSchema::Text, DB_KEYWORDS));// template
+		add(MTSchema(MTSchema::Integer, DB_VERSION));// template
+		// Origin
+		add(MTSchema(MTSchema::Text, DB_COMMENT));// template
+		add(MTSchema(MTSchema::Text, DB_AUTHOR));
+		add(MTSchema(MTSchema::Date, DB_CAPTUREDATE));
+
+
+		// Cammara
+		// Image
+		add(MTSchema(MTSchema::Date, DB_SUBSETIMEORIGINAL));
+		add(MTSchema(MTSchema::Text, DB_COPYRIGHT));
+
+		// Camera
+		add(MTSchema(MTSchema::Text, DB_MAKER));
+		add(MTSchema(MTSchema::Text, DB_MODEL));	
+		add(MTSchema(MTSchema::Text, DB_GPSTIMESTAMP));
+
+		// Location
+		add(MTSchema(MTSchema::Text, DB_LATITUDE));
+		add(MTSchema(MTSchema::Text, DB_LONGITUDE));
+		add(MTSchema(MTSchema::Text, DB_LOCATION));
+		add(MTSchema(MTSchema::Text, DB_SCENE));// template
+
+		// IPTC
+		add(MTSchema(MTSchema::Text, DB_SOURCEURL));			// template
+		add(MTSchema(MTSchema::Text, DB_USAGERIGHTS));// template
+		add(MTSchema(MTSchema::Text, DB_COPYRIGHTURL));// template
+		add(MTSchema(MTSchema::Text, DB_HEADLINE));// template
+		add(MTSchema(MTSchema::Text, DB_CATEGORY));// template
+		add(MTSchema(MTSchema::Text, DB_SOURCE));// template
+		add(MTSchema(MTSchema::Text, DB_INSTRUCTIONS));// template
+
+		add(MTSchema(MTSchema::Text, DB_CREATOR));// template
+		add(MTSchema(MTSchema::Text, DB_JOBTITLE));// template
+		add(MTSchema(MTSchema::Text, DB_ADDRESS));// template
+		add(MTSchema(MTSchema::Text, DB_CITY));// template
+		add(MTSchema(MTSchema::Text, DB_STATE));// template
+		add(MTSchema(MTSchema::Text, DB_POSTALCODE));// template
+		add(MTSchema(MTSchema::Text, DB_COUNTRY));// template
+		add(MTSchema(MTSchema::Text, DB_PHONE));// template
+		add(MTSchema(MTSchema::Text, DB_EMAIL));// template
+		add(MTSchema(MTSchema::Text, DB_WEBSITE));// template
+
+	}
+};
+
+class MetadataTemplateRow : public MTRow {
+	static MetadataTemplateRow m_tableSchema;
+
+public:
+	MetadataTemplateRow() : MTRow(m_tableSchema) {};
+	MetadataTemplateRow(const MTRow& row) : MTRow(row) {};
+};
+/*
+	Note table of one row
+*/
+class MetadataTemplatePartition : public MTTable {
+public:
+	MetadataTemplatePartition() : MTTable(new MetadataTemplateSchema) {};
+	virtual ~MetadataTemplatePartition() {};
+
+};
+
 class MetadataTemplate {
 	
 	
 	static Config_ptr m_templateFile;
 	static std::string &getValue(const char *key);
 
-	
-	
 	MetadataTemplate() noexcept = default;
 public:
 	static MetadataTemplate& GetInstance();

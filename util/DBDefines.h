@@ -51,6 +51,8 @@
 
 #define TABLE_METADATA_PROPERTIES		"MetadataProperties"
 #define TABLE_DERIVATIVE_METADATA		"DerivativeMetadata"
+#define TABLE_METADATA_TEMPLATE			"MetadataTemplate"
+#define TABLE_DERIVATIVE_TEMPLATE		"DerivativeTemplate"
 #define TABLE_PRIMARY_INDEX				"PrimaryIndex"
 #define TABLE_DERIVATIVE_INDEX			"DerivativeIndex"
 #define TABLE_MASTER_INDEX				"MasterIndex"
