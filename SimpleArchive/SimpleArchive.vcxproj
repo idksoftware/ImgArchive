@@ -23,7 +23,7 @@
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>SimpleArchive</RootNamespace>
     <ProjectName>iaarc</ProjectName>
-    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -116,7 +116,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>Ws2_32.lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>..\x64\Debug\fclib.lib;..\x64\Debug\util.lib;..\x64\Debug\exifcl.lib;..\x64\Debug\metatp.lib;..\x64\Debug\csv.lib;..\x64\Debug\database.lib;..\x64\Debug\sqlite3.lib;..\x64\Debug\SIALib.lib;..\x64\Debug\IntegrityManager.lib;..\x64\Debug\mirror.lib;..\x64\Debug\appbase.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\x64\Debug\fclib.lib;..\x64\Debug\util.lib;..\x64\Debug\exifcl.lib;..\x64\Debug\metatp.lib;..\x64\Debug\csv.lib;..\x64\Debug\database.lib;..\x64\Debug\sqlite3.lib;..\x64\Debug\SIALib.lib;..\x64\Debug\IntegrityManager.lib;..\x64\Debug\mirror.lib;..\x64\Debug\appbase.lib;..\x64\Debug\web.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ProjectReference>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>

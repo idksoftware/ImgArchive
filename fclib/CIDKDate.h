@@ -41,7 +41,7 @@
 #include "cport.h"
 #include <time.h>
 #include <string>
-
+#include <cinttypes>
 /*
 **	Class containing a date and time.
 */
@@ -220,7 +220,7 @@ public:
 
 	CIDKDate(unsigned long nNumberOfDays,unsigned long nNumberOfSeconds)
 	{
-		m_nTime = nNumberOfDays * (unsigned long)IDK_DATE_SECONDS_IN_DAY + nNumberOfSeconds;
+		m_nTime = (int64_t)nNumberOfDays * (int64_t)IDK_DATE_SECONDS_IN_DAY + (int64_t)nNumberOfSeconds;
 	}
 
 	bool SetSeconds(long nSeconds = 0)

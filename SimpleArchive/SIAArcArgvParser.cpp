@@ -57,6 +57,10 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineCommandSyntax("uncheckout", "iaarc uncheckout [--target-path=<path>]\n\t[--logging-level=<level>]"
 		"[--comment=<comment text>]\n\t[--scope=<scope-address]\n\t[--force=<yes|No>]\n\t[--version=<vesion-num>");
 
+	defineOption("workspace", "Manages the workspace.", ArgvParser::MasterOption);
+	defineCommandSyntax("workspace", "iaarc workspace [--sync]\n\t[--logging-level=<level>]"
+		"[--comment=<comment text>]\n\t[--scope=<scope-address]\n\t[--force=<yes|No>]");
+
 	
 	defineOption("status", "show check in/out status", ArgvParser::MasterOption);
 	defineOption("view", "View commands", ArgvParser::MasterOption);
@@ -98,8 +102,8 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineOption("L", "import from lightroom", ArgvParser::NoOptionAttribute);
 	defineOptionAlternative("L", "lightroom");
 
-	defineOption("S", "address scope", ArgvParser::OptionRequiresValue);
-	defineOptionAlternative("S", "scope");
+	defineOption("A", "address scope", ArgvParser::OptionRequiresValue);
+	defineOptionAlternative("A", "scope");
 
 	defineOption("R", "Remode server mode", ArgvParser::NoOptionAttribute);
 	defineOptionAlternative("R", "remote-server");
@@ -107,8 +111,11 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineOption("d", "destination of the images", ArgvParser::OptionRequiresValue);
 	defineOptionAlternative("d", "dist-path");
 
-	defineOption("M", "size of media", ArgvParser::OptionRequiresValue);
-	defineOptionAlternative("M", "media-size");
+	defineOption("S", "sync workspace with archive", ArgvParser::NoOptionAttribute);
+	defineOptionAlternative("S", "sync");
+
+	//defineOption("M", "size of media", ArgvParser::OptionRequiresValue);
+	//defineOptionAlternative("M", "media-size");
 
 	defineOption("m", "Goes through the motions of running the subcommand but makes no\nactual changes ether disk or repository.", ArgvParser::OptionRequiresValue);
 	defineOptionAlternative("m", "media-path");
@@ -208,6 +215,9 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineCommandOption("log", "from-date");
 	defineCommandOption("log", "to-date");
 //	defineCommandOption("mode", "remote-server");
+
+	defineCommandOption("workspace", "sync");
+
 
 	ArgvParser::ParserResults res = parse(argc, argv);
 
@@ -501,19 +511,27 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Log);
 		cmdFound = true;
 	}
+	else if (command("workspace") == true) {
+
+		if (foundOption("sync") == true) {
+			appOptions.m_sync = true;
+		}
+		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Workspace);
+		cmdFound = true;
+	}
 	else if (command("status") == true) {
 
-		if (foundOption("scope") == true) {
-			appOptions.m_imageAddress = optionValue("scope");
-		}
-		if (foundOption("checked-out") == true) {
-			appOptions.m_showCommandOption = SIAArcAppOptions::ShowCommandOption::SC_ShowUncheckedOutChanges;
-		}
-		if (foundOption("unchecked-out") == true) {
-			appOptions.m_showCommandOption = SIAArcAppOptions::ShowCommandOption::SC_ShowUncheckedOutChanges;	
-		}
-		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Status);
-		cmdFound = true;
+	if (foundOption("scope") == true) {
+		appOptions.m_imageAddress = optionValue("scope");
+	}
+	if (foundOption("checked-out") == true) {
+		appOptions.m_showCommandOption = SIAArcAppOptions::ShowCommandOption::SC_ShowUncheckedOutChanges;
+	}
+	if (foundOption("unchecked-out") == true) {
+		appOptions.m_showCommandOption = SIAArcAppOptions::ShowCommandOption::SC_ShowUncheckedOutChanges;
+	}
+	appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Status);
+	cmdFound = true;
 	}
 	else if (command("version") == true) {
 		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Version);

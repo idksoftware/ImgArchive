@@ -552,6 +552,12 @@ namespace simplearchive {
 		return true;
 	}
 
+	
+	bool SIALib::workspace(bool sync) {
+		return true;
+	}
+
+
 	bool SIALib::status(const char *scope) {
 
 		

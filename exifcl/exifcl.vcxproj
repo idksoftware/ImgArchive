@@ -22,7 +22,7 @@
     <ProjectGuid>{079F2B4F-39D6-44D7-82F7-7E37F7C4C64A}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>exifcl</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

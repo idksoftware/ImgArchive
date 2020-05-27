@@ -152,6 +152,8 @@ namespace simplearchive {
 
 		bool status(const char *scope);
 
+		bool workspace(bool sync);
+
 		bool mirror(const char *name);
 		
 		bool archive(const char *archivePath, const char *distPath, unsigned long sizeOfMedia, ExifDateTime *startDate, ExifDateTime *endDate);  //< Create backup volumes

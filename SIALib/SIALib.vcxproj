@@ -22,7 +22,7 @@
     <ProjectGuid>{439087AF-7106-492A-9A92-6692E1F0B07D}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>SIALib</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -99,7 +99,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>..\Debug\fclib.lib;..\Debug\util.lib;..\Debug\exifcl.lib;..\Debug\metatp.lib;..\Debug\csv.lib;..\Debug\mirror.lib;..\Debug\sqlite3.lib;..\Debug\database.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\x64\Debug\fclib.lib;..\x64\Debug\util.lib;..\x64\Debug\exifcl.lib;..\x64\Debug\metatp.lib;..\x64\Debug\csv.lib;..\x64\Debug\mirror.lib;..\x64\Debug\sqlite3.lib;..\x64\Debug\database.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

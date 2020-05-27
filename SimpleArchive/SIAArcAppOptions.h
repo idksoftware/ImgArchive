@@ -176,6 +176,7 @@ public:
 		CM_Prop,        // Show images properties.
 		CM_Log,         // Show images properties.
 		CM_Status,      // Show check in/out status.
+		CM_Workspace,	// Manage workspace
 		CM_Mode,		// Sets the mode in which imgarchive will be operating
 		CM_Unknown
 	};
@@ -199,6 +200,7 @@ private:
 	static bool m_useDate;
 	static bool m_useFileDate;
 	static bool m_useDateToday;
+	static bool m_sync;
 	static ExifDate m_archiveDate;	// used as the forced or default time.
 
 	//static bool m_enableUDP;
@@ -268,6 +270,7 @@ public:
 	bool getUseDateToday();
 	bool isDataForced();
 	bool isForced();
+	bool isSync();
 
 	ExifDate &getArchiveDate();
 	LogDocument::FormatType& getFormatType();
