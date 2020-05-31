@@ -80,18 +80,11 @@ public:
 		// Origin
 		add(MTSchema(MTSchema::Text, DB_COMMENT));// template
 		add(MTSchema(MTSchema::Text, DB_AUTHOR));
-		add(MTSchema(MTSchema::Date, DB_CAPTUREDATE));
-
 
 		// Cammara
-		// Image
-		add(MTSchema(MTSchema::Date, DB_SUBSETIMEORIGINAL));
 		add(MTSchema(MTSchema::Text, DB_COPYRIGHT));
-
-		// Camera
 		add(MTSchema(MTSchema::Text, DB_MAKER));
 		add(MTSchema(MTSchema::Text, DB_MODEL));	
-		add(MTSchema(MTSchema::Text, DB_GPSTIMESTAMP));
 
 		// Location
 		add(MTSchema(MTSchema::Text, DB_LATITUDE));
@@ -137,6 +130,8 @@ public:
 		}
 
 	}
+
+	
 };
 /*
 	Note table of one row
@@ -151,8 +146,9 @@ public:
 
 class MetadataTemplateResultsPresentation {
 	MTRow m_row;
+	std::shared_ptr<MTTableSchema> m_tableSchema;
 public:
-	MetadataTemplateResultsPresentation(MTRow row) : m_row(row) {};
+	MetadataTemplateResultsPresentation(MTRow row) : m_row(row), m_tableSchema(new MetadataTemplateSchema) {};
 	~MetadataTemplateResultsPresentation() = default;
 
 	bool writeHuman();

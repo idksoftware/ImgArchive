@@ -28,48 +28,48 @@ namespace simplearchive {
 		switch (homePathType) {
 		case HomePathType::LocalEnv:	// Local Environment set
 			if (res == false) {
-				printf("Found IMGARCHIVE_HOME as system profile: %s but archive not found at loacation", HomePath::get().c_str());
+				//printf("Found IMGARCHIVE_HOME as system profile: %s but archive not found at loacation", HomePath::get().c_str());
 				return false;
 			}
-			printf("Found IMGARCHIVE_HOME as system profile: %s. Archive found at that loacation", HomePath::get().c_str());
+			//printf("Found IMGARCHIVE_HOME as system profile: %s. Archive found at that loacation", HomePath::get().c_str());
 			break;
 		case HomePathType::SystemEnv:	// System Environment set
 			if (res == false) {
-				printf("Found IMGARCHIVE_HOME as system profile: %s. Archive found at that loacation", HomePath::get().c_str());
+				//printf("Found IMGARCHIVE_HOME as system profile: %s. Archive found at that loacation", HomePath::get().c_str());
 				return false;
 			}
 			break;
 		case HomePathType::UserOnly:	// user only archive
 			if (res == false) {
-				printf("Archive not found at default loacation");
+				//printf("Archive not found at default loacation");
 				return false;
 			}
-			printf("Archive found at default user loacation: %s.", HomePath::get().c_str());
+			//printf("Archive found at default user loacation: %s.", HomePath::get().c_str());
 			break;
 		case HomePathType::AllUsers:	// all users archive
 			if (res == false) {
-				printf("Archive not found at default loacation");
+				//printf("Archive not found at default loacation");
 				return false;
 			}
-			printf("Archive found at default system loacation: %s.", HomePath::get().c_str());
+			//printf("Archive found at default system loacation: %s.", HomePath::get().c_str());
 			break;
 		case HomePathType::Unknown:
 		default:
-			printf("Unknown error");
+			//printf("Unknown error");
 			return false;
 		}
 		std::string homePath = HomePath::get();
 		if (found == false) {
-			printf("ImgArchive Unable to start? No archive found in the default location or"
-				" the environment variable IMGARCHIVE_HOME not set.\nUse siaadmin to initalise an archive.\n");
+			//printf("ImgArchive Unable to start? No archive found in the default location or"
+			//	" the environment variable IMGARCHIVE_HOME not set.\nUse siaadmin to initalise an archive.\n");
 
 			return false;
 		}
 		m_configfile = homePath + "/config/" + "config.dat";
 		if (SAUtils::FileExists(m_configfile.c_str()) == false) {
 
-			printf("ImgArchive Unable to start? No config.dat file found in the default location or"
-				" the environment variable IMGARCHIVE_HOME not set.\nUse siaadmin to initalise an archive.\n");
+			//printf("ImgArchive Unable to start? No config.dat file found in the default location or"
+			//	" the environment variable IMGARCHIVE_HOME not set.\nUse siaadmin to initalise an archive.\n");
 			return false;
 		}
 		AppConfigReader configReader;

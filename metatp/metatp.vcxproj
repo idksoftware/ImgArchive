@@ -148,6 +148,7 @@
     <ClInclude Include="ContentsLister.h" />
     <ClInclude Include="DayIndexer.h" />
     <ClInclude Include="DerivativeMetadata.h" />
+    <ClInclude Include="DerivativeMetadataTemplate.h" />
     <ClInclude Include="MatadataManager.h" />
     <ClInclude Include="VersionsList.h" />
     <ClInclude Include="HTMLWriter.h" />
@@ -162,6 +163,7 @@
     <ClCompile Include="ContentsLister.cpp" />
     <ClCompile Include="DayIndexer.cpp" />
     <ClCompile Include="DerivativeMetadata.cpp" />
+    <ClCompile Include="DerivativeMetadataTemplate.cpp" />
     <ClCompile Include="HTMLWriter.cpp" />
     <ClCompile Include="ImageSideCar.cpp" />
     <ClCompile Include="MatadataManager.cpp" />
