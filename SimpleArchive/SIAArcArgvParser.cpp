@@ -61,14 +61,19 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineCommandSyntax("workspace", "iaarc workspace [--sync]\n\t[--logging-level=<level>]"
 		"[--comment=<comment text>]\n\t[--scope=<scope-address]\n\t[--force=<yes|No>]");
 
-	
+	defineOption("prop", "Manage image properties", ArgvParser::MasterOption);
+	defineCommandSyntax("prop", "iaarc prop [--s]\n\t[--logging-level=<level>]"
+		"[--comment=<comment text>]\n\t[--scope=<scope-address]\n\t[--force=<yes|No>]");
+
+	defineOption("template", "Manage metadata template", ArgvParser::MasterOption);
+	defineCommandSyntax("template", "iaarc template [--current]\n\t[--logging-level=<level>]"
+		"[--comment=<comment text>]\n\t[--scope=<scope-address]\n\t[--force=<yes|No>]");
+
 	defineOption("status", "show check in/out status", ArgvParser::MasterOption);
 	defineOption("view", "View commands", ArgvParser::MasterOption);
 
 	defineOption("show", "Show details", ArgvParser::MasterOption);
 	defineCommandSyntax("show", "iaarc show [--history=<image-address>]\n\t");
-
-	defineOption("prop", "Manage image properties", ArgvParser::MasterOption);
 
 	defineOption("log", "Show logs", ArgvParser::MasterOption);
 	defineCommandSyntax("log", "iaarc log [--image=<image-address]");
@@ -114,17 +119,23 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineOption("S", "sync workspace with archive", ArgvParser::NoOptionAttribute);
 	defineOptionAlternative("S", "sync");
 
-	//defineOption("M", "size of media", ArgvParser::OptionRequiresValue);
-	//defineOptionAlternative("M", "media-size");
+	
+	//defineOption("m", "master archive", ArgvParser::NoOptionAttribute);
+	//defineOptionAlternative("m", "master");
 
-	defineOption("m", "Goes through the motions of running the subcommand but makes no\nactual changes ether disk or repository.", ArgvParser::OptionRequiresValue);
-	defineOptionAlternative("m", "media-path");
+	//defineOption("d", "derivative archive.", ArgvParser::NoOptionAttribute);
+	//defineOptionAlternative("d", "derivative");
 
 	defineOption("image", "Specifies a image address in the form \"<date>/<image name>", ArgvParser::OptionRequiresValue);
 	//defineOptionAlternative("i", "image");
 
 	defineOption("F", "no output is sent to the terminal.", ArgvParser::NoOptionAttribute);
 	defineOptionAlternative("F", "force");
+
+	defineOption("C", "current template (master or derivative)", ArgvParser::OptionRequiresValue);
+	defineOptionAlternative("C", "current");
+
+
 
 	defineOption("v", "specifies a version.", ArgvParser::OptionRequiresValue);
 	defineOptionAlternative("v", "version");
@@ -205,9 +216,10 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineCommandOption("status", "checked-out");
 	defineCommandOption("status", "unchecked-out");
 	
-
+	defineCommandOption("status", "unchecked-out");
 
 	defineCommandOption("show", "settup");
+	defineCommandOption("template", "current");
 
 	defineCommandOption("log", "image");
 	defineCommandOption("log", "format-type");
@@ -431,6 +443,14 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	else if (command("show") == true) {
 		
 		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Show);
+		cmdFound = true;
+	}
+	
+	else if (command("template") == true) {
+		if (foundOption("current") == true) {
+			//appOptions.m_imageAddress = optionValue("list");
+		}
+		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Template);
 		cmdFound = true;
 	}
 	else if (command("prop") == true) {

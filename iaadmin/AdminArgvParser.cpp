@@ -727,7 +727,6 @@ namespace simplearchive {
 			}
 			cmdFound = true;
 		}
-		
 		else {
 			appOptions.setCommandMode(AppOptions::CommandMode::CM_Unknown);
 			cmdFound = true;

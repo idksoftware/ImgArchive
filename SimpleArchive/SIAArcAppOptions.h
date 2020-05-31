@@ -174,6 +174,7 @@ public:
 		CM_Unlock,      // Unlock working images in the repository so that no other user can commit changes to them.
 		CM_History,		// Show image change hisory for an image or images
 		CM_Prop,        // Show images properties.
+		CM_Template,    // Manage template properties.
 		CM_Log,         // Show images properties.
 		CM_Status,      // Show check in/out status.
 		CM_Workspace,	// Manage workspace
@@ -201,6 +202,7 @@ private:
 	static bool m_useFileDate;
 	static bool m_useDateToday;
 	static bool m_sync;
+	static bool m_current;
 	static ExifDate m_archiveDate;	// used as the forced or default time.
 
 	//static bool m_enableUDP;
@@ -271,6 +273,7 @@ public:
 	bool isDataForced();
 	bool isForced();
 	bool isSync();
+	bool isCurrent();
 
 	ExifDate &getArchiveDate();
 	LogDocument::FormatType& getFormatType();

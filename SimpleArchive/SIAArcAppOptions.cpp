@@ -64,6 +64,7 @@ bool SIAArcAppOptions::m_useDate = false;
 bool SIAArcAppOptions::m_useFileDate = false;
 bool SIAArcAppOptions::m_useDateToday = false;
 bool SIAArcAppOptions::m_sync = false;
+bool SIAArcAppOptions::m_current = false;
 ExifDate SIAArcAppOptions::m_archiveDate;
 
 std::string SIAArcAppOptions::m_name;
@@ -202,6 +203,11 @@ bool SIAArcAppOptions::isForced() {
 bool SIAArcAppOptions::isSync()
 {
 	return m_sync;
+}
+
+bool SIAArcAppOptions::isCurrent()
+{
+	return m_current;
 }
 
 ExifDate &SIAArcAppOptions::getArchiveDate() {

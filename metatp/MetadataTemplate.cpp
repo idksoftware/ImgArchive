@@ -46,7 +46,11 @@ static char THIS_FILE[] = __FILE__;
 
 namespace simplearchive {
 	
-std::unique_ptr<ConfigBlock>	MetadataTemplate::m_templateFile(new ConfigBlock);
+	MetadataTemplateSchema MetadataTemplateRow::m_tableSchema;
+
+	std::unique_ptr<ConfigBlock>	MetadataTemplate::m_templateFile(new ConfigBlock);
+	MetadataTemplateRow MetadataTemplate::m_metadataTemplateRow;
+
 //Config *MetadataTemplate::m_templateFile = 0;
 
 
@@ -59,6 +63,7 @@ MetadataTemplate& MetadataTemplate::GetInstance()
 MetadataTemplate::~MetadataTemplate() {}
 
 static std::string defaultStr = "";
+
 
 std::string& MetadataTemplate::getValue(const char *key) {
 	std::map<std::string, std::string>::iterator it;
@@ -77,12 +82,28 @@ bool MetadataTemplate::read(const char *datafile) {
 	}
 	//templateFile.printAll();
 	for (std::map<std::string, std::string>::iterator ii = m_templateFile->begin(); ii != m_templateFile->end(); ++ii) {
-		//std::string &value = getValue((*ii).first.c_str());
-		//printf("\"%s\" opt:\"%s\"\n", (*ii).first.c_str(), (*ii).second.c_str());
-		//if (value.compare("")) {
-		//	*value = (*ii).second.c_str();
-		//}
+		std::string &value = getValue((*ii).first.c_str());
+		printf("\"%s\" = \"%s\"\n", (*ii).first.c_str(), (*ii).second.c_str());
+		if (value.compare("")) {
+			value = (*ii).second.c_str();
+		}
+		try {
+			MTColumn& col = m_metadataTemplateRow.columnAt((*ii).first.c_str());
+			col = (*ii).second.c_str();
+		}
+		catch (std::invalid_argument& e) {
+			printf("%s", e.what());
+		}
+		catch (MTTypeException& e) {
+			const char* tmp = e.what();
+			printf("%s\n", tmp);
+		}
 	}
+	m_metadataTemplateRow.print();
+	return true;
+}
+
+bool MetadataTemplate::write(const char* datafile) {
 	return true;
 }
 

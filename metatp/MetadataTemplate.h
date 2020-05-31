@@ -39,6 +39,7 @@
 #include <map>
 #include <mutex>
 #include "ConfigReader.h"
+#include "ResultsPresentation.h"
 
 namespace simplearchive {
 
@@ -76,7 +77,6 @@ public:
 		add(MTSchema(MTSchema::Integer, DB_RATINGPERCENT));
 		add(MTSchema(MTSchema::Text, DB_TAGS));// template
 		add(MTSchema(MTSchema::Text, DB_KEYWORDS));// template
-		add(MTSchema(MTSchema::Integer, DB_VERSION));// template
 		// Origin
 		add(MTSchema(MTSchema::Text, DB_COMMENT));// template
 		add(MTSchema(MTSchema::Text, DB_AUTHOR));
@@ -123,11 +123,20 @@ public:
 };
 
 class MetadataTemplateRow : public MTRow {
-	static MetadataTemplateRow m_tableSchema;
+	static MetadataTemplateSchema m_tableSchema;
 
 public:
 	MetadataTemplateRow() : MTRow(m_tableSchema) {};
-	MetadataTemplateRow(const MTRow& row) : MTRow(row) {};
+	//MetadataTemplateRow(const MTRow& row) : MTRow(row) {};
+	MetadataTemplateRow(const MTRow& row) : MTRow(m_tableSchema) {
+
+		for (unsigned int i = 0; i < row.size(); i++) {
+			MTColumn& c1 = *at(i);
+			MTColumn& c2 = *row.at(i);
+			c1 = c2;
+		}
+
+	}
 };
 /*
 	Note table of one row
@@ -139,11 +148,27 @@ public:
 
 };
 
+
+class MetadataTemplateResultsPresentation {
+	MTRow m_row;
+public:
+	MetadataTemplateResultsPresentation(MTRow row) : m_row(row) {};
+	~MetadataTemplateResultsPresentation() = default;
+
+	bool writeHuman();
+	bool writeXML(); 
+	bool writeCSV();
+	bool writeJson();
+	bool writeHtml();
+};
+
+
 class MetadataTemplate {
 	
 	
 	static Config_ptr m_templateFile;
 	static std::string &getValue(const char *key);
+	static MetadataTemplateRow m_metadataTemplateRow;
 
 	MetadataTemplate() noexcept = default;
 public:
@@ -154,6 +179,7 @@ public:
 	MetadataTemplate& operator=(const MetadataTemplate& rhs) = delete;
 
 	static bool read(const char *datafile);
+	static bool write(const char* datafile);
 	static MetadataObject_ptr getMetadataObject();
 };
 
