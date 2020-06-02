@@ -75,6 +75,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../util;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -136,6 +137,7 @@
     <ClInclude Include="AppOptions.h" />
     <ClInclude Include="argvparser.h" />
     <ClInclude Include="EnvFunc.h" />
+    <ClInclude Include="ParseOptions.h" />
     <ClInclude Include="SIAArgvParser.h" />
   </ItemGroup>
   <ItemGroup>
@@ -143,6 +145,7 @@
     <ClCompile Include="AppOptions.cpp" />
     <ClCompile Include="argvparser.cpp" />
     <ClCompile Include="EnvFunc.cpp" />
+    <ClCompile Include="ParseOptions.cpp" />
     <ClCompile Include="SIAArgvParser.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
-
+#include "ParseOptions.h"
+/*
 class OutputType {
 public:
 	enum class Type {
@@ -77,6 +78,7 @@ public:
 		return "Unknown";
 	}
 };
+*/
 
 class SetSettings : public ParseOptions {
 	Option processSettingsOptions(std::string& optionString);
@@ -89,7 +91,7 @@ public:
 };
 
 
-class SetConfig
+class SetConfig : public ParseOptions
 {
 public:
 	enum class Error {
@@ -118,6 +120,7 @@ private:
 	bool checkPath();
 	bool checkNumber();
 	bool checkIPAddress();
+	std::string setLogLevel(std::string s);
 public:
 	SetConfig() = default;
 	virtual ~SetConfig() = default;

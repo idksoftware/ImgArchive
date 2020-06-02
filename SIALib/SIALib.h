@@ -154,7 +154,7 @@ namespace simplearchive {
 
 		bool workspace(bool sync);
 
-		bool metadataTemplate();
+		bool metadataTemplate(bool repo, bool templateFile);
 
 		bool mirror(const char *name);
 		

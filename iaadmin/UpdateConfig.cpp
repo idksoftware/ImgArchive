@@ -85,7 +85,7 @@ namespace simplearchive {
 		if (read(imgaConfig) == false) {
 			return false;
 		}
-		ConfigWriter configWriter(imgaConfig);
+		AppConfigBaseWriter configWriter(imgaConfig);
 		configWriter.update(configOptionBlock, configOption, configValue);
 		imgaConfig.printAll();
 		std::ofstream configFile;

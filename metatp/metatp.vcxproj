@@ -150,6 +150,7 @@
     <ClInclude Include="DerivativeMetadata.h" />
     <ClInclude Include="DerivativeMetadataTemplate.h" />
     <ClInclude Include="MatadataManager.h" />
+    <ClInclude Include="MetadataTemplateManager.h" />
     <ClInclude Include="VersionsList.h" />
     <ClInclude Include="HTMLWriter.h" />
     <ClInclude Include="ImageSideCar.h" />
@@ -167,6 +168,7 @@
     <ClCompile Include="HTMLWriter.cpp" />
     <ClCompile Include="ImageSideCar.cpp" />
     <ClCompile Include="MatadataManager.cpp" />
+    <ClCompile Include="MetadataTemplateManager.cpp" />
     <ClCompile Include="VersionMetadataObject.cpp" />
     <ClCompile Include="JSONWriter.cpp" />
     <ClCompile Include="MetadataObject.cpp" />

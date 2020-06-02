@@ -138,6 +138,7 @@ protected:
 	std::string includePath(int pos, std::string line);
 	int m_includeCnt;
 	std::string m_path;
+	std::string m_rootPath;
 	/// @brief deliminator for the key / value pair.
 	char m_delimChar;
 	std::string m_blockName;
@@ -154,11 +155,13 @@ public:
 	/// @param    config		Config class to be filled out.
 	/// @return	returns true if read correctly.
 	bool read(const char *datafile, ConfigBlock &config);
+	bool read(const char* path, const char* datafile, ConfigBlock& config);
 	/// @brief This function attempts to read a configuration file.
 	/// @param    str	string to read.
 	/// @param    config		Config class to be filled out.
 	/// @return	returns true if read correctly.
 	bool read(const std::string &str, ConfigBlock &config);
+	
 	bool readExif(const std::string &str, ConfigBlock &config);
 	virtual bool process() noexcept {
 		return true;
@@ -216,13 +219,25 @@ public:
 };
 
 class ConfigWriter {
+	ConfigBlock& m_configBlock;
+public:
+	ConfigWriter(ConfigBlock& c) : m_configBlock(c) {};
+	virtual ~ConfigWriter() = default;
+
+	bool update(const char* option, const char* value);
+	bool remove(const char* option);
+	bool write(const char* datafile);
+};
+
+
+class AppConfigBaseWriter {
 	AppConfigBase& m_config;
 public:
 	/// @brief Constructor for class.
-	ConfigWriter(AppConfigBase& c) : m_config(c) {};
+	AppConfigBaseWriter(AppConfigBase& c) : m_config(c) {};
 
 	/// @brief Destructor for the class.
-	virtual ~ConfigWriter() = default;
+	virtual ~AppConfigBaseWriter() = default;
 
 	bool update(const char* blockName, const char* cmd, const char* options);
 	

@@ -76,10 +76,10 @@ std::string& MetadataTemplate::getValue(const char *key) {
 	return it->second;
 }
 
-bool MetadataTemplate::read(const char *datafile) {
+bool MetadataTemplate::read(const char* path, const char *datafile) {
 
 	ConfigReader configReader;
-	if (configReader.read(datafile, *m_templateFile) == false) {
+	if (configReader.read(path, datafile, *m_templateFile) == false) {
 		return false;
 	}
 	//templateFile.printAll();

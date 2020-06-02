@@ -539,7 +539,7 @@ namespace simplearchive {
 		std::string metatemplatePath = m_templatePath;
 		metatemplatePath += "/master.tpl";
 
-		if (MetadataTemplate::read(metatemplatePath.c_str()) == false) {
+		if (MetadataTemplate::read(m_templatePath.c_str(), "master.tpl") == false) {
 			logger.log(LOG_OK, CLogger::Level::INFO, "Cannot read master template file \"%s\"", metatemplatePath.c_str());
 		}
 		logger.log(LOG_OK, CLogger::Level::INFO, "Completed reading metadata template file \"%s\"", metatemplatePath.c_str());

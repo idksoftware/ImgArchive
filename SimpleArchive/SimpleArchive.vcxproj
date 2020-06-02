@@ -169,15 +169,19 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="IAParseOptions.h" />
     <ClInclude Include="SIAArcApp.h" />
     <ClInclude Include="SIAArcAppOptions.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SIAArcArgvParser.h" />
+    <ClInclude Include="UpdateTemplateFile.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="IAParseOptions.cpp" />
     <ClCompile Include="SIAArcApp.cpp" />
     <ClCompile Include="SIAArcAppOptions.cpp" />
     <ClCompile Include="SIAArcArgvParser.cpp" />
+    <ClCompile Include="UpdateTemplateFile.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="mainpage.dox" />

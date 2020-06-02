@@ -11,6 +11,7 @@
 #include "argvparser.h"
 #include "Environment.h"
 #include "EnvFunc.h"
+#include "IAParseOptions.h"
 
 // beyond compare
 using namespace CommandLineProcessing;
@@ -447,9 +448,19 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	}
 	
 	else if (command("template") == true) {
+		IAParseOptions iaParseOptions;
+		bool res = false;
+		std::string opt;
 		if (foundOption("current") == true) {
-			//appOptions.m_imageAddress = optionValue("list");
+			std::string opt = optionValue("current");
+			res = iaParseOptions.parseTemplateOptions(opt.c_str());
+			if (!res) {
+				printf("Invalid argument for \"current\" \"%s\"\n\n", opt.c_str());
+				printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+				return false;
+			}
 		}
+		appOptions.m_current = iaParseOptions.isMaster();
 		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Template);
 		cmdFound = true;
 	}

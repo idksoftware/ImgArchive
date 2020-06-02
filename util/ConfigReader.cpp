@@ -45,6 +45,7 @@
 #include <cstdlib>
 #include "ConfigReader.h"
 #include "siaglobal.h"
+#include "SAUtils.h"
 #include "CLogger.h"
 
 #ifdef _DEBUG
@@ -151,12 +152,31 @@ std::string ConfigReader::includePath(int pos, std::string line) {
 	return m_path;
 }
 
+bool ConfigReader::read(const char* path, const char* datafile, ConfigBlock& config) {
+	std::string fullPath = path;
+	m_rootPath = path;
+	fullPath += '/'; 
+	fullPath += datafile;
+
+	return read(fullPath.c_str(), config);
+}
+
 bool ConfigReader::read(const char *datafile, ConfigBlock &config) {
 
 
 	std::string text;
-	m_path = datafile;
-	std::ifstream file(datafile);
+	
+	std::size_t found = m_path.find_first_not_of("/\\");
+	if (found != std::string::npos) {
+		std::string path = m_rootPath;
+		path += '/';
+		path += datafile;
+		m_path = path;
+	}
+	else {
+		m_path = datafile;
+	}
+	std::ifstream file(m_path.c_str());
 	if (file.is_open() == false) {
 		return false;
 	}
@@ -268,8 +288,10 @@ bool ConfigReader::read(const std::string &str, ConfigBlock &config) {
 	return true;
 }
 
-bool AppConfigReader::read(const char *datafile, AppConfigBase &config) {
 
+
+
+bool AppConfigReader::read(const char* datafile, AppConfigBase& config) {
 
 	std::string text;
 	m_path = datafile;
@@ -428,8 +450,8 @@ ConfigReader::Token ConfigReader::parse(const char *text, ConfigBlock &config) {
 		std::string include("include");
 		const std::size_t  includeIdx = line.find("include");
 		if (includeIdx != static_cast<std::size_t>(-1)) {
-
 			includePath(includeIdx, line);
+			m_path = line.substr(8, line.length() - 8);
 			return Include;
 		} else {
 			if (m_logging) {
@@ -452,6 +474,18 @@ ConfigReader::Token ConfigReader::parse(const char *text, ConfigBlock &config) {
 	config[(cmdp)] = (optionp);
 
 	return KeyValue;
+}
+
+bool ConfigWriter::update(const char* option, const char* value) {
+	return true;
+}
+
+bool ConfigWriter::remove(const char* option) {
+	return true;
+}
+
+bool ConfigWriter::write(const char* datafile) {
+	return true;
 }
 
 bool ConfigBlockWriter::update(const char* cmd, const char* options, ConfigBlock& config) {
@@ -521,7 +555,7 @@ bool ConfigBlockWriter::write(const char *datafile, ConfigBlock &config) {
 
 
 
-bool ConfigWriter::update(const char* blockName, const char* cmd, const char* options)
+bool AppConfigBaseWriter::update(const char* blockName, const char* cmd, const char* options)
 {
 	for (auto ii = m_config.begin(); ii != m_config.end(); ++ii) {
 		if (ii->first.compare(blockName) == 0) {
@@ -540,7 +574,7 @@ bool ConfigWriter::update(const char* blockName, const char* cmd, const char* op
 	return false;
 }
 
-bool ConfigWriter::remove(const char* cmd, ConfigBlock& config)
+bool AppConfigBaseWriter::remove(const char* cmd, ConfigBlock& config)
 {
 	return false;
 }
@@ -554,7 +588,7 @@ bool ConfigWriter::load(AppConfigBase& config)
 }
 */
 
-bool ConfigWriter::write(const char* datafile, AppConfigBase& config)
+bool AppConfigBaseWriter::write(const char* datafile, AppConfigBase& config)
 {
 	return false;
 }

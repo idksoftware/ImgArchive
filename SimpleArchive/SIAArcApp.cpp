@@ -356,7 +356,9 @@ bool SIAArcApp::doRun()
 	}
 	case SIAArcAppOptions::CommandMode::CM_Template:
 	{
-		if (siaLib.metadataTemplate() == false) {
+		bool repo = false;
+		bool file = false;
+		if (siaLib.metadataTemplate(repo, file) == false) {
 			setError(CLogger::getLastCode(), CLogger::getLastMessage());
 			return false;
 		}

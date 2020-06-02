@@ -6,6 +6,7 @@
 #include "AppConfig.h"
 #include "SAUtils.h"
 
+/*
 OutputType::Type OutputType::get() {
 	return m_type;
 }
@@ -33,7 +34,7 @@ bool OutputType::parse(const char* str) {
 	return false;
 }
 
-
+*/
 enum class Option {
 	QUIET,
 	SILENT,
@@ -92,6 +93,7 @@ enum class Option {
 	UNKNOWN
 };
 
+/*
 bool iequals(const std::string& a, const std::string& b)
 {
 	return std::equal(a.begin(), a.end(),
@@ -214,7 +216,7 @@ bool ParseOptions::processArgs(const char* ov) {
 
 	return true;
 }
-
+*/
 /*
 bool isTrueFalse(std::string& s) {
 	if (iequals("true", s) || iequals("false", s) || iequals("on", s) ||
@@ -230,7 +232,7 @@ bool isTrueFalse(std::string& s) {
 
 */
 
-std::string setLogLevel(std::string s) {
+std::string SetConfig::setLogLevel(std::string s) {
 	
 	if (iequals("TRACE", s)) {
 		return "TRACE";
