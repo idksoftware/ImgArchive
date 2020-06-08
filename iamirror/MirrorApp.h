@@ -53,8 +53,8 @@
 
 
  */
-#ifndef APP_H_
-#define APP_H_
+#pragma once
+
 #include "ArchiveBuilder.h"
 #include "AppBase.h"
 
@@ -65,15 +65,15 @@ namespace simplearchive {
 /**
 * @brief This is the main application class. This class is the first object main() will execute.
 */
-	class AdminApp : public AppBase {
+	class MirrorApp : public AppBase {
 private:
 	std::string m_HomePath;
 	
 public:
 	/// Constructor
-	AdminApp();
+	MirrorApp();
 	/// Destructor
-	virtual ~AdminApp();
+	virtual ~MirrorApp();
 	
 	
 	
@@ -93,4 +93,4 @@ protected:
 };
 
 }
-#endif /* APP_H_ */
+

@@ -79,9 +79,9 @@ Java HotSpot(TM) 64-Bit Server VM (build 24.51-b03, mixed mode)
 */
 namespace simplearchive {
 	
-	AdminApp::AdminApp() : AppBase(std::make_shared<AdminArgvParser>()) {};
+	MirrorApp::MirrorApp() : AppBase(std::make_shared<MirrorArgvParser>()) {};
 
-bool AdminApp::Show() {
+bool MirrorApp::Show() {
 	
 /*
 
@@ -181,7 +181,7 @@ int test(const std::string key) {
 }
 
 
-bool AdminApp::doInitalise(int argc, char **argv) {
+bool MirrorApp::doInitalise(int argc, char **argv) {
 	/*
 	AppOptions &appOptions = AppOptions::get();
 	if (appOptions.initalise(argc, argv) == false) {
@@ -189,15 +189,15 @@ bool AdminApp::doInitalise(int argc, char **argv) {
 		return false;
 	}
 	*/
-	AdminArgvParser adminArgvParser;
-	if (adminArgvParser.initalise(argc, argv) == false) {
+	MirrorArgvParser mirrorArgvParser;
+	if (mirrorArgvParser.initalise(argc, argv) == false) {
 
 		return false;
 	}
 	return true;
 }
 
-bool AdminApp::doRun()
+bool MirrorApp::doRun()
 {
 	// Find if the archive exists
 	AppOptions &appOptions = AppOptions::get();
@@ -293,7 +293,7 @@ bool AdminApp::doRun()
 	return true;
 }
 
-AdminApp::~AdminApp() {
+MirrorApp::~MirrorApp() {
 	CLogger::Close();
 }
 
@@ -311,7 +311,7 @@ bool failed()
 
 
 
-bool AdminApp::initaliseConfig() {
+bool MirrorApp::initaliseConfig() {
 
 	//AppConfig &config = AppConfig::get();
 	AdminConfig config;
@@ -403,7 +403,7 @@ bool AdminApp::initaliseConfig() {
 }
 
 // AppConfig &config = AppConfig::get();
-bool AdminApp::initaliseHomePath() {
+bool MirrorApp::initaliseHomePath() {
 
 	SIAARCConfig config;
 
@@ -480,7 +480,7 @@ bool AdminApp::initaliseHomePath() {
 	return true;
 }
 
-bool AdminApp::initaliseArgs(int argc, char **argv) {
+bool MirrorApp::initaliseArgs(int argc, char **argv) {
 
 	
 	if (m_argvParser->doInitalise(argc, argv) == false) {
@@ -498,7 +498,7 @@ bool AdminApp::initaliseArgs(int argc, char **argv) {
 
 int main(int argc, char **argv)
 {
-	simplearchive::AdminApp app;
+	simplearchive::MirrorApp app;
 	return app.RunApp(argc, argv);
 }
 

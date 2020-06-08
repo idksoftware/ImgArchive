@@ -65,15 +65,15 @@ namespace simplearchive {
 /**
 * @brief This is the main application class. This class is the first object main() will execute.
 */
-	class AdminApp : public AppBase {
+	class WebApp : public AppBase {
 private:
 	std::string m_HomePath;
 	
 public:
 	/// Constructor
-	AdminApp();
+	WebApp();
 	/// Destructor
-	virtual ~AdminApp();
+	virtual ~WebApp();
 	
 	
 	

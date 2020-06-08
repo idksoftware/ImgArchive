@@ -10,9 +10,7 @@ namespace simplearchive {
 		bool m_error;
 	public:
 
-		SIAArcArgvParser()
-		{
-		}
+		SIAArcArgvParser() : m_error(false) {};
 
 		virtual ~SIAArcArgvParser()
 		{

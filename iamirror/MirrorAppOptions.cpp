@@ -37,7 +37,7 @@
 #include "AppConfig.h"
 #include "SAUtils.h"
 #include "stdio.h"
-#include "SIAArgvParser.h"
+#include "MirrorArgvParser.h"
 #include "Environment.h"
 
 #ifdef _DEBUG
@@ -73,9 +73,7 @@ AppOptions &AppOptions::get() {
 	return _this;
 }
 
-AppOptions::AppOptions() {
-	m_configured = true;
-}
+AppOptions::AppOptions() : m_configured(true), m_error(false) {}
 
 bool AppOptions::initaliseConfig() {
 

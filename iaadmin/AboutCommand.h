@@ -1,6 +1,7 @@
 #pragma once
-#include "ImageExtentions.h"
+//#include "ImageExtentions.h"
 //#include "TextOut.h"
+#include <string>
 
 class AboutCommand
 {

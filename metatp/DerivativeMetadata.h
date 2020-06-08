@@ -1,5 +1,5 @@
-#ifndef DERIVATIVEMETADATAOBJECT_H_
-#define DERIVATIVEMETADATAOBJECT_H_
+#pragma once
+
 #include <string>
 #include <vector>
 #include <map>
@@ -123,4 +123,4 @@ namespace simplearchive {
 	};
 
 }; // simplearchive namespace
-#endif // DERIVATIVEMETADATAOBJECT_H_
+

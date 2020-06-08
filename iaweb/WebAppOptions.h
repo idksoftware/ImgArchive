@@ -89,7 +89,7 @@ private:
 	/**
 		@brief Set to true if no archive configuration found. 
 	*/
-	friend class AdminArgvParser;
+	friend class WebArgvParser;
 
 	bool m_configured;
 	void setCommandMode(const AppOptions::CommandMode mode);

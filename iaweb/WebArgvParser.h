@@ -7,15 +7,15 @@ using namespace CommandLineProcessing;
 
 namespace simplearchive {
 
-	class AdminArgvParser : public SIAArgvParser
+	class WebArgvParser : public SIAArgvParser
 	{
 	public:
 
-		AdminArgvParser()
+		WebArgvParser()
 		{
 		}
 
-		virtual ~AdminArgvParser()
+		virtual ~WebArgvParser()
 		{
 		}
 
@@ -26,6 +26,9 @@ namespace simplearchive {
 	protected:
 		virtual bool doInitalise(int argc, char **argv);
 		std::string usageDescriptionHeader(unsigned int _width) const;
+
+		virtual std::string commandUsage(unsigned int _width = 80) const;
+		virtual std::string generalHelp(unsigned int _width) const;
 	};
 
 } /* namespace CommandLineProcessing */

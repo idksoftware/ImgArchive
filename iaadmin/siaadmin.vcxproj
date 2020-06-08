@@ -107,7 +107,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>..\x64\Debug\fclib.lib;..\x64\Debug\util.lib;..\x64\Debug\exifcl.lib;..\x64\Debug\metatp.lib;..\x64\Debug\csv.lib;..\x64\Debug\sqlite3.lib;..\x64\Debug\SIALib.lib;..\x64\Debug\IntegrityManager.lib;%(AdditionalDependencies);kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib</AdditionalDependencies>
+      <AdditionalDependencies>..\x64\Debug\fclib.lib;..\x64\Debug\util.lib;..\x64\Debug\web.lib;..\x64\Debug\exifcl.lib;..\x64\Debug\metatp.lib;..\x64\Debug\csv.lib;..\x64\Debug\database.lib;..\x64\Debug\sqlite3.lib;..\x64\Debug\SIALib.lib;..\x64\Debug\IntegrityManager.lib;..\x64\Debug\mirror.lib;..\x64\Debug\appbase.lib;%(AdditionalDependencies);kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

@@ -78,9 +78,9 @@ Java HotSpot(TM) 64-Bit Server VM (build 24.51-b03, mixed mode)
 */
 namespace simplearchive {
 	
-	AdminApp::AdminApp() : AppBase(std::make_shared<AdminArgvParser>()) {};
+	WebApp::WebApp() : AppBase(std::make_shared<WebArgvParser>()) {};
 
-bool AdminApp::Show() {
+bool WebApp::Show() {
 	
 	AdminConfig config;
 	/*
@@ -182,7 +182,7 @@ int test(const std::string key) {
 }
 
 
-bool AdminApp::doInitalise(int argc, char **argv) {
+bool WebApp::doInitalise(int argc, char **argv) {
 	/*
 	AppOptions &appOptions = AppOptions::get();
 	if (appOptions.initalise(argc, argv) == false) {
@@ -190,15 +190,15 @@ bool AdminApp::doInitalise(int argc, char **argv) {
 		return false;
 	}
 	*/
-	AdminArgvParser adminArgvParser;
-	if (adminArgvParser.initalise(argc, argv) == false) {
+	WebArgvParser webArgvParser;
+	if (webArgvParser.initalise(argc, argv) == false) {
 
 		return false;
 	}
 	return true;
 }
 
-bool AdminApp::doRun()
+bool WebApp::doRun()
 {
 	// Find if the archive exists
 	AppOptions &appOptions = AppOptions::get();
@@ -226,7 +226,7 @@ bool AdminApp::doRun()
 	{
 		SIALib siaLib;
 		siaLib.initalise();
-		AppConfig &config = AppConfig::get();
+		AppConfig& config = AppConfig::get();
 		if (siaLib.view(appOptions.getName()) == false) {
 			return false;
 		}
@@ -238,7 +238,7 @@ bool AdminApp::doRun()
 		// make Web
 		SIALib siaLib;
 		siaLib.initalise();
-		AppConfig &config = AppConfig::get();
+		AppConfig& config = AppConfig::get();
 		//if (siaLib.Web(appOptions.getName()) == false) {
 		//	return false;
 		//}
@@ -247,54 +247,11 @@ bool AdminApp::doRun()
 		siaLib.complete();
 		break;
 	}
-	case AppOptions::CommandMode::CM_Validate:
-	{
-		/*
-		SIALib siaLib;
-		siaLib.initalise();
-		AppConfig &config = AppConfig::get();
-		if (appOptions.isConfiguratedOk() == false) {
-			// Do not create a new archive. The old one needs to be deleted?
-			return false;
-		}
-	
-		CompletedSummary completedSummary;
-		switch (appOptions.getVerifyOperation()) {
-		case AppOptions::VerifyOperation::Workspace:
-			if (siaLib.validate(config.getMasterPath(), config.getWorkspacePath(), config.getHomePath(), SIALib::MainArchives::Workspace, appOptions.repair()) == false) {
-				return false;
-			}
-			break;
-		case AppOptions::VerifyOperation::Master:			//* Show
-			if (siaLib.validate(config.getMasterPath(), config.getWorkspacePath(), config.getHomePath(), SIALib::Master, appOptions.repair()) == false) {
-				return false;
-			}
-			break;
-		default:
-			if (siaLib.validate(config.getMasterPath(), config.getWorkspacePath(), config.getHomePath(), SIALib::Both, appOptions.repair()) == false) {
-				return false;
-			}
-		}
-		siaLib.complete();
-		
-		break;
 	}
-	
-	case AppOptions::CommandMode::CM_Version:
-		printf("Simple Image Archive Administrator\n"
-			   "siaadmin version \"%s\" (build %s)\n"
-			   "Copyright@(2010-2016) IDK Sftware Ltd.\n", VERSION, BUILD);
-		return true;
-	case AppOptions::CommandMode::CM_Unknown:
-		break;
-	}
-
-	
-	*/
 	return true;
 }
 
-AdminApp::~AdminApp() {
+WebApp::~WebApp() {
 	CLogger::Close();
 }
 
@@ -312,7 +269,7 @@ bool failed()
 
 
 
-bool AdminApp::initaliseConfig() {
+bool WebApp::initaliseConfig() {
 
 	//AppConfig &config = AppConfig::get();
 	AdminConfig config;
@@ -377,7 +334,7 @@ bool AdminApp::initaliseConfig() {
 }
 
 // AppConfig &config = AppConfig::get();
-bool AdminApp::initaliseHomePath() {
+bool WebApp::initaliseHomePath() {
 
 	SIAARCConfig config;
 
@@ -452,7 +409,7 @@ bool AdminApp::initaliseHomePath() {
 	return true;
 }
 
-bool AdminApp::initaliseArgs(int argc, char **argv) {
+bool WebApp::initaliseArgs(int argc, char **argv) {
 
 	
 	if (m_argvParser->doInitalise(argc, argv) == false) {
@@ -470,7 +427,7 @@ bool AdminApp::initaliseArgs(int argc, char **argv) {
 
 int main(int argc, char **argv)
 {
-	simplearchive::AdminApp app;
+	simplearchive::WebApp app;
 	return app.RunApp(argc, argv);
 }
 

@@ -32,8 +32,7 @@
 **
 ** #$$@@$$# */
 
-#ifndef ADMINAPPOPTIONS_H_
-#define ADMINAPPOPTIONS_H_
+#pragma once
 #include <string>
 
 namespace simplearchive {
@@ -88,7 +87,7 @@ private:
 	/**
 		@brief Set to true if no archive configuration found. 
 	*/
-	friend class AdminArgvParser;
+	friend class MirrorArgvParser;
 
 	bool m_configured;
 	void setCommandMode(const AppOptions::CommandMode mode);
@@ -146,4 +145,4 @@ public:
 };
 
 } /* namespace simplearchive */
-#endif /* ADMINAPPOPTIONS_H_ */
+
