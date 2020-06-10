@@ -144,6 +144,7 @@
     <ClCompile Include="Mirror.cpp" />
     <ClCompile Include="MirrorList.cpp" />
     <ClCompile Include="MirrorManager.cpp" />
+    <ClCompile Include="PrimaryMirror.cpp" />
     <ClCompile Include="StagingManager.cpp" />
     <ClCompile Include="VerifyMirror.cpp" />
     <ClCompile Include="ViewManager.cpp" />
@@ -153,6 +154,7 @@
     <ClInclude Include="Mirror.h" />
     <ClInclude Include="MirrorList.h" />
     <ClInclude Include="MirrorManager.h" />
+    <ClInclude Include="PrimaryMirror.h" />
     <ClInclude Include="StagingManager.h" />
     <ClInclude Include="VerifyMirror.h" />
     <ClInclude Include="ViewManager.h" />

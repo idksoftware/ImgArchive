@@ -44,7 +44,7 @@ public:
 		CM_Show,        //* Show
 		CM_Version,     //* show version
 		CM_View,        //* View
-		CM_Mirror,      //* Mirror
+		CM_Process,     //* Process backups
 		CM_Archive,     //*
 		CM_Validate,    //* Validate the archive.
         CM_Fix,         //* Fix the archive

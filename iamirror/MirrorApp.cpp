@@ -81,114 +81,9 @@ namespace simplearchive {
 	
 	MirrorApp::MirrorApp() : AppBase(std::make_shared<MirrorArgvParser>()) {};
 
-bool MirrorApp::Show() {
-	
-/*
-
-	AdminConfig config;
-	
-	bool found = false;
-	std::string homePath;
-	// Looking the HKEY_LOCAL_MACHINE first
-	if (GetEnv(homePath, true) == true) {
-		printf("Found IMGARCHIVE_HOME in system variables: %s", homePath.c_str());
-		found = true;
-	}
-	else if (GetEnv(homePath, false) == true) {
-		//printf("Found IMGARCHIVE_HOME in user variables: %s", homePath.c_str());
-		found = true;
-	}
-	else {
-		bool found = false;
-		homePath = SAUtils::GetPOSIXEnv("USERPROFILE");
-		if (homePath.empty() == true || homePath.length() == 0) {
-			printf("ImgArchive Unable to start? Cannot read user profile.");
-			return false;
-		}
-		else {
-			homePath += "/IDK Software/ImageArchive1.0";
-			if (SAUtils::DirExists(homePath.c_str()) == true) {
-				printf("Found IMGARCHIVE_HOME in user profile: %s", homePath.c_str());
-				found = true;
-			}
-		}
-		if (found == false) {
-			homePath = SAUtils::GetPOSIXEnv("ProgramData");
-			if (homePath.empty() == true || homePath.length() == 0) {
-				printf("ImgArchive Unable to start? Cannot read all users profile.");
-				return false;
-			}
-			homePath += "/IDK Software/ImageArchive1.0";
-			if (SAUtils::DirExists(homePath.c_str()) == true) {
-				printf("Found IMGARCHIVE_HOME in all users profile: %s", homePath.c_str());
-				found = true;
-			}
-		}
-	}
-	if (found = false) {
-		printf("ImgArchive Unable to start? No archive found in the default location or"
-			" the environment variable IMGARCHIVE_HOME not set.\nUse siaadmin to initalise an archive.\n");
-
-		return false;
-	}
-	std::string configfile = homePath + "/config/" + "config.dat";
-	if (SAUtils::FileExists(configfile.c_str()) == false) {
-
-		printf("ImgArchive Unable to start? No config.dat file found in the default location or"
-			" the environment variable IMGARCHIVE_HOME not set.\nUse siaadmin to initalise an archive.\n");
-		return false;
-	}
-	AppConfigReader configReader;
-	configReader.setNoLogging();
-	configReader.read(configfile.c_str(), config);
-	config.printAll();
-
-	//if (config.value("SourcePath", temp) == true) {
-	//m_sourcePath = temp;
-	//}
-	//if (config.value("ArchivePath", temp) == true) {
-	//m_archivePath = temp;
-	//}
-	//if (config.value("LogLevel", temp) == true) {
-	//m_logLevel = temp;
-	//}
-
-	config.setHomePath(homePath.c_str());
-	std::string temp;
-	temp = SAUtils::GetPOSIXEnv("IAARCHIVE");
-	if (temp.empty() == false) {
-		config.setWorkspacePath(temp.c_str());
-	}
-	temp = SAUtils::GetPOSIXEnv("IASOURCE");
-	if (temp.empty() == false) {
-		config.setSourcePath(temp.c_str());
-	}
-	temp = SAUtils::GetPOSIXEnv("IALOGLEVEL");
-	if (temp.empty() == false) {
-		config.setLogLevel(temp.c_str());
-	}
-	temp = SAUtils::GetPOSIXEnv("IACONSOLELEVEL");
-	if (temp.empty() == false) {
-		config.setConsoleLevel(temp.c_str());
-	}
-*/
-	return true;
-}
-
-
-int test(const std::string key) {
-	return 0;
-}
-
 
 bool MirrorApp::doInitalise(int argc, char **argv) {
-	/*
-	AppOptions &appOptions = AppOptions::get();
-	if (appOptions.initalise(argc, argv) == false) {
-
-		return false;
-	}
-	*/
+	
 	MirrorArgvParser mirrorArgvParser;
 	if (mirrorArgvParser.initalise(argc, argv) == false) {
 
@@ -200,18 +95,23 @@ bool MirrorApp::doInitalise(int argc, char **argv) {
 bool MirrorApp::doRun()
 {
 	// Find if the archive exists
-	AppOptions &appOptions = AppOptions::get();
+	AppOptions& appOptions = AppOptions::get();
+	AppConfig& config = AppConfig::get();
 
-	if (appOptions.isConfiguratedOk() == false) {
-		if (appOptions.getCommandMode() == AppOptions::CommandMode::CM_Show) {
-			Show();
-			return false;
-		}
-		if (appOptions.getCommandMode() == AppOptions::CommandMode::CM_InitArchive) {
-			// const char *archivePath, const char *workspacePath, const char *reposPath, const char *masterPath, const char *derivativePath, bool users
-			printf("\nCompleted initalising the Archive\n");
-			return true;
-		}
+	SIALib siaLib;
+	
+
+	//printf("%s", config.toString().c_str());
+	config.settup();
+
+	if (isConfiguratedOk() == false) {
+		setError(12, "ImgArchive Unable to start? Archive not found at the specified location \"%s\".\n"
+			"Use iaadmin -i to create an empty archive at the default location (see documentation).\n", config.getHomePath());
+		return false;
+	}
+
+
+	if (siaLib.initalise() < 0) {
 		return false;
 	}
 
@@ -232,7 +132,7 @@ bool MirrorApp::doRun()
 		siaLib.complete();
 		break;
 	}
-	case AppOptions::CommandMode::CM_Mirror:
+	case AppOptions::CommandMode::CM_Process:
 	{
 		// make mirror
 		SIALib siaLib;
@@ -309,15 +209,14 @@ bool failed()
 	return(false);
 }
 
-
+void MirrorApp::Show() {
+	return;
+}
 
 bool MirrorApp::initaliseConfig() {
 
-	//AppConfig &config = AppConfig::get();
-	AdminConfig config;
-	m_configured = false;
-	bool found = false;
-	
+
+	SIAARCConfig config;
 
 	bool res = HomePath::init();
 	HomePathType homePathType = HomePath::type();
@@ -325,57 +224,37 @@ bool MirrorApp::initaliseConfig() {
 	switch (homePathType) {
 	case HomePathType::LocalEnv:	// Local Environment set
 		if (res == false) {
-			printf("Found IMGARCHIVE_HOME as system profile: %s but archive not found at loacation", HomePath::get().c_str());
+			//printf("Found IMGARCHIVE_HOME as system profile: %s but archive not found at loacation", HomePath::get().c_str());
 			return false;
 		}
-		printf("Found IMGARCHIVE_HOME as system profile: %s. Archive found at that loacation", HomePath::get().c_str());
+		//printf("Found IMGARCHIVE_HOME as system profile: %s. Archive found at that loacation", HomePath::get().c_str());
 		break;
 	case HomePathType::SystemEnv:	// System Environment set
 		if (res == false) {
-			printf("Found IMGARCHIVE_HOME as system profile: %s. Archive found at that loacation", HomePath::get().c_str());
+			//printf("Found IMGARCHIVE_HOME as system profile: %s. Archive found at that loacation", HomePath::get().c_str());
 			return false;
 		}
 		break;
 	case HomePathType::UserOnly:	// user only archive
 		if (res == false) {
-			printf("Archive not found at default loacation");
+			//printf("Archive not found at default loacation");
 			return false;
 		}
-		printf("Archive found at default user loacation: %s.", HomePath::get().c_str());
+		//printf("Archive found at default user loacation: %s.", HomePath::get().c_str());
 		break;
 	case HomePathType::AllUsers:	// all users archive
 		if (res == false) {
-			printf("Archive not found at default loacation");
+			//printf("Archive not found at default loacation");
 			return false;
 		}
-		printf("Archive found at default system loacation: %s.", HomePath::get().c_str());
+		//printf("Archive found at default system loacation: %s.", HomePath::get().c_str());
 		break;
 	case HomePathType::Unknown:
 	default:
-		printf("Unknown error");
+		//printf("Unknown error");
 		return false;
 	}
 	std::string homePath = HomePath::get();
-	if (found) {
-		// Initalise without the config file i.e. set defaults.
-		if (config.init(homePath.c_str()) == false) {
-			setError(12, "Cannot find home path? exiting?");
-			return false;
-		}
-	}
-	else {
-		if (config.init() == false) {
-			setError(12, "Cannot find home path? exiting?");
-			return false;
-		}
-	}
-
-	if (SAUtils::DirExists(homePath.c_str()) == false) {
-		setError(12, "ImgArchive Unable to start? Archive not found at default location and the environment variable IAHOME not set.\n"
-			"Use siaadmin -i to create an empty archive at the default location (see documentation).\n");
-		return false;
-
-	}
 
 	// try to set a systems temp folder 
 	std::string tempPath = SAUtils::GetPOSIXEnv("TEMP");
@@ -383,9 +262,10 @@ bool MirrorApp::initaliseConfig() {
 		tempPath = SAUtils::GetPOSIXEnv("TMP");
 	}
 
+	AppConfig::setDefaultLocations();
+	std::string configfile = homePath + "/config/" + "config.dat";
 	std::string configPath = homePath + "/config";
-	std::string configfile = configPath + "config.dat";
-	
+	// Now set the file based configuration with the possablity of overrighting defaults set prevously. 
 	if (SAUtils::FileExists(configfile.c_str()) == true) {
 		setConfigPath(configPath.c_str());
 		AppConfigReader configReader;
@@ -397,7 +277,9 @@ bool MirrorApp::initaliseConfig() {
 		config.fileBasedValues(homePath.c_str(), tempPath.c_str());
 		m_configured = true;
 	}
-
+	else {
+		m_configured = false;
+	}
 
 	return true;
 }
@@ -499,7 +381,24 @@ bool MirrorApp::initaliseArgs(int argc, char **argv) {
 int main(int argc, char **argv)
 {
 	simplearchive::MirrorApp app;
-	return app.RunApp(argc, argv);
+	bool error = false;
+	if (app.initalise(argc, argv) == false) {
+
+		error = true;
+	}
+	else {
+		if (app.Run() == false) {
+			error = true;
+		}
+	}
+	if (error) {
+		int code = CommandLineProcessing::AppBase::getError();
+		cout << "\n\n" << CommandLineProcessing::AppBase::getFullErrorString() << '\n';
+		return code;
+	}
+	else {
+		return 0;
+	}
 }
 
 

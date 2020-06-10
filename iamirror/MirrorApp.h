@@ -74,12 +74,7 @@ public:
 	MirrorApp();
 	/// Destructor
 	virtual ~MirrorApp();
-	
-	
-	
-	
-	/// @brief Shows the configuration of the archive. All application processing starts here.
-	bool Show();
+	void Show();
 protected:
 	bool initaliseHomePath();
 	bool initaliseConfig();

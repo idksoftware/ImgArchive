@@ -22,27 +22,23 @@ namespace simplearchive {
 		//define error codes
 		addErrorCode(0, "Success");
 		addErrorCode(1, "Error");
-		setIntroductoryDescription("The Image archive provides an organised place to store images. This archive is"
-			"designed to be simple in design and to use. It consists of archiving core that provides the basic archiving"
-			" functions but in addition, takes input and provides output from optional external components to provide a"
-			"tailored achieving solution and can be extended into a complete achieving system. ");
+		setIntroductoryDescription("iamirror is part of the ImgArchive archiving system, responsible for managing remote backups of the archive.");
 		setHelpOption();
 
-		setHeader("usage: siaadmin subcommand [options] [args]\n\n"
-			"Image archive command line administrator, version 1.0.0.1\n"
-			"Type 'siaadmin help <subcommand>' for help on a specific subcommand.\n\n"
-			"siaadmin is the primary command-line interface to administer Simple Image Archive (sia)."
+		setHeader("usage: iamirror subcommand [options] [args]\n\n"
+			"Image archive command line remote backup system, version 1.0.0.1\n"
+			"Type 'iamirror help <subcommand>' for help on a specific subcommand.\n\n"
+			"iamirror is the remote backup command-line interface to administer remote backup of the Archive."
 			"\n");
 
 
 		// Subcommands
 
-
 		defineOption("init", "Create Archive enviroment", ArgvParser::MasterOption);
 		defineOption("show", "Show settings", ArgvParser::MasterOption);
 		defineOption("version", "prints the version information", ArgvParser::MasterOption);
 		defineOption("validate", "Validate commands", ArgvParser::MasterOption);
-		defineOption("mirror", "Mirror commands", ArgvParser::MasterOption);
+		defineOption("process", "Mirror commands", ArgvParser::MasterOption);
 		defineOption("test", "test commands", ArgvParser::MasterOption);
 		/*
 		defineOption("image-address", "image address", ArgvParser::NoOptionAttribute);
@@ -54,14 +50,17 @@ namespace simplearchive {
 		defineOptionAlternative("b", "backup");
 		*/
 		// Options
+
+		defineOption("all", "Process all backups.", ArgvParser::NoOptionAttribute);
+		//defineOptionAlternative("a", "all");
+
 		defineOption("name", "name of the item.", ArgvParser::OptionRequiresValue);
 		//defineOptionAlternative("n", "name");
 
 		defineOption("repair", "Validate and repair.", ArgvParser::NoOptionAttribute);
 		//defineOptionAlternative("r", "repair");
 
-		defineOption("checkedOut", "Show images checkedOut.", ArgvParser::NoOptionAttribute);
-		defineOptionAlternative("o", "checkedOut");
+		
 
 		defineOption("scope", "Scope validate. i.e. Workspace/Master or both", ArgvParser::OptionRequiresValue);
 		//defineOptionAlternative("s", "scope");
@@ -115,6 +114,9 @@ namespace simplearchive {
 		*/
 		defineCommandOption("show", "settup");
 		defineCommandOption("show", "checkedOut");
+
+		defineCommandOption("process", "all");
+		
 
 		defineCommandOption("validate", "scope");
 		defineCommandOption("validate", "repair");
@@ -255,45 +257,11 @@ namespace simplearchive {
 					appOptions.m_repair = true;
 				}
 			}
-			else if (command("mirror") == true) {
-				appOptions.setCommandMode(AppOptions::CommandMode::CM_Mirror);
-
-				if (foundOption("archive-path") == true) {
-
-					std::string opt = optionValue("archive-path");
-//					printf(opt.c_str()); printf("\n");
-					config.setWorkspacePath(opt.c_str());
+			else if (command("process") == true) {
+				if (foundOption("all") == true) {
 				}
-				/*
-				if (foundOption("dist-path") == true) {
-
-				std::string opt = optionValue("dist-path");
-				printf(opt.c_str()); printf("\n");
-				config.setBackupDestinationPath(opt.c_str());
-
-				}
-				if (foundOption("size") == true) {
-
-				std::string opt = optionValue("size");
-				printf(opt.c_str()); printf("\n");
-				config.setBackupMediaSize(opt.c_str());
-
-				}
-				if (foundOption("from-date") == true) {
-
-				std::string opt = optionValue("from-date");
-				printf(opt.c_str()); printf("\n");
-				config.setFromDate(opt.c_str());
-
-				}
-				*/
-				if (foundOption("name") == true) {
-					std::string opt = optionValue("name");
-//					printf(opt.c_str()); printf("\n");
-					appOptions.setName(opt.c_str());
-				}
-
 				cmdFound = true;
+				appOptions.setCommandMode(AppOptions::CommandMode::CM_Process);
 			} else if (command("test") == true) {
 				appOptions.setCommandMode(AppOptions::CommandMode::CM_Test);
 				cmdFound = true;
@@ -397,20 +365,15 @@ namespace simplearchive {
 	{
 		std::string usage;
 
-		usage += "usage: imgarc subcommand [options] [args]\n\n";
-		usage += "Image archive command line client, version 1.0.0.1\n";
-		usage += "Type 'imgarc help <subcommand>' for help on a specific subcommand.\n\n";
+		usage += "usage: iamirror subcommand [options] [args]\n\n";
+		usage += "Image archive command line remote backup administrator, version 1.0.0.1\n";
+		usage += "Type 'iamirror help <subcommand>' for help on a specific subcommand.\n\n";
 
-		std::string tmp = "imgarc is the primary command-line interface to ImgArchive. This interface is used to manage the control of images going in and out of the archive software. ";
-		tmp += "It has a rich set of subcommands that \"add/import\" images to the archive and \"export\" images out of the archive, In addition manages the controlled modification of images";
-		tmp += " using the \"check-in/check-out\" command set";
+		std::string tmp = "iamirror is the remote backup command-line interface to ImgArchive. This interface is used to manage the control of remote backups.";
 		usage += '\n';
 		usage += formatString(tmp, _width);
 		usage += '\n';
 		usage += '\n';
-		usage += "Note:\n";
-		usage += formatString("The administration of the archive is carried out by the imgadmin command-line interface.", _width) + "\n";
-
 		return usage;
 	}
 
@@ -418,7 +381,7 @@ namespace simplearchive {
 	std::string MirrorArgvParser::commandUsage(unsigned int width) const
 	{
 		std::string usage; // the usage description text
-		usage = formatString("usage: iaarc[--version][--help] <command>[<args>]\n", width);
+		usage = formatString("usage: iamirror[--version][--help] <command>[<args>]\n", width);
 		usage += '\n';
 
 		return usage;
@@ -428,32 +391,13 @@ namespace simplearchive {
 	{
 		std::string usage; // the usage description text
 		usage = commandUsage(_width);
-		/*
-		if (intro_description.length())
-			usage += formatString(intro_description, _width) + "\n";
-
-		if (max_key <= 1) {// if we have some options
-
-			usage += formatString("No options available\n", _width) + "\n\n";
-			return(usage);
-		}
-
-		*/
+		
 		usage += '\n';
-		/*
-		usage += "usage: sia subcommand [options] [args]\n\n";
-		usage += "Image archive command line client, version 1.0.0.1\n";
-		usage += "Type 'sia help <subcommand>' for help on a specific subcommand.\n\n";
-		*/
-		std::string tmp = "The command imgarc is the primary command-line interface to ImgArchive. This interface is used to manage the control of images going in and out of the archive software. ";
-		tmp += "It has a rich set of subcommands that \"add/import\" images to the archive and \"export\" images out of the archive, In addition manages the controlled modification of images";
-		tmp += " using the \"check-in/check-out\" command set";
+		
+		std::string tmp = "iamirror is the remote backup command-line interface to ImgArchive. This interface is used to manage the control of remote backups.";
 		usage += '\n';
 		usage += formatString(tmp, _width);
 		usage += '\n';
-
-		usage += "Note:\n";
-		usage += formatString("The administration of the archive is carried out by the imgadmin command-line interface.", _width) + "\n";
 
 		usage += formatString(command_header, _width) + "\n";
 		usage += '\n';
@@ -508,58 +452,7 @@ namespace simplearchive {
 
 		}
 		usage += "\n";
-		/*
-		//printf("%s\n", usage.c_str());
-		// loop over all option attribute entries (which equals looping over all
-		// different options (not option names)
-		for (Key2AttributeMap::const_iterator it = option2attribute.begin();
-		it != option2attribute.end();
-		++it)
-		{
-		string os; // temp string for the option
-
-		// get the list of alternative names for this option
-		list<string> alternatives = getAllOptionAlternatives(it->first);
-
-		unsigned int count = 0;
-		for( list<string>::const_iterator alt = alternatives.begin();
-		alt != alternatives.end();
-		++alt )
-		{
-		++count;
-		if (option2attribute.find(it->first)->second == MasterOption) {
-		continue;
-		}
-		// additional '-' for long options
-		if (alt->length() > 1)
-		os += "-";
-
-		os += "-" + *alt;
-
-		// note if the option requires a value
-		if (option2attribute.find(it->first)->second & OptionRequiresValue)
-		os += " <value>";
-
-		// alternatives to come?
-		if (count < alternatives.size())
-		os += ", "; // add separator
-		}
-
-		// note if the option is required
-		if (option2attribute.find(it->first)->second & OptionRequired)
-		os += " [required]";
-
-		usage += formatString(os, _width) + "\n";
-
-		if (option2descr.find(it->first) != option2descr.end())
-		usage += formatString(option2descr.find(it->first)->second, _width, 4);
-		else
-		usage += formatString("(no description)", _width, 4);
-
-		// finally a little gap
-		usage += "\n\n";
-		}
-		*/
+		
 		if (!errorcode2descr.size()) // if have no errorcodes
 			return(usage);
 
