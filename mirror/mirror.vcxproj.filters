@@ -42,6 +42,9 @@
     <ClCompile Include="PrimaryMirror.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CSVStatusFile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MirrorManager.h">
@@ -66,6 +69,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PrimaryMirror.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CSVStatusFile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

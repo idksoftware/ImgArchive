@@ -32,8 +32,8 @@
 **
 ** #$$@@$$# */
 
-#ifndef CSVDBFILE_H_
-#define CSVDBFILE_H_
+#pragma once
+
 #include <string>
 #include <memory>
 #include <vector>
@@ -216,4 +216,3 @@ public:
 */
 
 } /* namespace simplearchive */
-#endif /* CSVDBFILE_H_ */

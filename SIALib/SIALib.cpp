@@ -588,26 +588,22 @@ namespace simplearchive {
 	}
 	bool SIALib::mirror(const char *name) {
 		
-		/*
-		if (name.compare("Master") == 0) {
-		viewManager.initaliseMaster(config.getArchivePath(), config.getMasterCataloguePath());
-		//if (viewManager.processMaster() == false) {
-		//	return false;
-		//}
-		}
-		else {
-		*/
+		AppConfig& config = AppConfig::get();
+
 		MirrorManager mirrorManager;
 		
-		// Make mirror
-		
+		mirrorManager.setPrimaryIndexPath(config.getIndexPath());
+
 		if (mirrorManager.mirror() == false) {
 			return false;
 		}
+
+		/*
 		
 		if (mirrorManager.verifyMirror() == false) {
 			return false;
 		}
+		*/
 		return true;
 	}
 	bool SIALib::archive(const char *archivePath, const char *distPath, unsigned long sizeOfMedia, ExifDateTime *startDate, ExifDateTime *endDate) {

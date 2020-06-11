@@ -426,6 +426,11 @@ namespace simplearchive {
 
 		defauleValue = homePath + TOOLS_PATH;
 		setSystemFolders(CATALOG_PATH_LABEL, AppConfig::m_catalogPath, defauleValue);
+
+		//setSystemFolders("SystemPath", AppConfig::m_systemPath, AppConfig::m_systemPath + SYSTEM_PATH);
+		//AppConfig::m_indexPath = AppConfig::m_systemPath + "/index";
+		defauleValue = homePath + "/pi";
+		AppConfig::m_indexPath = defauleValue + "/index";
 		
 	// External Exif Tool
 
@@ -489,8 +494,7 @@ namespace simplearchive {
 		setWorkspacePath(AppConfig::m_workspacePath.c_str());
 		setMasterPath(AppConfig::m_masterPath.c_str());
 
-		//setSystemFolders("SystemPath", AppConfig::m_systemPath, AppConfig::m_systemPath + SYSTEM_PATH);
-		AppConfig::m_indexPath = AppConfig::m_systemPath + "/index";
+		
 
 		logger.log(LOG_OK, CLogger::Level::INFO, "    General");
 		

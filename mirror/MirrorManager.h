@@ -45,9 +45,18 @@ class MirrorManager {
 
 	static std::string m_rootFolder;
 	static std::string m_configFile;
+
+	static std::string m_masterRepositoryPath;
+	static std::string m_derivativeRepositoryPath;
+	static std::string m_primaryMirrorPath;
+	static std::string m_primaryIndexPath;
+
 public:
 	MirrorManager();
 	virtual ~MirrorManager();
+
+	void setPrimaryIndexPath(const char* path);
+
 	static bool initalise(const char *rootFolder, const char *configFile);
 	/// This creates a mirror of the target root folder and all sub folders.
 	/// using the mirrors defined in the configuration file passed in the

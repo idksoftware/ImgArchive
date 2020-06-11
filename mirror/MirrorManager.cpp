@@ -38,6 +38,8 @@
 #include "MirrorList.h"
 #include "DirectoryVisitor.h"
 
+#include "PrimaryMirror.h"
+
 #ifdef _DEBUG
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
@@ -49,6 +51,11 @@ namespace simplearchive {
 std::string MirrorManager::m_rootFolder;
 std::string MirrorManager::m_configFile;
 
+std::string MirrorManager::m_masterRepositoryPath;
+std::string MirrorManager::m_derivativeRepositoryPath;
+std::string MirrorManager::m_primaryMirrorPath;
+std::string MirrorManager::m_primaryIndexPath;
+
 
 MirrorManager::MirrorManager() {
 	// TODO Auto-generated constructor stub
@@ -58,6 +65,12 @@ MirrorManager::MirrorManager() {
 MirrorManager::~MirrorManager() {
 	// TODO Auto-generated destructor stub
 }
+
+void MirrorManager::setPrimaryIndexPath(const char* path)
+{
+	m_primaryIndexPath = path;
+}
+
 
 bool MirrorManager::initalise(const char *rootFolder, const char *configFile) {
 	m_rootFolder = rootFolder;
@@ -80,9 +93,13 @@ bool MirrorManager::initalise(const char *rootFolder, const char *configFile) {
 
 
 bool MirrorManager::mirror() {
+	PrimaryMirror& primaryMirror = PrimaryMirror::get();
+	primaryMirror.setPrimaryIndexPath(m_primaryIndexPath.c_str());
+	primaryMirror.process();
+	/*
 	MirrorList &mirrorList = MirrorList::get();
 	mirrorList.setFunction(MirrorList::DoMirror);
-	/*
+	
 	std::shared_ptr<MirrorList> mirrorList_ptr = 0; // std::make_shared<MirrorList>(mirrorList);
 	DirectoryVisitor directoryVisitor(mirrorList_ptr, false);
 	return directoryVisitor.process(MirrorList::getRootFolder().c_str());

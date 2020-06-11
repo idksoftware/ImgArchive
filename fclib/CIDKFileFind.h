@@ -90,7 +90,7 @@ public:
 
 private:
 #ifdef _WIN32
-	long m_Filelocator;
+	intptr_t  m_Filelocator;
 #else
 	DIR* m_Filelocator;
 	struct dirent *m_pEntry;
