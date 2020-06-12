@@ -1,4 +1,5 @@
-#include "CSVTAble.h"
+#include "CSVTable.h"
+
 #include "CSVIndexVisitor.h"
 
 namespace simplearchive {
