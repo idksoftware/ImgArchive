@@ -1,6 +1,7 @@
 
 #include <vector>
 #include "Base32.h"
+#include <algorithm>
 
 static char base32[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
 

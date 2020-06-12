@@ -391,7 +391,7 @@ namespace simplearchive {
 		for (auto rowIt = m_resultsList.begin(); rowIt != m_resultsList.end(); rowIt++) {
 			SharedMTRow row = *rowIt;
 			std::cout << "\t<Event>\n";
-			for (int i = 0; i != row->size(); i++) {
+			for (size_t i = 0; i != row->size(); i++) {
 				MTTableSchema tableSchema = m_resultsList.getTableSchema();
 				std::cout << writeTag(tableSchema.getColumnName(i).c_str(), row->columnAt(i).toString(), 2);
 			}
