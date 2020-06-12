@@ -920,7 +920,7 @@ std::string CommandLineProcessing::ArgvParser::getSyntax(const std::string& _com
 {
 	if (option2key.find(_command) == option2key.end()) {
 		// application error
-		return false;
+		return std::string();
 	}
 	int key = option2key.find(_command)->second;
 	if (command2syntax.find(key) == command2syntax.end()) {
@@ -1192,7 +1192,7 @@ std::string CommandLineProcessing::formatString(const std::string& _string,
 	if (_padend != 0) {
 		if (it->length() < _padend) {
 			size_t psize = _padend - it->length();
-			for (int i = 0;i < psize; i++) {
+			for (size_t i = 0;i < psize; i++) {
 				formated += ' ';
 			}
 		}
@@ -1232,7 +1232,7 @@ std::string CommandLineProcessing::formatLine(const std::string& _string,
 	if (_padend != 0) {
 		if (line.length() < _padend) {
 			size_t psize = _padend - line.length();
-			for (int i = 0; i < psize; i++) {
+			for (size_t i = 0; i < psize; i++) {
 				line += ' ';
 			}
 		}
