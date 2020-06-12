@@ -203,6 +203,7 @@ private:
 	static bool m_useDateToday;
 	static bool m_sync;
 	static bool m_current;
+	static bool m_master;
 	static ExifDate m_archiveDate;	// used as the forced or default time.
 
 	//static bool m_enableUDP;
@@ -274,7 +275,7 @@ public:
 	bool isForced();
 	bool isSync();
 	bool isCurrent();
-
+	bool isMaster();
 	ExifDate &getArchiveDate();
 	LogDocument::FormatType& getFormatType();
     //* Ge The Show Command Option (only if the show command active).

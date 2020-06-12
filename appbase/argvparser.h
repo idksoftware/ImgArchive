@@ -161,7 +161,7 @@ public:
     /** Returns the number of read arguments. Arguments are efined as beeing
     * neither options nor option values and are specified at the end of the
     * command line after all options and their values. */
-    unsigned int arguments() const;
+    size_t arguments() const;
     /** Returns the Nth argument. See arguments().
     * \return Argument string or an empty string if there was no argument of
     * that id.

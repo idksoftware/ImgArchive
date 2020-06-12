@@ -1,165 +1,61 @@
-/* **************************************************
-**
-**    III                DDD  KKK
-**    III                DDD  KKK
-**                       DDD  KKK
-**    III   DDDDDDDDDDD  DDD  KKK            KKK
-**    III  DDD           DDD  KKK            KKK
-**    III  DDD           DDD  KKK           KKK
-**    III  DDD           DDD  KKK        KKKKKK
-**    III  DDD           DDD  KKK   KKKKKKKKK
-**    III  DDD           DDD  KKK        KKKKKK
-**    III  DDD           DDD  KKK           KKK
-**    III  DDD           DDD  KKK            KKK
-**    III   DDDDDDDDDDDDDDDD  KKK            KKK
-**
-**
-**     SSS         FF
-**    S           F   T
-**     SSS   OO   FF  TTT W   W  AAA  R RR   EEE
-**        S O  O  F   T   W W W  AAAA RR  R EEEEE
-**    S   S O  O  F   T   W W W A   A R     E
-**     SSS   OO  FFF   TT  W W   AAAA R      EEE
-**
-**    Copyright: (c) 2015 IDK Software Ltd
-**
-****************************************************
-**
-**	Filename	: CRegString.cpp
-**	Author		: I.Ferguson
-**	Version		: 1.000
-**	Date		: 26-05-2015
-**
-** #$$@@$$# */
-
 #include "MirrorManager.h"
-#include "Mirror.h"
-#include "StagingManager.h"
+#include "CSVDBFile.h"
+#include "CSVStatusFile.h"
 #include "MirrorList.h"
-#include "DirectoryVisitor.h"
-
-#include "PrimaryMirror.h"
-
-#ifdef _DEBUG
-#undef THIS_FILE
-static char THIS_FILE[] = __FILE__;
-//#define new DEBUG_NEW
-#endif
+//#include "AppConfig.h"
 
 namespace simplearchive {
 
-std::string MirrorManager::m_rootFolder;
-std::string MirrorManager::m_configFile;
+    MirrorManager::MirrorManager() : m_primaryIndex(1), m_mirrorList(std::make_shared<MirrorList>())
+    {};
 
-std::string MirrorManager::m_masterRepositoryPath;
-std::string MirrorManager::m_derivativeRepositoryPath;
-std::string MirrorManager::m_primaryMirrorPath;
-std::string MirrorManager::m_primaryIndexPath;
+    bool MirrorManager::process() {
 
 
-MirrorManager::MirrorManager() {
-	// TODO Auto-generated constructor stub
+        CSVDBFile csvDBFile;
+        CSVStatusFile csvStatusFile;
+        csvDBFile.setPath(m_primaryIndexPath.c_str());
+        csvStatusFile.setPath("C:\\ProgramData\\IDK-Software\\ImgArchive\\mirror");
+        m_primaryIndex = csvStatusFile.getMaxIndex();
+            //"C:\ProgramData\IDK-Software\ImgArchive\pi\index";
+        uint64_t index = csvDBFile.getMaxIndex();
+        for (m_primaryIndex; m_primaryIndex <= index; m_primaryIndex++) {
+            std::unique_ptr<ImageInfo> primaryItem = csvDBFile.getItemAt(m_primaryIndex);
+            ExifDate& date = (ExifDate &)primaryItem->getDate();
+            csvStatusFile.insert((uint64_t)primaryItem->getIdx(), primaryItem->getShortImagePath().c_str(), primaryItem->getName().c_str(), primaryItem->getSize(), (uint64_t)primaryItem->getCrc(),
+                                primaryItem->getMd5().c_str(), primaryItem->getUuid().c_str(), primaryItem->getVersion(), date, (uint64_t)primaryItem->getDBIdx());
+            // new images added
+            //m_mirrorList
+        }
+        
 
-}
+        return true;
+    }
 
-MirrorManager::~MirrorManager() {
-	// TODO Auto-generated destructor stub
-}
+    MirrorManager MirrorManager::get()
+    {
+        static MirrorManager primaryMirror;
+        return primaryMirror;
+    }
 
-void MirrorManager::setPrimaryIndexPath(const char* path)
-{
-	m_primaryIndexPath = path;
-}
+    void MirrorManager::setMasterRepositoryPath(const char* path)
+    {
+        m_masterRepositoryPath = path;
+    }
 
+    void MirrorManager::setDerivativeRepositoryPath(const char* path)
+    {
+        m_derivativeRepositoryPath = path;
+    }
 
-bool MirrorManager::initalise(const char *rootFolder, const char *configFile) {
-	m_rootFolder = rootFolder;
-	m_configFile = configFile;
-	m_configFile += "/mirror.dat";
+    void MirrorManager::setPrimaryIndexPath(const char* path)
+    {
+        m_primaryIndexPath = path;
+    }
 
-	MirrorList::setRootFolder(rootFolder);
+    void MirrorManager::setPrimaryMirrorPath(const char* path)
+    {
+        m_primaryMirrorPath = path;
+    }
 
-	try {
-		if (Mirror::initalise(MirrorList::getRootFolder().c_str(), m_configFile.c_str()) == false) {
-			return false;
-		}
-	} catch (MirrorException &e) {
-		printf("Error: %s\n", e.what());
-		return false;
-	}
-	return true;
-}
-
-
-
-bool MirrorManager::mirror() {
-	PrimaryMirror& primaryMirror = PrimaryMirror::get();
-	primaryMirror.setPrimaryIndexPath(m_primaryIndexPath.c_str());
-	primaryMirror.process();
-	/*
-	MirrorList &mirrorList = MirrorList::get();
-	mirrorList.setFunction(MirrorList::DoMirror);
-	
-	std::shared_ptr<MirrorList> mirrorList_ptr = 0; // std::make_shared<MirrorList>(mirrorList);
-	DirectoryVisitor directoryVisitor(mirrorList_ptr, false);
-	return directoryVisitor.process(MirrorList::getRootFolder().c_str());
-	*/
-	return true;
-}
-
-bool MirrorManager::SyncMirror() {
-	MirrorList &mirrorList = MirrorList::get();
-	mirrorList.setFunction(MirrorList::DoSyncMirror);
-	/*
-	std::shared_ptr<MirrorList> mirrorList_ptr = 0; // std::make_shared<MirrorList>(mirrorList);
-	DirectoryVisitor directoryVisitor(mirrorList_ptr, false);
-	return directoryVisitor.process(MirrorList::getRootFolder().c_str());
-	*/
-	return true;
-}
-
-bool MirrorManager::isMirrorInSync() {
-	MirrorList &mirrorList = MirrorList::get();
-	mirrorList.setFunction(MirrorList::DoIsMirrorInSync);
-	/*
-	std::shared_ptr<MirrorList> mirrorList_ptr = 0; // std::make_shared<MirrorList>(mirrorList);
-	DirectoryVisitor directoryVisitor(mirrorList_ptr, false);
-	return directoryVisitor.process(MirrorList::getRootFolder().c_str());
-	*/
-	return true;
-}
-
-bool MirrorManager::isSourceInSync() {
-	MirrorList &mirrorList = MirrorList::get();
-	mirrorList.setFunction(MirrorList::DoIsSourceInSync);
-	/*
-	std::shared_ptr<MirrorList> mirrorList_ptr = std::make_shared<MirrorList>(&mirrorList);
-	DirectoryVisitor directoryVisitor(mirrorList_ptr, false);
-	return directoryVisitor.process(MirrorList::getRootFolder().c_str());
-	*/
-	return true;
-}
-
-bool MirrorManager::verifyMirror() {
-	/*
-	MirrorList &mirrorList = MirrorList::get();
-	mirrorList.setFunction(MirrorList::DoMirrorVerify);
-	DirectoryVisitor directoryVisitor(&mirrorList, false);
-	return directoryVisitor.process(MirrorList::getRootFolder().c_str());
-	*/
-	Mirror &mirror = Mirror::get();
-	return mirror.verifyMirrors();
-}
-
-bool MirrorManager::verifySource() {
-	/*
-	MirrorList &mirrorList = MirrorList::get();
-	mirrorList.setFunction(MirrorList::DoSourceVerify);
-	DirectoryVisitor directoryVisitor(&mirrorList);
-	return directoryVisitor.process(MirrorList::getRootFolder().c_str());
-	*/
-	Mirror &mirror = Mirror::get();
-	return mirror.verifySource();
-}
-
-} // namespace simplearchive
+};

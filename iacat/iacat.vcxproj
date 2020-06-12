@@ -152,7 +152,7 @@
     <Text Include="ReadMe.md" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CataloguetApp.cpp" />
+    <ClCompile Include="CatalogueApp.cpp" />
     <ClCompile Include="CatalogueAppOptions.cpp" />
     <ClCompile Include="CatalogueArgvParser.cpp" />
   </ItemGroup>

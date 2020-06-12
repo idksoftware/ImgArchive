@@ -67,8 +67,8 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 		"[--comment=<comment text>]\n\t[--scope=<scope-address]\n\t[--force=<yes|No>]");
 
 	defineOption("template", "Manage metadata template", ArgvParser::MasterOption);
-	defineCommandSyntax("template", "iaarc template [--current]\n\t[--logging-level=<level>]"
-		"[--comment=<comment text>]\n\t[--scope=<scope-address]\n\t[--force=<yes|No>]");
+	defineCommandSyntax("template", "iaarc template [--current=<yes|no>]\n\t[--logging-level=<level>]"
+		"[--current=<yes|no>]\n\t[--comment=<comment text>]\n\t[--scope=<scope-address]\n\t[--force=<yes|No>]");
 
 	defineOption("status", "show check in/out status", ArgvParser::MasterOption);
 	defineOption("view", "View commands", ArgvParser::MasterOption);
@@ -220,7 +220,9 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineCommandOption("status", "unchecked-out");
 
 	defineCommandOption("show", "settup");
+
 	defineCommandOption("template", "current");
+	defineCommandOption("template", "base");
 
 	defineCommandOption("log", "image");
 	defineCommandOption("log", "format-type");
@@ -451,6 +453,8 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 		IAParseOptions iaParseOptions;
 		bool res = false;
 		std::string opt;
+		appOptions.m_current = true;
+		appOptions.m_master = true;
 		if (foundOption("current") == true) {
 			std::string opt = optionValue("current");
 			res = iaParseOptions.parseTemplateOptions(opt.c_str());
@@ -459,8 +463,20 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 				printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 				return false;
 			}
+			appOptions.m_master = iaParseOptions.isMaster();
 		}
-		appOptions.m_current = iaParseOptions.isMaster();
+		else if (foundOption("base") == true) {
+			std::string opt = optionValue("base");
+			res = iaParseOptions.parseTemplateOptions(opt.c_str());
+			if (!res) {
+				printf("Invalid argument for \"current\" \"%s\"\n\n", opt.c_str());
+				printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+				return false;
+			}
+			appOptions.m_master = iaParseOptions.isMaster();
+			appOptions.m_current = false;
+		}
+		
 		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Template);
 		cmdFound = true;
 	}

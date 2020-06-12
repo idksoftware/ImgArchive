@@ -358,7 +358,7 @@ bool SIAArcApp::doRun()
 	{
 		bool repo = false;
 		bool file = false;
-		if (siaLib.metadataTemplate(repo, file) == false) {
+		if (siaLib.metadataTemplate(appOptions.isMaster(), appOptions.isCurrent()) == false) {
 			setError(CLogger::getLastCode(), CLogger::getLastMessage());
 			return false;
 		}

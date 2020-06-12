@@ -174,7 +174,11 @@ public:
 	MetadataTemplate(const MetadataTemplate& src) = delete;
 	MetadataTemplate& operator=(const MetadataTemplate& rhs) = delete;
 
-	static bool read(const char* path, const char *datafile);
+	static bool readMaster(const char* path, bool current);
+	static bool readDerivative(const char* path, bool current);
+
+	static bool readMaster(const char* path, const char *datafile);
+	static bool readDerivative(const char* path, const char* datafile);
 	static bool write(const char* datafile);
 	static MetadataObject_ptr getMetadataObject();
 };

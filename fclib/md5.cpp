@@ -369,7 +369,7 @@ std::string md5(const std::string str)
 std::string MD5::md5(const char *szPath, bool &status)
 {
 	status = true;
-	unsigned long count = 0;
+    size_t count = 0;
 	char buf[1024];
 	FILE *fp = nullptr;
 	fopen_p(fp, szPath, "r");

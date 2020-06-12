@@ -62,7 +62,7 @@ namespace simplearchive {
 		}
 		// Linux  dirname() and basename()
 		std::string getFilename() {
-			unsigned int pos = m_path.find_last_of("/");
+			int64_t pos = m_path.find_last_of("/");
 			if (pos == std::string::npos) {
 				pos = m_path.find_last_of("\\");
 			}

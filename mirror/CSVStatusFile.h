@@ -46,7 +46,7 @@ namespace simplearchive {
 
 
 
-class ImageInfo {
+class ImageStatus {
 	uint64_t m_idx;
 	std::string m_imagePath;
 	std::string m_shortImagePath;
@@ -59,10 +59,10 @@ class ImageInfo {
 	ExifDate m_dateArchived;
 	uint64_t m_dbidx;
 public:
-
-	ImageInfo(uint64_t idx, const char* imagePath, const char* name, unsigned long size, uint64_t crc,
+	
+	ImageStatus(uint64_t idx, const char* imagePath, const char* name, unsigned long size, uint64_t crc,
 		const char* md5, const char* uuid, int version, ExifDate& date, uint64_t dbidx);
-	~ImageInfo();
+	~ImageStatus();
 	unsigned long getCrc() const;
 	const ExifDate& getDate() const;
 	int getIdx() const;
@@ -76,20 +76,20 @@ public:
 };
 
 
-//class MirrorIdxDB;
-class CSVDBFile {
+
+class CSVStatusFile {
 	std::string m_dbpath;
-//	std::unique_ptr<MirrorIdxDB> m_mirrorIdxDB;
+
 	unsigned int m_data[4];
 	int getMaxDirIndex(std::string &path);
 	bool insert(uint64_t idx, const char *imagePath, const char *name, unsigned long size, uint64_t crc,
 		const char *md5, const char *uuid, int version, ExifDate &date, const char*rootPath, uint64_t dbidx);
-	CSVDBFile(const CSVDBFile &) = delete;
+	CSVStatusFile(const CSVStatusFile&) = delete;
 	
 public:
-	CSVDBFile();
+	CSVStatusFile();
 
-	virtual ~CSVDBFile();
+	virtual ~CSVStatusFile();
 
 	bool insert(uint64_t idx, const char *imagePath, const char *name, unsigned long size, uint64_t crc,
 						const char *md5, const char *uuid, int version, ExifDate &date, uint64_t dbidx = -1);
@@ -101,28 +101,10 @@ public:
 	int getNextIndex();
 	uint64_t getNextIndex(uint64_t current);
 	uint64_t getMaxIndex();
-	std::unique_ptr<ImageInfo> getItemAt(uint64_t idx);
+	std::unique_ptr<ImageStatus> getItemAt(uint64_t idx);
 	static std::string getYear(const char *path);
 };
 
-/*
-class PrimaryIndexTable : public CSVDBFile {
-	static PrimaryIndexRow m_indexRow;
-public:
-	PrimaryIndexTable() : CSVDBFile(m_indexRow) {};
-};
 
-class MasterIndexTable : public CSVDBFile {
-	static MasterIndexRow m_indexRow;
-public:
-	MasterIndexTable() : CSVDBFile(m_indexRow) {};
-};
-
-class DerivativeIndexTable : public CSVDBFile {
-	static DerivativeIndexRow m_indexRow;
-public:
-	DerivativeIndexTable() : CSVDBFile(m_indexRow) {};
-};
-*/
 
 } /* namespace simplearchive */

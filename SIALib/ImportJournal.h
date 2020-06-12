@@ -36,9 +36,9 @@ namespace simplearchive {
 		bool add(const char *filepath);
 		bool update(const char *filepath, Result result, const char *location = 0);
 		
-		int numberOfImages() { return size(); }
+		size_t numberOfImages() { return size(); }
 		bool setCurrent(const char *imagesPath);
-		int getCurrentImageIndex();
+		size_t getCurrentImageIndex();
 		bool write() {
 			return write(m_logNameStr.c_str());
 		}

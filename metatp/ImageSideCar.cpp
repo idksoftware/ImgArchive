@@ -58,11 +58,11 @@ SideCarItem::SideCarItem(const char * sequenceId, const char * uniqueId, const c
 
 bool SideCarItem::fromString(const char *line) {
 	m_row = line;
-	int delim1 = m_row.find_first_of(':');
-	int delim2 = m_row.find_first_of(':', delim1+1);
-	int delim3 = m_row.find_first_of(':', delim2+1);
-	int delim4 = m_row.find_first_of(':', delim3+1);
-	int delim5 = m_row.find_first_of(':', delim4+1);
+	size_t delim1 = m_row.find_first_of(':');
+	size_t delim2 = m_row.find_first_of(':', delim1+1);
+	size_t delim3 = m_row.find_first_of(':', delim2+1);
+	size_t delim4 = m_row.find_first_of(':', delim3+1);
+	size_t delim5 = m_row.find_first_of(':', delim4+1);
 	m_sequenceId = m_row.substr(0,delim1);
 	m_filename = m_row.substr(delim1+1, (delim2-delim1)-1);
 	m_filepath = m_row.substr(delim2+1, (delim3-delim2)-1);

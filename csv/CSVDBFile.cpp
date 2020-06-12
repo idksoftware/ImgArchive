@@ -181,8 +181,8 @@ public:
 
 	std::unique_ptr<ImageInfo> getImageInfo() {
 
-		std::unique_ptr<ImageInfo> imageInfo(new ImageInfo(m_idx, m_imagePath.c_str(), m_name.c_str(), m_crc,
-									m_size, m_md5.c_str(), m_uuid.c_str(), m_version, m_dateArchived, m_dbLink));
+		std::unique_ptr<ImageInfo> imageInfo = std::make_unique<ImageInfo>(m_idx, m_imagePath.c_str(), m_name.c_str(), m_crc,
+									m_size, m_md5.c_str(), m_uuid.c_str(), m_version, m_dateArchived, m_dbLink);
 		return imageInfo;
 	}
 
@@ -821,5 +821,9 @@ const std::string& ImageInfo::getUuid() const {
 
 int ImageInfo::getVersion() const {
 	return m_version;
+}
+int ImageInfo::getDBIdx() const
+{
+	return m_dbidx;
 }
 } /* namespace simplearchive */

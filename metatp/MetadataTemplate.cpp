@@ -76,7 +76,34 @@ std::string& MetadataTemplate::getValue(const char *key) {
 	return it->second;
 }
 
-bool MetadataTemplate::read(const char* path, const char *datafile) {
+bool MetadataTemplate::readMaster(const char* path, bool current)
+{
+	std::string templatePath = path;
+
+	if (current) {
+
+		templatePath += "/master.tpl";
+
+		if (MetadataTemplate::readMaster(templatePath.c_str(), "master.tpl") == false) {
+			return false;
+		}
+	}
+	else {
+		templatePath += "/base.tpl";
+
+		if (MetadataTemplate::readMaster(templatePath.c_str(), "base.tpl") == false) {
+			return false;
+		}
+	}
+	return true;
+}
+
+bool MetadataTemplate::readDerivative(const char* path, bool current)
+{
+	return false;
+}
+
+bool MetadataTemplate::readMaster(const char* path, const char *datafile) {
 
 	ConfigReader configReader;
 	if (configReader.read(path, datafile, *m_templateFile) == false) {
@@ -106,6 +133,11 @@ bool MetadataTemplate::read(const char* path, const char *datafile) {
 	resultsPresentation.writeHuman();
 
 	return true;
+}
+
+bool MetadataTemplate::readDerivative(const char* path, const char* datafile)
+{
+	return false;
 }
 
 bool MetadataTemplate::write(const char* datafile) {

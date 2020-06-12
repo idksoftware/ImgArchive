@@ -141,22 +141,18 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CSVStatusFile.cpp" />
-    <ClCompile Include="ManagedMirror.cpp" />
     <ClCompile Include="Mirror.cpp" />
     <ClCompile Include="MirrorList.cpp" />
     <ClCompile Include="MirrorManager.cpp" />
-    <ClCompile Include="PrimaryMirror.cpp" />
     <ClCompile Include="StagingManager.cpp" />
     <ClCompile Include="VerifyMirror.cpp" />
     <ClCompile Include="ViewManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CSVStatusFile.h" />
-    <ClInclude Include="ManagedMirror.h" />
     <ClInclude Include="Mirror.h" />
     <ClInclude Include="MirrorList.h" />
     <ClInclude Include="MirrorManager.h" />
-    <ClInclude Include="PrimaryMirror.h" />
     <ClInclude Include="StagingManager.h" />
     <ClInclude Include="VerifyMirror.h" />
     <ClInclude Include="ViewManager.h" />

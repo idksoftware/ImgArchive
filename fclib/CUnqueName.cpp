@@ -57,17 +57,17 @@ std::string CUnqueName::make(const char *name) {
 	std::string path;
 
 
-	int slashpos = namestr.find_last_of("/");
+	size_t slashpos = namestr.find_last_of("/");
 	if (slashpos != -1) {
 		filename = namestr.substr(slashpos+1, namestr.length() - slashpos);
 		path = namestr.substr(0, slashpos);
 	} else {
 		filename = namestr;
 	}
-	int dotpos = filename.find_last_of(".");
+	size_t dotpos = filename.find_last_of(".");
 	std::string nameonly = filename.substr(0, dotpos);
 	std::string ext = filename.substr(dotpos, filename.length() - dotpos);
-	unsigned int vepos = nameonly.find_last_of(m_pre);
+	size_t vepos = nameonly.find_last_of(m_pre);
 
 	if (vepos == (unsigned int)-1 || (vepos <= (unsigned int)(nameonly.length() - 2))) {
 		nameonly = nameonly + m_pre + "1" + m_post;
@@ -78,7 +78,7 @@ std::string CUnqueName::make(const char *name) {
 		}
 
 	} else {
-		int vspos = nameonly.find_last_of(m_pre);
+		size_t vspos = nameonly.find_last_of(m_pre);
 		//int itmp = (nameonly.length() - vspos)-1;
 		std::string numstr = nameonly.substr(vspos+1, (vepos-vspos)-1);
 		m_dupNameCount = atoi(numstr.c_str());

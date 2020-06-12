@@ -124,7 +124,7 @@ namespace simplearchive {
 		m_current = pos;
 		return true;
 	}
-	int ImportJournal::getCurrentImageIndex() {
+	size_t ImportJournal::getCurrentImageIndex() {
 		return m_current;
 	}
 

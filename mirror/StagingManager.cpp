@@ -177,7 +177,7 @@ bool StagingManager::verifyTxtFile(std::string &number, const char *path) {
 	std::string path1;
 	while (txtfile.getline(text, 1024)) {
 		std::string data = text;
-		int delim1 = data.find_first_of(":");
+		int64_t delim1 = data.find_first_of(":");
 		number1 = data.substr(0,delim1);
 		path1 = data.substr(delim1+1, data.length());
 	}
@@ -201,7 +201,7 @@ std::string StagingManager::readTxtFile(const char *txtFilePath) {
 	std::string path;
 	while (txtfile.getline(text, 1024)) {
 		std::string data = text;
-		int delim1 = data.find_first_of(":");
+		int64_t delim1 = data.find_first_of(":");
 		number = data.substr(0,delim1);
 		path = data.substr(delim1+1, data.length());
 	}

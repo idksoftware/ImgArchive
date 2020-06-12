@@ -391,7 +391,7 @@ ArgvParser::parse(int _argc, char ** _argv)
     return(NoParserError); // everthing went fine -> sucess
 }
 
-unsigned int ArgvParser::arguments() const
+size_t ArgvParser::arguments() const
 {
     return(argument_container.size());
 }
@@ -1100,7 +1100,7 @@ std::string CommandLineProcessing::formatString(const std::string& _string,
     list<string> lines;
 
     // current position in the string
-    unsigned int pos = 0;
+	size_t pos = 0;
 
     // till the end of the string
     while (pos < _string.length())
@@ -1191,7 +1191,7 @@ std::string CommandLineProcessing::formatString(const std::string& _string,
 	
 	if (_padend != 0) {
 		if (it->length() < _padend) {
-			int psize = _padend - it->length();
+			size_t psize = _padend - it->length();
 			for (int i = 0;i < psize; i++) {
 				formated += ' ';
 			}
@@ -1231,7 +1231,7 @@ std::string CommandLineProcessing::formatLine(const std::string& _string,
 	
 	if (_padend != 0) {
 		if (line.length() < _padend) {
-			int psize = _padend - line.length();
+			size_t psize = _padend - line.length();
 			for (int i = 0; i < psize; i++) {
 				line += ' ';
 			}
