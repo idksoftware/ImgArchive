@@ -350,7 +350,7 @@ namespace simplearchive {
 			return false;
 		}
 		if (pos == 0) { // first char a number
-			int64_t pos = tmpPath.find_last_of("\\/");
+			size_t pos = tmpPath.find_last_of("\\/");
 			m_relativePath = tmpPath.substr(0, pos);
 			m_image = tmpPath.substr(pos + 1, tmpPath.length() - (pos + 1));
 			
@@ -363,7 +363,7 @@ namespace simplearchive {
 		}
 		else {
 			m_fullPath = path;
-			int64_t pos = m_fullPath.find_last_of("\\/");
+			size_t pos = m_fullPath.find_last_of("\\/");
 			m_root = m_fullPath.substr(0, pos);
 			m_image = m_fullPath.substr(pos + 1, m_fullPath.length() - (pos + 1));
 		}
@@ -371,7 +371,7 @@ namespace simplearchive {
 	}
 
 	bool PathController::split() {
-		int64_t pos = m_fullPath.find_last_of("\\/");
+		size_t pos = m_fullPath.find_last_of("\\/");
 		m_root = m_fullPath.substr(0, pos);
 		m_image = m_fullPath.substr(pos + 1, m_fullPath.length() - (pos + 1));
 		pos = m_root.find_last_of("\\/");

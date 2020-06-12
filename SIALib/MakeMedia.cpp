@@ -130,8 +130,8 @@ MakeMedia::~MakeMedia() {
 }
 std::string getDate(const char *path) {
 	std::string fpath = path;
-	int64_t sepIdx = fpath.find_first_of('/');
-	int64_t endIdx = fpath.find_last_of('/');
+	size_t sepIdx = fpath.find_first_of('/');
+	size_t endIdx = fpath.find_last_of('/');
 	return fpath.substr(sepIdx + 1, fpath.length() - (endIdx -1));
 }
 static std::string getYear(const char *path) {
