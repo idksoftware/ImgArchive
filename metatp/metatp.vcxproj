@@ -22,7 +22,7 @@
     <ProjectGuid>{C2205319-E84B-4C68-950F-FB4C97C88E5E}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>metatp</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -148,6 +148,7 @@
     <ClInclude Include="ContentsLister.h" />
     <ClInclude Include="DayIndexer.h" />
     <ClInclude Include="DerivativeMetadata.h" />
+    <ClInclude Include="DerivativeMetadataTemplate.h" />
     <ClInclude Include="VersionsList.h" />
     <ClInclude Include="HTMLWriter.h" />
     <ClInclude Include="ImageSideCar.h" />
@@ -161,6 +162,7 @@
     <ClCompile Include="ContentsLister.cpp" />
     <ClCompile Include="DayIndexer.cpp" />
     <ClCompile Include="DerivativeMetadata.cpp" />
+    <ClCompile Include="DerivativeMetadataTemplate.cpp" />
     <ClCompile Include="HTMLWriter.cpp" />
     <ClCompile Include="ImageSideCar.cpp" />
     <ClCompile Include="VersionMetadataObject.cpp" />
