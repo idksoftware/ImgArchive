@@ -93,7 +93,7 @@ namespace simplearchive {
 	/**
 	 * This is the Derivatives Object that is used to archive the derivatives (new verions) of original images contained in the master archive.  
 	 */
-	class DerivativeMetadata;
+	class DerivativeMetadataRow;
 	class DerivativeIndexTable;
 	class MetadataObject;
 	class Version;
@@ -104,7 +104,7 @@ namespace simplearchive {
 		std::unique_ptr<RepositoryPath> m_repositoryPath;
 		std::string m_workspacePath;
 		
-		std::shared_ptr<DerivativeMetadata> m_derivativeMetadata;
+		std::shared_ptr<DerivativeMetadataRow> m_derivativeMetadata;
 		RepositoryObject m_backup[2];
 	public:
 		DerivativesObject() noexcept :
@@ -137,7 +137,7 @@ namespace simplearchive {
 		//	return *m_currentVersion;
 		//}
 
-		DerivativeMetadata& getDerivativeMetadata() {
+		DerivativeMetadataRow& getDerivativeMetadata() {
 			return *m_derivativeMetadata;
 		}
 		bool isBackup1Enabled();
@@ -235,8 +235,8 @@ namespace simplearchive {
 		bool listContents(const char *addressScope);
 
 		bool writeMetadata(std::string& rootPath, std::string &imageName, MetadataObject &metadataObject);
-		bool writeDerivativeMetadata(std::string& rootPath, std::string &versionName, DerivativeMetadata &metadataObject, std::string &imageName);
-		bool writeDerivativeMetadata(std::string& rootPath, std::string &versionName, DerivativeMetadata &metadataObject);
+		bool writeDerivativeMetadata(std::string& rootPath, std::string &versionName, DerivativeMetadataRow &metadataObject, std::string &imageName);
+		bool writeDerivativeMetadata(std::string& rootPath, std::string &versionName, DerivativeMetadataRow &metadataObject);
 		//PrimaryIndex &getPrimaryIndex() {
 		//	return *m_primaryIndex;
 		//}
@@ -247,10 +247,10 @@ namespace simplearchive {
 		bool settupRelativeMaster(std::string &yyyymmddStr);
 		bool settupRelativeDerivative(std::string &yyyymmddStr);
 		bool writeMetadata2Workspace(ImagePath &imagePath, std::string &imageName, MetadataObject &metadataObject);
-		bool writeDerivativeMetadat2Workspace(ImagePath &imagePath, std::string &versionName, DerivativeMetadata &derivativeMetadata, std::string &imageName);
+		bool writeDerivativeMetadat2Workspace(ImagePath &imagePath, std::string &versionName, DerivativeMetadataRow &derivativeMetadata, std::string &imageName);
 		bool writeMetadata2PrimaryIndex(ImagePath &imagePat, std::string &imageName, MetadataObject &metadataObject);
 		bool writeMetadata2MasterDatabase(std::string &imageName, MetadataObject &metadataObject);
-		bool writeMetadata2DerivativesDatabase(std::string &versionName, DerivativeMetadata &metadataObject, std::string &imageName);
+		bool writeMetadata2DerivativesDatabase(std::string &versionName, DerivativeMetadataRow &metadataObject, std::string &imageName);
 		bool copyFile2Master(const std::string  &pathToSourceRoot, const std::string  &yyyymmddStr, const std::string &fileName, const std::string &sequenceName);
 
 		const RepositoryPath &getMasterPath() {

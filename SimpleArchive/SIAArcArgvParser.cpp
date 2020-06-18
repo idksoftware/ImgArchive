@@ -439,7 +439,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 			}
 			appOptions.m_current = iaParseOptions.isCurrent();
 		}
-		else if (foundOption("archive") == true) {
+		if (foundOption("archive") == true) {
 			std::string opt = optionValue("archive");
 			res = iaParseOptions.parseArchiveOptions(opt.c_str());
 			if (!res) {

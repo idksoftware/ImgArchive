@@ -18,20 +18,14 @@ static char THIS_FILE[] = __FILE__;
 
 namespace simplearchive {
 
-	DerivativeMetadataSchema DerivativeMetadata::m_schema;
-	DerivativeMetadata::DerivativeMetadata() : MTRow(m_schema)
+	DerivativeMetadataSchema DerivativeMetadataRow::m_schema;
+	DerivativeMetadataRow::DerivativeMetadataRow() : MTRow(m_schema)
 	{
 	}
 
-
-	DerivativeMetadata::~DerivativeMetadata()
+	DerivativeMetadataRow::~DerivativeMetadataRow()
 	{
 	}
-
-
-
-	
-	
 
 
 } // namespace simplearchive {

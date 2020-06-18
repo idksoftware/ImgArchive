@@ -35,7 +35,7 @@ void MetadataObject::update(const FileInfo& fileInfo, int seqNo,  int version) {
 	columnAt(static_cast<int>(MetadataObjectIndex::MD_CRC_IDX)) = fileInfo.getCrc();
 	columnAt(static_cast<int>(MetadataObjectIndex::MD_MD5_IDX)) = fileInfo.getMd5().c_str();
 	columnAt(static_cast<int>(MetadataObjectIndex::MD_UUID_IDX)) = fileInfo.getUuid().c_str();
-	columnAt(static_cast<int>(MetadataObjectIndex::MD_FILESIZE_IDX)) = fileInfo.getSize();
+	columnAt(static_cast<int>(MetadataObjectIndex::MD_FILESIZE_IDX)) = (int)fileInfo.getSize();
 	columnAt(static_cast<int>(MetadataObjectIndex::MD_DATEMODIFIED_IDX)) = fileInfo.getModTime();
 	columnAt(static_cast<int>(MetadataObjectIndex::MD_DATECREATE_IDX)) = fileInfo.getCreateTime();
 	columnAt(static_cast<int>(MetadataObjectIndex::MD_VERSION_IDX)) = version;

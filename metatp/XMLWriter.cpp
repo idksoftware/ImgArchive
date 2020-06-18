@@ -220,8 +220,7 @@ bool XMLWriter::writeImage(MetadataObject &container, const char *path) {
 
 }
 
-
-bool XMLWriter::writeDerivativeMetadata(DerivativeMetadata &container, const char *path) {
+bool XMLWriter::writeDerivativeMetadata(DerivativeMetadataRow& container, const char* path) {
 	std::ofstream xmlFile;
 	xmlFile.open(path);
 	xmlFile << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
@@ -276,6 +275,7 @@ bool XMLWriter::writeIndexImage(VersionMetadataObject &container, const char *pa
 	return true;
 
 }
+
 
 bool XMLWriter::writeImageVersionList(VersionsList &container, const char *imagePath, const char *location) {
 

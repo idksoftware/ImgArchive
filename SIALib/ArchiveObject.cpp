@@ -11,6 +11,7 @@
 #include "ImageExtentions.h"
 #include "ExifObject.h"
 #include "MetadataTemplate.h"
+#include "DerivativeMetadata.h"
 #include "MetadataObject.h"
 #include "ImageFileReader.h"
 #include "ImageIndex.h"
@@ -481,7 +482,7 @@ namespace simplearchive {
 	bool DerivativesObject::addimage(const char *sourceRelPath, FileInfo& fileInfo, const char *comment, int primarySeqNumber, int derivativeSeqNumber, int version, MetadataObject& metadataObject) {
 
 		CSVDerivativeDatabase &derivativeRepository = CSVDerivativeDatabase::get();
-		m_derivativeMetadata = std::make_shared<DerivativeMetadata>();
+		m_derivativeMetadata = std::make_shared<DerivativeMetadataRow>();
 		PathController pathController(fileInfo.getPath().c_str());
 		pathController.split();
 
@@ -503,7 +504,7 @@ namespace simplearchive {
 		m_derivativeMetadata->columnAt(DB_CRC) = fileInfo.getCrc();
 		m_derivativeMetadata->columnAt(DB_MD5) = fileInfo.getMd5().c_str();
 		m_derivativeMetadata->columnAt(DB_UUID) = fileInfo.getUuid().c_str();
-		m_derivativeMetadata->columnAt(DB_FILESIZE) = fileInfo.getSize();
+		m_derivativeMetadata->columnAt(DB_FILESIZE) = (int)fileInfo.getSize();
 		m_derivativeMetadata->columnAt(DB_DATEMODIFIED) = fileInfo.getModTime();
 		m_derivativeMetadata->columnAt(DB_DATECREATE) = fileInfo.getCreateTime();
 		ExifDateTime addTime;
@@ -811,7 +812,7 @@ namespace simplearchive {
 		return true;
 	}
 
-	bool ArchiveObject::writeDerivativeMetadata(std::string& rootPath, std::string &versionName, DerivativeMetadata &metadataObject, std::string &imageName) {
+	bool ArchiveObject::writeDerivativeMetadata(std::string& rootPath, std::string &versionName, DerivativeMetadataRow &metadataObject, std::string &imageName) {
 
 		CLogger &logger = CLogger::getLogger();
 
@@ -826,7 +827,7 @@ namespace simplearchive {
 		return writeDerivativeMetadata(toxml, versionName, metadataObject);
 	}
 
-	bool ArchiveObject::writeDerivativeMetadata(std::string& rootPath, std::string &versionName, DerivativeMetadata &metadataObject) {
+	bool ArchiveObject::writeDerivativeMetadata(std::string& rootPath, std::string &versionName, DerivativeMetadataRow&metadataObject) {
 		std::string toxml = rootPath;
 		toxml += '/';
 		toxml += versionName;
@@ -1064,7 +1065,7 @@ namespace simplearchive {
 		return true;
 	}
 
-	bool ArchiveObject::writeDerivativeMetadat2Workspace(ImagePath &imagePath, std::string &versionName, DerivativeMetadata &derivativeMetadata, std::string &imageName) {
+	bool ArchiveObject::writeDerivativeMetadat2Workspace(ImagePath &imagePath, std::string &versionName, DerivativeMetadataRow&derivativeMetadata, std::string &imageName) {
 		if (ArchiveObject::isWorkspaceEnabled() == true) {
 			std::string toxml = m_workspacePath + '/';
 			std::string relpath = imagePath.getRelativePath();
@@ -1150,7 +1151,7 @@ namespace simplearchive {
 		}
 		return true;
 	}
-	bool ArchiveObject::writeMetadata2DerivativesDatabase(std::string &versionName, DerivativeMetadata &metadataObject, std::string &imageName) {
+	bool ArchiveObject::writeMetadata2DerivativesDatabase(std::string &versionName, DerivativeMetadataRow& metadataObject, std::string &imageName) {
 		if (ArchivePath::isDerivativeEnabled() == true) {
 			std::string path = m_derivatives.getRepositoryPath().getMetadataPath();
 			if (writeDerivativeMetadata(path, versionName, metadataObject, imageName) == false) {
@@ -1648,7 +1649,7 @@ namespace simplearchive {
 		if (settupRelativeDerivative(yyyymmddStr) == false) {
 			return false;
 		}
-		DerivativeMetadata& derivativeMetadata = derivativesObject.getDerivativeMetadata();
+		DerivativeMetadataRow& derivativeMetadata = derivativesObject.getDerivativeMetadata();
 		std::string versionName = VersionControl::getInstance().getCurrentVersion().getVersionName();
 		
 		// Note the workspase needs the image name note the version image name

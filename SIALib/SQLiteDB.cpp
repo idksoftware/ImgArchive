@@ -403,7 +403,7 @@ namespace simplearchive {
 		return true;
 	}
 
-	bool SQLiteDB::add(DerivativeMetadata &derivativeMetadata) {
+	bool SQLiteDB::add(DerivativeMetadataRow &derivativeMetadata) {
 
 		if (!m_enabled) return true;
 

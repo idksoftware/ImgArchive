@@ -152,7 +152,7 @@ namespace simplearchive {
 		vmo.columnAt(DB_CRC) = fileInfo.getCrc();
 		vmo.columnAt(DB_MD5) = fileInfo.getMd5().c_str();
 		vmo.columnAt(DB_UUID) = fileInfo.getUuid().c_str();
-		vmo.columnAt(DB_FILESIZE) = fileInfo.getSize();
+		vmo.columnAt(DB_FILESIZE) = (int)fileInfo.getSize();
 		vmo.columnAt(DB_DATEMODIFIED) = fileInfo.getModTime();
 		vmo.columnAt(DB_DATECREATE) = fileInfo.getCreateTime();
 		ExifDateTime addTime;

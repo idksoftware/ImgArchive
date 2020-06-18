@@ -66,7 +66,7 @@ namespace simplearchive {
 
 
 
-	void CSVDerivativeDatabase::add(DerivativeMetadata &metadataObject) {
+	void CSVDerivativeDatabase::add(DerivativeMetadataRow &metadataObject) {
 		// check path exists
 
 		std::string relpath = metadataObject.columnAt(DB_VERSIONPATH).getString();
@@ -118,11 +118,11 @@ namespace simplearchive {
 		//m_mirrorDB->process(relPath);
 	}
 
-	const DerivativeMetadata *CSVDerivativeDatabase::get(unsigned int idx, const char *path) {
+	const DerivativeMetadataRow *CSVDerivativeDatabase::get(unsigned int idx, const char *path) {
 		return 0;
 	}
 
-	std::shared_ptr<DerivativeMetadata> CSVDerivativeDatabase::get(const char *name, const char *path) {
+	std::shared_ptr<DerivativeMetadataRow> CSVDerivativeDatabase::get(const char *name, const char *path) {
 		if (SAUtils::DirExists(m_dbpath.c_str()) == false) {
 			throw std::exception();
 		}
@@ -145,14 +145,14 @@ namespace simplearchive {
 		//MTDatabase &db = *m_mtDatabase;
 		//MetadataSet metadataSet(db, fullPath.c_str());
 		//return metadataSet.get(name);
-		return std::make_shared<DerivativeMetadata>();
+		return std::make_shared<DerivativeMetadataRow>();
 	}
 
-	std::shared_ptr<DerivativeMetadata> CSVDerivativeDatabase::makeRow() {
-		return std::make_shared<DerivativeMetadata>();
+	std::shared_ptr<DerivativeMetadataRow> CSVDerivativeDatabase::makeRow() {
+		return std::make_shared<DerivativeMetadataRow>();
 	}
 
-	bool CSVDerivativeDatabase::put(const char *name, const char *path, DerivativeMetadata &mo) {
+	bool CSVDerivativeDatabase::put(const char *name, const char *path, DerivativeMetadataRow &mo) {
 		std::string relPath = path;
 		std::string dayStr = relPath.substr(0, 10);
 		std::string yearStr = relPath.substr(0, 4);

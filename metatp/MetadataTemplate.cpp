@@ -81,26 +81,35 @@ bool MetadataTemplate::readMaster(const char* path, bool current)
 	std::string templatePath = path;
 
 	if (current) {
-
-		templatePath += "/master.tpl";
-
 		if (MetadataTemplate::readMaster(templatePath.c_str(), "master.tpl") == false) {
 			return false;
 		}
 	}
 	else {
-		//templatePath += "/base.tpl";
-
-		if (MetadataTemplate::readMaster(templatePath.c_str(), "base.tpl") == false) {
+		if (MetadataTemplate::readMaster(templatePath.c_str(), "master_base.tpl") == false) {
 			return false;
 		}
 	}
+	MetadataTemplateResultsPresentation resultsPresentation(m_metadataTemplateRow);
+	resultsPresentation.writeHuman();
 	return true;
 }
 
 bool MetadataTemplate::readDerivative(const char* path, bool current)
 {
-	return false;
+	std::string templatePath = path;
+
+	if (current) {
+		if (MetadataTemplate::readDerivative(templatePath.c_str(), "derivative.tpl") == false) {
+			return false;
+		}
+	}
+	else {
+		if (MetadataTemplate::readDerivative(templatePath.c_str(), "derivative_base.tpl") == false) {
+			return false;
+		}
+	}
+	return true;
 }
 
 bool MetadataTemplate::readMaster(const char* path, const char *datafile) {
@@ -128,16 +137,35 @@ bool MetadataTemplate::readMaster(const char* path, const char *datafile) {
 			printf("%s\n", tmp);
 		}
 	}
-
-	MetadataTemplateResultsPresentation resultsPresentation(m_metadataTemplateRow);
-	resultsPresentation.writeHuman();
-
 	return true;
 }
 
 bool MetadataTemplate::readDerivative(const char* path, const char* datafile)
 {
-	return false;
+	ConfigReader configReader;
+	if (configReader.read(path, datafile, *m_templateFile) == false) {
+		return false;
+	}
+	//templateFile.printAll();
+	for (auto ii = m_templateFile->begin(); ii != m_templateFile->end(); ++ii) {
+		std::string& value = getValue((*ii).first.c_str());
+		//printf("\"%s\" = \"%s\"\n", (*ii).first.c_str(), (*ii).second.c_str());
+		if (value.compare("")) {
+			value = (*ii).second.c_str();
+		}
+		try {
+			MTColumn& col = m_metadataTemplateRow.columnAt((*ii).first.c_str());
+			col = (*ii).second.c_str();
+		}
+		catch (std::invalid_argument& e) {
+			printf("%s", e.what());
+		}
+		catch (MTTypeException& e) {
+			const char* tmp = e.what();
+			printf("%s\n", tmp);
+		}
+	}
+	return true;
 }
 
 bool MetadataTemplate::write(const char* datafile) {

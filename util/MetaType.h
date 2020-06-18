@@ -50,11 +50,11 @@ public:
 private:
        EItemType m_type;
        std::string m_name;
-	   int m_size;
+	   size_t m_size;
 	   bool m_primaryKey;
 public:
 
-       MTSchema(EItemType type, const char *name, int size) {
+       MTSchema(EItemType type, const char *name, size_t size) {
     	   m_type  = type;
     	   m_name  = name;
 		   m_size = size; // used when converted to a SQL database
@@ -75,7 +75,7 @@ public:
 		   m_primaryKey = primaryKey;
 	   }
 
-       MTSchema(EItemType type, std::string &name, int size = 0) {
+       MTSchema(EItemType type, std::string &name, size_t size = 0) {
     	   m_type  = type;
     	   m_name  = name;
 		   m_primaryKey = false;
@@ -159,11 +159,11 @@ public:
 		return m_tablename;
 	}
 
-	const std::string& getColumnName(int i) const {
+	const std::string& getColumnName(size_t i) const {
 		return at(i).getName();
 	}
 
-	const MTSchema& getColumnSchema(int i) const {
+	const MTSchema& getColumnSchema(size_t i) const {
 		return at(i);
 	}
 

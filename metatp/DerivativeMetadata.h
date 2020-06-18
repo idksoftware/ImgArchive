@@ -52,11 +52,11 @@ namespace simplearchive {
 	};
 
 
-	class DerivativeMetadata : public MTRow {
+	class DerivativeMetadataRow : public MTRow {
 		static DerivativeMetadataSchema m_schema;
 	public:
-		DerivativeMetadata();
-		~DerivativeMetadata();
+		DerivativeMetadataRow();
+		~DerivativeMetadataRow();
 
 		const char *getSequenceIDString() const {
 			return columnAt(static_cast<int>(DerivativeMetadataIndex::DB_SEQUENCEID_IDX)).toString().c_str();

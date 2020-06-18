@@ -165,6 +165,7 @@ class MetadataTemplate {
 	static Config_ptr m_templateFile;
 	static std::string &getValue(const char *key);
 	static MetadataTemplateRow m_metadataTemplateRow;
+	//static DerivativeMetadataRow m_derivativeMetadataRow;
 
 	MetadataTemplate() noexcept = default;
 public:

@@ -80,7 +80,7 @@ namespace simplearchive {
 			this->m_crc = crc;
 		}
 
-		unsigned long getSize() const {
+		size_t getSize() const {
 			return m_size;
 		}
 

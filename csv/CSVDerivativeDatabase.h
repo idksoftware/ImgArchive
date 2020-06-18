@@ -28,12 +28,12 @@ namespace simplearchive {
 		/// destructor
 		virtual ~CSVDerivativeDatabase();
 
-		void add(DerivativeMetadata &metadataObject);
-		void update(DerivativeMetadata &metadataObject, unsigned int idx, const char *path);
-		const DerivativeMetadata *get(unsigned int idx, const char *path);
-		std::shared_ptr<DerivativeMetadata> makeRow();
-		std::shared_ptr<DerivativeMetadata> get(const char *name, const char *path);
-		bool put(const char *name, const char *path, DerivativeMetadata &mo);
+		void add(DerivativeMetadataRow &metadataObject);
+		void update(DerivativeMetadataRow &metadataObject, unsigned int idx, const char *path);
+		const DerivativeMetadataRow *get(unsigned int idx, const char *path);
+		std::shared_ptr<DerivativeMetadataRow> makeRow();
+		std::shared_ptr<DerivativeMetadataRow> get(const char *name, const char *path);
+		bool put(const char *name, const char *path, DerivativeMetadataRow &mo);
 
 		bool copy(const char *path);
 		bool validate(const char *path);

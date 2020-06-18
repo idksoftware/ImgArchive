@@ -133,7 +133,7 @@ namespace simplearchive {
 	
 	class MTTableSchema;
 	class MetadataObject;
-	class DerivativeMetadata;
+	class DerivativeMetadataRow;
 	class ImageHistoryRow;
 	class SystemHistoryRow;
 	class PrimaryIndexRow;
@@ -167,7 +167,7 @@ namespace simplearchive {
 		static bool add(MetadataObject &metadataObject);
 		static bool add(ImageHistoryRow &imageHistoryRow);
 		static bool add(SystemHistoryRow &imageHistoryRow);
-		static bool add(DerivativeMetadata &derivativeMetadata);
+		static bool add(DerivativeMetadataRow &derivativeMetadataRow);
 		static bool newImage2History(const char *filepath, const char *comment);
 	};
 
