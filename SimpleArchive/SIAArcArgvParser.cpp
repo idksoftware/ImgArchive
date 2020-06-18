@@ -117,15 +117,12 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineOption("d", "destination of the images", ArgvParser::OptionRequiresValue);
 	defineOptionAlternative("d", "dist-path");
 
+	defineOption("a", "archive", ArgvParser::NoOptionAttribute);
+	defineOptionAlternative("a", "archive");
+
 	defineOption("S", "sync workspace with archive", ArgvParser::NoOptionAttribute);
 	defineOptionAlternative("S", "sync");
-
 	
-	//defineOption("m", "master archive", ArgvParser::NoOptionAttribute);
-	//defineOptionAlternative("m", "master");
-
-	//defineOption("d", "derivative archive.", ArgvParser::NoOptionAttribute);
-	//defineOptionAlternative("d", "derivative");
 
 	defineOption("image", "Specifies a image address in the form \"<date>/<image name>", ArgvParser::OptionRequiresValue);
 	//defineOptionAlternative("i", "image");
@@ -148,8 +145,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineOption("fd", "From date", ArgvParser::OptionRequiresValue);
 	defineOptionAlternative("fd", "from-date");
 
-	defineOption("a", "location of the archive root folder.", ArgvParser::OptionRequiresValue);
-	defineOptionAlternative("a", "archive-path");
+	
 
 	defineOption("r", "location of the archive root folder.", ArgvParser::NoOptionAttribute);
 	defineOptionAlternative("r", "root");
@@ -184,8 +180,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineOption("unchecked-out", "Show changed images which are not checked out", ArgvParser::OptionRequiresValue);
 
 	defineCommandOption("import", "comment");
-	//defineCommandOption("import", "logging-level");
-	//defineCommandOption("import", "archive-path");
+	
 	defineCommandOption("import", "source-path");
 	defineCommandOption("import", "lightroom");
 
@@ -222,7 +217,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineCommandOption("show", "settup");
 
 	defineCommandOption("template", "current");
-	defineCommandOption("template", "base");
+	defineCommandOption("template", "archive");
 
 	defineCommandOption("log", "image");
 	defineCommandOption("log", "format-type");
@@ -289,19 +284,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 			config.setLightroom();
 		}
 
-		/*
-		if (foundOption("file") == true) {
-			appOptions.m_filePath = optionValue("file");
-			appOptions.m_usingFile = true;
-		}
-		*/
-
-		/*
-		if (foundOption("archive-path") == true) {
-			std::string opt = optionValue("archive-path");
-			config.setWorkspacePath(opt.c_str());
-		}
-		*/
+		
 		
 		if (foundOption("peek") == true) {
 			appOptions.m_peekOnly = true;
@@ -351,10 +334,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 		if (foundOption("comment") == true) {
 			appOptions.m_comment = optionValue("comment");
 		}
-		if (foundOption("archive-path") == true) {
-			std::string opt = optionValue("archive-path");
-			config.setWorkspacePath(opt.c_str());
-		}
+		
 
 		if (foundOption("force") == true) {
 			appOptions.m_force = true;
@@ -402,10 +382,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 		if (foundOption("comment") == true) {
 			appOptions.m_comment = optionValue("comment");
 		}
-		if (foundOption("archive-path") == true) {
-			std::string opt = optionValue("archive-path");
-			config.setWorkspacePath(opt.c_str());
-		}
+		
 
 		if (foundOption("force") == true) {
 			appOptions.m_force = true;
@@ -430,10 +407,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 		if (foundOption("comment") == true) {
 			appOptions.m_comment = optionValue("comment");
 		}
-		if (foundOption("archive-path") == true) {
-			std::string opt = optionValue("archive-path");
-			config.setWorkspacePath(opt.c_str());
-		}
+		
 
 		if (foundOption("force") == true) {
 			appOptions.m_force = true;
@@ -457,24 +431,24 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 		appOptions.m_master = true;
 		if (foundOption("current") == true) {
 			std::string opt = optionValue("current");
-			res = iaParseOptions.parseTemplateOptions(opt.c_str());
+			res = iaParseOptions.parseCurrentOptions(opt.c_str());
 			if (!res) {
 				printf("Invalid argument for \"current\" \"%s\"\n\n", opt.c_str());
 				printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 				return false;
 			}
-			appOptions.m_master = iaParseOptions.isMaster();
+			appOptions.m_current = iaParseOptions.isCurrent();
 		}
-		else if (foundOption("base") == true) {
-			std::string opt = optionValue("base");
-			res = iaParseOptions.parseTemplateOptions(opt.c_str());
+		else if (foundOption("archive") == true) {
+			std::string opt = optionValue("archive");
+			res = iaParseOptions.parseArchiveOptions(opt.c_str());
 			if (!res) {
-				printf("Invalid argument for \"current\" \"%s\"\n\n", opt.c_str());
+				printf("Invalid argument for \"archive\" \"%s\"\n\n", opt.c_str());
 				printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 				return false;
 			}
 			appOptions.m_master = iaParseOptions.isMaster();
-			appOptions.m_current = false;
+			
 		}
 		
 		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Template);
@@ -497,11 +471,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	else if (command("view") == true) {
 		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_View);
 
-		if (foundOption("archive-path") == true) {
-
-			std::string opt = optionValue("archive-path");
-			config.setWorkspacePath(opt.c_str());
-		}
+		
 		/*
 		if (foundOption("dist-path") == true) {
 

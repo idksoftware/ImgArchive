@@ -168,7 +168,7 @@ namespace simplearchive {
 		return xml.str();
 	}
 
-	int CheckDiskJournal::size()
+	size_t CheckDiskJournal::size()
 	{
 		return m_list->size();
 	}

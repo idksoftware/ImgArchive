@@ -89,7 +89,7 @@ bool MetadataTemplate::readMaster(const char* path, bool current)
 		}
 	}
 	else {
-		templatePath += "/base.tpl";
+		//templatePath += "/base.tpl";
 
 		if (MetadataTemplate::readMaster(templatePath.c_str(), "base.tpl") == false) {
 			return false;

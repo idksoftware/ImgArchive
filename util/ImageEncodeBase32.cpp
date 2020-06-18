@@ -35,7 +35,7 @@ ImageEncodeBase32::ImageEncodeBase32(long index, const char* imageName, int vers
 ImageEncodeBase32::ImageEncodeBase32(const char* encodedString)
 {
 	m_encodedString = encodedString;
-	int dotPos = m_encodedString.find_last_of(".");
+	size_t dotPos = m_encodedString.find_last_of(".");
 	std::string ext = m_encodedString.substr(dotPos + 1);
 }
 

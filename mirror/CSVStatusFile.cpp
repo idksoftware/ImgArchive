@@ -295,7 +295,7 @@ bool CSVStatusFile::insert(uint64_t idx, const char *imagePath, const char *name
 		std::string year = imagepath.substr(0, 4);
 		imagepath = year + '/' + imagepath;
 	}
-	unsigned int pos = imagepath.find_first_of('/');
+	size_t pos = imagepath.find_first_of('/');
 	if (pos == std::string::npos) {
 		if (PathController::validateYYMMDD(imagepath.c_str()) == false) {
 			return false;
@@ -425,7 +425,7 @@ int CSVStatusFile::getMaxDirIndex(std::string &path) {
 	return max;
 }
 
-std::unique_ptr<ImageStatus> CSVStatusFile::getItemAt(uint64_t idx) {
+std::unique_ptr<ImageStatus> CSVStatusFile::getItemAt(size_t idx) {
 	char hexStr[4];
 
 	m_data[0] = (unsigned int)idx & 0xFF;

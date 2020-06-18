@@ -566,13 +566,21 @@ namespace simplearchive {
 			logger.log(LOG_OK, CLogger::Level::INFO, "Cannot find template path");
 			return false;
 		}
-		std::string metatemplatePath = templatePath;
-		metatemplatePath += "/master.tpl";
+		
+		if (repo) {
+			
 
-		if (MetadataTemplate::readMaster(templatePath.c_str(), "master.tpl") == false) {
-			logger.log(LOG_OK, CLogger::Level::INFO, "Cannot read master template file \"%s\"", metatemplatePath.c_str());
+			if (MetadataTemplate::readMaster(templatePath.c_str(), templateFile) == false) {
+				logger.log(LOG_OK, CLogger::Level::INFO, "Cannot read master template file \"%s\"", templatePath.c_str());
+			}
+			logger.log(LOG_OK, CLogger::Level::INFO, "Completed reading metadata template file \"%s\"", templatePath.c_str());
 		}
-		logger.log(LOG_OK, CLogger::Level::INFO, "Completed reading metadata template file \"%s\"", metatemplatePath.c_str());
+		else {
+			if (MetadataTemplate::readDerivative(templatePath.c_str(), templateFile) == false) {
+				logger.log(LOG_OK, CLogger::Level::INFO, "Cannot read master template file \"%s\"", templatePath.c_str());
+			}
+			logger.log(LOG_OK, CLogger::Level::INFO, "Completed reading metadata template file \"%s\"", templatePath.c_str());
+		}
 		return true;
 	}
 

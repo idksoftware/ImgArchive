@@ -57,7 +57,7 @@ ImageEncode::ImageEncode(const char *encodedString) {
 	std::stringstream s;
 	s << year << '-' << mon << '-' << mday;
 	m_shortRelPath = s.str();
-	int pos = m_encodedString.find_first_of('@', 4);
+	size_t pos = m_encodedString.find_first_of('@', 4);
 	m_imageName = m_encodedString.substr(4, pos - 4);
 	std::string vs = m_encodedString.substr(pos + 1, 1);
 

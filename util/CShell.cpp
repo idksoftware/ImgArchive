@@ -90,7 +90,7 @@ bool CShell::exec(const char *cmd) {
 	if (pipe != NULL) {
 		if (fgets( buffer, MAX_LINE_LENGTH, pipe ))
 		{
-			int length = strlen(buffer);
+			size_t length = strlen(buffer);
 			if (length > 0  &&  buffer[length-1] == '\n')
 			{
 				buffer[--length] = '\0';

@@ -96,12 +96,12 @@ public:
 
 	void setPath(const char *s);
 	bool backupPaths(const char *path);
-	const char* findPath(uint64_t idx);
+	const char* findPath(size_t idx);
 	unsigned long findSize(unsigned int idx);
 	int getNextIndex();
-	uint64_t getNextIndex(uint64_t current);
+	uint64_t getNextIndex(size_t current);
 	uint64_t getMaxIndex();
-	std::unique_ptr<ImageStatus> getItemAt(uint64_t idx);
+	std::unique_ptr<ImageStatus> getItemAt(size_t idx);
 	static std::string getYear(const char *path);
 };
 

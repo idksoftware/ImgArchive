@@ -52,7 +52,7 @@ namespace simplearchive {
 		bool write(const char *path);
 		bool writeXML(const char *path);
 		
-		int size();
+		size_t size();
 		ReportStatus &getReportStatusAt(int i);
 		const char *getImageAt(int i);
 		const char *getOrginalAt(int i);

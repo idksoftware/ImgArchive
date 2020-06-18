@@ -105,7 +105,7 @@ std::string DateSequence::toString() {
 
 
 int DateSequence::getNumber(const std::string& filenane) {
-	int pos = filenane.find_last_of('.');
+	size_t pos = filenane.find_last_of('.');
 	std::string numStr = filenane.substr(pos - 5, 5);
 	if (isNumber(numStr) == false) {
 		return -1;

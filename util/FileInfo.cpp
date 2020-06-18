@@ -53,7 +53,7 @@ static char THIS_FILE[] = __FILE__;
 namespace simplearchive {
 
 	static std::string splitName(std::string pathStr) {
-		unsigned int pos = pathStr.find_last_of("/");
+		size_t pos = pathStr.find_last_of("/");
 		if (pos == std::string::npos) {
 			pos = pathStr.find_last_of("\\");
 			if (pos == std::string::npos) {

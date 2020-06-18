@@ -64,7 +64,7 @@ namespace simplearchive {
 		std::string m_mediaType;
 		std::string m_md5;
 		std::string m_uuid;
-		unsigned long m_size;
+		size_t m_size;
 		ExifDateTime m_modTime;
 		ExifDateTime m_createTime;
 		

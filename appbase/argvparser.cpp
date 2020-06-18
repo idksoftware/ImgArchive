@@ -134,6 +134,9 @@ ArgvParser::parse(int _argc, char ** _argv)
 					return(GeneralHelpRequested);
 				}
 				// current command is the second argument not the first
+				if (option2key.find(_command) == option2key.end()) {
+					return(GeneralHelpRequested);
+				}
 				key = option2key.find(_command)->second;
 				current_command_id = key;
 				return(TopicHelpRequested);

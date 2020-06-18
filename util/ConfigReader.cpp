@@ -145,8 +145,8 @@ ConfigReader::~ConfigReader() {
 
 std::string ConfigReader::includePath(int pos, std::string line) {
 
-	const int s = line.find_first_of("\"");
-	const int e = line.find_last_of("\"");
+	size_t s = line.find_first_of("\"");
+	size_t e = line.find_last_of("\"");
 	m_path = line.substr(s+1,e-(s+1));
 	//printf("path:%s\n", m_path.c_str());
 	return m_path;
@@ -395,13 +395,13 @@ ConfigReader::Token ConfigReader::parseExif(const char *text, ConfigBlock &confi
 	if (line.empty()) {
 		return ConfigReader::Comment;
 	}
-	int commentIdx = line.find_first_of('#');
+	size_t commentIdx = line.find_first_of('#');
 	if (commentIdx == 0) {
 		//printf("%s\n", line.c_str());
 		return ConfigReader::Comment; // comment before command
 	}
 	
-	const int delimIdx = line.find_first_of(config.getDelimChar());
+	const size_t delimIdx = line.find_first_of(config.getDelimChar());
 	if (delimIdx == -1) {
 		if (m_logging) {
 			CLogger::getLogger().log(LOG_OK, CLogger::Level::WARNING, "Cannot read \"%s\" in config file \"%s\"", line.c_str(), m_path.c_str());
@@ -410,7 +410,7 @@ ConfigReader::Token ConfigReader::parseExif(const char *text, ConfigBlock &confi
 	}
 	std::string cmd = line.substr(0, delimIdx);
 	std::string option = line.substr(delimIdx + 1, line.length());
-	if ((commentIdx = option.find_first_of('#')) != -1) {
+	if ((commentIdx = option.find_first_of('#')) != std::string::npos) {
 		option = option.substr(0, commentIdx);
 	}
 
@@ -432,20 +432,20 @@ ConfigReader::Token ConfigReader::parse(const char *text, ConfigBlock &config) {
 	if (line.empty() || line.at(0) == '\r') {
 		return Comment;
 	}
-	int commentIdx = line.find_first_of('#');
+	size_t commentIdx = line.find_first_of('#');
 	if (commentIdx == 0) {
 		//printf("%s\n", line.c_str());
 		return Comment; // comment before command
 	}
-	const int blockStartIdx = line.find_first_of('[');
+	const size_t blockStartIdx = line.find_first_of('[');
 	if (blockStartIdx == 0) {
 		//printf("%s\n", line.c_str());
-		const int blockEndIdx = line.find_last_of(']');
+		const size_t blockEndIdx = line.find_last_of(']');
 		m_blockName = line.substr(blockStartIdx+1, blockEndIdx-1);
 		return NewBlock; // comment before command
 	}
 	// config.getDelimChar()
-	const int delimIdx = line.find_first_of(config.getDelimChar());
+	const size_t delimIdx = line.find_first_of(config.getDelimChar());
 	if (delimIdx == -1) {
 		std::string include("include");
 		const std::size_t  includeIdx = line.find("include");

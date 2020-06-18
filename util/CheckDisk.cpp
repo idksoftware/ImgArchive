@@ -1221,7 +1221,7 @@ bool CheckDisk::checkout(const char *filePath, const char *image) {
 	data->setCheckedOut(true);
 	ckdskManifestFile.write(filePath);
 	std::string path = filePath;
-	int pos = path.find_last_of('/');
+	size_t pos = path.find_last_of('/');
 	path = path.substr(0, pos);
 	if (makeXML(path.c_str()) == false) {
 		ErrorCode::setErrorCode(IMGA_ERROR::XML_WRITE_ERROR);
@@ -1245,7 +1245,7 @@ bool CheckDisk::checkin(const char *filePath, const char *image) {
 	data->setCheckedOut(false);
 	ckdskManifestFile.write(filePath);
 	std::string path = filePath;
-	int pos = path.find_last_of('/');
+	size_t pos = path.find_last_of('/');
 	path = path.substr(0, pos);
 	if (makeXML(path.c_str()) == false) {
 		return false;

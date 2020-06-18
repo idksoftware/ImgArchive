@@ -185,7 +185,7 @@ std::string remove(std::string &str)
 */
 std::string removespace(std::string str)
 {    
-    int m = str.length();
+	size_t m = str.length();
     int i=0;
     while(i<m)
     {
@@ -338,7 +338,7 @@ bool VersionScopeItem::isScope(const char *pattern, int version) {
 		return false;
 	}
 
-	unsigned int delimt = m_pattern.find_first_of('-', 1);
+	size_t delimt = m_pattern.find_first_of('-', 1);
 	if (delimt == std::string::npos) {
 		return false;
 	}

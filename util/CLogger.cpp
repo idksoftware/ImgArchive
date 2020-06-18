@@ -111,8 +111,8 @@ static inline void trim(std::string &s) {
 
 
 CLogger::Level CLogger::messageLevel(std::string message) {
-	int spos = message.find("[");
-	int epos = message.find("]", spos + 1);
+	size_t spos = message.find("[");
+	size_t epos = message.find("]", spos + 1);
 	string levelStr = message.substr(spos+1, (epos-spos)-1);
 	trim(levelStr);
 	return toLevel(levelStr);
@@ -288,7 +288,7 @@ void CLogger::log(int code, Level level, const char *format, ...) {
 		message.append(buffer);
 
 */
-		int final_n, n = (strlen(format) * 2); // Reserve two times as much as the length of the fmt_str //
+		size_t final_n, n = (strlen(format) * 2); // Reserve two times as much as the length of the fmt_str //
 		std::string str;
 		std::unique_ptr<char[]> formatted;
 		va_list ap;
@@ -300,7 +300,7 @@ void CLogger::log(int code, Level level, const char *format, ...) {
 			final_n = vsnprintf(formatted.get(), n, format, ap);
 			va_end(ap);
 			if (final_n < 0 || final_n >= n) {
-				n += abs(final_n - n + 1);
+				n += abs((long)(final_n - n + 1));
 			}
 			else {
 				message = formatted.get();

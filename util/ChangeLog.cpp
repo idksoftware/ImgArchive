@@ -63,10 +63,10 @@ public:
 	 */
 	ChangeLogItem(const char *dataString) {
 		m_data = dataString;
-		int delim1 = m_data.find_first_of(':');
-		int delim2 = m_data.find_first_of(':', delim1+1);
-		int delim3 = m_data.find_first_of(':', delim2+1);
-		int delim4 = m_data.find_first_of(':', delim3 + 1);
+		size_t delim1 = m_data.find_first_of(':');
+		size_t delim2 = m_data.find_first_of(':', delim1+1);
+		size_t delim3 = m_data.find_first_of(':', delim2+1);
+		size_t delim4 = m_data.find_first_of(':', delim3 + 1);
 		m_date = m_data.substr(0,delim1);
 		m_filePath = m_data.substr(delim1+1, (delim2-delim1)-1);
 		m_version = m_data.substr(delim2 + 1, (delim3 - delim2) - 1);

@@ -55,7 +55,7 @@ namespace simplearchive {
 
 const char *Version::makeVersion() {
 
-	int dotpos = m_imagefilename.find_last_of(".");
+	size_t dotpos = m_imagefilename.find_last_of(".");
 	m_ext = m_imagefilename.substr(dotpos, m_imagefilename.length() - dotpos);
 	
 	std::stringstream ss;
@@ -67,7 +67,7 @@ const char *Version::makeVersion() {
 
 const char *Version::makeEncodedVersion() {
 
-	int dotpos = m_imagefilename.find_last_of(".");
+	size_t dotpos = m_imagefilename.find_last_of(".");
 	m_ext = m_imagefilename.substr(dotpos+1, m_imagefilename.length() - (dotpos + 1));
 
 	std::stringstream ss;
@@ -194,7 +194,7 @@ bool Version::CopyDataVersion2Current() {
 std::string Version::nameOnly(const char *name) {
 	std::string namestr = name;
 
-	int dotpos = namestr.find_last_of(".");
+	size_t dotpos = namestr.find_last_of(".");
 	std::string nameonly = namestr.substr(0, dotpos);
 	int vspos = nameonly.find_last_of('[');
 	nameonly = nameonly.substr(0, vspos);
@@ -207,14 +207,14 @@ int Version::versionIndex(const char *name) {
 	std::string path;
 
 
-	int slashpos = namestr.find_last_of("/");
+	size_t slashpos = namestr.find_last_of("/");
 	if (slashpos != -1) {
 		filename = namestr.substr(slashpos+1, namestr.length() - slashpos);
 		path = namestr.substr(0, slashpos);
 	} else {
 		filename = namestr;
 	}
-	int dotpos = filename.find_last_of(".");
+	size_t dotpos = filename.find_last_of(".");
 	std::string nameonly = filename.substr(0, dotpos);
 	size_t vepos = nameonly.find_last_of(']');
 	if (vepos == (size_t)-1 || (vepos <= (nameonly.length() - 2))) {
@@ -232,7 +232,7 @@ int Version::versionIndex(const char *name) {
 bool Version::splitpath(const char *name) {
 	std::string namestr(name);
 
-	int slashpos = namestr.find_last_of("/");
+	size_t slashpos = namestr.find_last_of("/");
 	if (slashpos != -1) {
 		m_imagefilename = namestr.substr(slashpos+1, namestr.length() - slashpos);
 		m_imagePath = namestr.substr(0, slashpos);
@@ -294,7 +294,7 @@ bool Version::setToVersion(const char *name, int idx) {
 		m_version = 0;
 		m_versionPath = name;
 		std::string namestr(m_versionPath);
-		int slashpos = namestr.find_last_of("/");
+		size_t slashpos = namestr.find_last_of("/");
 		if (slashpos != -1) {
 			m_versionName = namestr.substr(slashpos+1, namestr.length() - slashpos);
 			//m_imagePath = namestr.substr(0, slashpos);
