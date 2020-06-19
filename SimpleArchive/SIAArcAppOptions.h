@@ -221,7 +221,7 @@ private:
 	static std::string m_version;
     static std::string m_FromDate;
     static std::string m_ToDate;
-
+	static std::string m_option;
 	ShowCommandOption m_showCommandOption;
 
 	static DefaultArgumentsContainer defaultArgumentsContainer;
@@ -260,6 +260,7 @@ public:
 	const char *getFilePath();
     const char* getFromDate();
     const char* getToDate();
+	const char* getOption();
 
     //* Is the list option valid
 	bool isEnventsOn();

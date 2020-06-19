@@ -168,7 +168,10 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 
 	defineOption("out", "Output type: text, xml, json or html.", ArgvParser::OptionRequiresValue);
 	defineCommandSyntax("out", "out=[plain] | [xml] | [json] | [html]\n");
-	//defineOptionAlternative("u", "users");
+
+	defineOption("o", "property option.", ArgvParser::OptionRequiresValue);
+	defineOptionAlternative("o", "option");
+	defineCommandSyntax("option", "option <argument=value>\n");
 
 	defineOption("file", "output file name.", ArgvParser::OptionRequiresValue);
 	defineCommandSyntax("file", "file=<filename>\n");
@@ -218,6 +221,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 
 	defineCommandOption("template", "current");
 	defineCommandOption("template", "archive");
+	defineCommandOption("template", "option");
 
 	defineCommandOption("log", "image");
 	defineCommandOption("log", "format-type");
@@ -450,7 +454,11 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 			appOptions.m_master = iaParseOptions.isMaster();
 			
 		}
-		
+		if (foundOption("option") == true) {
+			std::string opt = optionValue("option");
+			//printf("option string %s\n", opt.c_str());
+			appOptions.m_option = opt;
+		}
 		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Template);
 		cmdFound = true;
 	}

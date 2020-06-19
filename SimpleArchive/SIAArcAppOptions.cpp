@@ -78,6 +78,7 @@ std::string SIAArcAppOptions::m_filePath;
 std::string SIAArcAppOptions::m_version = "last";
 std::string SIAArcAppOptions::m_FromDate;
 std::string SIAArcAppOptions::m_ToDate;
+std::string SIAArcAppOptions::m_option;
 
 int SIAArcAppOptions::m_udpPortNum = 64321;
 std::string SIAArcAppOptions::m_udpAddress = "127.0.0.1";
@@ -163,6 +164,11 @@ const char* SIAArcAppOptions::getFromDate()
 const char* SIAArcAppOptions::getToDate()
 {
 	return m_ToDate.c_str();
+}
+
+const char* SIAArcAppOptions::getOption()
+{
+	return m_option.c_str();
 }
 
 bool SIAArcAppOptions::isEnventsOn() {

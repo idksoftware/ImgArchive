@@ -17,8 +17,8 @@ namespace simplearchive {
 
 		static Config_ptr m_templateFile;
 		static std::string& getValue(const char* key);
-		static MasterMetadataTemplateRow m_metadataTemplateRow;
-		//static DerivativeMetadataRow m_derivativeMetadataRow;
+		static MasterMetadataTemplateRow m_masterMetadataTemplateRow;
+		static DerivativeMetadataTemplateRow m_derivativeMetadataTemplateRow;
 
 		MetadataTemplateManager() noexcept = default;
 	public:

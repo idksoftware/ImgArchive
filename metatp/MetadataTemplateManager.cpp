@@ -7,8 +7,8 @@ namespace simplearchive {
 	MasterMetadataTemplateSchema MasterMetadataTemplateRow::m_tableSchema;
 
 	std::unique_ptr<ConfigBlock>	MetadataTemplateManager::m_templateFile(new ConfigBlock);
-	MasterMetadataTemplateRow MetadataTemplateManager::m_metadataTemplateRow;
-
+	MasterMetadataTemplateRow MetadataTemplateManager::m_masterMetadataTemplateRow;
+	DerivativeMetadataTemplateRow MetadataTemplateManager::m_derivativeMetadataTemplateRow;
 	//Config *MetadataTemplate::m_templateFile = 0;
 
 
@@ -46,7 +46,7 @@ namespace simplearchive {
 				return false;
 			}
 		}
-		MasterMetadataTemplateResultsPresentation resultsPresentation(m_metadataTemplateRow);
+		MasterMetadataTemplateResultsPresentation resultsPresentation(m_masterMetadataTemplateRow);
 		resultsPresentation.writeHuman();
 		return true;
 	}
@@ -82,7 +82,7 @@ namespace simplearchive {
 				value = (*ii).second.c_str();
 			}
 			try {
-				MTColumn& col = m_metadataTemplateRow.columnAt((*ii).first.c_str());
+				MTColumn& col = m_masterMetadataTemplateRow.columnAt((*ii).first.c_str());
 				col = (*ii).second.c_str();
 			}
 			catch (std::invalid_argument& e) {
@@ -110,7 +110,7 @@ namespace simplearchive {
 				value = (*ii).second.c_str();
 			}
 			try {
-				MTColumn& col = m_metadataTemplateRow.columnAt((*ii).first.c_str());
+				MTColumn& col = m_derivativeMetadataTemplateRow.columnAt((*ii).first.c_str());
 				col = (*ii).second.c_str();
 			}
 			catch (std::invalid_argument& e) {

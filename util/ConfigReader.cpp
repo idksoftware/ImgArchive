@@ -477,6 +477,18 @@ ConfigReader::Token ConfigReader::parse(const char *text, ConfigBlock &config) {
 }
 
 bool ConfigWriter::update(const char* option, const char* value) {
+	for (auto ii = m_configBlock.begin(); ii != m_configBlock.end(); ++ii) {
+		std::string item = trim(ii->first);
+
+		if (item.compare(option) == 0) {
+			ii->second = value;
+			return true;
+		}
+	}
+	std::string cmdp(option);
+	std::string optionp(value);
+	m_configBlock[(cmdp)] = (optionp);
+	
 	return true;
 }
 
@@ -485,6 +497,14 @@ bool ConfigWriter::remove(const char* option) {
 }
 
 bool ConfigWriter::write(const char* datafile) {
+	std::ofstream file(datafile, std::ifstream::trunc);
+	if (file.is_open() == false) {
+		return false;
+	}
+	for (std::map<std::string, std::string>::iterator ii = m_configBlock.begin(); ii != m_configBlock.end(); ++ii) {
+		file << ii->first << "=" << ii->second << '\n';
+		//std::cout << ii->first << "=" << ii->second << '\n';
+	}
 	return true;
 }
 

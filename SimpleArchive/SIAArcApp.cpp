@@ -75,6 +75,7 @@ using namespace std;
 #include "HookCmd.h"
 #include "ImagePath.h"
 #include "HomePath.h"
+#include "UpdateTemplateManager.h"
 
 
 #define MAJORVERSION 0
@@ -356,8 +357,14 @@ bool SIAArcApp::doRun()
 	}
 	case SIAArcAppOptions::CommandMode::CM_Template:
 	{
-		bool repo = false;
-		bool file = false;
+		std::string option = appOptions.getOption();
+		if (!option.empty()) {
+			std::string templatePath = config.getTemplatePath();
+			UpdateTemplateManager updateTemplateManager(templatePath.c_str());
+			if (updateTemplateManager.process(appOptions.isMaster(), appOptions.isCurrent(), option.c_str()) == false) {
+				return false;
+			}
+		}
 		if (siaLib.metadataTemplate(appOptions.isMaster(), appOptions.isCurrent()) == false) {
 			setError(CLogger::getLastCode(), CLogger::getLastMessage());
 			return false;

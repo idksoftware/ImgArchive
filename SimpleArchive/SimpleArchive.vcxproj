@@ -175,6 +175,7 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="SIAArcArgvParser.h" />
     <ClInclude Include="UpdateTemplateFile.h" />
+    <ClInclude Include="UpdateTemplateManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IAParseOptions.cpp" />
@@ -182,6 +183,7 @@
     <ClCompile Include="SIAArcAppOptions.cpp" />
     <ClCompile Include="SIAArcArgvParser.cpp" />
     <ClCompile Include="UpdateTemplateFile.cpp" />
+    <ClCompile Include="UpdateTemplateManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="mainpage.dox" />

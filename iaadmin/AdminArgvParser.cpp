@@ -204,8 +204,7 @@ namespace simplearchive {
 
 		defineOption("file", "output file name.", ArgvParser::OptionRequiresValue);
 		defineCommandSyntax("file", "file=<filename>\n");
-		//defineOptionAlternative("u", "users");
-
+		
 		defineCommandOption("init", "archive-path");
 		defineCommandOption("init", "workspace-path");
 		defineCommandOption("init", "master-path");
