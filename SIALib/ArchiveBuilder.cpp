@@ -40,7 +40,7 @@
 #include "ArchiveRepository.h"
 #include "ImageExtentions.h"
 #include "ExifObject.h"
-#include "MetadataTemplate.h"
+#include "MetadataTemplateManager.h"
 #include "MetadataObject.h"
 #include "ImageFileReader.h"
 #include "ImageIndex.h"
@@ -539,7 +539,7 @@ namespace simplearchive {
 		std::string metatemplatePath = m_templatePath;
 		metatemplatePath += "/master.tpl";
 
-		if (MetadataTemplate::readMaster(m_templatePath.c_str(), "master.tpl") == false) {
+		if (MetadataTemplateManager::readMaster(m_templatePath.c_str(), "master.tpl") == false) {
 			logger.log(LOG_OK, CLogger::Level::INFO, "Cannot read master template file \"%s\"", metatemplatePath.c_str());
 		}
 		logger.log(LOG_OK, CLogger::Level::INFO, "Completed reading metadata template file \"%s\"", metatemplatePath.c_str());
@@ -696,8 +696,8 @@ namespace simplearchive {
 				}
 				logger.log(LOG_OK, CLogger::Level::INFO, "Processing bulk metedata %s", imageItem->getFilename().c_str());
 
-				MetadataTemplate &metadataTemplate = MetadataTemplate::GetInstance();
-				MetadataObject_ptr metadataObjectPtr = metadataTemplate.getMetadataObject();
+				MetadataTemplateManager& metadataTemplateManager = MetadataTemplateManager::GetInstance();
+				MetadataObject_ptr metadataObjectPtr = metadataTemplateManager.getMetadataObject();
 				MetadataObject &metadataObject = *metadataObjectPtr;
 				//print(metadataObject);
 				try {

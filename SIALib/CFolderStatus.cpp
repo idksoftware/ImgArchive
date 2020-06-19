@@ -58,10 +58,10 @@ public:
 	CFolderStatusItem();
 	CFolderStatusItem(const char *dataString) {
 		std::string m_data = dataString;
-		int delim1 = m_data.find_first_of(':');
-		int delim2 = m_data.find_first_of(delim1, ':');
+		size_t delim1 = m_data.find_first_of(':');
+		size_t delim2 = m_data.find_first_of(delim1, ':');
 		std::string crcStr = m_data.substr(0,delim1);
-		int m_crc = strtol(crcStr.c_str(),NULL,16);
+		size_t m_crc = strtol(crcStr.c_str(),NULL,16);
 		std::string name = m_data.substr(delim1, delim2);
 		std::string md5 = m_data.substr(delim2, m_data.length());
 	}

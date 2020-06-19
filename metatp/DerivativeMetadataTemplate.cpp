@@ -1,10 +1,11 @@
-#include "DerivativeMetadataTemplate.h"
 
 #include <stdio.h>
 #include <iomanip>
 #include "DBDefines.h"
 #include "MetadataObject.h"
-#include "MetadataTemplate.h"
+#include "MasterMetadataTemplate.h"
+#include "DerivativeMetadataTemplate.h"
+
 //#include "ConfigReader.h"
 
 
@@ -70,7 +71,7 @@ namespace simplearchive {
 			}
 		}
 
-		MetadataTemplateResultsPresentation resultsPresentation(m_metadataTemplateRow);
+		MasterMetadataTemplateResultsPresentation resultsPresentation(m_metadataTemplateRow);
 		resultsPresentation.writeHuman();
 
 		return true;

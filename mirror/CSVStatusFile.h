@@ -57,7 +57,7 @@ class ImageStatus {
 	unsigned long m_size;
 	int m_version;
 	ExifDate m_dateArchived;
-	uint64_t m_dbidx;
+	size_t m_dbidx;
 public:
 	
 	ImageStatus(uint64_t idx, const char* imagePath, const char* name, unsigned long size, uint64_t crc,
@@ -99,8 +99,8 @@ public:
 	const char* findPath(size_t idx);
 	unsigned long findSize(unsigned int idx);
 	int getNextIndex();
-	uint64_t getNextIndex(size_t current);
-	uint64_t getMaxIndex();
+	size_t getNextIndex(size_t current);
+	size_t getMaxIndex();
 	std::unique_ptr<ImageStatus> getItemAt(size_t idx);
 	static std::string getYear(const char *path);
 };

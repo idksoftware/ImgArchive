@@ -144,7 +144,7 @@ ExifObject *ExternalComand::process(const char *imagefile) {
 }
 
 std::string ExternalComand::replaceToken(std::string &str, const char *toklabel, const char *repstr) {
-	int s = str.find_first_of("[");
+	size_t s = str.find_first_of("[");
 	if (s == -1) {
 		return str;
 	}
@@ -175,7 +175,7 @@ std::string ExternalComand::replace(std::string &commandLine, std::string &in) {
 }
 
 bool ExternalComand::findToken(std::string &str, const char *toklabel) {
-	int s = str.find_first_of("[");
+	size_t s = str.find_first_of("[");
 	if (s == -1) {
 		return false;
 	}

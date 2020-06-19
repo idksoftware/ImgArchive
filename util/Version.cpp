@@ -196,7 +196,7 @@ std::string Version::nameOnly(const char *name) {
 
 	size_t dotpos = namestr.find_last_of(".");
 	std::string nameonly = namestr.substr(0, dotpos);
-	int vspos = nameonly.find_last_of('[');
+	size_t vspos = nameonly.find_last_of('[');
 	nameonly = nameonly.substr(0, vspos);
 	return nameonly;
 }

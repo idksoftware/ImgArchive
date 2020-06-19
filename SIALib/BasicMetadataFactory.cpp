@@ -155,7 +155,7 @@ namespace simplearchive {
 	}
 
 	static std::string splitName(std::string pathStr) {
-		unsigned int pos = pathStr.find_last_of("/");
+		size_t pos = pathStr.find_last_of("/");
 		if (pos == std::string::npos) {
 			pos = pathStr.find_last_of("\\");
 			if (pos == std::string::npos) {
@@ -203,7 +203,7 @@ namespace simplearchive {
 		std::string uuid = uuidObj.GetUuid();
 		basicMetadata->setUuid(uuid);
 		logger.log(LOG_OK, CLogger::Level::INFO, "UUID of image: %s is %s", p.c_str(), uuid.c_str());
-		int size = buf.length();
+		size_t size = buf.length();
 		basicMetadata->setSize(size);
 
 		logger.log(LOG_OK, CLogger::Level::INFO, "Size of image: %s is %d", p.c_str(), size);

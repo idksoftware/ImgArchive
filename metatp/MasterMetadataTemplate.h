@@ -64,9 +64,9 @@ typedef std::unique_ptr<ConfigBlock> Config_ptr;
 //class Config;
 
 
-class MetadataTemplateSchema : public MTTableSchema {
+class MasterMetadataTemplateSchema : public MTTableSchema {
 public:
-	MetadataTemplateSchema() noexcept : MTTableSchema(TABLE_METADATA_TEMPLATE) {
+	MasterMetadataTemplateSchema() noexcept : MTTableSchema(TABLE_METADATA_TEMPLATE) {
 
 		// Description
 		add(MTSchema(MTSchema::Text, DB_DESCRIPTION));
@@ -115,13 +115,13 @@ public:
 	}
 };
 
-class MetadataTemplateRow : public MTRow {
-	static MetadataTemplateSchema m_tableSchema;
+class MasterMetadataTemplateRow : public MTRow {
+	static MasterMetadataTemplateSchema m_tableSchema;
 
 public:
-	MetadataTemplateRow() : MTRow(m_tableSchema) {};
+	MasterMetadataTemplateRow() : MTRow(m_tableSchema) {};
 	//MetadataTemplateRow(const MTRow& row) : MTRow(row) {};
-	MetadataTemplateRow(const MTRow& row) : MTRow(m_tableSchema) {
+	MasterMetadataTemplateRow(const MTRow& row) : MTRow(m_tableSchema) {
 
 		for (unsigned int i = 0; i < row.size(); i++) {
 			MTColumn& c1 = *at(i);
@@ -136,20 +136,20 @@ public:
 /*
 	Note table of one row
 */
-class MetadataTemplatePartition : public MTTable {
+class MasterMetadataTemplatePartition : public MTTable {
 public:
-	MetadataTemplatePartition() : MTTable(new MetadataTemplateSchema) {};
-	virtual ~MetadataTemplatePartition() {};
+	MasterMetadataTemplatePartition() : MTTable(new MasterMetadataTemplateSchema) {};
+	virtual ~MasterMetadataTemplatePartition() {};
 
 };
 
 
-class MetadataTemplateResultsPresentation {
+class MasterMetadataTemplateResultsPresentation {
 	MTRow m_row;
 	std::shared_ptr<MTTableSchema> m_tableSchema;
 public:
-	MetadataTemplateResultsPresentation(MTRow row) : m_row(row), m_tableSchema(new MetadataTemplateSchema) {};
-	~MetadataTemplateResultsPresentation() = default;
+	MasterMetadataTemplateResultsPresentation(MTRow row) : m_row(row), m_tableSchema(new MasterMetadataTemplateSchema) {};
+	~MasterMetadataTemplateResultsPresentation() = default;
 
 	bool writeHuman();
 	bool writeXML(); 
@@ -159,30 +159,7 @@ public:
 };
 
 
-class MetadataTemplate {
-	
-	
-	static Config_ptr m_templateFile;
-	static std::string &getValue(const char *key);
-	static MetadataTemplateRow m_metadataTemplateRow;
-	//static DerivativeMetadataRow m_derivativeMetadataRow;
 
-	MetadataTemplate() noexcept = default;
-public:
-	static MetadataTemplate& GetInstance();
-	virtual ~MetadataTemplate();
-	
-	MetadataTemplate(const MetadataTemplate& src) = delete;
-	MetadataTemplate& operator=(const MetadataTemplate& rhs) = delete;
-
-	static bool readMaster(const char* path, bool current);
-	static bool readDerivative(const char* path, bool current);
-
-	static bool readMaster(const char* path, const char *datafile);
-	static bool readDerivative(const char* path, const char* datafile);
-	static bool write(const char* datafile);
-	static MetadataObject_ptr getMetadataObject();
-};
 
 } /* namespace simplearchive */
 #endif /* METADATATEMPLATE_H_ */

@@ -399,7 +399,7 @@ bool CatalogueApp::initaliseHomePath() {
 	temp = SAUtils::GetPOSIXEnv(key);
 	homePath = temp;
 	//printf("%s", homePath.c_str());
-	int i = homePath.length();
+	size_t i = homePath.length();
 	if (homePath.empty() == true || homePath.length() == 0) {
 		homePath = SAUtils::GetPOSIXEnv("ProgramData");
 		//C:\ProgramData\IDK Software\ImageArchive1.0

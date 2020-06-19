@@ -20,7 +20,7 @@
 
 
 struct sockaddr_in UDPOut::m_si_other;
-int UDPOut::m_socketId;
+SOCKET UDPOut::m_socketId;
 int UDPOut::m_socketLength;
 const char *UDPOut::m_address;
 int UDPOut::m_port;

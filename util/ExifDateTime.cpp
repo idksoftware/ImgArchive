@@ -113,8 +113,8 @@ namespace simplearchive {
 		}
 		else {
 			std::string datestr = str;
-			int s = 0;
-			int e = datestr.find_first_of(":.");
+			size_t s = 0;
+			size_t e = datestr.find_first_of(":.");
 			std::string numstr = datestr.substr(s, e);
 			m_year = strtol(numstr.c_str(), NULL, 10);
 			s = e + 1;
@@ -165,8 +165,8 @@ namespace simplearchive {
 		}
 
 		std::string datestr = str;
-		int s = 0;
-		int e = datestr.find_first_of(":.");
+		size_t s = 0;
+		size_t e = datestr.find_first_of(":.");
 		std::string numstr = datestr.substr(s, e);
 		if (is_number(numstr) == false) {
 			return false;

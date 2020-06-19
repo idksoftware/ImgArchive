@@ -63,14 +63,14 @@ std::string CUnqueName::make(const char *name) {
 	std::string path;
 
 
-	int slashpos = namestr.find_last_of("/");
+	size_t slashpos = namestr.find_last_of("/");
 	if (slashpos != -1) {
 		filename = namestr.substr(slashpos+1, namestr.length() - slashpos);
 		path = namestr.substr(0, slashpos);
 	} else {
 		filename = namestr;
 	}
-	int dotpos = filename.find_last_of(".");
+	size_t dotpos = filename.find_last_of(".");
 	std::string nameonly = filename.substr(0, dotpos);
 	std::string ext = filename.substr(dotpos, filename.length() - dotpos);
 	size_t vepos = nameonly.find_last_of(m_pre);

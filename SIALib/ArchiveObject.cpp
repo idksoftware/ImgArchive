@@ -10,7 +10,7 @@
 
 #include "ImageExtentions.h"
 #include "ExifObject.h"
-#include "MetadataTemplate.h"
+#include "MasterMetadataTemplate.h"
 #include "DerivativeMetadata.h"
 #include "MetadataObject.h"
 #include "ImageFileReader.h"

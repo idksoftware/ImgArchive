@@ -100,7 +100,7 @@ namespace simplearchive {
 	}
 
 	std::string ExternalProcess::replaceToken(std::string &str, const char *toklabel, const char *repstr) {
-		int s = str.find_first_of("[");
+		size_t s = str.find_first_of("[");
 		if (s == -1) {
 			return str;
 		}

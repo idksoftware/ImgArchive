@@ -320,7 +320,7 @@ bool MTColumn::fromString(const std::string &str) {
 }
 
 std::string MTColumn::token(int *pos, std::string &str) {
-	int delim = str.find_first_of(DELIM, *pos);
+	size_t delim = str.find_first_of(DELIM, *pos);
 	std::string tmp = str.substr(*pos, (delim - *pos));
 	//printf("%s\n",tmp.c_str());
 	*pos = delim;

@@ -448,8 +448,8 @@ ConfigReader::Token ConfigReader::parse(const char *text, ConfigBlock &config) {
 	const size_t delimIdx = line.find_first_of(config.getDelimChar());
 	if (delimIdx == -1) {
 		std::string include("include");
-		const std::size_t  includeIdx = line.find("include");
-		if (includeIdx != static_cast<std::size_t>(-1)) {
+		const size_t  includeIdx = line.find("include");
+		if (includeIdx != static_cast<size_t>(-1)) {
 			includePath(includeIdx, line);
 			m_path = line.substr(8, line.length() - 8);
 			return Include;

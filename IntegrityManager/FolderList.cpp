@@ -576,7 +576,7 @@ bool FolderList::fixWorkspace(const char* archivePath, const char *jouralFile) {
 	if (checkDiskJournal.read(jouralFile) == false) {
 		return false;
 	}
-	int size = checkDiskJournal.size();
+	size_t size = checkDiskJournal.size();
 	for (int i = 0; i < size; i++) {
 		ReportStatus rs = checkDiskJournal.getReportStatusAt(i);
 		std::string imagePath = checkDiskJournal.getImageAt(i);

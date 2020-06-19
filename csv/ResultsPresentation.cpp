@@ -30,7 +30,7 @@ bool ResultsPresentation::write(FormatType formatType) {
 
 bool ResultsPresentation::iequals(const std::string& a, const std::string& b)
 {
-	unsigned int sz = a.size();
+	size_t sz = a.size();
 	if (b.size() != sz)
 		return false;
 	for (unsigned int i = 0; i < sz; ++i)

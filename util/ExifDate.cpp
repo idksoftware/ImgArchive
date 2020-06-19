@@ -54,8 +54,8 @@ ExifDate::ExifDate() {
 ExifDate::ExifDate(const char *str) {
 	m_isOk = true;
 	std::string datestr = str;
-	int s = 0;
-	int e = datestr.find_first_of(':');
+	size_t s = 0;
+	size_t e = datestr.find_first_of(':');
 	if (e != 4) {
 		now();
 		m_isOk = false;

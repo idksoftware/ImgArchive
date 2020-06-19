@@ -246,7 +246,7 @@ void DupDataFile::insert(unsigned long crc, std::string& row) {
 	for (std::vector<std::string>::iterator i = m_dataContainer->begin(); i != m_dataContainer->end(); i++) {
 		std::string data = *i;
 		//printf("%s", data.c_str());
-		int delim1 = data.find_first_of(':');
+		size_t delim1 = data.find_first_of(':');
 		std::string crcStr = data.substr(0,delim1);
 		unsigned long newcrc = std::stoul(crcStr.c_str(), NULL, 16);
 		if (newcrc > crc) {
@@ -280,7 +280,7 @@ std::string DupDataFile::findData(unsigned long crc) {
 
 		data = *i;
 		//printf("%s", data.c_str());
-		int delim1 = data.find_first_of(':');
+		size_t delim1 = data.find_first_of(':');
 		std::string crcStr = data.substr(0, delim1);
 		unsigned long newcrc = std::stoul(crcStr.c_str(), NULL, 16);
 		if (newcrc == crc) {
@@ -311,7 +311,7 @@ int DupDataFile::find(unsigned long crc) {
 
 		std::string data = *i;
 		//printf("%s", data.c_str());
-		int delim1 = data.find_first_of(':');
+		size_t delim1 = data.find_first_of(':');
 		std::string crcStr = data.substr(0,delim1);
 		unsigned long newcrc = std::stoul(crcStr.c_str(), NULL, 16);
 		if (newcrc == crc) {

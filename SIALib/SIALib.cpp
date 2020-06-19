@@ -42,7 +42,7 @@
 #include "ArchiveRepository.h"
 #include "ImageExtentions.h"
 #include "ExifObject.h"
-#include "MetadataTemplate.h"
+#include "MetadataTemplateManager.h"
 #include "MetadataObject.h"
 #include "ImageFileReader.h"
 #include "ImageIndex.h"
@@ -570,13 +570,13 @@ namespace simplearchive {
 		if (repo) {
 			
 
-			if (MetadataTemplate::readMaster(templatePath.c_str(), templateFile) == false) {
+			if (MetadataTemplateManager::readMaster(templatePath.c_str(), templateFile) == false) {
 				logger.log(LOG_OK, CLogger::Level::INFO, "Cannot read master template file \"%s\"", templatePath.c_str());
 			}
 			logger.log(LOG_OK, CLogger::Level::INFO, "Completed reading metadata template file \"%s\"", templatePath.c_str());
 		}
 		else {
-			if (MetadataTemplate::readDerivative(templatePath.c_str(), templateFile) == false) {
+			if (MetadataTemplateManager::readDerivative(templatePath.c_str(), templateFile) == false) {
 				logger.log(LOG_OK, CLogger::Level::INFO, "Cannot read master template file \"%s\"", templatePath.c_str());
 			}
 			logger.log(LOG_OK, CLogger::Level::INFO, "Completed reading metadata template file \"%s\"", templatePath.c_str());

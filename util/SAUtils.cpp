@@ -258,7 +258,7 @@ std::string SAUtils::getFilePathNoExt(const std::string &file) {
 }
 
 std::string SAUtils::getFilename(const std::string &filepath) {
-	int sp = filepath.find_last_of("/");
+	size_t sp = filepath.find_last_of("/");
 	if (sp == string::npos) {
 		sp = filepath.find_last_of("\\");
 	}
@@ -270,7 +270,7 @@ std::string SAUtils::getFilename(const std::string &filepath) {
 }
 
 std::string SAUtils::getFolder(const std::string &filepath) {
-	int sp = filepath.find_last_of("/");
+	size_t sp = filepath.find_last_of("/");
 	if (sp == string::npos) {
 		sp = filepath.find_last_of("\\");
 	}
@@ -282,13 +282,13 @@ std::string SAUtils::getFolder(const std::string &filepath) {
 }
 
 std::string SAUtils::getFilenameNoExt(const std::string &file) {
-	int sp = file.find_last_of("/\\");
+	size_t sp = file.find_last_of("/\\");
 	
 	std::string name;
 	if (sp != -1) {
 		name = file.substr(++sp);
 	}
-	const int ep = file.find_last_of('.');
+	const size_t ep = file.find_last_of('.');
 	name = file.substr(0, ep);
 	return name;
 }
@@ -465,7 +465,7 @@ std::string SAUtils::sprintf(const char *fmt, ...)
 	
 	
 	
-	int final_n, n = (strlen(fmt) * 2); // Reserve two times as much as the length of the fmt_str //
+	size_t final_n, n = (strlen(fmt) * 2); // Reserve two times as much as the length of the fmt_str //
 	std::string str;
 	
 	va_list ap;
@@ -477,7 +477,7 @@ std::string SAUtils::sprintf(const char *fmt, ...)
 		final_n = vsnprintf(formatted.get(), n, fmt, ap);
 		va_end(ap);
 		if (final_n < 0 || final_n >= n) {
-			n += abs(final_n - n + 1);
+			n += abs((int)(final_n - n + 1));
 		}
 		else {
 			str = formatted.get();
@@ -524,8 +524,8 @@ bool SAUtils::makePath(const char *from, const char *to) {
 	bool last = false;
 	std::string node;
 	while (last != true) {
-		unsigned int start = curPath.length();
-		unsigned int end = 0;
+		size_t start = curPath.length();
+		size_t end = 0;
 #ifdef _WIN32
 		if ((end = fullPath.find_first_of("\\", start + 2)) == std::string::npos) {
 #else
@@ -561,11 +561,11 @@ bool SAUtils::makePath(const char *to) {
 	if (fullPath.empty()) {
 		return false;
 	}
-	int idx = fullPath.find_first_of(':');
+	size_t idx = fullPath.find_first_of(':');
 	std::string drive = fullPath.substr(0, idx + 1);
 	bool last = false;
-	unsigned int start = idx + 1;
-	unsigned int end = 0;
+	size_t start = idx + 1;
+	size_t end = 0;
 	std::string curPath = drive;
 	std::string node;
 	while (last != true) {
@@ -581,7 +581,7 @@ bool SAUtils::makePath(const char *to) {
 			node = fullPath.substr(start + 1, (end)-(start + 1));
 		}
 #ifdef _WIN32
-		curPath += '\\/';
+		curPath += "\\/";
 #else
 		curPath += '/';
 #endif

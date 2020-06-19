@@ -36,7 +36,7 @@
 #include <iomanip>
 #include "DBDefines.h"
 #include "MetadataObject.h"
-#include "MetadataTemplate.h"
+#include "MasterMetadataTemplate.h"
 //#include "ConfigReader.h"
 
 
@@ -48,155 +48,9 @@ static char THIS_FILE[] = __FILE__;
 
 namespace simplearchive {
 	
-	MetadataTemplateSchema MetadataTemplateRow::m_tableSchema;
-
-	std::unique_ptr<ConfigBlock>	MetadataTemplate::m_templateFile(new ConfigBlock);
-	MetadataTemplateRow MetadataTemplate::m_metadataTemplateRow;
-
-//Config *MetadataTemplate::m_templateFile = 0;
-
-
-MetadataTemplate& MetadataTemplate::GetInstance()
-{
-	static MetadataTemplate metadataTemplate;
-	return metadataTemplate;
-}
-
-MetadataTemplate::~MetadataTemplate() {}
-
-static std::string defaultStr = "";
-
-
-std::string& MetadataTemplate::getValue(const char *key) {
-	std::map<std::string, std::string>::iterator it;
-
-	if ((it = m_templateFile->find(key)) == m_templateFile->end()) {
-		return defaultStr;
-	}
-	return it->second;
-}
-
-bool MetadataTemplate::readMaster(const char* path, bool current)
-{
-	std::string templatePath = path;
-
-	if (current) {
-		if (MetadataTemplate::readMaster(templatePath.c_str(), "master.tpl") == false) {
-			return false;
-		}
-	}
-	else {
-		if (MetadataTemplate::readMaster(templatePath.c_str(), "master_base.tpl") == false) {
-			return false;
-		}
-	}
-	MetadataTemplateResultsPresentation resultsPresentation(m_metadataTemplateRow);
-	resultsPresentation.writeHuman();
-	return true;
-}
-
-bool MetadataTemplate::readDerivative(const char* path, bool current)
-{
-	std::string templatePath = path;
-
-	if (current) {
-		if (MetadataTemplate::readDerivative(templatePath.c_str(), "derivative.tpl") == false) {
-			return false;
-		}
-	}
-	else {
-		if (MetadataTemplate::readDerivative(templatePath.c_str(), "derivative_base.tpl") == false) {
-			return false;
-		}
-	}
-	return true;
-}
-
-bool MetadataTemplate::readMaster(const char* path, const char *datafile) {
-
-	ConfigReader configReader;
-	if (configReader.read(path, datafile, *m_templateFile) == false) {
-		return false;
-	}
-	//templateFile.printAll();
-	for (std::map<std::string, std::string>::iterator ii = m_templateFile->begin(); ii != m_templateFile->end(); ++ii) {
-		std::string &value = getValue((*ii).first.c_str());
-		//printf("\"%s\" = \"%s\"\n", (*ii).first.c_str(), (*ii).second.c_str());
-		if (value.compare("")) {
-			value = (*ii).second.c_str();
-		}
-		try {
-			MTColumn& col = m_metadataTemplateRow.columnAt((*ii).first.c_str());
-			col = (*ii).second.c_str();
-		}
-		catch (std::invalid_argument& e) {
-			printf("%s", e.what());
-		}
-		catch (MTTypeException& e) {
-			const char* tmp = e.what();
-			printf("%s\n", tmp);
-		}
-	}
-	return true;
-}
-
-bool MetadataTemplate::readDerivative(const char* path, const char* datafile)
-{
-	ConfigReader configReader;
-	if (configReader.read(path, datafile, *m_templateFile) == false) {
-		return false;
-	}
-	//templateFile.printAll();
-	for (auto ii = m_templateFile->begin(); ii != m_templateFile->end(); ++ii) {
-		std::string& value = getValue((*ii).first.c_str());
-		//printf("\"%s\" = \"%s\"\n", (*ii).first.c_str(), (*ii).second.c_str());
-		if (value.compare("")) {
-			value = (*ii).second.c_str();
-		}
-		try {
-			MTColumn& col = m_metadataTemplateRow.columnAt((*ii).first.c_str());
-			col = (*ii).second.c_str();
-		}
-		catch (std::invalid_argument& e) {
-			printf("%s", e.what());
-		}
-		catch (MTTypeException& e) {
-			const char* tmp = e.what();
-			printf("%s\n", tmp);
-		}
-	}
-	return true;
-}
-
-bool MetadataTemplate::write(const char* datafile) {
-	return true;
-}
-
-MetadataObject_ptr MetadataTemplate::getMetadataObject() {
-	MetadataObject_ptr metadataObject = std::make_unique<MetadataObject>();
 	
-	for (std::map<std::string, std::string>::iterator ii = m_templateFile->begin(); ii != m_templateFile->end(); ++ii) {
-		//std::string &value = getValue((*ii).first.c_str());
-		//printf("\"%s\" opt:\"%s\"\n", (*ii).first.c_str(), (*ii).second.c_str());
-		try {
-			MTColumn& col = metadataObject->columnAt((*ii).first.c_str());
-			col = (*ii).second.c_str();
-		}
-		catch (std::invalid_argument &e) {
-			printf("%s", e.what());
-		}
-		catch (MTTypeException &e) {
-			const char *tmp = e.what();
-			printf("%s\n", tmp);
-		}
-		//if (value.compare("")) {
-		//	*value = (*ii).second.c_str();
-		//}
-	}
-	return metadataObject;
-}
 
-bool MetadataTemplateResultsPresentation::writeHuman()
+bool MasterMetadataTemplateResultsPresentation::writeHuman()
 {
 	/*
 	std::ofstream file;
@@ -248,19 +102,19 @@ bool MetadataTemplateResultsPresentation::writeHuman()
 	//}
 	return true;
 }
-bool MetadataTemplateResultsPresentation::writeXML()
+bool MasterMetadataTemplateResultsPresentation::writeXML()
 {
 	return false;
 }
-bool MetadataTemplateResultsPresentation::writeCSV()
+bool MasterMetadataTemplateResultsPresentation::writeCSV()
 {
 	return false;
 }
-bool MetadataTemplateResultsPresentation::writeJson()
+bool MasterMetadataTemplateResultsPresentation::writeJson()
 {
 	return false;
 }
-bool MetadataTemplateResultsPresentation::writeHtml()
+bool MasterMetadataTemplateResultsPresentation::writeHtml()
 {
 	return false;
 }

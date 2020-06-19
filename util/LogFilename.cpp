@@ -65,8 +65,8 @@ LogFilename::~LogFilename() {
 
 time_t toDate(const char *str) {
 	std::string datestr = str;
-	int s = 0;
-	int e = datestr.find_first_of('-');
+	size_t s = 0;
+	size_t e = datestr.find_first_of('-');
 	std::string numstr = datestr.substr(s, e);
 	int m_year = strtol(numstr.c_str(), NULL, 10);
 	s = e + 1;
@@ -139,7 +139,7 @@ std::string LogFilename::lastfile() {
 	do {
 		std::string entry = fileFind.GetFileName();
 		std::string tmp = SAUtils::getFilePathNoExt(entry);
-		int pos = tmp.find_first_of("+");
+		size_t pos = tmp.find_first_of("+");
 		std::string dateOnly = tmp.substr(0, pos);
 
 		std::string verOnly = tmp.substr(pos + 1, tmp.length() - pos);

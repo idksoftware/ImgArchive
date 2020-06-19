@@ -86,7 +86,7 @@ namespace simplearchive {
 	{
 		m_count = 0;	
 		m_logNameStr = name;
-		int lenNoExt = m_logNameStr.find_last_of(".");
+		size_t lenNoExt = m_logNameStr.find_last_of(".");
 		m_xmlNameStr = m_logNameStr.substr(0, lenNoExt);
 		m_xmlNameStr += ".xml";
 	}

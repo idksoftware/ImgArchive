@@ -69,7 +69,7 @@ bool MetadataUpdate::process(const char *imagePath, const char *imageName, const
 
 bool MetadataUpdate::command(std::string &cmdarg, MetadataObject &mo) {
 
-	unsigned int idx = cmdarg.find_first_of('=');
+	size_t idx = cmdarg.find_first_of('=');
 	if (idx == std::string::npos) {
 		return false;
 	}
@@ -110,7 +110,7 @@ std::shared_ptr<MetadataDocument> MetadataUpdate::get(const char *imagePath, con
 
 bool MetadataUpdate::loadMetadataDocument(MetadataDocument &metadataDocument, MetadataObject &metadataObject) {
 	const MTTableSchema& schema = metadataObject.getSchema();
-	unsigned int len = schema.size();
+	size_t len = schema.size();
 
 	for (unsigned int i = 0; i < len; i++) {
 		std::string line = schema.getColumnName(i);

@@ -60,7 +60,7 @@ int Base32::toDecimal(std::string encoded)
 	int ret = 0;
 	unsigned char c = 0;
 	unsigned int num = 0;
-	const int len = encoded.length();
+	const size_t len = encoded.length();
 	for (unsigned int index = 0; index < encoded.length(); index++) {
 		c = encoded[index];
 		if (c >= sizeof(LookupDigits)) {
@@ -134,7 +134,7 @@ int Base32Hex::toDecimal(std::string encoded)
 	int ret = 0;
 	unsigned char c = 0;
 	unsigned int num = 0;
-	const int len = encoded.length();
+	const size_t len = encoded.length();
 	for (unsigned int index = 0; index < encoded.length(); index++) {
 		c = encoded[index];
 		if (c >= sizeof(LookupDigitsHex)) {

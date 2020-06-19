@@ -25,7 +25,7 @@
 class UDPOut
 {
 	static struct sockaddr_in m_si_other;
-	static int m_socketId;
+	static SOCKET m_socketId;
 	static int m_socketLength;
 	static const char *m_address;
 	static int m_port;

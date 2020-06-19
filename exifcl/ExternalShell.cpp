@@ -101,7 +101,7 @@ namespace simplearchive {
 		if (pipe != NULL) {
 			while (fgets(buffer, MAX_LINE_LENGTH, pipe) != 0)
 			{
-				int length = strlen(buffer);
+				size_t length = strlen(buffer);
 				if (length > 0 && buffer[length - 1] == '\n')
 				{
 					buffer[--length] = '\0';

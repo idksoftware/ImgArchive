@@ -92,7 +92,7 @@ bool ArchiveRepository::checkout(const char *filepath, const char *comment) {
 	std::string path;
 
 	// This fines the filename from path NEEDS TO BE MOVED INTO UTILS
-	int slashpos = fullPath.find_last_of("/");
+	size_t slashpos = fullPath.find_last_of("/");
 	if (slashpos != -1) {
 		filename = fullPath.substr(slashpos+1, fullPath.length() - slashpos);
 		path = fullPath.substr(0, slashpos);
@@ -139,7 +139,7 @@ bool ArchiveRepository::checkin(const char *filepath, const char *comment) {
 	std::string buff;
 
 
-	int slashpos = fullPath.find_last_of("/");
+	size_t slashpos = fullPath.find_last_of("/");
 	if (slashpos != -1) {
 		filename = fullPath.substr(slashpos+1, fullPath.length() - slashpos);
 		path = fullPath.substr(0, slashpos);
@@ -185,7 +185,7 @@ bool ArchiveRepository::uncheckout(const char *filepath, const char *comment) {
 	std::string buff;
 
 
-	int slashpos = fullPath.find_last_of("/");
+	size_t slashpos = fullPath.find_last_of("/");
 	if (slashpos != -1) {
 		filename = fullPath.substr(slashpos+1, fullPath.length() - slashpos);
 		path = fullPath.substr(0, slashpos);

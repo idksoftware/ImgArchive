@@ -172,7 +172,7 @@ public:
 		std::string mode = csvArgs.at(0);
 		m_path = csvArgs.at(1);
 		type = csvArgs.at(2);
-		int size = csvArgs.size();
+		size_t size = csvArgs.size();
 		if (csvArgs.size() >= 4) {
 			access = csvArgs.at(3);
 		}

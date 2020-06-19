@@ -115,7 +115,7 @@ bool ChangeLog::log(const char *filepath, const char *version, const char *comme
 	std::string filepathstr = filepath;
 	std::string filename;
 	std::string path;
-	int slashpos = filepathstr.find_last_of("/");
+	size_t slashpos = filepathstr.find_last_of("/");
 	if (slashpos != -1) {
 		filename = filepathstr.substr(slashpos+1, filepathstr.length() - slashpos);
 		path = filepathstr.substr(0, slashpos);
