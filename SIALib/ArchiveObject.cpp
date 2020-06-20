@@ -1308,11 +1308,14 @@ namespace simplearchive {
 	}
 
 	bool ArchiveObject::checkout(const char *scope, const char *comment, bool force) {
-		IndexVisitor IndexVisitor(std::make_shared<CheckoutAction>(this));
-		if (!IndexVisitor.setScope(scope)) {
+		IndexVisitor indexVisitor(std::make_shared<CheckoutAction>(this));
+		indexVisitor.setPath("C:\\ProgramData/IDK-Software/ImgArchive/pi/chkout");
+		//"C:\\ProgramData/IDK-Software/ImgArchive/pi/chkout"
+
+		if (!indexVisitor.setScope(scope)) {
 			return false;
 		}
-		IndexVisitor.process();
+		indexVisitor.process();
 		
 		return true;
 	}

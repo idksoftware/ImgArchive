@@ -116,9 +116,6 @@ namespace simplearchive {
 			return nullptr;
 		}
 
-
-		
-
 		ArchiveHistoryPartition archiveHistoryPartition;
 		std::string filenameStr = pathController.getYearday();
 		filenameStr += ".csv";

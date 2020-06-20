@@ -910,7 +910,7 @@ bool StatusAction::onStart()
 		bool first = true;
 		for (std::list<std::string>::iterator i = begin(); i != end(); i++) {
 			//std::cout << *i << '\n';
-			CSVArgs csvArgs(',');
+			CSVArgs csvArgs(':');
 			if (csvArgs.process(i->c_str()) == false) {
 				return false;
 			}
@@ -969,6 +969,102 @@ bool StatusAction::onStart()
 	}
 
 
-	
+
+
+	bool CheckoutStatusResultsPresentation::writeHuman() {
+
+		/*
+	std::ofstream file;
+	if (!m_filename.empty()) {
+		file.open(m_filename.c_str());
+		if (file.is_open() == false) {
+			return false;
+		}
+		file << "\n---------------------------------------------------\n";
+		file << "Image: " << m_title << '\n';
+		file << "Path : " << m_description << '\n';
+		file << "=====================================================\n";
+		file << "Date Time             version     Event      Comment\n\n";
+		for (std::list<std::string>::iterator i = begin(); i != end(); i++) {
+			//std::cout << *i << '\n';
+			CSVArgs csvArgs(',');
+			if (csvArgs.process(i->c_str()) == false) {
+				return false;
+			}
+
+			file << csvArgs.at(0) << "    ";
+			file << csvArgs.at(1) << "      ";
+			file << csvArgs.at(4) << "  ";
+			file << csvArgs.at(3) << "\n\n";
+		}
+	}
+	else {
+	*/
+	//std::cout << "\n---------------------------------------------------\n";
+	//std::cout << "Image: " << m_title << '\n';
+	//std::cout << "Path : " << m_description << '\n';
+	//std::cout << "=====================================================\n";
+	//std::cout << "Date Time             version     Event      Comment\n\n";
+
+		for (std::vector<MTSchema>::iterator i = m_resultsList.getTableSchema().begin(); i != m_resultsList.getTableSchema().end(); i++) {
+			MTSchema& columnInfo = *i;
+			printf("%s ", columnInfo.getName().c_str());
+
+		}
+		printf("\n");
+		for (auto rowIt = m_resultsList.begin(); rowIt != m_resultsList.end(); rowIt++) {
+			SharedMTRow row = *rowIt;
+			for (auto i = row->begin(); i != row->end(); i++) {
+				SharedMTColumn column = *i;
+				//std::shared_ptr<MTSchema> mtSchema = column->getMTSchemaItem();
+				//std::cout << mtSchema->getName();
+				//if (mtSchema == nullptr) {
+				//	continue;
+				//}
+				std::cout << ',';
+				std::cout << column->toString();
+
+			}
+			std::cout << '\n';
+		}
+		//}
+		return true;
+	}
+
+
+	bool CheckoutStatusResultsPresentation::writeJson() {
+		return true;
+	}
+
+	bool CheckoutStatusResultsPresentation::writeHtml()
+	{
+		return false;
+	}
+
+	bool CheckoutStatusResultsPresentation::writeCSV() {
+		for (auto rowIt = m_resultsList.begin(); rowIt != m_resultsList.end(); rowIt++) {
+			std::cout << *rowIt << '\n';
+		}
+		return true;
+	}
+
+	bool CheckoutStatusResultsPresentation::writeXML() {
+		std::cout << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+			<< "<History ordering=\"date\" from=\"2015-03-6 12.10.45\" to=\"2015-03-6 12.10.45\">\n";
+
+		for (auto rowIt = m_resultsList.begin(); rowIt != m_resultsList.end(); rowIt++) {
+			SharedMTRow row = *rowIt;
+			std::cout << "\t<Event>\n";
+			for (size_t i = 0; i != row->size(); i++) {
+				MTTableSchema tableSchema = m_resultsList.getTableSchema();
+				std::cout << writeTag(tableSchema.getColumnName(i).c_str(), row->columnAt(i).toString(), 2);
+			}
+			std::cout << "\t</Event>\n";
+		}
+		std::cout << "</Catalog>\n";
+		return true;
+	}
+
+
 
 }

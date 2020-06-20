@@ -129,7 +129,7 @@ namespace simplearchive {
 		
 		std::string scopeStr;
 		if (scope != nullptr) {
-			std::string scopeStr = scope;
+			scopeStr = scope;
 		}
 
 		if (scopeStr.empty()) {
