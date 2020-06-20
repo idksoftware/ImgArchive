@@ -5,6 +5,7 @@
 #include "DBDefines.h"
 #include "MetaType.h"
 #include "IndexVisitor.h"
+#include "ResultsPresentation.h"
 
 class AddressScope;
 
@@ -106,6 +107,19 @@ namespace simplearchive {
 			return true;
 		};
 	};
+
+	class CheckoutStatusResultsPresentation : public ResultsPresentation {
+	public:
+		CheckoutStatusResultsPresentation(ResultsList& resultsList) : ResultsPresentation(resultsList) {};
+		~CheckoutStatusResultsPresentation() = default;
+
+		bool writeHuman() override;
+		bool writeXML() override;
+		bool writeCSV() override;
+		bool writeJson() override;
+		bool writeHtml() override;
+	};
+
 
 	class StatusAction : public IndexAction {
 		std::shared_ptr<CheckoutStatusLog> log;
