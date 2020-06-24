@@ -222,13 +222,7 @@ namespace simplearchive {
 		checkoutPartition.addRow(checkoutRow);
 		checkoutPartition.write(workPath.c_str());
 
-		
 		return true;
-
-
-
-
-
 		
 	}
 

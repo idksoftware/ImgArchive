@@ -120,9 +120,6 @@
     <ClCompile Include="History.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ImageHistory.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="tinyxml2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -142,6 +139,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ImageEncodeBase32.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OldImageHistory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -269,9 +269,6 @@
     <ClInclude Include="History.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ImageHistory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="tinyxml2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -291,6 +288,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ImageEncodeBase32.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OldImageHistory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

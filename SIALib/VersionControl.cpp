@@ -701,7 +701,7 @@ bool VersionControl::checkout(const char *filepath, const char *comment) {
 	int idx = version.getVersion();
 	version.CopyDataVersion2Old();
 	setHistory(hstpath.c_str(), filepath, comment, HistoryEvent::CHECKOUT, idx);
-//	ImageHistory &imageHistory = ImageHistory::getImageHistory();
+//	OldImageHistory &imageHistory = OldImageHistory::getImageHistory();
 //	imageHistory.add(filepath, idx, comment, HistoryEvent::CHECKOUT);
 	return true;
 }
@@ -765,7 +765,7 @@ bool VersionControl::checkin(const char *filepath, const char *comment) {
 	// use the above for a log message
 	int idx = version.getVersion();
 	setHistory(hstpath.c_str(), filepath, comment, HistoryEvent::CHECKIN, idx);
-//	ImageHistory &imageHistory = ImageHistory::getImageHistory();
+//	OldImageHistory &imageHistory = OldImageHistory::getImageHistory();
 //	imageHistory.add(filepath, idx, comment, HistoryEvent::CHECKIN);
 
 	//ArchiveObject& archiveObject = ArchiveObject::get();
@@ -796,7 +796,7 @@ bool VersionControl::uncheckout(const char *filepath, const char *comment) {
 		// log error
 	}
 	setHistory(hstpath.c_str(), filepath, comment, HistoryEvent::UNCHECKOUT, idx);
-//	ImageHistory &imageHistory = ImageHistory::getImageHistory();
+//	OldImageHistory &imageHistory = OldImageHistory::getImageHistory();
 //	imageHistory.add(filepath, idx, comment, HistoryEvent::UNCHECKOUT);
 
 	// use the above for a log message
@@ -841,11 +841,11 @@ bool VersionControl::uncheckout(const char *imagePath,const char *targetPath, in
 
 
 bool VersionControl::setHistory(const char *hstpath, const char *filepath, const char *comment, HistoryEvent evt, int idx) {
-	//ImageHistory imageHistory(hstpath);
+	//OldImageHistory imageHistory(hstpath);
 	std::string idxStr = versonString(idx);
 	//imageHistory.add(filepath, idxStr.c_str(), comment, HistoryEvent::UNCHECKOUT);
 	/*
-	ImageHistory &history = ImageHistory::getImageHistory(filepath);
+	OldImageHistory &history = OldImageHistory::getImageHistory(filepath);
 	HistoryEvent he(HistoryEvent::CHECKIN);
 
 	history.add(filepath, idxStr.c_str(), comment, he);
@@ -892,7 +892,7 @@ std::shared_ptr<ImageHistoryLog>  VersionControl::getHistory(const char *filepat
 	getPathAndFilename(fullPath.c_str(), filename, path);
 	std::string hstpath = path + "/.metadata/" + filename + ".hst";
 
-	ImageHistory imageHistory(hstpath.c_str());
+	OldImageHistory imageHistory(hstpath.c_str());
 	return imageHistory.get();
 }
 */

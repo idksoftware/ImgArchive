@@ -6,7 +6,7 @@
 #include <iomanip>
 
 #include "HistoryEvent.h"
-#include "ImageHistory.h"
+#include "OldImageHistory.h"
 //#include "SystemHistory.h"
 #include "ChangeLog.h"
 #include "ErrorCode.h"
@@ -15,6 +15,7 @@
 
 namespace simplearchive {
 
+	/*
 	ImageHistorySchema ImageHistoryRow::m_tableSchema;
 	ImageHistoryRow::ImageHistoryRow() : MTRow(m_tableSchema) {}
 	ImageHistoryRow::ImageHistoryRow(const char *filepath, const char *version, const char *comment, const HistoryEvent &he) : MTRow(m_tableSchema) {
@@ -26,7 +27,7 @@ namespace simplearchive {
 		columnAt(static_cast<int>(ImageHistoryIndex::IH_EVENT_IDX)).fromString(he.getString());;
 		columnAt(static_cast<int>(ImageHistoryIndex::IH_COMMENT_IDX)).fromString(comment);;
 	}
-
+	*/
 
 	/*
 	SystemHistorySchema SystemHistoryRow::m_tableSchema;
@@ -50,7 +51,7 @@ namespace simplearchive {
 	std::string History::m_changeLogPath;
 
 	History::History() : //m_systemHistory(std::make_unique<SystemHistory>()),
-						m_imageHistory(std::make_unique<ImageHistory>()),
+						m_imageHistory(std::make_unique<OldImageHistory>()),
 						m_changeLog(std::make_unique<ChangeLog>())
 	{
 		
@@ -90,7 +91,7 @@ namespace simplearchive {
 		m_systemHisteryPath = system;
 		
 		//SystemHistory::setPath(system, index);
-		ImageHistory::setPath(workspace, index);
+		OldImageHistory::setPath(workspace, index);
 	}
 
 	bool History::newImage(const char *filepath, const char *comment) {
@@ -178,6 +179,7 @@ namespace simplearchive {
 		return true;
 	}
 
+	/*
 	bool History::logImageHistory(const char *imagepath, LogDocument::FormatType formatType, const char* filepath) {
 		
 		if (imagepath == nullptr || imagepath[0] == '\0') {
@@ -196,7 +198,7 @@ namespace simplearchive {
 		}
 		return true;
 	}
-
+	*/
 	/*
 
 	bool History::logSystemHistory(const char* from, const char* to, LogDocument::FormatType formatType, const char* filepath)
@@ -323,6 +325,7 @@ namespace simplearchive {
 	}
 	*/
 	
+/*
 	ImageHistoryLog::ImageHistoryLog() : LogDocument(std::make_shared<ImageHistorySchema>()) {
 		// TODO Auto-generated constructor stub
 
@@ -567,7 +570,7 @@ namespace simplearchive {
 		}
 			return true;
 	}
-	
+*/
 	
 
 } //namespace simplearchive

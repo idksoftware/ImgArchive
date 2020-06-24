@@ -104,7 +104,7 @@ namespace simplearchive {
 
 	
 
-	class ArchiveHistoryIndex : public CSVIndexVisitorHistory {
+	class ArchiveHistoryIndex : public CSVIndexSystemHistory {
 	public:
 		/// Constructor
 		/// @parm folderVisitor - pointer to FolderVisitor
@@ -132,7 +132,7 @@ namespace simplearchive {
 		ArchiveHistory() :
 			CSVTable(std::make_shared<ArchiveHistorySchema>(),
 					std::make_shared<ArchiveHistoryPartition>(),
-					std::make_shared<CSVIndexVisitorHistory>(std::make_shared<ArchiveHistoryAction>())
+					std::make_shared<CSVIndexSystemHistory>(std::make_shared<ArchiveHistoryAction>())
 				)
 		{};
 		~ArchiveHistory() = default;

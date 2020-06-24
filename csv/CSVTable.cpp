@@ -104,13 +104,7 @@ namespace simplearchive {
 		}
 		m_csvIndexVisitor->process(m_indexRoot.c_str());
 		m_resultsList = m_csvIndexVisitor->getIndexAction().getResultsList();
-		for (auto i = m_resultsList->begin(); i != m_resultsList->end(); i++) {
-			std::shared_ptr<MTRow> row = *i;
-			const MTTableSchema& ts = row->getSchema(); // testing only
-			printf("MTTableSchema: %s\n", ts.getName().c_str());
-			
-
-		}
+		
 		return true;
 	}
 };

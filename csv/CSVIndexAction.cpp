@@ -42,7 +42,7 @@ namespace simplearchive {
 	bool CSVIndexAction::onImage(const char* name)
 	{
 		std::shared_ptr<MTTable> currentPartition = std::make_shared<MTTable>(m_mtTableSchema);
-
+		
 		if (currentPartition->read(name) == false) {
 			return false;
 		}
@@ -53,6 +53,7 @@ namespace simplearchive {
 			m_resultsList->push_back(row);
 
 		}
+		
 		return true;
 	}
 

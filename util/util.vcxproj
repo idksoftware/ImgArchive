@@ -158,7 +158,7 @@
     <ClCompile Include="ImageEncode.cpp" />
     <ClCompile Include="History.cpp" />
     <ClCompile Include="ImageEncodeBase32.cpp" />
-    <ClCompile Include="ImageHistory.cpp" />
+    <ClCompile Include="OldImageHistory.cpp" />
     <ClCompile Include="SequenceNumber.cpp" />
     <ClCompile Include="tinyxml2.cpp" />
     <ClCompile Include="Version.cpp" />
@@ -203,7 +203,7 @@
     <ClInclude Include="ImageEncode.h" />
     <ClInclude Include="History.h" />
     <ClInclude Include="ImageEncodeBase32.h" />
-    <ClInclude Include="ImageHistory.h" />
+    <ClInclude Include="OldImageHistory.h" />
     <ClInclude Include="SequenceNumber.h" />
     <ClInclude Include="tinyxml2.h" />
     <ClInclude Include="Version.h" />

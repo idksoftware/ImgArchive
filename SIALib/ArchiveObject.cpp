@@ -26,6 +26,7 @@
 #include "HTMLWriter.h"
 #include "ImagePath.h"
 #include "ArchiveHistory.h"
+#include "ImageHistory.h"
 #include "Database.h"
 #include "SQLiteDB.h"
 #include "HistoryEvent.h"
@@ -759,6 +760,8 @@ namespace simplearchive {
 		CSVDatabase::setDBPath(csvpdbPath.c_str());
 		History::setPaths(ArchivePath::getIndexHistory().c_str(), ArchivePath::getPathToWorkspace().c_str(), config.getHistoryPath());
 		ArchiveHistory::setPath(config.getHistoryPath());
+		ImageHistory& imageHistory = ImageHistory::get();
+		imageHistory.setPath(ArchivePath::getPathToWorkspace().c_str(), ArchivePath::getIndexHistory().c_str());
 		History& history = History::getHistory();
 		history.init();
 
@@ -1179,6 +1182,12 @@ namespace simplearchive {
 		ArchiveHistory& archiveHistory = ArchiveHistory::get();
 
 		if (archiveHistory.newImage(imagePath.getImageAddress().c_str(), comment) == false) {
+			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
+			return false;
+		}
+
+		ImageHistory& imageHistory = ImageHistory::get();
+		if (imageHistory.newImage(imagePath.getImageAddress().c_str(), comment) == false) {
 			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 			return false;
 		}
@@ -1806,10 +1815,10 @@ namespace simplearchive {
 		CLogger& logger = CLogger::getLogger();
 		History& history = History::getHistory();
 
-		if (history.logImageHistory(imagePath, formatType, outFile) == false) {
-			logger.log(LOG_OK, CLogger::Level::FATAL, "Unable to process image history for image: \"%s\" Error: %s", imagePath, ErrorCode::toString(ErrorCode::getErrorCode()));
-			return false;
-		}
+		//if (history.logImageHistory(imagePath, formatType, outFile) == false) {
+		//	logger.log(LOG_OK, CLogger::Level::FATAL, "Unable to process image history for image: \"%s\" Error: %s", imagePath, ErrorCode::toString(ErrorCode::getErrorCode()));
+		//	return false;
+		//}
 
 		return true;
 	}

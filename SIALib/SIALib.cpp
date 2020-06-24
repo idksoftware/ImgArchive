@@ -48,7 +48,7 @@
 #include "ImageIndex.h"
 #include "SAUtils.h"
 #include "CLogger.h"
-//#include "ImageGroup.h"
+#include "ImageHistory.h"
 #include "TargetsList.h"
 #include "FileInfo.h"
 #include "BasicMetadataFactory.h"
@@ -505,6 +505,7 @@ namespace simplearchive {
 	bool SIALib::log(const char* filepath, const char* fromDate, const char* toDate, LogDocument::FormatType& formatType, const char* filename) {
 		CLogger& logger = CLogger::getLogger();
 		
+		/*
 		ArchiveHistory archiveHistory = ArchiveHistory::get();
 		const char* scope = nullptr;
 		if (archiveHistory.select(scope) == false) {
@@ -518,6 +519,23 @@ namespace simplearchive {
 		}
 		ArchiveHistoryResultsPresentation resultsPresentation(*results);
 		resultsPresentation.writeHuman();
+		*/
+		ImageHistory& imageHistory = ImageHistory::get();
+		const char* scope = nullptr;
+		if (imageHistory.select(scope) == false) {
+			logger.log(LOG_OK, CLogger::Level::ERR, "Cannot process archive history");
+			return false;
+		}
+		std::shared_ptr<ResultsList> results = imageHistory.getResults();
+		if (results == nullptr) {
+			logger.log(LOG_OK, CLogger::Level::WARNING, "No results for archive history");
+			return false;
+		}
+		ImageHistoryResultsPresentation resultsPresentation(*results);
+		resultsPresentation.writeHuman();
+
+
+
 		/*
 		if (filepath == nullptr || filepath[0] == '\0') {  // System History log
 			

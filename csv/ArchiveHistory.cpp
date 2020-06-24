@@ -24,7 +24,7 @@ namespace simplearchive {
 
 	ArchiveHistorySchema ArchiveHistoryRow::m_tableSchema;
 
-	ArchiveHistoryIndex::ArchiveHistoryIndex() : CSVIndexVisitorHistory(std::make_shared<ArchiveHistoryAction>()) {}
+	ArchiveHistoryIndex::ArchiveHistoryIndex() : CSVIndexSystemHistory(std::make_shared<ArchiveHistoryAction>()) {}
 	ArchiveHistoryIndex::~ArchiveHistoryIndex() {}
 
 	bool ArchiveHistoryPartition::findEvent(const char *event) {
@@ -225,16 +225,16 @@ namespace simplearchive {
 				return false;
 			}
 		}
-		std::string chkoutPath = indexPathController.getFullPath();
-		if (SAUtils::DirExists(chkoutPath.c_str()) == false) {
-			if (SAUtils::mkDir(chkoutPath.c_str()) == false) {
+		std::string indexFullPath = indexPathController.getFullPath();
+		if (SAUtils::DirExists(indexFullPath.c_str()) == false) {
+			if (SAUtils::mkDir(indexFullPath.c_str()) == false) {
 				throw std::exception();
 			}
 		}
-		chkoutPath += '/';
-		chkoutPath += indexPathController.getYearday();
-		if (SAUtils::DirExists(chkoutPath.c_str()) == false) {
-			if (SAUtils::mkDir(chkoutPath.c_str()) == false) {
+		indexFullPath += '/';
+		indexFullPath += indexPathController.getYearday();
+		if (SAUtils::DirExists(indexFullPath.c_str()) == false) {
+			if (SAUtils::mkDir(indexFullPath.c_str()) == false) {
 				return false;
 			}
 		}
@@ -242,7 +242,7 @@ namespace simplearchive {
 
 		ArchiveHistoryPartition archiveHistoryPartition;
 		std::string filename = archiveHistoryRow.getSchema().getName() + ".csv";
-		if (archiveHistoryPartition.read(chkoutPath.c_str(), filename.c_str()) == false) {
+		if (archiveHistoryPartition.read(indexFullPath.c_str(), filename.c_str()) == false) {
 			if (ErrorCode::getErrorCode() != IMGA_ERROR::OPEN_ERROR) {
 				// file may not exist
 				return false;
@@ -251,11 +251,10 @@ namespace simplearchive {
 		if (archiveHistoryPartition.addRow(archiveHistoryRow) == false) {
 			return false;
 		}
-		if (archiveHistoryPartition.write(chkoutPath.c_str(), filename.c_str()) == false) {
+		if (archiveHistoryPartition.write(indexFullPath.c_str(), filename.c_str()) == false) {
 			return false;
 		}
 		return true;
-		//m_mirrorDB->process(relPath);
 	}
 
 	

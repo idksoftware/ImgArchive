@@ -40,7 +40,7 @@
 #include "CheckDisk.h"
 #include "SAUtils.h"
 #include "ValidateReportingObject.h"
-#include "CheckoutStatus.h"
+
 #include "CheckDiskJournal.h"
 #include "ImageEncode.h"
 

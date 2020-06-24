@@ -58,7 +58,6 @@
 #include "ViewManager.h"
 #include "SQLiteDB.h"
 #include "ImportJournal.h"
-#include "CheckoutStatus.h"
 #include "ContentsLister.h"
 #include "ExportImages.h"
 #include "CheckFile.h"
