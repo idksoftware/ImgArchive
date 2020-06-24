@@ -31,20 +31,19 @@
 
 namespace simplearchive {
 
-	CSVIndexVisitor::CSVIndexVisitor(std::shared_ptr<CSVIndexAction> indexAction, const char* indexPath) {
+	CSVIndexVisitorBase::CSVIndexVisitorBase(std::shared_ptr<CSVIndexAction> indexAction) {
 		m_indexAction = indexAction;
 		m_indexAction->setAddressScope(m_addressScope);
-		m_indexPath = indexPath;
 	}
 
-	CSVIndexVisitor::~CSVIndexVisitor() {
+	CSVIndexVisitorBase::~CSVIndexVisitorBase() {
 
 	}
 
 
 
 
-	bool CSVIndexVisitor::setScope(const char* scope) {
+	bool CSVIndexVisitorBase::setScope(const char* scope) {
 
 		std::string scopeStr;
 		if (scope != nullptr) {
@@ -63,14 +62,7 @@ namespace simplearchive {
 		return true;
 	}
 
-	bool CSVIndexVisitor::process() {
-		if (!CSVIndexVisitor::process(m_indexPath.c_str())) {
-			return false;
-		}
-		return true;
-	}
-
-	bool CSVIndexVisitor::process(const char* rootFolder) {
+	bool CSVIndexVisitorHistory::process(const char* rootFolder) {
 		std::string path = rootFolder;
 
 		m_indexAction->onStart();

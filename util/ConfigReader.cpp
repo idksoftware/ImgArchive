@@ -143,7 +143,7 @@ ConfigReader::~ConfigReader() {
 	// TODO Auto-generated destructor stub
 }
 
-std::string ConfigReader::includePath(int pos, std::string line) {
+std::string ConfigReader::includePath(size_t pos, std::string line) {
 
 	size_t s = line.find_first_of("\"");
 	size_t e = line.find_last_of("\"");

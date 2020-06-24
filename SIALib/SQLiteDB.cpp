@@ -195,12 +195,14 @@ namespace simplearchive {
 			return false;
 		}
 
+		/*
 		SystemHistorySchema systemHistorySchema;
 		::TableRow systemHistoryRow;
 		SQLiteDB::createRow(systemHistoryRow, systemHistorySchema);
 		if (db.create(TABLE_SYSTEM_HISTORY, systemHistoryRow) == false) {
 			return false;
 		}
+		*/
 
 		PrimaryIndexSchema primaryIndexSchema;
 		::TableRow primaryIndexRow;
@@ -225,10 +227,12 @@ namespace simplearchive {
 
 		DerivativeMetadataSchema derivativeMetadataSchema;
 		::TableRow derivativeMetadata;
+		/* To be put back
 		SQLiteDB::createRow(derivativeMetadata, derivativeMetadataSchema);
 		if (db.create(TABLE_DERIVATIVE_METADATA, systemHistoryRow) == false) {
 			return false;
 		}
+		*/
 		return true;
 	}
 
@@ -315,17 +319,17 @@ namespace simplearchive {
 	bool SQLiteDB::newImage2History(const char *filepath, const char *comment) {
 		HistoryEvent he(HistoryEvent::Event::ADDED);
 		ImageHistoryRow imageHistoryRow(filepath, "0000", comment, he);
-		SystemHistoryRow systemHistoryRow(filepath, "0000", comment, he);
+		//SystemHistoryRow systemHistoryRow(filepath, "0000", comment, he);
 		
 		if (add(imageHistoryRow) == false) {
 			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 			return false;
 		}
 
-		if (add(systemHistoryRow) == false) {
-			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
-			return false;
-		}
+		//if (add(systemHistoryRow) == false) {
+		//	ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
+		//	return false;
+		//}
 		
 
 		return true;
@@ -353,10 +357,12 @@ namespace simplearchive {
 		Database& db = Database::getInstance();
 
 		::TableRow row;
+		/*
 		SQLiteDB::insertRow(row, systemHistoryRow);
 		if (db.insert(TABLE_SYSTEM_HISTORY, row) == false) {
 			return false;
 		}
+		*/
 		return true;
 	}
 

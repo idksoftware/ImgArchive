@@ -12,7 +12,7 @@
 #include "LogDocument.h"
 #include "AddressScope.h"
 #include "IndexVisitor.h"
-#include "ResultsPresentation.h"
+#include "ResultsList.h"
 
 namespace simplearchive {
 

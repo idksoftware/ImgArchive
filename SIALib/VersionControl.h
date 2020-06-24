@@ -23,10 +23,10 @@ namespace simplearchive {
 		std::string m_relativeWorkspacePath;
 		std::unique_ptr<VersionIndex> m_versionIndex;
 		std::shared_ptr<Version> m_currentVersion;
-		int m_version;
+		int m_version { 0 };
 		std::string m_currentVersionPath;
 		std::string m_md5;
-		unsigned int m_crc;
+		unsigned int m_crc { 0 };
 		bool checkoutFromMaster(const char *targetRelPath, const char *comment, bool force);
 		bool checkoutFromDerivatives(const char *targetRelPath, const char *comment, bool force);
 		bool makeVersionsList(const char * filepath);
@@ -67,10 +67,10 @@ namespace simplearchive {
 			return m_md5;
 		}
 
-		bool createMasterVersion(const BasicMetadata &bm, const char *path, int masterSeqNumber, int primarySeqNumber) {
+		bool createMasterVersion(const BasicMetadata &bm, const char *path, size_t masterSeqNumber, size_t primarySeqNumber) {
 			return m_versionIndex->createMasterVersion(bm, path, masterSeqNumber, primarySeqNumber);
 		}
-		bool createDerivativeVersion(FileInfo& fileInfo, int derivativeSeqNumber, int primarySeqNumber);
+		bool createDerivativeVersion(FileInfo& fileInfo, size_t derivativeSeqNumber, size_t primarySeqNumber);
 
 		const Version& getCurrentVersion() {
 			return *m_currentVersion;

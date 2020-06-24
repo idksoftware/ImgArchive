@@ -111,9 +111,6 @@
     <ClCompile Include="pathcontroller.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SystemHistory.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="BasicMetadata.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -261,9 +258,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="pathcontroller.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SystemHistory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="BasicMetadata.h">

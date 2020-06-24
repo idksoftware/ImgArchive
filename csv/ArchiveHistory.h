@@ -67,25 +67,10 @@ namespace simplearchive {
 		bool findEvent(const char *Event);
 	};
 
-	/*
-	class ArchiveHistoryLog : public LogDocument {
-
-	public:
-		ArchiveHistoryLog();
-		virtual ~ArchiveHistoryLog();
-		bool writeHuman();
-		bool writeXML();
-		bool writeCSV();
-		bool writeJson();
-		bool writeHtml() {
-			return true;
-		};
-	};
-	*/
-
-	/*
 	class ArchiveHistoryAction : public CSVIndexAction {
 		
+		std::shared_ptr<ArchiveHistoryPartition> m_partition;
+
 	protected:
 
 		/// On the start of each directory found, this function is run.
@@ -101,43 +86,36 @@ namespace simplearchive {
 		/// On finding a directory, this function is run.
 		virtual bool onDayEnd() { return true; };
 		/// On finding a directory, this function is run.
-		//virtual bool onImage(const char* name);
+		virtual bool onImage(const char* name);
 
 		virtual bool onMetadata(const char* path, const char* name) { return true; };
 		/// This function is a factory function used to create new FolderVisitor objects.
 
 	public:
 		/// Constructor
-		ArchiveHistoryAction() : CSVIndexAction(std::make_shared<ArchiveHistorySchema>()) {};
+		ArchiveHistoryAction() : CSVIndexAction(std::make_shared<ArchiveHistorySchema>())
+		{
+			m_partition = std::make_shared<ArchiveHistoryPartition>();
+		};
 		/// Distructor
 		virtual ~ArchiveHistoryAction() = default;
 
 	};
-	*/
-	/*
 
-	class ArchiveHistoryIndex {
-		
-		static std::string m_indexPath;
-		std::shared_ptr<IndexAction> m_indexAction;
-		std::unique_ptr<AddressScope> m_addressScope;
-		bool process(const char* rootFolder);
+	
+
+	class ArchiveHistoryIndex : public CSVIndexVisitorHistory {
 	public:
 		/// Constructor
 		/// @parm folderVisitor - pointer to FolderVisitor
-		ArchiveHistoryIndex(std::shared_ptr<ArchiveHistoryAction> indexAction);
-		//static bool Init(const char* Master, const char* workspace, const char* primaryIndex);
-		bool setScope(const char* scope);
+		ArchiveHistoryIndex();
+		
 		// Destructor
 		virtual ~ArchiveHistoryIndex();
-		/// This Function processes the files under the root using the
-		/// FolderVisitor class passed in the constructor
-		bool process();
-		static void setPath(const char* indexRoot);
 		
 	};
 
-	*/
+	
 
 	class ArchiveHistory : public CSVTable
 	{
@@ -148,10 +126,15 @@ namespace simplearchive {
 		//bool processFile(std::shared_ptr<ResultsList> log, const std::string yyyymmddFile);
 		bool historyLog(const char* filepath, ResultsPresentation::FormatType formatType);
 		std::shared_ptr<ResultsList> getEntries(const char* filepath);
-		bool save(ExifDateTime dateAdded, ArchiveHistoryRow archiveHistoryRow);
+		//bool save(ExifDateTime dateAdded, ArchiveHistoryRow archiveHistoryRow);
 		
 	public:
-		ArchiveHistory() : CSVTable(std::make_shared<ArchiveHistorySchema>()) {};
+		ArchiveHistory() :
+			CSVTable(std::make_shared<ArchiveHistorySchema>(),
+					std::make_shared<ArchiveHistoryPartition>(),
+					std::make_shared<CSVIndexVisitorHistory>(std::make_shared<ArchiveHistoryAction>())
+				)
+		{};
 		~ArchiveHistory() = default;
 
 		bool newImage(const char* imagePath, const char* comment);
@@ -165,4 +148,15 @@ namespace simplearchive {
 
 	};
 
+	class ArchiveHistoryResultsPresentation : public ResultsPresentation {
+	public:
+		ArchiveHistoryResultsPresentation(ResultsList& resultsList) : ResultsPresentation(resultsList) {};
+		~ArchiveHistoryResultsPresentation() = default;
+
+		bool writeHuman() override;
+		bool writeXML() override;
+		bool writeCSV() override;
+		bool writeJson() override;
+		bool writeHtml() override;
+	};
 };

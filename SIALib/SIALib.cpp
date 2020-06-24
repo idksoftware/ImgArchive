@@ -503,11 +503,21 @@ namespace simplearchive {
 	}
 
 	bool SIALib::log(const char* filepath, const char* fromDate, const char* toDate, LogDocument::FormatType& formatType, const char* filename) {
-		
+		CLogger& logger = CLogger::getLogger();
 		
 		ArchiveHistory archiveHistory = ArchiveHistory::get();
 		const char* scope = nullptr;
-		archiveHistory.scopedStatus(scope);
+		if (archiveHistory.select(scope) == false) {
+			logger.log(LOG_OK, CLogger::Level::ERR, "Cannot process archive history");
+			return false;
+		}
+		std::shared_ptr<ResultsList> results = archiveHistory.getResults();
+		if (results == nullptr) {
+			logger.log(LOG_OK, CLogger::Level::WARNING, "No results for archive history");
+			return false;
+		}
+		ArchiveHistoryResultsPresentation resultsPresentation(*results);
+		resultsPresentation.writeHuman();
 		/*
 		if (filepath == nullptr || filepath[0] == '\0') {  // System History log
 			

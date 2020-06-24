@@ -167,7 +167,6 @@
     <ClCompile Include="ExternalProcess.cpp" />
     <ClCompile Include="FileInfo.cpp" />
     <ClCompile Include="ImageExtentions.cpp" />
-    <ClCompile Include="SystemHistory.cpp" />
     <ClCompile Include="ipsock.cpp" />
     <ClCompile Include="JpegEXIF.cpp" />
     <ClCompile Include="LogDocument.cpp" />
@@ -218,7 +217,6 @@
     <ClInclude Include="println.h" />
     <ClInclude Include="siaglobal.h" />
     <ClInclude Include="ImageExtentions.h" />
-    <ClInclude Include="SystemHistory.h" />
     <ClInclude Include="ImageType.h" />
     <ClInclude Include="ipsock.h" />
     <ClInclude Include="LogDocument.h" />

@@ -51,8 +51,8 @@ namespace simplearchive {
 		ImageIndex &getimageIndex() {
 			return *m_imageIndex;
 		}
-		bool addMasterImage(const BasicMetadata &BasicMetadata, ImagePath &imagePath, int masterSeqNumber, int primarySeqNumber);
-		bool addDerivativeImage(FileInfo& fileInfo, const char *comment, int primarySeqNumber, int derivativeSeqNumber, const Version& version);
+		bool addMasterImage(const BasicMetadata &BasicMetadata, ImagePath &imagePath, size_t masterSeqNumber, size_t primarySeqNumber);
+		bool addDerivativeImage(FileInfo& fileInfo, const char *comment, size_t primarySeqNumber, size_t derivativeSeqNumber, const Version& version);
 
 		PrimaryIndexTable &getPrimaryIndexTable() {
 			return *m_primaryIndexTable;
@@ -87,7 +87,7 @@ namespace simplearchive {
 		virtual bool settupRelative(std::string &yyyymmddStr);
 		bool writeMetadata(ImagePath &imagePath, MetadataObject &metadataObject);
 		virtual bool copyFile(const std::string &pathToSourceRoot, const std::string &fileName, const std::string &sequenceName);
-		bool validate(const char *dbImage, unsigned int size, unsigned int crc, const char *md5);
+		bool validate(const char *dbImage, size_t size, unsigned int crc, const char *md5);
 	};
 
 	/**

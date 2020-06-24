@@ -68,8 +68,7 @@ void CIDKCrc::make_crc_table()
    crc() routine below)).
 */
    
-unsigned long CIDKCrc::update_crc(unsigned long crc, unsigned char *buf,
-                            int len)
+unsigned long CIDKCrc::update_crc(unsigned long crc, unsigned char *buf, size_t len)
 {
 	unsigned long c = crc;
 	int n;

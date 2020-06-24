@@ -117,11 +117,14 @@ bool ResultsPresentation::writeHuman() {
 	//std::cout << "=====================================================\n";
 	//std::cout << "Date Time             version     Event      Comment\n\n";
 
+	/*
 	for (std::vector<MTSchema>::iterator i = m_resultsList.getTableSchema().begin(); i != m_resultsList.getTableSchema().end(); i++) {
 		MTSchema& columnInfo = *i;
 		printf("%s ", columnInfo.getName().c_str());
 
 	}
+	*/
+
 	printf("\n");
 	for (auto rowIt = m_resultsList.begin(); rowIt != m_resultsList.end(); rowIt++) {
 		SharedMTRow row = *rowIt;

@@ -1,5 +1,9 @@
 #include <string>
+#include <vector>
+#include <iomanip>
 #include "ArchiveHistory.h"
+//#include "ResultsList.h"
+#include "MetaType.h"
 #include "ResultsPresentation.h"
 #include "pathcontroller.h"
 #include "FileInfo.h"
@@ -20,17 +24,8 @@ namespace simplearchive {
 
 	ArchiveHistorySchema ArchiveHistoryRow::m_tableSchema;
 
-	class ArchiveHistoryResultsPresentation : public ResultsPresentation {
-	public:
-		ArchiveHistoryResultsPresentation(ResultsList& resultsList) : ResultsPresentation(resultsList) {};
-		~ArchiveHistoryResultsPresentation() = default;
-
-		bool writeHuman() override;
-		bool writeXML() override;
-		bool writeCSV() override;
-		bool writeJson() override;
-		bool writeHtml() override;
-	};
+	ArchiveHistoryIndex::ArchiveHistoryIndex() : CSVIndexVisitorHistory(std::make_shared<ArchiveHistoryAction>()) {}
+	ArchiveHistoryIndex::~ArchiveHistoryIndex() {}
 
 	bool ArchiveHistoryPartition::findEvent(const char *event) {
 		if (MTTable::empty() == true) {
@@ -50,6 +45,7 @@ namespace simplearchive {
 
 	void ArchiveHistory::setPath(const char* indexRoot) {
 		ArchiveHistory &archiveHistory = ArchiveHistory::get();
+		//archiveHistory.setPath(indexRoot);
 		archiveHistory.m_indexRoot = indexRoot;
 	}
 
@@ -75,7 +71,7 @@ namespace simplearchive {
 		ExifDateTime dateAdded;
 		dateAdded.now();
 		archiveHistoryRow.columnAt(DB_DATEADDED) = dateAdded;
-
+		archiveHistoryRow.columnAt(DB_COMMENT) = comment;
 		std::string pidxPath = m_indexRoot;
 		pidxPath += '/';
 		pidxPath += pathController.getYear();
@@ -174,6 +170,7 @@ namespace simplearchive {
 		ExifDateTime dateAdded;
 		dateAdded.now();
 		archiveHistoryRow.columnAt(DB_DATEADDED) = dateAdded;
+		archiveHistoryRow.columnAt(DB_COMMENT) = comment;
 
 		return save(dateAdded, archiveHistoryRow);
 
@@ -199,11 +196,16 @@ namespace simplearchive {
 		ExifDateTime dateAdded;
 		dateAdded.now();
 		archiveHistoryRow.columnAt(DB_DATEADDED) = dateAdded;
+		archiveHistoryRow.columnAt(DB_COMMENT) = comment;
+
 		return save(dateAdded, archiveHistoryRow);
 	}
 
 	
+	/*
+		This uses the Image 
 
+	*/
 	bool ArchiveHistory::add(ArchiveHistoryRow & archiveHistoryRow, const char *img) {
 		// check path exists
 		if (SAUtils::DirExists(m_indexRoot.c_str()) == false) {
@@ -211,26 +213,26 @@ namespace simplearchive {
 				throw std::exception();
 			}
 		}
-		std::string checkoutStatusFileRoot = m_indexRoot;
-		PathController chkoutPathController(checkoutStatusFileRoot.c_str());
-		chkoutPathController.splitShort(img);
-		chkoutPathController.makePath(false);
-		checkoutStatusFileRoot += '/';
-		checkoutStatusFileRoot += chkoutPathController.getYear();
-		if (SAUtils::DirExists(checkoutStatusFileRoot.c_str()) == false) {
-			SAUtils::mkDir(checkoutStatusFileRoot.c_str());
-			if (SAUtils::DirExists(checkoutStatusFileRoot.c_str()) == false) {
+		std::string indexPath = m_indexRoot;
+		PathController indexPathController(indexPath.c_str());
+		indexPathController.splitShort(img);
+		indexPathController.makePath(false);
+		indexPath += '/';
+		indexPath += indexPathController.getYear();
+		if (SAUtils::DirExists(indexPath.c_str()) == false) {
+			SAUtils::mkDir(indexPath.c_str());
+			if (SAUtils::DirExists(indexPath.c_str()) == false) {
 				return false;
 			}
 		}
-		std::string chkoutPath = chkoutPathController.getFullPath();
+		std::string chkoutPath = indexPathController.getFullPath();
 		if (SAUtils::DirExists(chkoutPath.c_str()) == false) {
 			if (SAUtils::mkDir(chkoutPath.c_str()) == false) {
 				throw std::exception();
 			}
 		}
 		chkoutPath += '/';
-		chkoutPath += chkoutPathController.getYearday();
+		chkoutPath += indexPathController.getYearday();
 		if (SAUtils::DirExists(chkoutPath.c_str()) == false) {
 			if (SAUtils::mkDir(chkoutPath.c_str()) == false) {
 				return false;
@@ -256,51 +258,7 @@ namespace simplearchive {
 		//m_mirrorDB->process(relPath);
 	}
 
-	bool ArchiveHistory::save(ExifDateTime dateAdded, ArchiveHistoryRow archiveHistoryRow)
-	{
-		std::string dateStr = dateAdded.toLogString();
-
-		std::string yearStr = dateStr.substr(0, 4);
-		std::string monthStr = dateStr.substr(5, 2);
-		std::string dayStr = dateStr.substr(8, 2);
-
-		std::string addressStr = yearStr + '-' + monthStr + '-' + dayStr;
-
-		if (SAUtils::DirExists(m_indexRoot.c_str()) == false) {
-			return false;
-		}
-
-		std::string indexPath = m_indexRoot + '/' + yearStr;
-
-		if (SAUtils::DirExists(indexPath.c_str()) == false) {
-			if (SAUtils::mkDir(indexPath.c_str()) == false) {
-				return false;
-			}
-		}
-
-		indexPath += '/' + addressStr;
-
-		if (SAUtils::DirExists(indexPath.c_str()) == false) {
-			if (SAUtils::mkDir(indexPath.c_str()) == false) {
-				return false;
-			}
-		}
-
-		LogName logName;
-		std::string currentFilename = logName.makeName(indexPath.c_str(), "", "hst", 1);
-
-		indexPath += '/' + currentFilename;
-
-		ArchiveHistoryPartition archiveHistoryPartition;
-		if (SAUtils::FileExists(indexPath.c_str()) == true) {
-			archiveHistoryPartition.read(indexPath.c_str());
-		}
-		archiveHistoryPartition.addRow(archiveHistoryRow);
-		archiveHistoryPartition.write(indexPath.c_str());
-
-		return true;
-	}
-
+	
 	
 	
 
@@ -338,29 +296,99 @@ namespace simplearchive {
 	//std::cout << "Path : " << m_description << '\n';
 	//std::cout << "=====================================================\n";
 	//std::cout << "Date Time             version     Event      Comment\n\n";
+	
+		size_t filename = 0;
+		size_t filepath = 0;
+		size_t comment = 0;
+
+		for (auto rowIt = m_resultsList.begin(); rowIt != m_resultsList.end(); rowIt++) {
+			SharedMTRow row = *rowIt;
+			const MTTableSchema& ts = row->getSchema(); // testing only
+			MTColumn& filenameCol = row->columnAt(DB_FILENAME);
+			const std::string& filenameStr = filenameCol.getString();
+
+			MTColumn& filepathCol = row->columnAt(DB_FILEPATH);
+			const std::string& filepathStr = filepathCol.getString();
+
+			MTColumn& commentCol = row->columnAt(DB_COMMENT);
+			const std::string& commentStr = commentCol.getString();
+
+			if (filenameStr.length() > filename) {
+				filename = filenameStr.length();
+			}
+
+			if (filepathStr.length() > filepath) {
+				filepath = filepathStr.length();
+			}
+
+			if (commentStr.length() > comment) {
+				comment = commentStr.length();
+			}
+		}
 
 		for (std::vector<MTSchema>::iterator i = m_resultsList.getTableSchema().begin(); i != m_resultsList.getTableSchema().end(); i++) {
 			MTSchema& columnInfo = *i;
-			printf("%s ", columnInfo.getName().c_str());
-
+			//printf("%s ", columnInfo.getName().c_str());
+			std::cout << ' ';
+			//	first = false;
+			//}  setw
+			if (columnInfo.getName().compare(DB_DATEADDED) == 0) {
+				std::cout << std::setw(19) << columnInfo.getName().c_str();
+			}
+			else if (columnInfo.getName().compare(DB_FILENAME) == 0) {
+				std::cout << std::setw(filename) << columnInfo.getName().c_str();
+			}
+			else if (columnInfo.getName().compare(DB_FILEPATH) == 0) {
+				std::cout << std::setw(filepath) << columnInfo.getName().c_str();
+			}
+			else if (columnInfo.getName().compare(DB_COMMENT) == 0) {
+				std::cout << std::setw(comment) << columnInfo.getName().c_str();
+			}
+			
+			else {
+				std::cout << columnInfo.getName().c_str();
+			}
 		}
-		printf("\n");
+		std::cout << '\n';
+		//bool first = true;
+		
 		for (auto rowIt = m_resultsList.begin(); rowIt != m_resultsList.end(); rowIt++) {
 			SharedMTRow row = *rowIt;
+			auto schemaIdx = m_resultsList.getTableSchema().begin();
 			for (auto i = row->begin(); i != row->end(); i++) {
 				SharedMTColumn column = *i;
+				MTSchema& columnInfo = *schemaIdx;
 				//std::shared_ptr<MTSchema> mtSchema = column->getMTSchemaItem();
 				//std::cout << mtSchema->getName();
 				//if (mtSchema == nullptr) {
 				//	continue;
 				//}
-				std::cout << ',';
-				std::cout << column->toString();
-
+				//if (!first) {
+				std::cout << ' ';
+				//	first = false;
+				//}  setw
+				
+				if (columnInfo.getName().compare(DB_FILENAME) == 0) {
+					std::cout << std::setw(filename) << column->toString();
+				} else if (columnInfo.getName().compare(DB_FILEPATH) == 0) {
+					std::cout << std::setw(filepath) << column->toString();
+				}
+				else if (columnInfo.getName().compare(DB_COMMENT) == 0) {
+					std::cout << std::setw(comment) << column->toString();
+				}
+				else if (columnInfo.getName().compare(DB_EVENT) == 0) {
+					HistoryEvent::Event ev = (HistoryEvent::Event)column->getInt();
+					HistoryEvent historyEvent(ev);
+					std::cout << std::setw(10) << historyEvent.getString();
+				}
+				else {
+					std::cout << column->toString();
+				}
+				schemaIdx++;
 			}
 			std::cout << '\n';
 		}
-		//}
+
 		return true;
 	}
 
@@ -385,6 +413,7 @@ namespace simplearchive {
 		std::cout << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 			<< "<History ordering=\"date\" from=\"2015-03-6 12.10.45\" to=\"2015-03-6 12.10.45\">\n";
 
+
 		for (auto rowIt = m_resultsList.begin(); rowIt != m_resultsList.end(); rowIt++) {
 			SharedMTRow row = *rowIt;
 			std::cout << "\t<Event>\n";
@@ -394,156 +423,51 @@ namespace simplearchive {
 			}
 			std::cout << "\t</Event>\n";
 		}
+		
 		std::cout << "</Catalog>\n";
 		return true;
 	}
-	
 
-
-	/*
-	bool ArchiveHistoryIndex::setScope(const char* scope) {
-
-		std::string scopeStr;
-		if (scope != nullptr) {
-			std::string scopeStr = scope;
-		}
-		if (scopeStr.empty()) {
-			m_addressScope->scopeAll();
-		}
-		else if (scopeStr.compare("all") == 0) {
-			m_addressScope->scopeAll();
-		}
-		else if (!m_addressScope->scope(scope)) {
-			return false;
-		}
-		return true;
-	}
-
-	bool ArchiveHistoryIndex::process() {
-		if (!process(m_indexPath.c_str())) {
-			return false;
-		}
-		return true;
-	}
-
-	*/
-
-	/*
-	ArchiveHistoryIndex::ArchiveHistoryIndex(std::shared_ptr<ArchiveHistoryAction> indexAction) {
-		m_indexAction = indexAction;
-		m_addressScope = std::make_unique<AddressScope>();
-	}
-
-	ArchiveHistoryIndex::~ArchiveHistoryIndex() {
-
-	}
-
-
-	bool ArchiveHistoryIndex::process(const char* rootFolder) {
-		std::string path = rootFolder;
-
-		m_indexAction->onStart();
-		// read years in Master folder
-		FileList_Ptr filelist = SAUtils::getFiles_(path.c_str());
-		for (auto i = filelist->begin(); i != filelist->end(); i++) {
-			std::string year = *i;
-			char c = (year)[0];
-			if (c == '.') {
-				continue;
-			}
-
-			std::string yearMaster = path;
-			try {
-				m_indexAction->onYearFolder(year.c_str());
-			}
-			catch (std::exception ) { //e*) {
-				return false;
-			}
-
-			yearMaster += '/';
-			yearMaster += year;
-
-			if (!m_addressScope->isInScope(year.c_str())) {
-				continue;
-			}
-
-
-			FileList_Ptr filelist = SAUtils::getFiles_(yearMaster.c_str());
-			for (auto i = filelist->begin(); i != filelist->end(); i++) {
-				std::string dayfolder = *i;
-				char c = (dayfolder)[0];
-				if (c == '.') {
-					continue;
-				}
-				std::string dateStr = dayfolder.substr(0, 10);
-				if (!m_addressScope->isInScope(dateStr.c_str())) {
-					continue;
-				}
-
-				PathController pathController(dayfolder.c_str(), false);
-				
-				std::string filenameStr = yearMaster;
-				filenameStr += '/';
-				filenameStr += dayfolder;
-				
-				m_indexAction->onDayFolder(filenameStr.c_str());
-				//std::string dayFolderMaster = yearMaster;
-				//dayFolderMaster += '/';
-				//dayFolderMaster += dayfolder;
-
-				FileList_Ptr filelist = SAUtils::getFiles_(filenameStr.c_str());
-				for (std::vector<std::string>::iterator i = filelist->begin(); i != filelist->end(); i++) {
-					std::string imageFile = *i;
-					char c = (imageFile)[0];
-					if (c == '.') {
-						continue;
-					}
-					//printf("\t\tImage %s: \n", imageFile->c_str());
-					std::string itemPath = filenameStr;
-					itemPath += '/'; 
-					itemPath += imageFile;
-					m_indexAction->onImage(itemPath.c_str());
-				}
-				m_indexAction->onDayEnd();
-			}
-			m_indexAction->onYearEnd();
-
-		}
-		m_indexAction->onEnd();
-		return true;
-	}
-
-	*/
-
-/*
 	bool ArchiveHistoryAction::onEnd()
 	{
-		if (!resultsList->write(ResultsList::FormatType::Human)) {
+		/*
+		if (!m_resultsList->write(ResultsList::FormatType::Human)) {
 			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
 			return false;
 		}
+		*/
 		return true;
 	};
 
 	bool ArchiveHistoryAction::onImage(const char* name)
 	{
-		std::shared_ptr<ArchiveHistoryPartition> currentPartition = std::make_shared<ArchiveHistoryPartition>();
+		
 
-		if (currentPartition->read(name) == false) {
+		if (m_partition->read(name) == false) {
 			return false;
 		}
 
-		for (auto i = currentPartition->begin(); i != currentPartition->end(); i++) {
+		for (auto i = m_partition->begin(); i != m_partition->end(); i++) {
 			std::shared_ptr<MTRow> row = *i;
-			resultsList->push_back(row);
-
+			const MTTableSchema& ts = row->getSchema(); // testing only
+			printf("MTTableSchema: %s\n", ts.getName().c_str());
+			//m_resultsList->push_back(row);
+			m_resultsList->emplace_back(row);
+			
 		}
+		/*
+		for (auto i = m_resultsList->begin(); i != m_resultsList->end(); i++) {
+			std::shared_ptr<MTRow> row = *i;
+			const MTTableSchema& ts = row->getSchema(); // testing only
+			printf("in list MTTableSchema: %s\n", ts.getName().c_str());
+		}
+		*/
 		return true;
 	}
 
 	bool ArchiveHistoryAction::onStart()
 	{
-		resultsList = std::make_shared<ResultsList>(m_mtTableSchema);
+		m_resultsList = std::make_shared<ResultsList>(m_mtTableSchema);
 		return true;
 	};
 
@@ -552,5 +476,7 @@ namespace simplearchive {
 		return true;
 	}
 	
-	*/
+	
+	
+
 }

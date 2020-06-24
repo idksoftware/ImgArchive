@@ -12,14 +12,7 @@ static char THIS_FILE[] = __FILE__;
 
 namespace simplearchive {
 
-	ResultsList::ResultsList(std::shared_ptr<MTTableSchema> tableSchema) : m_tableSchema(tableSchema) {
-		// TODO Auto-generated constructor stub
-
-	}
-
-	ResultsList::~ResultsList() {
-		// TODO Auto-generated destructor stub
-	}
+	
 
 
 } /* namespace simplearchive */

@@ -22,6 +22,7 @@ namespace simplearchive {
 		}
 	};
 
+	/*
 	class SystemHistorySchema : public MTTableSchema {
 	public:
 		SystemHistorySchema() : MTTableSchema(TABLE_SYSTEM_HISTORY) {
@@ -32,6 +33,7 @@ namespace simplearchive {
 			add(MTSchema(MTSchema::Text, DB_COMMENT));// template
 		}
 	};
+	*/
 	
 	class ImageHistoryRow : public MTRow {
 		static ImageHistorySchema m_tableSchema;
@@ -48,6 +50,7 @@ namespace simplearchive {
 		}
 	};
 
+	/*
 	class SystemHistoryRow : public MTRow {
 		static SystemHistorySchema m_tableSchema;
 	public:
@@ -62,12 +65,14 @@ namespace simplearchive {
 			}
 		}
 	};
+	*/
 
 
-	class SystemHistory;
+	//class SystemHistory;
 	class ImageHistory;
 	class ChangeLog;
 
+	/*
 	class SystemHistoryLog : public LogDocument {
 
 	public:
@@ -79,6 +84,7 @@ namespace simplearchive {
 		bool writeJson();
 		bool writeHtml();
 	};
+	*/
 
 	class ImageHistoryLog : public LogDocument {
 		
@@ -103,7 +109,7 @@ namespace simplearchive {
 		static std::string m_workspacePath;
 		static std::string m_systemHisteryPath;
 		static std::string m_changeLogPath;
-		std::unique_ptr<SystemHistory> m_systemHistory;
+		//std::unique_ptr<SystemHistory> m_systemHistory;
 		std::unique_ptr<ImageHistory> m_imageHistory;
 		std::unique_ptr<ChangeLog> m_changeLog;
 	public:
@@ -124,7 +130,7 @@ namespace simplearchive {
 
 		// This will write out the image histroy log
 		bool logImageHistory(const char *imagepath, LogDocument::FormatType formatType, const char* filepath);
-		bool logSystemHistory(const char* dateFrom, const char* dateTo, LogDocument::FormatType formatType, const char* filepath);
+		//bool logSystemHistory(const char* dateFrom, const char* dateTo, LogDocument::FormatType formatType, const char* filepath);
 	};
 
 } // namespace simplearchive

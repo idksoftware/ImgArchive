@@ -135,7 +135,7 @@ protected:
 	/// @brief parses a line of text
 	ConfigReader::Token parse(const char *text, ConfigBlock &config);
 	ConfigReader::Token parseExif(const char *text, ConfigBlock &config);
-	std::string includePath(int pos, std::string line);
+	std::string includePath(size_t pos, std::string line);
 	int m_includeCnt;
 	std::string m_path;
 	std::string m_rootPath;

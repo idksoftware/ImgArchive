@@ -131,7 +131,7 @@ namespace simplearchive {
 		m_currentVersion = std::make_shared<Version>(repositoryPath, sourceRelPath, fileName, version);
 	}
 
-	bool VersionControl::createDerivativeVersion(FileInfo& fileInfo, int derivativeSeqNumber, int primarySeqNumber) {
+	bool VersionControl::createDerivativeVersion(FileInfo& fileInfo, size_t derivativeSeqNumber, size_t primarySeqNumber) {
 
 		VersionMetadataObject vmo;
 		PathController pathController(fileInfo.getPath().c_str());
@@ -139,9 +139,9 @@ namespace simplearchive {
 			return false;
 		}
 		ExifDate addDate;
-		vmo.columnAt(DB_SEQUENCEID) = primarySeqNumber;
+		vmo.columnAt(DB_SEQUENCEID) = (int)primarySeqNumber;
 		vmo.columnAt(DB_VERSION) = m_currentVersion->getVersion();
-		vmo.columnAt(DB_DATABASEID) = derivativeSeqNumber;
+		vmo.columnAt(DB_DATABASEID) = (int)derivativeSeqNumber;
 		vmo.columnAt(DB_FILENAME) = m_currentVersion->getVersionName().c_str();
 		vmo.columnAt(DB_ORGINALNAME) = fileInfo.getName().c_str();
 		std::string shortRelPath = m_currentVersion->getShortRelPath();

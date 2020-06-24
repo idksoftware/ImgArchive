@@ -469,6 +469,9 @@ public:
 };
 
 using SharedMTRow = std::shared_ptr<MTRow>;
+using SharedMTRow = std::shared_ptr<MTRow>;
+//using ResultsList = std::vector<SharedMTRow>;
+
 class MTTable : public std::vector<SharedMTRow> {
 
 	std::shared_ptr<MTTableSchema> m_TableSchema;

@@ -103,7 +103,7 @@ namespace simplearchive {
 		return true;
 	}
 
-	bool PrimaryIndexObject::addMasterImage(const BasicMetadata &basicMetadata, ImagePath &imagePath, int masterSeqNumber, int primarySeqNumber) {
+	bool PrimaryIndexObject::addMasterImage(const BasicMetadata &basicMetadata, ImagePath &imagePath, size_t masterSeqNumber, size_t primarySeqNumber) {
 		unsigned long seqNumber = m_primaryIndexTable->getNextIndex();
 
 		ExifDate date;
@@ -119,7 +119,7 @@ namespace simplearchive {
 		return true;
 	}
 
-	bool PrimaryIndexObject::addDerivativeImage(FileInfo& fileInfo, const char *comment, int primarySeqNumber, int derivativeSeqNumber, const Version& version) {
+	bool PrimaryIndexObject::addDerivativeImage(FileInfo& fileInfo, const char *comment, size_t primarySeqNumber, size_t derivativeSeqNumber, const Version& version) {
 
 
 		PathController pathController(fileInfo.getPath().c_str());
@@ -148,7 +148,7 @@ namespace simplearchive {
 		return true;
 	}
 
-	bool RepositoryObject::validate(const char *dbImage, unsigned int size, unsigned int crc, const char * md5)
+	bool RepositoryObject::validate(const char *dbImage, size_t size, unsigned int crc, const char * md5)
 	{
 		CLogger &logger = CLogger::getLogger();
 
@@ -1175,7 +1175,7 @@ namespace simplearchive {
 
 	bool ArchiveObject::processHistory(ImagePath &imagePath, const char *comment) {
 
-		ArchiveHistory::setPath("C:\\ProgramData\\IDK-Software\\ImgArchive\\tmp");
+		//ArchiveHistory::setPath("C:\\ProgramData\\IDK-Software\\ImgArchive\\tmp");
 		ArchiveHistory& archiveHistory = ArchiveHistory::get();
 
 		if (archiveHistory.newImage(imagePath.getImageAddress().c_str(), comment) == false) {
@@ -1794,10 +1794,10 @@ namespace simplearchive {
 		CLogger &logger = CLogger::getLogger();
 		History& history = History::getHistory();
 		
-		if (history.logSystemHistory(from, to, formatType, filepath) == false) {
-			logger.log(LOG_OK, CLogger::Level::FATAL, "Unable to process system history Error: %s", ErrorCode::toString(ErrorCode::getErrorCode()));
-			return false;
-		}
+		//if (history.logSystemHistory(from, to, formatType, filepath) == false) {
+		//	logger.log(LOG_OK, CLogger::Level::FATAL, "Unable to process system history Error: %s", ErrorCode::toString(ErrorCode::getErrorCode()));
+		//	return false;
+		//}
 		
 		return true;
 	}

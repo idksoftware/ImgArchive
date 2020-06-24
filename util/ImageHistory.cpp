@@ -47,7 +47,6 @@
 #include "SAUtils.h"
 #include "History.h"
 #include "CSVArgs.h"
-#include "SystemHistory.h"
 #include "ArchivePath.h"
 #include "ErrorCode.h"
 #include "pathcontroller.h"
@@ -145,7 +144,9 @@ bool ImageHistory::init() {
 
 bool ImageHistory::init() {
 
+	/*
 
+		This does nothing at the moment --- NEEDS SORTING ---
 	LogName logName;
 	//m_currentFilename = logName.makeName(m_primary.c_str(), "", "hst", 256);
 
@@ -170,6 +171,7 @@ bool ImageHistory::init() {
 		}
 		
 	}
+	*/
 	return true;
 }
 

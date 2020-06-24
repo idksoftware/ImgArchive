@@ -80,7 +80,7 @@ class CIDKCrc
 	*/
    
 	unsigned long update_crc(unsigned long crc,
-					unsigned char *buf, int len);
+					unsigned char *buf, size_t len);
 	unsigned long update_crc(unsigned long crc,
 					FILE *fp);
 public:
@@ -91,7 +91,7 @@ public:
 	}
 
 	/* Return the CRC of the bytes buf[0..len-1]. */
-	unsigned long crc(unsigned char *buf, int len)
+	unsigned long crc(unsigned char *buf, size_t len)
 	{
 		return update_crc(0xffffffffL, buf, len) ^ 0xffffffffL;
 	};

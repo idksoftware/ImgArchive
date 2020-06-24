@@ -49,6 +49,7 @@ namespace simplearchive {
 
 		for (auto i = currentPartition->begin(); i != currentPartition->end(); i++) {
 			std::shared_ptr<MTRow> row = *i;
+			const MTTableSchema& ts = row->getSchema();
 			m_resultsList->push_back(row);
 
 		}
