@@ -141,7 +141,7 @@ namespace simplearchive {
 			m_backup2 = path;
 		}
 
-		static ImageHistory& get();
+		//static ImageHistory& get();
 	};
 
 	class ImageHistoryResultsPresentation : public ResultsPresentation {

@@ -133,6 +133,8 @@ namespace simplearchive {
 		// This will write out the image histroy log
 		//bool logImageHistory(const char *imagepath, LogDocument::FormatType formatType, const char* filepath);
 		//bool logSystemHistory(const char* dateFrom, const char* dateTo, LogDocument::FormatType formatType, const char* filepath);
+		bool systemHistoryLog(const char* scope);
+		bool imageHistoryLog(const char* scope);
 	};
 
 } // namespace simplearchive

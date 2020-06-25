@@ -140,7 +140,6 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ArchiveHistory.cpp" />
     <ClCompile Include="CheckoutStatus.cpp" />
     <ClCompile Include="CSVDatabase.cpp" />
     <ClCompile Include="CSVDBBase.cpp" />
@@ -152,13 +151,14 @@
     <ClCompile Include="CSVDerivativeDatabase.cpp" />
     <ClCompile Include="CSVPrimaryDatabase.cpp" />
     <ClCompile Include="CSVTAble.cpp" />
+    <ClCompile Include="History.cpp" />
     <ClCompile Include="ImageHistory.cpp" />
     <ClCompile Include="IndexVisitor.cpp" />
     <ClCompile Include="ResultsList.cpp" />
     <ClCompile Include="ResultsPresentation.cpp" />
+    <ClCompile Include="SystemHistory.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ArchiveHistory.h" />
     <ClInclude Include="CheckoutStatus.h" />
     <ClInclude Include="CSVDatabase.h" />
     <ClInclude Include="CSVDBBase.h" />
@@ -170,10 +170,12 @@
     <ClInclude Include="CSVDerivativeDatabase.h" />
     <ClInclude Include="CSVPrimaryDatabase.h" />
     <ClInclude Include="CSVTAble.h" />
+    <ClInclude Include="History.h" />
     <ClInclude Include="ImageHistory.h" />
     <ClInclude Include="IndexVisitor.h" />
     <ClInclude Include="ResultsList.h" />
     <ClInclude Include="ResultsPresentation.h" />
+    <ClInclude Include="SystemHistory.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="csvmain.dox" />

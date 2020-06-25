@@ -255,11 +255,13 @@ namespace simplearchive {
 		return true;
 	}
 
+	/*
 	ImageHistory& ImageHistory::get() {
 
 		static ImageHistory imageHistory;
 		return imageHistory;
 	}
+	*/
 
 	bool ImageHistoryAction::onEnd()
 	{

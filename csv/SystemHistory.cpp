@@ -1,7 +1,7 @@
 #include <string>
 #include <vector>
 #include <iomanip>
-#include "ArchiveHistory.h"
+#include "SystemHistory.h"
 //#include "ResultsList.h"
 #include "MetaType.h"
 #include "ResultsPresentation.h"
@@ -22,12 +22,12 @@
 
 namespace simplearchive {
 
-	ArchiveHistorySchema ArchiveHistoryRow::m_tableSchema;
+	SystemHistorySchema SystemHistoryRow::m_tableSchema;
 
-	ArchiveHistoryIndex::ArchiveHistoryIndex() : CSVIndexSystemHistory(std::make_shared<ArchiveHistoryAction>()) {}
-	ArchiveHistoryIndex::~ArchiveHistoryIndex() {}
+	SystemHistoryIndex::SystemHistoryIndex() : CSVIndexSystemHistory(std::make_shared<SystemHistoryAction>()) {}
+	SystemHistoryIndex::~SystemHistoryIndex() {}
 
-	bool ArchiveHistoryPartition::findEvent(const char *event) {
+	bool SystemHistoryPartition::findEvent(const char *event) {
 		if (MTTable::empty() == true) {
 			return false;
 		}
@@ -40,38 +40,33 @@ namespace simplearchive {
 		return true;
 	}
 	
-	
-	
-
-	void ArchiveHistory::setPath(const char* indexRoot) {
-		ArchiveHistory &archiveHistory = ArchiveHistory::get();
-		//archiveHistory.setPath(indexRoot);
-		archiveHistory.m_indexRoot = indexRoot;
+	void SystemHistory::setPath(const char* indexRoot) {
+		m_indexRoot = indexRoot;
 	}
 
 	
 	
-	bool ArchiveHistory::add(const char *img, const char *comment) {
+	bool SystemHistory::add(const char *img, const char *comment) {
 		std::string imagePath = img;
 		PathController pathController(img);
 		pathController.splitShort(img);
-		ArchiveHistoryRow archiveHistoryRow;
+		SystemHistoryRow systemHistoryRow;
 
 #ifdef WIN32
-		archiveHistoryRow.columnAt(DB_FILENAME) = pathController.getImage();
-		archiveHistoryRow.columnAt(DB_FILEPATH) = pathController.getYearday();
+		systemHistoryRow.columnAt(DB_FILENAME) = pathController.getImage();
+		systemHistoryRow.columnAt(DB_FILEPATH) = pathController.getYearday();
 #else
-		archiveHistoryRow.columnAt(DB_FILENAME) = pathController.getImage().c_str();
+		systemHistoryRow.columnAt(DB_FILENAME) = pathController.getImage().c_str();
 		//tmp = pathController.getImage().c_str();
-		archiveHistoryRow.columnAt(DB_FILEPATH) = pathController.getYearday().c_str();
+		systemHistoryRow.columnAt(DB_FILEPATH) = pathController.getYearday().c_str();
 		//tmp = pathController.getYearday().c_str();
 #endif
-		archiveHistoryRow.columnAt(DB_EVENT) = static_cast<int>(HistoryEvent::Event::ADDED);
-		archiveHistoryRow.columnAt(DB_VERSION) = 0;
+		systemHistoryRow.columnAt(DB_EVENT) = static_cast<int>(HistoryEvent::Event::ADDED);
+		systemHistoryRow.columnAt(DB_VERSION) = 0;
 		ExifDateTime dateAdded;
 		dateAdded.now();
-		archiveHistoryRow.columnAt(DB_DATEADDED) = dateAdded;
-		archiveHistoryRow.columnAt(DB_COMMENT) = comment;
+		systemHistoryRow.columnAt(DB_DATEADDED) = dateAdded;
+		systemHistoryRow.columnAt(DB_COMMENT) = comment;
 		std::string pidxPath = m_indexRoot;
 		pidxPath += '/';
 		pidxPath += pathController.getYear();
@@ -81,22 +76,22 @@ namespace simplearchive {
 			}
 		}
 		
-		ArchiveHistoryPartition archiveHistoryPartition;
+		SystemHistoryPartition systemHistoryPartition;
 		std::string filenameStr = pathController.getYearday();
 		filenameStr += ".csv";
 		pidxPath += "/";
 		pidxPath += filenameStr;
 		
 		if (SAUtils::FileExists(pidxPath.c_str()) == true) {
-			archiveHistoryPartition.read(pidxPath.c_str());
+			systemHistoryPartition.read(pidxPath.c_str());
 		}
-		archiveHistoryPartition.addRow(archiveHistoryRow);
-		archiveHistoryPartition.write(pidxPath.c_str());
+		systemHistoryPartition.addRow(systemHistoryRow);
+		systemHistoryPartition.write(pidxPath.c_str());
 
 		return true;
 	}
 
-	SharedMTRow ArchiveHistory::getRow(const char *img) {
+	SharedMTRow SystemHistory::getRow(const char *img) {
 		std::string imagePath = img;
 
 		PathController pathController(m_indexRoot.c_str());
@@ -112,7 +107,7 @@ namespace simplearchive {
 			return nullptr;
 		}
 
-		ArchiveHistoryPartition archiveHistoryPartition;
+		SystemHistoryPartition systemHistoryPartition;
 		std::string filenameStr = pathController.getYearday();
 		filenameStr += ".csv";
 		pidxPath += "/";
@@ -122,28 +117,24 @@ namespace simplearchive {
 			ErrorCode::setErrorCode(IMGA_ERROR::FILE_NOT_FOUND);
 			return nullptr;
 		}
-		if (archiveHistoryPartition.read(pidxPath.c_str()) == false) {
+		if (systemHistoryPartition.read(pidxPath.c_str()) == false) {
 			ErrorCode::setErrorCode(IMGA_ERROR::READ_ERROR);
 			return nullptr;
 		}
-		if (archiveHistoryPartition.findEvent(pathController.getImage().c_str()) == false) {
+		if (systemHistoryPartition.findEvent(pathController.getImage().c_str()) == false) {
 			ErrorCode::setErrorCode(IMGA_ERROR::IMAGE_NOT_FOUND);
 			return nullptr;
 		}
-		SharedMTRow row = archiveHistoryPartition.getCurrentRow();
+		SharedMTRow row = systemHistoryPartition.getCurrentRow();
 		return row;
 	}
 
-	ArchiveHistory& ArchiveHistory::get() {
-		
-		static ArchiveHistory archiveHistory;
-		return archiveHistory;
-	}
+	
 	
 
 	
 
-	bool ArchiveHistory::add(const char* filepath, int version, const char* comment, const HistoryEvent& he)
+	bool SystemHistory::add(const char* filepath, int version, const char* comment, const HistoryEvent& he)
 	{
 		ExifDateTime date;
 		date.now();
@@ -153,52 +144,52 @@ namespace simplearchive {
 		PathController pathController(filepath);
 		pathController.splitShort(filepath);
 
-		ArchiveHistoryRow archiveHistoryRow;
+		SystemHistoryRow systemHistoryRow;
 #ifdef WIN32
-		archiveHistoryRow.columnAt(DB_FILENAME) = pathController.getImage();
-		archiveHistoryRow.columnAt(DB_FILEPATH) = pathController.getYearday();
+		systemHistoryRow.columnAt(DB_FILENAME) = pathController.getImage();
+		systemHistoryRow.columnAt(DB_FILEPATH) = pathController.getYearday();
 #else
-		archiveHistoryRow.columnAt(DB_FILENAME) = pathController.getImage().c_str();
+		systemHistoryRow.columnAt(DB_FILENAME) = pathController.getImage().c_str();
 		//tmp = pathController.getImage().c_str();
-		archiveHistoryRow.columnAt(DB_FILEPATH) = pathController.getYearday().c_str();
+		systemHistoryRow.columnAt(DB_FILEPATH) = pathController.getYearday().c_str();
 		//tmp = pathController.getYearday().c_str();
 #endif
 		HistoryEvent::Event event = he.m_event;
 
-		archiveHistoryRow.columnAt(DB_EVENT) = static_cast<int>(event);
-		archiveHistoryRow.columnAt(DB_VERSION) = version;
+		systemHistoryRow.columnAt(DB_EVENT) = static_cast<int>(event);
+		systemHistoryRow.columnAt(DB_VERSION) = version;
 		ExifDateTime dateAdded;
 		dateAdded.now();
-		archiveHistoryRow.columnAt(DB_DATEADDED) = dateAdded;
-		archiveHistoryRow.columnAt(DB_COMMENT) = comment;
+		systemHistoryRow.columnAt(DB_DATEADDED) = dateAdded;
+		systemHistoryRow.columnAt(DB_COMMENT) = comment;
 
-		return save(dateAdded, archiveHistoryRow);
+		return save(dateAdded, systemHistoryRow);
 
 	}
 
-	bool ArchiveHistory::newImage(const char* img, const char* comment) {
+	bool SystemHistory::newImage(const char* img, const char* comment) {
 		std::string imagePath = img;
 		PathController pathController(img);
 		pathController.splitShort(img);
-		ArchiveHistoryRow archiveHistoryRow;
+		SystemHistoryRow systemHistoryRow;
 
 #ifdef WIN32
-		archiveHistoryRow.columnAt(DB_FILENAME) = pathController.getImage();
-		archiveHistoryRow.columnAt(DB_FILEPATH) = pathController.getYearday();
+		systemHistoryRow.columnAt(DB_FILENAME) = pathController.getImage();
+		systemHistoryRow.columnAt(DB_FILEPATH) = pathController.getYearday();
 #else
-		archiveHistoryRow.columnAt(DB_FILENAME) = pathController.getImage().c_str();
+		systemHistoryRow.columnAt(DB_FILENAME) = pathController.getImage().c_str();
 		//tmp = pathController.getImage().c_str();
-		archiveHistoryRow.columnAt(DB_FILEPATH) = pathController.getYearday().c_str();
+		systemHistoryRow.columnAt(DB_FILEPATH) = pathController.getYearday().c_str();
 		//tmp = pathController.getYearday().c_str();
 #endif
-		archiveHistoryRow.columnAt(DB_EVENT) = static_cast<int>(HistoryEvent::Event::ADDED);
-		archiveHistoryRow.columnAt(DB_VERSION) = 0;
+		systemHistoryRow.columnAt(DB_EVENT) = static_cast<int>(HistoryEvent::Event::ADDED);
+		systemHistoryRow.columnAt(DB_VERSION) = 0;
 		ExifDateTime dateAdded;
 		dateAdded.now();
-		archiveHistoryRow.columnAt(DB_DATEADDED) = dateAdded;
-		archiveHistoryRow.columnAt(DB_COMMENT) = comment;
+		systemHistoryRow.columnAt(DB_DATEADDED) = dateAdded;
+		systemHistoryRow.columnAt(DB_COMMENT) = comment;
 
-		return save(dateAdded, archiveHistoryRow);
+		return save(dateAdded, systemHistoryRow);
 	}
 
 	
@@ -206,7 +197,7 @@ namespace simplearchive {
 		This uses the Image 
 
 	*/
-	bool ArchiveHistory::add(ArchiveHistoryRow & archiveHistoryRow, const char *img) {
+	bool SystemHistory::add(SystemHistoryRow & SystemHistoryRow, const char *img) {
 		// check path exists
 		if (SAUtils::DirExists(m_indexRoot.c_str()) == false) {
 			if (SAUtils::mkDir(m_indexRoot.c_str()) == false) {
@@ -240,18 +231,18 @@ namespace simplearchive {
 		}
 
 
-		ArchiveHistoryPartition archiveHistoryPartition;
-		std::string filename = archiveHistoryRow.getSchema().getName() + ".csv";
-		if (archiveHistoryPartition.read(indexFullPath.c_str(), filename.c_str()) == false) {
+		SystemHistoryPartition systemHistoryPartition;
+		std::string filename = SystemHistoryRow.getSchema().getName() + ".csv";
+		if (systemHistoryPartition.read(indexFullPath.c_str(), filename.c_str()) == false) {
 			if (ErrorCode::getErrorCode() != IMGA_ERROR::OPEN_ERROR) {
 				// file may not exist
 				return false;
 			}
 		}
-		if (archiveHistoryPartition.addRow(archiveHistoryRow) == false) {
+		if (systemHistoryPartition.addRow(SystemHistoryRow) == false) {
 			return false;
 		}
-		if (archiveHistoryPartition.write(indexFullPath.c_str(), filename.c_str()) == false) {
+		if (systemHistoryPartition.write(indexFullPath.c_str(), filename.c_str()) == false) {
 			return false;
 		}
 		return true;
@@ -261,7 +252,7 @@ namespace simplearchive {
 	
 	
 
-	bool ArchiveHistoryResultsPresentation::writeHuman() {
+	bool SystemHistoryResultsPresentation::writeHuman() {
 		
 		/*
 	std::ofstream file;
@@ -392,23 +383,23 @@ namespace simplearchive {
 	}
 
 
-	bool ArchiveHistoryResultsPresentation::writeJson() {
+	bool SystemHistoryResultsPresentation::writeJson() {
 		return true;
 	}
 
-	bool ArchiveHistoryResultsPresentation::writeHtml()
+	bool SystemHistoryResultsPresentation::writeHtml()
 	{
 		return false;
 	}
 
-	bool ArchiveHistoryResultsPresentation::writeCSV() {
+	bool SystemHistoryResultsPresentation::writeCSV() {
 		for (auto rowIt = m_resultsList.begin(); rowIt != m_resultsList.end(); rowIt++) {
 			std::cout << *rowIt << '\n';
 		}
 		return true;
 	}
 
-	bool ArchiveHistoryResultsPresentation::writeXML() {
+	bool SystemHistoryResultsPresentation::writeXML() {
 		std::cout << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 			<< "<History ordering=\"date\" from=\"2015-03-6 12.10.45\" to=\"2015-03-6 12.10.45\">\n";
 
@@ -427,7 +418,7 @@ namespace simplearchive {
 		return true;
 	}
 
-	bool ArchiveHistoryAction::onEnd()
+	bool SystemHistoryAction::onEnd()
 	{
 		/*
 		if (!m_resultsList->write(ResultsList::FormatType::Human)) {
@@ -438,7 +429,7 @@ namespace simplearchive {
 		return true;
 	};
 
-	bool ArchiveHistoryAction::onImage(const char* name)
+	bool SystemHistoryAction::onImage(const char* name)
 	{
 		
 
@@ -464,13 +455,13 @@ namespace simplearchive {
 		return true;
 	}
 
-	bool ArchiveHistoryAction::onStart()
+	bool SystemHistoryAction::onStart()
 	{
 		m_resultsList = std::make_shared<ResultsList>(m_mtTableSchema);
 		return true;
 	};
 
-	bool ArchiveHistoryAction::onDayFolder(const char* name)
+	bool SystemHistoryAction::onDayFolder(const char* name)
 	{
 		return true;
 	}

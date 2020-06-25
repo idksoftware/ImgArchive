@@ -6,7 +6,7 @@
 #include <iomanip>
 
 #include "HistoryEvent.h"
-#include "OldImageHistory.h"
+//#include "ImageHistory.h"
 //#include "SystemHistory.h"
 #include "ChangeLog.h"
 #include "ErrorCode.h"
@@ -14,34 +14,6 @@
 #include "LogDocument.h"
 
 namespace simplearchive {
-
-	/*
-	ImageHistorySchema ImageHistoryRow::m_tableSchema;
-	ImageHistoryRow::ImageHistoryRow() : MTRow(m_tableSchema) {}
-	ImageHistoryRow::ImageHistoryRow(const char *filepath, const char *version, const char *comment, const HistoryEvent &he) : MTRow(m_tableSchema) {
-		ExifDateTime date;
-		date.now();
-		columnAt(static_cast<int>(ImageHistoryIndex::IH_FILEPATH_IDX)).fromString(filepath);;
-		columnAt(static_cast<int>(ImageHistoryIndex::IH_DATEADDED_IDX)).fromString(date.toString());;
-		columnAt(static_cast<int>(ImageHistoryIndex::IH_VERSION_IDX)).fromString(version);;
-		columnAt(static_cast<int>(ImageHistoryIndex::IH_EVENT_IDX)).fromString(he.getString());;
-		columnAt(static_cast<int>(ImageHistoryIndex::IH_COMMENT_IDX)).fromString(comment);;
-	}
-	*/
-
-	/*
-	SystemHistorySchema SystemHistoryRow::m_tableSchema;
-	SystemHistoryRow::SystemHistoryRow() : MTRow(m_tableSchema) {}
-	SystemHistoryRow::SystemHistoryRow(const char *filepath, const char *version, const char *comment, const HistoryEvent &he) : MTRow(m_tableSchema) {
-		ExifDateTime date;
-		date.now();
-		columnAt(static_cast<int>(SystemHistoryIndex::SH_DATEADDED_IDX)).fromString(date.toString());;
-		columnAt(static_cast<int>(SystemHistoryIndex::SH_FILEPATH_IDX)).fromString(filepath);;
-		columnAt(static_cast<int>(SystemHistoryIndex::SH_VERSION_IDX)).fromString(version);;
-		columnAt(static_cast<int>(SystemHistoryIndex::SH_EVENT_IDX)).fromString(he.getString());;
-		columnAt(static_cast<int>(SystemHistoryIndex::SH_COMMENT_IDX)).fromString(comment);;
-	}
-	*/
 
 	std::unique_ptr<History> History::m_this = nullptr;
 	std::once_flag History::m_onceFlag;

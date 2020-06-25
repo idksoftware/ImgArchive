@@ -15,16 +15,16 @@ namespace simplearchive {
 	
 	
 	/**
-	 * ArchiveHistory is the history of actions performed on the archive.
+	 * SystemHistory is the history of actions performed on the System.
 	 */
-	class ArchiveHistoryRow;
-	//class ArchiveHistoryLog;
+	class SystemHistoryRow;
+	//class SystemHistoryLog;
 
 	
 
-	class ArchiveHistorySchema : public MTTableSchema {
+	class SystemHistorySchema : public MTTableSchema {
 	public:
-		ArchiveHistorySchema() noexcept : MTTableSchema("ArchiveHistory") {
+		SystemHistorySchema() noexcept : MTTableSchema("SystemHistory") {
 			add(MTSchema(MTSchema::Date, DB_DATEADDED));
 			add(MTSchema(MTSchema::Text, DB_FILENAME));
 			add(MTSchema(MTSchema::Text, DB_FILEPATH));
@@ -35,12 +35,12 @@ namespace simplearchive {
 	};
 	
 	
-	class ArchiveHistoryRow : public MTRow {
-		static ArchiveHistorySchema m_tableSchema;
+	class SystemHistoryRow : public MTRow {
+		static SystemHistorySchema m_tableSchema;
 		
 	public:
-		ArchiveHistoryRow() : MTRow(m_tableSchema) {};
-		ArchiveHistoryRow(const MTRow &row) : MTRow(m_tableSchema) {
+		SystemHistoryRow() : MTRow(m_tableSchema) {};
+		SystemHistoryRow(const MTRow &row) : MTRow(m_tableSchema) {
 
 			for (unsigned int i = 0; i < row.size(); i++) {
 				MTColumn& c1 = *at(i);
@@ -60,16 +60,16 @@ namespace simplearchive {
 	
 	
 
-	class ArchiveHistoryPartition : public MTTable {
+	class SystemHistoryPartition : public MTTable {
 	public:
-		ArchiveHistoryPartition() : MTTable(new ArchiveHistorySchema) {};
-		virtual ~ArchiveHistoryPartition() {};
+		SystemHistoryPartition() : MTTable(new SystemHistorySchema) {};
+		virtual ~SystemHistoryPartition() {};
 		bool findEvent(const char *Event);
 	};
 
-	class ArchiveHistoryAction : public CSVIndexAction {
+	class SystemHistoryAction : public CSVIndexAction {
 		
-		std::shared_ptr<ArchiveHistoryPartition> m_partition;
+		std::shared_ptr<SystemHistoryPartition> m_partition;
 
 	protected:
 
@@ -93,65 +93,61 @@ namespace simplearchive {
 
 	public:
 		/// Constructor
-		ArchiveHistoryAction() : CSVIndexAction(std::make_shared<ArchiveHistorySchema>())
+		SystemHistoryAction() : CSVIndexAction(std::make_shared<SystemHistorySchema>())
 		{
-			m_partition = std::make_shared<ArchiveHistoryPartition>();
+			m_partition = std::make_shared<SystemHistoryPartition>();
 		};
 		/// Distructor
-		virtual ~ArchiveHistoryAction() = default;
+		virtual ~SystemHistoryAction() = default;
 
 	};
 
 	
 
-	class ArchiveHistoryIndex : public CSVIndexSystemHistory {
+	class SystemHistoryIndex : public CSVIndexSystemHistory {
 	public:
 		/// Constructor
 		/// @parm folderVisitor - pointer to FolderVisitor
-		ArchiveHistoryIndex();
+		SystemHistoryIndex();
 		
 		// Destructor
-		virtual ~ArchiveHistoryIndex();
+		virtual ~SystemHistoryIndex();
 		
 	};
 
 	
 
-	class ArchiveHistory : public CSVTable
+	class SystemHistory : public CSVTable
 	{
 		
-		bool add(ArchiveHistoryRow& archiveHistoryRow, const char* relpath);
+		bool add(SystemHistoryRow& SystemHistoryRow, const char* relpath);
 
 		SharedMTRow getRow(const char* img);
 		//bool processFile(std::shared_ptr<ResultsList> log, const std::string yyyymmddFile);
 		bool historyLog(const char* filepath, ResultsPresentation::FormatType formatType);
 		std::shared_ptr<ResultsList> getEntries(const char* filepath);
-		//bool save(ExifDateTime dateAdded, ArchiveHistoryRow archiveHistoryRow);
+		//bool save(ExifDateTime dateAdded, SystemHistoryRow SystemHistoryRow);
 		
 	public:
-		ArchiveHistory() :
-			CSVTable(std::make_shared<ArchiveHistorySchema>(),
-					std::make_shared<ArchiveHistoryPartition>(),
-					std::make_shared<CSVIndexSystemHistory>(std::make_shared<ArchiveHistoryAction>())
+		SystemHistory() :
+			CSVTable(std::make_shared<SystemHistorySchema>(),
+					std::make_shared<SystemHistoryPartition>(),
+					std::make_shared<CSVIndexSystemHistory>(std::make_shared<SystemHistoryAction>())
 				)
 		{};
-		~ArchiveHistory() = default;
+		~SystemHistory() = default;
 
 		bool newImage(const char* imagePath, const char* comment);
 		bool add(const char* filepath, int version, const char* comment, const HistoryEvent& he);
 		bool add(const char* imagePath, const char* comment);
 		
-		static ArchiveHistory& get();
-		static void setPath(const char* indexRoot);
-
-
-
+		void setPath(const char* indexRoot);
 	};
 
-	class ArchiveHistoryResultsPresentation : public ResultsPresentation {
+	class SystemHistoryResultsPresentation : public ResultsPresentation {
 	public:
-		ArchiveHistoryResultsPresentation(ResultsList& resultsList) : ResultsPresentation(resultsList) {};
-		~ArchiveHistoryResultsPresentation() = default;
+		SystemHistoryResultsPresentation(ResultsList& resultsList) : ResultsPresentation(resultsList) {};
+		~SystemHistoryResultsPresentation() = default;
 
 		bool writeHuman() override;
 		bool writeXML() override;

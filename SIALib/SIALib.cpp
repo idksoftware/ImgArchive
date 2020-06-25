@@ -73,7 +73,7 @@
 #include "ArchivePath.h"
 #include "CheckoutStatus.h"
 #include "IndexVisitor.h"
-#include "ArchiveHistory.h"
+#include "SystemHistory.h"
 #include "RemoteServer.h"
 #include <stdio.h>
 #include <sstream>
@@ -505,8 +505,16 @@ namespace simplearchive {
 	bool SIALib::log(const char* filepath, const char* fromDate, const char* toDate, LogDocument::FormatType& formatType, const char* filename) {
 		CLogger& logger = CLogger::getLogger();
 		
+
+		History& history = History::getHistory();
+		const char* scope = nullptr;
+		
+		if (history.systemHistoryLog(scope) == false) {
+			logger.log(LOG_OK, CLogger::Level::ERR, "Cannot process system history");
+			return false;
+		}
 		/*
-		ArchiveHistory archiveHistory = ArchiveHistory::get();
+		SystemHistory archiveHistory = SystemHistory::get();
 		const char* scope = nullptr;
 		if (archiveHistory.select(scope) == false) {
 			logger.log(LOG_OK, CLogger::Level::ERR, "Cannot process archive history");
@@ -519,10 +527,12 @@ namespace simplearchive {
 		}
 		ArchiveHistoryResultsPresentation resultsPresentation(*results);
 		resultsPresentation.writeHuman();
-		*/
+		
+		History& History = History::getHistory();
+
 		ImageHistory& imageHistory = ImageHistory::get();
 		const char* scope = nullptr;
-		if (imageHistory.select(scope) == false) {
+		if (SystemHistory.select(scope) == false) {
 			logger.log(LOG_OK, CLogger::Level::ERR, "Cannot process archive history");
 			return false;
 		}
@@ -533,7 +543,7 @@ namespace simplearchive {
 		}
 		ImageHistoryResultsPresentation resultsPresentation(*results);
 		resultsPresentation.writeHuman();
-
+		*/
 
 
 		/*
