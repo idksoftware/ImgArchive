@@ -1,6 +1,6 @@
 SOFTWARE PRODUCT LICENSE AGREEMENT
-Image Archive 1.01
-Copyright © 1998-2017 IDK Software Ltd. All Rights Reserved.
+Image Archive 0.90
+Copyright © 2017-2020 IDK Software Ltd. All Rights Reserved.
 IMPORTANT - READ CAREFULLY: This End User License Agreement ("EULA") is a legal agreement between YOU as Licensee and IDK Software Ltd. ("IDK") for the SOFTWARE PRODUCT identified above. By installing, copying, or otherwise using the SOFTWARE PRODUCT, YOU agree to be bound by the terms of this EULA. If YOU do not agree to the terms of this EULA, promptly return the unused SOFTWARE PRODUCT to the place of purchase for a full refund.
 
 The copyright in the SOFTWARE PRODUCT and its documentation is owned by IDK Software Ltd A. Subject to the terms of this EULA, YOU are granted a non-exclusive right for the duration of the EULA to use the SOFTWARE PRODUCT. YOU do not acquire ownership of copyright or other intellectual property rights in any part of the SOFTWARE PRODUCT by virtue of this EULA.
