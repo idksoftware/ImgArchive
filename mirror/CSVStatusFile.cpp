@@ -317,7 +317,7 @@ bool CSVStatusFile::insert(uint64_t idx, const char *imagePath, const char *name
 	return true;
 }
 
-uint64_t CSVStatusFile::getMaxIndex() {
+size_t CSVStatusFile::getMaxIndex() {
 	
 	char hexStr[4];
 	if (SAUtils::DirExists(m_dbpath.c_str()) == false) {
@@ -360,7 +360,7 @@ uint64_t CSVStatusFile::getMaxIndex() {
 
 }
 
-uint64_t CSVStatusFile::getNextIndex(uint64_t current) {
+size_t CSVStatusFile::getNextIndex(size_t current) {
 	char hexStr[4];
 	m_data[0] = (unsigned int)current & 0xFF;
 	m_data[1] = (unsigned int)(current >> 8) & 0xFFF;
@@ -504,7 +504,7 @@ unsigned long CSVStatusFile::findSize(unsigned int idx) {
 	return -1;
 }
 
-const char* CSVStatusFile::findPath(uint64_t idx) {
+const char* CSVStatusFile::findPath(size_t idx) {
 	char hexStr[4];
 
 	m_data[0] = (unsigned int)idx & 0xFF;
