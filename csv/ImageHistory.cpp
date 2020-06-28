@@ -162,7 +162,7 @@ namespace simplearchive {
 		PathController indexController;
 		indexController.split(filepath);
 		indexController.makeImagePath();
-#ifdef WIN32
+#ifdef _WIN32
 		imageHistoryRow.columnAt(DB_FILENAME) = indexController.getImageName();
 		imageHistoryRow.columnAt(DB_FILEPATH) = indexController.getYearday();
 #else

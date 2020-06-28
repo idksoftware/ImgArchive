@@ -138,9 +138,6 @@
     <ClCompile Include="ImageEncodeBase32.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="OldImageHistory.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SAUtils.h">
@@ -282,9 +279,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ImageEncodeBase32.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OldImageHistory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
