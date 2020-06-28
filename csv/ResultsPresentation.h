@@ -35,7 +35,7 @@ namespace simplearchive {
 		}
 
 		void readRow(SharedMTRow row) {
-			for (int i = 0; i < m_rowSize; i++) {
+			for (size_t i = 0; i < m_rowSize; i++) {
 				*(m_list + i) = 0;
 			}
 			int i = 0;

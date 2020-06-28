@@ -164,8 +164,8 @@ namespace simplearchive {
 	bool CheckoutStatus::Init(const char *Master, const char *workspace, const char *primaryIndex) {
 		m_Master = Master;
 		m_workspace = workspace;
-		//m_primaryIndex = primaryIndex;
-		m_primaryIndex = "C:\\ProgramData\\IDK-Software\\ImgArchive\\pi\\chkout";
+		m_primaryIndex = primaryIndex;
+		
 		return true;
 	}
 
