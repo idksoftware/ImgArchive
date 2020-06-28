@@ -136,10 +136,10 @@ public:
 		m_index.insert(std::make_pair(item.getName(), m_count));
 		m_count++;
 	}
-	int getIndex(const char* name) const {
+	size_t getIndex(const char* name) const {
 
 		if (m_index.find(name) == m_index.end()) {
-			return -1;
+			return std::string::npos;
 		}
 		else {
 			return m_index.at(name);
@@ -356,7 +356,10 @@ public:
 	MTColumn& columnAt(const char *name) const {
 
 		try {
-			int idx = m_schema.getIndex(name);
+			size_t idx = m_schema.getIndex(name);
+			if (idx == std::string::npos) {
+				throw new std::exception;
+			}
 			return *(at(idx));
 		} catch (std::exception /*&e */) {
 			std::string err = "Column name invalid: ";

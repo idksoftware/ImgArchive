@@ -52,6 +52,7 @@ public:
 public:
 
 	const char *getString() const;
+	static const char* getString(HistoryEvent::Event evt);
 	static const char getChar(HistoryEvent::Event evt);
 	
 	void set(const char *he);
@@ -63,6 +64,8 @@ public:
 		m_event = e;
 	}
 	virtual ~HistoryEvent();
+
+	static int maxStringSize() { return 10;  }
 };
 
 } /* namespace simplearchive */

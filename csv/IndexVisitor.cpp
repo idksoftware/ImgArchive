@@ -122,8 +122,6 @@ namespace simplearchive {
 
 	}
 
-	
-
 
 	bool IndexVisitor::setScope(const char *scope) {
 		

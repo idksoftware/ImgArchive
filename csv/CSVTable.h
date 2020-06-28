@@ -17,7 +17,7 @@ namespace simplearchive {
 		std::shared_ptr<CSVIndexVisitorBase> m_csvIndexVisitor;
 		std::shared_ptr<ResultsList> m_resultsList;
 
-		void setPath(const char* indexRoot);
+		
 
 		bool add(const char* yearDay, MTRow& row);
 
@@ -37,7 +37,7 @@ namespace simplearchive {
 			return m_resultsList;
 		}
 
-
+		void setPath(const char* indexRoot);
 	};
 
 	

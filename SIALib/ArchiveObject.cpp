@@ -34,6 +34,7 @@
 #include "pathcontroller.h"
 
 #include "CSVDatabase.h"
+
 #include "CSVDerivativeDatabase.h"
 #include "IntegrityManager.h"
 #include "HookCmd.h"
@@ -640,15 +641,6 @@ namespace simplearchive {
 		return *m_PrimaryIndexObject;
 	}
 
-
-	//ArchiveObject& ArchiveObject::getInstance()
-	//{
-	//	if (m_this == nullptr) {
-	//		m_this = std::make_unique<ArchiveObject>();
-	//	}
-	//	return *m_this;
-	//}
-
 	std::unique_ptr<ArchiveObject> ArchiveObject::m_this = nullptr;
 
 	//bool ArchiveObject::Initalise(const char *pathToWorkspace, const char *pathToMaster, const char *pathToHome, const char *pathToHistory) {
@@ -1251,9 +1243,11 @@ namespace simplearchive {
 		return true;
 	}
 	*/
-	class GetAction : public IndexAction {
+
+
+	class GetAction : public CheckoutStatusAction { //IndexAction {
 		/// On finding a directory, this function is run.
-		virtual bool onImage();
+		virtual bool onImage(const char* name);
 		ArchiveObject *m_ArchiveObject;
 		std::string m_versions;
 	public:
@@ -1267,9 +1261,9 @@ namespace simplearchive {
 
 	};
 
-	class CheckoutAction : public IndexAction {
+	class CheckoutAction : public CheckoutStatusAction { //IndexAction {
 		/// On finding a directory, this function is run.
-		virtual bool onImage();
+		virtual bool onImage(const char* name);
 		ArchiveObject *m_ArchiveObject;
 	public:
 		/// Constructor
@@ -1281,8 +1275,8 @@ namespace simplearchive {
 
 	};
 
-	class CheckinAction : public IndexAction {
-		virtual bool onImage();
+	class CheckinAction : public CheckoutStatusAction { //IndexAction {
+		virtual bool onImage(const char *name);
 		ArchiveObject *m_ArchiveObject;
 	public:
 		/// Constructor
@@ -1294,8 +1288,8 @@ namespace simplearchive {
 
 	};
 
-	class UnCheckoutAction : public IndexAction {
-		virtual bool onImage();
+	class UnCheckoutAction : public CheckoutStatusAction { //IndexAction {
+		virtual bool onImage(const char* name);
 		ArchiveObject *m_ArchiveObject;
 	public:
 		/// Constructor
@@ -1308,16 +1302,26 @@ namespace simplearchive {
 	};
 
 	bool ArchiveObject::get(const char *scope, const char *versions, const char *comment, bool force) {
+		/*
 		IndexVisitor IndexVisitor(std::make_shared<GetAction>(this, versions));
 		if (!IndexVisitor.setScope(scope)) {
 			return false;
 		}
 		IndexVisitor.process();
-
+		*/
+		CLogger& logger = CLogger::getLogger();
+		CheckoutStatus checkoutStatus;
+		PrimaryIndexPath piPath = m_PrimaryIndexObject->getPrimaryIndexPath();
+		checkoutStatus.setPath(piPath.getCheckoutStatusPath().c_str());
+		if (checkoutStatus.select(scope) == false) {
+			logger.log(LOG_OK, CLogger::Level::ERR, "Cannot process archive history");
+			return false;
+		}
 		return true;
 	}
 
 	bool ArchiveObject::checkout(const char *scope, const char *comment, bool force) {
+		/*
 		IndexVisitor indexVisitor(std::make_shared<CheckoutAction>(this));
 		indexVisitor.setPath("C:\\ProgramData/IDK-Software/ImgArchive/pi/chkout");
 		//"C:\\ProgramData/IDK-Software/ImgArchive/pi/chkout"
@@ -1326,33 +1330,64 @@ namespace simplearchive {
 			return false;
 		}
 		indexVisitor.process();
-		
+		*/
+		CLogger& logger = CLogger::getLogger();
+		CheckoutStatus checkoutStatus(std::make_shared<CheckoutAction>(this));
+		PrimaryIndexPath piPath = m_PrimaryIndexObject->getPrimaryIndexPath();
+		checkoutStatus.setPath(piPath.getCheckoutStatusPath().c_str());
+		if (checkoutStatus.select(scope) == false) {
+			logger.log(LOG_OK, CLogger::Level::ERR, "Cannot process archive history");
+			return false;
+		}
 		return true;
 	}
 
 	bool ArchiveObject::checkin(const char *scope, const char *comment, bool force) {
+		/*
 		IndexVisitor IndexVisitor(std::make_shared<CheckinAction>(this));
 		if (!IndexVisitor.setScope(scope)) {
 			return false;
 		}
 		IndexVisitor.process();
+		*/
+		CLogger& logger = CLogger::getLogger();
+		CheckoutStatus checkoutStatus(std::make_shared<CheckinAction>(this));
+		PrimaryIndexPath piPath = m_PrimaryIndexObject->getPrimaryIndexPath();
+		checkoutStatus.setPath(piPath.getCheckoutStatusPath().c_str());
+		if (checkoutStatus.select(scope) == false) {
+			logger.log(LOG_OK, CLogger::Level::ERR, "Cannot process archive history");
+			return false;
+		}
 		return true;
 	}
 
 	bool ArchiveObject::uncheckout(const char *scope, const char *comment, bool force) {
+		/*
 		IndexVisitor IndexVisitor(std::make_shared<UnCheckoutAction>(this));
 		if (!IndexVisitor.setScope(scope)) {
 			return false;
 		}
 		IndexVisitor.process();
+		*/
+		CLogger& logger = CLogger::getLogger();
+		CheckoutStatus checkoutStatus(std::make_shared<UnCheckoutAction>(this));
+		PrimaryIndexPath piPath = m_PrimaryIndexObject->getPrimaryIndexPath();
+		checkoutStatus.setPath(piPath.getCheckoutStatusPath().c_str());
+		if (checkoutStatus.select(scope) == false) {
+			logger.log(LOG_OK, CLogger::Level::ERR, "Cannot process archive history");
+			return false;
+		}
 		return true;
 	}
 
-	bool GetAction::onImage() {
+	bool GetAction::onImage(const char* name) {
 		CLogger &logger = CLogger::getLogger();
+		std::string path = name;
+		/*
 		std::string path = m_currentRow->columnAt(DB_FILEPATH).getString();
 		path += '/';
 		path += m_currentRow->columnAt(DB_FILENAME).getString();
+		*/
 
 		VersionControl& versionControl = VersionControl::getInstance();
 
@@ -1363,12 +1398,14 @@ namespace simplearchive {
 		return true;
 	}
 
-	bool CheckoutAction::onImage() {
+	bool CheckoutAction::onImage(const char* name) {
 		CLogger &logger = CLogger::getLogger();
+		std::string path = name;
+		/*
 		std::string path = m_currentRow->columnAt(DB_FILEPATH).getString();
 		path += '/';
 		path += m_currentRow->columnAt(DB_FILENAME).getString();
-			
+		*/
 		if (m_ArchiveObject->checkoutFile(path.c_str(), "", false) == false) {
 			switch (ErrorCode::getErrorCode()) {
 			case IMGA_ERROR::INVALID_PATH:
@@ -1395,11 +1432,14 @@ namespace simplearchive {
 	}
 
 
-	bool CheckinAction::onImage() {
+	bool CheckinAction::onImage(const char* name) {
 		CLogger &logger = CLogger::getLogger();
+		std::string path = name;
+		/*
 		std::string path = m_currentRow->columnAt(DB_FILEPATH).getString();
 		path += '/';
 		path += m_currentRow->columnAt(DB_FILENAME).getString();
+		*/
 		
 		if (m_ArchiveObject->checkinFile(path.c_str(), "", false) == false) {
 			switch (ErrorCode::getErrorCode()) {
@@ -1433,11 +1473,14 @@ namespace simplearchive {
 		return true;
 	}
 
-	bool UnCheckoutAction::onImage() {
+	bool UnCheckoutAction::onImage(const char* name) {
 		CLogger &logger = CLogger::getLogger();
+		std::string path = name;
+		/*
 		std::string path = m_currentRow->columnAt(DB_FILEPATH).getString();
 		path += '/';
 		path += m_currentRow->columnAt(DB_FILENAME).getString();
+		*/
 		
 		if (m_ArchiveObject->uncheckoutFile(path.c_str(), "", false) == false) {
 			switch (ErrorCode::getErrorCode()) {

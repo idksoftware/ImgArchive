@@ -13,12 +13,25 @@
 #include "AddressScope.h"
 #include "IndexVisitor.h"
 #include "ResultsList.h"
+#include "Clogger.h"
+#include <iomanip>
+
 
 namespace simplearchive {
 
 	
-
+	CheckoutStatus::CheckoutStatus() : CSVTable(std::make_shared<CheckoutSchema>(),
+		std::make_shared<CheckoutStatusPartition>(),
+		std::make_shared<CSVIndexCheckoutStatus>(std::make_shared<CheckoutStatusAction>())
+	)
+	{};
 	
+	CheckoutStatus::CheckoutStatus(std::shared_ptr<CheckoutStatusAction> indexAction) : CSVTable(std::make_shared<CheckoutSchema>(),
+		std::make_shared<CheckoutStatusPartition>(),
+		std::make_shared<CSVIndexCheckoutStatus>(indexAction)
+	)
+	{};
+
 	/*
 	class ScopeIterator {
 		std::string m_rootPath;
@@ -129,7 +142,7 @@ namespace simplearchive {
 	
 	CheckoutSchema CheckoutRow::m_tableSchema;
 
-	bool CheckoutPartition::findImage(const char *image) {
+	bool CheckoutStatusPartition::findImage(const char *image) {
 		if (MTTable::empty() == true) {
 			return false;
 		}
@@ -151,7 +164,8 @@ namespace simplearchive {
 	bool CheckoutStatus::Init(const char *Master, const char *workspace, const char *primaryIndex) {
 		m_Master = Master;
 		m_workspace = workspace;
-		m_primaryIndex = primaryIndex;
+		//m_primaryIndex = primaryIndex;
+		m_primaryIndex = "C:\\ProgramData\\IDK-Software\\ImgArchive\\pi\\chkout";
 		return true;
 	}
 
@@ -199,7 +213,7 @@ namespace simplearchive {
 				return false;
 			}
 		}
-		CheckoutPartition checkoutPartition;
+		CheckoutStatusPartition checkoutPartition;
 		std::string filenameStr = pathController.getYearday();
 		filenameStr += ".csv";
 		pidxPath += "/";
@@ -254,7 +268,7 @@ namespace simplearchive {
 			return nullptr;
 		}
 
-		CheckoutPartition checkoutPartition;
+		CheckoutStatusPartition checkoutPartition;
 		std::string filenameStr = pathController.getYearday();
 		filenameStr += ".csv";
 		pidxPath += "/";
@@ -306,7 +320,7 @@ namespace simplearchive {
 			return false;
 		}
 
-		CheckoutPartition checkoutPartition;
+		CheckoutStatusPartition checkoutPartition;
 		std::string filenameStr = pathController.getYearday();
 		filenameStr += ".csv";
 		pidxPath += "/";
@@ -494,26 +508,92 @@ namespace simplearchive {
 		return true;;
 	}
 
+	bool CheckoutStatusAction::onEnd()
+	{
+		/*
+		if (!m_resultsList->write(ResultsList::FormatType::Human)) {
+			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
+			return false;
+		}
+		*/
+		return true;
+	}
+
+	bool CheckoutStatusAction::onImage(const char* name)
+	{
+		if (m_partition->read(name) == false) {
+			return false;
+		}
+
+		for (auto i = m_partition->begin(); i != m_partition->end(); i++) {
+			std::shared_ptr<MTRow> row = *i;
+			m_resultsList->emplace_back(row);
+		}
+		return true;
+	}
+
+	bool CheckoutStatusAction::onStart()
+	{
+		m_resultsList = std::make_shared<ResultsList>(m_mtTableSchema);
+		return true;
+	};
+
+	bool CheckoutStatusAction::onDayFolder(const char* name)
+	{
+		m_partition = std::make_shared<CheckoutStatusPartition>();
+
+		if (m_partition->read(name) == false) {
+			return false;
+		}
+
+		for (auto i = m_partition->begin(); i != m_partition->end(); i++) {
+			std::shared_ptr<MTRow> row = *i;
+			std::string path = row->columnAt(DB_FILEPATH).getString();
+			path += '/';
+			path += row->columnAt(DB_FILENAME).getString();
+			onImage(path.c_str());
+			m_resultsList->emplace_back(row);
+			//if (!m_addressScope->isImageInScope(fileName)) {
+			//	continue;
+			//}
+			
+
+		}
+		return true;
+	}
+
+
+
+
+
 	bool CheckoutStatus::scopedStatus(const char * scope)
 	{
 
+		/*
 		CheckoutTableIndex checkoutTableIndex(std::make_shared<StatusAction>());
 		//checkoutTableIndex.setIndexPath(m_primaryIndex.c_str());
 		if (!checkoutTableIndex.setScope(scope)) {
 			return false;
 		}
 		checkoutTableIndex.process(m_primaryIndex.c_str());
+		*/
 		return true;
 	}
 
 	bool CheckoutStatus::showCheckedOut(const char *addressScope) {
-		if (addressScope == nullptr) {
-			// All images
-
+		CLogger& logger = CLogger::getLogger();
+		setPath(m_primaryIndex.c_str());
+		if (select(addressScope) == false) {
+			logger.log(LOG_OK, CLogger::Level::ERR, "Cannot process archive history");
+			return false;
 		}
-		//FolderList folderList(m_Master.c_str());
-		//folderList.showCheckedOut(addressScope);
-
+		std::shared_ptr<ResultsList> results = getResults();
+		if (results == nullptr) {
+			logger.log(LOG_OK, CLogger::Level::WARNING, "No results for archive history");
+			return false;
+		}
+		CheckoutStatusResultsPresentation resultsPresentation(*results);
+		resultsPresentation.writeHuman();
 		return true;
 	}
 
@@ -562,7 +642,7 @@ namespace simplearchive {
 		}
 
 
-		CheckoutPartition checkoutPartition;
+		CheckoutStatusPartition checkoutPartition;
 		std::string filename = checkoutRow.getSchema().getName() + ".csv";
 		if (checkoutPartition.read(chkoutPath.c_str(), filename.c_str()) == false) {
 			if (ErrorCode::getErrorCode() != IMGA_ERROR::OPEN_ERROR) {
@@ -608,7 +688,7 @@ namespace simplearchive {
 			return HistoryEvent::Event::ERROR;
 		}
 
-		CheckoutPartition checkoutPartition;
+		CheckoutStatusPartition checkoutPartition;
 		std::string filenameStr = pathController.getYearday();
 		filenameStr += ".csv";
 		pidxPath += "/";
@@ -757,6 +837,8 @@ namespace simplearchive {
 		return true;
 	}
 	*/
+
+/*
 std::string CheckoutTableIndex::m_primaryIndex;
 
 bool CheckoutTableIndex::Init(const char* primaryIndex) {
@@ -790,7 +872,7 @@ bool CheckoutTableIndex::process(const char* rootFolder) {
 		try {
 			m_indexAction->onYearFolder(year.c_str());
 		}
-		catch (std::exception /*e*/) {
+		catch (std::exception) {
 			return false;
 		}
 
@@ -885,10 +967,10 @@ bool StatusAction::onStart()
 	return true;
 };
 
+*/
 
 
-
-
+/*
 	CheckoutStatusLog::CheckoutStatusLog() : LogDocument(std::make_shared<CheckoutSchema>()) {
 		// TODO Auto-generated constructor stub
 
@@ -962,7 +1044,7 @@ bool StatusAction::onStart()
 		std::cout << "</Catalog>\n";
 		return true;
 	}
-
+	*/
 
 
 
@@ -1000,29 +1082,41 @@ bool StatusAction::onStart()
 	//std::cout << "Path : " << m_description << '\n';
 	//std::cout << "=====================================================\n";
 	//std::cout << "Date Time             version     Event      Comment\n\n";
+		
+		/*
+		ColumnJustification columnJustification(m_resultsList.getTableSchema().size());
 
+		for (auto rowIt = m_resultsList.begin(); rowIt != m_resultsList.end(); rowIt++) {
+			SharedMTRow row = *rowIt;
+			columnJustification.readRow(row);
+		}
+		for (int i = 0; i < m_resultsList.getTableSchema().size(); i++) {
+			std::cout << ' ' << columnJustification.getSize(i) << '\n';
+		}
+		int idx = 0;
 		for (std::vector<MTSchema>::iterator i = m_resultsList.getTableSchema().begin(); i != m_resultsList.getTableSchema().end(); i++) {
 			MTSchema& columnInfo = *i;
-			printf("%s ", columnInfo.getName().c_str());
+			std::string s = columnInfo.getName();
+			columnJustification.header(idx, s);
+			std::cout << std::setw(columnJustification.getSize(idx++) + 1) << columnInfo.getName();
 
 		}
 		printf("\n");
 		for (auto rowIt = m_resultsList.begin(); rowIt != m_resultsList.end(); rowIt++) {
 			SharedMTRow row = *rowIt;
+			idx = 0;
 			for (auto i = row->begin(); i != row->end(); i++) {
 				SharedMTColumn column = *i;
-				//std::shared_ptr<MTSchema> mtSchema = column->getMTSchemaItem();
-				//std::cout << mtSchema->getName();
-				//if (mtSchema == nullptr) {
-				//	continue;
-				//}
-				std::cout << ',';
-				std::cout << column->toString();
+				std::cout << std::setw(columnJustification.getSize(idx++) + 1) << column->toString();
 
 			}
 			std::cout << '\n';
 		}
-		//}
+		*/
+		CheckoutWriteHuman writeHuman(m_resultsList);
+		if (!writeHuman.write()) {
+			return false;
+		};
 		return true;
 	}
 
@@ -1052,7 +1146,7 @@ bool StatusAction::onStart()
 			std::cout << "\t<Event>\n";
 			for (size_t i = 0; i != row->size(); i++) {
 				MTTableSchema tableSchema = m_resultsList.getTableSchema();
-				std::cout << writeTag(tableSchema.getColumnName(i).c_str(), row->columnAt(i).toString(), 2);
+				std::cout << writeTag(tableSchema.getColumnName(i).c_str(), row->columnAt((int)i).toString(), 2);
 			}
 			std::cout << "\t</Event>\n";
 		}

@@ -47,7 +47,7 @@ namespace simplearchive {
 
 		std::string scopeStr;
 		if (scope != nullptr) {
-			std::string scopeStr = scope;
+			scopeStr = scope;
 		}
 
 		if (scopeStr.empty()) {
@@ -210,4 +210,62 @@ namespace simplearchive {
 		return true;
 	}
 
+	bool CSVIndexCheckoutStatus::process(const char* rootFolder) {
+		std::string path = rootFolder;
+
+		m_indexAction->onStart();
+		// read years in Master folder
+		FileList_Ptr filelist = SAUtils::getFiles_(path.c_str());
+		for (auto i = filelist->begin(); i != filelist->end(); i++) {
+			std::string year = *i;
+			char c = (year)[0];
+			if (c == '.') {
+				continue;
+			}
+
+			std::string yearMaster = path;
+			try {
+				m_indexAction->onYearFolder(year.c_str());
+			}
+			catch (std::exception) {
+				return false;
+			}
+
+			yearMaster += '/';
+			yearMaster += year;
+
+			if (!m_addressScope.isInScope(year.c_str())) {
+				continue;
+			}
+
+
+			FileList_Ptr filelist = SAUtils::getFiles_(yearMaster.c_str());
+			for (auto i = filelist->begin(); i != filelist->end(); i++) {
+				std::string dayfolder = *i;
+				char c = (dayfolder)[0];
+				if (c == '.') {
+					continue;
+				}
+				std::string dateStr = dayfolder.substr(0, 10);
+				if (!m_addressScope.isInScope(dateStr.c_str())) {
+					continue;
+				}
+
+				PathController pathController(dayfolder.c_str(), false);
+
+				std::string filenameStr = yearMaster;
+				filenameStr += '/';
+				filenameStr += dayfolder;
+
+
+				m_indexAction->onDayFolder(filenameStr.c_str());
+
+				m_indexAction->onDayEnd();
+			}
+			m_indexAction->onYearEnd();
+
+		}
+		m_indexAction->onEnd();
+		return true;
+	}
 };

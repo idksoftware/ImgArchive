@@ -738,7 +738,7 @@ bool MTTable::read(const char *fullpath) {
 
 	
 	file.close();
-
+	m_rowCursor = 0;
 	return true;
 }
 

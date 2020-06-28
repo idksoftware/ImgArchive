@@ -287,98 +287,10 @@ namespace simplearchive {
 	//std::cout << "=====================================================\n";
 	//std::cout << "Date Time             version     Event      Comment\n\n";
 	
-		size_t filename = 0;
-		size_t filepath = 0;
-		size_t comment = 0;
-
-		for (auto rowIt = m_resultsList.begin(); rowIt != m_resultsList.end(); rowIt++) {
-			SharedMTRow row = *rowIt;
-			const MTTableSchema& ts = row->getSchema(); // testing only
-			MTColumn& filenameCol = row->columnAt(DB_FILENAME);
-			const std::string& filenameStr = filenameCol.getString();
-
-			MTColumn& filepathCol = row->columnAt(DB_FILEPATH);
-			const std::string& filepathStr = filepathCol.getString();
-
-			MTColumn& commentCol = row->columnAt(DB_COMMENT);
-			const std::string& commentStr = commentCol.getString();
-
-			if (filenameStr.length() > filename) {
-				filename = filenameStr.length();
-			}
-
-			if (filepathStr.length() > filepath) {
-				filepath = filepathStr.length();
-			}
-
-			if (commentStr.length() > comment) {
-				comment = commentStr.length();
-			}
-		}
-
-		for (std::vector<MTSchema>::iterator i = m_resultsList.getTableSchema().begin(); i != m_resultsList.getTableSchema().end(); i++) {
-			MTSchema& columnInfo = *i;
-			//printf("%s ", columnInfo.getName().c_str());
-			std::cout << ' ';
-			//	first = false;
-			//}  setw
-			if (columnInfo.getName().compare(DB_DATEADDED) == 0) {
-				std::cout << std::setw(19) << columnInfo.getName().c_str();
-			}
-			else if (columnInfo.getName().compare(DB_FILENAME) == 0) {
-				std::cout << std::setw(filename) << columnInfo.getName().c_str();
-			}
-			else if (columnInfo.getName().compare(DB_FILEPATH) == 0) {
-				std::cout << std::setw(filepath) << columnInfo.getName().c_str();
-			}
-			else if (columnInfo.getName().compare(DB_COMMENT) == 0) {
-				std::cout << std::setw(comment) << columnInfo.getName().c_str();
-			}
-			
-			else {
-				std::cout << columnInfo.getName().c_str();
-			}
-		}
-		std::cout << '\n';
-		//bool first = true;
-		
-		for (auto rowIt = m_resultsList.begin(); rowIt != m_resultsList.end(); rowIt++) {
-			SharedMTRow row = *rowIt;
-			auto schemaIdx = m_resultsList.getTableSchema().begin();
-			for (auto i = row->begin(); i != row->end(); i++) {
-				SharedMTColumn column = *i;
-				MTSchema& columnInfo = *schemaIdx;
-				//std::shared_ptr<MTSchema> mtSchema = column->getMTSchemaItem();
-				//std::cout << mtSchema->getName();
-				//if (mtSchema == nullptr) {
-				//	continue;
-				//}
-				//if (!first) {
-				std::cout << ' ';
-				//	first = false;
-				//}  setw
-				
-				if (columnInfo.getName().compare(DB_FILENAME) == 0) {
-					std::cout << std::setw(filename) << column->toString();
-				} else if (columnInfo.getName().compare(DB_FILEPATH) == 0) {
-					std::cout << std::setw(filepath) << column->toString();
-				}
-				else if (columnInfo.getName().compare(DB_COMMENT) == 0) {
-					std::cout << std::setw(comment) << column->toString();
-				}
-				else if (columnInfo.getName().compare(DB_EVENT) == 0) {
-					HistoryEvent::Event ev = (HistoryEvent::Event)column->getInt();
-					HistoryEvent historyEvent(ev);
-					std::cout << std::setw(10) << historyEvent.getString();
-				}
-				else {
-					std::cout << column->toString();
-				}
-				schemaIdx++;
-			}
-			std::cout << '\n';
-		}
-
+		CheckoutWriteHuman writeHuman(m_resultsList);
+		if (!writeHuman.write()) {
+			return false;
+		};
 		return true;
 	}
 
@@ -409,7 +321,7 @@ namespace simplearchive {
 			std::cout << "\t<Event>\n";
 			for (size_t i = 0; i != row->size(); i++) {
 				MTTableSchema tableSchema = m_resultsList.getTableSchema();
-				std::cout << writeTag(tableSchema.getColumnName(i).c_str(), row->columnAt(i).toString(), 2);
+				std::cout << writeTag(tableSchema.getColumnName(i).c_str(), row->columnAt((int)i).toString(), 2);
 			}
 			std::cout << "\t</Event>\n";
 		}
@@ -439,11 +351,7 @@ namespace simplearchive {
 
 		for (auto i = m_partition->begin(); i != m_partition->end(); i++) {
 			std::shared_ptr<MTRow> row = *i;
-			const MTTableSchema& ts = row->getSchema(); // testing only
-			printf("MTTableSchema: %s\n", ts.getName().c_str());
-			//m_resultsList->push_back(row);
 			m_resultsList->emplace_back(row);
-			
 		}
 		/*
 		for (auto i = m_resultsList->begin(); i != m_resultsList->end(); i++) {

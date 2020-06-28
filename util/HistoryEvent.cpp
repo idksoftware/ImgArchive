@@ -51,8 +51,12 @@ HistoryEvent::~HistoryEvent() {
 	// TODO Auto-generated destructor stub
 }
 
-const char *HistoryEvent::getString() const {
-	switch (m_event) {
+const char* HistoryEvent::getString() const {
+	return getString(m_event);
+}
+
+const char *HistoryEvent::getString(HistoryEvent::Event evt) {
+	switch (evt) {
 	case Event::ADDED:
 		return "added";
 	case Event::CHECKOUT:

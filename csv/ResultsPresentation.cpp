@@ -4,6 +4,9 @@
 #include "CSVArgs.h"
 #include <sstream>
 #include "MetaType.h"
+#include <iomanip>
+#include "DBDefines.h"
+#include "HistoryEvent.h"
 
 namespace simplearchive {
 
@@ -145,5 +148,86 @@ bool ResultsPresentation::writeHuman() {
 	return true;
 }
 
+
+
+
+bool WriteHuman::write()
+{
+	ColumnJustification columnJustification(m_resultsList.getTableSchema().size());
+
+	for (auto rowIt = m_resultsList.begin(); rowIt != m_resultsList.end(); rowIt++) {
+		SharedMTRow row = *rowIt;
+		columnJustification.readRow(row);
+	}
+	for (int i = 0; i < m_resultsList.getTableSchema().size(); i++) {
+		std::cout << ' ' << columnJustification.getSize(i) << '\n';
+	}
+	int idx = 0;
+	for (std::vector<MTSchema>::iterator i = m_resultsList.getTableSchema().begin(); i != m_resultsList.getTableSchema().end(); i++) {
+
+		MTSchema& columnInfo = *i;
+		std::string s = columnInfo.getName();
+		columnJustification.header(idx, s);
+		std::cout << std::setw(columnJustification.getSize(idx++) + 1) << columnInfo.getName();
+	}
+	printf("\n");
+	for (auto rowIt = m_resultsList.begin(); rowIt != m_resultsList.end(); rowIt++) {
+		SharedMTRow row = *rowIt;
+		idx = 0;
+		for (auto i = row->begin(); i != row->end(); i++) {
+			SharedMTColumn column = *i;
+			std::cout << std::setw(columnJustification.getSize(idx++) + 1) << column->toString();
+
+		}
+		std::cout << '\n';
+	}
+	return true;
+}
+
+CheckoutWriteHuman::CheckoutWriteHuman(ResultsList& resultsList) : WriteHuman(resultsList) {}
+
+bool CheckoutWriteHuman::write()
+{
+	ColumnJustification columnJustification(m_resultsList.getTableSchema().size());
+
+	for (auto rowIt = m_resultsList.begin(); rowIt != m_resultsList.end(); rowIt++) {
+		SharedMTRow row = *rowIt;
+		columnJustification.readRow(row);
+	}
+	int eventIdx = -1;
+	int idx = 0;
+	for (std::vector<MTSchema>::iterator i = m_resultsList.getTableSchema().begin(); i != m_resultsList.getTableSchema().end(); i++) {
+		
+		MTSchema& columnInfo = *i;
+		std::string s = columnInfo.getName();
+		columnJustification.header(idx, s);
+		
+		if (columnInfo.getName().compare(DB_EVENT) == 0) {
+			eventIdx = idx;
+			std::cout << std::setw(HistoryEvent::maxStringSize() + 1) << columnInfo.getName();
+		}
+		else {
+			std::cout << std::setw(columnJustification.getSize(idx++) + 1) << columnInfo.getName();
+		}
+	}
+	printf("\n");
+	for (auto rowIt = m_resultsList.begin(); rowIt != m_resultsList.end(); rowIt++) {
+		SharedMTRow row = *rowIt;
+		idx = 0;
+		for (auto i = row->begin(); i != row->end(); i++) {
+			SharedMTColumn column = *i;
+			if (eventIdx == idx) {
+				HistoryEvent::Event evn = static_cast<HistoryEvent::Event>(column->getInt());
+				std::cout << std::setw(HistoryEvent::maxStringSize() + 1) << HistoryEvent::getString(evn);
+			}
+			else {
+				std::cout << std::setw(columnJustification.getSize(idx) + 1) << column->toString();
+			}
+			idx++;
+		}
+		std::cout << '\n';
+	}
+	return true;
+}
 
 } /* namespace simplearchive */

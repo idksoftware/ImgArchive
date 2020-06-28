@@ -6,6 +6,8 @@
 #include "MetaType.h"
 #include "IndexVisitor.h"
 #include "ResultsPresentation.h"
+#include "CSVIndexAction.h"
+#include "CSVTable.h"
 
 class AddressScope;
 
@@ -17,23 +19,24 @@ namespace simplearchive {
 	 */
 	class CheckoutRow;
 	class CheckoutStatusLog;
+	class CheckoutStatusAction;
 	
-	class CheckoutStatus
+	class CheckoutStatus : public CSVTable
 	{
-		
-
 		static std::string m_Master;
 		static std::string m_workspace;
 		static std::string m_primaryIndex;
 		bool add(CheckoutRow &checkoutRow, const char *relpath);
 		bool checkInOutUpdate(const char *img, const HistoryEvent::Event& event, const char*comment);
 		SharedMTRow getRow(const char *img);
-		bool processFile(std::shared_ptr<CheckoutStatusLog> log, const std::string yyyymmddFile);
-		bool historyLog(const char *filepath, LogDocument::FormatType formatType);
-		std::shared_ptr<CheckoutStatusLog> getEntries(const char *filepath);
+		//bool processFile(std::shared_ptr<CheckoutStatusLog> log, const std::string yyyymmddFile);
+		//bool historyLog(const char *filepath, LogDocument::FormatType formatType);
+		//std::shared_ptr<CheckoutStatusLog> getEntries(const char *filepath);
 		bool isCheckedInOut(const char *img, bool in);
 	public:
-		CheckoutStatus() = default;
+		CheckoutStatus();
+		CheckoutStatus::CheckoutStatus(std::shared_ptr<CheckoutStatusAction> indexAction);
+
 		~CheckoutStatus() = default;
 		
 		static bool Init(const char *Master, const char *workspace, const char *primaryIndex);
@@ -52,6 +55,9 @@ namespace simplearchive {
 		//bool uncheckout(const char *imagePath);
 	};
 
+	/// 
+	/// 
+	/// 
 
 	class CheckoutSchema : public MTTableSchema {
 	public:
@@ -67,7 +73,7 @@ namespace simplearchive {
 
 	class CheckoutRow : public MTRow {
 		static CheckoutSchema m_tableSchema;
-		friend class MetadataTemplate;
+		
 	public:
 		CheckoutRow() : MTRow(m_tableSchema) {};
 		CheckoutRow(const MTRow &row) : MTRow(m_tableSchema) {
@@ -87,26 +93,13 @@ namespace simplearchive {
 
 	
 
-	class CheckoutPartition : public MTTable {
+	class CheckoutStatusPartition : public MTTable {
 	public:
-		CheckoutPartition() : MTTable(new CheckoutSchema) {};
-		virtual ~CheckoutPartition() {};
+		CheckoutStatusPartition() : MTTable(new CheckoutSchema) {};
+		virtual ~CheckoutStatusPartition() {};
 		bool findImage(const char *image);
 	};
 
-	class CheckoutStatusLog : public LogDocument {
-
-	public:
-		CheckoutStatusLog();
-		virtual ~CheckoutStatusLog();
-		bool writeHuman();
-		bool writeXML();
-		bool writeCSV();
-		bool writeJson();
-		bool writeHtml() {
-			return true;
-		};
-	};
 
 	class CheckoutStatusResultsPresentation : public ResultsPresentation {
 	public:
@@ -120,7 +113,7 @@ namespace simplearchive {
 		bool writeHtml() override;
 	};
 
-
+	/*
 	class StatusAction : public IndexAction {
 		std::shared_ptr<CheckoutStatusLog> log;
 
@@ -158,8 +151,6 @@ namespace simplearchive {
 
 	};
 
-
-
 	class CheckoutTableIndex : public IndexVisitor {
 	protected:
 		static std::string m_primaryIndex;
@@ -178,4 +169,87 @@ namespace simplearchive {
 		bool process(const char* rootFolder);
 		bool process();
 	};
+	*/
+
+
+
+	/*
+	class CheckoutStatusActionTrigger : public CSVIndexAction {
+
+		std::shared_ptr<CheckoutStatusPartition> m_partition;
+		std::shared_ptr<CheckoutRow> m_currentRow;
+
+	protected:
+
+		/// On the start of each directory found, this function is run.
+		virtual bool onStart();
+		/// At the end of each directory found, this function is run.
+		virtual bool onEnd();
+		/// On finding a file, this function is run.
+		virtual bool onYearFolder(const char* name) { return true; };
+		/// On finding a file, this function is run.
+		virtual bool onYearEnd() { return true; };
+		/// On finding a directory, this function is run.
+		virtual bool onDayFolder(const char* name);
+		/// On finding a directory, this function is run.
+		virtual bool onDayEnd() { return true; };
+		/// On finding a directory, this function is run.
+		virtual bool onImage(const char* name);
+
+		virtual bool onMetadata(const char* path, const char* name) { return true; };
+		/// This function is a factory function used to create new FolderVisitor objects.
+
+	public:
+		/// Constructor
+		CheckoutStatusActionTrigger() : CSVIndexAction(std::make_shared<CheckoutSchema>())
+		{
+			m_partition = std::make_shared<CheckoutStatusPartition>();
+		};
+		/// Distructor
+		virtual ~CheckoutStatusActionTrigger() = default;
+
+	};
+	*/
+
+
+	class CheckoutStatusAction : public CSVIndexAction {
+
+	protected:
+
+		std::shared_ptr<CheckoutStatusPartition> m_partition;
+		std::shared_ptr<CheckoutRow> m_currentRow;
+
+		/// On the start of each directory found, this function is run.
+		virtual bool onStart();
+		/// At the end of each directory found, this function is run.
+		virtual bool onEnd();
+		/// On finding a file, this function is run.
+		virtual bool onYearFolder(const char* name) { return true; };
+		/// On finding a file, this function is run.
+		virtual bool onYearEnd() { return true; };
+		/// On finding a directory, this function is run.
+		virtual bool onDayFolder(const char* name);
+		/// On finding a directory, this function is run.
+		virtual bool onDayEnd() { return true; };
+		/// On finding a directory, this function is run.
+		virtual bool onImage(const char* name);
+
+		virtual bool onMetadata(const char* path, const char* name) { return true; };
+		/// This function is a factory function used to create new FolderVisitor objects.
+
+	public:
+		/// Constructor
+		CheckoutStatusAction() : CSVIndexAction(std::make_shared<CheckoutSchema>())
+		{
+			m_partition = std::make_shared<CheckoutStatusPartition>();
+		};
+		/// Distructor
+		virtual ~CheckoutStatusAction() = default;
+
+	};
+
+
+	
+
+	
 };
