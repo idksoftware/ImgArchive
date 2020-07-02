@@ -1,32 +1,49 @@
 #include "AddressScope.h"
-#include "SAUtils.h"
 #include <vector>
+//#define STANDALONE 1
+#ifndef STANDALONE
+#include "SAUtils.h"
+#else
+class SAUtils {
+public:
+	static bool isNumber(const std::string& s);
+};
 
-class DataString {
+bool SAUtils::isNumber(const std::string& s)
+{
+	std::string::const_iterator it = s.begin();
+	while (it != s.end() && std::isdigit(*it)) ++it;
+	return !s.empty() && it == s.end();
+}
+#endif
+
+
+
+class ScopeString {
 	std::string m_day;
 	std::string m_month;
 	std::string m_year;
 	std::string m_image;
 	void init(const std::string &s);
 public:
-	DataString();
-	DataString(const std::string &pattern);
-	DataString(const char *d);
-	int compare(DataString &d);
+	ScopeString();
+	ScopeString(const std::string &pattern);
+	ScopeString(const char *d);
+	int compare(ScopeString&d);
 };
 
-DataString::DataString() {
+ScopeString::ScopeString() {
 	m_day = '*';
 	m_month = '*';
 	m_year = '*';
 	m_image = '*';
 }
 
-DataString::DataString(const std::string &s) {
+ScopeString::ScopeString(const std::string &s) {
 	init(s);
 }
 
-DataString::DataString(const char *d) {
+ScopeString::ScopeString(const char *d) {
 	std::string tmp = d;
 	init(tmp);
 }
@@ -43,22 +60,39 @@ std::string justify(std::string s) {
 	return s;
 }
 
-void DataString::init(const std::string &s) {
-	std::string delimiter = "/";
-	if (s.find("-") != std::string::npos) {
-		delimiter = "-";
-	}
-	
+void ScopeString::init(const std::string &ss) {
+	std::string delimiter = "-";
 	size_t last = 0;
 	size_t next = 0;
-	std::string token[4] = { "*", "*", "*", "*" };
-	int c = 0;
-	while ((next = s.find(delimiter, last)) != std::string::npos) {
-		token[c++] = s.substr(last, next-last);
-		//printf("%s", token[c].c_str());
-		last = next + 1;
+	std::string s;
+	std::string name;
+	int pos = 0;
+	if ((pos = ss.find("/")) != std::string::npos) {
+		s = ss.substr(0, pos);
+		pos++;
+		name = ss.substr(pos, ss.length() - pos);
 	}
-	token[c] = s.substr(last);
+	else {
+		s = ss;
+	}
+	
+	std::string token[4] = { "*", "*", "*", "*" };
+
+	int c = 0;
+	if (s.find(delimiter, last) != std::string::npos) {
+		while ((next = s.find(delimiter, last)) != std::string::npos) {
+			token[c++] = s.substr(last, next - last);
+			//printf("%s", token[c].c_str());
+			last = next + 1;
+		}
+		token[c] = s.substr(last);
+	}
+	else {
+		token[0] = s;
+	}
+
+	
+	/*
 	if (delimiter == "-") {
 		delimiter = "/";
 		if ((next = token[c].find(delimiter)) != std::string::npos) {
@@ -66,6 +100,10 @@ void DataString::init(const std::string &s) {
 			token[c + 1] = token[c].substr(next+1, token[c].length() - (next+1));
 			token[c] = tmp;
 		}
+	}
+	*/
+	if (name.length() != 0) {
+		token[3] = name;
 	}
 	m_image = token[3];
 	m_day = justify(token[2]);
@@ -75,7 +113,7 @@ void DataString::init(const std::string &s) {
 
 }
 
-int DataString::compare(DataString &d) {
+int ScopeString::compare(ScopeString&d) {
 
 	if (m_year == "*" || d.m_year == "*" || m_year.compare(d.m_year) == 0) {
 		// year matched
@@ -93,19 +131,19 @@ int DataString::compare(DataString &d) {
 }
 
 class AddressScopeItem {
-	DataString m_begin;
-	DataString m_end;
+	ScopeString m_begin;
+	ScopeString m_end;
 	bool m_range;
 	void init(std::string &pattern);
 public:
 	AddressScopeItem(const char *pattern);
 	AddressScopeItem(std::string &pattern);
-	const bool isInScope(DataString &d);
+	const bool isInScope(ScopeString&d);
 };
 
 void AddressScopeItem::init(std::string &pattern) {
 	std::string s = pattern;
-	m_begin = DataString(s);
+	m_begin = ScopeString(s);
 	m_range = false;
 	// begin-2009
 	/*
@@ -136,7 +174,7 @@ AddressScopeItem::AddressScopeItem(const char *pattern) {
 
 }
 
-const bool AddressScopeItem::isInScope(DataString &d) {
+const bool AddressScopeItem::isInScope(ScopeString &d) {
 	
 	if (m_range) {
 		if (m_begin.compare(d) <= 0 && m_end.compare(d) >= 0) {
@@ -204,7 +242,7 @@ bool AddressScope::isInScope(const char *d) {
 
 	if (m_matchAll) return true;
 
-	DataString date(d);
+	ScopeString date(d);
 	for(auto iter = m_list->begin();  iter != m_list->end(); iter++) {
 		AddressScopeItem &item = *iter;
 		if (item.isInScope(date)) {
@@ -214,13 +252,15 @@ bool AddressScope::isInScope(const char *d) {
 	return false;
 }
 
+
+
 bool AddressScope::isImageInScope(const char * image)
 {
 	if (m_matchAll) return true;
 	std::string pattern = "*-*-*/";
 	pattern += image;
 
-	DataString dateImage(pattern);
+	ScopeString dateImage(pattern);
 	for (auto iter = m_list->begin(); iter != m_list->end(); iter++) {
 		AddressScopeItem &item = *iter;
 		if (item.isInScope(dateImage)) {
@@ -237,8 +277,8 @@ void AddressScope::scopeAll() {
 
 bool AddressScope::scope(const char *str) {
 	m_matchAll = false;
-	std::string tmp = str;
-	std::string s = removespace(tmp);
+	std::string s = str;
+	//std::string s = removespace(tmp);
 	std::string delimiter = ",";
 
 	size_t last = 0;

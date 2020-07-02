@@ -550,12 +550,14 @@ namespace simplearchive {
 			std::shared_ptr<MTRow> row = *i;
 			std::string path = row->columnAt(DB_FILEPATH).getString();
 			path += '/';
-			path += row->columnAt(DB_FILENAME).getString();
+			std::string image = row->columnAt(DB_FILENAME).getString();
+			path += image;
+			if (!m_addressScope->isImageInScope(image.c_str())) {
+				continue;
+			}
 			onImage(path.c_str());
 			m_resultsList->emplace_back(row);
-			//if (!m_addressScope->isImageInScope(fileName)) {
-			//	continue;
-			//}
+			
 			
 
 		}
@@ -1083,36 +1085,7 @@ bool StatusAction::onStart()
 	//std::cout << "=====================================================\n";
 	//std::cout << "Date Time             version     Event      Comment\n\n";
 		
-		/*
-		ColumnJustification columnJustification(m_resultsList.getTableSchema().size());
-
-		for (auto rowIt = m_resultsList.begin(); rowIt != m_resultsList.end(); rowIt++) {
-			SharedMTRow row = *rowIt;
-			columnJustification.readRow(row);
-		}
-		for (int i = 0; i < m_resultsList.getTableSchema().size(); i++) {
-			std::cout << ' ' << columnJustification.getSize(i) << '\n';
-		}
-		int idx = 0;
-		for (std::vector<MTSchema>::iterator i = m_resultsList.getTableSchema().begin(); i != m_resultsList.getTableSchema().end(); i++) {
-			MTSchema& columnInfo = *i;
-			std::string s = columnInfo.getName();
-			columnJustification.header(idx, s);
-			std::cout << std::setw(columnJustification.getSize(idx++) + 1) << columnInfo.getName();
-
-		}
-		printf("\n");
-		for (auto rowIt = m_resultsList.begin(); rowIt != m_resultsList.end(); rowIt++) {
-			SharedMTRow row = *rowIt;
-			idx = 0;
-			for (auto i = row->begin(); i != row->end(); i++) {
-				SharedMTColumn column = *i;
-				std::cout << std::setw(columnJustification.getSize(idx++) + 1) << column->toString();
-
-			}
-			std::cout << '\n';
-		}
-		*/
+		
 		CheckoutWriteHuman writeHuman(m_resultsList);
 		if (!writeHuman.write()) {
 			return false;

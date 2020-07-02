@@ -76,3 +76,5 @@ add --source-path="C:\local\Lightroom\2019"
 add --lightroom
 
 mode --remote-server
+
+checkin --scope="2020-04-03/Untitled - 1_00001N.jpg"

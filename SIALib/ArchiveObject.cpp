@@ -763,10 +763,9 @@ namespace simplearchive {
 		VersionControl::setPaths(primaryIndexPath.getPathToRepository().c_str(), ArchivePath::getMasterPath().c_str(), ArchivePath::getDerivativePath().c_str(), ArchivePath::getPathToWorkspace().c_str());
 		MasterCatalogue& masterView = getMasterCatalogue();
 
-		/* Testing
+		/* Testing */
 		masterView.setFileEnabled(true);
-		masterView.setWWWEnabled(true);
-		*/
+	//	masterView.setWWWEnabled(true);
 
 		if (masterView.isWWWEnabled()) {
 			if (masterView.settupWWW(config.getTempPath(), config.getTemplatePath(), config.getMasterWWWCataloguePath()) == false) {
@@ -1171,20 +1170,7 @@ namespace simplearchive {
 
 	bool ArchiveObject::processHistory(ImagePath &imagePath, const char *comment) {
 
-		//SystemHistory::setPath("C:\\ProgramData\\IDK-Software\\ImgArchive\\tmp");
-		/*
-		SystemHistory& systemHistory = SystemHistory::get();
-		if (systemHistory.newImage(imagePath.getImageAddress().c_str(), comment) == false) {
-			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
-			return false;
-		}
-
-		ImageHistory& imageHistory = ImageHistory::get();
-		if (imageHistory.newImage(imagePath.getImageAddress().c_str(), comment) == false) {
-			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
-			return false;
-		}
-		*/
+		
 		History& history = History::getHistory();
 		if (history.newImage(imagePath.getImageAddress().c_str(), comment) == false) {
 			return false;
