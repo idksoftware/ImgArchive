@@ -37,6 +37,7 @@
 #include <memory>
 #include <string>
 
+
 namespace simplearchive {
 
 class ImageIndex;
@@ -54,6 +55,8 @@ class ImportJournal;
  * checkin
  */
 class ArchiveObject;
+
+
 class ArchiveBuilder {
 	bool m_Error;
 	

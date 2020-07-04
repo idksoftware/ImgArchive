@@ -52,7 +52,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 
 	defineOption("uncheckout", "Un-checkout images in to archive.", ArgvParser::MasterOption);
 	defineCommandSyntax("uncheckout", "iaarc uncheckout [--target-path=<path>]\n\t[--logging-level=<level>]"
-		"[--comment=<comment text>]\n\t[--scope=<scope-address]\n\t[--force=<yes|No>]\n\t[--version=<vesion-num>");
+		"[--comment=<comment text>]\n\t[--scope=<scope-address>]\n\t[--force=<yes|No>]\n\t[--version=<vesion-num>");
 
 	defineOption("export", "Export images from archive.", ArgvParser::MasterOption);
 	defineCommandSyntax("uncheckout", "iaarc uncheckout [--target-path=<path>]\n\t[--logging-level=<level>]"
@@ -65,6 +65,10 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineOption("prop", "Manage image properties", ArgvParser::MasterOption);
 	defineCommandSyntax("prop", "iaarc prop [--s]\n\t[--logging-level=<level>]"
 		"[--comment=<comment text>]\n\t[--scope=<scope-address]\n\t[--force=<yes|No>]");
+
+	defineOption("metadata", "Show Metadata properties", ArgvParser::MasterOption);
+	defineCommandSyntax("metadata", "iaarc metadata [--s]\n\t[--format-type=<type>]"
+		"[--comment=<comment text>]\n\t[--scope=<scope-address]\n\t[--master=<yes|No>]");
 
 	defineOption("template", "Manage metadata template", ArgvParser::MasterOption);
 	defineCommandSyntax("template", "iaarc template [--current=<yes|no>]\n\t[--logging-level=<level>]"
@@ -214,7 +218,11 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineCommandOption("status", "scope");
 	defineCommandOption("status", "checked-out");
 	defineCommandOption("status", "unchecked-out");
-	
+
+	defineCommandOption("metadata", "scope");
+	defineCommandOption("metadata", "format-type");
+	defineCommandOption("metadata", "file");
+
 	defineCommandOption("status", "unchecked-out");
 
 	defineCommandOption("show", "settup");
@@ -526,7 +534,12 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 
 		if (foundOption("format-type") == true) {
 			std::string opt = optionValue("format-type");
-			appOptions.m_formatType = LogDocument::parse(opt.c_str());
+			if (LogDocument::parse(opt.c_str()) == LogDocument::FormatType::unknown) {
+				printf("Invalid argument for \"FormatType\" \"%s\"\n\n", opt.c_str());
+				printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+				return false;
+			}
+			appOptions.m_option = opt.c_str();
 		}
 
 		if (gotImageAddress == false) {
@@ -546,17 +559,39 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	}
 	else if (command("status") == true) {
 
-	if (foundOption("scope") == true) {
-		appOptions.m_imageAddress = optionValue("scope");
+		if (foundOption("scope") == true) {
+			appOptions.m_imageAddress = optionValue("scope");
+		}
+		if (foundOption("checked-out") == true) {
+			appOptions.m_showCommandOption = SIAArcAppOptions::ShowCommandOption::SC_ShowUncheckedOutChanges;
+		}
+		if (foundOption("unchecked-out") == true) {
+			appOptions.m_showCommandOption = SIAArcAppOptions::ShowCommandOption::SC_ShowUncheckedOutChanges;
+		}
+		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Status);
+		cmdFound = true;
 	}
-	if (foundOption("checked-out") == true) {
-		appOptions.m_showCommandOption = SIAArcAppOptions::ShowCommandOption::SC_ShowUncheckedOutChanges;
-	}
-	if (foundOption("unchecked-out") == true) {
-		appOptions.m_showCommandOption = SIAArcAppOptions::ShowCommandOption::SC_ShowUncheckedOutChanges;
-	}
-	appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Status);
-	cmdFound = true;
+	else if (command("metadata") == true) {
+
+		if (foundOption("scope") == true) {
+			appOptions.m_imageAddress = optionValue("scope");
+		}
+		if (foundOption("file") == true) {
+			std::string opt = optionValue("file");
+			appOptions.m_filePath = opt;
+		}
+
+		if (foundOption("format-type") == true) {
+			std::string opt = optionValue("format-type");
+			if (LogDocument::parse(opt.c_str()) == LogDocument::FormatType::unknown) {
+				printf("Invalid argument for \"FormatType\" \"%s\"\n\n", opt.c_str());
+				printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+				return false;
+			}
+			appOptions.m_option = opt.c_str();
+		}
+		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Metadata);
+		cmdFound = true;
 	}
 	else if (command("version") == true) {
 		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Version);

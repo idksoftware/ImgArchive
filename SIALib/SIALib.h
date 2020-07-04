@@ -152,6 +152,8 @@ namespace simplearchive {
 
 		bool status(const char *scope);
 
+		bool metadata(const char* scope, const char* formatType, const char* filePath);
+
 		bool workspace(bool sync);
 
 		bool metadataTemplate(bool repo, bool templateFile);

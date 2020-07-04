@@ -78,6 +78,18 @@ namespace simplearchive {
 		bool write() override;
 	};
 
+	class MasterDatabaseWriteHuman : WriteHuman {
+
+	public:
+		MasterDatabaseWriteHuman(ResultsList& resultsList);
+		~MasterDatabaseWriteHuman() = default;
+
+		bool write() override;
+	};
+
+	
+
+
 	class ResultsPresentation
 	{
 	public:

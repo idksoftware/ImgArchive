@@ -34,6 +34,7 @@
 
 #include "AppConfig.h"
 #include "SACmdArgs.h"
+#include "ArchivePath.h"
 #include "ArchiveDate.h"
 #include "ArchiveBuilder.h"
 #include "StandardOut.h"
@@ -320,7 +321,7 @@ namespace simplearchive {
 		
 		AppConfig config = AppConfig::get();
 		m_Error = false;
-		
+	
 		m_MasterPath = m_archiveObject.getMasterPath().getRepositoryPath();
 		if (m_MasterPath.empty()) {
 			return false;
@@ -467,8 +468,8 @@ namespace simplearchive {
 		// Read files into folder sets (ImageSets)
 		//
 		logger.log(LOG_ANALISING, CLogger::Level::SUMMARY, "Stage 1: Reading Image files to be processes");
-
-		LightroomImport lightroomImport(m_archiveObject.getMasterPath().getRepositoryPath().c_str(), lightroomPath);
+		std::string repositoryPath = m_archiveObject.getMasterPath().getRepositoryPath();
+		LightroomImport lightroomImport(repositoryPath.c_str(), lightroomPath);
 		if (lightroomImport.makeList() == false) {
 			std::shared_ptr<ImageSets> empty;
 			return empty;

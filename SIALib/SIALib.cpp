@@ -622,12 +622,21 @@ namespace simplearchive {
 		return true;
 	}
 
-	bool SIALib::status(const char *scope) {
+	bool SIALib::metadata(const char *scope, const char* formatType, const char* filePath) {
 
-		
+		CSVDatabase& masterDatabase = CSVDatabase::get();
+		if (masterDatabase.showMasterMetadata(scope, formatType, filePath) == false) {
+			
+			return false;
+		}
+		return true;
+	}
+
+	bool SIALib::status(const char* scope) {
+
 		CheckoutStatus checkoutStatus;
 		if (checkoutStatus.scopedStatus(scope) == false) {
-			
+
 			return false;
 		}
 		return true;

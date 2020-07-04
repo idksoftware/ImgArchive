@@ -339,6 +339,14 @@ bool SIAArcApp::doRun()
 
 		break;
 	}
+	case SIAArcAppOptions::CommandMode::CM_Metadata:
+	{
+		if (siaLib.metadata(appOptions.getImageAddress(), appOptions.getOption(), appOptions.getFilePath()) == false) {
+			setError(CLogger::getLastCode(), CLogger::getLastMessage());
+			return false;
+		}
+		break;
+	}
 	case SIAArcAppOptions::CommandMode::CM_View:
 	{
 		if (siaLib.view(appOptions.getName()) == false) {

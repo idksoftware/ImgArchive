@@ -158,6 +158,7 @@ public:
 		CM_Import,      //< Import(add) one or more images into the archve.
 		CM_Export,      //< Export one or more images out of the archive.
 		CM_Get,         //< Gets images from the archive into the workspace.
+		CM_Metadata,	//< Shows the image metadata.
 		CM_Checkout,    //< Check-out one or more images out of the archive.
 		CM_Checkin,     //< Check-in one or more images into the archive.
 		CM_UnCheckout,  //< Uncheck out one or more images into the archive, any changes will be lost.

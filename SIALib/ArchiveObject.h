@@ -8,6 +8,7 @@
 #include "MasterCatalogue.h"
 #include "SQLiteDB.h"
 #include "IndexVisitor.h"
+#include "ImagePath.h"
 //using namespace SIADBLite;
 
 namespace simplearchive {
