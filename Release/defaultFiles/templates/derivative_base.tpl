@@ -1,0 +1,9 @@
+Comment=My comment
+Description=My description here
+Keywords=My,Image,Keywords,go,in,here
+Label=My Lable of the image
+Rating=4
+RatingPercent=60
+Subject=My Subject of image
+Tags=My,Tags,go,in,here
+Title=My Title of image

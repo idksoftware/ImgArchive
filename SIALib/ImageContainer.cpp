@@ -163,6 +163,8 @@ void ImageContainer::print() {
 	logger.log(LOG_OK, CLogger::Level::SUMMARY, "Item Name: %s", m_Name.c_str());
 	if (hasPictureFile()) {
 		logger.log(LOG_OK, CLogger::Level::SUMMARY, "PictureFile: %s", m_PictureNode->getFile().c_str());
+		MTRow row = m_PictureNode->getMetadataObject();
+		row.print();
 	}
 	else
 	{
@@ -170,6 +172,8 @@ void ImageContainer::print() {
 	}
 	if (hasRawFile()) {
 		logger.log(LOG_OK, CLogger::Level::SUMMARY, "Has RAW File: %s", m_RawNode->getFile().c_str());
+		MTRow row = m_RawNode->getMetadataObject();
+		row.print();
 	}
 	else {
 		logger.log(LOG_OK, CLogger::Level::SUMMARY, "No RAW File");

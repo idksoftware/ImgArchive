@@ -446,8 +446,7 @@ public:
 			return false;
 		}
 		std::vector<std::string>::iterator arg = csvArgs.begin();
-		for (auto i = this->begin(); i != this->end(); i++, arg++) {
-			
+		for (auto i = this->begin(); i != this->end(); i++, arg++) {	
 			if (arg == csvArgs.end()) {
 				break;
 			}
@@ -455,7 +454,6 @@ public:
 			SharedMTColumn column = *i;
 			column->fromString(argStr.c_str());
 		}
-
 		return true;
 	}
 
@@ -466,9 +464,6 @@ public:
 	const MTTableSchema& getSchema() const {
 		return m_schema;
 	}
-
-	
-	
 };
 
 using SharedMTRow = std::shared_ptr<MTRow>;

@@ -540,7 +540,7 @@ namespace simplearchive {
 		metatemplatePath += "/master.tpl";
 
 		if (MetadataTemplateManager::readMaster(m_templatePath.c_str(), "master.tpl") == false) {
-			logger.log(LOG_OK, CLogger::Level::INFO, "Cannot read master template file \"%s\"", metatemplatePath.c_str());
+			logger.log(LOG_OK, CLogger::Level::WARNING, "Cannot read master template file \"%s\"", metatemplatePath.c_str());
 		}
 		logger.log(LOG_OK, CLogger::Level::INFO, "Completed reading metadata template file \"%s\"", metatemplatePath.c_str());
 		// Creating metadata object with bulk data
@@ -710,10 +710,10 @@ namespace simplearchive {
 				if (exifObject != nullptr) {
 					copyExternalExif(metadataObject, *exifObject);
 				}
-				//print(metadataObject);
+				print(metadataObject);
 				
 				imageGroup->add(BasicMetadataPtr, metadataObjectPtr);
-				//imageGroup->print();
+				imageGroup->print();
 				logger.log(LOG_OK, CLogger::Level::INFO, "completed Stage 2 \"%s\"", imageItem->getFilename().c_str());
 				
 				

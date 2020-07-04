@@ -42,6 +42,8 @@ add --source-path="D:\tmp_pics"
 
 import --source-path="D:\ia_test"
 
+metadata --format-type=XML
+
 checkin --image-address="2017-01-16/DSC01278.JPG" --comment "A comment"
 checkin --force --image-address="2017-01-16/DSC01278.JPG" --comment "A comment"
 
