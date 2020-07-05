@@ -162,7 +162,7 @@ public:
 		CM_Checkout,    //< Check-out one or more images out of the archive.
 		CM_Checkin,     //< Check-in one or more images into the archive.
 		CM_UnCheckout,  //< Uncheck out one or more images into the archive, any changes will be lost.
-		CM_Version,     //< Show the current version/build of this software.
+		CM_About,     //< Show the current version/build of this software.
 		CM_View,        //< Manages veiws that are generated from the archive.
 		CM_Uncheckin,   //< ? this may not be used.
 		CM_Show,        //< This shows the current state of archive properties.

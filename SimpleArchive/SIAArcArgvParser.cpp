@@ -275,7 +275,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	bool cmdFound = false;
 
 	if (command("about") == true) {
-		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Version);
+		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_About);
 		cmdFound = true;
 	}
 
@@ -593,10 +593,10 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Metadata);
 		cmdFound = true;
 	}
-	else if (command("version") == true) {
-		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Version);
-		cmdFound = true;
-	}
+	//else if (command("version") == true) {
+	//	appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Version);
+	//	cmdFound = true;
+	//}
 	else if (command("mode") == true) {
 		if (foundOption("remote-server") == true) {
 			config.setServerModeON();
