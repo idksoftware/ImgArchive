@@ -77,8 +77,7 @@ using namespace std;
 #include "SetImageExtentionFile.h"
 #include "AboutCommand.h"
 
-#define VERSION	"1.00"
-#define BUILD	"040115.1749"
+
 #define DB "c:/temp/test3.db"
 /*
 java version "1.7.0_51"
@@ -165,7 +164,7 @@ namespace simplearchive {
 	}
 
 	bool AdminApp::About(const char* outputType, const char* filename) {
-		AboutCommand aboutCommand(VERSION, BUILD);
+		AboutCommand aboutCommand("Administrator", "iaadmin", VERSION, BUILD);
 		aboutCommand.setOutputFile(filename);
 		aboutCommand.setTextOutputType(outputType);
 		

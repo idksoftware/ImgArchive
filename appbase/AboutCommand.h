@@ -1,6 +1,5 @@
 #pragma once
-//#include "ImageExtentions.h"
-//#include "TextOut.h"
+
 #include <string>
 
 class AboutCommand
@@ -9,8 +8,15 @@ class AboutCommand
 	std::string m_textOutputType;
 	std::string m_version;
 	std::string m_build;
+	std::string m_name;
+	std::string m_appName;
 public:
-	AboutCommand(const char* v, const char* b) : m_version(v), m_build(b) {};
+	AboutCommand(const char* name, const char* appName, const char* v, const char* b)
+		: m_version(v),
+		  m_build(b),
+		  m_name(name),
+		  m_appName(appName)
+	{};
 	~AboutCommand() = default;
 	void setOutputFile(const char* s);
 	void setTextOutputType(const char* s);

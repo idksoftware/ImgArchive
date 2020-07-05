@@ -9,6 +9,9 @@
 #include <string>
 #include "SIAArgvParser.h"
 
+#define VERSION	"1.00"
+#define BUILD	"040115.34e7500"
+
 
 namespace CommandLineProcessing {
 

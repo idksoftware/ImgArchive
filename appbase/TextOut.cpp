@@ -1,11 +1,16 @@
 
 #include "TextOut.h"
-#include "AppConfig.h"
+//#include "AppConfig.h"
 #include "SAUtils.h"
 #include <stdio.h>
 #include <sstream>
 #include <iostream>
 #include <fstream>
+
+#define PLAIN_TEXT_LABEL		"plain"
+#define XML_LABEL				"xml"
+#define JSON_LABEL				"json"
+#define HTML_LABEL				"html"
 
 std::string TextOut::writePlainTag(const char* tag, const char* v) {
 	const std::string& value = v;
@@ -94,8 +99,8 @@ bool TextOut::parseTextOutType(const char *s)
 		m_textOutType = TextOutType::html;
 		return true; 
 	}
-	m_textOutType = TextOutType::unknown;
-	return false;
+	m_textOutType = TextOutType::plain;
+	return true;
 }
 
 std::string TextOut::toString() {

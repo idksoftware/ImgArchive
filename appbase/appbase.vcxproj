@@ -136,14 +136,17 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AboutCommand.h" />
     <ClInclude Include="AppBase.h" />
     <ClInclude Include="AppOptions.h" />
     <ClInclude Include="argvparser.h" />
     <ClInclude Include="EnvFunc.h" />
     <ClInclude Include="ParseOptions.h" />
     <ClInclude Include="SIAArgvParser.h" />
+    <ClInclude Include="TextOut.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AboutCommand.cpp" />
     <ClCompile Include="AppBase.cpp" />
     <ClCompile Include="AppOptions.cpp" />
     <ClCompile Include="argvparser.cpp" />
@@ -152,6 +155,7 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">../util</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="SIAArgvParser.cpp" />
+    <ClCompile Include="TextOut.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

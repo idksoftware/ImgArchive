@@ -51,7 +51,7 @@
 #include "MakeMedia.h"
 #include "MirrorManager.h"
 #include "ViewManager.h"
-
+#include "AboutCommand.h"
 
 #include "SummaryFile.h"
 #include "IntegrityManager.h"
@@ -81,7 +81,7 @@ using namespace std;
 #define MAJORVERSION 0
 #define MINORVERSION 9
 #define REVISION     91
-#define BUILD	"040115.1749"
+
 
 
 
@@ -126,6 +126,17 @@ protected:
 	}
 };
 
+bool SIAArcApp::about(const char* outputType, const char* filename) {
+	AboutCommand aboutCommand("Administrator", "iaadmin", VERSION, BUILD);
+	aboutCommand.setOutputFile(filename);
+	aboutCommand.setTextOutputType(outputType);
+
+	if (aboutCommand.process() == false) {
+		return false;
+	}
+
+	return true;
+}
 
 bool SIAArcApp::initaliseArgs(int argc, char **argv) {
 	
@@ -411,24 +422,7 @@ bool SIAArcApp::doRun()
 	
 	case SIAArcAppOptions::CommandMode::CM_About:
 	{
-		/*
-		openjdk version "11.0.7" 2020-04-14
-OpenJDK Runtime Environment (build 11.0.7+10-post-Ubuntu-3ubuntu1)
-OpenJDK 64-Bit Server VM (build 11.0.7+10-post-Ubuntu-3ubuntu1, mixed mode, sharing)
-		*/
-		std::string platform;
-#ifdef _WIN64
-		platform = "64 bit Windows ";
-#elif _WIN32
-		platform = "32 bit Windows";
-#else
-		platform = "64 bit Linux";
-#endif
-		printf("iaarc version \"%d.%d.%d\" %s\n"
-			"ImgArchive %s (build %s)\n"
-			"Copyright@(2010-2016) IDK Sftware Ltd.\n", MAJORVERSION, MINORVERSION, REVISION, __DATE__, platform.c_str(), BUILD);
-
-		return true;
+		return about(appOptions.getTextOutputType(), appOptions.getOutputFile());
 	}
 	case SIAArcAppOptions::CommandMode::CM_Unknown:
 		setError(CLogger::getLastCode(), CLogger::getLastMessage());

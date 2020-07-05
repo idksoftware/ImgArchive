@@ -149,7 +149,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="AboutCommand.h" />
     <ClInclude Include="AdminApp.h" />
     <ClInclude Include="AdminAppOptions.h" />
     <ClInclude Include="AdminArgvParser.h" />
@@ -160,11 +159,9 @@
     <ClInclude Include="ShowCommand.h" />
     <ClInclude Include="SyncCommand.h" />
     <ClInclude Include="TestArchive.h" />
-    <ClInclude Include="TextOut.h" />
     <ClInclude Include="UpdateConfig.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AboutCommand.cpp" />
     <ClCompile Include="AdminApp.cpp" />
     <ClCompile Include="AdminAppOptions.cpp" />
     <ClCompile Include="AdminArgvParser.cpp" />
@@ -175,7 +172,6 @@
     <ClCompile Include="ShowCommand.cpp" />
     <ClCompile Include="SyncCommand.cpp" />
     <ClCompile Include="TestArchive.cpp" />
-    <ClCompile Include="TextOut.cpp" />
     <ClCompile Include="UpdateConfig.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

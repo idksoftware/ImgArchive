@@ -223,6 +223,8 @@ private:
     static std::string m_FromDate;
     static std::string m_ToDate;
 	static std::string m_option;
+	static std::string m_outputFile;
+	static std::string m_textOutputType;
 	ShowCommandOption m_showCommandOption;
 
 	static DefaultArgumentsContainer defaultArgumentsContainer;
@@ -262,6 +264,8 @@ public:
     const char* getFromDate();
     const char* getToDate();
 	const char* getOption();
+	const char* getOutputFile();
+	const char* getTextOutputType();
 
     //* Is the list option valid
 	bool isEnventsOn();

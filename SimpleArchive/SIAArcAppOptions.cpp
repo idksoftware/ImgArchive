@@ -79,6 +79,8 @@ std::string SIAArcAppOptions::m_version = "last";
 std::string SIAArcAppOptions::m_FromDate;
 std::string SIAArcAppOptions::m_ToDate;
 std::string SIAArcAppOptions::m_option;
+std::string SIAArcAppOptions::m_outputFile;
+std::string SIAArcAppOptions::m_textOutputType;
 
 int SIAArcAppOptions::m_udpPortNum = 64321;
 std::string SIAArcAppOptions::m_udpAddress = "127.0.0.1";
@@ -221,6 +223,15 @@ bool SIAArcAppOptions::isCurrent()
 bool SIAArcAppOptions::isMaster()
 {
 	return m_master;
+}
+
+const char* SIAArcAppOptions::getOutputFile()
+{
+	return m_outputFile.c_str();
+}
+const char* SIAArcAppOptions::getTextOutputType()
+{
+	return m_textOutputType.c_str();
 }
 
 ExifDate &SIAArcAppOptions::getArchiveDate() {

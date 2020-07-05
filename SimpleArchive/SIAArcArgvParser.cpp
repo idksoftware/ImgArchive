@@ -275,6 +275,21 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	bool cmdFound = false;
 
 	if (command("about") == true) {
+		if (foundOption("out") == true) {
+			OutputType outputType;
+			std::string outType = optionValue("out");
+			if (outputType.parse(optionValue("out").c_str()) == false) {
+				printf("Option for argument \"out\" for sub-command: %s is invalid: %s\n\n", getCurrentCommand().c_str(), optionValue("out").c_str());
+				printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+				return false;
+			}
+			else {
+				appOptions.m_textOutputType = optionValue("out");
+			}
+		}
+		if (foundOption("file") == true) {
+			appOptions.m_outputFile = optionValue("file");
+		}
 		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_About);
 		cmdFound = true;
 	}
