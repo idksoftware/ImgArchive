@@ -500,8 +500,6 @@ namespace simplearchive {
 		
 		TargetsList targetsList;
 		targetsList.process(sourcePath);
-
-		
 		m_folders = TargetsList::getFolderCount();
 		m_folders++;
 		m_imageFiles = TargetsList::getFileCount();
@@ -511,7 +509,6 @@ namespace simplearchive {
 			// No images to process
 			return nullptr;
 		}
-		
 		return imageSets;
 	}
 
@@ -674,7 +671,6 @@ namespace simplearchive {
 					}
 				}
 				
-				
 				// Not a dup so add to group. 
 				if (!BasicMetadata.isExifFound()) {
 					logger.log(LOG_OK, CLogger::Level::INFO, "No simple EXIF infomation found in \"%s\"", imageItem->getFilename().c_str());
@@ -710,14 +706,10 @@ namespace simplearchive {
 				if (exifObject != nullptr) {
 					copyExternalExif(metadataObject, *exifObject);
 				}
-				print(metadataObject);
-				
+				//print(metadataObject);
 				imageGroup->add(BasicMetadataPtr, metadataObjectPtr);
-				imageGroup->print();
+				//imageGroup->print();
 				logger.log(LOG_OK, CLogger::Level::INFO, "completed Stage 2 \"%s\"", imageItem->getFilename().c_str());
-				
-				
-				
 			}
 			if (!m_doDryRun) {
 				logger.log(LOG_IMPORTING, CLogger::Level::SUMMARY, "Stage 3: Archiving images");
@@ -730,9 +722,6 @@ namespace simplearchive {
 					}
 					m_imageFilesCompleted++;
 				}
-
-				
-				
 				logger.log(LOG_IMPORTING, CLogger::Level::SUMMARY, "Completed Stage 3: Archiving images");
 			}
 			else {

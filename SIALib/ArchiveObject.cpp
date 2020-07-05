@@ -983,7 +983,11 @@ namespace simplearchive {
 			return false;
 		}
 
-		if (m_masterView->addImage(imagePath.getCurrentSourcePath().c_str(), metadataObject, filepath.c_str()) == false) {
+		std::string sourcePath = imagePath.getCurrentSourcePath();
+		sourcePath += '/';
+		sourcePath += imagePath.getOrginalName();
+
+		if (m_masterView->addImage(sourcePath.c_str(), metadataObject, filepath.c_str()) == false) {
 			logger.log(LOG_OK, CLogger::Level::ERR, "Unable to preview file: \"%s\" Error: %s", filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
 		}
 

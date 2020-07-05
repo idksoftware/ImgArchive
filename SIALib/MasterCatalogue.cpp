@@ -170,7 +170,7 @@ namespace simplearchive {
 		}
 		else if (type.getType() == ImageType::Type::RAW_EXT) {
 			fileOut += ".jpg";
-			if (convertRAW(source, m_tempPath, file, fileOut) == false) {
+			if (convertRAW(source, m_tempPath, fileOut) == false) {
 				return false;
 			}
 			if (isWWWFullSize() == true) {
@@ -220,43 +220,9 @@ namespace simplearchive {
 
 		ImageType type = extItem->getType();
 		std::string fileOut = file;
-		if (type.getType() == ImageType::Type::PICTURE_EXT) {
-			if (copyFile(source, m_tempPath, file) == false) {
-				return false;
-			}
-			if (isFileFullSize() == true) {
-				if (copyFile(m_tempPath, dist, fileOut) == false) {
-					return false;
-				}
-			}
-			if (isFilePreview1() == true || isFilePreview2() == true || isFilePreview3() == true || isFileThumbnail() == true) {
-				if (createFilePreviews(m_tempPath, yyyymmddimg) == false) {
-					return false;
-				}
-			}
-		}
-		else if (type.getType() == ImageType::Type::RAW_EXT) {
-			fileOut += ".jpg";
-			if (convertRAW(source, m_tempPath, file, fileOut) == false) {
-				return false;
-			}
-			if (isFileFullSize() == true) {
-				if (copyFile(m_tempPath, dist, fileOut) == false) {
-					return false;
-				}
-			}
-			if (isFilePreview1() == true || isFilePreview2() == true || isFilePreview3() == true || isFileThumbnail() == true) {
-				yyyymmddimg += ".jpg";
-				if (createFilePreviews(m_tempPath, yyyymmddimg) == false) {
-					return false;
-				}
-			}
-		}
-		else {
-			ErrorCode::setErrorCode(IMGA_ERROR::INVALID_IMAGE_TYPE);
+		if (copyFile(source, dist, file) == false) {
 			return false;
 		}
-
 		std::string metaPath = m_viewFilePath->getMetadataPath().c_str();
 		if (createFileMetadata(metadataObject, metaPath) == false) {
 			return false;
@@ -588,7 +554,7 @@ namespace simplearchive {
 
 	bool MasterCatalogue::copyFile(const std::string &source, const std::string &dist, const std::string &file) {
 
-		std::string from = source + "/" + file;
+		std::string from = source;
 		std::string to = dist + '/' + file;
 
 		if (SAUtils::FileExists(from.c_str()) == false) {
@@ -604,9 +570,9 @@ namespace simplearchive {
 		return true;
 	}
 
-	bool MasterCatalogue::convertRAW(const std::string &source, const std::string &dist, const std::string &fileIn, const std::string &fileOut) {
+	bool MasterCatalogue::convertRAW(const std::string &source, const std::string &dist, const std::string &fileOut) {
 
-		std::string from = source + "/" + fileIn;
+		std::string from = source;
 		std::string to = dist + '/' + fileOut;
 
 		if (SAUtils::FileExists(from.c_str()) == false) {
@@ -688,43 +654,42 @@ namespace simplearchive {
 
 	bool ViewPath::settup() {
 
-
-		// Master Archive
 		std::string dataFolder = m_pathToRepository;
 		if (SAUtils::DirExists(dataFolder.c_str()) == false) {
 			if (SAUtils::mkDir(dataFolder.c_str()) == false) {
 				return false;
 			}
 		}
-
-
-		if (m_indexPath.empty() == true) {
-
-			m_indexPath = dataFolder + IMAGES_PATH;
-
-			if (SAUtils::DirExists(m_indexPath.c_str()) == false) {
-				if (SAUtils::mkDir(m_indexPath.c_str()) == false) {
-					return false;
-				}
-			}
-
-		}
+		m_indexPath = dataFolder;
 		return true;
 	}
 
+	/*
+	PathController pathController(m_dbpath.c_str());
+	pathController.splitShort(relpath);
 
+	std::string fullPath = m_dbpath;
+	fullPath += '/';
+	fullPath += pathController.getYear();
+	if (SAUtils::DirExists(fullPath.c_str()) == false) {
+		if (SAUtils::mkDir(fullPath.c_str()) == false) {
+			throw std::exception();
+		}
+	}
 
-	bool ViewPath::settupRelative(std::string &yyyymmddStr) {
+	MetadataPartition metadataPartition;
+	std::string filename = pathController.getYearday() + ".csv";
+	*/
+
+	bool ViewPath::settupRelative(std::string &imageAddress) {
 
 		PathController pathController;
+		pathController.splitPathAndFile(imageAddress.c_str());
 
-		pathController.splitPathAndFile(yyyymmddStr.c_str());
 		m_imageName = pathController.getImageName();
-		m_yearStr = yyyymmddStr.substr(0, 4);
+		m_yearStr = pathController.getYear();
 		m_yyyymmddStr = pathController.getYearday();
-
 		m_relpath = pathController.getRelativePath();
-
 
 		m_yearStrPath = m_indexPath + '/' + pathController.getYear();
 		if (SAUtils::DirExists(m_yearStrPath.c_str()) == false) {
@@ -741,8 +706,8 @@ namespace simplearchive {
 			}
 
 		}
-		m_imagePath = m_yyyymmddStrPath + MASTER_IMAGE_PATH;
-		m_metadataPath = m_yyyymmddStrPath + METADATA_PATH;
+		m_imagePath = m_yyyymmddStrPath;
+		m_metadataPath = m_yyyymmddStrPath + WORKSPACE_METADATA_PATH;
 
 
 		if (SAUtils::DirExists(m_imagePath.c_str()) == false) {

@@ -85,7 +85,7 @@ namespace simplearchive {
 		bool createFileMetadata(MetadataObject &metadataObject, std::string &imageRelativePath);
 		bool copyFile(const std::string &source, const std::string &dist, const std::string &file);
 		bool copyFile(const std::string &source, const std::string &dist, const std::string &sfile, const std::string &dfile);
-		bool convertRAW(const std::string &source, const std::string &dist, const std::string &fileIn, const std::string &fileOut);
+		bool convertRAW(const std::string &source, const std::string &dist, const std::string &fileOut);
 		bool initWWW(const char *tempPath, const char *templatePath, const char* htmlPath);
 		
 		std::vector<std::string> m_daysProcessed;
