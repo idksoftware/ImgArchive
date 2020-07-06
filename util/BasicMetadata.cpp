@@ -546,6 +546,10 @@ void BasicMetadata::setCopyright(const std::string& copyright) {
 //	m_dateTime = dateTime;
 //}
 
+bool BasicMetadata::getDateTimeDigitizedNull() const {
+	return columnAt(static_cast<int>(BasicMetadataIndex::BM_CAPTUREDATE_IDX)).isNull();
+}
+
 const ExifDateTime &BasicMetadata::getDateTimeDigitized() const {
 	return columnAt(static_cast<int>(BasicMetadataIndex::BM_CAPTUREDATE_IDX)).getDate();
 }

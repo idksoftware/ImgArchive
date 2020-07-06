@@ -210,6 +210,10 @@ public:
 		return columnAt(static_cast<int>(MetadataObjectIndex::MD_CAPTUREDATE_IDX)).toString().c_str();
 	}
 
+	bool isCaptureDateNull() const {
+		return columnAt(static_cast<int>(MetadataObjectIndex::MD_CAPTUREDATE_IDX)).isNull();
+	}
+
 	const ExifDateTime& getCaptureDate() const {
 		return columnAt(static_cast<int>(MetadataObjectIndex::MD_CAPTUREDATE_IDX)).getDate();
 	}

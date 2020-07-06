@@ -160,13 +160,15 @@ namespace simplearchive {
 	
 		if (rawMetadata != nullptr) {
 			try {
-				
-				const ExifDateTime captureDate = rawMetadata->getCaptureDate();
-				m_exifDate.reset(new ExifDate(captureDate));
-				if (m_exifDate->isOk() == true) {
-					//logger.log(LOG_OK, CLogger::Level::SUMMARY, "Image \"%s\" will be archived under the date: %s", ic.getName(), m_exifDate->toString().c_str());
-					m_usingDate = USING_CAPTURE_RAW_DATE;
-					return true;	// Found date
+				if (rawMetadata->isCaptureDateNull() == false) {
+					const ExifDateTime captureDate = rawMetadata->getCaptureDate();
+					m_exifDate.reset(new ExifDate(captureDate));
+					if (m_exifDate->isOk() == true) {
+						//logger.log(LOG_OK, CLogger::Level::SUMMARY, "Image \"%s\" will be archived under the date: %s", ic.getName(), m_exifDate->toString().c_str());
+						m_usingDate = USING_CAPTURE_RAW_DATE;
+						return true;	// Found date
+					}
+					m_usingDate = UNKNOWN;
 				}
 				m_usingDate = UNKNOWN;
 			}
@@ -194,12 +196,14 @@ namespace simplearchive {
 		}
 		if (picMetadata != nullptr) {
 			try {
-				const ExifDateTime captureDate = picMetadata->getCaptureDate();
-				m_exifDate = std::make_shared<ExifDate>(captureDate);
-				if (m_exifDate->isOk() == true) {
-					//logger.log(LOG_OK, CLogger::Level::SUMMARY, "Image \"%s\" will be archived under the date: %s", ic.getName(), m_exifDate->toString().c_str());
-					m_usingDate = USING_CAPTURE_PIC_DATE;
-					return true;
+				if (picMetadata->isCaptureDateNull() == false) {
+					const ExifDateTime captureDate = picMetadata->getCaptureDate();
+					m_exifDate = std::make_shared<ExifDate>(captureDate);
+					if (m_exifDate->isOk() == true) {
+						//logger.log(LOG_OK, CLogger::Level::SUMMARY, "Image \"%s\" will be archived under the date: %s", ic.getName(), m_exifDate->toString().c_str());
+						m_usingDate = USING_CAPTURE_PIC_DATE;
+						return true;
+					}
 				}
 				m_usingDate = UNKNOWN;
 			}
@@ -212,12 +216,14 @@ namespace simplearchive {
 		
 		if ((picId != nullptr) && (picId->isExifFound())) {
 			try {
-				const ExifDateTime& captureDate = picId->getDateTimeDigitized();
-				m_exifDate = std::make_shared<ExifDate>(captureDate);
-				if (m_exifDate->isOk() == true) {
-					//logger.log(LOG_OK, CLogger::Level::SUMMARY, "Image \"%s\" will be archived under the date: %s", ic.getName(), m_exifDate->toString().c_str());
-					m_usingDate = USING_CAPTURE_PIC_DATE;
-					return true;
+				if (picId->getDateTimeDigitizedNull() == false) {
+					const ExifDateTime& captureDate = picId->getDateTimeDigitized();
+					m_exifDate = std::make_shared<ExifDate>(captureDate);
+					if (m_exifDate->isOk() == true) {
+						//logger.log(LOG_OK, CLogger::Level::SUMMARY, "Image \"%s\" will be archived under the date: %s", ic.getName(), m_exifDate->toString().c_str());
+						m_usingDate = USING_CAPTURE_PIC_DATE;
+						return true;
+					}
 				}
 				m_usingDate = UNKNOWN;
 			}

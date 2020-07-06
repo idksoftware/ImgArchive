@@ -355,6 +355,7 @@ public:
 //	void setDateTime(const std::string& dateTime);
 
 	const ExifDateTime& getDateTimeDigitized() const;
+	bool getDateTimeDigitizedNull() const;
 	void setDateTimeDigitized(ExifDateTime& dateTimeDigitized);
 
 //	const std::string& getDateTimeOriginal() const;

@@ -745,7 +745,7 @@ namespace simplearchive {
 				std::string source = item->getSourceImage();
 
 				if (item->getResultEnum() == ImportJournal::Result::Imported) {
-					logger.log(LOG_OK, CLogger::Level::INFO, "Validating image \"%s\"", location.c_str());
+					logger.log(LOG_OK, CLogger::Level::STATUS, "Validating image \"%s\"", location.c_str());
 					if (mdb.validate(location.c_str(), source.c_str()) == true) {
 						item->setValidated();
 					}
