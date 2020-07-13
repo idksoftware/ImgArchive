@@ -415,17 +415,41 @@ public:
 		for (auto i = this->begin(); i != this->end(); i++) {
 			SharedMTColumn column = *i;
 			std::shared_ptr<MTSchema> mtSchema = column->getMTSchemaItem();
+			std::string tmp;
 			if (mtSchema == nullptr) {
 				continue;
 			}
 			
 			if (first) {
-			first = false;
-			text = escapeString(column->toString());
+				first = false;
+				
+				if (mtSchema->getType() == MTSchema::EItemType::Date) {
+					if (column->isNull()) {
+						//text = "0.0.0.0.0.0";
+						printf("%s\n", text.c_str());
+					}
+				}
+				else {
+					//text = escapeString(column->toString());
+				}
+				tmp = escapeString(column->toString());
+				text = tmp;
 			}
 			else {
-			text += m_delim;
-			text += escapeString(column->toString());
+				text += m_delim;
+				
+				if (mtSchema->getType() == MTSchema::EItemType::Date) {
+					if (column->isNull()) {
+						//text += "0.0.0.0.0.0";
+						printf("%s\n", text.c_str());
+					}
+				}
+				else {
+					//text += escapeString(column->toString());
+				}
+				tmp = escapeString(column->toString());
+				text += tmp;
+				//text += escapeString(column->toString());
 			}
 		}
 		return text;
