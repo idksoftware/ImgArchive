@@ -101,14 +101,21 @@ bool ExternalComand::init(const char *externalCommandLine, const char *exifMapPa
 }
 
 // python exif.py [input] [output]
-ExifObject *ExternalComand::process(const char *imagefile) {
+
+
+
+ExifObject *ExternalComand::process(const char *path, const char* file) {
 	CLogger &logger = CLogger::getLogger();
 	ExifObject *exifObject = nullptr;
+	std::string imagefile = path;
+	imagefile += '/';
+	imagefile += file;
+
 	std::string in = "\""; in += imagefile; in += "\"";
 
 	ExternalShell externalShell;
 	ExternalExifMapper externalExifMapper;
-	if (findToken(m_commandLine, "output") == false) {
+	if (findToken(m_commandLine, "exif") == false) {
 		std::string cmd = replace(m_commandLine, in);
 		logger.log(LOG_OK, CLogger::Level::FINE, "Using Exif command: \"%s\"", cmd.c_str());
 		externalShell.exec(cmd.c_str());
@@ -122,7 +129,7 @@ ExifObject *ExternalComand::process(const char *imagefile) {
 	else {
 		std::string out = m_tempPath;
 		out += '/';
-		out += SAUtils::getFilenameNoExt(imagefile);
+		out += SAUtils::getFilenameNoExt(file);
 		
 		out.append(".exf");
 		std::string cmd = replace(m_commandLine, in, out);
@@ -160,8 +167,8 @@ std::string ExternalComand::replaceToken(std::string &str, const char *toklabel,
 std::string ExternalComand::replace(std::string &commandLine, std::string &in, std::string &out) {
 	CLogger &logger = CLogger::getLogger();
 	std::string command = commandLine;
-	command = replaceToken(command, "[input]", in.c_str());
-	command = replaceToken(command, "[output]", out.c_str());
+	command = replaceToken(command, "[source]", in.c_str());
+	command = replaceToken(command, "[exif]", out.c_str());
 	logger.log(LOG_OK, CLogger::Level::FINE, "Exif command line to be executed \"%s\"", command.c_str());
 	return command;
 }
@@ -169,20 +176,24 @@ std::string ExternalComand::replace(std::string &commandLine, std::string &in, s
 std::string ExternalComand::replace(std::string &commandLine, std::string &in) {
 	CLogger &logger = CLogger::getLogger();
 	std::string command = commandLine;
-	command = replaceToken(command, "[input]", in.c_str());
+	command = replaceToken(command, "[source]", in.c_str());
 	logger.log(LOG_OK, CLogger::Level::FINE, "Exif command line to be executed \"%s\"", command.c_str());
 	return command;
 }
 
 bool ExternalComand::findToken(std::string &str, const char *toklabel) {
-	size_t s = str.find_first_of("[");
-	if (s == -1) {
-		return false;
-	}
-	std::string tok = toklabel;
-	std::string tokstr = str.substr(s, tok.length());
-	if (tokstr.compare(tok) != 0) {
-		return false;
+	std::string tstr = str;
+	while (1) {
+		size_t pos = tstr.find_first_of("[");
+		if (pos == -1) {
+			return false;
+		}
+		std::string tok = toklabel;
+		std::string tokstr = tstr.substr(pos+1, tok.length());
+		if (tokstr.compare(tok) == 0) {
+			return true;
+		}
+		tstr = tstr.substr(pos + tok.length());
 	}
 	return true;
 }

@@ -183,6 +183,7 @@ namespace simplearchive {
 		//RepositoryObject m_backup[2];
 		DerivativesObject m_derivatives;
 		std::unique_ptr<MasterCatalogue> m_masterView;
+		std::unique_ptr<MasterWWWCatalogue> m_wwwView;
 		std::unique_ptr<PrimaryIndexObject> m_PrimaryIndexObject;
 		
 		bool isWorkspaceEnabled();
@@ -265,6 +266,7 @@ namespace simplearchive {
 		MasterRepositoryObject& getMasterObject();
 		
 		MasterCatalogue& getMasterCatalogue();
+		MasterWWWCatalogue& getWWWCatalogue();
 
 		bool imageHistory(const char *imageFilepath, const LogDocument::FormatType& formatType, const char* filepath);
 		bool systemHistory(const char* from, const char* to, LogDocument::FormatType formatType, const char* filepath);

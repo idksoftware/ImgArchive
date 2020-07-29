@@ -84,6 +84,7 @@
 #define EXIF_MAP_FILE_LABEL				"ExifMapFile"
 #define EXIF_TOOL_LABEL					"ExifTool"
 #define EXIF_COMMANDLINE_LABEL			"ExifCommandLine"
+#define EXIF_FILE_DELIM_LABEL			"ExifFileDelim"
 #define TEMPLATE_PATH_LABEL				"TemplatePath"
 #define CATALOG_PATH_LABEL				"CatalogPath"
 #define WORKSPACE_PATH_LABEL			"WorkspacePath"

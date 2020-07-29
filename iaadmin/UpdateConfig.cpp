@@ -87,7 +87,7 @@ namespace simplearchive {
 		}
 		AppConfigBaseWriter configWriter(imgaConfig);
 		configWriter.update(configOptionBlock, configOption, configValue);
-		imgaConfig.printAll();
+		//imgaConfig.printAll();
 		std::ofstream configFile;
 		configFile.open(m_configfile.c_str());
 		//configFile.open("C:\\temp\\t.dat");
@@ -95,7 +95,7 @@ namespace simplearchive {
 			return false;
 		}
 		configFile << imgaConfig;
-		std::cout << imgaConfig;
+		//std::cout << imgaConfig;
 		configFile.close();
 		
 		return true;

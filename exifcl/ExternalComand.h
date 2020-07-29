@@ -53,7 +53,8 @@ public:
 	/// @brief Distructor for class.
 	virtual ~ExternalComand();
 	bool init(const char *externalCommandLine, const char *exifMapFile);
-	ExifObject *process(const char *imageFile);
+	ExifObject *process(const char *imageFile, const char* filename);
+	//bool processLine()
 	std::string getDate();
 	std::string replace(std::string &commandLine, std::string &in, std::string &out);
 	std::string replace(std::string &commandLine, std::string &in);

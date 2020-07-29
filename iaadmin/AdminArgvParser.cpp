@@ -66,10 +66,13 @@ namespace simplearchive {
 		defineOption("sync", "This command synchronises the primary archives with there associated backups.", ArgvParser::MasterOption);
 		//defineOptionAlternative("archive", "a");
 		defineCommandSyntax("sync", "isadmin sync --master-with=[backup1] | [backup2] | [Both]\n"
-											 "--derivative-with=[backup1] | [backup2] | [Both]\n");
+												"--derivative-with=[backup1] | [backup2] | [Both]\n"
+												"--workspace --force\n"
+												"--catalogue\n"
+												"--www\n");
 
-		defineOption("master-with", "Sync this archive with named backup or both", ArgvParser::MasterOption);
-		defineOption("derivative-with", "Sync this archive with named backup or both", ArgvParser::MasterOption);
+		defineOption("master-with", "Sync this archive with named backup or both", ArgvParser::OptionRequiresValue);
+		defineOption("derivative-with", "Sync this archive with named backup or both", ArgvParser::OptionRequiresValue);
 
 		defineOption("about", "prints the version information", ArgvParser::MasterOption);
 		defineCommandSyntax("about", "about [--out] [--file]\n");
@@ -140,8 +143,9 @@ namespace simplearchive {
 		defineOption("exiftool", "Configure exit look intergration", ArgvParser::OptionRequiresValue);
 		defineOptionAlternative("exiftool", "E");
 		defineCommandSyntax("exiftool", "--exiftool <Option=Value>\n"
-			"[ExifMapPath=<path>] | [ExifMapFile=<filename>]\n"
-			"[ExifTool=<path>] | [ExifCommandLine=<argumentlist>]");
+									"[ExifMapPath=<path>] | [ExifMapFile=<filename>]\n"
+									"[ExifFileDelim=<character>]\n"
+									"[ExifTool=<path/name>] | [ExifCommandLine=<argumentlist>]");
 
 		defineOption("master", "This section controls the master archive", ArgvParser::OptionRequiresValue);					
 		defineOptionAlternative("master", "M");
@@ -154,6 +158,10 @@ namespace simplearchive {
 		defineCommandSyntax("derivative", "--derivative <Option=Value>\n"
 			"[BackupOneEnabled=<Enabled|Disabled>] | [BackupTwoEnabled=<Enabled|Disabled>] |\n"
 			"[BackupOne=<path>] | [BackupTwo=<path>]");
+
+		//defineOption("workspace", "Manages the workspace.", ArgvParser::MasterOption);
+		//defineCommandSyntax("workspace", "iaarc workspace [--sync]\n\t[--logging-level=<level>]"
+		//	"[--comment=<comment text>]\n\t[--scope=<scope-address]\n\t[--force=<yes|No>]");
 
 		defineOption("network", "Configure network parameters", ArgvParser::OptionRequiresValue);
 		defineOptionAlternative("network", "N");
@@ -189,6 +197,12 @@ namespace simplearchive {
 
 		defineOption("to-date", "to date, Date to shop archiving. If none given will be to the end (lastest item).", ArgvParser::OptionRequiresValue);
 		defineCommandSyntax("to-date", "--to-date=<<day>/<month>/<year>> example: --to-date=05/12/2019\n");
+
+		defineOption("force", "Forces over-write", ArgvParser::NoOptionAttribute);
+		defineOption("catalogue", "synchronize catalogue", ArgvParser::NoOptionAttribute);
+		defineOption("www", "synchronize www catalogue", ArgvParser::NoOptionAttribute);
+		defineOption("workspace", "synchronize workspace", ArgvParser::NoOptionAttribute);
+		defineCommandSyntax("workspace", "synchronize workspace");
 
 		defineOption("s", "Show setting", ArgvParser::OptionRequiresValue);
 		defineOptionAlternative("s", "setting");
@@ -242,6 +256,10 @@ namespace simplearchive {
 
 		defineCommandOption("sync", "master-with");
 		defineCommandOption("sync", "derivative-with");
+		defineCommandOption("sync", "workspace");
+		defineCommandOption("sync", "force");
+		defineCommandOption("sync", "catalogue");
+		defineCommandOption("sync", "www");
 
 		defineCommandOption("archive", "media-size");
 		defineCommandOption("archive", "media-path");
@@ -250,6 +268,8 @@ namespace simplearchive {
 
 		defineCommandOption("about", "out");
 		defineCommandOption("about", "file");
+
+		//defineCommandOption("workspace", "sync");
 
 		ArgvParser::ParserResults res = parse(argc, argv);
 
@@ -491,6 +511,16 @@ namespace simplearchive {
 			}
 			
 		}
+		/*
+		else if (command("workspace") == true) {
+
+			if (foundOption("sync") == true) {
+				appOptions.m_sync = true;
+			}
+			appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Workspace);
+			cmdFound = true;
+		}
+		*/
 		else if (command("validate") == true) {
 			appOptions.setCommandMode(AppOptions::CommandMode::CM_Validate);
 			cmdFound = true;
@@ -669,6 +699,27 @@ namespace simplearchive {
 					ok = true;
 				}
 				
+			}
+			else if (foundOption("workspace") == true) {
+				opt = optionValue("workspace");
+				if (syncCommand.setBackup(opt.c_str()) == true) {
+					ok = true;
+				}
+
+			}
+			else if (foundOption("catalogue") == true) {
+				opt = optionValue("catalogue");
+				if (syncCommand.setBackup(opt.c_str()) == true) {
+					ok = true;
+				}
+
+			}
+			else if (foundOption("www") == true) {
+				opt = optionValue("www");
+				if (syncCommand.setBackup(opt.c_str()) == true) {
+					ok = true;
+				}
+
 			}
 			else {
 				printf("Invalid argument for sub-command: %s folders \"%s\" %s\n\n", getCurrentCommand().c_str(), appOptions.getConfigOption(), opt.c_str());

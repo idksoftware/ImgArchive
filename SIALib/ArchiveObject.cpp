@@ -598,6 +598,7 @@ namespace simplearchive {
 
 	ArchiveObject::ArchiveObject() noexcept :
 		m_masterView(std::make_unique<MasterCatalogue>()),
+		m_wwwView(std::make_unique<MasterWWWCatalogue>()),
 		m_PrimaryIndexObject(std::make_unique<PrimaryIndexObject>())
 	{}
 
@@ -614,6 +615,10 @@ namespace simplearchive {
 
 	bool ArchiveObject::isWorkspaceEnabled() {
 		return (m_workspacePath.empty() == false);
+	}
+
+	MasterWWWCatalogue& ArchiveObject::getWWWCatalogue() {
+		return *m_wwwView;
 	}
 
 	MasterCatalogue& ArchiveObject::getMasterCatalogue() {
@@ -762,19 +767,20 @@ namespace simplearchive {
 		CheckoutStatus::Init(ArchivePath::getMasterPath().c_str(), ArchivePath::getPathToWorkspace().c_str(), primaryIndexPath.getCheckoutStatusPath().c_str());
 		VersionControl::setPaths(primaryIndexPath.getPathToRepository().c_str(), ArchivePath::getMasterPath().c_str(), ArchivePath::getDerivativePath().c_str(), ArchivePath::getPathToWorkspace().c_str());
 		MasterCatalogue& masterView = getMasterCatalogue();
+		MasterWWWCatalogue& wwwView = getWWWCatalogue();
 
 		/* Testing */
 		masterView.setFileEnabled(true);
 	//	masterView.setWWWEnabled(true);
 
-		if (masterView.isWWWEnabled()) {
-			if (masterView.settupWWW(config.getTempPath(), config.getTemplatePath(), config.getMasterWWWCataloguePath()) == false) {
+		if (wwwView.isWWWEnabled()) {
+			if (wwwView.settupWWW(config.getTempPath(), config.getTemplatePath(), config.getMasterWWWCataloguePath()) == false) {
 				logger.log(LOG_OK, CLogger::Level::FATAL, "Initalisation Failed creating master WWW view");
 				return false;
 			}
 
 
-			if (masterView.settupSystemWWW(primaryIndexPath.getPathToRepository().c_str(), config.getTemplatePath(), config.getMasterWWWCataloguePath(), ArchivePath::getMainHistory().c_str(),
+			if (wwwView.settupSystemWWW(primaryIndexPath.getPathToRepository().c_str(), config.getTemplatePath(), config.getMasterWWWCataloguePath(), ArchivePath::getMainHistory().c_str(),
 																		master.getJournalPath().c_str()) == false) {
 				logger.log(LOG_OK, CLogger::Level::FATAL, "Initalisation Failed creating master WWW view system");
 				return false;
@@ -798,9 +804,9 @@ namespace simplearchive {
 	}
 
 	bool ArchiveObject::OnCompletion() {
-		MasterCatalogue& masterView = getMasterCatalogue();
+		MasterWWWCatalogue& wwwView = getWWWCatalogue();
 
-		if (masterView.processWWWPages() == false) {
+		if (wwwView.processWWWPages() == false) {
 			return false;
 		}
 

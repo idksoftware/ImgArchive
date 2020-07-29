@@ -222,7 +222,6 @@
     <ClInclude Include="ExifDateTime.h" />
     <ClInclude Include="HistoryEvent.h" />
     <ClInclude Include="LogName.h" />
-    <ClInclude Include="MetadataProperties.h" />
     <ClInclude Include="MetaType.h" />
     <ClInclude Include="RunExec.h" />
     <ClInclude Include="SAUtils.h" />

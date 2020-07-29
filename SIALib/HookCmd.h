@@ -74,6 +74,7 @@ private:
 
 protected:
 	void init(ImagePath &imagePath);
+	bool processAll(const char* arg1, const char* arg2, const char* arg3);
 public:
 	HookCmd(HookType type);
 	virtual ~HookCmd();

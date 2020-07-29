@@ -40,6 +40,7 @@ namespace simplearchive {
 
 class ExternalShell {
 	std::string m_output;
+	std::string m_errorString;
 public:
 	ExternalShell();
 	virtual ~ExternalShell();

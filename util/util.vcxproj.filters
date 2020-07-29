@@ -197,9 +197,6 @@
     <ClInclude Include="LogDocument.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MetadataProperties.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="MetaType.h">
       <Filter>Header Files</Filter>
     </ClInclude>

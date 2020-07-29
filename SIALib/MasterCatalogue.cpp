@@ -37,7 +37,7 @@ namespace simplearchive {
 		//bool writeIndexImage(IndexMetadataObject &container, const char *path);
 	};
 
-	bool MasterCatalogue::settupSystemWWW(const char *archiveRootPath, const char *templatePath, const char* wwwCataloguePath, const char *systemHistoryPath, const char *inputJounalPath) {
+	bool MasterWWWCatalogue::settupSystemWWW(const char *archiveRootPath, const char *templatePath, const char* wwwCataloguePath, const char *systemHistoryPath, const char *inputJounalPath) {
 		m_archiveRootPath = archiveRootPath;
 #ifdef WIN32
 		m_pageImageMaker->setArchiveRootPath(archiveRootPath);
@@ -51,7 +51,7 @@ namespace simplearchive {
 		return true;
 	}
 
-	void MasterCatalogue::setWWWEnabled(bool b)
+	void MasterWWWCatalogue::setWWWEnabled(bool b)
 	{
 		m_viewWWWPath->setEnabled(b);
 	}
@@ -63,7 +63,19 @@ namespace simplearchive {
 
 
 	MasterCatalogue::MasterCatalogue() :
-						m_viewFilePath(std::make_unique<ViewPath>()),
+						m_viewFilePath(std::make_unique<ViewPath>())
+	{}
+
+	MasterCatalogue::~MasterCatalogue()
+	{
+	}
+
+	void MasterWWWCatalogue::addDayUpdate(std::string yyyymmddimg)
+	{
+	}
+
+	MasterWWWCatalogue::MasterWWWCatalogue() :
+						
 						m_viewWWWPath(std::make_unique<ViewPath>()),
 #ifdef WIN32
 						m_pageIndexMaker(std::make_unique<PageIndexMaker>()),
@@ -71,29 +83,18 @@ namespace simplearchive {
 #endif
 						m_systemHistoryMaker(std::make_unique<SystemHistoryMaker>()),
 						m_inputJournalMaker(std::make_unique<ImportJournalMaker>())
-	{
-		/* Testing only
-		m_fullSize = true;
-		m_preview1 = true;
-		m_preview2 = true;
-		m_preview3 = true;
-		m_thumbnail = true;
+	{}
 
-		m_fileFullSize = true;
-		m_filePreview1 = true;
-		m_filePreview2 = true;
-		m_filePreview3 = true;
-		m_fileThumbnail = true;
-		*/
-	}
-
-
-
-	MasterCatalogue::~MasterCatalogue()
+	MasterWWWCatalogue::~MasterWWWCatalogue()
 	{
 	}
 
-	bool MasterCatalogue::initWWW(const char *tempPath, const char *templatePath, const char* rootPath) {
+	bool MasterWWWCatalogue::convertRAW(const std::string& source, const std::string& dist, const std::string& fileOut)
+	{
+		return false;
+	}
+
+	bool MasterWWWCatalogue::initWWW(const char *tempPath, const char *templatePath, const char* rootPath) {
 		m_tempPath = tempPath;
 #ifdef WIN32
 		std::string imagesPath = rootPath;
@@ -123,6 +124,7 @@ namespace simplearchive {
 				return false;
 			}
 		}
+		/*
 		if (isWWWEnabled()) {
 			logger.log(LOG_OK, CLogger::Level::INFO, "Creating Web files for image: %s", imageRelativePath);
 			if (addWWWImage(sourcePath, metadataObject, imageRelativePath) == false) {
@@ -130,10 +132,11 @@ namespace simplearchive {
 				return false;
 			}
 		}
+		*/
 		return true;
 	}
 
-	bool MasterCatalogue::addWWWImage(const char *sourcePath, MetadataObject &metadataObject, const char *imageRelativePath) {
+	bool MasterWWWCatalogue::addWWWImage(const char *sourcePath, MetadataObject &metadataObject, const char *imageRelativePath) {
 		if (m_viewWWWPath->isEnabled()) {
 			return true;
 		}
@@ -240,7 +243,7 @@ namespace simplearchive {
 		m_daysProcessed.push_back(yyyymmddimg);
 	}
 
-	bool MasterCatalogue::makePages() {
+	bool MasterWWWCatalogue::makePages() {
 #ifdef WIN32
 		if (m_pageIndexMaker->process() == false) {
 			return false;
@@ -252,21 +255,21 @@ namespace simplearchive {
 		return true;
 	}
 
-	bool MasterCatalogue::processHistoryPages() {
+	bool MasterWWWCatalogue::processHistoryPages() {
 		if (m_systemHistoryMaker->process() == false) {
 			return false;
 		}
 		return true;
 	}
 
-	bool MasterCatalogue::processJournalPages() {
+	bool MasterWWWCatalogue::processJournalPages() {
 		if (m_inputJournalMaker->process() == false) {
 			return false;
 		}
 		return true;
 	}
 
-	bool MasterCatalogue::processWWWPages()
+	bool MasterWWWCatalogue::processWWWPages()
 	{
 		if (isWWWEnabled()) {
 			if (processHistoryPages() == false) {
@@ -282,7 +285,7 @@ namespace simplearchive {
 		return true;
 	}
 
-	bool MasterCatalogue::createWWWMetadata(MetadataObject &metadataObject, std::string &imageRelativePath) {
+	bool MasterWWWCatalogue::createWWWMetadata(MetadataObject &metadataObject, std::string &imageRelativePath) {
 		// Canon EOS 1D X | Canon EF 600mm f/4.0L IS II USM @840mm | 1/500 | f/5.6 | ISO 1000
 		//metadataObject
 		std::string metaPath = imageRelativePath;
@@ -296,6 +299,16 @@ namespace simplearchive {
 		return true;
 	}
 
+	bool MasterWWWCatalogue::copyFile(const std::string& source, const std::string& dist, const std::string& file)
+	{
+		return false;
+	}
+
+	bool MasterWWWCatalogue::copyFile(const std::string& source, const std::string& dist, const std::string& sfile, const std::string& dfile)
+	{
+		return false;
+	}
+
 	bool MasterCatalogue::createFileMetadata(MetadataObject &metadataObject, std::string &imageRelativePath) {
 		
 		//metadataObject
@@ -303,6 +316,7 @@ namespace simplearchive {
 		metaPath += '/';
 		metaPath += m_viewFilePath->getImageName();
 		metaPath += ".xml";
+
 		XMLWriter xmlWriter;
 		if (xmlWriter.writeImage(metadataObject, metaPath.c_str()) == false) {
 			return false;
@@ -310,7 +324,7 @@ namespace simplearchive {
 		return true;
 	}
 
-	bool MasterCatalogue::createWWWPreviews(std::string &sourcePath, std::string &yyyymmddStr) {
+	bool MasterWWWCatalogue::createWWWPreviews(std::string &sourcePath, std::string &yyyymmddStr) {
 
 		if (m_viewWWWPath->settupRelative(yyyymmddStr) == false) {
 			return false;
@@ -606,32 +620,32 @@ namespace simplearchive {
 		return true;
 	}
 
-	void MasterCatalogue::setWWWFullSize(bool b) {
+	void MasterWWWCatalogue::setWWWFullSize(bool b) {
 		m_fullSize = b;
 	}
-	void MasterCatalogue::setWWWPreview1(bool b) {
+	void MasterWWWCatalogue::setWWWPreview1(bool b) {
 
 		m_preview1 = b;
 	}
-	void MasterCatalogue::setWWWThumbnail(bool b) {
+	void MasterWWWCatalogue::setWWWThumbnail(bool b) {
 
 		m_thumbnail = b;
 	}
 
-	bool MasterCatalogue::isWWWFullSize() {
+	bool MasterWWWCatalogue::isWWWFullSize() {
 		return m_fullSize;
 	}
-	bool MasterCatalogue::isWWWPreview1() {
+	bool MasterWWWCatalogue::isWWWPreview1() {
 		return m_preview1;
 	}
-	bool MasterCatalogue::isWWWPreview2() {
+	bool MasterWWWCatalogue::isWWWPreview2() {
 		return m_preview2;
 	}
-	bool MasterCatalogue::isWWWPreview3() {
+	bool MasterWWWCatalogue::isWWWPreview3() {
 		return m_preview3;
 	}
 	
-	bool MasterCatalogue::isWWWThumbnail() {
+	bool MasterWWWCatalogue::isWWWThumbnail() {
 		return m_thumbnail;
 	}
 

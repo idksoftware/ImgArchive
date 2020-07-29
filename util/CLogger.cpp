@@ -155,7 +155,10 @@ void CLogger::makeFile() {
 		return;
 	}
 	m_filename = logName.makeName(m_logpath.c_str(), "", "log", 256);
-	m_logfile.open(m_filename.c_str(), ios::out | ios::app);
+	std::string fullpath = m_logpath;
+	fullpath += '/';
+	fullpath += m_filename;
+	m_logfile.open(fullpath.c_str(), ios::out | ios::app);
 	if (m_logfile.is_open() == false) {  // changed to true for testing
 		throw SIAException("Cannot open log file");
 	}
@@ -253,41 +256,10 @@ void CLogger::status(int code, ReporterEvent::Status level, const char *format, 
 	}
 }
 
-void CLogger::log(int code, Level level, const char *format, ...) {
-	
-	if (m_size < m_cursize) {
-		m_logfile.close();
-		makeFile();
-		m_cursize = 0;
-	}
-	// Return if the message is to low leval to be include in the log, UDP or terminal.
-	
-	
-	ExifDateTime date;
-	date.now();
-	if (last.getTime() == date.getTime()) {
-		count++;
-	}
-	else {
-		count = 1;
-	}
-	last.now();
+
+void CLogger::log(int code, Level level, const char* format, ...) {
 	std::string message;
 	try {
-
-/*old way
-		char buffer[1024];
-		va_list args;
-		va_start(args, format);
-#ifdef _WIN32
-		vsprintf_s(buffer, format, args);
-#else
-		vsprintf(buffer, format, args);
-#endif
-		va_end(args);
-		message.append(buffer);
-
-*/
 		size_t final_n, n = (strlen(format) * 2); // Reserve two times as much as the length of the fmt_str //
 		std::string str;
 		std::unique_ptr<char[]> formatted;
@@ -307,12 +279,37 @@ void CLogger::log(int code, Level level, const char *format, ...) {
 				break;
 			}
 		}
-		
+
 	}
 	catch (const exception e) {
 		printf("logger crashed parsing message");
 		exit(-1);
 	}
+
+	log(code, level, message);
+}
+
+void CLogger::log(int code, Level level, const std::string& message) {
+	
+	if (m_size < m_cursize) {
+		m_logfile.close();
+		makeFile();
+		m_cursize = 0;
+	}
+	// Return if the message is to low leval to be include in the log, UDP or terminal.
+	
+	
+	ExifDateTime date;
+	date.now();
+	if (last.getTime() == date.getTime()) {
+		count++;
+	}
+	else {
+		count = 1;
+	}
+	last.now();
+	//std::string message;
+	
 	try {
 
 		if (IsLogOut(level)) {
@@ -374,22 +371,7 @@ void CLogger::Log(Level level, const char *format, ...) {
 */
 
 
-void CLogger::log(int code, Level level, const std::string &message) {
-	
-	if (!IsLogOut(level)) return;
-	ExifDateTime date;
-	date.now();
-	std::stringstream logMessage;
-	logMessage << "\n" << date.toLogString() << ":\t";
-	logMessage << message;
-	if (m_isOpen) {
-		m_logfile << logMessage.str();
-	}
-	else {
 
-	}
-	UDPOut::out(message.c_str());
-}
 
 CLogger& CLogger::operator << (const std::string& message) {
 	ExifDateTime date;

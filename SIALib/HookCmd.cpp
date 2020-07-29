@@ -79,73 +79,52 @@ namespace simplearchive {
 	}
 
 	bool HookCmd::process() {
-		CLogger &logger = CLogger::getLogger();
-		//std::string out = SAUtils::getFilenameNoExt(imagefile);
-		//std::string in = imagefile;
-		std::string scriptName;
-		if ((scriptName = getScriptNames()).empty() == true) {
-			return false;
-		}
-		std::string cmd = "python.exe ";
-		cmd += m_hookPath + '/' + scriptName;
-		
-		ExternalShell externalShell;
-		externalShell.exec(cmd.c_str());
-		m_output = externalShell.getOutput();
-		logger.log(LOG_OK, CLogger::Level::TRACE, "hook process output: %s", m_output.c_str());
-		return true;
+		return processAll(nullptr, nullptr, nullptr);
 	}
 	
 	bool HookCmd::process(const char *arg1) {
-		CLogger &logger = CLogger::getLogger();
-		//std::string out = SAUtils::getFilenameNoExt(imagefile);
-		//std::string in = imagefile;
-		std::string scriptName;
-		if ((scriptName = getScriptNames()).empty() == true) {
-			return false;
-		}
-		std::string cmd = "python.exe ";
-		cmd += m_hookPath + '/' + scriptName;
-		cmd += ' '; cmd += arg1;
-		ExternalShell externalShell;
-		externalShell.exec(cmd.c_str());
-		m_output = externalShell.getOutput();
-		logger.log(LOG_OK, CLogger::Level::TRACE, "hook process output: %s", m_output.c_str());
-		return true;
+		return processAll(arg1, nullptr, nullptr);
 	}
 	
 	bool HookCmd::process(const char *arg1, const char *arg2) {
-		CLogger &logger = CLogger::getLogger();
-		std::string scriptName;
-		if ((scriptName = getScriptNames()).empty() == true) {
-			return false;
-		}
-		std::string cmd = "python.exe ";
-		cmd += m_hookPath + '/' + scriptName;
-		cmd += ' '; cmd += arg1;
-		cmd += ' '; cmd += arg2;
-		// = "g:\\sia\\archive\\tools\\convert dsc_3248.nef -quality 100 dsc_3248.jpg";
-		ExternalShell externalShell;
-		externalShell.exec(cmd.c_str());
-		m_output = externalShell.getOutput();
-		logger.log(LOG_OK, CLogger::Level::TRACE, "hook process output: ", m_output.c_str());
-		return true;
+		return processAll(arg1, arg2, nullptr);
 	}
 
 	bool HookCmd::process(const char *arg1, const char *arg2, const char *arg3) {
-		CLogger &logger = CLogger::getLogger();
+		return processAll(arg1, arg2, arg3);
+	}
+
+	bool HookCmd::processAll(const char* arg1, const char* arg2, const char* arg3) {
+		CLogger& logger = CLogger::getLogger();
 		std::string scriptName;
 		if ((scriptName = getScriptNames()).empty() == true) {
 			return false;
 		}
-		std::string cmd = "python.exe ";
+		
+		std::string ext = SAUtils::getExtention(scriptName.c_str());
+		std::string cmd;
+		if (ext.compare("py") == 0) {
+			cmd = "python.exe ";
+		}
 		cmd += m_hookPath + '/' + scriptName;
-		cmd += ' '; cmd += arg1;
-		cmd += ' '; cmd += arg2;
-		cmd += ' '; cmd += arg3;
+		if (SAUtils::FileExists(cmd.c_str()) == false) {
+			logger.log(LOG_OK, CLogger::Level::TRACE, "Cannot find ");
+			return false;
+		}
+		if (arg1 != nullptr) {
+			cmd += ' '; cmd += arg1;
+		}
+		if (arg2 != nullptr) {
+			cmd += ' '; cmd += arg2;
+		}
+		if (arg3 != nullptr) {
+			cmd += ' '; cmd += arg3;
+		}
 		// = "g:\\sia\\archive\\tools\\convert dsc_3248.nef -quality 100 dsc_3248.jpg";
 		ExternalShell externalShell;
-		externalShell.exec(cmd.c_str());
+		if (externalShell.exec(cmd.c_str()) == false) {
+			logger.log(LOG_OK, CLogger::Level::TRACE, "hook process failed with output: %s", m_output.c_str());
+		}
 		m_output = externalShell.getOutput();
 		logger.log(LOG_OK, CLogger::Level::TRACE, "hook process output: %s", m_output.c_str());
 		return true;

@@ -44,7 +44,7 @@ class ImageFileReader
 public:
 	ImageFileReader();
 	~ImageFileReader();
-	static ExifObject *externalExifTool(std::string &path);
+	static ExifObject *externalExifTool(std::string &path, std::string& filename);
 };
 
 } /* namespace simplearchive */

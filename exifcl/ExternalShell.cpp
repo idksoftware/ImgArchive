@@ -59,7 +59,10 @@ static char THIS_FILE[] = __FILE__;
 //#define new DEBUG_NEW
 #endif
 
-std::string ExecuteExternalFile(std::string &csExeNameAndArgs);
+std::string returnedExecString;
+
+std::string GetLastErrorStdStr();
+int ExecuteExternalFile(std::string &csExeNameAndArgs);
 
 namespace simplearchive {
 
@@ -77,8 +80,12 @@ namespace simplearchive {
 #define MAX_LINE_LENGTH 255
 	bool ExternalShell::exec(const char *cmd) {
 		std::string cmdstr = cmd;
-		m_output = ExecuteExternalFile(cmdstr);
-		return true;
+		bool ret = ExecuteExternalFile(cmdstr);
+		m_output = returnedExecString;
+		if (ret == false) {
+			m_errorString = GetLastErrorStdStr();
+		}
+		return ret;
 
 #ifdef _WIN32
 		//m_output = ExecuteExternalFile(cmd);
@@ -136,8 +143,10 @@ namespace simplearchive {
 #include <string>
 #include <stdio.h>
 
+
+
 #ifdef _WIN32
-std::string ExecuteExternalFile(std::string &csExeNameAndArgs)
+int ExecuteExternalFile(std::string &csExeNameAndArgs)
 {
 	std::string csExecute;
 	csExecute = csExeNameAndArgs;
@@ -168,11 +177,12 @@ std::string ExecuteExternalFile(std::string &csExeNameAndArgs)
 
 	//Create the process here.
 #ifdef _WIN64
-	CreateProcess(0, (LPSTR)csExecute.c_str(), 0, 0, TRUE, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, 0, 0, &sInfo, &pInfo);
+	if (CreateProcess(0, (LPSTR)csExecute.c_str(), 0, 0, TRUE, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, 0, 0, &sInfo, &pInfo) == false) {
 #else
-	CreateProcess(0, (LPSTR)csExecute.c_str(), 0, 0, TRUE, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, 0, 0, &sInfo, &pInfo);
+	if (CreateProcess(0, (LPSTR)csExecute.c_str(), 0, 0, TRUE, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, 0, 0, &sInfo, &pInfo) == false) {
 #endif
-	
+		return false;
+	}
 	//now read the output pipe here.
 
 	char buf[100 + 1];
@@ -195,9 +205,38 @@ std::string ExecuteExternalFile(std::string &csExeNameAndArgs)
 	} while (res);
 	m_csOutput = streamBuf.str();
 	//printf("%s", m_csOutput.c_str());
-	
-	return m_csOutput;
+	returnedExecString = m_csOutput;
+	return true;
 }
+
+std::string GetLastErrorStdStr()
+{
+	DWORD error = GetLastError();
+	if (error)
+	{
+		LPVOID lpMsgBuf;
+		DWORD bufLen = FormatMessage(
+			FORMAT_MESSAGE_ALLOCATE_BUFFER |
+			FORMAT_MESSAGE_FROM_SYSTEM |
+			FORMAT_MESSAGE_IGNORE_INSERTS,
+			NULL,
+			error,
+			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+			(LPTSTR)&lpMsgBuf,
+			0, NULL);
+		if (bufLen)
+		{
+			LPCSTR lpMsgStr = (LPCSTR)lpMsgBuf;
+			std::string result(lpMsgStr, lpMsgStr + bufLen);
+
+			LocalFree(lpMsgBuf);
+
+			return result;
+		}
+  }
+	return std::string();
+}
+
 #else
 std::string ExecuteExternalFile(std::string &csExeNameAndArgs) {
 	std::string m_csOutput;

@@ -77,6 +77,8 @@
 #include "RemoteServer.h"
 #include <stdio.h>
 #include <sstream>
+//#include "DCRawArgs.h"
+//#include "LUAScript.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -89,6 +91,8 @@ static char THIS_FILE[] = __FILE__;
 
 #undef FILECODE
 #define FILECODE SIALIB_CPP
+
+//int pythonmain();
 
 namespace simplearchive {
 	
@@ -431,12 +435,44 @@ namespace simplearchive {
 	}
 
 	bool SIALib::show() {
+		/*
+		DCRawArgs cdrawArgs;
+		const char *file1 = "D:/ia_test1/DSC01275_1_00001C.ARW";
+		const char *file2 = "D:/ia_test1/DSC01275_1_00001C.jpg";
+		cdrawArgs.process();
+		
+		
+		//pythonmain();
+		
 		AppConfig &config = AppConfig::get();
 		//config.setup();
-
-		std::string str = config.toString();
-		std::cout << "Using\n====================\n";
 		
+		ImagePath imagePath("2020-07-12/test.jpg");
+		std::string m_arg[3];
+
+		
+		
+		//std::string luafile = "C:\\temp\\test.lua";
+		std::string argv[] = {
+			"C:\\temp\\test.lua"
+		};
+
+		
+
+		LUAScript luaScript;
+		luaScript.setScriptRootPath("C:\\temp");
+		luaScript.setScriptName("test.lua");
+		int res = luaScript.luaScript(argv, 0);
+		
+		
+		//std::string str = config.toString();
+		//std::cout << "Using\n====================\n";
+		*/
+		const char* file1 = "D:/ia_test1/DSC01275_1_00001C.ARW";
+		const char* file2 = "D:/ia_test1/DSC01275_1_00001C.jpg";
+		OnViewRAWCmd onViewRAWCmd(file1, file2);;
+		onViewRAWCmd.process();
+
 		//completedSummary.setSummary(str.c_str());
 		//completedSummary.setResult("Completed Successfully");
 		return true;

@@ -32,15 +32,14 @@
 **
 ** #$$@@$$# */
 
-#ifndef ARCHIVEREPOSITORY_H_
-#define ARCHIVEREPOSITORY_H_
+#pragma once
+
 #include "ImageContainer.h"
-#include "HistoryEvent.h"
+
 
 namespace simplearchive {
 
-class ImagePath;
-class HistoryEvent;
+
 /// @brief The Main Archive class object.
 class ArchiveRepository {
 	
@@ -87,4 +86,4 @@ public:
 };
 
 } /* namespace simplearchive */
-#endif /* ARCHIVEREPOSITORY_H_ */
+

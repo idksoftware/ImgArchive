@@ -58,9 +58,9 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineCommandSyntax("uncheckout", "iaarc uncheckout [--target-path=<path>]\n\t[--logging-level=<level>]"
 		"[--comment=<comment text>]\n\t[--scope=<scope-address]\n\t[--force=<yes|No>]\n\t[--version=<vesion-num>");
 
-	defineOption("workspace", "Manages the workspace.", ArgvParser::MasterOption);
-	defineCommandSyntax("workspace", "iaarc workspace [--sync]\n\t[--logging-level=<level>]"
-		"[--comment=<comment text>]\n\t[--scope=<scope-address]\n\t[--force=<yes|No>]");
+	//defineOption("workspace", "Manages the workspace.", ArgvParser::MasterOption);
+	//defineCommandSyntax("workspace", "iaarc workspace [--sync]\n\t[--logging-level=<level>]"
+	//	"[--comment=<comment text>]\n\t[--scope=<scope-address]\n\t[--force=<yes|No>]");
 
 	defineOption("prop", "Manage image properties", ArgvParser::MasterOption);
 	defineCommandSyntax("prop", "iaarc prop [--s]\n\t[--logging-level=<level>]"
@@ -124,8 +124,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineOption("a", "archive", ArgvParser::NoOptionAttribute);
 	defineOptionAlternative("a", "archive");
 
-	defineOption("S", "sync workspace with archive", ArgvParser::NoOptionAttribute);
-	defineOptionAlternative("S", "sync");
+	
 	
 
 	defineOption("image", "Specifies a image address in the form \"<date>/<image name>", ArgvParser::OptionRequiresValue);
@@ -238,7 +237,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineCommandOption("log", "to-date");
 //	defineCommandOption("mode", "remote-server");
 
-	defineCommandOption("workspace", "sync");
+	
 
 
 	ArgvParser::ParserResults res = parse(argc, argv);
@@ -562,14 +561,6 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 		}
 
 		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Log);
-		cmdFound = true;
-	}
-	else if (command("workspace") == true) {
-
-		if (foundOption("sync") == true) {
-			appOptions.m_sync = true;
-		}
-		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Workspace);
 		cmdFound = true;
 	}
 	else if (command("status") == true) {

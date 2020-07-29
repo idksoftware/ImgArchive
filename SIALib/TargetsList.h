@@ -69,6 +69,14 @@ namespace simplearchive {
 			std::string filename = m_path.substr(pos+1, m_path.length() - (pos+1));
 			return filename;
 		}
+		std::string getRootPath() {
+			size_t pos = m_path.find_last_of("/");
+			if (pos == std::string::npos) {
+				pos = m_path.find_last_of("\\");
+			}
+			std::string rootPath = m_path.substr(0, pos);
+			return rootPath;
+		}
 	};
 
 	class ImageSet : public std::vector<std::shared_ptr<ImageItem>> {

@@ -65,7 +65,7 @@ ImageFileReader::~ImageFileReader()
 {
 }
 
-ExifObject *ImageFileReader::externalExifTool(std::string &path) {
+ExifObject *ImageFileReader::externalExifTool(std::string &path, std::string& filename) {
 	CLogger &logger = CLogger::getLogger();
 
 	AppConfig config = AppConfig::get();
@@ -74,7 +74,6 @@ ExifObject *ImageFileReader::externalExifTool(std::string &path) {
 	// Get the temp path for temp exif files
 	if (config.getExternalExifTool() == nullptr) {
 		//logger.log(LOG_OK, CLogger::ERROR, "Exif command line not found\n");
-
 		return nullptr;
 	}
 	// Get the path to the external tool i.e. exiftool.exe
@@ -115,7 +114,7 @@ ExifObject *ImageFileReader::externalExifTool(std::string &path) {
 		
 		return nullptr;
 	}
-	ExifObject *exifObject = externalComand.process(path.c_str());
+	ExifObject *exifObject = externalComand.process(path.c_str(), filename.c_str());
 	if (exifObject == nullptr) {
 		logger.log(LOG_OK, CLogger::Level::WARNING, "Failed to read map file for \"%s\"", externalCommandLine.c_str());
 		return nullptr;

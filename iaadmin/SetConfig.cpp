@@ -75,6 +75,7 @@ enum class Option {
 	EXIF_MAP_FILE,
 	EXIF_TOOL,
 	EXIF_COMMANDLINE,
+	EXIF_FILE_DELIM,
 	TEMPLATE_PATH,
 	CATALOG_PATH,
 	WORKSPACE_PATH,
@@ -420,8 +421,9 @@ bool SetConfig::parseExifToolOptions(const char* ov)
 	case Option::EXIF_COMMANDLINE:
 		m_option = EXIF_COMMANDLINE_LABEL;
 		return true;
-		break;
-
+	case Option::EXIF_FILE_DELIM:
+		m_option = EXIF_FILE_DELIM_LABEL;
+		return true;
 	default:
 		return false;
 	}
@@ -690,6 +692,10 @@ Option SetConfig::processExifToolOptions(std::string& optionString)
 	else if (iequals(optionString, EXIF_COMMANDLINE_LABEL)) {
 		return Option::EXIF_COMMANDLINE;	 // Main configuration path
 	}
+	else if (iequals(optionString, EXIF_FILE_DELIM_LABEL)) {
+		return Option::EXIF_FILE_DELIM;	 // Main configuration path
+	}
+	
 	return Option::UNKNOWN;
 }
 
