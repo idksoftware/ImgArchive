@@ -352,7 +352,11 @@ bool SIAArcApp::doRun()
 	}
 	case SIAArcAppOptions::CommandMode::CM_Metadata:
 	{
-		if (siaLib.metadata(appOptions.getImageAddress(), appOptions.getOption(), appOptions.getFilePath()) == false) {
+		std::string formatType = appOptions.getOption();
+		if (formatType.empty()) {
+			formatType = "human";
+		}
+		if (siaLib.metadata(appOptions.getImageAddress(), formatType.c_str(), appOptions.getFilePath()) == false) {
 			setError(CLogger::getLastCode(), CLogger::getLastMessage());
 			return false;
 		}
@@ -392,10 +396,13 @@ bool SIAArcApp::doRun()
 	}
 	case SIAArcAppOptions::CommandMode::CM_Prop:
 	{
+		siaLib.setProperty(appOptions.getImageAddress(), appOptions.getOption(), appOptions.getValue());
+		/*
 		if (siaLib.listContents(appOptions.getImageAddress()) == false) {
 			setError(CLogger::getLastCode(), CLogger::getLastMessage());
 			return false;
 		}
+		*/
 		break;
 	}
 

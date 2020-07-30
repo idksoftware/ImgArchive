@@ -261,6 +261,35 @@ bool CSVDatabase::showMasterMetadata(const char* addressScope, const char* aform
 	return true;
 }
 
+bool CSVDatabase::setMasterMetadata(const char* addressScope, const char* option, const char* value)
+{
+	CLogger& logger = CLogger::getLogger();
+
+	setPath(m_dbpath.c_str());
+	if (select(addressScope) == false) {
+		logger.log(LOG_OK, CLogger::Level::ERR, "Cannot process metadata");
+		return false;
+	}
+	std::shared_ptr<ResultsList> results = getResults();
+	if (results == nullptr) {
+		logger.log(LOG_OK, CLogger::Level::WARNING, "No results for metadata");
+		return false;
+	}
+	MTTableSchema& schema = results->getTableSchema();
+	size_t idx = schema.getIndex(option);
+	if (idx == std::string::npos) {
+		logger.log(LOG_OK, CLogger::Level::WARNING, "No property of that name: \"%s\"", option);
+		return false;
+	}
+
+	for (auto i = results->begin(); i != results->end(); i++) {
+		SharedMTRow row = *i;
+		MTColumn& col = row->columnAt(idx);
+		col.fromString(value);
+	}
+	return false;
+}
+
 bool MasterMatadataResultsPresentation::writeHuman() {
 
 	MasterDatabaseWriteHuman masterDatabaseWriteHuman(m_resultsList);

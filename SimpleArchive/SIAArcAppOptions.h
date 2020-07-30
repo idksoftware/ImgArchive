@@ -223,6 +223,7 @@ private:
     static std::string m_FromDate;
     static std::string m_ToDate;
 	static std::string m_option;
+	static std::string m_value;
 	static std::string m_outputFile;
 	static std::string m_textOutputType;
 	ShowCommandOption m_showCommandOption;
@@ -264,6 +265,7 @@ public:
     const char* getFromDate();
     const char* getToDate();
 	const char* getOption();
+	const char* getValue();
 	const char* getOutputFile();
 	const char* getTextOutputType();
 

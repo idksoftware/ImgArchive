@@ -170,6 +170,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="IAParseOptions.h" />
+    <ClInclude Include="ParseProperties.h" />
     <ClInclude Include="SIAArcApp.h" />
     <ClInclude Include="SIAArcAppOptions.h" />
     <ClInclude Include="resource.h" />
@@ -179,6 +180,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IAParseOptions.cpp" />
+    <ClCompile Include="ParseProperties.cpp" />
     <ClCompile Include="SIAArcApp.cpp" />
     <ClCompile Include="SIAArcAppOptions.cpp" />
     <ClCompile Include="SIAArcArgvParser.cpp" />

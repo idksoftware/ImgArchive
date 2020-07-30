@@ -86,6 +86,9 @@ public:
 	bool copy(const char *path);
 	bool validate(const char *path);
 	bool showMasterMetadata(const char* addressScope, const char* formatType, const char* filePath);
+	bool setMasterMetadata(const char* addressScope, const char* option, const char* value);
+
+
 };
 
 //class MirrorDB;

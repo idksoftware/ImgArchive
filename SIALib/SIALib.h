@@ -134,7 +134,7 @@ namespace simplearchive {
 
 		bool showUncheckedOutChanges(const char *addressScope);
 
-		bool listContents(const char *addressScope);
+		bool listContents(const char *addressScope); // maybe not used
 
 		bool get(const char *filepath, const char *comment, bool force);
 
@@ -153,6 +153,8 @@ namespace simplearchive {
 		bool status(const char *scope);
 
 		bool metadata(const char* scope, const char* formatType, const char* filePath);
+
+		bool setProperty(const char* scope, const char* option, const char* value);
 
 		bool workspace(bool sync);
 

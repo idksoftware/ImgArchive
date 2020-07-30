@@ -48,6 +48,27 @@ bool ParseOptions::isNumber(const std::string& str)
 		(str.find_first_not_of("[0123456789]") == std::string::npos);
 }
 
+bool ParseOptions::isFloatNumber(const std::string& string) {
+	std::string::const_iterator it = string.begin();
+	bool decimalPoint = false;
+	int minSize = 0;
+	if (string.size() > 0 && (string[0] == '-' || string[0] == '+')) {
+		it++;
+		minSize++;
+	}
+	while (it != string.end()) {
+		if (*it == '.') {
+			if (!decimalPoint) decimalPoint = true;
+			else break;
+		}
+		else if (!std::isdigit(*it) && ((*it != 'f') || it + 1 != string.end() || !decimalPoint)) {
+			break;
+		}
+		++it;
+	}
+	return string.size() > minSize && it == string.end();
+}
+
 // Function to split string str using given delimiter
 std::vector<std::string> ParseOptions::split(const std::string& str, char delim)
 {
@@ -143,7 +164,7 @@ bool ParseOptions::checkIPAddress()
 
 bool ParseOptions::processArgs(const char* ov) {
 	std::string optionValueString = ov;
-	size_t pos = optionValueString.find_first_of('=');
+	size_t pos = optionValueString.find_first_of(":=");
 	if (pos == std::string::npos) {
 		return false;
 	}

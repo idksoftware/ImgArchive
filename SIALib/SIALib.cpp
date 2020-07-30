@@ -173,7 +173,6 @@ namespace simplearchive {
 
 	int SIALib::initalise() {
 		
-		
 		AppConfig &config = AppConfig::get();
 
 		CLogger::setLogLevel(config.getLogLevel());
@@ -697,6 +696,15 @@ namespace simplearchive {
 		*/
 		return true;
 	}
+
+	bool SIALib::setProperty(const char* scope, const char* option, const char* value) {
+		CSVDatabase& masterDatabase = CSVDatabase::get();
+		if (masterDatabase.setMasterMetadata(scope, option, value) == false) {
+			return false;
+		}
+		return true;
+	}
+
 	bool SIALib::archive(const char *archivePath, const char *distPath, unsigned long sizeOfMedia, ExifDateTime *startDate, ExifDateTime *endDate) {
 		
 		if (archivePath == nullptr) {

@@ -79,6 +79,7 @@ std::string SIAArcAppOptions::m_version = "last";
 std::string SIAArcAppOptions::m_FromDate;
 std::string SIAArcAppOptions::m_ToDate;
 std::string SIAArcAppOptions::m_option;
+std::string SIAArcAppOptions::m_value;
 std::string SIAArcAppOptions::m_outputFile;
 std::string SIAArcAppOptions::m_textOutputType;
 
@@ -171,6 +172,11 @@ const char* SIAArcAppOptions::getToDate()
 const char* SIAArcAppOptions::getOption()
 {
 	return m_option.c_str();
+}
+
+const char* SIAArcAppOptions::getValue()
+{
+	return m_value.c_str();
 }
 
 bool SIAArcAppOptions::isEnventsOn() {

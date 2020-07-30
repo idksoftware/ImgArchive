@@ -12,6 +12,7 @@
 #include "Environment.h"
 #include "EnvFunc.h"
 #include "IAParseOptions.h"
+#include "ParseProperties.h"
 
 // beyond compare
 using namespace CommandLineProcessing;
@@ -58,13 +59,9 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineCommandSyntax("uncheckout", "iaarc uncheckout [--target-path=<path>]\n\t[--logging-level=<level>]"
 		"[--comment=<comment text>]\n\t[--scope=<scope-address]\n\t[--force=<yes|No>]\n\t[--version=<vesion-num>");
 
-	//defineOption("workspace", "Manages the workspace.", ArgvParser::MasterOption);
-	//defineCommandSyntax("workspace", "iaarc workspace [--sync]\n\t[--logging-level=<level>]"
-	//	"[--comment=<comment text>]\n\t[--scope=<scope-address]\n\t[--force=<yes|No>]");
-
 	defineOption("prop", "Manage image properties", ArgvParser::MasterOption);
 	defineCommandSyntax("prop", "iaarc prop [--s]\n\t[--logging-level=<level>]"
-		"[--comment=<comment text>]\n\t[--scope=<scope-address]\n\t[--force=<yes|No>]");
+		"[--scope=<scope-address]\n\t[--set=<property:value>]");
 
 	defineOption("metadata", "Show Metadata properties", ArgvParser::MasterOption);
 	defineCommandSyntax("metadata", "iaarc metadata [--s]\n\t[--format-type=<type>]"
@@ -92,7 +89,11 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineOption("b", "Goes through the motions of running the subcommand but makes no\nactual changes ether disk or repository.", ArgvParser::NoOptionAttribute);
 	defineOptionAlternative("b", "backup");
 	*/
-	// Options
+	defineOption("set", "Sets a metadata property:value", ArgvParser::OptionRequiresValue);
+	//defineOptionAlternative("set", "set-prop");
+	defineCommandSyntax("set", "iaarc workspace [--sync]\n\t[--logging-level=<level>]");
+	//	"[--comment=<comment text>]\n\t[--scope=<scope-address]\n\t[--force=<yes|No>]");
+
 
 	defineOption("n", "name of the view.", ArgvParser::OptionRequiresValue);
 	defineOptionAlternative("n", "name");
@@ -225,6 +226,9 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineCommandOption("status", "unchecked-out");
 
 	defineCommandOption("show", "settup");
+
+	defineCommandOption("prop", "scope");
+	defineCommandOption("prop", "set");
 
 	defineCommandOption("template", "current");
 	defineCommandOption("template", "archive");
@@ -485,9 +489,21 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 		cmdFound = true;
 	}
 	else if (command("prop") == true) {
-		if (foundOption("list") == true) {
-			appOptions.m_imageAddress = optionValue("list");
+		if (foundOption("scope") == true) {
+			appOptions.m_imageAddress = optionValue("scope");
 		}
+		if (foundOption("set") == true) {
+			std::string opt = optionValue("set");
+			ParseProperties parseProperties;
+			if (!parseProperties.parse(opt.c_str())) {
+				printf("Invalid argument for \"archive\" \"%s\"\n\n", opt.c_str());
+				printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+				return false;
+			}
+			appOptions.m_option = parseProperties.getOption();
+			appOptions.m_value = parseProperties.getValue();
+		}
+		
 		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Prop);
 		cmdFound = true;
 	}
