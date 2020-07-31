@@ -91,7 +91,7 @@ std::string CheckWorkspaceFile::getFullAddress(const char *address) {
 	pathcontroller.splitShort(address);
 	pathcontroller.makePath();
 	std::string fullPath = pathcontroller.getFullPath();
-	fullPath += "/.sia/ckfile.dat";
+	fullPath += "/.imga/ckfile.dat";
 	return fullPath;
 }
 
@@ -101,7 +101,7 @@ std::string CheckMasterFile::getFullAddress(const char *address) {
 	pathcontroller.splitShort(address);
 	pathcontroller.makePath();
 	std::string fullPath = pathcontroller.getFullPath();
-	fullPath += "/.sia/ckfile.dat";
+	fullPath += "/.imga/ckfile.dat";
 	return fullPath;
 }
 
@@ -208,7 +208,7 @@ std::string CDCheckInOutManager::getFullAddress(DB db, const char *address) {
 		break;
 	}
 	}
-	fullPath += "/.sia/ckfile.dat";
+	fullPath += "/.imga/ckfile.dat";
 	return fullPath;
 }
 

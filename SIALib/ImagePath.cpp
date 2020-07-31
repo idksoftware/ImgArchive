@@ -53,6 +53,7 @@ std::string ImagePath::m_mainMetadataPath;
 std::string ImagePath::m_mainDupsPath;
 std::string ImagePath::m_mainHistory;
 std::string ImagePath::m_pathToWorkspace;
+std::string ImagePath::m_pathToPrimaryIndex;
 
 std::string ImagePath::m_pathToMaster;
 std::string ImagePath::m_MasterMetadataPath;
@@ -65,7 +66,7 @@ std::string ImagePath::m_MasterJournalPath;
 
 
 
-bool ImagePath::settupMainArchiveFolders(const char *pathToWorkspace, const char *pathToMaster, const char *pathToDerivative, const char *pathToHome) {
+bool ImagePath::settupMainArchiveFolders(const char *pathToWorkspace, const char *pathToMaster, const char *pathToDerivative, const char* pathToPrimaryIndex, const char *pathToHome) {
 
 	if (SAUtils::DirExists(pathToWorkspace) == false) {
 		return false;
@@ -73,6 +74,7 @@ bool ImagePath::settupMainArchiveFolders(const char *pathToWorkspace, const char
 	if (SAUtils::DirExists(pathToMaster) == false) {
 		return false;
 	}
+	m_pathToPrimaryIndex = pathToPrimaryIndex;
 	m_pathToWorkspace = pathToWorkspace;
 	m_pathToMaster = pathToMaster;
 	IntegrityManager &integrityManager = IntegrityManager::get();
@@ -149,6 +151,7 @@ void ImagePath::init(std::string &yyyymmddStr) {
 	}
 
 	createWorkspaceMetadataPath();
+	createPrimaryIndexMetadataPath();
 
 	m_relpath = getYearStr() + '/' + getYyyymmddStr();
 
@@ -166,7 +169,7 @@ void ImagePath::init(std::string &yyyymmddStr) {
 }
 
 void ImagePath::createWorkspaceMetadataPath() {
-	m_workspaceMetadataPath = m_yyyymmddStrPath + "/.sia";
+	m_workspaceMetadataPath = m_yyyymmddStrPath + "/.imga";
 	if (SAUtils::DirExists(m_workspaceMetadataPath.c_str()) == false) {
 		SAUtils::mkDir(m_workspaceMetadataPath.c_str());
 	}
@@ -175,6 +178,14 @@ void ImagePath::createWorkspaceMetadataPath() {
 		SAUtils::mkDir(m_workspaceMetadataPath.c_str());
 	}
 }
+
+void ImagePath::createPrimaryIndexMetadataPath() {
+	m_workspaceMetadataPath += "/metadata";
+	if (SAUtils::DirExists(m_workspaceMetadataPath.c_str()) == false) {
+		SAUtils::mkDir(m_workspaceMetadataPath.c_str());
+	}
+}
+
 
 
 void ImagePath::createLocalPaths(std::string localPath)

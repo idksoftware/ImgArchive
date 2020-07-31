@@ -88,6 +88,7 @@ class ImagePath {
 	std::string m_localMasterHistoryPath;
 
 	static std::string m_pathToWorkspace;
+	static std::string m_pathToPrimaryIndex;
 	static std::string m_mainMetadataPath;
 //	static std::string m_userDefinedSequenceNumberPath;
 	static std::string m_mainDupsPath;
@@ -113,6 +114,8 @@ public:
 
 	void createLocalPaths(std::string localPath);
 	void createWorkspaceMetadataPath();
+	void createPrimaryIndexMetadataPath();
+
 
 	void setImageName(const char *imageName) {
 		m_imageName = imageName;
@@ -209,9 +212,16 @@ public:
 		return m_workspaceMetadataPath;
 	}
 
-
 	const std::string& getPathToWorkspace() const {
 		return m_pathToWorkspace;
+	}
+
+	static const std::string& getPathToMaster() {
+		return m_pathToMaster;
+	}
+
+	const std::string& getPathToPrimaryIndex() const {
+		return m_pathToPrimaryIndex;
 	}
 
 	const std::string& getRelativePath() const {
@@ -219,7 +229,7 @@ public:
 		return m_relpath;
 	}
 
-	static bool settupMainArchiveFolders(const char *pathToWorkspace, const char *pathToMaster, const char *pathToDerivative, const char *pathToHome);
+	static bool settupMainArchiveFolders(const char *pathToWorkspace, const char *pathToMaster, const char *pathToDerivative, const char* pathToPrimaryIndex, const char *pathToHome);
 
 	// main
 	/// @brief The dups path is set in the configuation file (Default is $Master_FOLDER/root/dups)

@@ -635,7 +635,7 @@ bool VersionControl::makeVersionsList(const char * filepath)
 	std::string versionPath = workspacePathControl.getYear();
 	versionPath += '/';
 	versionPath += workspacePathControl.getYearday();
-	versionPath += "/.sia/metadata/";
+	versionPath += "/.imga/metadata/";
 	versionPath += workspacePathControl.getImageName();
 	workspaceVersionPath += versionPath;
 	

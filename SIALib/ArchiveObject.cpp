@@ -379,7 +379,6 @@ namespace simplearchive {
 		return true;
 	}
 
-	
 
 	bool DerivativesObject::init(RepositoryPath &repositoryPath, const char *workspacePath) {
 		CLogger& logger = CLogger::getLogger();
@@ -557,6 +556,8 @@ namespace simplearchive {
 		CSVDerivativeDatabase &derivativeRepository = CSVDerivativeDatabase::get();
 		return true;
 	}
+
+
 
 	bool MasterRepositoryObject::isBackup1Enabled() {
 		return m_backup[0].getRepositoryPath().isEnabled();
@@ -743,7 +744,8 @@ namespace simplearchive {
 				return false;
 			}
 
-			if (ImagePath::settupMainArchiveFolders(ArchivePath::getPathToWorkspace().c_str(), ArchivePath::getMasterPath().c_str(), ArchivePath::getDerivativePath().c_str(), ArchivePath::getPathToHome().c_str()) == false) {
+			if (ImagePath::settupMainArchiveFolders(ArchivePath::getPathToWorkspace().c_str(), ArchivePath::getMasterPath().c_str(), 
+													ArchivePath::getDerivativePath().c_str(), path.c_str(), ArchivePath::getPathToHome().c_str()) == false) {
 
 				return false;
 			}
@@ -927,7 +929,7 @@ namespace simplearchive {
 		}
 
 		// Write the metadata to the Master archive
-		if (this->writeMetadata2MasterDatabase(name, metadataObject) == false) {
+		if (this->writeMetadata2MasterDatabase(imagePath, name, metadataObject) == false) {
 			logger.log(LOG_OK, CLogger::Level::FATAL, "Fataled to write image \"%s\" master database", imagePath.getImageName().c_str());
 			return false;
 		}
@@ -1049,7 +1051,7 @@ namespace simplearchive {
 					return false;
 				}
 			}
-			toxml += "/.sia";
+			toxml += "/.imga";
 			if (SAUtils::DirExists(toxml.c_str()) == false) {
 				if (SAUtils::mkDir(toxml.c_str()) == false) {
 					return false;
@@ -1087,7 +1089,7 @@ namespace simplearchive {
 					return false;
 				}
 			}
-			toxml += "/.sia";
+			toxml += "/.imga";
 			if (SAUtils::DirExists(toxml.c_str()) == false) {
 				if (SAUtils::mkDir(toxml.c_str()) == false) {
 					return false;
@@ -1106,7 +1108,7 @@ namespace simplearchive {
 		return true;
 	}
 
-	bool ArchiveObject::writeMetadata2PrimaryIndex(ImagePath &imagePath, std::string &imageName,  MetadataObject &metadataObject) {
+	bool ArchiveObject::writeMetadata2PrimaryIndex(ImagePath &imagePath, std::string &imageName, MetadataObject &metadataObject) {
 		PrimaryIndexPath primaryIndexPath = getPrimaryIndexObject().getPrimaryIndexPath();
 		std::string primaryIndexObjectMetadataPath = primaryIndexPath.getMetadataPath();
 
@@ -1135,22 +1137,87 @@ namespace simplearchive {
 		}
 		return true;
 	}
-	bool ArchiveObject::writeMetadata2MasterDatabase(std::string &imageName, MetadataObject &metadataObject) {
+	bool ArchiveObject::writeMetadata2MasterDatabase(ImagePath& imagePath, std::string& imageName, MetadataObject &metadataObject) {
 		if (ArchivePath::isMasterEnabled() == true) {
-			std::string path = m_master.getRepositoryPath().getMetadataPath();
-			if (writeMetadata(path, imageName, metadataObject) == false) {
+			std::string toxml = ImagePath::getPathToMaster();
+			std::string relpath = imagePath.getRelativePath();
+			toxml += '/';
+			toxml += imagePath.getYear(relpath);
+			if (SAUtils::DirExists(toxml.c_str()) == false) {
+				if (SAUtils::mkDir(toxml.c_str()) == false) {
+					return false;
+				}
+			}
+			toxml = ImagePath::getPathToMaster() + '/';
+			toxml += imagePath.getRelativePath();
+			if (SAUtils::DirExists(toxml.c_str()) == false) {
+				if (SAUtils::mkDir(toxml.c_str()) == false) {
+					return false;
+				}
+			}
+			toxml += "/metadata";
+			if (SAUtils::DirExists(toxml.c_str()) == false) {
+				if (SAUtils::mkDir(toxml.c_str()) == false) {
+					return false;
+				}
+			}
+			if (writeMetadata(toxml, imageName, metadataObject) == false) {
 				return false;
 			}
 		}
 		if (ArchivePath::isMasterBackup1Enabled() == true) {
-			std::string path = m_master.getBackup1Object().getRepositoryPath().getMetadataPath();
-			if (writeMetadata(path, imageName, metadataObject) == false) {
+			std::string path = m_master.getBackup1Object().getRepositoryPath().getRepositoryPath();
+			std::string toxml = path;
+			toxml += '/';
+			std::string relpath = imagePath.getRelativePath();
+			toxml += imagePath.getYear(relpath);
+			if (SAUtils::DirExists(toxml.c_str()) == false) {
+				if (SAUtils::mkDir(toxml.c_str()) == false) {
+					return false;
+				}
+			}
+			toxml = path + '/';
+			toxml += imagePath.getRelativePath();
+			if (SAUtils::DirExists(toxml.c_str()) == false) {
+				if (SAUtils::mkDir(toxml.c_str()) == false) {
+					return false;
+				}
+			}
+			toxml += "/metadata";
+			if (SAUtils::DirExists(toxml.c_str()) == false) {
+				if (SAUtils::mkDir(toxml.c_str()) == false) {
+					return false;
+				}
+			}
+			if (writeMetadata(toxml, imageName, metadataObject) == false) {
 				return false;
 			}
 		}
 		if (ArchivePath::isMasterBackup2Enabled() == true) {
-			std::string path = m_master.getBackup2Object().getRepositoryPath().getMetadataPath();
-			if (writeMetadata(path, imageName, metadataObject) == false) {
+			std::string path = m_master.getBackup2Object().getRepositoryPath().getRepositoryPath();
+			std::string toxml = path;
+			std::string relpath = imagePath.getRelativePath();
+			toxml += '/';
+			toxml += imagePath.getYear(relpath);
+			if (SAUtils::DirExists(toxml.c_str()) == false) {
+				if (SAUtils::mkDir(toxml.c_str()) == false) {
+					return false;
+				}
+			}
+			toxml = path + '/';
+			toxml += imagePath.getRelativePath();
+			if (SAUtils::DirExists(toxml.c_str()) == false) {
+				if (SAUtils::mkDir(toxml.c_str()) == false) {
+					return false;
+				}
+			}
+			toxml += "/metadata";
+			if (SAUtils::DirExists(toxml.c_str()) == false) {
+				if (SAUtils::mkDir(toxml.c_str()) == false) {
+					return false;
+				}
+			}
+			if (writeMetadata(toxml, imageName, metadataObject) == false) {
 				return false;
 			}
 		}
@@ -1758,6 +1825,36 @@ namespace simplearchive {
 			logger.log(LOG_UNABLE_TO_CHECKOUT_GENERAL, CLogger::Level::FATAL, "Unable to update checkout history for image: \"%s\" Error: %s", filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
 			return false;
 		}
+		return true;
+		
+	}
+
+	bool ArchiveObject::updateMasterMetadata(const char* scope, const char* option, const char* value)
+	{
+		CLogger& logger = CLogger::getLogger();
+		CSVDatabase& masterDatabase = CSVDatabase::get();
+		if (masterDatabase.setMasterMetadata(scope, option, value) == false) {
+			logger.log(LOG_OK, CLogger::Level::WARNING, "Unable to update metadata");
+			return false;
+		}
+		std::shared_ptr<ResultsList> results = masterDatabase.getResults();
+		for (auto i = results->begin(); i != results->end(); i++) {
+			SharedMTRow row = *i;
+			MetadataObject metadataObject(*row);
+			std::string filepath = metadataObject.getFilepathString();
+			std::string fileName = metadataObject.getFilenameString();
+			ImagePath imagePath(filepath);
+			if (writeMetadata2Workspace(imagePath, fileName, metadataObject) == false) {
+				logger.log(LOG_OK, CLogger::Level::WARNING, "Unable to update workspace");
+			}
+			if (writeMetadata2PrimaryIndex(imagePath, fileName, metadataObject) == false) {
+				logger.log(LOG_OK, CLogger::Level::WARNING, "Unable to update workspace");
+			}
+			if (writeMetadata2MasterDatabase(imagePath, fileName, metadataObject) == false) {
+				logger.log(LOG_OK, CLogger::Level::WARNING, "Unable to update master database");
+			}
+		}
+		
 		return true;
 		
 	}

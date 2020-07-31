@@ -101,7 +101,7 @@ bool ArchiveRepository::checkout(const char *filepath, const char *comment) {
 	}
 
 	// Full path to metadata directory
-	std::string lockpath = path + "/.sia/metadata/" + filename;
+	std::string lockpath = path + "/.imga/metadata/" + filename;
 	// Full path to lock file
 	std::string imageHistoryPath = lockpath + ".hst";
 
@@ -146,8 +146,8 @@ bool ArchiveRepository::checkin(const char *filepath, const char *comment) {
 	} else {
 		//printf("Path to Image in achive invalid \"%s\"", filepath);
 	}
-	std::string hstpath = path + "/.sia/metadata/" + filename + ".hst";
-	std::string lockpath = path + "/.sia/metadata/" + filename;
+	std::string hstpath = path + "/.imga/metadata/" + filename + ".hst";
+	std::string lockpath = path + "/.imga/metadata/" + filename;
 
 	if ((ImageLock::unlock(lockpath.c_str())) == false) {
 		//return false;
@@ -192,8 +192,8 @@ bool ArchiveRepository::uncheckout(const char *filepath, const char *comment) {
 	} else {
 		//printf("Path to Image in achive invalid \"%s\"", filepath);
 	}
-	std::string hstpath = path + "/.sia/metadata/" + filename + ".hst";
-	std::string lockpath = path + "/.sia/metadata/" + filename;
+	std::string hstpath = path + "/.imga/metadata/" + filename + ".hst";
+	std::string lockpath = path + "/.imga/metadata/" + filename;
 
 	if ((ImageLock::unlock(lockpath.c_str())) == false) {
 		//return false;

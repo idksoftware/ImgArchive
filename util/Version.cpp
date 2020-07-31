@@ -111,7 +111,7 @@ int Version::Revert() {
 }
 
 bool Version::HasChanged() {
-	std::string datapath = m_imagePath + "/.sia/data";
+	std::string datapath = m_imagePath + "/.imga/data";
 	std::string imageFilePath = m_imagePath + "/" + m_imagefilename;
 	std::string imageDataPath = datapath + "/" + m_imagefilename;
 
@@ -122,7 +122,7 @@ bool Version::HasChanged() {
 }
 
 bool Version::RemoveTemp() {
-	std::string datapath = m_imagePath + "/.sia/data/";
+	std::string datapath = m_imagePath + "/.imga/data/";
 	std::string tmpVersion = datapath + m_imagefilename + ".tmp";
 	if (SAUtils::FileExists(tmpVersion.c_str()) == false) {
 		return true;
@@ -158,7 +158,7 @@ bool Version::CopyDataVersion2Old() {
 */
 
 bool Version::CopyDataVersion2Temp() {
-	std::string datapath = m_imagePath + "/.sia/data";
+	std::string datapath = m_imagePath + "/.imga/data";
 	std::string from = datapath + "/" + m_imagefilename;
 	std::string to = from + ".tmp";
 	// data
@@ -180,7 +180,7 @@ bool Version::CopyDataVersion2Temp() {
 }
 
 bool Version::CopyDataVersion2Current() {
-	std::string datapath = m_imagePath + "/.sia/data";
+	std::string datapath = m_imagePath + "/.imga/data";
 	std::string from = datapath + "/" + m_imagefilename;
 	std::string to = m_imagePath + "/" + m_imagefilename;
 	// data

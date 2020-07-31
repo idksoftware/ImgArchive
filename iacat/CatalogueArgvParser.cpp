@@ -31,7 +31,7 @@ namespace simplearchive {
 		setHeader("usage: siaadmin subcommand [options] [args]\n\n"
 			"Image archive command line administrator, version 1.0.0.1\n"
 			"Type 'siaadmin help <subcommand>' for help on a specific subcommand.\n\n"
-			"siaadmin is the primary command-line interface to administer Simple Image Archive (sia)."
+			"siaadmin is the primary command-line interface to administer Image Archive (imga)."
 			"\n");
 
 
@@ -440,9 +440,9 @@ namespace simplearchive {
 		*/
 		usage += '\n';
 		/*
-		usage += "usage: sia subcommand [options] [args]\n\n";
+		usage += "usage: imga subcommand [options] [args]\n\n";
 		usage += "Image archive command line client, version 1.0.0.1\n";
-		usage += "Type 'sia help <subcommand>' for help on a specific subcommand.\n\n";
+		usage += "Type 'imga help <subcommand>' for help on a specific subcommand.\n\n";
 		*/
 		std::string tmp = "The command imgarc is the primary command-line interface to ImgArchive. This interface is used to manage the control of images going in and out of the archive software. ";
 		tmp += "It has a rich set of subcommands that \"add/import\" images to the archive and \"export\" images out of the archive, In addition manages the controlled modification of images";

@@ -135,7 +135,7 @@ namespace simplearchive {
 		workspaceController.splitShort(filepath);
 		workspaceController.makePath();
 		std::string workspacePath = workspaceController.getFullPath();
-		workspacePath += "/.sia/"; workspacePath += workspaceController.getImage();
+		workspacePath += "/.imga/"; workspacePath += workspaceController.getImage();
 		workspacePath += ".hst";
 
 		if (writeLog(historyItem, workspacePath.c_str()) == false) {

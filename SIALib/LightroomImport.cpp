@@ -68,7 +68,7 @@ namespace simplearchive {
 				if (c == '.') {
 					continue;
 				}
-				//for workspace std::string filepath = year + "/" + name + "/.sia/chdsk/fdata.xml";
+				//for workspace std::string filepath = year + "/" + name + "/.imga/chdsk/fdata.xml";
 				std::string relfilepath = year + "/" + name;
 				std::string lightroomFullPath = m_lightroomPath + '/' + relfilepath;
 				std::string archiveFullPath = m_archivePath + "/system/chdsk/" + relfilepath + "/fdata.csv";

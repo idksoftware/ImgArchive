@@ -5,9 +5,9 @@
  *      Author: wzw7yn
  */
 
-#ifndef METADATAUPDATE_H_
-#define METADATAUPDATE_H_
 
+
+#ifdef XXXXX
 namespace simplearchive {
 
 class MetadataDocument;
@@ -27,4 +27,4 @@ public:
 
 
 } /* namespace simplearchive */
-#endif /* METADATAUPDATE_H_ */
+#endif 

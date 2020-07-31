@@ -693,7 +693,7 @@ CheckDisk::~CheckDisk() {}
 
 bool CheckDisk::makeCheckData(const char *targetdir) {
 
-	std::string path = targetdir + std::string("/.sia");
+	std::string path = targetdir + std::string("/.imga");
 	if (SAUtils::DirExists(path.c_str()) == false) {
 		if (SAUtils::mkDir(path.c_str()) == false) {
 			throw std::exception();
@@ -935,7 +935,7 @@ bool CheckDisk::checkExtra(CkdskDiffFile &ckdskDiffFile, FileList_Ptr &filelist,
 	// This is a very slow way? better ways must be found.
 	for (std::vector<std::string>::iterator j = filelist->begin(); j != filelist->end(); j++) {
 		std::string &chkname = *j;
-		if (chkname.compare(".") == 0 || chkname.compare("..") == 0 || chkname.compare(".sia") == 0) {
+		if (chkname.compare(".") == 0 || chkname.compare("..") == 0 || chkname.compare(".imga") == 0) {
 			continue;
 		}
 		for (std::vector<std::string>::iterator i = ckdskDiffFile.begin(); i != ckdskDiffFile.end(); i++) {
@@ -1003,7 +1003,7 @@ bool CheckDisk::findNewImages(const char *checkFilePath, const char *targetdir, 
 	std::string targetdirStr = targetdir;
 	for (std::vector<std::string>::iterator i = filelist->begin(); i != filelist->end(); i++) {
 		std::string name = *i;
-		if (name.compare(".") == 0 || name.compare("..") == 0 || name.compare(".sia") == 0) {
+		if (name.compare(".") == 0 || name.compare("..") == 0 || name.compare(".imga") == 0) {
 			continue;
 		}
 		std::string filepath = targetdirStr + "/" + name;
@@ -1065,7 +1065,7 @@ bool CheckDisk::check(const char *targetdir, const char *checkFilePath, const ch
 	std::string targetdirStr = targetdir;
 	for (std::vector<std::string>::iterator i = filelist->begin(); i != filelist->end(); i++) {
 		std::string name = *i;
-		if (name.compare(".") == 0 || name.compare("..") == 0 || name.compare(".sia") == 0) {
+		if (name.compare(".") == 0 || name.compare("..") == 0 || name.compare(".imga") == 0) {
 			continue;
 		}
 		std::string filepath = targetdirStr + "/" + name;

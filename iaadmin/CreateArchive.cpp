@@ -165,7 +165,7 @@ const char *mirrordoc[] = {
 
 const char *viewdoc[] = {
 	"# name ,mode, path, type",
-	"#default=dynamic,/backup/home/tmp1,link,readonly,include,/home/wzw7yn/sia/piclist.dat",
+	"#default=dynamic,/backup/home/tmp1,link,readonly,include,/home/wzw7yn/imga/piclist.dat",
 	"#link=dynamic,/backup/home/test/link,link,readonly",
 	"#copy=dynamic,/backup/home/test/copy,copy,readonly"
 };

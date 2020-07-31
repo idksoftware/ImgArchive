@@ -207,7 +207,7 @@ namespace simplearchive {
 			}
 		}
 		workPath += '/';
-		workPath += ".sia";
+		workPath += ".imga";
 		if (SAUtils::FileExists(workPath.c_str()) == false) {
 			if (SAUtils::mkDir(workPath.c_str()) == false) {
 				return false;

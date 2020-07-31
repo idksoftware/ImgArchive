@@ -195,7 +195,7 @@ namespace simplearchive {
 				filexml << "\t<YearFolder Name=\"" << data.getYear() << "\" >\n";
 
 			}
-			//for workspace std::string filepath = currYear + "/" + data.getFolderName() + "/.sia/chdsk/fdata.xml";
+			//for workspace std::string filepath = currYear + "/" + data.getFolderName() + "/.imga/chdsk/fdata.xml";
 			std::string filepath = currYear + "/" + data.getFolderName() + "/fdata.xml";
 			//printf("folder: %s \n", name->c_str());
 			filexml << "\t\t<DayFolder Name=\"" << data.getFolderName() << "\" "

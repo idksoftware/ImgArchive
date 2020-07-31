@@ -9,6 +9,8 @@
 #include "SQLiteDB.h"
 #include "IndexVisitor.h"
 #include "ImagePath.h"
+#include "DerivativeRepository.h"
+
 //using namespace SIADBLite;
 
 namespace simplearchive {
@@ -94,6 +96,7 @@ namespace simplearchive {
 	/**
 	 * This is the Derivatives Object that is used to archive the derivatives (new verions) of original images contained in the master archive.  
 	 */
+	
 	class DerivativeMetadataRow;
 	class DerivativeIndexTable;
 	class MetadataObject;
@@ -148,7 +151,8 @@ namespace simplearchive {
 		virtual bool copyFile(const std::string &pathToSourceRoot, const std::string  &yyyymmddStr, const std::string &fileName, const std::string &sequenceName);
 		bool validate(const char *dbImage, const char *sourceImage = nullptr);
 	};
-
+	
+	
 	
 
 	class MasterRepositoryObject : public RepositoryObject {
@@ -213,7 +217,7 @@ namespace simplearchive {
 		bool CreateImage(const BasicMetadata &BasicMetadata, ImagePath &imagePath, MetadataObject &metadataObject);
 		bool processHistory(ImagePath &imagePath, const char *comment);
 		//bool processHistory(ImagePath &imagePath, const char *filepath, const char *comment, const HistoryEvent &he, int ver);
-		bool processImageGroupSets(ImageSets *imageSets, ImportJournal& importJournal);
+		//bool processImageGroupSets(ImageSets *imageSets, ImportJournal& importJournal);
 		/// @brief Show checked out files into the Workspace
 		/// @param fileath - distination folder were the images that may be checked out.
 		bool showCheckedOut(const char *filepath);
@@ -230,6 +234,8 @@ namespace simplearchive {
 		bool checkinFile(const char *filepath, const char *comment, bool force);
 		bool uncheckout(const char *scope, const char *comment, bool force);
 		bool uncheckoutFile(const char *filepath, const char *comment, bool force);
+
+		bool updateMasterMetadata(const char* scope, const char* option, const char* value);
 		/// @brief Checkin
 		/// @param fileath - distination folder were the images to be checked out reside.
 		bool get(const char *filepath, const char *versions, const char *comment, bool force);
@@ -251,7 +257,7 @@ namespace simplearchive {
 		bool writeMetadata2Workspace(ImagePath &imagePath, std::string &imageName, MetadataObject &metadataObject);
 		bool writeDerivativeMetadat2Workspace(ImagePath &imagePath, std::string &versionName, DerivativeMetadataRow &derivativeMetadata, std::string &imageName);
 		bool writeMetadata2PrimaryIndex(ImagePath &imagePat, std::string &imageName, MetadataObject &metadataObject);
-		bool writeMetadata2MasterDatabase(std::string &imageName, MetadataObject &metadataObject);
+		bool writeMetadata2MasterDatabase(ImagePath& imagePat, std::string& imageName, MetadataObject &metadataObject);
 		bool writeMetadata2DerivativesDatabase(std::string &versionName, DerivativeMetadataRow &metadataObject, std::string &imageName);
 		bool copyFile2Master(const std::string  &pathToSourceRoot, const std::string  &yyyymmddStr, const std::string &fileName, const std::string &sequenceName);
 

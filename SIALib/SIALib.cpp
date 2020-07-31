@@ -248,17 +248,17 @@ namespace simplearchive {
 		}
 
 		if (SAUtils::DirExists(temp.c_str()) == false) {
-			logger.log(LOG_OK, CLogger::Level::INFO, "Hidden .sia folder not found at location: \"%s\"", temp.c_str());
+			logger.log(LOG_OK, CLogger::Level::INFO, "Hidden .imga folder not found at location: \"%s\"", temp.c_str());
 
 			if (SAUtils::mkDir(temp.c_str()) == false) {
-				logger.log(LOG_OK, CLogger::Level::FATAL, "Cannot create Hidden .sia folder at location: \"%s\"", temp.c_str());
+				logger.log(LOG_OK, CLogger::Level::FATAL, "Cannot create Hidden .imga folder at location: \"%s\"", temp.c_str());
 				return -1;
 			}
 			if (SAUtils::setHidden(temp.c_str()) == false) {
-				logger.log(LOG_OK, CLogger::Level::INFO, "Cannot set Hidden .sia folder to a hidden folder \"%s\"", temp.c_str());
+				logger.log(LOG_OK, CLogger::Level::INFO, "Cannot set Hidden .imga folder to a hidden folder \"%s\"", temp.c_str());
 				return -1;
 			}
-			logger.log(LOG_OK, CLogger::Level::INFO, "Hidden .sia folder created at location: \"%s\"", temp.c_str());
+			logger.log(LOG_OK, CLogger::Level::INFO, "Hidden .imga folder created at location: \"%s\"", temp.c_str());
 		}
 
 
@@ -698,11 +698,12 @@ namespace simplearchive {
 	}
 
 	bool SIALib::setProperty(const char* scope, const char* option, const char* value) {
-		CSVDatabase& masterDatabase = CSVDatabase::get();
-		if (masterDatabase.setMasterMetadata(scope, option, value) == false) {
+
+		if (ArchiveObject::getInstance().updateMasterMetadata(scope, option, value) == false) {
 			return false;
 		}
 		return true;
+		
 	}
 
 	bool SIALib::archive(const char *archivePath, const char *distPath, unsigned long sizeOfMedia, ExifDateTime *startDate, ExifDateTime *endDate) {

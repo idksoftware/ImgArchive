@@ -21,7 +21,7 @@ static char THIS_FILE[] = __FILE__;
 //#define new DEBUG_NEW
 #endif
 
-
+#ifdef XXXX
 namespace simplearchive {
 
 
@@ -123,3 +123,4 @@ bool MetadataUpdate::loadMetadataDocument(MetadataDocument &metadataDocument, Me
 }
 
 } /* namespace simplearchive */
+#endif
