@@ -275,20 +275,14 @@ bool CSVDatabase::setMasterMetadata(const char* addressScope, const char* option
 		logger.log(LOG_OK, CLogger::Level::WARNING, "No results for metadata");
 		return false;
 	}
-	MTTableSchema& schema = results->getTableSchema();
-	size_t idx = schema.getIndex(option);
-	if (idx == std::string::npos) {
+	if (update(option, value) == false) {
 		logger.log(LOG_OK, CLogger::Level::WARNING, "No property of that name: \"%s\"", option);
 		return false;
 	}
-
-	for (auto i = results->begin(); i != results->end(); i++) {
-		SharedMTRow row = *i;
-		MTColumn& col = row->columnAt(idx);
-		col.fromString(value);
-	}
-	return false;
+	return true;
 }
+
+
 
 bool MasterMatadataResultsPresentation::writeHuman() {
 

@@ -31,7 +31,9 @@ namespace simplearchive {
 		{};
 		~CSVTable() = default;
 		const char* getName();
+
 		bool select(const char* scope);
+		bool update(const char* option, const char* value);
 
 		std::shared_ptr<ResultsList> getResults() {
 			return m_resultsList;

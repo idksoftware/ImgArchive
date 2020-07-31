@@ -107,4 +107,19 @@ namespace simplearchive {
 		
 		return true;
 	}
+
+	bool CSVTable::update(const char* option, const char* value) {
+		MTTableSchema& schema = m_resultsList->getTableSchema();
+		size_t idx = schema.getIndex(option);
+		if (idx == std::string::npos) {
+			return false;
+		}
+
+		for (auto i = m_resultsList->begin(); i != m_resultsList->end(); i++) {
+			SharedMTRow row = *i;
+			MTColumn& col = row->columnAt(idx);
+			col.fromString(value);
+		}
+		return true;
+	}
 };
