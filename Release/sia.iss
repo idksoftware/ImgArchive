@@ -9,8 +9,8 @@
 #define AppConfig "{commonappdata}\IDK-Software\ImgArchive\config"
 #define AppHooks "{commonappdata}\IDK-Software\ImgArchive\hooks"
 #define AppHome "{commonappdata}\IDK-Software\ImgArchive"
-#define ReleasePath "C:\development\imgarch_root\ImgArchive\Release"
-#define ReleasePath64 "C:\development\imgarch_root\ImgArchive\x64\Release"
+#define ReleasePath "C:\development\SIA\ImgArchive\Release"
+#define ReleasePath64 "C:\development\SIA\ImgArchive\x64\Release"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
