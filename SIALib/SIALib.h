@@ -146,7 +146,7 @@ namespace simplearchive {
 		
 		bool exportImage(const char *distpath);
 
-		bool view(const char *name);
+		// Not_Used bool view(const char *name);
 
 		bool show();
 

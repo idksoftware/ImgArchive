@@ -18,19 +18,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AssetProperties.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Database.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageTable.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MediaProerties.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MetadataContainer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SQLBuilder.cpp">
@@ -38,19 +26,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AssetProperties.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Database.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageTable.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MediaProerties.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MetadataContainer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SQLBuilder.h">

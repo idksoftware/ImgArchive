@@ -606,7 +606,7 @@ namespace simplearchive {
 		}
 		return true;
 	}
-
+#ifdef NOT_USED
 	bool SIALib::view(const char *name) {
 	
 		/*
@@ -624,7 +624,7 @@ namespace simplearchive {
 		}
 		return true;
 	}
-
+#endif
 	
 	bool SIALib::workspace(bool sync) {
 		return true;

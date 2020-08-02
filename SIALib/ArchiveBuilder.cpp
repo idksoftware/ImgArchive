@@ -341,7 +341,7 @@ namespace simplearchive {
 		std::string MasterJournalPath = ImagePath::getMasterJournalPath();
 		ImportJournalManager::setJournalFilePath(MasterJournalPath.c_str());
 
-		ViewManager::GetInstance().initaliseMaster(config.getWorkspacePath(), config.getMasterCataloguePath());
+		//ViewManager::GetInstance().initaliseMaster(config.getWorkspacePath(), config.getMasterCataloguePath());
 
 		CLogger &logger = CLogger::getLogger();
 

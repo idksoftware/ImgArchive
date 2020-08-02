@@ -146,7 +146,6 @@
     <ClCompile Include="MirrorManager.cpp" />
     <ClCompile Include="StagingManager.cpp" />
     <ClCompile Include="VerifyMirror.cpp" />
-    <ClCompile Include="ViewManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CSVStatusFile.h" />
@@ -155,7 +154,6 @@
     <ClInclude Include="MirrorManager.h" />
     <ClInclude Include="StagingManager.h" />
     <ClInclude Include="VerifyMirror.h" />
-    <ClInclude Include="ViewManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="main.dox" />

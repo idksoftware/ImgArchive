@@ -157,13 +157,12 @@ public:
 	enum class CommandMode {
 		CM_Import,      //< Import(add) one or more images into the archve.
 		CM_Export,      //< Export one or more images out of the archive.
-		CM_Get,         //< Gets images from the archive into the workspace.
 		CM_Metadata,	//< Shows the image metadata.
 		CM_Checkout,    //< Check-out one or more images out of the archive.
 		CM_Checkin,     //< Check-in one or more images into the archive.
 		CM_UnCheckout,  //< Uncheck out one or more images into the archive, any changes will be lost.
 		CM_About,     //< Show the current version/build of this software.
-		CM_View,        //< Manages veiws that are generated from the archive.
+		//CM_View,        //< Manages views that are generated from the archive.
 		CM_Uncheckin,   //< ? this may not be used.
 		CM_Show,        //< This shows the current state of archive properties.
 		CM_Cleanup,		// Recursively clean up the workspace

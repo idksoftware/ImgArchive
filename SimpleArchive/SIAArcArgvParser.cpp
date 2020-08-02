@@ -39,10 +39,6 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineCommandSyntax("import", "iaarc import [--source-path=<path>]\n\t"
 		"[--comment=<comment text>]\n\t[--lightroom=<On|Off>]");
 	
-	defineOption("get", "get images from the archive.", ArgvParser::MasterOption);
-	defineCommandSyntax("get", "iaarc get [--target-path=<path>]\n\t"
-		"[--comment=<comment text>]\n\t[--scope=<scope-address]\n\t[--force=<yes|No>]\n\t[--version=<vesion-num>");
-
 	defineOption("checkout", "Checkout images from archive.", ArgvParser::MasterOption);
 	defineCommandSyntax("checkout", "iaarc checkout [--target-path=<path>]\n\t"
 		"[--comment=<comment text>]\n\t[--scope=<scope-address]\n\t[--force=<yes|No>]\n\t[--version=<vesion-num>");
@@ -56,9 +52,9 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 		"[--comment=<comment text>]\n\t[--scope=<scope-address>]\n\t[--force=<yes|No>]\n\t[--version=<vesion-num>");
 
 	defineOption("export", "Export images from archive.", ArgvParser::MasterOption);
-	defineCommandSyntax("uncheckout", "iaarc uncheckout [--target-path=<path>]\n\t[--logging-level=<level>]"
+	defineCommandSyntax("export", "iaarc export [--target-path=<path>]\n\t[--logging-level=<level>]"
 		"[--comment=<comment text>]\n\t[--scope=<scope-address]\n\t[--force=<yes|No>]\n\t[--version=<vesion-num>");
-
+	
 	defineOption("prop", "Manage image properties", ArgvParser::MasterOption);
 	defineCommandSyntax("prop", "iaarc prop [--s]\n\t[--logging-level=<level>]"
 		"[--scope=<scope-address]\n\t[--set=<property:value>]");
@@ -72,7 +68,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 		"[--current=<yes|no>]\n\t[--comment=<comment text>]\n\t[--scope=<scope-address]\n\t[--force=<yes|No>]");
 
 	defineOption("status", "show check in/out status", ArgvParser::MasterOption);
-	defineOption("view", "View commands", ArgvParser::MasterOption);
+	
 
 	defineOption("show", "Show details", ArgvParser::MasterOption);
 	defineCommandSyntax("show", "iaarc show [--history=<image-address>]\n\t");
@@ -191,10 +187,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineCommandOption("import", "source-path");
 	defineCommandOption("import", "lightroom");
 
-	defineCommandOption("get", "comment");
-	defineCommandOption("get", "scope");
-	defineCommandOption("get", "force");
-	defineCommandOption("get", "version");
+	
 
 	defineCommandOption("checkin", "comment");
 	defineCommandOption("checkin", "scope");
@@ -211,9 +204,12 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineCommandOption("uncheckout", "force");
 	defineCommandOption("uncheckout", "image");
 
-	defineCommandOption("export", "comment");
 	defineCommandOption("export", "logging-level");
 	defineCommandOption("export", "dist-path");
+	defineCommandOption("export", "comment");
+	defineCommandOption("export", "scope");
+	defineCommandOption("export", "force");
+	defineCommandOption("export", "version");
 
 	defineCommandOption("status", "scope");
 	defineCommandOption("status", "checked-out");
@@ -355,29 +351,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 		Environment::setEnvironment();
 		cmdFound = true;
 	}
-	else if (command("get") == true) {
-
-		if (foundOption("scope") == true) {
-			appOptions.m_imageAddress = optionValue("scope");
-		}
-
-		if (foundOption("comment") == true) {
-			appOptions.m_comment = optionValue("comment");
-		}
-		
-
-		if (foundOption("force") == true) {
-			appOptions.m_force = true;
-		}
-
-		if (foundOption("version") == true) {
-			std::string opt = optionValue("version");
-			appOptions.m_version = opt.c_str();
-		}
-
-		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Get);
-		cmdFound = true;
-	}
+	
 	else if (command("checkout") == true) {
 
 		if (foundOption("scope") == true) {
@@ -508,12 +482,28 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 		cmdFound = true;
 	}
 	else if (command("export") == true) {
-		if (foundOption("dist-path") == true) {
-			appOptions.m_distinationPath = optionValue("dist-path");
+		if (foundOption("scope") == true) {
+			appOptions.m_imageAddress = optionValue("scope");
 		}
-		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Export);
-		cmdFound = true;
-	}
+
+		if (foundOption("comment") == true) {
+			appOptions.m_comment = optionValue("comment");
+		}
+
+
+		if (foundOption("force") == true) {
+			appOptions.m_force = true;
+		}
+
+		if (foundOption("version") == true) {
+			std::string opt = optionValue("version");
+			appOptions.m_version = opt.c_str();
+		}
+
+			appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Export);
+			cmdFound = true;
+		}
+#ifdef NOT_USED
 	else if (command("view") == true) {
 		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_View);
 
@@ -548,7 +538,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 
 		cmdFound = true;
 	}
-
+#endif
 	else if (command("log") == true) {
 
 		bool gotImageAddress = false;

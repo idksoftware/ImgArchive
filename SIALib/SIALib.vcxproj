@@ -194,7 +194,6 @@
     <ClInclude Include="StandardOut.h" />
     <ClInclude Include="TargetsList.h" />
     <ClInclude Include="TerminalServer.h" />
-    <ClInclude Include="ViewManager.h" />
     <ClInclude Include="XMLReader.h" />
   </ItemGroup>
   <ItemGroup>
@@ -240,7 +239,6 @@
     <ClCompile Include="TargetsList.cpp" />
     <ClCompile Include="TerminalServer.cpp" />
     <ClCompile Include="VersionControl.cpp" />
-    <ClCompile Include="ViewManager.cpp" />
     <ClCompile Include="XMLReader.cpp" />
   </ItemGroup>
   <ItemGroup>

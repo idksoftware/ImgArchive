@@ -93,9 +93,6 @@
     <ClInclude Include="HookCmd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ViewManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ExportImages.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -225,9 +222,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="HookCmd.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ViewManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ExportImages.cpp">

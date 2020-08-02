@@ -38,7 +38,7 @@
 #include "CSVDerivativeDatabase.h"
 #include "IntegrityManager.h"
 #include "HookCmd.h"
-#include "ViewManager.h"
+//#include "ViewManager.h"
 #include "Version.h"
 #include "VersionControl.h"
 #include "ImportJournal.h"
@@ -680,10 +680,11 @@ namespace simplearchive {
 		if (SAUtils::DirExists(derivative.getRepositoryPath().c_str()) == false) {
 			return false;
 		}
-
+		/* NOT_USED
 		if (ViewManager::initalise(ArchivePath::getMasterPath().c_str(), config.getConfigPath()) == false) {
 			return false;
 		}
+		*/
 
 		SQLiteDB::enableSQLiteDB(config.isSQL());
 

@@ -136,19 +136,11 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AssetProperties.cpp" />
     <ClCompile Include="Database.cpp" />
-    <ClCompile Include="ImageTable.cpp" />
-    <ClCompile Include="MediaProerties.cpp" />
-    <ClCompile Include="MetadataContainer.cpp" />
     <ClCompile Include="SQLBuilder.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AssetProperties.h" />
     <ClInclude Include="Database.h" />
-    <ClInclude Include="ImageTable.h" />
-    <ClInclude Include="MediaProerties.h" />
-    <ClInclude Include="MetadataContainer.h" />
     <ClInclude Include="SQLBuilder.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

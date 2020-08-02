@@ -50,7 +50,7 @@
 #include "HookCmd.h"
 #include "MakeMedia.h"
 #include "MirrorManager.h"
-#include "ViewManager.h"
+//#include "ViewManager.h"
 #include "AboutCommand.h"
 
 #include "SummaryFile.h"
@@ -295,12 +295,6 @@ bool SIAArcApp::doRun()
 		}
 		break;
 		
-	case SIAArcAppOptions::CommandMode::CM_Get:
-		if (siaLib.get(appOptions.getImageAddress(), appOptions.getComment(), appOptions.isForced()) == false) {
-			setError(CLogger::getLastCode(), CLogger::getLastMessage());
-			return false;
-		}
-		break;
 	case SIAArcAppOptions::CommandMode::CM_Checkout:
 	{
 		if (siaLib.checkout(appOptions.getImageAddress(), appOptions.getComment(), appOptions.isForced()) == false) {
@@ -362,6 +356,7 @@ bool SIAArcApp::doRun()
 		}
 		break;
 	}
+#ifdef NOT_USED
 	case SIAArcAppOptions::CommandMode::CM_View:
 	{
 		if (siaLib.view(appOptions.getName()) == false) {
@@ -370,6 +365,7 @@ bool SIAArcApp::doRun()
 		}
 		break;
 	}
+#endif
 	case SIAArcAppOptions::CommandMode::CM_Workspace:
 	{
 		if (siaLib.workspace(appOptions.isSync())) {

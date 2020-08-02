@@ -50,7 +50,7 @@
 #include "HookCmd.h"
 #include "MakeMedia.h"
 #include "MirrorManager.h"
-#include "ViewManager.h"
+//#include "ViewManager.h"
 #include "CreateArchive.h"
 #include "TestArchive.h"
 #include "SummaryFile.h"
