@@ -39,7 +39,8 @@
 #include "AppOptions.h"
 #include "argvparser.h"
 #include "ExifDate.h"
-#include "LogDocument.h"
+#include "ResultsPresentation.h"
+#include "ParseOptions.h"
 
 namespace simplearchive {
 
@@ -152,6 +153,21 @@ namespace simplearchive {
 
 typedef std::vector<std::string> DefaultArgumentsContainer;
 
+#define STATUS_CHECKED_OUT	"checked-out"
+#define STATUS_CHECKED_IN	"checked-in"
+#define STATUS_DELETED		"deleted"
+
+class StatusOptions : public ParseOptions
+{
+	std::string m_option{ STATUS_CHECKED_OUT };
+public:
+	StatusOptions() = default;
+	virtual ~StatusOptions() = default;
+	bool parse(const char* optionString);
+	const char* getOption() { return m_option.c_str(); };
+};
+
+
 class SIAArcAppOptions : public CommandLineProcessing::AppOptions{
 public:
 	enum class CommandMode {
@@ -168,6 +184,7 @@ public:
 		CM_Cleanup,		// Recursively clean up the workspace
 		CM_Relocate,	// Relocate images from one date to another
 		CM_Delete,		// Delete images
+		CM_Undelete,	// Undelete images
         CM_Info,        // same as show
 		CM_List,		// This may be superseded my show, list(ls) — List directory entries in the repository.
 		CM_Lock,		// Lock working images in the repository so that no other user can commit changes to them.
@@ -184,12 +201,14 @@ public:
 
 	enum class ShowCommandOption {
 		SC_ShowCheckedOut,
+		SC_ShowCheckedIn,
 		SC_ShowUncheckedOutChanges,
 		SC_Unknown
 	};
 
 private:
 	friend class SIAArcArgvParser;
+	friend class StatusOptions;
 	static SIAArcAppOptions *m_this;
 	static bool m_list;
 	static bool m_usingFile;
@@ -217,7 +236,7 @@ private:
 	static std::string m_imageAddress;
 	static std::string m_distinationPath;
 	static std::string m_filePath;
-	static LogDocument::FormatType m_formatType;
+	static ResultsPresentation::FormatType m_formatType;
 	static std::string m_version;
     static std::string m_FromDate;
     static std::string m_ToDate;
@@ -225,7 +244,7 @@ private:
 	static std::string m_value;
 	static std::string m_outputFile;
 	static std::string m_textOutputType;
-	ShowCommandOption m_showCommandOption;
+	static ShowCommandOption m_showCommandOption;
 
 	static DefaultArgumentsContainer defaultArgumentsContainer;
 
@@ -284,7 +303,7 @@ public:
 	bool isCurrent();
 	bool isMaster();
 	ExifDate &getArchiveDate();
-	LogDocument::FormatType& getFormatType();
+	ResultsPresentation::FormatType& getFormatType();
     //* Ge The Show Command Option (only if the show command active).
 	ShowCommandOption getShowCommandOption() { return m_showCommandOption; };
 

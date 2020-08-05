@@ -4,7 +4,7 @@
 #include "VersionIndex.h"
 #include "VersionControl.h"
 #include "TargetsList.h"
-#include "LogDocument.h"
+#include "ResultsPresentation.h"
 #include "MasterCatalogue.h"
 #include "SQLiteDB.h"
 #include "IndexVisitor.h"
@@ -218,12 +218,14 @@ namespace simplearchive {
 		bool processHistory(ImagePath &imagePath, const char *comment);
 		//bool processHistory(ImagePath &imagePath, const char *filepath, const char *comment, const HistoryEvent &he, int ver);
 		//bool processImageGroupSets(ImageSets *imageSets, ImportJournal& importJournal);
+		/// @brief Show all checked out status checked out/in, add, deleted 
+		bool showCheckedStatus(const char* filepath, ResultsPresentation::FormatType formatType, const char* file);
 		/// @brief Show checked out files into the Workspace
 		/// @param fileath - distination folder were the images that may be checked out.
-		bool showCheckedOut(const char *filepath);
+		bool showCheckedOut(const char *filepath, ResultsPresentation::FormatType formatType, const char* file);
 		/// @brief Show un-checked out changes in the Workspace
 		/// @param fileath - distination folder were the images that may be checked out.
-		bool showUncheckedOutChanges(const char *filepath);
+		bool showUncheckedOutChanges(const char *filepath, ResultsPresentation::FormatType formatType, const char* file);
 		/// @brief Checkout
 		/// @param fileath - distination folder were the images to be checked out reside.
 		bool checkout(const char *scope, const char *comment, bool force);
@@ -234,6 +236,13 @@ namespace simplearchive {
 		bool checkinFile(const char *filepath, const char *comment, bool force);
 		bool uncheckout(const char *scope, const char *comment, bool force);
 		bool uncheckoutFile(const char *filepath, const char *comment, bool force);
+
+		/// @brief deleteImages
+		/// @param fileath - distination folder were the images to be checked out reside.
+		bool deleteImages(const char* scope, const char* comment, bool force);
+		/// @brief deleteImages
+		/// @param fileath - distination folder were the images to be checked out reside.
+		bool undeleteImages(const char* scope, const char* comment);
 
 		bool updateMasterMetadata(const char* scope, const char* option, const char* value);
 		/// @brief Checkin
@@ -274,8 +283,8 @@ namespace simplearchive {
 		MasterCatalogue& getMasterCatalogue();
 		MasterWWWCatalogue& getWWWCatalogue();
 
-		bool imageHistory(const char *imageFilepath, const LogDocument::FormatType& formatType, const char* filepath);
-		bool systemHistory(const char* from, const char* to, LogDocument::FormatType formatType, const char* filepath);
+		bool imageHistory(const char *imageFilepath, const ResultsPresentation::FormatType& formatType, const char* filepath);
+		bool systemHistory(const char* from, const char* to, ResultsPresentation::FormatType formatType, const char* filepath);
 	};
 
 } // simplearchive

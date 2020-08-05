@@ -319,21 +319,33 @@ bool SIAArcApp::doRun()
 			return false;
 		}
 		break;
-	case SIAArcAppOptions::CommandMode::CM_Status:
-	{
-		if (siaLib.status(appOptions.getImageAddress()) == false) {
+	case SIAArcAppOptions::CommandMode::CM_Delete:
+		if (siaLib.deleteImages(appOptions.getImageAddress(), appOptions.getComment(), appOptions.isForced()) == false) {
 			setError(CLogger::getLastCode(), CLogger::getLastMessage());
 			return false;
 		}
+		break;
+	case SIAArcAppOptions::CommandMode::CM_Undelete:
+		if (siaLib.undeleteImages(appOptions.getImageAddress(), appOptions.getComment()) == false) {
+			setError(CLogger::getLastCode(), CLogger::getLastMessage());
+			return false;
+		}
+		break;
+	case SIAArcAppOptions::CommandMode::CM_Status:
+	{
+		//if (siaLib.status(appOptions.getImageAddress()) == false) {
+		//	setError(CLogger::getLastCode(), CLogger::getLastMessage());
+		//	return false;
+		//}
 		switch (appOptions.getShowCommandOption()) {
 		case SIAArcAppOptions::ShowCommandOption::SC_ShowCheckedOut:
-			if (siaLib.showCheckedOut(appOptions.getImageAddress()) == false) {
+			if (siaLib.showCheckedOut(appOptions.getImageAddress(), appOptions.getFormatType(), appOptions.getFilePath()) == false) {
 				setError(CLogger::getLastCode(), CLogger::getLastMessage());
 				return false;
 			}
 
 		case SIAArcAppOptions::ShowCommandOption::SC_ShowUncheckedOutChanges:
-			if (siaLib.showUncheckedOutChanges(appOptions.getImageAddress()) == false) {
+			if (siaLib.showUncheckedOutChanges(appOptions.getImageAddress(), appOptions.getFormatType(), appOptions.getFilePath()) == false) {
 				setError(CLogger::getLastCode(), CLogger::getLastMessage());
 				return false;
 			}

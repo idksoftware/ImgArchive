@@ -12,6 +12,8 @@
 #include "ErrorCode.h"
 #include "ResultsPresentation.h"
 #include "ResultsList.h"
+#include "ImageHistoryResultsPresentation.h"
+#include "SystemHistoryResultsPresentation.h"
 #include "CLogger.h"
 
 namespace simplearchive {

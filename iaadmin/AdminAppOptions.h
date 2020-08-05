@@ -46,6 +46,7 @@ public:
 		CM_About,       //* show version
 		CM_Sync,		//* Sync archive to backup(s)
 		CM_Validate,    //* Validate the archive.
+		CM_Purge,		//* Purge deleted images
 		CM_Test,        //* Test the archive
 		CM_Backup,		//* Backup archive to exteral media
 		CM_Config,		//* Configure the system

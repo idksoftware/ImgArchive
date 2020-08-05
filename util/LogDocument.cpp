@@ -44,9 +44,11 @@ static char THIS_FILE[] = __FILE__;
 //#define new DEBUG_NEW
 #endif
 
+#ifdef XXXXXXXXXXXXX
+
 namespace simplearchive {
 
-	LogDocument::LogDocument(std::shared_ptr<MTTableSchema> tableSchema) : m_tableSchema(tableSchema) {
+LogDocument::LogDocument(std::shared_ptr<MTTableSchema> tableSchema) : m_tableSchema(tableSchema) {
 	// TODO Auto-generated constructor stub
 
 }
@@ -130,3 +132,4 @@ std::string LogDocument::writeTag(const char *tag, const int value, int tab) {
 }
 
 } /* namespace simplearchive */
+#endif

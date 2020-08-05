@@ -41,8 +41,8 @@ namespace simplearchive {
 		
 		static bool Init(const char *Master, const char *workspace, const char *primaryIndex);
 		bool newImage(const char *imagePath, const char*comment);
-		bool showCheckedOut(const char *path);
-		bool showUncheckedOutChanges(const char *path);
+		bool showCheckedOut(const char *path, ResultsPresentation::FormatType formatType, const char* file);
+		bool showUncheckedOutChanges(const char *path, ResultsPresentation::FormatType formatType, const char* file);
 		bool checkoutUpdate(const char *imagePath, const char*comment);
 		bool checkinUpdate(const char *imagePath, const char*comment);
 		bool uncheckoutUpdate(const char *imagePath, const char*comment);
@@ -217,7 +217,7 @@ namespace simplearchive {
 	protected:
 
 		std::shared_ptr<CheckoutStatusPartition> m_partition;
-		std::shared_ptr<CheckoutRow> m_currentRow;
+		std::shared_ptr<MTRow> m_currentRow;
 
 		/// On the start of each directory found, this function is run.
 		virtual bool onStart();

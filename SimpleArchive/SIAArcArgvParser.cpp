@@ -51,6 +51,14 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineCommandSyntax("uncheckout", "iaarc uncheckout [--target-path=<path>]\n\t[--logging-level=<level>]"
 		"[--comment=<comment text>]\n\t[--scope=<scope-address>]\n\t[--force=<yes|No>]\n\t[--version=<vesion-num>");
 
+	defineOption("delete", "Delete images in the archive.", ArgvParser::MasterOption);
+	defineCommandSyntax("delete", "iaarc delete [--logging-level=<level>]"
+		"[--comment=<comment text>]\n\t[--scope=<scope-address>]\n\t[--version=<vesion-num>");
+
+	defineOption("undelete", "Undelete images in the archive.", ArgvParser::MasterOption);
+	defineCommandSyntax("undelete", "iaarc undelete [--logging-level=<level>]"
+		"[--comment=<comment text>]\n\t[--scope=<scope-address>]\n\t[--version=<vesion-num>");
+
 	defineOption("export", "Export images from archive.", ArgvParser::MasterOption);
 	defineCommandSyntax("export", "iaarc export [--target-path=<path>]\n\t[--logging-level=<level>]"
 		"[--comment=<comment text>]\n\t[--scope=<scope-address]\n\t[--force=<yes|No>]\n\t[--version=<vesion-num>");
@@ -68,7 +76,8 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 		"[--current=<yes|no>]\n\t[--comment=<comment text>]\n\t[--scope=<scope-address]\n\t[--force=<yes|No>]");
 
 	defineOption("status", "show check in/out status", ArgvParser::MasterOption);
-	
+	defineCommandSyntax("status", "iaarc status [--list>]\n\t[--logging-level=<level>]"
+		"[--current=<yes|no>]\n\t[--comment=<comment text>]\n\t[--scope=<scope-address]\n\t[--force=<yes|No>]");
 
 	defineOption("show", "Show details", ArgvParser::MasterOption);
 	defineCommandSyntax("show", "iaarc show [--history=<image-address>]\n\t");
@@ -160,9 +169,6 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineOption("c", "Comment to be included in command", ArgvParser::OptionRequiresValue);
 	defineOptionAlternative("c", "comment");
 
-	defineOption("li", "List items", ArgvParser::OptionRequiresValue);
-	defineOptionAlternative("li", "list");
-
 	defineOption("U", "Show settup", ArgvParser::NoOptionAttribute);
 	defineOptionAlternative("U", "settup");
 
@@ -179,8 +185,8 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineOption("force-date", "Overrides all dates found associated with the images in the selection", ArgvParser::OptionRequiresValue);
 	defineOption("default-date", "Uses this date if none found associated with an image", ArgvParser::OptionRequiresValue);
 
-	defineOption("checked-out", "Show checked out images", ArgvParser::OptionRequiresValue); // =all =year{2015}
-	defineOption("unchecked-out", "Show changed images which are not checked out", ArgvParser::OptionRequiresValue);
+	defineOption("list", "list checked out/in and delete images", ArgvParser::OptionRequiresValue); // =all =year{2015}
+	defineCommandSyntax("list", "list=[checked-out] | [checked-in] | [deleted]\n");
 
 	defineCommandOption("import", "comment");
 	
@@ -204,6 +210,16 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineCommandOption("uncheckout", "force");
 	defineCommandOption("uncheckout", "image");
 
+	defineCommandOption("delete", "comment");
+	defineCommandOption("delete", "scope");
+	defineCommandOption("delete", "force");
+	defineCommandOption("delete", "image");
+
+	defineCommandOption("undelete", "comment");
+	defineCommandOption("undelete", "scope");
+	defineCommandOption("undelete", "force");
+	defineCommandOption("undelete", "image");
+
 	defineCommandOption("export", "logging-level");
 	defineCommandOption("export", "dist-path");
 	defineCommandOption("export", "comment");
@@ -211,15 +227,14 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineCommandOption("export", "force");
 	defineCommandOption("export", "version");
 
+	defineCommandOption("status", "list");
 	defineCommandOption("status", "scope");
-	defineCommandOption("status", "checked-out");
-	defineCommandOption("status", "unchecked-out");
+	defineCommandOption("status", "format-type");
+	defineCommandOption("status", "file");
 
 	defineCommandOption("metadata", "scope");
 	defineCommandOption("metadata", "format-type");
 	defineCommandOption("metadata", "file");
-
-	defineCommandOption("status", "unchecked-out");
 
 	defineCommandOption("show", "settup");
 
@@ -272,7 +287,9 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 
 	//testHelpOptionDetection();
 	bool cmdFound = false;
-
+	//
+	// about
+	//
 	if (command("about") == true) {
 		if (foundOption("out") == true) {
 			OutputType outputType;
@@ -292,7 +309,9 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_About);
 		cmdFound = true;
 	}
-
+	//
+	// import
+	//
 	else if (command("import") == true) {
 
 		bool isSourePathSet = false;
@@ -351,7 +370,9 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 		Environment::setEnvironment();
 		cmdFound = true;
 	}
-	
+	//
+	// checkout
+	//
 	else if (command("checkout") == true) {
 
 		if (foundOption("scope") == true) {
@@ -378,6 +399,9 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Checkout);
 		cmdFound = true;
 	}
+	//
+	// checkin
+	//
 	else if (command("checkin") == true) {
 
 		if (foundOption("scope") == true) {
@@ -400,6 +424,9 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Checkin);
 		cmdFound = true;
 	}
+	//
+	// uncheckout
+	//
 	else if (command("uncheckout") == true) {
 
 		bool gotImageAddress = false;
@@ -421,12 +448,75 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_UnCheckout);
 		cmdFound = true;
 	}
+	//
+	// delete
+	//
+	else if (command("delete") == true) {
+
+		if (foundOption("scope") == true) {
+			appOptions.m_imageAddress = optionValue("scope");
+		}
+
+		if (foundOption("list") == true) {
+			appOptions.m_list = true;
+		}
+
+		if (foundOption("file") == true) {
+			appOptions.m_filePath = optionValue("file");
+			appOptions.m_usingFile = true;
+		}
+
+		if (foundOption("comment") == true) {
+			appOptions.m_comment = optionValue("comment");
+		}
+
+		if (foundOption("force") == true) {
+			appOptions.m_force = true;
+		}
+
+		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Delete);
+		cmdFound = true;
+	}
+	//
+	// undelete
+	//
+	else if (command("undelete") == true) {
+
+		if (foundOption("scope") == true) {
+			appOptions.m_imageAddress = optionValue("scope");
+		}
+
+		if (foundOption("list") == true) {
+			appOptions.m_list = true;
+		}
+
+		if (foundOption("file") == true) {
+			appOptions.m_filePath = optionValue("file");
+			appOptions.m_usingFile = true;
+		}
+
+		if (foundOption("comment") == true) {
+			appOptions.m_comment = optionValue("comment");
+		}
+
+		if (foundOption("force") == true) {
+			appOptions.m_force = true;
+		}
+
+		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Undelete);
+		cmdFound = true;
+	}
+	//
+	// show
+	//
 	else if (command("show") == true) {
 		
 		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Show);
 		cmdFound = true;
 	}
-	
+	//
+	// template
+	//
 	else if (command("template") == true) {
 		IAParseOptions iaParseOptions;
 		bool res = false;
@@ -462,6 +552,9 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Template);
 		cmdFound = true;
 	}
+	//
+	// prop
+	//
 	else if (command("prop") == true) {
 		if (foundOption("scope") == true) {
 			appOptions.m_imageAddress = optionValue("scope");
@@ -481,6 +574,9 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Prop);
 		cmdFound = true;
 	}
+	//
+	// export
+	//
 	else if (command("export") == true) {
 		if (foundOption("scope") == true) {
 			appOptions.m_imageAddress = optionValue("scope");
@@ -539,6 +635,9 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 		cmdFound = true;
 	}
 #endif
+	//
+	// log
+	//
 	else if (command("log") == true) {
 
 		bool gotImageAddress = false;
@@ -554,12 +653,12 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 
 		if (foundOption("format-type") == true) {
 			std::string opt = optionValue("format-type");
-			if (LogDocument::parse(opt.c_str()) == LogDocument::FormatType::unknown) {
+			if ((appOptions.m_formatType = ResultsPresentation::parse(opt.c_str())) == ResultsPresentation::FormatType::unknown) {
 				printf("Invalid argument for \"FormatType\" \"%s\"\n\n", opt.c_str());
 				printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 				return false;
 			}
-			appOptions.m_option = opt.c_str();
+			appOptions.m_textOutputType = opt.c_str();
 		}
 
 		if (gotImageAddress == false) {
@@ -569,20 +668,48 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Log);
 		cmdFound = true;
 	}
+	//
+	// status
+	//
 	else if (command("status") == true) {
+	
+		if (foundOption("list") == true) {
+			std::string opt = optionValue("list");
+			StatusOptions statusOptions;
+			if (statusOptions.parse(opt.c_str()) == false) {
+				printf("Invalid argument for \"list\" \"%s\"\n\n", opt.c_str());
+				printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+				return false;
+			}
+			appOptions.m_option = statusOptions.getOption();
+		}
+		else {
+			appOptions.m_option = STATUS_CHECKED_OUT;
+		}
 
 		if (foundOption("scope") == true) {
 			appOptions.m_imageAddress = optionValue("scope");
 		}
-		if (foundOption("checked-out") == true) {
-			appOptions.m_showCommandOption = SIAArcAppOptions::ShowCommandOption::SC_ShowUncheckedOutChanges;
+
+		if (foundOption("file") == true) {
+			std::string opt = optionValue("file");
+			appOptions.m_filePath = opt;
 		}
-		if (foundOption("unchecked-out") == true) {
-			appOptions.m_showCommandOption = SIAArcAppOptions::ShowCommandOption::SC_ShowUncheckedOutChanges;
+
+		if (foundOption("format-type") == true) {
+			std::string opt = optionValue("format-type");
+			if ((appOptions.m_formatType = ResultsPresentation::parse(opt.c_str())) == ResultsPresentation::FormatType::unknown) {
+				printf("Invalid argument for \"FormatType\" \"%s\"\n\n", opt.c_str());
+				printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+				return false;
+			}
 		}
 		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Status);
 		cmdFound = true;
 	}
+	//
+	// metadata
+	//
 	else if (command("metadata") == true) {
 
 		if (foundOption("scope") == true) {
@@ -595,7 +722,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 
 		if (foundOption("format-type") == true) {
 			std::string opt = optionValue("format-type");
-			if (LogDocument::parse(opt.c_str()) == LogDocument::FormatType::unknown) {
+			if (ResultsPresentation::parse(opt.c_str()) == ResultsPresentation::FormatType::unknown) {
 				printf("Invalid argument for \"FormatType\" \"%s\"\n\n", opt.c_str());
 				printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 				return false;
@@ -609,6 +736,9 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	//	appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Version);
 	//	cmdFound = true;
 	//}
+	//
+	// mode
+	//
 	else if (command("mode") == true) {
 		if (foundOption("remote-server") == true) {
 			config.setServerModeON();

@@ -32,6 +32,8 @@
 **
 ** #$$@@$$# */
 
+#ifdef XXXXXXXXXXXXXXXXx
+
 #ifndef LOGDOCUMENT_H_
 #define LOGDOCUMENT_H_
 #include <string>
@@ -100,3 +102,5 @@ public:
 
 } /* namespace simplearchive */
 #endif /* LOGDOCUMENT_H_ */
+
+#endif

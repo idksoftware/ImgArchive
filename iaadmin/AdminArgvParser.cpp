@@ -77,6 +77,9 @@ namespace simplearchive {
 		defineOption("about", "prints the version information", ArgvParser::MasterOption);
 		defineCommandSyntax("about", "about [--out] [--file]\n");
 
+		defineOption("purge", "Purges deleted images from archive", ArgvParser::MasterOption);
+		defineCommandSyntax("purge", "purge\n");
+
 		defineOption("validate", "Validate commands", ArgvParser::MasterOption);
 		defineCommandSyntax("validate", "validate [-q | --quiet]\n"
 			"| [--scope=<archive>] | [--validate-backup=<option>]\n"
@@ -511,16 +514,12 @@ namespace simplearchive {
 			}
 			
 		}
-		/*
-		else if (command("workspace") == true) {
-
-			if (foundOption("sync") == true) {
-				appOptions.m_sync = true;
-			}
-			appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Workspace);
+		else if (command("purge") == true) {
+			printf("Purge command\n");
+			appOptions.setCommandMode(AppOptions::CommandMode::CM_Purge);
 			cmdFound = true;
 		}
-		*/
+		
 		else if (command("validate") == true) {
 			appOptions.setCommandMode(AppOptions::CommandMode::CM_Validate);
 			cmdFound = true;

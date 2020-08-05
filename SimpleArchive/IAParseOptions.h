@@ -10,15 +10,16 @@ enum class Option {
 
 class IAParseOptions : public ParseOptions
 {
-	bool m_isMaster;
-	bool m_isCurrent;
+	bool m_isMaster{ true };
+	bool m_isCurrent{ true };
 public:
-	IAParseOptions() : m_isMaster(true) {};
+	IAParseOptions() = default;
 	virtual ~IAParseOptions() = default;
 	bool parseArchiveOptions(const char* optionString);
 	bool isMaster() { return m_isMaster; };
 	bool parseCurrentOptions(const char* optionString);
 	bool isCurrent() { return m_isCurrent; };
 };
+
 
 

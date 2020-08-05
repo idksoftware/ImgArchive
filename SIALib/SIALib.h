@@ -39,7 +39,7 @@
 #include <memory>
 
 #include "ExifDate.h"
-#include "LogDocument.h"
+#include "ResultsPresentation.h"
 /*
 */
 namespace simplearchive {
@@ -130,9 +130,11 @@ namespace simplearchive {
 		year = all the year	i.e "2015"
 		day  = all the day  i.e "2015-02-11"
 		*/
-		bool showCheckedOut(const char *addressScope);
+		bool status(const char* scope, ResultsPresentation::FormatType& formatType, const char* filepath);
 
-		bool showUncheckedOutChanges(const char *addressScope);
+		bool showCheckedOut(const char* scope, ResultsPresentation::FormatType& formatType, const char* filepath);
+
+		bool showUncheckedOutChanges(const char* scope, ResultsPresentation::FormatType& formatType, const char* filepath);
 
 		bool listContents(const char *addressScope); // maybe not used
 
@@ -150,7 +152,11 @@ namespace simplearchive {
 
 		bool show();
 
-		bool status(const char *scope);
+		bool deleteImages(const char* scope, const char* comment, bool force);
+		
+		bool undeleteImages(const char* scope, const char* comment);
+		
+		bool purge();
 
 		bool metadata(const char* scope, const char* formatType, const char* filePath);
 
@@ -170,7 +176,7 @@ namespace simplearchive {
 
 		bool sync(MainArchives mainArchives, Backups backups);
 
-		bool log(const char *filepath, const char* fromDate, const char* toDate, LogDocument::FormatType& formatType, const char* filename);
+		bool log(const char *filepath, const char* fromDate, const char* toDate, ResultsPresentation::FormatType& formatType, const char* filename);
 
 		bool remoteServer();
 	

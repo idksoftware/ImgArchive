@@ -9,7 +9,7 @@
 
 #include "HistoryEvent.h"
 #include "ErrorCode.h"
-#include "LogDocument.h"
+#include "ResultsPresentation.h"
 #include "AddressScope.h"
 #include "IndexVisitor.h"
 #include "ResultsList.h"
@@ -521,6 +521,7 @@ namespace simplearchive {
 
 	bool CheckoutStatusAction::onImage(const char* name)
 	{
+		/*
 		if (m_partition->read(name) == false) {
 			return false;
 		}
@@ -529,6 +530,8 @@ namespace simplearchive {
 			std::shared_ptr<MTRow> row = *i;
 			m_resultsList->emplace_back(row);
 		}
+		*/
+		m_resultsList->emplace_back(m_currentRow);
 		return true;
 	}
 
@@ -552,14 +555,14 @@ namespace simplearchive {
 			path += '/';
 			std::string image = row->columnAt(DB_FILENAME).getString();
 			path += image;
+			m_currentRow = row;
 			if (!m_addressScope->isImageInScope(image.c_str())) {
 				continue;
 			}
-			onImage(path.c_str());
-			m_resultsList->emplace_back(row);
+			if (onImage(path.c_str()) == false) {
+				return false;
+			}
 			
-			
-
 		}
 		return true;
 	}
@@ -582,7 +585,7 @@ namespace simplearchive {
 		return true;
 	}
 
-	bool CheckoutStatus::showCheckedOut(const char *addressScope) {
+	bool CheckoutStatus::showCheckedOut(const char *addressScope, ResultsPresentation::FormatType formatType, const char* file) {
 		CLogger& logger = CLogger::getLogger();
 		setPath(m_primaryIndex.c_str());
 		if (select(addressScope) == false) {
@@ -594,12 +597,16 @@ namespace simplearchive {
 			logger.log(LOG_OK, CLogger::Level::WARNING, "No results for archive history");
 			return false;
 		}
+		std::string fileStr = file;
 		CheckoutStatusResultsPresentation resultsPresentation(*results);
-		resultsPresentation.writeHuman();
+		if (!fileStr.empty()) {
+			resultsPresentation.setFilename(file);
+		}
+		resultsPresentation.write(formatType);
 		return true;
 	}
 
-	bool CheckoutStatus::showUncheckedOutChanges(const char *addressScope) {
+	bool CheckoutStatus::showUncheckedOutChanges(const char *addressScope, ResultsPresentation::FormatType formatType, const char* file) {
 		if (addressScope == nullptr) {
 			// All images
 
@@ -1095,6 +1102,10 @@ bool StatusAction::onStart()
 
 
 	bool CheckoutStatusResultsPresentation::writeJson() {
+		CheckoutWriteJSON write(m_resultsList);
+		if (!write.write()) {
+			return false;
+		};
 		return true;
 	}
 
@@ -1111,6 +1122,7 @@ bool StatusAction::onStart()
 	}
 
 	bool CheckoutStatusResultsPresentation::writeXML() {
+		/*
 		std::cout << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 			<< "<History ordering=\"date\" from=\"2015-03-6 12.10.45\" to=\"2015-03-6 12.10.45\">\n";
 
@@ -1124,6 +1136,7 @@ bool StatusAction::onStart()
 			std::cout << "\t</Event>\n";
 		}
 		std::cout << "</Catalog>\n";
+		*/
 		return true;
 	}
 

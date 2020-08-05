@@ -8,11 +8,11 @@
 #ifndef METADATADOCUMENT_H_
 #define METADATADOCUMENT_H_
 
-#include "LogDocument.h"
+#include "ResultsPresentation.h"
 
 namespace simplearchive {
 
-class MetadataDocument : public LogDocument {
+class MetadataDocument : public ResultsPresentation {
 	std::string m_imageName;
 	std::string m_imagePath;
 public:

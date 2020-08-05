@@ -486,10 +486,9 @@ namespace simplearchive {
 		return true;
 	}
 
+	bool SIALib::status(const char* scope, ResultsPresentation::FormatType& formatType, const char* file) {
 
-	bool SIALib::showCheckedOut(const char *filepath) {
-
-		if (ArchiveObject::getInstance().showCheckedOut(filepath) == false) {
+		if (ArchiveObject::getInstance().showCheckedStatus(scope, formatType, file) == false) {
 			//completedSummary.setResult("Failed to complete");
 			return false;
 		}
@@ -497,8 +496,18 @@ namespace simplearchive {
 		return true;
 	}
 
-	bool SIALib::showUncheckedOutChanges(const char *filepath) {
-		if (ArchiveObject::getInstance().showUncheckedOutChanges(filepath) == false) {
+	bool SIALib::showCheckedOut(const char* scope, ResultsPresentation::FormatType& formatType, const char* file) {
+
+		if (ArchiveObject::getInstance().showCheckedOut(scope, formatType, file) == false) {
+			//completedSummary.setResult("Failed to complete");
+			return false;
+		}
+		//completedSummary.setResult("Completed Successfully");
+		return true;
+	}
+
+	bool SIALib::showUncheckedOutChanges(const char* scope, ResultsPresentation::FormatType& formatType, const char* file) {
+		if (ArchiveObject::getInstance().showUncheckedOutChanges(scope, formatType, file) == false) {
 			return false;
 		}
 		return true;
@@ -537,7 +546,21 @@ namespace simplearchive {
 
 	}
 
-	bool SIALib::log(const char* filepath, const char* fromDate, const char* toDate, LogDocument::FormatType& formatType, const char* filename) {
+	bool SIALib::deleteImages(const char* scope, const char* comment, bool force) {
+		//if (ArchiveObject::getInstance().uncheckout(scope, comment, force) == false) {
+		//	return false;
+		//}
+		return true;
+	}
+
+	bool SIALib::undeleteImages(const char* scope, const char* comment) {
+		//if (ArchiveObject::getInstance().uncheckout(scope, comment) == false) {
+		//	return false;
+		//}
+		return true;
+	}
+
+	bool SIALib::log(const char* filepath, const char* fromDate, const char* toDate, ResultsPresentation::FormatType& formatType, const char* filename) {
 		CLogger& logger = CLogger::getLogger();
 		
 
@@ -667,15 +690,7 @@ namespace simplearchive {
 		return true;
 	}
 
-	bool SIALib::status(const char* scope) {
-
-		CheckoutStatus checkoutStatus;
-		if (checkoutStatus.scopedStatus(scope) == false) {
-
-			return false;
-		}
-		return true;
-	}
+	
 	bool SIALib::mirror(const char *name) {
 		
 		AppConfig& config = AppConfig::get();
@@ -926,4 +941,10 @@ namespace simplearchive {
 		*/
 		return true;
 	}
+
+	bool SIALib::purge() {
+		return true;
+	}
+
+	
 } // simplearchive

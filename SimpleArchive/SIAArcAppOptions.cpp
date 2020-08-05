@@ -82,11 +82,12 @@ std::string SIAArcAppOptions::m_option;
 std::string SIAArcAppOptions::m_value;
 std::string SIAArcAppOptions::m_outputFile;
 std::string SIAArcAppOptions::m_textOutputType;
+SIAArcAppOptions::ShowCommandOption SIAArcAppOptions::m_showCommandOption;
 
 int SIAArcAppOptions::m_udpPortNum = 64321;
 std::string SIAArcAppOptions::m_udpAddress = "127.0.0.1";
 int SIAArcAppOptions::m_tcpPortNum = 64322;
-LogDocument::FormatType SIAArcAppOptions::m_formatType = LogDocument::FormatType::Human;
+ResultsPresentation::FormatType SIAArcAppOptions::m_formatType = ResultsPresentation::FormatType::Human;
 
 
 SIAArcAppOptions::SIAArcAppOptions() : m_argvParser(std::make_unique<SIAArcArgvParser>()) {
@@ -252,8 +253,29 @@ DefaultArgumentsContainer& SIAArcAppOptions::getDefaultArguments() {
 	return defaultArgumentsContainer;
 }
 
-LogDocument::FormatType& SIAArcAppOptions::getFormatType() {
+ResultsPresentation::FormatType& SIAArcAppOptions::getFormatType() {
 	return m_formatType;
 }
+
+
+bool StatusOptions::parse(const char* optionString)
+{
+	if (iequals(optionString, STATUS_CHECKED_OUT)) {
+		m_option = STATUS_CHECKED_OUT;
+		SIAArcAppOptions::m_showCommandOption = SIAArcAppOptions::ShowCommandOption::SC_ShowCheckedOut;
+		return true;
+	}
+	else if (iequals(optionString, STATUS_CHECKED_IN)) {
+		m_option = STATUS_CHECKED_IN;
+		SIAArcAppOptions::m_showCommandOption = SIAArcAppOptions::ShowCommandOption::SC_ShowCheckedIn;
+		return true;
+	}
+	else if (iequals(optionString, STATUS_DELETED)) {
+		m_option = STATUS_DELETED;
+		return true;
+	}
+	return false;
+}
+
 
 } /* namespace simplearchive */

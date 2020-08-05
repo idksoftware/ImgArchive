@@ -1260,23 +1260,33 @@ namespace simplearchive {
 		return true;
 	}
 	
-	
-
-	bool ArchiveObject::showCheckedOut(const char *filepath) {
+	bool ArchiveObject::showCheckedStatus(const char* addressScope, ResultsPresentation::FormatType formatType, const char* file) {
 		PrimaryIndexObject& primaryIndexObject = getPrimaryIndexObject();
-		
-		VersionControl::getInstance().setCurrentVersion(filepath);
+
+		VersionControl::getInstance().setCurrentVersion(addressScope);
 		std::string versionPath = VersionControl::getInstance().getCurrentVersionPath();
 		CheckoutStatus checkoutStatus;
-		if (checkoutStatus.showCheckedOut(filepath) == false) {
+		if (checkoutStatus.showCheckedOut(addressScope, formatType, file) == false) {
 			return false;
 		}
 		return true;
 	}
 
-	bool ArchiveObject::showUncheckedOutChanges(const char *filepath) {
+	bool ArchiveObject::showCheckedOut(const char * addressScope, ResultsPresentation::FormatType formatType, const char* file) {
+		PrimaryIndexObject& primaryIndexObject = getPrimaryIndexObject();
+		
+		VersionControl::getInstance().setCurrentVersion(addressScope);
+		std::string versionPath = VersionControl::getInstance().getCurrentVersionPath();
 		CheckoutStatus checkoutStatus;
-		if (checkoutStatus.showUncheckedOutChanges(filepath) == false) {
+		if (checkoutStatus.showCheckedOut(addressScope, formatType, file) == false) {
+			return false;
+		}
+		return true;
+	}
+
+	bool ArchiveObject::showUncheckedOutChanges(const char *filepath, ResultsPresentation::FormatType formatType, const char* file) {
+		CheckoutStatus checkoutStatus;
+		if (checkoutStatus.showUncheckedOutChanges(filepath, formatType, file) == false) {
 			return false;
 		}
 		return true;
@@ -1441,6 +1451,34 @@ namespace simplearchive {
 			logger.log(LOG_OK, CLogger::Level::ERR, "Cannot process archive history");
 			return false;
 		}
+		return true;
+	}
+
+	bool ArchiveObject::deleteImages(const char* scope, const char* comment, bool force) {
+		/*
+		CLogger& logger = CLogger::getLogger();
+		CheckoutStatus checkoutStatus(std::make_shared<UnCheckoutAction>(this));
+		PrimaryIndexPath piPath = m_PrimaryIndexObject->getPrimaryIndexPath();
+		checkoutStatus.setPath(piPath.getCheckoutStatusPath().c_str());
+		if (checkoutStatus.select(scope) == false) {
+			logger.log(LOG_OK, CLogger::Level::ERR, "Cannot process archive history");
+			return false;
+		}
+		*/
+		return true;
+	}
+
+	bool ArchiveObject::undeleteImages(const char* scope, const char* comment) {
+		/*
+		CLogger& logger = CLogger::getLogger();
+		CheckoutStatus checkoutStatus(std::make_shared<UnCheckoutAction>(this));
+		PrimaryIndexPath piPath = m_PrimaryIndexObject->getPrimaryIndexPath();
+		checkoutStatus.setPath(piPath.getCheckoutStatusPath().c_str());
+		if (checkoutStatus.select(scope) == false) {
+			logger.log(LOG_OK, CLogger::Level::ERR, "Cannot process archive history");
+			return false;
+		}
+		*/
 		return true;
 	}
 
@@ -1923,7 +1961,7 @@ namespace simplearchive {
 		return true;
 	}
 	
-	bool ArchiveObject::systemHistory(const char* from, const char* to, LogDocument::FormatType formatType, const char* filepath) {
+	bool ArchiveObject::systemHistory(const char* from, const char* to, ResultsPresentation::FormatType formatType, const char* filepath) {
 		CLogger &logger = CLogger::getLogger();
 		History& history = History::getHistory();
 		
@@ -1935,7 +1973,7 @@ namespace simplearchive {
 		return true;
 	}
 	
-	bool ArchiveObject::imageHistory(const char* imagePath, const LogDocument::FormatType& formatType, const char* outFile) {
+	bool ArchiveObject::imageHistory(const char* imagePath, const ResultsPresentation::FormatType& formatType, const char* outFile) {
 		CLogger& logger = CLogger::getLogger();
 		History& history = History::getHistory();
 

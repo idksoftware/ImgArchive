@@ -54,8 +54,9 @@ namespace simplearchive {
 		}
 	};
 
-
-
+	//
+	// WriteHuman
+	//
 	class ResultsList;
 
 	class WriteHuman {
@@ -66,7 +67,7 @@ namespace simplearchive {
 		{}
 		~WriteHuman() = default;
 
-		virtual bool write();
+		virtual bool write() = 0;
 	};
 
 	class CheckoutWriteHuman : WriteHuman {
@@ -78,18 +79,61 @@ namespace simplearchive {
 		bool write() override;
 	};
 
-	class MasterDatabaseWriteHuman : WriteHuman {
+	
 
+	//
+	// WriteXML
+	//
+	class WriteXML {
+	protected:
+		ResultsList& m_resultsList;
+		std::string writeTag(const char* tag, const std::string& value, int tab);
+		std::string writeTag(const char* tag, const int value, int tab);
 	public:
-		MasterDatabaseWriteHuman(ResultsList& resultsList);
-		~MasterDatabaseWriteHuman() = default;
+		WriteXML(ResultsList& resultsList) : m_resultsList{ resultsList }
+		{}
+		~WriteXML() = default;
+
+		virtual bool write() = 0;
+	};
+
+	class CheckoutWriteXML : WriteXML {
+	public:
+		CheckoutWriteXML(ResultsList& resultsList);
+		~CheckoutWriteXML() = default;
 
 		bool write() override;
 	};
 
-	
+	//
+	// WriteJSON
+	//
+	class WriteJSON {
+	protected:
+		ResultsList& m_resultsList;
+		std::string writeTag(const char* tag, const std::string& value, bool end);
+		std::string writeArrayOpen(const char* tag);
+		std::string writeArrayClose(bool end);
+	public:
+		WriteJSON(ResultsList& resultsList) : m_resultsList{ resultsList }
+		{}
+		~WriteJSON() = default;
+
+		virtual bool write() = 0;
+	};
+
+	class CheckoutWriteJSON : WriteJSON {
+	public:
+		CheckoutWriteJSON(ResultsList& resultsList);
+		~CheckoutWriteJSON() = default;
+
+		bool write() override;
+	};
 
 
+	//
+	// ResultsPresentation
+	//
 	class ResultsPresentation
 	{
 	public:
@@ -102,8 +146,7 @@ namespace simplearchive {
 			unknown
 		};
 	protected:
-		std::string writeTag(const char* tag, const std::string& value, int tab);
-		std::string writeTag(const char* tag, const int value, int tab);
+		
 		
 		ResultsList& m_resultsList;
 		std::string m_title;
@@ -111,6 +154,7 @@ namespace simplearchive {
 		std::string m_image;
 
 		std::string m_filename;
+		bool m_useFile = { false };
 
 		static bool iequals(const std::string& a, const std::string& b);
 
@@ -130,6 +174,7 @@ namespace simplearchive {
 		virtual bool writeHtml() { return true; };
 
 		void setFilename(const char* f) {
+			m_useFile = true;
 			m_filename = f;
 		}
 

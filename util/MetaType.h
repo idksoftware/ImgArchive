@@ -426,7 +426,7 @@ public:
 				if (mtSchema->getType() == MTSchema::EItemType::Date) {
 					if (column->isNull()) {
 						//text = "0.0.0.0.0.0";
-						printf("%s\n", text.c_str());
+						//printf("%s\n", text.c_str());
 					}
 				}
 				else {
@@ -441,7 +441,7 @@ public:
 				if (mtSchema->getType() == MTSchema::EItemType::Date) {
 					if (column->isNull()) {
 						//text += "0.0.0.0.0.0";
-						printf("%s\n", text.c_str());
+						//printf("%s\n", text.c_str());
 					}
 				}
 				else {

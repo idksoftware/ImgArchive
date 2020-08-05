@@ -45,6 +45,7 @@
 #include "MetadataObject.h"
 #include "ResultsList.h"
 #include "ResultsPresentation.h"
+#include "MasterMatadataResultsPresentation.h"
 #include "CSVIndexAction.h"
 #include "Clogger.h"
 
@@ -100,17 +101,7 @@ namespace simplearchive {
 	};
 
 
-class MasterMatadataResultsPresentation : public ResultsPresentation {
-public:
-	MasterMatadataResultsPresentation(ResultsList& resultsList) : ResultsPresentation(resultsList) {};
-	~MasterMatadataResultsPresentation() = default;
 
-	bool writeHuman() override;
-	bool writeXML() override;
-	bool writeCSV() override;
-	bool writeJson() override;
-	bool writeHtml() override;
-};
 
 std::string CSVDatabase::m_dbpath;
 
@@ -282,7 +273,7 @@ bool CSVDatabase::setMasterMetadata(const char* addressScope, const char* option
 	return true;
 }
 
-
+/*
 
 bool MasterMatadataResultsPresentation::writeHuman() {
 
@@ -293,6 +284,7 @@ bool MasterMatadataResultsPresentation::writeHuman() {
 	return true;
 
 }
+
 
 bool MasterMatadataResultsPresentation::writeXML() {
 	std::cout << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
@@ -322,7 +314,7 @@ bool MasterMatadataResultsPresentation::writeJson() {
 bool MasterMatadataResultsPresentation::writeHtml() {
 	return true;
 }
-
+*/
 
 bool MasterMetadataAction::onEnd()
 {

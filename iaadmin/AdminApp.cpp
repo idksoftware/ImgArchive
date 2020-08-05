@@ -141,6 +141,12 @@ namespace simplearchive {
 		return true;
 	}
 
+	bool AdminApp::Purge() {
+		SIALib siaLib;
+		return siaLib.purge();
+	}
+
+
 	bool AdminApp::Sync(const char* archive, const char* backups)
 	{
 		AppOptions& appOptions = AppOptions::get();
@@ -241,6 +247,8 @@ bool AdminApp::doRun()
 		}
 		case AppOptions::CommandMode::CM_Sync:
 			return Sync(appOptions.getConfigOption(), appOptions.getConfigValue());
+		case AppOptions::CommandMode::CM_Purge:
+			return Purge();
 		case AppOptions::CommandMode::CM_Backup:
 			return Backup(appOptions.getMediaSize(), appOptions.getMediaPath(), appOptions.getFromDate(), appOptions.getToDate());
 		case AppOptions::CommandMode::CM_Unknown:

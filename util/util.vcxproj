@@ -167,7 +167,6 @@
     <ClCompile Include="ImageExtentions.cpp" />
     <ClCompile Include="ipsock.cpp" />
     <ClCompile Include="JpegEXIF.cpp" />
-    <ClCompile Include="LogDocument.cpp" />
     <ClCompile Include="LogFilename.cpp" />
     <ClCompile Include="DirectoryVisitor.cpp" />
     <ClCompile Include="ExifDate.cpp" />
@@ -215,7 +214,6 @@
     <ClInclude Include="ImageExtentions.h" />
     <ClInclude Include="ImageType.h" />
     <ClInclude Include="ipsock.h" />
-    <ClInclude Include="LogDocument.h" />
     <ClInclude Include="LogFilename.h" />
     <ClInclude Include="DirectoryVisitor.h" />
     <ClInclude Include="ExifDate.h" />

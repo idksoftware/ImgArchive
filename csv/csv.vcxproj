@@ -153,10 +153,13 @@
     <ClCompile Include="CSVTAble.cpp" />
     <ClCompile Include="History.cpp" />
     <ClCompile Include="ImageHistory.cpp" />
+    <ClCompile Include="ImageHistoryResultsPresentation.cpp" />
     <ClCompile Include="IndexVisitor.cpp" />
+    <ClCompile Include="MasterMatadataResultsPresentation.cpp" />
     <ClCompile Include="ResultsList.cpp" />
     <ClCompile Include="ResultsPresentation.cpp" />
     <ClCompile Include="SystemHistory.cpp" />
+    <ClCompile Include="SystemHistoryResultsPresentation.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CheckoutStatus.h" />
@@ -172,10 +175,13 @@
     <ClInclude Include="CSVTAble.h" />
     <ClInclude Include="History.h" />
     <ClInclude Include="ImageHistory.h" />
+    <ClInclude Include="ImageHistoryResultsPresentation.h" />
     <ClInclude Include="IndexVisitor.h" />
+    <ClInclude Include="MasterMatadataResultsPresentation.h" />
     <ClInclude Include="ResultsList.h" />
     <ClInclude Include="ResultsPresentation.h" />
     <ClInclude Include="SystemHistory.h" />
+    <ClInclude Include="SystemHistoryResultsPresentation.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="csvmain.dox" />

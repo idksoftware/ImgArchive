@@ -90,6 +90,7 @@ public:
 	/// @brief Shows the configuration of the archive. All application processing starts here.
 	bool Show(const char* configOption, const char* configValue, const char* outputType, const char* filename);
 	bool Backup(const char* mediaSize, const char* mediaPath, const char* fromDate, const char* toDate);
+	bool Purge();
 	bool Sync(const char* archive, const char* backups);
 	bool About(const char* outputType, const char* filename);
 	
