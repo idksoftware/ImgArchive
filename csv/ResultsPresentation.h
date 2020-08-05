@@ -3,6 +3,7 @@
 #include <string>
 #include <list>
 #include <memory>
+#include <sstream>
 #include "MetaType.h"
 
 
@@ -54,81 +55,79 @@ namespace simplearchive {
 		}
 	};
 
+
+	class ResultsList;
+
+	class WriteBase {
+	protected:
+		ResultsList& m_resultsList;
+		std::ostringstream m_output;
+	public:
+		WriteBase(ResultsList& resultsList) : m_resultsList{ resultsList } {}
+		virtual ~WriteBase() = default;
+
+		virtual bool write() = 0;
+		std::string getOutput();
+	};
+
 	//
 	// WriteHuman
 	//
-	class ResultsList;
+	
 
-	class WriteHuman {
-	protected:
-		ResultsList& m_resultsList;
+	class WriteHuman : public WriteBase {
+	
 	public:
-		WriteHuman(ResultsList& resultsList) : m_resultsList{ resultsList }
-		{}
+		WriteHuman(ResultsList& resultsList) : WriteBase{ resultsList } {}
 		~WriteHuman() = default;
-
-		virtual bool write() = 0;
 	};
 
-	class CheckoutWriteHuman : WriteHuman {
-		
-	public:
-		CheckoutWriteHuman(ResultsList& resultsList);
-		~CheckoutWriteHuman() = default;
+	
 
-		bool write() override;
+	class WriteCSV : public WriteBase {
+	
+	public:
+		WriteCSV(ResultsList& resultsList) : WriteBase{ resultsList } {}
+		~WriteCSV() = default;
+
+	};
+
+	//
+	// WriteXML
+	//
+	class WriteXML : public WriteBase {
+	protected:
+		std::string writeTag(const char* tag, const std::string& value, int tab);
+		std::string writeTag(const char* tag, const int value, int tab);
+	public:
+		WriteXML(ResultsList& resultsList) : WriteBase{ resultsList } {}
+		~WriteXML() = default;
 	};
 
 	
 
 	//
-	// WriteXML
-	//
-	class WriteXML {
-	protected:
-		ResultsList& m_resultsList;
-		std::string writeTag(const char* tag, const std::string& value, int tab);
-		std::string writeTag(const char* tag, const int value, int tab);
-	public:
-		WriteXML(ResultsList& resultsList) : m_resultsList{ resultsList }
-		{}
-		~WriteXML() = default;
-
-		virtual bool write() = 0;
-	};
-
-	class CheckoutWriteXML : WriteXML {
-	public:
-		CheckoutWriteXML(ResultsList& resultsList);
-		~CheckoutWriteXML() = default;
-
-		bool write() override;
-	};
-
-	//
 	// WriteJSON
 	//
-	class WriteJSON {
+	class WriteJSON : public WriteBase {
 	protected:
-		ResultsList& m_resultsList;
 		std::string writeTag(const char* tag, const std::string& value, bool end);
 		std::string writeArrayOpen(const char* tag);
 		std::string writeArrayClose(bool end);
 	public:
-		WriteJSON(ResultsList& resultsList) : m_resultsList{ resultsList }
-		{}
+		WriteJSON(ResultsList& resultsList) : WriteBase{ resultsList } {}
 		~WriteJSON() = default;
-
-		virtual bool write() = 0;
 	};
 
-	class CheckoutWriteJSON : WriteJSON {
+	
+	// WriteHtml
+	//
+	class WriteHtml : public WriteBase {
 	public:
-		CheckoutWriteJSON(ResultsList& resultsList);
-		~CheckoutWriteJSON() = default;
-
-		bool write() override;
+		WriteHtml(ResultsList& resultsList) : WriteBase{ resultsList } {}
+		~WriteHtml() = default;		
 	};
+
 
 
 	//
@@ -167,11 +166,13 @@ namespace simplearchive {
 
 		bool write(FormatType formatType);
 
-		virtual bool writeHuman();
+		virtual bool writeHuman() { return true; };
 		virtual bool writeXML() { return true; };
 		virtual bool writeCSV() { return true; };
 		virtual bool writeJson() { return true; };
 		virtual bool writeHtml() { return true; };
+
+		bool write(std::string& output);
 
 		void setFilename(const char* f) {
 			m_useFile = true;

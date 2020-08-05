@@ -78,6 +78,9 @@
     <ClCompile Include="SystemHistoryResultsPresentation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CheckoutStatusResultsPresentation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CSVDBFile.h">
@@ -138,6 +141,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SystemHistoryResultsPresentation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CheckoutStatusResultsPresentation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

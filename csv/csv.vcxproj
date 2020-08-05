@@ -141,6 +141,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CheckoutStatus.cpp" />
+    <ClCompile Include="CheckoutStatusResultsPresentation.cpp" />
     <ClCompile Include="CSVDatabase.cpp" />
     <ClCompile Include="CSVDBBase.cpp" />
     <ClCompile Include="CSVDBFile.cpp" />
@@ -163,6 +164,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CheckoutStatus.h" />
+    <ClInclude Include="CheckoutStatusResultsPresentation.h" />
     <ClInclude Include="CSVDatabase.h" />
     <ClInclude Include="CSVDBBase.h" />
     <ClInclude Include="CSVDBFile.h" />

@@ -71,18 +71,72 @@ namespace simplearchive {
 		return true;
 	}
 
+	class  SystemHistoryWriteJson : WriteJSON {
+
+	public:
+		SystemHistoryWriteJson(ResultsList& resultsList);
+		~SystemHistoryWriteJson() = default;
+
+		bool write() override;
+	};
+
+	SystemHistoryWriteJson::SystemHistoryWriteJson(ResultsList& resultsList) : WriteJSON(resultsList) {}
+
+	bool SystemHistoryWriteJson::write() {
+		return true;
+	};
+
 	bool SystemHistoryResultsPresentation::writeJson() {
+		SystemHistoryWriteJson systemHistoryWriteJson(m_resultsList);
+		if (!systemHistoryWriteJson.write()) {
+			return false;
+		};
 		return true;
 	}
+
+
+	class  SystemHistoryWriteHtml : WriteHtml {
+
+	public:
+		SystemHistoryWriteHtml(ResultsList& resultsList);
+		~SystemHistoryWriteHtml() = default;
+
+		bool write() override;
+	};
+
+	SystemHistoryWriteHtml::SystemHistoryWriteHtml(ResultsList& resultsList) : WriteHtml(resultsList) {}
+
+	bool SystemHistoryWriteHtml::write() {
+		return true;
+	};
 
 	bool SystemHistoryResultsPresentation::writeHtml()
 	{
 		return false;
 	}
 
-	bool SystemHistoryResultsPresentation::writeCSV() {
+	class  SystemHistorywriteCSV : public WriteCSV {
+
+	public:
+		SystemHistorywriteCSV(ResultsList& resultsList);
+		~SystemHistorywriteCSV() = default;
+
+		bool write() override;
+	};
+
+	SystemHistorywriteCSV::SystemHistorywriteCSV(ResultsList& resultsList) : WriteCSV(resultsList) {}
+
+	bool SystemHistorywriteCSV::write() {
 		for (auto rowIt = m_resultsList.begin(); rowIt != m_resultsList.end(); rowIt++) {
 			std::cout << *rowIt << '\n';
+		}
+		return true;
+	}
+
+	bool SystemHistoryResultsPresentation::writeCSV() {
+		SystemHistorywriteCSV systemHistorywriteCSV(m_resultsList);
+		if (!systemHistorywriteCSV.write()) {
+			return false;
 		}
 		return true;
 	}
