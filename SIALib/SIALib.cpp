@@ -486,6 +486,17 @@ namespace simplearchive {
 		return true;
 	}
 
+	bool SIALib::history(const char* scope, ResultsPresentation::FormatType& formatType, const char* file) {
+		CLogger& logger = CLogger::getLogger();
+		History& history = History::getHistory();
+		
+		if (history.systemHistoryLog(scope, formatType, file) == false) {
+			logger.log(LOG_OK, CLogger::Level::ERR, "Cannot process system history");
+			return false;
+		}
+		return true;
+	}
+
 	bool SIALib::status(const char* scope, ResultsPresentation::FormatType& formatType, const char* file) {
 
 		if (ArchiveObject::getInstance().showCheckedStatus(scope, formatType, file) == false) {
@@ -560,14 +571,10 @@ namespace simplearchive {
 		return true;
 	}
 
-	bool SIALib::log(const char* filepath, const char* fromDate, const char* toDate, ResultsPresentation::FormatType& formatType, const char* filename) {
+	bool SIALib::log(const char* scope, const char* fromDate, const char* toDate, ResultsPresentation::FormatType& formatType, const char* filename) {
 		CLogger& logger = CLogger::getLogger();
-		
-
 		History& history = History::getHistory();
-		const char* scope = nullptr;
-		
-		if (history.systemHistoryLog(scope) == false) {
+		if (history.imageHistoryLog(scope, formatType, filename) == false) {
 			logger.log(LOG_OK, CLogger::Level::ERR, "Cannot process system history");
 			return false;
 		}

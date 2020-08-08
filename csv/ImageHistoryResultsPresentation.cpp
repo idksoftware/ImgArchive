@@ -12,8 +12,22 @@
 
 namespace simplearchive {
 
+	//
+	// WriteHuman
+	//
+	class  ImageHistoryWriteHuman : public WriteHuman {
 
-	bool ImageHistoryResultsPresentation::writeHuman() {
+	public:
+		ImageHistoryWriteHuman(ResultsList& resultsList);
+		~ImageHistoryWriteHuman() = default;
+
+		bool write() override;
+	};
+
+	ImageHistoryWriteHuman::ImageHistoryWriteHuman(ResultsList& resultsList) : WriteHuman(resultsList) {}
+
+	bool ImageHistoryWriteHuman::write() {
+	
 
 		/*
 	std::ofstream file;
@@ -48,106 +62,116 @@ namespace simplearchive {
 	//std::cout << "=====================================================\n";
 	//std::cout << "Date Time             version     Event      Comment\n\n";
 
-		size_t filename = 0;
-		size_t filepath = 0;
-		size_t comment = 0;
+		ColumnJustification columnJustification(m_resultsList.getTableSchema().size());
 
 		for (auto rowIt = m_resultsList.begin(); rowIt != m_resultsList.end(); rowIt++) {
 			SharedMTRow row = *rowIt;
-			const MTTableSchema& ts = row->getSchema(); // testing only
-			MTColumn& filenameCol = row->columnAt(DB_FILENAME);
-			const std::string& filenameStr = filenameCol.getString();
-
-			MTColumn& filepathCol = row->columnAt(DB_FILEPATH);
-			const std::string& filepathStr = filepathCol.getString();
-
-			MTColumn& commentCol = row->columnAt(DB_COMMENT);
-			const std::string& commentStr = commentCol.getString();
-
-			if (filenameStr.length() > filename) {
-				filename = filenameStr.length();
-			}
-
-			if (filepathStr.length() > filepath) {
-				filepath = filepathStr.length();
-			}
-
-			if (commentStr.length() > comment) {
-				comment = commentStr.length();
-			}
+			columnJustification.readRow(row);
 		}
-
+		int eventIdx = -1;
+		int idx = 0;
 		for (std::vector<MTSchema>::iterator i = m_resultsList.getTableSchema().begin(); i != m_resultsList.getTableSchema().end(); i++) {
+
 			MTSchema& columnInfo = *i;
-			//printf("%s ", columnInfo.getName().c_str());
-			std::cout << ' ';
-			//	first = false;
-			//}  setw
-			if (columnInfo.getName().compare(DB_DATEADDED) == 0) {
-				std::cout << std::setw(19) << columnInfo.getName().c_str();
-			}
-			else if (columnInfo.getName().compare(DB_FILENAME) == 0) {
-				std::cout << std::setw(filename) << columnInfo.getName().c_str();
-			}
-			else if (columnInfo.getName().compare(DB_FILEPATH) == 0) {
-				std::cout << std::setw(filepath) << columnInfo.getName().c_str();
-			}
-			else if (columnInfo.getName().compare(DB_COMMENT) == 0) {
-				std::cout << std::setw(comment) << columnInfo.getName().c_str();
-			}
+			std::string s = columnInfo.getName();
+			columnJustification.header(idx, s);
 
+			if (columnInfo.getName().compare(DB_EVENT) == 0) {
+				eventIdx = idx;
+				m_output << std::setw(HistoryEvent::maxStringSize() + 1) << columnInfo.getName();
+			}
 			else {
-				std::cout << columnInfo.getName().c_str();
+				m_output << std::setw(columnJustification.getSize(idx) + 1) << columnInfo.getName();
 			}
+			idx++;
 		}
-		std::cout << '\n';
-		//bool first = true;
-
+		m_output << "\n";
 		for (auto rowIt = m_resultsList.begin(); rowIt != m_resultsList.end(); rowIt++) {
 			SharedMTRow row = *rowIt;
-			auto schemaIdx = m_resultsList.getTableSchema().begin();
+			idx = 0;
 			for (auto i = row->begin(); i != row->end(); i++) {
 				SharedMTColumn column = *i;
-				MTSchema& columnInfo = *schemaIdx;
-				//std::shared_ptr<MTSchema> mtSchema = column->getMTSchemaItem();
-				//std::cout << mtSchema->getName();
-				//if (mtSchema == nullptr) {
-				//	continue;
-				//}
-				//if (!first) {
-				std::cout << ' ';
-				//	first = false;
-				//}  setw
-
-				if (columnInfo.getName().compare(DB_FILENAME) == 0) {
-					std::cout << std::setw(filename) << column->toString();
-				}
-				else if (columnInfo.getName().compare(DB_FILEPATH) == 0) {
-					std::cout << std::setw(filepath) << column->toString();
-				}
-				else if (columnInfo.getName().compare(DB_COMMENT) == 0) {
-					std::cout << std::setw(comment) << column->toString();
-				}
-				else if (columnInfo.getName().compare(DB_EVENT) == 0) {
-					HistoryEvent::Event ev = (HistoryEvent::Event)column->getInt();
-					HistoryEvent historyEvent(ev);
-					std::cout << std::setw(10) << historyEvent.getString();
+				if (eventIdx == idx) {
+					HistoryEvent::Event evn = static_cast<HistoryEvent::Event>(column->getInt());
+					m_output << std::setw(HistoryEvent::maxStringSize() + 1) << HistoryEvent::getString(evn);
 				}
 				else {
-					std::cout << column->toString();
+					m_output << std::setw(columnJustification.getSize(idx) + 1) << column->toString();
 				}
-				schemaIdx++;
+				idx++;
 			}
-			std::cout << '\n';
+			m_output << '\n';
 		}
+		return true;
 
 		return true;
 	}
+	bool ImageHistoryResultsPresentation::writeHuman() {
+		ImageHistoryWriteHuman imageHistoryWriteHuman(m_resultsList);
+		if (!imageHistoryWriteHuman.write()) {
+			return false;
+		};
+		if (write(imageHistoryWriteHuman.getOutput()) == false) {
+			return false;
+		}
+		return true;
+	}
 
+	//
+	// WriteJSON
+	//
+	class  ImageHistoryWriteJson : public WriteJSON {
+	public:
+		ImageHistoryWriteJson(ResultsList& resultsList);
+		~ImageHistoryWriteJson() = default;
+		bool write() override;
+	};
+
+	ImageHistoryWriteJson::ImageHistoryWriteJson(ResultsList& resultsList) : WriteJSON(resultsList) {}
+
+	bool ImageHistoryWriteJson::write() {
+		MTTableSchema& tableSchema = m_resultsList.getTableSchema();
+		int rowSize = tableSchema.size();
+
+		m_output << "{\n";
+		m_output << "\"images\": [\n";
+		bool first = true;
+		for (auto rowIt = m_resultsList.begin(); rowIt != m_resultsList.end(); rowIt++) {
+			SharedMTRow row = *rowIt;
+			int idx = 0;
+			if (first) {
+				first = false;
+			}
+			else {
+				m_output << "},\n";
+			}
+			m_output << "{\n";
+			for (auto i = row->begin(); i != row->end(); i++) {
+				SharedMTColumn column = *i;
+				MTSchema& col = tableSchema.at(idx);
+				std::string tag = col.getName();
+				m_output << writeTag(tag.c_str(), column->toString(), (idx >= rowSize - 1));
+				idx++;
+			}
+
+		}
+		m_output << "}\n";
+		m_output << "] }\n";
+		return true;
+	};
 
 	bool ImageHistoryResultsPresentation::writeJson() {
+		ImageHistoryWriteJson systemHistoryWriteJson(m_resultsList);
+		if (!systemHistoryWriteJson.write()) {
+			return false;
+		};
+		if (write(systemHistoryWriteJson.getOutput()) == false) {
+			return false;
+		}
 		return true;
 	}
+
+	
 
 	bool ImageHistoryResultsPresentation::writeHtml()
 	{

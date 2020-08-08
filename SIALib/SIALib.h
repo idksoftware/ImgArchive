@@ -130,6 +130,8 @@ namespace simplearchive {
 		year = all the year	i.e "2015"
 		day  = all the day  i.e "2015-02-11"
 		*/
+		bool history(const char* scope, ResultsPresentation::FormatType& formatType, const char* filepath);
+
 		bool status(const char* scope, ResultsPresentation::FormatType& formatType, const char* filepath);
 
 		bool showCheckedOut(const char* scope, ResultsPresentation::FormatType& formatType, const char* filepath);

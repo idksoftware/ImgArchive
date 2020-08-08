@@ -164,24 +164,30 @@ namespace simplearchive {
 		return true;
 	}
 
-	bool History::systemHistoryLog(const char* scope) {
+	bool History::systemHistoryLog(const char* addressScope, ResultsPresentation::FormatType formatType, const char* file) {
 		CLogger& logger = CLogger::getLogger();
 		m_systemHistory->setPath(m_systemHisteryPath.c_str());
 	
-		if (m_systemHistory->select(scope) == false) {
+		if (m_systemHistory->select(addressScope) == false) {
 			logger.log(LOG_OK, CLogger::Level::ERR, "Cannot process archive history");
 			return false;
 		}
 		std::shared_ptr<ResultsList> results = m_systemHistory->getResults();
+		
 		if (results == nullptr) {
 			logger.log(LOG_OK, CLogger::Level::WARNING, "No results for archive history");
 			return false;
 		}
+		std::string fileStr = file;
 		SystemHistoryResultsPresentation resultsPresentation(*results);
-		resultsPresentation.writeHuman();
+		if (!fileStr.empty()) {
+			resultsPresentation.setFilename(file);
+		}
+		resultsPresentation.write(formatType);
+		return true;
 	}
 
-	bool History::imageHistoryLog(const char* scope)
+	bool History::imageHistoryLog(const char* scope, ResultsPresentation::FormatType formatType, const char* file)
 	{
 		CLogger& logger = CLogger::getLogger();
 		m_imageHistory->setPath(m_workspacePath.c_str(), m_indexPath.c_str());
@@ -195,9 +201,13 @@ namespace simplearchive {
 			logger.log(LOG_OK, CLogger::Level::WARNING, "No results for archive history");
 			return false;
 		}
+		std::string fileStr = file;
 		ImageHistoryResultsPresentation resultsPresentation(*results);
-		resultsPresentation.writeHuman();
-		return false;
+		if (!fileStr.empty()) {
+			resultsPresentation.setFilename(file);
+		}
+		resultsPresentation.write(formatType);
+		return true;
 	}
 
 };

@@ -111,15 +111,16 @@ namespace simplearchive {
 	/**
 	 * This function adds history to an image.
 	 */
-	bool ImageHistory::add(const char* filepath, int version, const char* comment, const HistoryEvent& he) {
-		std::string buff = SAUtils::sprintf("%.4d", version);
-		add(filepath, buff.c_str(), comment, he);
+	bool ImageHistory::add(const char* filepath, const char* version, const char* comment, const HistoryEvent& he) {
+		std::string str = version;
+		int ver = std::stoi(str);
+		add(filepath, ver, comment, he);
 		return true;
 	}
 	/**
 		filepath i.e 2015-11-10/DSC1236.jpg
 	*/
-	bool ImageHistory::add(const char* filepath, const char* version, const char* comment, const HistoryEvent& he) {
+	bool ImageHistory::add(const char* filepath, int version, const char* comment, const HistoryEvent& he) {
 
 		ExifDateTime date;
 		date.now();
@@ -169,8 +170,8 @@ namespace simplearchive {
 		imageHistoryRow.columnAt(DB_FILENAME) = filepath.c_str();
 		imageHistoryRow.columnAt(DB_FILEPATH) = filepath.c_str();
 #endif
-		imageHistoryRow.columnAt(DB_EVENT) = static_cast<int>(HistoryEvent::Event::ADDED);
-		imageHistoryRow.columnAt(DB_VERSION) = 0;
+		imageHistoryRow.columnAt(DB_EVENT) = static_cast<int>(he.m_event);
+		imageHistoryRow.columnAt(DB_VERSION) = version;
 		ExifDateTime dateAdded;
 		dateAdded.now();
 		imageHistoryRow.columnAt(DB_DATEADDED) = dateAdded;
@@ -223,14 +224,14 @@ namespace simplearchive {
 
 		std::string partitionFilename = indexController.getImageName() + ".hst";
 		m_mtTablePartition->clear();
-		/*
-		if (imageHistoryPartition.read(indexPath.c_str(), partitionFilename.c_str()) == false) {
+		
+		if (m_mtTablePartition->read(indexPath.c_str(), partitionFilename.c_str()) == false) {
 			if (ErrorCode::getErrorCode() != IMGA_ERROR::OPEN_ERROR) {
 				// file may not exist
 				return false;
 			}
 		}
-		*/
+		
 		if (m_mtTablePartition->addRow(imageHistoryRow) == false) {
 			return false;
 		}

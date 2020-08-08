@@ -183,10 +183,10 @@ namespace simplearchive {
 				filenameStr += '/';
 				filenameStr += dayfolder;
 
-				m_indexAction->onDayFolder(filenameStr.c_str());
-				//std::string dayFolderMaster = yearMaster;
-				//dayFolderMaster += '/';
-				//dayFolderMaster += dayfolder;
+				if (!m_addressScope.isInScope(dateStr.c_str())) {
+					continue;
+				}
+				m_indexAction->onDayFolder(filenameStr.c_str());	
 
 				FileList_Ptr filelist = SAUtils::getFiles_(filenameStr.c_str());
 				for (std::vector<std::string>::iterator i = filelist->begin(); i != filelist->end(); i++) {
@@ -195,7 +195,14 @@ namespace simplearchive {
 					if (c == '.') {
 						continue;
 					}
-					//printf("\t\tImage %s: \n", imageFile->c_str());
+					std::string ext = SAUtils::getExtention(imageFile.c_str());
+					if (ext.compare("hst") != 0) {
+						continue;
+					}
+					std::string image = SAUtils::getFilenameNoExt(imageFile.c_str());
+					if (!m_addressScope.isImageInScope(image.c_str())) {
+						continue;
+					}
 					std::string itemPath = filenameStr;
 					itemPath += '/';
 					itemPath += imageFile;

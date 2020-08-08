@@ -248,8 +248,7 @@ namespace simplearchive {
 	protected:
 		
 	public:
-		CheckoutWriteHtml(ResultsList& resultsList) : WriteHtml{ resultsList }
-		{}
+		CheckoutWriteHtml(ResultsList& resultsList) : WriteHtml{ resultsList } {}
 		~CheckoutWriteHtml() = default;
 
 		virtual bool write();
@@ -257,8 +256,6 @@ namespace simplearchive {
 
 
 	bool CheckoutWriteHtml::write() {
-	
-		
 		m_output << "<!DOCTYPE html>\n"
 			<< "<html>\n"
 			<< "<head>\n"
@@ -312,10 +309,6 @@ namespace simplearchive {
 					m_output << "<td>" << row->columnAt((int)i).toString() << "</td>\n";
 				}
 				idx++;
-
-
-
-
 			}
 			m_output << "</tr>\n";
 		}
@@ -323,11 +316,7 @@ namespace simplearchive {
 			 << "</div>\n"
 			 << "</body>\n"
 			 << "</html>\n";
-
-		
-
 		return true;
-
 	}
 
 	bool CheckoutStatusResultsPresentation::writeHtml()
@@ -340,6 +329,5 @@ namespace simplearchive {
 			return false;
 		}
 		return true;
-		
 	}
 }; // namespace

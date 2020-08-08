@@ -7,6 +7,7 @@
 #include "LogDocument.h"
 #include "DBDefines.h"
 #include "MetaType.h"
+#include "ResultsPresentation.h"
 
 namespace simplearchive {
 
@@ -50,8 +51,8 @@ namespace simplearchive {
 		static History& getHistory();
 
 		// This will write out the image histroy log
-		bool systemHistoryLog(const char* scope);
-		bool imageHistoryLog(const char* scope);
+		bool systemHistoryLog(const char* addressScope, ResultsPresentation::FormatType formatType, const char* file);
+		bool imageHistoryLog(const char* addressScope, ResultsPresentation::FormatType formatType, const char* file);
 		//bool logImageHistory(const char *imagepath, LogDocument::FormatType formatType, const char* filepath);
 		//bool logSystemHistory(const char* dateFrom, const char* dateTo, LogDocument::FormatType formatType, const char* filepath);
 	};

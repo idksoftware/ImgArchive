@@ -79,6 +79,10 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineCommandSyntax("status", "iaarc status [--list>]\n\t[--logging-level=<level>]"
 		"[--current=<yes|no>]\n\t[--comment=<comment text>]\n\t[--scope=<scope-address]\n\t[--force=<yes|No>]");
 
+	defineOption("history", "shows the check in/out status history for the archive.", ArgvParser::MasterOption);
+	defineCommandSyntax("history", "iaarc status [--list>]\n\t[--logging-level=<level>]"
+		"[--current=<yes|no>]\n\t[--comment=<comment text>]\n\t[--scope=<scope-address]\n\t[--force=<yes|No>]");
+
 	defineOption("show", "Show details", ArgvParser::MasterOption);
 	defineCommandSyntax("show", "iaarc show [--history=<image-address>]\n\t");
 
@@ -232,6 +236,11 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineCommandOption("status", "format-type");
 	defineCommandOption("status", "file");
 
+	defineCommandOption("history", "list");
+	defineCommandOption("history", "scope");
+	defineCommandOption("history", "format-type");
+	defineCommandOption("history", "file");
+
 	defineCommandOption("metadata", "scope");
 	defineCommandOption("metadata", "format-type");
 	defineCommandOption("metadata", "file");
@@ -246,10 +255,10 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineCommandOption("template", "option");
 
 	defineCommandOption("log", "image");
+	defineCommandOption("log", "scope");
 	defineCommandOption("log", "format-type");
 	defineCommandOption("log", "file");
-	defineCommandOption("log", "from-date");
-	defineCommandOption("log", "to-date");
+	
 //	defineCommandOption("mode", "remote-server");
 
 	
@@ -636,6 +645,45 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	}
 #endif
 	//
+	// history
+	//
+	else if (command("history") == true) {
+
+		if (foundOption("list") == true) {
+			std::string opt = optionValue("list");
+			StatusOptions statusOptions;
+			if (statusOptions.parse(opt.c_str()) == false) {
+				printf("Invalid argument for \"list\" \"%s\"\n\n", opt.c_str());
+				printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+				return false;
+			}
+			appOptions.m_option = statusOptions.getOption();
+		}
+		else {
+			appOptions.m_option = STATUS_CHECKED_OUT;
+		}
+
+		if (foundOption("scope") == true) {
+			appOptions.m_imageAddress = optionValue("scope");
+		}
+
+		if (foundOption("file") == true) {
+			std::string opt = optionValue("file");
+			appOptions.m_filePath = opt;
+		}
+
+		if (foundOption("format-type") == true) {
+			std::string opt = optionValue("format-type");
+			if ((appOptions.m_formatType = ResultsPresentation::parse(opt.c_str())) == ResultsPresentation::FormatType::unknown) {
+				printf("Invalid argument for \"FormatType\" \"%s\"\n\n", opt.c_str());
+				printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+				return false;
+			}
+		}
+		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_History);
+		cmdFound = true;
+	}
+	//
 	// log
 	//
 	else if (command("log") == true) {
@@ -646,6 +694,10 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 			gotImageAddress = true;
 		}
 		
+		if (foundOption("scope") == true) {
+			appOptions.m_imageAddress = optionValue("scope");
+		}
+
 		if (foundOption("file") == true) {
 			std::string opt = optionValue("file");
 			appOptions.m_filePath = opt;

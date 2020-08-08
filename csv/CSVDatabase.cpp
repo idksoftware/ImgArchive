@@ -181,10 +181,12 @@ SharedMTRow CSVDatabase::get(const char *name, const char *path) {
 		throw std::exception();
 	}
 	MetadataPartition metadataPartition;
-	std::string filename = metadataPartition.getSchema().getName() + ".csv";
+	
 	std::string rootPath = pathController.getRoot();
 	std::string imagename = pathController.getImage();
-	if (metadataPartition.read(rootPath.c_str(), filename.c_str()) == false) {
+	std::string filePath = pathController.getRoot();
+	filePath += ".csv"; 
+	if (metadataPartition.read(filePath.c_str()) == false) {
 		if (ErrorCode::getErrorCode() != IMGA_ERROR::OPEN_ERROR) {
 			// file may not exist
 			throw std::exception();

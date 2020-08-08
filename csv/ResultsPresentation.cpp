@@ -171,6 +171,4 @@ std::string WriteBase::getOutput() {
 	return m_output.str();
 }
 
-
-
 } /* namespace simplearchive */
