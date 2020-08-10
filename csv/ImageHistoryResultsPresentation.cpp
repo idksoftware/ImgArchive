@@ -28,81 +28,76 @@ namespace simplearchive {
 
 	bool ImageHistoryWriteHuman::write() {
 	
-
-		/*
-	std::ofstream file;
-	if (!m_filename.empty()) {
-		file.open(m_filename.c_str());
-		if (file.is_open() == false) {
-			return false;
-		}
-		file << "\n---------------------------------------------------\n";
-		file << "Image: " << m_title << '\n';
-		file << "Path : " << m_description << '\n';
-		file << "=====================================================\n";
-		file << "Date Time             version     Event      Comment\n\n";
-		for (std::list<std::string>::iterator i = begin(); i != end(); i++) {
-			//std::cout << *i << '\n';
-			CSVArgs csvArgs(',');
-			if (csvArgs.process(i->c_str()) == false) {
-				return false;
-			}
-
-			file << csvArgs.at(0) << "    ";
-			file << csvArgs.at(1) << "      ";
-			file << csvArgs.at(4) << "  ";
-			file << csvArgs.at(3) << "\n\n";
-		}
-	}
-	else {
-	*/
-	//std::cout << "\n---------------------------------------------------\n";
-	//std::cout << "Image: " << m_title << '\n';
-	//std::cout << "Path : " << m_description << '\n';
-	//std::cout << "=====================================================\n";
-	//std::cout << "Date Time             version     Event      Comment\n\n";
-
 		ColumnJustification columnJustification(m_resultsList.getTableSchema().size());
 
 		for (auto rowIt = m_resultsList.begin(); rowIt != m_resultsList.end(); rowIt++) {
 			SharedMTRow row = *rowIt;
 			columnJustification.readRow(row);
 		}
+		int filePathIdx = -1;
+		int fileNameIdx = -1;
 		int eventIdx = -1;
 		int idx = 0;
+		std::ostringstream headerStr;
+		// Header
 		for (std::vector<MTSchema>::iterator i = m_resultsList.getTableSchema().begin(); i != m_resultsList.getTableSchema().end(); i++) {
 
 			MTSchema& columnInfo = *i;
 			std::string s = columnInfo.getName();
 			columnJustification.header(idx, s);
-
-			if (columnInfo.getName().compare(DB_EVENT) == 0) {
-				eventIdx = idx;
-				m_output << std::setw(HistoryEvent::maxStringSize() + 1) << columnInfo.getName();
+			if (columnInfo.getName().compare(DB_FILEPATH) == 0) {
+				filePathIdx = idx++;
+			} else if (columnInfo.getName().compare(DB_FILENAME) == 0) {
+				fileNameIdx = idx++;
 			}
 			else {
-				m_output << std::setw(columnJustification.getSize(idx) + 1) << columnInfo.getName();
-			}
-			idx++;
-		}
-		m_output << "\n";
-		for (auto rowIt = m_resultsList.begin(); rowIt != m_resultsList.end(); rowIt++) {
-			SharedMTRow row = *rowIt;
-			idx = 0;
-			for (auto i = row->begin(); i != row->end(); i++) {
-				SharedMTColumn column = *i;
-				if (eventIdx == idx) {
-					HistoryEvent::Event evn = static_cast<HistoryEvent::Event>(column->getInt());
-					m_output << std::setw(HistoryEvent::maxStringSize() + 1) << HistoryEvent::getString(evn);
+
+				if (columnInfo.getName().compare(DB_EVENT) == 0) {
+					eventIdx = idx;
+					headerStr << std::setw(HistoryEvent::maxStringSize() + 1) << columnInfo.getName();
 				}
 				else {
-					m_output << std::setw(columnJustification.getSize(idx) + 1) << column->toString();
+					headerStr << std::setw(columnJustification.getSize(idx) + 1) << columnInfo.getName();
 				}
 				idx++;
 			}
-			m_output << '\n';
 		}
-		return true;
+		
+		m_output << "\n";
+		std::string currImageAddress;
+		for (auto rowIt = m_resultsList.begin(); rowIt != m_resultsList.end(); rowIt++) {
+			SharedMTRow row = *rowIt;
+			idx = 0;
+			std::string imageAddress = row->columnAt(DB_FILEPATH).toString();
+			imageAddress += '/';
+			imageAddress += row->columnAt(DB_FILENAME).toString();
+			if (imageAddress.compare(currImageAddress) != 0) {
+				currImageAddress = imageAddress;
+				m_output << '\n';
+				m_output << "Image: " << imageAddress << '\n';
+				m_output << "----------------------------------------------------------------" << '\n';
+				m_output << headerStr.str() << '\n'; 
+
+			}
+			else {
+				for (auto i = row->begin(); i != row->end(); i++) {
+					SharedMTColumn column = *i;
+					if (filePathIdx != idx && fileNameIdx != idx) {
+						if (eventIdx == idx) {
+							HistoryEvent::Event evn = static_cast<HistoryEvent::Event>(column->getInt());
+							m_output << std::setw(HistoryEvent::maxStringSize() + 1) << HistoryEvent::getString(evn);
+						}
+						else {
+							m_output << std::setw(columnJustification.getSize(idx) + 1) << column->toString();
+						}
+					}
+					idx++;
+				}
+				m_output << '\n';
+			}
+
+		}
+		m_output << "\n\n";
 
 		return true;
 	}
@@ -131,32 +126,75 @@ namespace simplearchive {
 
 	bool ImageHistoryWriteJson::write() {
 		MTTableSchema& tableSchema = m_resultsList.getTableSchema();
-		int rowSize = tableSchema.size();
+		int idx = 0;
+		int filePathIdx = -1;
+		int fileNameIdx = -1;
+		int eventIdx = -1;
+		std::ostringstream headerStr;
+		// Header
+		for (std::vector<MTSchema>::iterator i = m_resultsList.getTableSchema().begin(); i != m_resultsList.getTableSchema().end(); i++) {
+			MTSchema& columnInfo = *i;
+			if (columnInfo.getName().compare(DB_FILEPATH) == 0) {
+				filePathIdx = idx++;
+			}
+			else if (columnInfo.getName().compare(DB_FILENAME) == 0) {
+				fileNameIdx = idx++;
+			}
+			else if (columnInfo.getName().compare(DB_EVENT) == 0) {
+				eventIdx = idx;
+			}
+		}
 
+		int rowSize = tableSchema.size();
 		m_output << "{\n";
 		m_output << "\"images\": [\n";
 		bool first = true;
+		bool firstHistory = true;
+		std::string currImageAddress;
 		for (auto rowIt = m_resultsList.begin(); rowIt != m_resultsList.end(); rowIt++) {
 			SharedMTRow row = *rowIt;
-			int idx = 0;
-			if (first) {
-				first = false;
+			
+			std::string imageAddress = row->columnAt(DB_FILEPATH).toString();
+			imageAddress += '/';
+			imageAddress += row->columnAt(DB_FILENAME).toString();
+			if (imageAddress.compare(currImageAddress) != 0) {
+				currImageAddress = imageAddress;
+				if (firstHistory == false) {
+					m_output << "}]\n";
+				}
+				firstHistory = true;
+				int idx = 0;
+				if (first) {
+					first = false;
+				}
+				else {
+					m_output << "},\n";
+				}
+				m_output << "{\n";
+				std::string column = row->columnAt(DB_FILEPATH).toString();
+				m_output << writeTag(DB_FILEPATH, column.c_str(), false);
+				column = row->columnAt(DB_FILENAME).toString();
+				m_output << writeTag(DB_FILENAME, column.c_str(), false);
 			}
 			else {
-				m_output << "},\n";
-			}
-			m_output << "{\n";
-			for (auto i = row->begin(); i != row->end(); i++) {
-				SharedMTColumn column = *i;
-				MTSchema& col = tableSchema.at(idx);
-				std::string tag = col.getName();
-				m_output << writeTag(tag.c_str(), column->toString(), (idx >= rowSize - 1));
-				idx++;
+				if (firstHistory) {
+					firstHistory = false;
+					m_output << "\"ImageHistory\": [\n";
+				}
+				else {
+					m_output << "},\n";
+				}
+				m_output << "{\n";
+				m_output << writeTag(DB_DATEADDED, row->columnAt(DB_DATEADDED).toString(), false);
+				m_output << writeTag(DB_VERSION, row->columnAt(DB_VERSION).toString(), false);
+				m_output << writeTag(DB_EVENT, row->columnAt(DB_EVENT).toString(), false);
+				m_output << writeTag(DB_COMMENT, row->columnAt(DB_COMMENT).toString(), true);
 			}
 
 		}
-		m_output << "}\n";
-		m_output << "] }\n";
+		m_output << "}\n"; // last history item
+		m_output << "] }\n"; // last image
+		m_output << "] }\n"; // close main array and close main
 		return true;
 	};
 
