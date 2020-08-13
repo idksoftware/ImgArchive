@@ -557,6 +557,14 @@ namespace simplearchive {
 
 	}
 
+	bool SIALib::getImages(const char* scope, const char* comment, bool force) {
+		if (ArchiveObject::getInstance().checkout(scope, comment, force) == false) {
+			return false;
+		}
+		return true;
+
+	}
+
 	bool SIALib::deleteImages(const char* scope, const char* comment, bool force) {
 		//if (ArchiveObject::getInstance().uncheckout(scope, comment, force) == false) {
 		//	return false;

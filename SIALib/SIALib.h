@@ -147,6 +147,8 @@ namespace simplearchive {
 		bool checkin(const char * scope, const char *comment, bool force);
 		
 		bool uncheckout(const char* scope, const char* comment, bool force);
+
+		bool getImages(const char* scope, const char* comment, bool force);
 		
 		bool exportImage(const char *distpath);
 

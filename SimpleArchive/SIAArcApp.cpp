@@ -319,6 +319,12 @@ bool SIAArcApp::doRun()
 			return false;
 		}
 		break;
+	case SIAArcAppOptions::CommandMode::CM_Get:
+		if (siaLib.getImages(appOptions.getImageAddress(), appOptions.getComment(), appOptions.isForced()) == false) {
+			setError(CLogger::getLastCode(), CLogger::getLastMessage());
+			return false;
+		}
+		break;
 	case SIAArcAppOptions::CommandMode::CM_Delete:
 		if (siaLib.deleteImages(appOptions.getImageAddress(), appOptions.getComment(), appOptions.isForced()) == false) {
 			setError(CLogger::getLastCode(), CLogger::getLastMessage());

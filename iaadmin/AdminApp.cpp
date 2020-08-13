@@ -192,9 +192,21 @@ bool AdminApp::doRun()
 	if (isConfiguratedOk() == true) {
 		switch (appOptions.getCommandMode()) {
 		case AppOptions::CommandMode::CM_Allow:
-			return Allow(appOptions.getConfigOption(), appOptions.getConfigValue());
+		{
+			bool ret = Allow(appOptions.getConfigOption(), appOptions.getConfigValue());
+			if (ret == false) {
+				printf("Command \"Configue\" failed? May need to be in admin mode\n");
+			}
+			return ret;
+		}
 		case AppOptions::CommandMode::CM_Config:
-			return Configure(appOptions.getConfigOptionBlock(), appOptions.getConfigOption(), appOptions.getConfigValue());
+		{
+			bool ret = Configure(appOptions.getConfigOptionBlock(), appOptions.getConfigOption(), appOptions.getConfigValue());
+			if (ret == false) {
+				printf("Command \"Configue\" failed? May need to be in admin mode\n");
+			}
+			return ret;
+		}
 		case AppOptions::CommandMode::CM_Show:
 			return Show(appOptions.getConfigOption(), appOptions.getConfigValue(), appOptions.getTextOutputType(), appOptions.getOutputFile());
 		case AppOptions::CommandMode::CM_Test:

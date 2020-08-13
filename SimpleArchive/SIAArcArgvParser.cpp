@@ -39,16 +39,20 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineCommandSyntax("import", "iaarc import [--source-path=<path>]\n\t"
 		"[--comment=<comment text>]\n\t[--lightroom=<On|Off>]");
 	
-	defineOption("checkout", "Checkout images from archive.", ArgvParser::MasterOption);
+	defineOption("checkout", "Checkout images from archive to workspace.", ArgvParser::MasterOption);
 	defineCommandSyntax("checkout", "iaarc checkout [--target-path=<path>]\n\t"
 		"[--comment=<comment text>]\n\t[--scope=<scope-address]\n\t[--force=<yes|No>]\n\t[--version=<vesion-num>");
 
-	defineOption("checkin", "Checkin images in to archive.", ArgvParser::MasterOption);
+	defineOption("checkin", "Checkin images from workspace into the archive.", ArgvParser::MasterOption);
 	defineCommandSyntax("checkin", "iaarc checkin [--target-path=<path>]\n\t[--logging-level=<level>]"
 		"[--comment=<comment text>]\n\t[--scope=<scope-address]\n\t[--force=<yes|No>]\n\t[--version=<vesion-num>");
 
-	defineOption("uncheckout", "Un-checkout images in to archive.", ArgvParser::MasterOption);
-	defineCommandSyntax("uncheckout", "iaarc uncheckout [--target-path=<path>]\n\t[--logging-level=<level>]"
+	defineOption("uncheckout", "Un-checkout images from workspace into the archive.", ArgvParser::MasterOption);
+	defineCommandSyntax("uncheckout", "iaarc uncheckout [--logging-level=<level>]"
+		"[--comment=<comment text>]\n\t[--scope=<scope-address>]\n\t[--force=<yes|No>]\n\t[--version=<vesion-num>");
+
+	defineOption("get", "Get images from archive to workspace.", ArgvParser::MasterOption);
+	defineCommandSyntax("get", "iaarc get [--logging-level=<level>]"
 		"[--comment=<comment text>]\n\t[--scope=<scope-address>]\n\t[--force=<yes|No>]\n\t[--version=<vesion-num>");
 
 	defineOption("delete", "Delete images in the archive.", ArgvParser::MasterOption);
@@ -59,7 +63,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineCommandSyntax("undelete", "iaarc undelete [--logging-level=<level>]"
 		"[--comment=<comment text>]\n\t[--scope=<scope-address>]\n\t[--version=<vesion-num>");
 
-	defineOption("export", "Export images from archive.", ArgvParser::MasterOption);
+	defineOption("export", "Export images from archive into a destination folder.", ArgvParser::MasterOption);
 	defineCommandSyntax("export", "iaarc export [--target-path=<path>]\n\t[--logging-level=<level>]"
 		"[--comment=<comment text>]\n\t[--scope=<scope-address]\n\t[--force=<yes|No>]\n\t[--version=<vesion-num>");
 	
@@ -213,6 +217,11 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineCommandOption("uncheckout", "scope");
 	defineCommandOption("uncheckout", "force");
 	defineCommandOption("uncheckout", "image");
+
+	defineCommandOption("get", "comment");
+	defineCommandOption("get", "scope");
+	defineCommandOption("get", "force");
+	defineCommandOption("get", "image");
 
 	defineCommandOption("delete", "comment");
 	defineCommandOption("delete", "scope");
@@ -456,6 +465,30 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 
 		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_UnCheckout);
 		cmdFound = true;
+	}
+	//
+	// get
+	//
+	else if (command("get") == true) {
+
+	bool gotImageAddress = false;
+	if (foundOption("scope") == true) {
+		appOptions.m_imageAddress = optionValue("scope");
+		gotImageAddress = true;
+	}
+
+	if (foundOption("comment") == true) {
+		appOptions.m_comment = optionValue("comment");
+	}
+
+
+	if (foundOption("force") == true) {
+		appOptions.m_force = true;
+	}
+
+
+	appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Get);
+	cmdFound = true;
 	}
 	//
 	// delete

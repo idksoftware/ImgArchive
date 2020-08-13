@@ -211,9 +211,103 @@ namespace simplearchive {
 
 	
 
+	//
+	// Html
+	//
+	class  ImageHistoryWriteHtml : public WriteHtml {
+	public:
+		ImageHistoryWriteHtml(ResultsList& resultsList);
+		~ImageHistoryWriteHtml() = default;
+		bool write() override;
+	};
+
+	ImageHistoryWriteHtml::ImageHistoryWriteHtml(ResultsList& resultsList) : WriteHtml(resultsList) {}
+
+	bool ImageHistoryWriteHtml::write() {
+		MTTableSchema& tableSchema = m_resultsList.getTableSchema();
+		int idx = 0;
+		int filePathIdx = -1;
+		int fileNameIdx = -1;
+		int eventIdx = -1;
+		std::ostringstream headerStr;
+		// Header
+		for (std::vector<MTSchema>::iterator i = m_resultsList.getTableSchema().begin(); i != m_resultsList.getTableSchema().end(); i++) {
+			MTSchema& columnInfo = *i;
+			if (columnInfo.getName().compare(DB_FILEPATH) == 0) {
+				filePathIdx = idx++;
+			}
+			else if (columnInfo.getName().compare(DB_FILENAME) == 0) {
+				fileNameIdx = idx++;
+			}
+			else if (columnInfo.getName().compare(DB_EVENT) == 0) {
+				eventIdx = idx;
+			}
+		}
+
+		int rowSize = tableSchema.size();
+		m_output << "{\n";
+		m_output << "\"images\": [\n";
+		bool first = true;
+		bool firstHistory = true;
+		std::string currImageAddress;
+		for (auto rowIt = m_resultsList.begin(); rowIt != m_resultsList.end(); rowIt++) {
+			SharedMTRow row = *rowIt;
+
+			std::string imageAddress = row->columnAt(DB_FILEPATH).toString();
+			imageAddress += '/';
+			imageAddress += row->columnAt(DB_FILENAME).toString();
+			if (imageAddress.compare(currImageAddress) != 0) {
+				currImageAddress = imageAddress;
+				if (firstHistory == false) {
+					m_output << "}]\n";
+				}
+				firstHistory = true;
+				int idx = 0;
+				if (first) {
+					first = false;
+				}
+				else {
+					m_output << "},\n";
+				}
+				m_output << "{\n";
+				std::string column = row->columnAt(DB_FILEPATH).toString();
+				//m_output << writeTag(DB_FILEPATH, column.c_str(), false);
+				column = row->columnAt(DB_FILENAME).toString();
+				//m_output << writeTag(DB_FILENAME, column.c_str(), false);
+			}
+			else {
+				if (firstHistory) {
+					firstHistory = false;
+					m_output << "\"ImageHistory\": [\n";
+				}
+				else {
+					m_output << "},\n";
+				}
+				m_output << "{\n";
+				//m_output << writeTag(DB_DATEADDED, row->columnAt(DB_DATEADDED).toString(), false);
+				//m_output << writeTag(DB_VERSION, row->columnAt(DB_VERSION).toString(), false);
+				//m_output << writeTag(DB_EVENT, row->columnAt(DB_EVENT).toString(), false);
+				//m_output << writeTag(DB_COMMENT, row->columnAt(DB_COMMENT).toString(), true);
+			}
+
+		}
+		m_output << "}\n"; // last history item
+		m_output << "] }\n"; // last image
+		m_output << "] }\n"; // close main array and close main
+		return true;
+	};
+	
+
 	bool ImageHistoryResultsPresentation::writeHtml()
 	{
-		return false;
+		ImageHistoryWriteHtml imageHistoryWriteHtml(m_resultsList);
+		if (!imageHistoryWriteHtml.write()) {
+			return false;
+		};
+		if (write(imageHistoryWriteHtml.getOutput()) == false) {
+			return false;
+		}
+		return true;
 	}
 
 	bool ImageHistoryResultsPresentation::writeCSV() {

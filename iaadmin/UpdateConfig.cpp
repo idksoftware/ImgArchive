@@ -91,7 +91,7 @@ namespace simplearchive {
 		std::ofstream configFile;
 		configFile.open(m_configfile.c_str());
 		//configFile.open("C:\\temp\\t.dat");
-		if (configFile.bad()) {
+		if (configFile.bad() || configFile.fail()) {
 			return false;
 		}
 		configFile << imgaConfig;

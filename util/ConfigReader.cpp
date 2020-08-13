@@ -591,7 +591,7 @@ bool AppConfigBaseWriter::update(const char* blockName, const char* cmd, const c
 	ConfigBlockWriter configBlockWriter;
 	configBlockWriter.update(cmd, options, config);
 	m_config.insert(blockPair);
-	return false;
+	return true;
 }
 
 bool AppConfigBaseWriter::remove(const char* cmd, ConfigBlock& config)
