@@ -183,6 +183,10 @@ public:
 		return setLevel(m_logLevel, level);
 	}
 
+	static void setAppName(const std::string& appName) {
+		m_appName = appName;
+	}
+
 	static void setLogPath(const char *logpath);
 	static void startLogging();
 
@@ -200,11 +204,12 @@ private:
 	CLogger& operator = (const CLogger& ) { return *this; }
 	bool IsLogOut(Level level);
 	static bool IsConsoleOut(Level level);
-	static void makeFile();
+	static void makeFile(const std::string& appName);
 	const char *levelStr(Level level);
 	static bool m_isQuiet;
 	static bool m_isSilent;
 	static bool m_isOpen;
+	
 	static std::string m_filename;
 	static const std::string m_Path;
 	static std::unique_ptr<CLogger> m_this;
@@ -216,6 +221,7 @@ private:
 	static int m_cursize;
 	static int m_lastCode;
 	static std::string m_lastMessage;
+	static std::string m_appName;
 	static std::unique_ptr<LogBuffer> m_startUpBuffer;
 	static bool setLevel(CLogger::Level &level, const std::string &s);
 	static CLogger::Level toLevel(const std::string &s);

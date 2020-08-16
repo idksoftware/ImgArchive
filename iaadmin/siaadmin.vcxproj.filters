@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CreateArchive.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="AdminApp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -27,22 +24,10 @@
     <ClInclude Include="AdminArgvParser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TestArchive.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ShowCommand.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SetConfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="UpdateConfig.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DefaultEnvironment.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SetImageExtentionFile.h">
+    <ClInclude Include="ShowCommand.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SyncCommand.h">
@@ -50,9 +35,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CreateArchive.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="AdminApp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -62,22 +44,10 @@
     <ClCompile Include="AdminArgvParser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TestArchive.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ShowCommand.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SetConfig.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="UpdateConfig.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DefaultEnvironment.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SetImageExtentionFile.cpp">
+    <ClCompile Include="ShowCommand.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SyncCommand.cpp">

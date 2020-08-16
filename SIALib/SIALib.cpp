@@ -77,6 +77,7 @@
 #include "RemoteServer.h"
 #include <stdio.h>
 #include <sstream>
+#include "UpdateConfig.h"
 //#include "DCRawArgs.h"
 //#include "LUAScript.h"
 
@@ -171,10 +172,12 @@ namespace simplearchive {
 	}
 
 
-	int SIALib::initalise() {
+	int SIALib::initalise(const char *appName) {
 		
 		AppConfig &config = AppConfig::get();
-
+		std::string appPerName = appName;
+		appPerName += "-";
+		CLogger::setAppName(appPerName);
 		CLogger::setLogLevel(config.getLogLevel());
 		CLogger::setConsoleLevel(config.getConsoleLevel());
 		CLogger::setSilent(config.isSilent());
@@ -781,6 +784,15 @@ namespace simplearchive {
 		return true;
 	}
 
+
+	bool SIALib::configure(const char* configOptionBlock, const char* configOption, const char* configValue) {
+
+		UpdateConfig updateConfig;
+		if (updateConfig.update(configOptionBlock, configOption, configValue) == false) {
+			return false;
+		}
+		return true;
+	}
 	
 	bool SIALib::validate(Scope scope, bool main, VerifyBackups verifyBackups, bool repair) {
 		CLogger &logger = CLogger::getLogger();

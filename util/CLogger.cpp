@@ -70,6 +70,7 @@ bool CLogger::m_isSilent = false;
 bool CLogger::m_isOpen = false;
 int CLogger::m_lastCode;
 std::string CLogger::m_lastMessage;
+std::string CLogger::m_appName;
 std::unique_ptr<LogBuffer> CLogger::m_startUpBuffer;
 
 class LoggBuffer : public std::vector<std::string> {
@@ -125,7 +126,7 @@ void CLogger::setLogPath(const char *logpath) {
 
 void CLogger::startLogging() {
 	m_isOpen = true;
-	makeFile();
+	makeFile(m_appName.c_str());
 	processBuffer();
 }
 
@@ -149,19 +150,21 @@ void CLogger::processBuffer() {
 	}
 }
 
-void CLogger::makeFile() {
+void CLogger::makeFile(const std::string& appName) {
 	LogName logName;
 	if (m_isOpen == false) {
 		return;
 	}
-	m_filename = logName.makeName(m_logpath.c_str(), "", "log", 256);
+	m_filename = logName.makeName(m_logpath.c_str(), appName.c_str(), "log", 256);
 	std::string fullpath = m_logpath;
 	fullpath += '/';
 	fullpath += m_filename;
 	m_logfile.open(fullpath.c_str(), ios::out | ios::app);
 	if (m_logfile.is_open() == false) {  // changed to true for testing
+		//printf("cannot open log file %s", fullpath.c_str());
 		throw SIAException("Cannot open log file");
 	}
+	//printf("Opened log file %s", fullpath.c_str());
 }
 
 ExifDateTime last;
@@ -177,7 +180,7 @@ recorded with the ReporterEvent
 void CLogger::status(int code, ReporterEvent::Status level, const char *format, ...) {
 	if (m_size < m_cursize) {
 		m_logfile.close();
-		makeFile();
+		makeFile(m_appName);
 		m_cursize = 0;
 	}
 	
@@ -293,7 +296,7 @@ void CLogger::log(int code, Level level, const std::string& message) {
 	
 	if (m_size < m_cursize) {
 		m_logfile.close();
-		makeFile();
+		makeFile(m_appName);
 		m_cursize = 0;
 	}
 	// Return if the message is to low leval to be include in the log, UDP or terminal.

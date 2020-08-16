@@ -58,6 +58,7 @@
 //#include "ArchiveBuilder.h"
 #include "AppBase.h"
 
+#define APP_NAME "iaarc"
 
 
 using namespace CommandLineProcessing;

@@ -246,7 +246,7 @@ bool SIAArcApp::doRun()
 	}
 	
 	
-	if (siaLib.initalise() < 0) {
+	if (siaLib.initalise(APP_NAME) < 0) {
 		return false;
 	}
 	/*

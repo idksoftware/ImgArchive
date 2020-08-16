@@ -107,7 +107,7 @@ namespace simplearchive {
 		~SIALib();
 		void enableEvents(const char *address, int port);
 		void enableServer(int port);
-		int initalise();
+		int initalise(const char* appName);
 		int complete();
 		//int complete();
 		int checkin();
@@ -175,6 +175,8 @@ namespace simplearchive {
 		bool archive(const char *archivePath, const char *distPath, unsigned long sizeOfMedia, ExifDateTime *startDate, ExifDateTime *endDate);  //< Create backup volumes
 
 		bool checkDisk();
+
+		bool configure(const char* configOptionBlock, const char* configOption, const char* configValue);
 
 		bool validate(Scope scope, bool main, VerifyBackups verifyBackups, bool repair);
 

@@ -136,6 +136,7 @@ namespace simplearchive {
 		Default paths based on UserDrive and UserHome
 
 	*/
+	// This is only used in iaadmin
 	bool SharedConfig::init(const char *homePath) {
 		CLogger &logger = CLogger::getLogger();
 		
@@ -298,6 +299,7 @@ namespace simplearchive {
 		return true;
 	}
 
+
 	void AppConfig::settup() {
 		getWorkspacePath();
 		getMasterPath();
@@ -426,6 +428,17 @@ namespace simplearchive {
 
 		defauleValue = homePath + TOOLS_PATH;
 		setSystemFolders(CATALOG_PATH_LABEL, AppConfig::m_catalogPath, defauleValue);
+
+		// set the workspace if found in the config file
+		// this is defaultied so with not be emply
+		auto folders = getSystemFolders();
+		if (folders == nullptr || getRoot().value("WorkspacePath", AppConfig::m_workspacePath) == false) {
+			// if not found read from IMGA_WORKSPACE environment variable
+			std::string temp = SAUtils::GetPOSIXEnv(IMGA_WORKSPACE);
+			if (temp.empty() == false) {
+				AppConfig::m_workspacePath = temp;
+			}
+		}
 
 		//setSystemFolders("SystemPath", AppConfig::m_systemPath, AppConfig::m_systemPath + SYSTEM_PATH);
 		//AppConfig::m_indexPath = AppConfig::m_systemPath + "/index";

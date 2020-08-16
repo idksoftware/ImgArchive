@@ -58,6 +58,8 @@
 #include "ArchiveBuilder.h"
 #include "AppBase.h"
 
+#define APP_NAME "iaadmin"
+
 using namespace CommandLineProcessing;
 namespace simplearchive {
 

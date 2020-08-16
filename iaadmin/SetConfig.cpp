@@ -371,6 +371,9 @@ bool SetConfig::parseFolderOptions(const char* ov)
 	case Option::SYSTEM_PATH:
 		m_option = SYSTEM_PATH_LABEL;
 		return true;
+	case Option::WORKSPACE_PATH:
+		m_option = WORKSPACE_PATH_LABEL;
+		return true;
 	case Option::MASTER_PATH:
 		m_option = MASTER_PATH_LABEL;
 		return true;
@@ -648,6 +651,9 @@ Option SetConfig::processFolderOptions(std::string& optionString)
 	}
 	else if (iequals(optionString, SYSTEM_PATH_LABEL)) {
 		return Option::SYSTEM_PATH;
+	}
+	else if (iequals(optionString, WORKSPACE_PATH_LABEL)) {
+		return Option::WORKSPACE_PATH;
 	}
 	else if (iequals(optionString, MASTER_PATH_LABEL)) {
 		return Option::MASTER_PATH;

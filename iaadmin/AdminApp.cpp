@@ -118,8 +118,8 @@ namespace simplearchive {
 
 	bool AdminApp::Configure(const char* configOptionBlock, const char* configOption, const char* configValue)
 	{
-		UpdateConfig updateConfig;
-		if (updateConfig.update(configOptionBlock, configOption, configValue) == false) {
+		SIALib siaLib;
+		if (siaLib.configure(configOptionBlock, configOption, configValue) == false) {
 			return false;
 		}
 		return true;
@@ -158,7 +158,7 @@ namespace simplearchive {
 			return false;
 		}
 		SIALib siaLib;
-		siaLib.initalise();
+		siaLib.initalise(APP_NAME);
 		//AppConfig& config = AppConfig::get();
 		if (appOptions.isConfiguratedOk() == false) {
 			// Do not create a new archive. The old one needs to be deleted?
@@ -223,7 +223,7 @@ bool AdminApp::doRun()
 		case AppOptions::CommandMode::CM_Validate:
 		{
 			SIALib siaLib;
-			siaLib.initalise();
+			siaLib.initalise(APP_NAME);
 			//AppConfig& config = AppConfig::get();
 			if (appOptions.isConfiguratedOk() == false) {
 				// Do not create a new archive. The old one needs to be deleted?
