@@ -120,7 +120,6 @@ namespace simplearchive {
 	std::string AppConfig::m_derivativeBackup1;
 	std::string AppConfig::m_derivativeBackup2;
 
-	std::string AppConfig::m_masterCataloguePath;
 	std::string AppConfig::m_masterWWWCataloguePath;
 	
 	
@@ -216,24 +215,24 @@ namespace simplearchive {
 		}
 		logger.log(LOG_OK, CLogger::Level::INFO, "        Master Web catalogue: path \"%s\"", AppConfig::m_masterWWWCataloguePath.c_str());
 
-		if (AppConfig::m_masterCataloguePath.empty() == true) {
+		if (AppConfig::m_catalogPath.empty() == true) {
 			// read from config file
 			auto folders = getSystemFolders();
-			if (folders == nullptr || getRoot().value("MasterCataloguePath", AppConfig::m_masterCataloguePath) == false) {
+			if (folders == nullptr || getRoot().value("MasterCataloguePath", AppConfig::m_catalogPath) == false) {
 				// if not found read from IMGA_MASTER_CATALOGUE environment variable
 				std::string temp = SAUtils::GetPOSIXEnv("IMGA_MASTER_CATALOGUE");
 				if (temp.empty() == false) {
-					AppConfig::m_masterCataloguePath = temp;
+					AppConfig::m_catalogPath = temp;
 				}
 				else {
 					std::string tempHomeDrive = SAUtils::GetPOSIXEnv("HOMEDRIVE");
 					std::string tempHomePath = SAUtils::GetPOSIXEnv("HOMEPATH");
-					AppConfig::m_masterCataloguePath = tempHomeDrive + tempHomePath + DEFAULT_MASTER_CATALOGUE_PATH;
+					AppConfig::m_catalogPath = tempHomeDrive + tempHomePath + DEFAULT_MASTER_CATALOGUE_PATH;
 				}
 			}
 		}
 		//ArchivePath::setMasterCataloguePath(AppConfig::m_masterViewPath);
-		logger.log(LOG_OK, CLogger::Level::INFO, "        Master catalogue path:     \"%s\"", AppConfig::m_masterCataloguePath.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Master catalogue path:     \"%s\"", AppConfig::m_catalogPath.c_str());
 
 		// Workspace Path
 		// This is used in siaadm.exe
@@ -426,19 +425,19 @@ namespace simplearchive {
 		defauleValue = homePath + TEMPLATE_PATH;
 		setSystemFolders(TEMPLATE_PATH_LABEL, AppConfig::m_templatePath, defauleValue);
 
-		defauleValue = homePath + TOOLS_PATH;
+		defauleValue = AppConfig::m_catalogPath;
 		setSystemFolders(CATALOG_PATH_LABEL, AppConfig::m_catalogPath, defauleValue);
 
 		// set the workspace if found in the config file
 		// this is defaultied so with not be emply
-		auto folders = getSystemFolders();
-		if (folders == nullptr || getRoot().value("WorkspacePath", AppConfig::m_workspacePath) == false) {
+		defauleValue = AppConfig::m_workspacePath;
+		setSystemFolders(WORKSPACE_PATH_LABEL, AppConfig::m_workspacePath, defauleValue);
 			// if not found read from IMGA_WORKSPACE environment variable
-			std::string temp = SAUtils::GetPOSIXEnv(IMGA_WORKSPACE);
-			if (temp.empty() == false) {
-				AppConfig::m_workspacePath = temp;
-			}
+		std::string temp = SAUtils::GetPOSIXEnv(IMGA_WORKSPACE);
+		if (temp.empty() == false) {
+			AppConfig::m_workspacePath = temp;
 		}
+		
 
 		//setSystemFolders("SystemPath", AppConfig::m_systemPath, AppConfig::m_systemPath + SYSTEM_PATH);
 		//AppConfig::m_indexPath = AppConfig::m_systemPath + "/index";
@@ -503,7 +502,7 @@ namespace simplearchive {
 		
 		ArchivePath::setPathToWorkspace(AppConfig::m_workspacePath);
 		ArchivePath::setDerivativePath(AppConfig::m_derivativePath);
-		//setSystemFolders(MASTER_VIEW_PATH_LABEL, AppConfig::m_masterCataloguePath, ctemp);
+		//setSystemFolders(MASTER_VIEW_PATH_LABEL, AppConfig::m_catalogPath, ctemp);
 		setWorkspacePath(AppConfig::m_workspacePath.c_str());
 		setMasterPath(AppConfig::m_masterPath.c_str());
 
@@ -696,7 +695,7 @@ namespace simplearchive {
 	}
 
 	void SharedConfig::setMasterCataloguePath(const char *path) {
-		AppConfig::m_masterCataloguePath = path;
+		AppConfig::m_catalogPath = path;
 	}
 
 	void SharedConfig::setLogLevel(const char *logLevel) {
@@ -768,7 +767,7 @@ namespace simplearchive {
 	}
 
 	const char *AppConfig::getMasterCataloguePath() {
-		return m_masterCataloguePath.c_str();
+		return m_catalogPath.c_str();
 	}
 
 	const char *AppConfig::getMasterWWWCataloguePath() {
@@ -1072,7 +1071,7 @@ namespace simplearchive {
 		m_masterPath = MasterPath::get();
 		m_derivativePath = DerivativePath::get();
 		m_workspacePath = WorkspacePath::get();
-		m_masterCataloguePath = PicturePath::get();
+		m_catalogPath = PicturePath::get();
 		m_masterWWWCataloguePath = WWWImagePath::get();
 
 		return locations(m_homePath.c_str());

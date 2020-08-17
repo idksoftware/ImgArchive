@@ -60,7 +60,7 @@ std::string AppOptions::m_masterPath;
 std::string AppOptions::m_configPath;
 std::string AppOptions::m_derivativePath;
 std::string AppOptions::m_repositoryPath;
-std::string AppOptions::m_cataloguePath;
+std::string AppOptions::m_catalogPath;
 std::string AppOptions::m_picturePath;
 std::string AppOptions::m_wwwImagePath;
 std::string AppOptions::m_configOption;
@@ -157,7 +157,7 @@ void AppOptions::setDerivativePath(const char *path) {
 }
 
 void AppOptions::setCataloguePath(const char *path) {
-	m_cataloguePath = path;
+	m_catalogPath = path;
 }
 
 void AppOptions::setWWWImagePath(const char* wwwImagePath)
@@ -200,7 +200,7 @@ const char *AppOptions::getDerivativePath() {
 	return m_derivativePath.c_str();
 }
 const char *AppOptions::getCataloguePath() {
-	return m_cataloguePath.c_str();
+	return m_catalogPath.c_str();
 }
 const char* AppOptions::getWWWImagePath()
 {

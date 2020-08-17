@@ -378,7 +378,7 @@ bool SetConfig::parseFolderOptions(const char* ov)
 		m_option = MASTER_PATH_LABEL;
 		return true;
 	case Option::MASTER_VIEW_PATH:
-		m_option = MASTER_VIEW_PATH_LABEL;
+		m_option = CATALOG_PATH_LABEL;
 		return true;
 	case Option::DERIVATIVE_PATH:
 		m_option = DERIVATIVE_PATH_LABEL;
@@ -658,7 +658,7 @@ Option SetConfig::processFolderOptions(std::string& optionString)
 	else if (iequals(optionString, MASTER_PATH_LABEL)) {
 		return Option::MASTER_PATH;
 	}
-	else if (iequals(optionString, MASTER_VIEW_PATH_LABEL)) {
+	else if (iequals(optionString, CATALOG_PATH_LABEL)) {
 		return Option::MASTER_VIEW_PATH;
 	}
 	else if (iequals(optionString, DERIVATIVE_PATH_LABEL)) {

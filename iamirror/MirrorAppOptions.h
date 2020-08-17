@@ -78,7 +78,7 @@ private:
 	static std::string m_configPath;
 	static std::string m_derivativePath;
 	static std::string m_repositoryPath;
-	static std::string m_cataloguePath;
+	static std::string m_catalogPath;
 	static VerifyOperation m_verifyOperation;
 	static ShowOperation m_showOperation;
 	static bool m_repair;

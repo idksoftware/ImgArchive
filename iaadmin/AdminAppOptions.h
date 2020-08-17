@@ -89,7 +89,7 @@ private:
 	static std::string m_configPath;
 	static std::string m_derivativePath;
 	static std::string m_repositoryPath;
-	static std::string m_cataloguePath;
+	static std::string m_catalogPath;
 	static std::string m_picturePath;
 	static std::string m_wwwImagePath;
 	static std::string m_configOption;

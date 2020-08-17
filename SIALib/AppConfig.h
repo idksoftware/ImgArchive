@@ -68,7 +68,7 @@
 #define SYSTEM_PATH_LABEL         		"SystemPath"
 #define MASTER_PATH_LABEL         		"MasterPath"
 #define SQL_LABEL         				"SQL"
-#define MASTER_VIEW_PATH_LABEL         	"MasterCataloguePath"
+//#define MASTER_VIEW_PATH_LABEL         	"MasterCataloguePath"
 #define DERIVATIVE_PATH_LABEL         	"DerivativePath"
 #define SQL_DATABASE_PATH_LABEL         "SQLDatabasePath"
 #define LOG_PATH_LABEL					"LogPath"
@@ -177,7 +177,7 @@ namespace simplearchive {
 		static std::string m_workspacePath;
 		static std::string m_masterPath;
 		static std::string m_derivativePath;
-		static std::string m_masterCataloguePath;
+		
 		static std::string m_masterWWWCataloguePath;
 		static std::string m_catalogPath;
 		static std::string m_lightroomPath;

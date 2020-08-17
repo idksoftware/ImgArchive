@@ -391,7 +391,7 @@ namespace simplearchive {
 			AppOptions::m_configPath = HomePath::get();
 			AppOptions::m_derivativePath = DerivativePath::get();
 			AppOptions::m_repositoryPath = HomePath::get();
-			AppOptions::m_cataloguePath = PicturePath::get();
+			AppOptions::m_catalogPath = PicturePath::get();
 
 			if (foundOption("archive-path") == true) {
 				opt = optionValue("archive-path");
