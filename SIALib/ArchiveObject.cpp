@@ -21,7 +21,7 @@
 #include "TargetsList.h"
 #include "FileInfo.h"
 #include "BasicMetadataFactory.h"
-#include "XMLWriter.h"
+//#include "XMLWriter.h"
 #include "JSONWriter.h"
 #include "HTMLWriter.h"
 #include "ImagePath.h"
@@ -50,6 +50,7 @@
 #include "IndexVisitor.h"
 #include "SQLiteDB.h"
 #include "ImageFileNameManager.h"
+#include "WriteMetadata.h"
 
 #include <stdio.h>
 #include <sstream>
@@ -340,6 +341,14 @@ namespace simplearchive {
 	}
 
 	bool RepositoryObject::writeMetadata(ImagePath &imagePath, MetadataObject &metadataObject) {
+
+		std::string imageAddress = imagePath.getImageName();
+
+		if (WriteMetadata::writeMasterMetadata(getRepositoryPath().getMetadataPath(), imageAddress, metadataObject) == false) {
+			return false;
+		}
+
+		/*
 		std::string toxml = getRepositoryPath().getMetadataPath() + '/' + imagePath.getImageName() + ".xml";
 		XMLWriter xmlWriter;
 		if (xmlWriter.writeImage(metadataObject, toxml.c_str()) == false) {
@@ -355,6 +364,7 @@ namespace simplearchive {
 		if (htmlWriter.writeImage(metadataObject, tohtml.c_str()) == false) {
 			return false;
 		}
+		*/
 		return true;
 	}
 
@@ -603,12 +613,7 @@ namespace simplearchive {
 		m_PrimaryIndexObject(std::make_unique<PrimaryIndexObject>())
 	{}
 
-
-
-
 	ArchiveObject::~ArchiveObject() {}
-
-	
 
 	bool ArchiveObject::isMasterEnabled() {
 		return m_master.getRepositoryPath().isEnabled();
@@ -816,61 +821,9 @@ namespace simplearchive {
 		return true;
 	}
 
-	bool ArchiveObject::writeDerivativeMetadata(std::string& rootPath, std::string &versionName, DerivativeMetadataRow &metadataObject, std::string &imageName) {
+	bool ArchiveObject::writeDerivativeMetadata(std::string& rootPath, std::string& versionName, DerivativeMetadataRow& metadataObject, std::string& imageName) {
 
-		CLogger &logger = CLogger::getLogger();
-
-		std::string toxml = rootPath + '/' + imageName;
-		if (SAUtils::DirExists(toxml.c_str()) == false) {
-			if (SAUtils::mkDir(toxml.c_str()) == false) {
-				logger.log(LOG_OK, CLogger::Level::FATAL, "Failed to create version folder: \"%s\"?", toxml.c_str());
-				return false;
-			}
-
-		}
-		return writeDerivativeMetadata(toxml, versionName, metadataObject);
-	}
-
-	bool ArchiveObject::writeDerivativeMetadata(std::string& rootPath, std::string &versionName, DerivativeMetadataRow&metadataObject) {
-		std::string toxml = rootPath;
-		toxml += '/';
-		toxml += versionName;
-		toxml += ".xml";
-
-		XMLWriter xmlWriter;
-		if (xmlWriter.writeDerivativeMetadata(metadataObject, toxml.c_str()) == false) {
-			return false;
-		}
-		/*
-		std::string tojson = rootPath + '/' + imageName + ".json";
-		JSONWriter jsonWriter;
-		if (jsonWriter.writeDerivativeMetadata(metadataObject, tojson.c_str()) == false) {
-			return false;
-		}
-		std::string tohtml = rootPath + '/' + imageName + ".html";
-		HTMLWriter htmlWriter;
-		if (htmlWriter.writeDerivativeMetadata(metadataObject, tohtml.c_str()) == false) {
-			return false;
-		}
-		*/
-		return true;
-	}
-
-	bool ArchiveObject::writeMetadata(std::string& rootPath, std::string &imageName, MetadataObject &metadataObject) {
-
-		std::string toxml = rootPath + '/' + imageName + ".xml";
-		XMLWriter xmlWriter;
-		if (xmlWriter.writeImage(metadataObject, toxml.c_str()) == false) {
-			return false;
-		}
-		std::string tojson = rootPath + '/' + imageName + ".json";
-		JSONWriter jsonWriter;
-		if (jsonWriter.writeImage(metadataObject, tojson.c_str()) == false) {
-			return false;
-		}
-		std::string tohtml = rootPath + '/' + imageName + ".html";
-		HTMLWriter htmlWriter;
-		if (htmlWriter.writeImage(metadataObject, tohtml.c_str()) == false) {
+		if (WriteMetadata::writeDerivativeMetadata(rootPath, versionName, metadataObject, imageName) == false) {
 			return false;
 		}
 		return true;
@@ -1037,44 +990,23 @@ namespace simplearchive {
 	bool ArchiveObject::writeMetadata2Workspace(ImagePath &imagePath, std::string &imageName, MetadataObject &metadataObject) {
 
 		if (ArchiveObject::isWorkspaceEnabled() == true) {
-			std::string toxml = m_workspacePath + '/';
-			std::string relpath = imagePath.getRelativePath();
-			toxml += imagePath.getYear(relpath);
-			if (SAUtils::DirExists(toxml.c_str()) == false) {
-				if (SAUtils::mkDir(toxml.c_str()) == false) {
-					return false;
-				}
-			}
-			toxml = m_workspacePath + '/';
-			toxml += imagePath.getRelativePath();
-			if (SAUtils::DirExists(toxml.c_str()) == false) {
-				if (SAUtils::mkDir(toxml.c_str()) == false) {
-					return false;
-				}
-			}
-			toxml += "/.imga";
-			if (SAUtils::DirExists(toxml.c_str()) == false) {
-				if (SAUtils::mkDir(toxml.c_str()) == false) {
-					return false;
-				}
-			}
-			toxml += "/metadata";
-			if (SAUtils::DirExists(toxml.c_str()) == false) {
-				if (SAUtils::mkDir(toxml.c_str()) == false) {
-					return false;
-				}
-			}
-			if (writeMetadata(toxml, imageName, metadataObject) == false) {
+
+			std::string imageAddress = imagePath.getImageAddress();
+			if (WriteMetadata::writeMetadata2Workspace(m_workspacePath, imageAddress, metadataObject) == false) {
 				return false;
 			}
 		}
-
-
 		return true;
 	}
 
-	bool ArchiveObject::writeDerivativeMetadat2Workspace(ImagePath &imagePath, std::string &versionName, DerivativeMetadataRow&derivativeMetadata, std::string &imageName) {
+	bool ArchiveObject::writeDerivativeMetadat2Workspace(ImagePath &imagePath, std::string &versionName, DerivativeMetadataRow& derivativeMetadata, std::string &imageName) {
 		if (ArchiveObject::isWorkspaceEnabled() == true) {
+
+			std::string imageAddress = imagePath.getImageAddress();
+			if (WriteMetadata::writeDerivativeMetadat2Workspace(m_workspacePath, imageAddress, versionName, derivativeMetadata) == false) {
+				return false;
+			}
+			/*
 			std::string toxml = m_workspacePath + '/';
 			std::string relpath = imagePath.getRelativePath();
 			toxml += imagePath.getYear(relpath);
@@ -1105,6 +1037,7 @@ namespace simplearchive {
 			if (writeDerivativeMetadata(toxml, versionName, derivativeMetadata, imageName) == false) {
 				return false;
 			}
+			*/
 		}
 		return true;
 	}
@@ -1133,7 +1066,7 @@ namespace simplearchive {
 		}
 
 		
-		if (writeMetadata(toxml, imageName, metadataObject) == false) {
+		if (WriteMetadata::writeMasterMetadata(toxml, imageName, metadataObject) == false) {
 			return false;
 		}
 		return true;
@@ -1162,7 +1095,7 @@ namespace simplearchive {
 					return false;
 				}
 			}
-			if (writeMetadata(toxml, imageName, metadataObject) == false) {
+			if (WriteMetadata::writeMasterMetadata(toxml, imageName, metadataObject) == false) {
 				return false;
 			}
 		}
@@ -1190,7 +1123,7 @@ namespace simplearchive {
 					return false;
 				}
 			}
-			if (writeMetadata(toxml, imageName, metadataObject) == false) {
+			if (WriteMetadata::writeMasterMetadata(toxml, imageName, metadataObject) == false) {
 				return false;
 			}
 		}
@@ -1218,7 +1151,7 @@ namespace simplearchive {
 					return false;
 				}
 			}
-			if (writeMetadata(toxml, imageName, metadataObject) == false) {
+			if (WriteMetadata::writeMasterMetadata(toxml, imageName, metadataObject) == false) {
 				return false;
 			}
 		}
@@ -1261,10 +1194,10 @@ namespace simplearchive {
 	}
 	
 	bool ArchiveObject::showCheckedStatus(const char* addressScope, ResultsPresentation::FormatType formatType, const char* file) {
-		PrimaryIndexObject& primaryIndexObject = getPrimaryIndexObject();
+		//PrimaryIndexObject& primaryIndexObject = getPrimaryIndexObject();
+		//VersionControl::getInstance().setCurrentVersion(addressScope);
+		//std::string versionPath = VersionControl::getInstance().getCurrentVersionPath();
 
-		VersionControl::getInstance().setCurrentVersion(addressScope);
-		std::string versionPath = VersionControl::getInstance().getCurrentVersionPath();
 		CheckoutStatus checkoutStatus;
 		if (checkoutStatus.showCheckedOut(addressScope, formatType, file) == false) {
 			return false;
@@ -1273,10 +1206,10 @@ namespace simplearchive {
 	}
 
 	bool ArchiveObject::showCheckedOut(const char * addressScope, ResultsPresentation::FormatType formatType, const char* file) {
-		PrimaryIndexObject& primaryIndexObject = getPrimaryIndexObject();
-		
-		VersionControl::getInstance().setCurrentVersion(addressScope);
-		std::string versionPath = VersionControl::getInstance().getCurrentVersionPath();
+		//PrimaryIndexObject& primaryIndexObject = getPrimaryIndexObject();
+		//VersionControl::getInstance().setCurrentVersion(addressScope);
+		//std::string versionPath = VersionControl::getInstance().getCurrentVersionPath();
+
 		CheckoutStatus checkoutStatus;
 		if (checkoutStatus.showCheckedOut(addressScope, formatType, file) == false) {
 			return false;

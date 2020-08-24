@@ -44,8 +44,6 @@
 #include "ImageExtentions.h"
 #include "TargetsList.h"
 #include "CIDKDate.h"
-#include "ImagePath.h"
-
 #include "argvparser.h"
 #include "HookCmd.h"
 #include "MakeMedia.h"
@@ -189,7 +187,12 @@ bool SIAArcApp::initaliseConfig() {
 		return false;
 	}
 	std::string homePath = HomePath::get();
-
+	// Initalise without the config file i.e. set defaults.
+	if (config.init(homePath.c_str()) == false) {
+		printf("Cannot find home path: %s", homePath.c_str());
+		setError(12, "Cannot find home path? exiting?");
+		return false;
+	}
 	// try to set a systems temp folder 
 	std::string tempPath = SAUtils::GetPOSIXEnv("TEMP");
 	if (tempPath.empty() == true || tempPath.length() == 0) {

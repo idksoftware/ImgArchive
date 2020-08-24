@@ -81,16 +81,101 @@ static char THIS_FILE[] = __FILE__;
 
 namespace simplearchive {
 
-	std::string VersionControl::m_pathToPrimary;
-	std::string VersionControl::m_pathToMaster;
-	std::string VersionControl::m_pathToDerivative;
-	std::string VersionControl::m_workspace;
+	//std::string VersionControl::m_pathToPrimary;
+	//std::string VersionControl::m_pathToMaster;
+	//std::string VersionControl::m_pathToDerivative;
+	//std::string VersionControl::m_workspace;
+
+	class VersionControlFileManager {
+		static std::string m_pathToPrimary;
+		static std::string m_pathToMaster;
+		static std::string m_pathToDerivative;
+		static std::string m_workspace;
+
+		std::string m_imagePath2Workspace;
+		std::string m_relativeWorkspacePath;
+	public:
+		VersionControlFileManager() = default;
+		virtual ~VersionControlFileManager() = default;
+
+		std::string getImagePath2Workspace() {
+			return m_imagePath2Workspace;
+		}
+
+		bool makePath2Workspace(const char* imageAddress);
+
+		bool checkWorkspaceFileExists(const char* imageAddress);
+
+		static void setPaths(const char* primary, const char* master, const char* derivative, const char* workspace) {
+			m_pathToPrimary = primary;
+			m_pathToMaster = master;
+			m_pathToDerivative = derivative;
+			m_workspace = workspace;
+		}
+
+		//std::string& getCurrentVersionPath() {
+		//	return m_currentVersionPath;
+		//}
+
+		static std::string getRootPrimaryPath() {
+			return m_pathToPrimary;
+		}
+
+		static std::string getRootMasterPath() {
+			return m_pathToMaster;
+		}
+
+		static std::string getRootDerivativePath() {
+			return m_pathToDerivative;
+		}
+
+		static std::string getRootWorkspace() {
+			return m_workspace;
+		}
+
+		bool checkoutFromMaster(const char* imageAddress, const char* comment, bool force);
+		bool checkoutFromDerivatives(const char* imageAddress, const char* comment, bool force);
+	};
+
+	std::string VersionControlFileManager::m_pathToPrimary;
+	std::string VersionControlFileManager::m_pathToMaster;
+	std::string VersionControlFileManager::m_pathToDerivative;
+	std::string VersionControlFileManager::m_workspace;
+
+	bool VersionControlFileManager::makePath2Workspace(const char* imageAddress) {
+		PathController pathController;
+		if (pathController.splitShort(imageAddress) == false) {
+			return false;
+		}
+		m_imagePath2Workspace = m_workspace;
+		m_imagePath2Workspace += '/';
+		m_imagePath2Workspace += pathController.getYear();
+		m_imagePath2Workspace += '/';
+		m_imagePath2Workspace += imageAddress;
+		return true;
+	}
+
+	bool VersionControlFileManager::checkWorkspaceFileExists(const char* imageAddress) {
+
+		CLogger& logger = CLogger::getLogger();
+
+		PathController pathController;
+		if (makePath2Workspace(imageAddress) == false) {
+			return false;
+		}
+		
+		// Note the file in the workspace may not exist
+		if (!SAUtils::FileExists(getImagePath2Workspace().c_str())) {
+			return false;
+		}
+
+		return true;
+	}
+
+
 
 	void VersionControl::setPaths(const char* primary, const char* master, const char* derivative, const char* workspace) {
-		m_pathToPrimary = primary;
-		m_pathToMaster = master;
-		m_pathToDerivative = derivative;
-		m_workspace = workspace;
+		VersionControlFileManager::setPaths(primary, master, derivative, workspace);
 	}
 
 	VersionControl& VersionControl::getInstance() {
@@ -98,30 +183,30 @@ namespace simplearchive {
 		return versionControl;
 	}
 
-	bool VersionControl::setCurrentVersion(const char* filepath) {
+	bool VersionControl::setCurrentVersion(const char* imageAddress) {
 		CLogger& logger = CLogger::getLogger();
-		PathController pathController;
-		if (pathController.splitShort(filepath) == false) {
-			return false;
-		}
-		std::string fullWS = m_workspace;
-		fullWS += '/';
-		fullWS += pathController.getYear();
-		fullWS += '/';
-		fullWS += filepath;
+		//PathController pathController;
+		//if (pathController.splitShort(imageAddress) == false) {
+		//	return false;
+		//}
+		//std::string fullWS = m_workspace;
+		//fullWS += '/';
+		//fullWS += pathController.getYear();
+		//fullWS += '/';
+		//fullWS += imageAddress;
 
 		// Note the file in the workspace may not exist
 		//if (!SAUtils::FileExists(fullWS.c_str())) {
 		//	return false;
 		//}
-		m_relativeWorkspacePath = filepath;
-		if (m_versionIndex->setRowCursor(filepath) == false) {
+		//m_relativeWorkspacePath = imageAddress;
+		if (m_versionIndex->setRowCursor(imageAddress) == false) {
 			//logger.log(LOG_UNABLE_TO_CHECKOUT_GENERAL, CLogger::Level::FATAL, "Unable to checkout: \"%s\" Error: %s", filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
 			return false;
 		}
 		SharedMTRow row = m_versionIndex->getCurrentRow();
 		m_version = row->columnAt(DB_VERSION).getInt();
-		m_currentVersionPath = row->columnAt(DB_VERSIONPATH).getString();
+		//m_currentVersionPath = row->columnAt(DB_VERSIONPATH).getString();
 		m_crc = row->columnAt(DB_CRC).getInt();
 		m_md5 = row->columnAt(DB_MD5).getString();
 		return true;
@@ -169,7 +254,7 @@ namespace simplearchive {
 		CLogger& logger = CLogger::getLogger();
 
 
-		std::string targetRootPath = m_workspace;
+		//std::string targetRootPath = m_workspace;
 		//PathController pathController;
 		//if (pathController.splitShort(filepath) == false) {
 		//	ErrorCode::setErrorCode(IMGA_ERROR::INVALID_PATH);
@@ -181,7 +266,7 @@ namespace simplearchive {
 			logger.log(LOG_UNABLE_TO_CHECKOUT_GENERAL, CLogger::Level::FATAL, "Unable to checkout: \"%s\" Error: %s", filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
 			return false;
 		}
-		std::string versionPath = getCurrentVersionPath();
+		//std::string versionPath = getCurrentVersionPath();
 		int version = getVersion();
 
 		CheckoutStatus checkoutStatus;
@@ -273,9 +358,8 @@ namespace simplearchive {
 		return false;
 	}
 
+#ifdef XXXXXX
 	bool VersionControl::checkout(const char* relWorkspace, const char* relDb, bool force) {
-
-
 
 		std::string from = m_pathToMaster;
 		from += '/';
@@ -313,21 +397,21 @@ namespace simplearchive {
 
 		return true;
 	}
+#endif	
 
-
-bool VersionControl::checkoutFromMaster(const char *targetRelPath, const char *comment, bool force) {
+bool VersionControlFileManager::checkoutFromMaster(const char *imageAddress, const char *comment, bool force) {
 	CLogger &logger = CLogger::getLogger();
 
 
-	PathController pathController(m_pathToMaster.c_str());
-	pathController.splitPathAndFile(targetRelPath);
+	PathController pathController(VersionControlFileManager::getRootMasterPath().c_str());
+	pathController.splitPathAndFile(imageAddress);
 
-	if (pathController.makeRelativePath(targetRelPath) == false) {
-		logger.log(LOG_OK, CLogger::Level::FATAL, "Invalid version path: \"%s\"?", targetRelPath);
+	if (pathController.makeRelativePath(imageAddress) == false) {
+		logger.log(LOG_OK, CLogger::Level::FATAL, "Invalid version path: \"%s\"?", imageAddress);
 		ErrorCode::setErrorCode(IMGA_ERROR::IMAGE_NOT_FOUND);
 		return false;
 	}
-	std::string from = m_pathToMaster.c_str();
+	std::string from = VersionControlFileManager::getRootMasterPath().c_str();
 
 
 
@@ -339,11 +423,11 @@ bool VersionControl::checkoutFromMaster(const char *targetRelPath, const char *c
 		logger.log(LOG_OK, CLogger::Level::FATAL, "Invalid database path: \"%s\"?", from.c_str());
 		return false;
 	}
-	if (pathController.makeRelativePath(targetRelPath) == false) {
+	if (pathController.makeRelativePath(imageAddress) == false) {
 		logger.log(LOG_OK, CLogger::Level::FATAL, "Invalid target path: \"%s\"?", from.c_str());
 		return false;
 	}
-	std::string to = m_workspace;
+	std::string to = VersionControlFileManager::getRootWorkspace();
 	to += '/';
 	to += pathController.getRelativePath();
 	to += '/';
@@ -355,7 +439,7 @@ bool VersionControl::checkoutFromMaster(const char *targetRelPath, const char *c
 			FileInfo fileInfoFrom(from);
 			FileInfo fileInfoTo(to);
 			if (fileInfoFrom.getCrc() != fileInfoTo.getCrc()) {
-				logger.log(LOG_OK, CLogger::Level::WARNING, "Changes may be lost by Checkout \"%s\"?", targetRelPath);
+				logger.log(LOG_OK, CLogger::Level::WARNING, "Changes may be lost by Checkout \"%s\"?", imageAddress);
 				ErrorCode::setErrorCode(IMGA_ERROR::CHANGE_MAY_BE_LOST);
 				return false;
 			}
@@ -377,13 +461,27 @@ bool VersionControl::checkoutFromMaster(const char *targetRelPath, const char *c
 	return true;
 }
 
-bool VersionControl::checkoutFromDerivatives(const char *targetRelPath, const char *comment, bool force) {
-	
+bool VersionControl::checkoutFromMaster(const char* imageAddress, const char* comment, bool force) {
+	VersionControlFileManager versionControlFileManager;
+	return versionControlFileManager.checkoutFromMaster(imageAddress, comment, force);
+}
+
+
+bool VersionControlFileManager::checkoutFromDerivatives(const char* imageAddress, const char* comment, bool force)
+{
+/*
+	return false;
+}
+
+
+
+bool versionControlFileManager::checkoutFromDerivatives(const char *imageAddress, const char *comment, bool force) {
+*/
 	CLogger &logger = CLogger::getLogger();
-	std::string root = m_pathToDerivative.c_str();
+	std::string root = VersionControlFileManager::getRootDerivativePath().c_str();
 	
 	PathController pathController(root.c_str());
-	pathController.splitShort(getCurrentVersionPath().c_str());
+	pathController.splitShort(imageAddress);
 	if (pathController.makeImagePath()) {
 		return false;
 	}
@@ -419,13 +517,13 @@ bool VersionControl::checkoutFromDerivatives(const char *targetRelPath, const ch
 	//	logger.log(LOG_OK, CLogger::Level::FATAL, "Invalid target path: \"%s\"?", from.c_str());
 	//	return false;
 	//}m_workspace
-	PathController workspacePathControl(m_workspace.c_str());
-	workspacePathControl.splitShort(targetRelPath);
-	std::string to = m_workspace;
+	PathController workspacePathControl(VersionControlFileManager::getRootWorkspace().c_str());
+	workspacePathControl.splitShort(imageAddress);
+	std::string to = VersionControlFileManager::getRootWorkspace();
 	to += '/';
 	to += workspacePathControl.getYear();
 	to += '/';
-	to += targetRelPath;
+	to += imageAddress;
 
 	//if (SAUtils::FileExists(from.c_str()) == false) {
 	//	logger.log(LOG_OK, CLogger::Level::FATAL, "Invalid database path: \"%s\"?", from.c_str());
@@ -438,22 +536,22 @@ bool VersionControl::checkoutFromDerivatives(const char *targetRelPath, const ch
 		FileInfo fileInfoTo(to);
 		if (fileInfoFrom.getCrc() != fileInfoTo.getCrc()) {
 			if (force != true) {
-				logger.log(LOG_OK, CLogger::Level::INFO, "Changes may be lost by checkout, file not copied\"%s\"?", targetRelPath);
+				logger.log(LOG_OK, CLogger::Level::INFO, "Changes may be lost by checkout, file not copied\"%s\"?", imageAddress);
 				ErrorCode::setErrorCode(IMGA_ERROR::CHANGE_MAY_BE_LOST);
 				return false;
 			}
 			else {
-				logger.log(LOG_OK, CLogger::Level::INFO, "Forcing copy. This will overwrite changes, \"%s\"?", targetRelPath);
+				logger.log(LOG_OK, CLogger::Level::INFO, "Forcing copy. This will overwrite changes, \"%s\"?", imageAddress);
 			}
 		}
 		else {
 			if (force != true) {
-				logger.log(LOG_OK, CLogger::Level::INFO, "File not copied as the images are the same, \"%s\"?", targetRelPath);
+				logger.log(LOG_OK, CLogger::Level::INFO, "File not copied as the images are the same, \"%s\"?", imageAddress);
 				ErrorCode::setErrorCode(IMGA_ERROR::NO_CHANGE_IN_IMAGE);
 				return false;
 			}
 			else {
-				logger.log(LOG_OK, CLogger::Level::INFO, "Forcing copy. However the images are the same, \"%s\"?", targetRelPath);
+				logger.log(LOG_OK, CLogger::Level::INFO, "Forcing copy. However the images are the same, \"%s\"?", imageAddress);
 				return true;
 			}
 		}
@@ -465,6 +563,11 @@ bool VersionControl::checkoutFromDerivatives(const char *targetRelPath, const ch
 		return false;
 	}
 	return true;
+}
+
+bool VersionControl::checkoutFromDerivatives(const char* imageAddress, const char* comment, bool force) {
+	VersionControlFileManager versionControlFileManager;
+	return versionControlFileManager.checkoutFromDerivatives(imageAddress, comment, force);
 }
 
 bool VersionControl::uncheckoutFile(const char *filepath, const char *comment, bool force) {
@@ -519,12 +622,12 @@ bool VersionControl::getVersions(const char * filepath, const char * versions, b
 	VersionScope versionScope(latestVersion);
 	versionScope.scope(versions);
 	bool done = false;
-	std::string workspaceVersionPath = m_workspace;
+	std::string workspaceVersionPath = VersionControlFileManager::getRootWorkspace();
 	for (int i = 0; i <= latestVersion; i++) {
 		
 		if (versionScope.isInScope(i) == true) {
 			if (!done) {
-				PathController workspacePathControl(m_workspace.c_str());
+				PathController workspacePathControl(VersionControlFileManager::getRootWorkspace().c_str());
 				workspacePathControl.splitShort(filepath);
 				
 				workspaceVersionPath += '/';
@@ -564,7 +667,7 @@ to += '/';
 to += imageName;
 std::string dbPath;
 if (i == 0) {
-	std::string root = m_pathToMaster.c_str();
+	std::string root = VersionControlFileManager::getRootMasterPath().c_str();
 
 	PathController masterPathControl(root.c_str());
 	masterPathControl.splitShort(shortImagePath.c_str());
@@ -580,7 +683,7 @@ if (i == 0) {
 	dbPath += masterPathControl.getImage();
 }
 else {
-	std::string root = m_pathToDerivative.c_str();
+	std::string root = VersionControlFileManager::getRootDerivativePath().c_str();
 
 	PathController derivativePathControl(root.c_str());
 	derivativePathControl.splitShort(shortImagePath.c_str());
@@ -626,9 +729,9 @@ bool VersionControl::makeVersionsList(const char * filepath)
 	
 
 	
-	std::string workspaceVersionPath = m_workspace;
+	std::string workspaceVersionPath = VersionControlFileManager::getRootWorkspace();
 
-	PathController workspacePathControl(m_workspace.c_str());
+	PathController workspacePathControl(VersionControlFileManager::getRootWorkspace().c_str());
 	workspacePathControl.splitShort(filepath);
 
 	workspaceVersionPath += '/';

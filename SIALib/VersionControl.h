@@ -16,15 +16,15 @@ namespace simplearchive {
 
 	class VersionControl
 	{
-		static std::string m_pathToPrimary;
-		static std::string m_pathToMaster;
-		static std::string m_pathToDerivative;
-		static std::string m_workspace;
-		std::string m_relativeWorkspacePath;
+		//static std::string m_pathToPrimary;
+		//static std::string m_pathToMaster;
+		//static std::string m_pathToDerivative;
+		//static std::string m_workspace;
+		//std::string m_relativeWorkspacePath;
 		std::unique_ptr<VersionIndex> m_versionIndex;
 		std::shared_ptr<Version> m_currentVersion;
 		int m_version { 0 };
-		std::string m_currentVersionPath;
+		//std::string m_currentVersionPath;
 		std::string m_md5;
 		unsigned int m_crc { 0 };
 		bool checkoutFromMaster(const char *targetRelPath, const char *comment, bool force);
@@ -34,7 +34,8 @@ namespace simplearchive {
 
 		VersionControl() : m_versionIndex(std::make_unique<VersionIndex>()) {};
 		~VersionControl() = default;
-		bool setCurrentVersion(const char *filepath);
+
+		bool setCurrentVersion(const char * imageAddress);
 		void setCurrentVersion(const char *repositoryPath, const char *sourceRelPath, const char *fileName, int version);
 
 
@@ -51,9 +52,7 @@ namespace simplearchive {
 		bool uncheckoutFile(const char *filepath, const char *comment, bool force);
 		bool getVersions(const char *filepath, const char *versions, bool force);
 
-		std::string &getCurrentVersionPath() {
-			return m_currentVersionPath;
-		}
+		
 
 		int getVersion() {
 			return m_version;
@@ -78,21 +77,7 @@ namespace simplearchive {
 
 		static VersionControl &getInstance();
 
-		static std::string getRootPrimaryPath() {
-			return m_pathToPrimary;
-		}
-
-		static std::string getRootMasterPath() {
-			return m_pathToMaster;
-		}
-			
-		static std::string getRootDerivativePath() {
-			return m_pathToDerivative;
-		}
-
-		static std::string getRootWorkspace() {
-			return m_workspace;
-		}
+		
 	};
 
 }

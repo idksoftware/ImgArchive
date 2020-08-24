@@ -690,13 +690,14 @@ namespace simplearchive {
 			return HistoryEvent::Event::ERROR;
 		}
 
-
+		/* This function is handling the csv database
 		std::string workPath = m_workspace.c_str();
 		workPath += '/'; workPath += pathController.getYear();
 		if (SAUtils::FileExists(workPath.c_str()) == false) {
 			ErrorCode::setErrorCode(IMGA_ERROR::WORKSPACE_NOT_FOUND);
 			return HistoryEvent::Event::ERROR;
 		}
+		*/
 
 		CheckoutStatusPartition checkoutPartition;
 		std::string filenameStr = pathController.getYearday();

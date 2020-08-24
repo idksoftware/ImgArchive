@@ -142,7 +142,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>Ws2_32.lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>..\Release\fclib.lib;..\Release\util.lib;..\Release\exifcl.lib;..\Release\metatp.lib;..\Release\csv.lib;..\Release\sqlite3.lib;..\Release\database.lib;..\Release\SIALib.lib;..\Release\IntegrityManager.lib;..\Release\mirror.lib;..\Release\web.lib;..\Release\appbase.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\Release\fclib.lib;..\Release\util.lib;..\Release\exifcl.lib;..\Release\metatp.lib;..\Release\csv.lib;..\Release\sqlite3.lib;..\Release\database.lib;..\Release\SIALib.lib;..\Release\IntegrityManager.lib;..\Release\mirror.lib;..\Release\web.lib;..\Release\appbase.lib;..\Release\admin.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -154,7 +154,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN64;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../appbase;../fclib;../util;../exifcl;../metatp;../csv;../mirror;../sqlite3;../SIALib;../IntegrityManager;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../appbase;../fclib;../util;../exifcl;../metatp;../csv;../mirror;../sqlite3;../SIALib;../IntegrityManager;../admin;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -162,7 +162,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>..\x64\Release\fclib.lib;..\x64\Release\util.lib;..\x64\Release\web.lib;..\x64\Release\exifcl.lib;..\x64\Release\metatp.lib;..\x64\Release\csv.lib;..\x64\Release\database.lib;..\x64\Release\sqlite3.lib;..\x64\Release\SIALib.lib;..\x64\Release\IntegrityManager.lib;..\x64\Release\mirror.lib;..\x64\Release\appbase.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\x64\Release\fclib.lib;..\x64\Release\util.lib;..\x64\Release\web.lib;..\x64\Release\exifcl.lib;..\x64\Release\metatp.lib;..\x64\Release\csv.lib;..\x64\Release\database.lib;..\x64\Release\sqlite3.lib;..\x64\Release\SIALib.lib;..\x64\Release\IntegrityManager.lib;..\x64\Release\mirror.lib;..\x64\Release\appbase.lib;..\x64\Release\admin.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

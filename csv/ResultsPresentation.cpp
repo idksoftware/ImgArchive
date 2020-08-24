@@ -77,6 +77,7 @@ bool ResultsPresentation::write(std::string& output) {
 	else {
 		std::cout << output;
 	}
+	return true;
 }
 /*
 bool WriteHuman::write()

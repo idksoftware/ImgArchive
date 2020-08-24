@@ -65,6 +65,7 @@ Source: "defaultFiles\config\config.dat"; DestDir: "{#AppConfig}"; DestName: "co
 Source: "defaultFiles\config\ext.dat"; DestDir: "{#AppConfig}"; DestName: "ext.dat"
 Source: "defaultFiles\config\mirror.dat"; DestDir: "{#AppConfig}"; DestName: "mirror.dat"
 Source: "defaultFiles\config\view.dat"; DestDir: "{#AppConfig}"; DestName: "view.dat"
+Source: "defaultFiles\config\exiftool.ini"; DestDir: "{#AppConfig}"; DestName: "exiftool.ini"
 Source: "defaultFiles\README.TXT"; DestDir: "{app}"; DestName: "README.TXT"
 
 Source: "defaultFiles\hooks\view-preview1.py"; DestDir: "{#AppHooks}"; DestName: "view-preview1.py"

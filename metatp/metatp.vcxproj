@@ -156,6 +156,7 @@
     <ClInclude Include="JSONWriter.h" />
     <ClInclude Include="MetadataObject.h" />
     <ClInclude Include="MasterMetadataTemplate.h" />
+    <ClInclude Include="WriteMetadata.h" />
     <ClInclude Include="XMLWriter.h" />
   </ItemGroup>
   <ItemGroup>
@@ -169,6 +170,7 @@
     <ClCompile Include="JSONWriter.cpp" />
     <ClCompile Include="MetadataObject.cpp" />
     <ClCompile Include="MasterMetadataTemplate.cpp" />
+    <ClCompile Include="WriteMetadata.cpp" />
     <ClCompile Include="XMLWriter.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

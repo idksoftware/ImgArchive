@@ -251,9 +251,9 @@ namespace simplearchive {
 		bool exportImages(const char *dispPath);
 		bool listContents(const char *addressScope);
 
-		bool writeMetadata(std::string& rootPath, std::string &imageName, MetadataObject &metadataObject);
+		
 		bool writeDerivativeMetadata(std::string& rootPath, std::string &versionName, DerivativeMetadataRow &metadataObject, std::string &imageName);
-		bool writeDerivativeMetadata(std::string& rootPath, std::string &versionName, DerivativeMetadataRow &metadataObject);
+		
 		//PrimaryIndex &getPrimaryIndex() {
 		//	return *m_primaryIndex;
 		//}

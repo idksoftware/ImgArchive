@@ -82,3 +82,5 @@ mode --remote-server
 checkin --scope="2020-04-03/Untitled - 1_00001N.jpg"
 
 prop --set="Title:My Title" 
+
+checkout --scope=2014-08-11
