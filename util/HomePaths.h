@@ -23,33 +23,44 @@ enum class HPError {
 	Unknown				// Unknown state
 };
 
+enum class HomePathID {
+	HomePath,
+	MasterPath,
+	DerivativePath,
+	WorkspacePath,
+	PicturePath,
+	WWWImagePath,
+	InvalidPath
+};
+
 class HomePathsBase {
 	static std::vector<HomePathsBase*> m_list;
 protected:
-	virtual void join() const = 0;
-	static void add(HomePathsBase* object) {
-		m_list.push_back(object);
-	}
+	
 public:
 	HomePathsBase() = default;
-	~HomePathsBase() = default;
+	virtual ~HomePathsBase() = default;
+
+	virtual HomePathID getID() const = 0;
 };
 
 
-class HomePath
+class HomePath : public HomePathsBase {
 {
 	static std::string m_homePath;
 	static bool m_found;	// string found
 	static bool m_valid;	// in file system
-	//static bool m_configured;
 	
 	static HomePathType m_type;
 	static HPError m_error;
+
 public:
 	HomePath() = default;
 	~HomePath() = default;
-	static bool init();
-	static std::string get();
+	bool init();
+
+	virtual HomePathID getID() const { return HomePathID::HomePath; };
+	
 	static HomePathType type();
 	static bool isFound() noexcept {	// string found
 		return m_found;
@@ -60,6 +71,13 @@ public:
 	static bool setPath(const char* p);
 	static bool setAllUserDefaultHome();
 	static bool setLocalUserDefaultHome();
+
+	static std::string get();
+	
+	static HomePathsBase* getObject() {
+		static HomePath homePath;
+		return &homePath;
+	}
 };
 
 class MasterPath : public HomePathsBase {
@@ -72,13 +90,15 @@ class MasterPath : public HomePathsBase {
 	static HomePathType m_type;
 	static HPError m_error;
 protected:
-	void join() const override {
-		HomePathsBase::add(getThis());
-	}
+	
 public:
 	MasterPath() = default;
 	~MasterPath() = default;
+
+
 	static bool init();
+	virtual HomePathID getID() const { return HomePathID::MasterPath; };
+
 	static std::string get();
 	static HomePathType type();
 	static bool isFound() noexcept {	// string found
@@ -108,13 +128,14 @@ class DerivativePath : public HomePathsBase {
 	static HomePathType m_type;
 	static HPError m_error;
 protected:
-	HomePathsBase* clone() const override {
-		return getThis();
-	}
+	
 public:
 	DerivativePath() = default;
 	~DerivativePath() = default;
-	static bool init();
+	
+	bool init();
+	virtual HomePathID getID() const { return HomePathID::DerivativePath; };
+
 	static std::string get();
 	static HomePathType type();
 	static bool isFound() noexcept {	// string found
@@ -143,13 +164,14 @@ class WorkspacePath : public HomePathsBase {
 	static HomePathType m_type;
 	static HPError m_error;
 protected:
-	HomePathsBase* clone() const override {
-		return getThis();
-	}
+	
 public:
 	WorkspacePath() = default;
 	~WorkspacePath() = default;
-	static bool init();
+
+	bool init();
+	virtual HomePathID getID() const { return HomePathID::WorkspacePath; };
+
 	static std::string get();
 	static HomePathType type();
 	static bool isFound() noexcept {	// string found
@@ -180,7 +202,10 @@ class PicturePath : public HomePathsBase {
 public:
 	PicturePath() = default;
 	~PicturePath() = default;
-	static bool init();
+	
+	bool init();
+	virtual HomePathID getID() const { return HomePathID::PicturePath; };
+
 	static std::string get();
 	static HomePathType type();
 	static bool isFound() noexcept {	// string found
@@ -206,7 +231,10 @@ class WWWImagePath : public HomePathsBase {
 public:
 	WWWImagePath() = default;
 	~WWWImagePath() = default;
+
 	static bool init();
+	virtual HomePathID getID() const { return HomePathID::WWWImagePath; };
+
 	static std::string get();
 	static HomePathType type();
 	static bool isFound() noexcept {	// string found
