@@ -154,7 +154,7 @@
     <ClCompile Include="ConfigReader.cpp" />
     <ClCompile Include="CShell.cpp" />
     <ClCompile Include="CSVArgs.cpp" />
-    <ClCompile Include="HomePath.cpp" />
+    <ClCompile Include="HomePaths.cpp" />
     <ClCompile Include="ImageEncode.cpp" />
     <ClCompile Include="ImageEncodeBase32.cpp" />
     <ClCompile Include="SequenceNumber.cpp" />
@@ -196,7 +196,7 @@
     <ClInclude Include="ConfigReader.h" />
     <ClInclude Include="CShell.h" />
     <ClInclude Include="CSVArgs.h" />
-    <ClInclude Include="HomePath.h" />
+    <ClInclude Include="HomePaths.h" />
     <ClInclude Include="ImageEncode.h" />
     <ClInclude Include="ImageEncodeBase32.h" />
     <ClInclude Include="SequenceNumber.h" />

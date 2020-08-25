@@ -126,13 +126,13 @@
     <ClCompile Include="SequenceNumber.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="HomePath.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Base32.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ImageEncodeBase32.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HomePaths.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -263,13 +263,13 @@
     <ClInclude Include="SequenceNumber.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="HomePath.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Base32.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ImageEncodeBase32.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HomePaths.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

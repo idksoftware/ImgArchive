@@ -1,8 +1,10 @@
-#include "HomePath.h"
+#include "HomePaths.h"
 #include <string>
 #include <vector>
 #include "SAUtils.h"
 #include "AppPaths.h"
+
+std::vector<std::shared_ptr<HomePathsBase>> HomePathsBase::m_list;
 
 std::string HomePath::m_homePath;
 bool HomePath::m_found = false;	// string found
