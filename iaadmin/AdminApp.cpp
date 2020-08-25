@@ -276,7 +276,7 @@ bool AdminApp::doRun()
 		if (appOptions.getCommandMode() == AppOptions::CommandMode::CM_InitArchive) {
 			// const char *archivePath, const char *workspacePath, const char *reposPath, const char *masterPath, const char *derivativePath, bool users
 			DefaultEnvironment defaultEnvironment;
-			defaultEnvironment.init();
+			//defaultEnvironment.init();
 
 			if (CreateArchive(appOptions.getHomePath(), appOptions.getWorkspacePath(), appOptions.getRepositoryPath(),
 							appOptions.getMasterPath(), appOptions.getDerivativePath(), appOptions.getCataloguePath(), appOptions.getUsers()) == false) {

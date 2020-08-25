@@ -357,7 +357,7 @@ namespace simplearchive {
 					DefaultEnvironment::setLocalDefaultLocations();
 				}
 				else if (users.compare("all") == 0) {
-					if (DefaultEnvironment::isInAdminMode() == false) {
+					if (SAUtils::IsAdminMode() == false) {
 						// Not in admin mode so cannot be initalised in admin mode so return with error
 						printf("Invalid operation? Not in admin mode so cannot be initalised in admin mode\n\n");
 						printf("%s", usageDescription(80).c_str());

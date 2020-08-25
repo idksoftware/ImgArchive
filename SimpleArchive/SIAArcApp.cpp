@@ -74,6 +74,7 @@ using namespace std;
 #include "ImagePath.h"
 #include "HomePath.h"
 #include "UpdateTemplateManager.h"
+#include "DefaultEnvironment.h"
 
 
 #define MAJORVERSION 0
@@ -173,6 +174,7 @@ bool SIAArcApp::initaliseConfig() {
 			return false;
 		}
 		//printf("Archive found at default user loacation: %s.", HomePath::get().c_str());
+		DefaultEnvironment::setLocalDefaultLocations();
 		break;
 	case HomePathType::AllUsers:	// all users archive
 		if (res == false) {
@@ -180,6 +182,7 @@ bool SIAArcApp::initaliseConfig() {
 			return false;
 		}
 		//printf("Archive found at default system loacation: %s.", HomePath::get().c_str());
+		DefaultEnvironment::setAllUserDefaultLocations();
 		break;
 	case HomePathType::Unknown:
 	default:
@@ -188,11 +191,7 @@ bool SIAArcApp::initaliseConfig() {
 	}
 	std::string homePath = HomePath::get();
 	// Initalise without the config file i.e. set defaults.
-	if (config.init(homePath.c_str()) == false) {
-		printf("Cannot find home path: %s", homePath.c_str());
-		setError(12, "Cannot find home path? exiting?");
-		return false;
-	}
+	
 	// try to set a systems temp folder 
 	std::string tempPath = SAUtils::GetPOSIXEnv("TEMP");
 	if (tempPath.empty() == true || tempPath.length() == 0) {
