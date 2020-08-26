@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
 #include "HistoryEvent.h"
-#include "LogDocument.h"
+//#include "LogDocument.h"
 #include "DBDefines.h"
 #include "MetaType.h"
 #include "IndexVisitor.h"

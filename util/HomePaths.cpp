@@ -4,7 +4,7 @@
 #include "SAUtils.h"
 #include "AppPaths.h"
 
-std::vector<std::shared_ptr<HomePathsBase>> HomePathsBase::m_list;
+std::vector<HomePathsBase*> HomePathsBase::m_list;
 
 std::string HomePath::m_homePath;
 bool HomePath::m_found = false;	// string found
@@ -71,9 +71,7 @@ bool HomePath::init()
 
 std::string HomePath::get()
 {
-	if (m_found == false) {
-		init();
-	}
+	
 	return m_homePath;
 }
 
@@ -304,9 +302,7 @@ bool DerivativePath::init()
 
 std::string DerivativePath::get()
 {
-	if (m_found == false) {
-		init();
-	}
+	
 	return m_homePath;
 }
 
@@ -464,9 +460,6 @@ bool WorkspacePath::init()
 
 std::string WorkspacePath::get()
 {
-	if (m_found == false) {
-		init();
-	}
 	return m_homePath;
 }
 
@@ -598,9 +591,6 @@ bool PicturePath::init()
 
 std::string PicturePath::get()
 {
-	if (m_found == false) {
-		init();
-	}
 	return m_homePath;
 }
 

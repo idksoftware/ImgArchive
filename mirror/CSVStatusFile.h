@@ -98,7 +98,7 @@ public:
 	bool backupPaths(const char *path);
 	const char* findPath(size_t idx);
 	unsigned long findSize(unsigned int idx);
-	int getNextIndex();
+	size_t getNextIndex();
 	size_t getNextIndex(size_t current);
 	size_t getMaxIndex();
 	std::unique_ptr<ImageStatus> getItemAt(size_t idx);

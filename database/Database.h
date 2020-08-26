@@ -61,7 +61,7 @@ public:
 	} DataType;
 private:
 	std::string stringValue;
-	DataType m_type;
+	DataType m_type{ Null };
 	bool m_isUpdated;
 public:
 	bool isUpdated() const {

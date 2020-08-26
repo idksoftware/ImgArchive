@@ -399,8 +399,8 @@ size_t CSVStatusFile::getNextIndex(size_t current) {
 	return last;
 }
 
-int CSVStatusFile::getNextIndex() {
-	int last = getMaxIndex();
+size_t CSVStatusFile::getNextIndex() {
+	size_t last = getMaxIndex();
 	last++;
 	return last;
 }

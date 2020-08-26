@@ -4,7 +4,7 @@
 #include <mutex>
 #include <memory>
 #include "SAUtils.h"
-#include "LogDocument.h"
+//#include "LogDocument.h"
 #include "ExifDateTime.h"
 
 namespace simplearchive {

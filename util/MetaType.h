@@ -497,7 +497,7 @@ using SharedMTRow = std::shared_ptr<MTRow>;
 class MTTable : public std::vector<SharedMTRow> {
 
 	std::shared_ptr<MTTableSchema> m_TableSchema;
-	int m_rowCursor;
+	int m_rowCursor{ NOT_FOUND };
 public:
 	const int NOT_FOUND = -1;
 	MTTable(MTTableSchema* pSchemaTable)

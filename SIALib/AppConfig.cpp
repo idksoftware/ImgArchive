@@ -38,7 +38,7 @@
 #include "SAUtils.h"
 #include "ArchivePath.h"
 #include "CLogger.h"
-#include "HomePath.h"
+#include "HomePaths.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE

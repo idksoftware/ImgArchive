@@ -40,7 +40,7 @@
 #include "VersionIndex.h"
 #include "VersionControl.h"
 #include "TargetsList.h"
-#include "LogDocument.h"
+//#include "LogDocument.h"
 #include "MasterCatalogue.h"
 #include "SQLiteDB.h"
 #include "IndexVisitor.h"

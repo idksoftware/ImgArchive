@@ -4,7 +4,7 @@
 #include <memory>
 #include <string>
 #include <mutex>
-#include "LogDocument.h"
+//#include "LogDocument.h"
 #include "DBDefines.h"
 #include "MetaType.h"
 #include "ResultsPresentation.h"

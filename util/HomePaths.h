@@ -46,7 +46,7 @@ public:
 
 
 class HomePath : public HomePathsBase {
-{
+
 	static std::string m_homePath;
 	static bool m_found;	// string found
 	static bool m_valid;	// in file system

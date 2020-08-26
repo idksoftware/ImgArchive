@@ -72,7 +72,7 @@ using namespace std;
 #include "Threads.h"
 #include "HookCmd.h"
 #include "ImagePath.h"
-#include "HomePath.h"
+#include "HomePaths.h"
 #include "UpdateTemplateManager.h"
 #include "DefaultEnvironment.h"
 

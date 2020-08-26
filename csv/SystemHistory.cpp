@@ -14,7 +14,7 @@
 
 #include "HistoryEvent.h"
 #include "ErrorCode.h"
-#include "LogDocument.h"
+//#include "LogDocument.h"
 #include "AddressScope.h"
 #include "IndexVisitor.h"
 #include "CheckoutStatus.h"
