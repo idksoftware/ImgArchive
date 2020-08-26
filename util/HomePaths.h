@@ -39,9 +39,12 @@ protected:
 	
 public:
 	HomePathsBase() = default;
-	virtual ~HomePathsBase() = default;
+	virtual ~HomePathsBase() {};
 
 	virtual HomePathID getID() const = 0;
+	virtual bool setPath(const char* p) = 0;
+	virtual bool setAllUserDefaultHome() = 0;
+	virtual bool setLocalUserDefaultHome() = 0;
 };
 
 
@@ -56,10 +59,10 @@ class HomePath : public HomePathsBase {
 
 public:
 	HomePath() = default;
-	~HomePath() = default;
+	virtual ~HomePath() {};
 	bool init();
 
-	virtual HomePathID getID() const { return HomePathID::HomePath; };
+	HomePathID getID() const override { return HomePathID::HomePath; };
 	
 	static HomePathType type();
 	static bool isFound() noexcept {	// string found
@@ -93,7 +96,7 @@ protected:
 	
 public:
 	MasterPath() = default;
-	~MasterPath() = default;
+	virtual ~MasterPath() {};
 
 
 	static bool init();
@@ -111,7 +114,7 @@ public:
 	static bool setAllUserDefaultHome();
 	static bool setLocalUserDefaultHome();
 
-	static HomePathsBase* getThis() {
+	static HomePathsBase* getObject() {
 		static MasterPath masterPath;
 		return &masterPath;
 	}
@@ -131,10 +134,10 @@ protected:
 	
 public:
 	DerivativePath() = default;
-	~DerivativePath() = default;
+	virtual ~DerivativePath() {};
 	
 	bool init();
-	virtual HomePathID getID() const { return HomePathID::DerivativePath; };
+	HomePathID getID() const override { return HomePathID::DerivativePath; };
 
 	static std::string get();
 	static HomePathType type();
@@ -148,7 +151,7 @@ public:
 	static bool setAllUserDefaultHome();
 	static bool setLocalUserDefaultHome();
 
-	static HomePathsBase* getThis() {
+	static HomePathsBase* getObject() {
 		static DerivativePath derivativePath;
 		return &derivativePath;
 	}
@@ -167,10 +170,10 @@ protected:
 	
 public:
 	WorkspacePath() = default;
-	~WorkspacePath() = default;
+	virtual ~WorkspacePath() {};
 
 	bool init();
-	virtual HomePathID getID() const { return HomePathID::WorkspacePath; };
+	HomePathID getID() const override { return HomePathID::WorkspacePath; };
 
 	static std::string get();
 	static HomePathType type();
@@ -184,7 +187,7 @@ public:
 	static bool setAllUserDefaultHome();
 	static bool setLocalUserDefaultHome();
 
-	static HomePathsBase* getThis() {
+	static HomePathsBase* getObject() {
 		static DerivativePath derivativePath;
 		return &derivativePath;
 	}
@@ -201,10 +204,10 @@ class PicturePath : public HomePathsBase {
 	static HPError m_error;
 public:
 	PicturePath() = default;
-	~PicturePath() = default;
+	virtual ~PicturePath() {};
 	
 	bool init();
-	virtual HomePathID getID() const { return HomePathID::PicturePath; };
+	HomePathID getID() const override { return HomePathID::PicturePath; };
 
 	static std::string get();
 	static HomePathType type();
@@ -217,6 +220,11 @@ public:
 	static bool setPath(const char* p);
 	static bool setAllUserDefaultHome();
 	static bool setLocalUserDefaultHome();
+
+	static HomePathsBase* getObject() {
+		static PicturePath picturePath;
+		return &picturePath;
+	}
 };
 
 class WWWImagePath : public HomePathsBase {
@@ -230,10 +238,10 @@ class WWWImagePath : public HomePathsBase {
 	static HPError m_error;
 public:
 	WWWImagePath() = default;
-	~WWWImagePath() = default;
+	virtual ~WWWImagePath() {};
 
 	static bool init();
-	virtual HomePathID getID() const { return HomePathID::WWWImagePath; };
+	HomePathID getID() const override { return HomePathID::WWWImagePath; };
 
 	static std::string get();
 	static HomePathType type();
@@ -246,4 +254,9 @@ public:
 	static bool setPath(const char* p);
 	static bool setAllUserDefaultHome();
 	static bool setLocalUserDefaultHome();
+
+	static HomePathsBase* getObject() {
+		static PicturePath wwwImagePath;
+		return &wwwImagePath;
+	}
 };
