@@ -36,11 +36,26 @@ enum class HomePathID {
 class HomePathsBase {
 	static std::vector<HomePathsBase*> m_list;
 protected:
-	
+	bool m_found;	// string found
+	bool m_valid;	// in file system
+
+	HomePathType m_type;
+	HPError m_error;
 public:
 	HomePathsBase() = default;
 	virtual ~HomePathsBase() {};
 
+	HomePathType type() noexcept {
+		return m_type;
+	}
+	bool isFound() noexcept {	// string found
+		return m_found;
+	}
+	bool isValid() noexcept {	// in file system
+		return m_valid;
+	}
+	
+	virtual bool init() = 0;
 	virtual HomePathID getID() const = 0;
 	virtual bool setPath(const char* p) = 0;
 	virtual bool setAllUserDefaultHome() = 0;
@@ -51,32 +66,22 @@ public:
 class HomePath : public HomePathsBase {
 
 	static std::string m_homePath;
-	static bool m_found;	// string found
-	static bool m_valid;	// in file system
 	
-	static HomePathType m_type;
-	static HPError m_error;
-
 public:
+
 	HomePath() = default;
 	virtual ~HomePath() {};
-	bool init();
 
-	HomePathID getID() const override { return HomePathID::HomePath; };
-	
-	static HomePathType type();
-	static bool isFound() noexcept {	// string found
-		return m_found;
-	}
-	static bool isValid() noexcept {	// in file system
-		return m_valid;
-	}
-	static bool setPath(const char* p);
-	static bool setAllUserDefaultHome();
-	static bool setLocalUserDefaultHome();
+	HomePathID getID() const override {
+		return HomePathID::HomePath;
+	};
+
+	bool init() override;
+	bool setPath(const char* p) override;
+	bool setAllUserDefaultHome() override;
+	bool setLocalUserDefaultHome() override;
 
 	static std::string get();
-	
 	static HomePathsBase* getObject() {
 		static HomePath homePath;
 		return &homePath;
@@ -86,35 +91,23 @@ public:
 class MasterPath : public HomePathsBase {
 
 	static std::string m_homePath;
-	static bool m_found;	// string found
-	static bool m_valid;	// in file system
-	//static bool m_configured;
-	
-	static HomePathType m_type;
-	static HPError m_error;
 protected:
 	
 public:
 	MasterPath() = default;
 	virtual ~MasterPath() {};
 
+	virtual HomePathID getID() const {
+		return HomePathID::MasterPath;
+	};
 
-	static bool init();
-	virtual HomePathID getID() const { return HomePathID::MasterPath; };
+	bool init() override;
+	bool setPath(const char* p) override;
+	bool setAllUserDefaultHome() override;
+	bool setLocalUserDefaultHome() override;
 
-	static std::string get();
-	static HomePathType type();
-	static bool isFound() noexcept {	// string found
-		return m_found;
-	}
-	static bool isValid() noexcept {	// in file system
-		return m_valid;
-	}
-	static bool setPath(const char* p);
-	static bool setAllUserDefaultHome();
-	static bool setLocalUserDefaultHome();
-
-	static HomePathsBase* getObject() {
+	std::string get();
+	HomePathsBase* getObject() {
 		static MasterPath masterPath;
 		return &masterPath;
 	}
@@ -124,33 +117,24 @@ public:
 class DerivativePath : public HomePathsBase {
 
 	static std::string m_homePath;
-	static bool m_found;	// string found
-	static bool m_valid;	// in file system
-	//static bool m_configured;
-
-	static HomePathType m_type;
-	static HPError m_error;
 protected:
 	
 public:
 	DerivativePath() = default;
 	virtual ~DerivativePath() {};
 	
-	bool init();
-	HomePathID getID() const override { return HomePathID::DerivativePath; };
+	
+	HomePathID getID() const override {
+		return HomePathID::DerivativePath;
+	};
+
+	
+	bool init() override;
+	bool setPath(const char* p) override;
+	bool setAllUserDefaultHome() override;
+	bool setLocalUserDefaultHome();
 
 	static std::string get();
-	static HomePathType type();
-	static bool isFound() noexcept {	// string found
-		return m_found;
-	}
-	static bool isValid() noexcept {	// in file system
-		return m_valid;
-	}
-	static bool setPath(const char* p);
-	static bool setAllUserDefaultHome();
-	static bool setLocalUserDefaultHome();
-
 	static HomePathsBase* getObject() {
 		static DerivativePath derivativePath;
 		return &derivativePath;
@@ -160,32 +144,24 @@ public:
 class WorkspacePath : public HomePathsBase {
 
 	static std::string m_homePath;
-	static bool m_found;	// string found
-	static bool m_valid;	// in file system
-	//static bool m_configured;
-
-	static HomePathType m_type;
-	static HPError m_error;
+	
 protected:
 	
 public:
 	WorkspacePath() = default;
 	virtual ~WorkspacePath() {};
 
-	bool init();
-	HomePathID getID() const override { return HomePathID::WorkspacePath; };
+	
+	HomePathID getID() const override {
+		return HomePathID::WorkspacePath;
+	};
 
 	static std::string get();
-	static HomePathType type();
-	static bool isFound() noexcept {	// string found
-		return m_found;
-	}
-	static bool isValid() noexcept {	// in file system
-		return m_valid;
-	}
-	static bool setPath(const char* p);
-	static bool setAllUserDefaultHome();
-	static bool setLocalUserDefaultHome();
+
+	bool init() override;
+	bool setPath(const char* p) override;
+	bool setAllUserDefaultHome() override;
+	bool setLocalUserDefaultHome() override;
 
 	static HomePathsBase* getObject() {
 		static DerivativePath derivativePath;
@@ -196,31 +172,21 @@ public:
 class PicturePath : public HomePathsBase {
 
 	static std::string m_homePath;
-	static bool m_found;	// string found
-	static bool m_valid;	// in file system
-	//static bool m_configured;
-
-	static HomePathType m_type;
-	static HPError m_error;
+	
 public:
 	PicturePath() = default;
 	virtual ~PicturePath() {};
 	
-	bool init();
-	HomePathID getID() const override { return HomePathID::PicturePath; };
+	HomePathID getID() const override {
+		return HomePathID::PicturePath;
+	};
+
+	bool init() override;
+	bool setPath(const char* p) override;
+	bool setAllUserDefaultHome() override;
+	bool setLocalUserDefaultHome() override;
 
 	static std::string get();
-	static HomePathType type();
-	static bool isFound() noexcept {	// string found
-		return m_found;
-	}
-	static bool isValid() noexcept {	// in file system
-		return m_valid;
-	}
-	static bool setPath(const char* p);
-	static bool setAllUserDefaultHome();
-	static bool setLocalUserDefaultHome();
-
 	static HomePathsBase* getObject() {
 		static PicturePath picturePath;
 		return &picturePath;
@@ -230,31 +196,21 @@ public:
 class WWWImagePath : public HomePathsBase {
 
 	static std::string m_homePath;
-	static bool m_found;	// string found
-	static bool m_valid;	// in file system
-	//static bool m_configured;
-
-	static HomePathType m_type;
-	static HPError m_error;
+	
 public:
 	WWWImagePath() = default;
 	virtual ~WWWImagePath() {};
 
-	static bool init();
-	HomePathID getID() const override { return HomePathID::WWWImagePath; };
+	HomePathID getID() const override {
+		return HomePathID::WWWImagePath;
+	};
 
-	static std::string get();
-	static HomePathType type();
-	static bool isFound() noexcept {	// string found
-		return m_found;
-	}
-	static bool isValid() noexcept {	// in file system
-		return m_valid;
-	}
+	bool init();
 	static bool setPath(const char* p);
 	static bool setAllUserDefaultHome();
 	static bool setLocalUserDefaultHome();
 
+	static std::string get();
 	static HomePathsBase* getObject() {
 		static PicturePath wwwImagePath;
 		return &wwwImagePath;

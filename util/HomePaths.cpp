@@ -75,10 +75,7 @@ std::string HomePath::get()
 	return m_homePath;
 }
 
-HomePathType HomePath::type()
-{
-	return m_type;
-}
+
 
 bool HomePath::setLocalUserDefaultHome() {
 #ifdef WIN32
