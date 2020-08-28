@@ -33,18 +33,24 @@ enum class HomePathID {
 	InvalidPath
 };
 
-class HomePathsBase {
-	static std::vector<HomePathsBase*> m_list;
-protected:
-	bool m_found;	// string found
-	bool m_valid;	// in file system
+class InitailiseHomePaths;
 
-	HomePathType m_type;
-	HPError m_error;
+class HomePathsBase {
+	
+protected:
+
+	bool m_found{ false };	// string found
+	bool m_valid{ false };	// in file system
+	HomePathType m_type{ HomePathType::Unknown };
+	HPError m_error{ HPError::Unknown };
+
 public:
 	HomePathsBase() = default;
 	virtual ~HomePathsBase() {};
 
+	HPError error() noexcept {
+		return m_error;
+	}
 	HomePathType type() noexcept {
 		return m_type;
 	}
@@ -62,6 +68,22 @@ public:
 	virtual bool setLocalUserDefaultHome() = 0;
 };
 
+class InitailiseHomePaths {
+	static std::vector<HomePathsBase*> m_list;
+
+	static void InitailiseHomePaths::initHomePaths();
+
+public:
+	InitailiseHomePaths() = default;
+	~InitailiseHomePaths() = default;
+
+	static bool init() {
+		return true;
+	}
+
+	
+
+};
 
 class HomePath : public HomePathsBase {
 
@@ -107,7 +129,7 @@ public:
 	bool setLocalUserDefaultHome() override;
 
 	std::string get();
-	HomePathsBase* getObject() {
+	static HomePathsBase* getObject() {
 		static MasterPath masterPath;
 		return &masterPath;
 	}
@@ -206,9 +228,9 @@ public:
 	};
 
 	bool init();
-	static bool setPath(const char* p);
-	static bool setAllUserDefaultHome();
-	static bool setLocalUserDefaultHome();
+	bool setPath(const char* p);
+	bool setAllUserDefaultHome();
+	bool setLocalUserDefaultHome();
 
 	static std::string get();
 	static HomePathsBase* getObject() {

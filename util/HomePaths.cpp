@@ -4,13 +4,21 @@
 #include "SAUtils.h"
 #include "AppPaths.h"
 
-std::vector<HomePathsBase*> HomePathsBase::m_list;
+std::vector<HomePathsBase*> InitailiseHomePaths::m_list;
+
+void InitailiseHomePaths::initHomePaths() {
+	HomePathsBase* path = HomePath::getObject();
+	m_list.push_back(path);
+	path = MasterPath::getObject();
+	m_list.push_back(path);
+	path = DerivativePath::getObject();
+	m_list.push_back(path);
+	path = WorkspacePath::getObject();
+	m_list.push_back(path);
+}
+
 
 std::string HomePath::m_homePath;
-bool HomePath::m_found = false;	// string found
-bool HomePath::m_valid = false;	// in file system
-HPError HomePath::m_error = HPError::Unknown;
-HomePathType HomePath::m_type = HomePathType::Unknown;
 
 bool HomePath::init()
 {
@@ -118,10 +126,6 @@ bool HomePath::setPath(const char* p)
 */
 
 std::string MasterPath::m_homePath;
-bool MasterPath::m_found = false;	// string found
-bool MasterPath::m_valid = false;	// in file system
-HPError MasterPath::m_error = HPError::Unknown;
-HomePathType MasterPath::m_type = HomePathType::Unknown;
 
 bool MasterPath::init()
 {
@@ -188,10 +192,6 @@ std::string MasterPath::get()
 	return m_homePath;
 }
 
-HomePathType MasterPath::type()
-{
-	return m_type;
-}
 
 bool MasterPath::setLocalUserDefaultHome() {
 
@@ -230,10 +230,7 @@ bool MasterPath::setPath(const char* p)
 }
 
 std::string DerivativePath::m_homePath;
-bool DerivativePath::m_found = false;	// string found
-bool DerivativePath::m_valid = false;	// in file system
-HPError DerivativePath::m_error = HPError::Unknown;
-HomePathType DerivativePath::m_type = HomePathType::Unknown;
+
 
 bool DerivativePath::init()
 {
@@ -303,10 +300,6 @@ std::string DerivativePath::get()
 	return m_homePath;
 }
 
-HomePathType DerivativePath::type()
-{
-	return m_type;
-}
 
 bool DerivativePath::setLocalUserDefaultHome() {
 #ifdef WIN32
@@ -347,10 +340,7 @@ bool DerivativePath::setPath(const char* p)
 */
 
 std::string WorkspacePath::m_homePath;
-bool WorkspacePath::m_found = false;	// string found
-bool WorkspacePath::m_valid = false;	// in file system
-HPError WorkspacePath::m_error = HPError::Unknown;
-HomePathType WorkspacePath::m_type = HomePathType::Unknown;
+
 
 bool WorkspacePath::setLocalUserDefaultHome() {
 
@@ -460,10 +450,7 @@ std::string WorkspacePath::get()
 	return m_homePath;
 }
 
-HomePathType WorkspacePath::type()
-{
-	return m_type;
-}
+
 
 bool WorkspacePath::setPath(const char* p)
 {
@@ -477,10 +464,7 @@ bool WorkspacePath::setPath(const char* p)
 */
 
 std::string PicturePath::m_homePath;
-bool PicturePath::m_found = false;	// string found
-bool PicturePath::m_valid = false;	// in file system
-HPError PicturePath::m_error = HPError::Unknown;
-HomePathType PicturePath::m_type = HomePathType::Unknown;
+
 
 bool PicturePath::setLocalUserDefaultHome() {
 
@@ -591,10 +575,6 @@ std::string PicturePath::get()
 	return m_homePath;
 }
 
-HomePathType PicturePath::type()
-{
-	return m_type;
-}
 
 bool PicturePath::setPath(const char* p)
 {
@@ -606,10 +586,6 @@ bool PicturePath::setPath(const char* p)
 */
 
 std::string WWWImagePath::m_homePath;
-bool WWWImagePath::m_found = false;	// string found
-bool WWWImagePath::m_valid = false;	// in file system
-HPError WWWImagePath::m_error = HPError::Unknown;
-HomePathType WWWImagePath::m_type = HomePathType::Unknown;
 
 bool WWWImagePath::setLocalUserDefaultHome() {
 	std::string myselfHomeEnvironmentPath = SAUtils::GetEnv(IMGA_WWWIMAGE, false);
@@ -720,19 +696,5 @@ bool WWWImagePath::init()
 
 std::string WWWImagePath::get()
 {
-	if (m_found == false) {
-		init();
-	}
 	return m_homePath;
-}
-
-HomePathType WWWImagePath::type()
-{
-	return m_type;
-}
-
-bool WWWImagePath::setPath(const char* p)
-{
-	m_homePath = p;
-	return true;
 }
