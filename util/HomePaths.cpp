@@ -13,12 +13,13 @@ std::string HomePathsBase::m_homeDrive;
 std::string HomePathsBase::m_homePath;
 
 
-std::vector<HomePathsBase&> InitialiseHomePaths::m_list;
+std::vector<HomePathsBase*> InitialiseHomePaths::m_list;
 
 void InitialiseHomePaths::initHomePaths() {
-	/*
-	HomePathsBase& path = HomePath::getObject();
+	
+	HomePathsBase* path = &(HomePath::getObject());
 	m_list.push_back(path);
+	/*
 	path = MasterPath::getObject();
 	m_list.push_back(path);
 	path = DerivativePath::getObject();
@@ -34,6 +35,7 @@ void InitialiseHomePaths::initHomePaths() {
 
 
 bool HomePathsBase::loadEnv() {
+	
 	HomePathsBase::m_allUsersHomeEnvironmentPath = SAUtils::GetEnv(IMGARCHIVE_HOME, true);
 	HomePathsBase::m_myselfHomeEnvironmentPath = SAUtils::GetEnv(IMGARCHIVE_HOME, false);
 	// All Users
@@ -42,6 +44,7 @@ bool HomePathsBase::loadEnv() {
 
 	HomePathsBase::m_homeDrive = SAUtils::GetPOSIXEnv("HOMEDRIVE");
 	HomePathsBase::m_homePath = SAUtils::GetPOSIXEnv("HOMEPATH");
+
 	return true;
 }
 

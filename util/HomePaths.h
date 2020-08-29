@@ -84,20 +84,20 @@ class InitialiseHomePaths {
 	void initHomePaths();
 
 public:
-	InitialiseHomePaths() {
+	InitialiseHomePaths() noexcept {
 		initHomePaths();
 	}
 	~InitialiseHomePaths() = default;
 
 	bool init() {
-		/*
+		
 		for (auto i = m_list.begin(); i != m_list.begin(); i++) {
-			HomePathsBase& hp = *i;
-			if (hp.init() == false) {
+			auto hp = *i;
+			if (hp->init() == false) {
 				m_error = true;
 			}
 		}
-		*/
+		
 		return true;
 	}
 
@@ -133,9 +133,9 @@ public:
 
 	static std::string get();
 
-	static HomePathsBase* getObject() {
+	static HomePath& getObject() {
 		static HomePath homePath;
-		return &homePath;
+		return homePath;
 	}
 };
 
@@ -158,7 +158,7 @@ public:
 	bool setLocalUserDefaultHome() override;
 
 	std::string get();
-	static HomePathsBase& getObject() {
+	static MasterPath& getObject() {
 		static MasterPath masterPath;
 		return masterPath;
 	}
@@ -186,7 +186,7 @@ public:
 	bool setLocalUserDefaultHome() override;
 
 	static std::string get();
-	static HomePathsBase& getObject() {
+	static DerivativePath& getObject() {
 		static DerivativePath derivativePath;
 		return derivativePath;
 	}
@@ -214,9 +214,9 @@ public:
 
 	static std::string get();
 
-	static HomePathsBase& getObject() {
-		static DerivativePath derivativePath;
-		return derivativePath;
+	static WorkspacePath& getObject() {
+		static WorkspacePath workspacePath;
+		return workspacePath;
 	}
 };
 
