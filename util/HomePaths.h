@@ -37,12 +37,21 @@ class InitailiseHomePaths;
 
 class HomePathsBase {
 	
+	bool loadEnv();
 protected:
 
 	bool m_found{ false };	// string found
 	bool m_valid{ false };	// in file system
 	HomePathType m_type{ HomePathType::Unknown };
 	HPError m_error{ HPError::Unknown };
+
+	static bool m_first;
+	static std::string m_allUsersHomeEnvironmentPath;
+	static std::string m_myselfHomeEnvironmentPath;
+	static std::string m_allusersHomeDefaultPath;
+	static std::string m_myselfHomeDefaultPath;
+	static std::string m_homeDrive;
+	static std::string m_homePath;
 
 public:
 	HomePathsBase() = default;
@@ -68,20 +77,39 @@ public:
 	virtual bool setLocalUserDefaultHome() = 0;
 };
 
-class InitailiseHomePaths {
+class InitialiseHomePaths {
 	static std::vector<HomePathsBase*> m_list;
+	bool m_error{ false };
 
-	static void InitailiseHomePaths::initHomePaths();
+	void initHomePaths();
 
 public:
-	InitailiseHomePaths() = default;
-	~InitailiseHomePaths() = default;
+	InitialiseHomePaths() {
+		initHomePaths();
+	}
+	~InitialiseHomePaths() = default;
 
-	static bool init() {
+	bool init() {
+		/*
+		for (auto i = m_list.begin(); i != m_list.begin(); i++) {
+			HomePathsBase& hp = *i;
+			if (hp.init() == false) {
+				m_error = true;
+			}
+		}
+		*/
 		return true;
 	}
 
-	
+	bool error() noexcept {
+		return m_error;
+	}
+
+	static InitialiseHomePaths& getObject() {
+		static InitialiseHomePaths initialiseHomePaths;
+		return initialiseHomePaths;
+	}
+
 
 };
 
@@ -104,6 +132,7 @@ public:
 	bool setLocalUserDefaultHome() override;
 
 	static std::string get();
+
 	static HomePathsBase* getObject() {
 		static HomePath homePath;
 		return &homePath;
@@ -129,9 +158,9 @@ public:
 	bool setLocalUserDefaultHome() override;
 
 	std::string get();
-	static HomePathsBase* getObject() {
+	static HomePathsBase& getObject() {
 		static MasterPath masterPath;
-		return &masterPath;
+		return masterPath;
 	}
 };
 
@@ -154,12 +183,12 @@ public:
 	bool init() override;
 	bool setPath(const char* p) override;
 	bool setAllUserDefaultHome() override;
-	bool setLocalUserDefaultHome();
+	bool setLocalUserDefaultHome() override;
 
 	static std::string get();
-	static HomePathsBase* getObject() {
+	static HomePathsBase& getObject() {
 		static DerivativePath derivativePath;
-		return &derivativePath;
+		return derivativePath;
 	}
 };
 
@@ -178,16 +207,16 @@ public:
 		return HomePathID::WorkspacePath;
 	};
 
-	static std::string get();
-
 	bool init() override;
 	bool setPath(const char* p) override;
 	bool setAllUserDefaultHome() override;
 	bool setLocalUserDefaultHome() override;
 
-	static HomePathsBase* getObject() {
+	static std::string get();
+
+	static HomePathsBase& getObject() {
 		static DerivativePath derivativePath;
-		return &derivativePath;
+		return derivativePath;
 	}
 };
 
@@ -209,9 +238,10 @@ public:
 	bool setLocalUserDefaultHome() override;
 
 	static std::string get();
-	static HomePathsBase* getObject() {
+
+	static HomePathsBase& getObject() {
 		static PicturePath picturePath;
-		return &picturePath;
+		return picturePath;
 	}
 };
 
@@ -233,8 +263,9 @@ public:
 	bool setLocalUserDefaultHome();
 
 	static std::string get();
-	static HomePathsBase* getObject() {
+
+	static HomePathsBase& getObject() {
 		static PicturePath wwwImagePath;
-		return &wwwImagePath;
+		return wwwImagePath;
 	}
 };

@@ -4,10 +4,20 @@
 #include "SAUtils.h"
 #include "AppPaths.h"
 
-std::vector<HomePathsBase*> InitailiseHomePaths::m_list;
+bool HomePathsBase::m_first = true;
+std::string HomePathsBase::m_allUsersHomeEnvironmentPath;
+std::string HomePathsBase::m_myselfHomeEnvironmentPath;
+std::string HomePathsBase::m_allusersHomeDefaultPath;
+std::string HomePathsBase::m_myselfHomeDefaultPath;
+std::string HomePathsBase::m_homeDrive;
+std::string HomePathsBase::m_homePath;
 
-void InitailiseHomePaths::initHomePaths() {
-	HomePathsBase* path = HomePath::getObject();
+
+std::vector<HomePathsBase&> InitialiseHomePaths::m_list;
+
+void InitialiseHomePaths::initHomePaths() {
+	/*
+	HomePathsBase& path = HomePath::getObject();
 	m_list.push_back(path);
 	path = MasterPath::getObject();
 	m_list.push_back(path);
@@ -15,8 +25,25 @@ void InitailiseHomePaths::initHomePaths() {
 	m_list.push_back(path);
 	path = WorkspacePath::getObject();
 	m_list.push_back(path);
+	path = PicturePath::getObject();
+	m_list.push_back(path);
+	path = WWWImagePath::getObject();
+	m_list.push_back(path);
+	*/
 }
 
+
+bool HomePathsBase::loadEnv() {
+	HomePathsBase::m_allUsersHomeEnvironmentPath = SAUtils::GetEnv(IMGARCHIVE_HOME, true);
+	HomePathsBase::m_myselfHomeEnvironmentPath = SAUtils::GetEnv(IMGARCHIVE_HOME, false);
+	// All Users
+	HomePathsBase::m_allusersHomeDefaultPath = SAUtils::GetPOSIXEnv("ProgramData");
+	HomePathsBase::m_myselfHomeDefaultPath = SAUtils::GetPOSIXEnv("LOCALAPPDATA");
+
+	HomePathsBase::m_homeDrive = SAUtils::GetPOSIXEnv("HOMEDRIVE");
+	HomePathsBase::m_homePath = SAUtils::GetPOSIXEnv("HOMEPATH");
+	return true;
+}
 
 std::string HomePath::m_homePath;
 
@@ -24,12 +51,12 @@ bool HomePath::init()
 {
 
 	// Set Windows Defaults (they can be overridden later)
-	std::string allUsersHomeEnvironmentPath = SAUtils::GetEnv(IMGARCHIVE_HOME, true);
-	std::string myselfHomeEnvironmentPath = SAUtils::GetEnv(IMGARCHIVE_HOME, false);
+	std::string allUsersHomeEnvironmentPath = m_allUsersHomeEnvironmentPath;
+	std::string myselfHomeEnvironmentPath = m_myselfHomeEnvironmentPath;
 	// All Users
-	std::string allusersHomeDefaultPath = SAUtils::GetPOSIXEnv("ProgramData");
+	std::string allusersHomeDefaultPath = m_allusersHomeDefaultPath;
 	allusersHomeDefaultPath += DEFAULT_ALLUSER_HOME_PATH;
-	std::string myselfHomeDefaultPath = SAUtils::GetPOSIXEnv("LOCALAPPDATA");
+	std::string myselfHomeDefaultPath = m_myselfHomeDefaultPath;
 	myselfHomeDefaultPath += DEFAULT_LOCAL_HOME_PATH;
 
 	// Looking the HKEY_LOCAL_MACHINE first
@@ -87,7 +114,7 @@ std::string HomePath::get()
 
 bool HomePath::setLocalUserDefaultHome() {
 #ifdef WIN32
-	std::string myselfHomeDefaultPath = SAUtils::GetPOSIXEnv("LOCALAPPDATA");
+	std::string myselfHomeDefaultPath = m_myselfHomeDefaultPath;
 #else
 	std::string myselfHomeDefaultPath = SAUtils::GetPOSIXEnv("HOME");
 #endif
@@ -104,7 +131,7 @@ bool HomePath::setLocalUserDefaultHome() {
 }
 
 bool HomePath::setAllUserDefaultHome() {
-	std::string allusersHomeDefaultPath = SAUtils::GetPOSIXEnv("ProgramData");
+	std::string allusersHomeDefaultPath = m_allusersHomeDefaultPath;
 	allusersHomeDefaultPath += DEFAULT_ALLUSER_HOME_PATH;
 	m_homePath = allusersHomeDefaultPath;
 	m_found = true;
@@ -131,12 +158,12 @@ bool MasterPath::init()
 {
 
 	// Set Windows Defaults (they can be overridden later)
-	std::string allUsersHomeEnvironmentPath = SAUtils::GetEnv(IMGA_MASTER, true);
-	std::string myselfHomeEnvironmentPath = SAUtils::GetEnv(IMGA_MASTER, false);
+	std::string allUsersHomeEnvironmentPath = m_allUsersHomeEnvironmentPath;
+	std::string myselfHomeEnvironmentPath = m_myselfHomeEnvironmentPath;
 	// All Users
-	std::string allusersHomeDefaultPath = SAUtils::GetPOSIXEnv("ProgramData");
+	std::string allusersHomeDefaultPath = m_allusersHomeDefaultPath;
 	allusersHomeDefaultPath += DEFAULT_ALLUSER_MASTER_PATH;
-	std::string myselfHomeDefaultPath = SAUtils::GetPOSIXEnv("LOCALAPPDATA");
+	std::string myselfHomeDefaultPath = m_myselfHomeDefaultPath;
 	myselfHomeDefaultPath += DEFAULT_LOCAL_MASTER_PATH;
 
 	// Looking the HKEY_LOCAL_MACHINE first
@@ -196,7 +223,7 @@ std::string MasterPath::get()
 bool MasterPath::setLocalUserDefaultHome() {
 
 #ifdef WIN32
-	std::string myselfHomeDefaultPath = SAUtils::GetPOSIXEnv("LOCALAPPDATA");
+	std::string myselfHomeDefaultPath = m_myselfHomeDefaultPath;
 #else
 	std::string myselfHomeDefaultPath = SAUtils::GetPOSIXEnv("HOME");
 #endif
@@ -211,7 +238,7 @@ bool MasterPath::setLocalUserDefaultHome() {
 }
 
 bool MasterPath::setAllUserDefaultHome() {
-	std::string allusersHomeDefaultPath = SAUtils::GetPOSIXEnv("ProgramData");
+	std::string allusersHomeDefaultPath = m_allusersHomeDefaultPath;
 	allusersHomeDefaultPath += DEFAULT_ALLUSER_MASTER_PATH;
 	m_homePath = allusersHomeDefaultPath;
 	m_found = true;
@@ -236,13 +263,13 @@ bool DerivativePath::init()
 {
 
 	// Set Windows Defaults (they can be overridden later)
-	std::string allUsersHomeEnvironmentPath = SAUtils::GetEnv(IMGARCHIVE_HOME, true);
-	std::string myselfHomeEnvironmentPath = SAUtils::GetEnv(IMGARCHIVE_HOME, false);
+	std::string allUsersHomeEnvironmentPath = m_allUsersHomeEnvironmentPath;
+	std::string myselfHomeEnvironmentPath = m_myselfHomeEnvironmentPath;
 	// All Users
-	std::string allusersHomeDefaultPath = SAUtils::GetPOSIXEnv("ProgramData");
+	std::string allusersHomeDefaultPath = m_allusersHomeDefaultPath;
 	allusersHomeDefaultPath += DEFAULT_ALLUSER_DERIVATIVE_PATH;
 #ifdef WIN32
-	std::string myselfHomeDefaultPath = SAUtils::GetPOSIXEnv("LOCALAPPDATA");
+	std::string myselfHomeDefaultPath = m_myselfHomeDefaultPath;
 #else
 	std::string myselfHomeDefaultPath = SAUtils::GetPOSIXEnv("HOME");
 #endif
@@ -303,7 +330,7 @@ std::string DerivativePath::get()
 
 bool DerivativePath::setLocalUserDefaultHome() {
 #ifdef WIN32
-	std::string myselfHomeDefaultPath = SAUtils::GetPOSIXEnv("LOCALAPPDATA");
+	std::string myselfHomeDefaultPath = m_myselfHomeDefaultPath;
 #else
 	std::string myselfHomeDefaultPath = SAUtils::GetPOSIXEnv("HOME");
 #endif
@@ -318,7 +345,7 @@ bool DerivativePath::setLocalUserDefaultHome() {
 }
 
 bool DerivativePath::setAllUserDefaultHome() {
-	std::string allusersHomeDefaultPath = SAUtils::GetPOSIXEnv("ProgramData");
+	std::string allusersHomeDefaultPath = m_allusersHomeDefaultPath;
 	allusersHomeDefaultPath += DEFAULT_ALLUSER_DERIVATIVE_PATH;
 	m_homePath = allusersHomeDefaultPath;
 	m_found = true;
