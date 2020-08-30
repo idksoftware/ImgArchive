@@ -6,7 +6,7 @@
 //#include "EnvFunc.h"
 //#include "AppBase.h"
 #include "AppPaths.h"
-#include "HomePath.h"
+#include "HomePaths.h"
 #ifdef _WIN32
 #include <Windows.h>
 
@@ -45,8 +45,9 @@ namespace simplearchive {
 		
 
 		DefaultEnvironment::m_isInAdminMode = SAUtils::IsAdminMode();
-		HomePath::init();
-		bool isFound = HomePath::isFound();
+		HomePath& HomePathObj = HomePath::getObject();
+		HomePathObj.init();
+		bool isFound = HomePathObj.isFound();
 		if (!isFound) {
 			m_configured = false;
 			return true;
@@ -144,24 +145,24 @@ namespace simplearchive {
 	}
 
 	bool DefaultEnvironment::setAllUserDefaultLocations() {
-		HomePath::setAllUserDefaultHome();
-		MasterPath::setAllUserDefaultHome();
-		DerivativePath::setAllUserDefaultHome();
-		WorkspacePath::setAllUserDefaultHome();
-		PicturePath::setAllUserDefaultHome();
-		WWWImagePath::setAllUserDefaultHome();
+		HomePath::getObject().setAllUserDefaultHome();
+		MasterPath::getObject().setAllUserDefaultHome();
+		DerivativePath::getObject().setAllUserDefaultHome();
+		WorkspacePath::getObject().setAllUserDefaultHome();
+		PicturePath::getObject().setAllUserDefaultHome();
+		WWWImagePath::getObject().setAllUserDefaultHome();
 
 		return locations(HomePath::get().c_str());
 	}
 
 	bool DefaultEnvironment::setLocalDefaultLocations() {
 
-		HomePath::setLocalUserDefaultHome();
-		MasterPath::setLocalUserDefaultHome();
-		DerivativePath::setLocalUserDefaultHome();
-		WorkspacePath::setLocalUserDefaultHome();
-		PicturePath::setLocalUserDefaultHome();
-		WWWImagePath::setLocalUserDefaultHome();
+		HomePath::getObject().setLocalUserDefaultHome();
+		MasterPath::getObject().setLocalUserDefaultHome();
+		DerivativePath::getObject().setLocalUserDefaultHome();
+		WorkspacePath::getObject().setLocalUserDefaultHome();
+		PicturePath::getObject().setLocalUserDefaultHome();
+		WWWImagePath::getObject().setLocalUserDefaultHome();
 		return locations(HomePath::get().c_str());
 	}
 

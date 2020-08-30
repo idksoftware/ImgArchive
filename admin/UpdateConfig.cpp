@@ -7,7 +7,7 @@
 #include "ConfigReader.h"
 //#include "EnvFunc.h"
 //#include "AppBase.h"
-#include "HomePath.h"
+#include "HomePaths.h"
 
 namespace simplearchive {
 
@@ -20,10 +20,10 @@ namespace simplearchive {
 		std::string homePath = temp;
 		*/
 		
-		
-		bool res = HomePath::init();
-		HomePathType homePathType = HomePath::type();
-		bool found = HomePath::isFound();
+		HomePath& HomePathObj = HomePath::getObject();
+		bool res = HomePathObj.init();
+		HomePathType homePathType = HomePathObj.type();
+		bool found = HomePathObj.isFound();
 
 		switch (homePathType) {
 		case HomePathType::LocalEnv:	// Local Environment set

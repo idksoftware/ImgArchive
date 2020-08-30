@@ -74,7 +74,7 @@ using namespace std;
 #include "ImagePath.h"
 #include "HomePaths.h"
 #include "UpdateTemplateManager.h"
-#include "DefaultEnvironment.h"
+//#include "DefaultEnvironment.h"
 
 
 #define MAJORVERSION 0
@@ -151,42 +151,44 @@ bool SIAArcApp::initaliseConfig() {
 
 	SIAARCConfig config;
 
-	bool res = HomePath::init();
-	HomePathType homePathType = HomePath::type();
+	InitialiseHomePaths& initialiseHomePaths = InitialiseHomePaths::getObject();
+	bool res = initialiseHomePaths.init();
+
+	HomePath& HomePathObj = HomePath::getObject();
+	HomePathType homePathType = HomePathObj.type();
 	
 	switch (homePathType) {
 	case HomePathType::LocalEnv:	// Local Environment set
 		if (res == false) {
-			//printf("Found IMGARCHIVE_HOME as system profile: %s but archive not found at loacation", HomePath::get().c_str());
+			printf("Found IMGARCHIVE_HOME as local profile: %s but archive not found at loacation", HomePath::get().c_str());
 			return false;
 		}
-		//printf("Found IMGARCHIVE_HOME as system profile: %s. Archive found at that loacation", HomePath::get().c_str());
+		printf("Found IMGARCHIVE_HOME as local profile: %s. Archive found at that loacation", HomePath::get().c_str());
 		break;
 	case HomePathType::SystemEnv:	// System Environment set
 		if (res == false) {
-			//printf("Found IMGARCHIVE_HOME as system profile: %s. Archive found at that loacation", HomePath::get().c_str());
+			printf("Found IMGARCHIVE_HOME as system profile: %s but archive not found at loacation", HomePath::get().c_str());
 			return false;
 		}
+		printf("Found IMGARCHIVE_HOME as system profile: %s. Archive found at that loacation", HomePath::get().c_str());
 		break;
 	case HomePathType::UserOnly:	// user only archive
 		if (res == false) {
-			//printf("Archive not found at default loacation");
+			printf("Archive not found at default loacation");
 			return false;
 		}
-		//printf("Archive found at default user loacation: %s.", HomePath::get().c_str());
-		DefaultEnvironment::setLocalDefaultLocations();
+		printf("Archive found at default user loacation: %s.", HomePath::get().c_str());
 		break;
 	case HomePathType::AllUsers:	// all users archive
 		if (res == false) {
-			//printf("Archive not found at default loacation");
+			printf("Archive not found at default loacation");
 			return false;
 		}
-		//printf("Archive found at default system loacation: %s.", HomePath::get().c_str());
-		DefaultEnvironment::setAllUserDefaultLocations();
+		printf("Archive found at default system loacation: %s.", HomePath::get().c_str());
 		break;
 	case HomePathType::Unknown:
 	default:
-		//printf("Unknown error");
+		printf("Unknown error");
 		return false;
 	}
 	std::string homePath = HomePath::get();
