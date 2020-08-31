@@ -12,14 +12,13 @@ std::string HomePathsBase::m_myselfHomeDefaultPath;
 std::string HomePathsBase::m_homeDrive;
 std::string HomePathsBase::m_homePathEnv;
 
+std::string ImgArchiveHome::m_imgArchiveHome;
 
-std::vector<HomePathsBase*> InitialiseHomePaths::m_list;
+std::vector<HomePathsBase*> ImgArchiveHome::m_list;
 
-void InitialiseHomePaths::initHomePaths() {
+void ImgArchiveHome::initHomePaths() {
 	
-	HomePathsBase* path = &(HomePath::getObject());
-	m_list.push_back(path);
-	path = &(MasterPath::getObject());
+	HomePathsBase* path = &(MasterPath::getObject());
 	m_list.push_back(path);
 	path = &(DerivativePath::getObject());
 	m_list.push_back(path);
@@ -32,12 +31,71 @@ void InitialiseHomePaths::initHomePaths() {
 
 }
 
-bool InitialiseHomePaths::init() {
+std::string& ImgArchiveHome::getImgArchiveHome() {
+	return m_imgArchiveHome;
+}
+
+bool ImgArchiveHome::init() {
+
+	// Set Windows Defaults (they can be overridden later)
+	std::string allUsersHomeEnvironmentPath = SAUtils::GetEnv(IMGARCHIVE_HOME, true);
+	std::string myselfHomeEnvironmentPath = SAUtils::GetEnv(IMGARCHIVE_HOME, false);
+	// All Users
+	std::string allusersHomeDefaultPath = SAUtils::GetPOSIXEnv("ProgramData");
+	allusersHomeDefaultPath += DEFAULT_ALLUSER_HOME_PATH;
+	std::string myselfHomeDefaultPath = SAUtils::GetPOSIXEnv("LOCALAPPDATA");
+	myselfHomeDefaultPath += DEFAULT_LOCAL_HOME_PATH;
+
+	// Looking the HKEY_LOCAL_MACHINE first
+	if (allUsersHomeEnvironmentPath.empty() == false) {
+		m_type = HomePathType::SystemEnv;	// System Environment set
+		m_found = true;
+		m_imgArchiveHome = allUsersHomeEnvironmentPath;
+	}
+	else if (myselfHomeEnvironmentPath.empty() == false) {
+		m_type = HomePathType::LocalEnv;
+		m_found = true;
+		m_imgArchiveHome = myselfHomeEnvironmentPath;
+	} 
+	else if (SAUtils::DirExists(allusersHomeDefaultPath.c_str()) == true) {
+		m_imgArchiveHome = allusersHomeDefaultPath;
+		m_type = HomePathType::AllUsers;
+		m_found = true;
+		
+	}
+	else if (SAUtils::DirExists(myselfHomeDefaultPath.c_str()) == true) {
+		m_imgArchiveHome = myselfHomeDefaultPath;
+		m_type = HomePathType::UserOnly;
+		m_found = true;
+		
+	}
+	else {
+		m_error = HPError::NotFound;
+		return false;
+	}
+
+	if (m_type == HomePathType::SystemEnv) {
+		if (SAUtils::DirExists(m_imgArchiveHome.c_str()) == false) {
+			m_error = HPError::CannotLocatePath;
+			return false;
+		}
+		
+	}
+	else if (m_type == HomePathType::LocalEnv) {
+
+		if (SAUtils::DirExists(m_imgArchiveHome.c_str()) == false) {
+			m_error = HPError::CannotLocatePath;
+			return false;
+		}
+
+	}
+	m_valid = true;
+
 	bool res = true;
 	for (auto i = m_list.begin(); i != m_list.end(); i++) {
 		auto hp = *i;
 		if (hp->init() == false) {
-			m_error = true;
+			m_error = HPError::initaliseError;
 			res = false;
 		}
 	}
@@ -45,24 +103,24 @@ bool InitialiseHomePaths::init() {
 	return res;
 }
 
-bool InitialiseHomePaths::setAllUserDefaultHome() {
+bool ImgArchiveHome::setAllUserDefaultHome() {
 	bool res = true;
 	for (auto i = m_list.begin(); i != m_list.end(); i++) {
 		auto hp = *i;
 		if (hp->setAllUserDefaultHome() == false) {
-			m_error = true;
+			m_error = HPError::initaliseError;
 			res = false;
 		}
 	}
 	return res;
 }
 
-bool InitialiseHomePaths::setLocalUserDefaultHome() {
+bool ImgArchiveHome::setLocalUserDefaultHome() {
 	bool res = true;
 	for (auto i = m_list.begin(); i != m_list.end(); i++) {
 		auto hp = *i;
 		if (hp->setLocalUserDefaultHome() == false) {
-			m_error = true;
+			m_error = HPError::initaliseError;
 			res = false;
 		}
 	}
@@ -72,7 +130,7 @@ bool InitialiseHomePaths::setLocalUserDefaultHome() {
 	return setHomeType();
 }
 
-bool InitialiseHomePaths::setHomeType() {
+bool ImgArchiveHome::setHomeType() {
 	HomePath& HomePathObj = HomePath::getObject();
 	HomePathType homePathType = HomePathObj.type();
 
@@ -229,14 +287,13 @@ bool HomePath::setPath(const char* p)
 bool MasterPath::init()
 {
 
+	std::string& imgArchiveHome = ImgArchiveHome::getImgArchiveHome();
 	// Set Windows Defaults (they can be overridden later)
 	std::string allUsersHomeEnvironmentPath = SAUtils::GetEnv(IMGA_MASTER, true);
 	std::string myselfHomeEnvironmentPath = SAUtils::GetEnv(IMGA_MASTER, false);
 	// All Users
 	std::string allusersHomeDefaultPath = m_allusersHomeDefaultPath;
-	allusersHomeDefaultPath += DEFAULT_ALLUSER_MASTER_PATH;
 	std::string myselfHomeDefaultPath = m_myselfHomeDefaultPath;
-	myselfHomeDefaultPath += DEFAULT_LOCAL_MASTER_PATH;
 
 	// Looking the HKEY_LOCAL_MACHINE first
 	if (allUsersHomeEnvironmentPath.empty() == false) {

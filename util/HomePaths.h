@@ -18,6 +18,7 @@ enum class HomePathType {
 
 enum class HPError {
 	Ok,					// OK
+	initaliseError,
 	CannotLocatePath,	// Cannot locate path at default or HOME if set
 	NotFound,			// Path not at default and HOME not set 
 	Unknown				// Unknown state
@@ -79,30 +80,47 @@ public:
 	static bool loadEnv();
 };
 
-class InitialiseHomePaths {
+class ImgArchiveHome {
 	static std::vector<HomePathsBase*> m_list;
-	bool m_error{ false };
+
+	bool m_found{ false };	// string found
+	bool m_valid{ false };	// in file system
+	HomePathType m_type{ HomePathType::Unknown };
+	HPError m_error{ HPError::Unknown };
+	static std::string m_imgArchiveHome;
 
 	void initHomePaths();
 	bool setHomeType();
 	bool setAllUserDefaultHome();
 	bool setLocalUserDefaultHome();
 public:
-	InitialiseHomePaths() noexcept {
+	ImgArchiveHome() noexcept {
 		HomePathsBase::loadEnv();
 		initHomePaths();
 	}
-	~InitialiseHomePaths() = default;
+	~ImgArchiveHome() = default;
 
 	bool init();
 
-	bool error() noexcept {
+	HPError error() noexcept {
 		return m_error;
 	}
 
-	static InitialiseHomePaths& getObject() {
-		static InitialiseHomePaths initialiseHomePaths;
-		return initialiseHomePaths;
+	HomePathType type() noexcept {
+		return m_type;
+	}
+	bool isFound() noexcept {	// string found
+		return m_found;
+	}
+	bool isValid() noexcept {	// in file system
+		return m_valid;
+	}
+
+	static std::string& getImgArchiveHome();
+
+	static ImgArchiveHome& getObject() {
+		static ImgArchiveHome imgArchiveHome;
+		return imgArchiveHome;
 	}
 
 

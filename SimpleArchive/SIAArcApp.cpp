@@ -151,8 +151,8 @@ bool SIAArcApp::initaliseConfig() {
 
 	SIAARCConfig config;
 
-	InitialiseHomePaths& initialiseHomePaths = InitialiseHomePaths::getObject();
-	bool res = initialiseHomePaths.init();
+	ImgArchiveHome& imgArchiveHome = ImgArchiveHome::getObject();
+	bool res = imgArchiveHome.init();
 
 	HomePath& HomePathObj = HomePath::getObject();
 	HomePathType homePathType = HomePathObj.type();
