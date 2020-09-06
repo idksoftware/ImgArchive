@@ -10,7 +10,7 @@
 #include "Environment.h"
 #include "SetConfig.h"
 #include "DefaultEnvironment.h"
-#include "HomePath.h"
+#include "HomePaths.h"
 #include "SetImageExtentionFile.h"
 #include "SyncCommand.h"
 
