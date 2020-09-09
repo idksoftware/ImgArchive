@@ -1067,14 +1067,14 @@ namespace simplearchive {
 	
 	bool AppConfig::setDefaultLocations() {
 
-		m_homePath = HomePath::get();
+		
 		m_masterPath = MasterPath::get();
 		m_derivativePath = DerivativePath::get();
 		m_workspacePath = WorkspacePath::get();
 		m_catalogPath = PicturePath::get();
 		m_masterWWWCataloguePath = WWWImagePath::get();
 
-		return locations(m_homePath.c_str());
+		return locations(ImgArchiveHome::getImgArchiveHome().c_str());
 	}
 
 	bool AppConfig::locations(const char* home) {

@@ -53,7 +53,7 @@ protected:
 	static std::string m_myselfHomeDefaultPath;
 	static std::string m_homeDrive;
 	static std::string m_homePathEnv;
-
+	
 public:
 	HomePathsBase() = default;
 	virtual ~HomePathsBase() {};
@@ -90,13 +90,18 @@ class ImgArchiveHome {
 	static std::string m_imgArchiveHome;
 
 	void initHomePaths();
-	bool setHomeType();
+	
+	bool setArchiveHome();
 	bool setAllUserDefaultHome();
 	bool setLocalUserDefaultHome();
 public:
 	ImgArchiveHome() noexcept {
+		setArchiveHome();
 		HomePathsBase::loadEnv();
-		initHomePaths();
+		if (m_valid == true) {
+			initHomePaths();
+			init();
+		}
 	}
 	~ImgArchiveHome() = default;
 
@@ -126,6 +131,7 @@ public:
 
 };
 
+/*
 class HomePath : public HomePathsBase {
 
 	static std::string m_path;
@@ -152,6 +158,7 @@ public:
 		return homePath;
 	}
 };
+*/
 
 class MasterPath : public HomePathsBase {
 

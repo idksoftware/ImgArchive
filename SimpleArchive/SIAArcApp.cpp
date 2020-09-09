@@ -152,46 +152,34 @@ bool SIAArcApp::initaliseConfig() {
 	SIAARCConfig config;
 
 	ImgArchiveHome& imgArchiveHome = ImgArchiveHome::getObject();
-	bool res = imgArchiveHome.init();
-
-	HomePath& HomePathObj = HomePath::getObject();
-	HomePathType homePathType = HomePathObj.type();
-	
+	if (imgArchiveHome.isValid() == false) {
+		return false;
+	}
+	HomePathType homePathType = imgArchiveHome.type();
+	std::string homePath = ImgArchiveHome::getImgArchiveHome();
 	switch (homePathType) {
 	case HomePathType::LocalEnv:	// Local Environment set
-		if (res == false) {
-			printf("Found IMGARCHIVE_HOME as local profile: %s but archive not found at loacation", HomePath::get().c_str());
-			return false;
-		}
-		printf("Found IMGARCHIVE_HOME as local profile: %s. Archive found at that loacation", HomePath::get().c_str());
+		
+		printf("Found IMGARCHIVE_HOME as local profile: %s. Archive found at that loacation", homePath.c_str());
 		break;
 	case HomePathType::SystemEnv:	// System Environment set
-		if (res == false) {
-			printf("Found IMGARCHIVE_HOME as system profile: %s but archive not found at loacation", HomePath::get().c_str());
-			return false;
-		}
-		printf("Found IMGARCHIVE_HOME as system profile: %s. Archive found at that loacation", HomePath::get().c_str());
+		
+		printf("Found IMGARCHIVE_HOME as system profile: %s. Archive found at that loacation", homePath.c_str());
 		break;
 	case HomePathType::UserOnly:	// user only archive
-		if (res == false) {
-			printf("Archive not found at default loacation");
-			return false;
-		}
-		printf("Archive found at default user loacation: %s.", HomePath::get().c_str());
+		
+		printf("Archive found at default user loacation: %s.", homePath.c_str());
 		break;
 	case HomePathType::AllUsers:	// all users archive
-		if (res == false) {
-			printf("Archive not found at default loacation");
-			return false;
-		}
-		printf("Archive found at default system loacation: %s.", HomePath::get().c_str());
+		
+		printf("Archive found at default system loacation: %s.", homePath.c_str());
 		break;
 	case HomePathType::Unknown:
 	default:
 		printf("Unknown error");
 		return false;
 	}
-	std::string homePath = HomePath::get();
+	
 	// Initalise without the config file i.e. set defaults.
 	
 	// try to set a systems temp folder 

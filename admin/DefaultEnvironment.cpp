@@ -43,6 +43,7 @@ namespace simplearchive {
 		AppConfigBase config;
 		m_configured = false;
 		
+#ifdef XXXXXXXXXXXXXXX
 
 		DefaultEnvironment::m_isInAdminMode = SAUtils::IsAdminMode();
 		HomePath& HomePathObj = HomePath::getObject();
@@ -52,7 +53,6 @@ namespace simplearchive {
 			m_configured = false;
 			return true;
 		}
-#ifdef XXXXXXXXXXXXXXX
 #ifdef WIN32
 		bool found = false;
 		// Find if the IMGARCHIVE_HOME pathe is in the windows registery 
@@ -132,7 +132,7 @@ namespace simplearchive {
 		if (tempPath.empty() == true || tempPath.length() == 0) {
 			tempPath = SAUtils::GetPOSIXEnv("TMP");
 		}
-		std::string homePath = HomePath::get();
+		std::string homePath = ImgArchiveHome::getImgArchiveHome();
 		std::string configfile = homePath + "/config/" + "config.dat";
 		std::string configPath = homePath + "/config";
 		if (SAUtils::FileExists(configfile.c_str()) == true) {
@@ -145,25 +145,25 @@ namespace simplearchive {
 	}
 
 	bool DefaultEnvironment::setAllUserDefaultLocations() {
-		HomePath::getObject().setAllUserDefaultHome();
+		
 		MasterPath::getObject().setAllUserDefaultHome();
 		DerivativePath::getObject().setAllUserDefaultHome();
 		WorkspacePath::getObject().setAllUserDefaultHome();
 		PicturePath::getObject().setAllUserDefaultHome();
 		WWWImagePath::getObject().setAllUserDefaultHome();
 
-		return locations(HomePath::get().c_str());
+		return locations(ImgArchiveHome::getImgArchiveHome().c_str());
 	}
 
 	bool DefaultEnvironment::setLocalDefaultLocations() {
 
-		HomePath::getObject().setLocalUserDefaultHome();
+		
 		MasterPath::getObject().setLocalUserDefaultHome();
 		DerivativePath::getObject().setLocalUserDefaultHome();
 		WorkspacePath::getObject().setLocalUserDefaultHome();
 		PicturePath::getObject().setLocalUserDefaultHome();
 		WWWImagePath::getObject().setLocalUserDefaultHome();
-		return locations(HomePath::get().c_str());
+		return locations(ImgArchiveHome::getImgArchiveHome().c_str());
 	}
 
 	bool DefaultEnvironment::locations(const char *home) {
