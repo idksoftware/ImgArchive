@@ -385,12 +385,12 @@ namespace simplearchive {
 				bool homeEnv = (setHomeEnv == BoolOption::True) ? true : false;
 				appOptions.setHomeEnv(homeEnv);
 			}
-			AppOptions::m_homePath = HomePath::get();
+			AppOptions::m_homePath = ImgArchiveHome::getImgArchiveHome();
 			AppOptions::m_workspacePath = WorkspacePath::get();
 			AppOptions::m_masterPath = MasterPath::get();
-			AppOptions::m_configPath = HomePath::get();
+			AppOptions::m_configPath = ImgArchiveHome::getImgArchiveHome();
 			AppOptions::m_derivativePath = DerivativePath::get();
-			AppOptions::m_repositoryPath = HomePath::get();
+			AppOptions::m_repositoryPath = ImgArchiveHome::getImgArchiveHome();
 			AppOptions::m_catalogPath = PicturePath::get();
 
 			if (foundOption("archive-path") == true) {
