@@ -121,7 +121,7 @@ public:
 		return m_valid;
 	}
 
-	static std::string& getImgArchiveHome();
+	static const std::string& getImgArchiveHome();
 
 	static ImgArchiveHome& getObject() {
 		static ImgArchiveHome imgArchiveHome;
@@ -179,7 +179,7 @@ public:
 	bool setLocalUserDefaultHome() override;
 	bool setEnvironmentPath() override;
 
-	static std::string& get();
+	static const std::string& get();
 	static MasterPath& getObject() {
 		static MasterPath masterPath;
 		return masterPath;
@@ -208,7 +208,7 @@ public:
 	bool setLocalUserDefaultHome() override;
 	bool setEnvironmentPath() override;
 
-	static std::string& get();
+	static const std::string& get();
 	static DerivativePath& getObject() {
 		static DerivativePath derivativePath;
 		return derivativePath;
@@ -236,7 +236,7 @@ public:
 	bool setLocalUserDefaultHome() override;
 	bool setEnvironmentPath() override;
 
-	static std::string& get();
+	static const std::string& get();
 
 	static WorkspacePath& getObject() {
 		static WorkspacePath workspacePath;
@@ -262,7 +262,7 @@ public:
 	bool setLocalUserDefaultHome() override;
 	bool setEnvironmentPath() override;
 
-	static std::string& get();
+	static const std::string& get();
 
 	static HomePathsBase& getObject() {
 		static PicturePath picturePath;
@@ -288,7 +288,7 @@ public:
 	bool setLocalUserDefaultHome();
 	bool setEnvironmentPath() override;
 
-	static std::string& get();
+	static const std::string& get();
 
 	static HomePathsBase& getObject() {
 		static PicturePath wwwImagePath;

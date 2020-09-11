@@ -172,25 +172,25 @@ namespace simplearchive {
 			return showGeneral(m_outputFile.c_str(), m_textOutputType.c_str());
 		}
 		if (arg.compare("logging") == 0) {
-			return showLogging();
+			return showLogging(m_outputFile.c_str(), m_textOutputType.c_str());
 		}
 		if (arg.compare("network") == 0) {
-			return showNetwork();
+			return showNetwork(m_outputFile.c_str(), m_textOutputType.c_str());
 		}
 		if (arg.compare("folders") == 0) {
-			return showFolders();
+			return showFolders(m_outputFile.c_str(), m_textOutputType.c_str());
 		}
 		if (arg.compare("master") == 0) {
-			return showMaster();
+			return showMaster(m_outputFile.c_str(), m_textOutputType.c_str());
 		}
 		if (arg.compare("derivative") == 0) {
-			return showDerivative();
+			return showDerivative(m_outputFile.c_str(), m_textOutputType.c_str());
 		}
 		if (arg.compare("backup") == 0) {
-			return showBackup();
+			return showBackup(m_outputFile.c_str(), m_textOutputType.c_str());
 		}
 		if (arg.compare("exiftool") == 0) {
-			return showExiftool();
+			return showExiftool(m_outputFile.c_str(), m_textOutputType.c_str());
 		}
 		m_error = Error::ParseError;
 		return false;
@@ -272,18 +272,35 @@ namespace simplearchive {
 		return true;
 	}
 
-	bool ShowCommand::showLogging()
+	bool ShowCommand::showLogging(const char* filename, const char* textOutType)
 	{
 		return false;
 	}
 
-	bool ShowCommand::showNetwork()
+	bool ShowCommand::showNetwork(const char* filename, const char* textOutType)
 	{
 		return false;
 	}
 
-	bool ShowCommand::showFolders()
+	class FoldersTextOut : public TextOut {
+	public:
+		std::string writePlain();
+		std::string writeXML();
+		std::string writeJson();
+		std::string writeHtml();
+	};
+
+	bool ShowCommand::showFolders(const char* filename, const char* textOutType)
 	{
+		FoldersTextOut foldersTextOut;
+		if (foldersTextOut.parseTextOutType(textOutType) == false) {
+			return false;
+		}
+		foldersTextOut.process();
+		return true;
+	}
+
+	std::string FoldersTextOut::writePlain() {
 		AppConfig appConfig;
 		std::stringstream str;
 		str << "    Application paths" << '\n';
@@ -301,12 +318,43 @@ namespace simplearchive {
 		str << "        Temp path:                 " << appConfig.getTempPath() << '\n';
 
 		std::string s = str.str();
-		std::cout << s;
+		return s;
+	}
+
+	std::string FoldersTextOut::writeXML()
+	{
+		return std::string();
+	}
+
+	std::string FoldersTextOut::writeJson()
+	{
+		return std::string();
+	}
+
+	std::string FoldersTextOut::writeHtml()
+	{
+		return std::string();
+	}
+
+	class MasterTextOut : public TextOut {
+	public:
+		std::string writePlain();
+		std::string writeXML();
+		std::string writeJson();
+		std::string writeHtml();
+	};
+
+	bool ShowCommand::showMaster(const char* filename, const char* textOutType)
+	{
+		MasterTextOut masterTextOut;
+		if (masterTextOut.parseTextOutType(textOutType) == false) {
+			return false;
+		}
+		masterTextOut.process();
 		return true;
 	}
 
-	bool ShowCommand::showMaster()
-	{
+	std::string MasterTextOut::writePlain() {
 		AppConfig appConfig;
 		std::stringstream str;
 		str << "    Master Archive Backups\n";
@@ -316,11 +364,25 @@ namespace simplearchive {
 		str << "        Backup Two path:           " << appConfig.getMasterBackup2() << '\n';
 
 		std::string s = str.str();
-		std::cout << s;
-		return true;
+		return s;
 	}
 
-	bool ShowCommand::showDerivative()
+	std::string MasterTextOut::writeXML()
+	{
+		return std::string();
+	}
+
+	std::string MasterTextOut::writeJson()
+	{
+		return std::string();
+	}
+
+	std::string MasterTextOut::writeHtml()
+	{
+		return std::string();
+	}
+
+	bool ShowCommand::showDerivative(const char* filename, const char* textOutType)
 	{
 		AppConfig appConfig;
 		std::stringstream str;
@@ -335,12 +397,12 @@ namespace simplearchive {
 		return true;
 	}
 
-	bool ShowCommand::showBackup()
+	bool ShowCommand::showBackup(const char* filename, const char* textOutType)
 	{
 		return false;
 	}
 
-	bool ShowCommand::showExiftool()
+	bool ShowCommand::showExiftool(const char* filename, const char* textOutType)
 	{
 		AppConfig appConfig;
 		std::stringstream str;

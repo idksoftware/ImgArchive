@@ -16,13 +16,13 @@ namespace simplearchive {
 	private:
 		
 		bool showGeneral(const char* filename, const char* textOutType);
-		bool showLogging();
-		bool showNetwork();
-		bool showFolders();
-		bool showMaster();
-		bool showDerivative();
-		bool showBackup();
-		bool showExiftool();
+		bool showLogging(const char* filename, const char* textOutType);
+		bool showNetwork(const char* filename, const char* textOutType);
+		bool showFolders(const char* filename, const char* textOutType);
+		bool showMaster(const char* filename, const char* textOutType);
+		bool showDerivative(const char* filename, const char* textOutType);
+		bool showBackup(const char* filename, const char* textOutType);
+		bool showExiftool(const char* filename, const char* textOutType);
 		bool processSettings(const char* str);
 		bool processAllowed(const char* str);
 

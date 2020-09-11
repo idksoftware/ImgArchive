@@ -30,7 +30,7 @@ void ImgArchiveHome::initHomePaths() {
 
 }
 
-std::string& ImgArchiveHome::getImgArchiveHome() {
+const std::string& ImgArchiveHome::getImgArchiveHome() {
 	return m_imgArchiveHome;
 }
 
@@ -262,7 +262,7 @@ bool HomePath::setPath(const char* p)
 bool MasterPath::init()
 {
 
-	std::string& m_path = ImgArchiveHome::getImgArchiveHome();
+	std::string m_path = ImgArchiveHome::getImgArchiveHome();
 	m_path += MASTER_PATH;
 	// Set Windows Defaults (they can be overridden later)
 	std::string allUsersHomeEnvironmentPath = SAUtils::GetEnv(IMGA_MASTER, true);
@@ -299,7 +299,7 @@ bool MasterPath::init()
 
 std::string MasterPath::m_path;
 
-std::string& MasterPath::get()
+const std::string& MasterPath::get()
 {
 	
 	return m_path;
@@ -351,7 +351,7 @@ std::string DerivativePath::m_path;
 
 bool DerivativePath::init()
 {
-	std::string& m_path = ImgArchiveHome::getImgArchiveHome();
+	std::string m_path = ImgArchiveHome::getImgArchiveHome();
 	m_path += DERIVATIVE_PATH;
 	// Set Windows Defaults (they can be overridden later)
 	std::string allUsersHomeEnvironmentPath = SAUtils::GetEnv(IMGA_DERIVATIVE, true);
@@ -387,7 +387,7 @@ bool DerivativePath::init()
 	return true;
 }
 
-std::string& DerivativePath::get()
+const std::string& DerivativePath::get()
 {
 	
 	return m_path;
@@ -547,7 +547,7 @@ bool WorkspacePath::setEnvironmentPath() {
 }
 
 
-std::string& WorkspacePath::get()
+const std::string& WorkspacePath::get()
 {
 	return m_path;
 }
@@ -678,7 +678,7 @@ bool PicturePath::setEnvironmentPath() {
 }
 
 
-std::string& PicturePath::get()
+const std::string& PicturePath::get()
 {
 	return m_path;
 }
@@ -804,7 +804,7 @@ bool WWWImagePath::setEnvironmentPath() {
 }
 
 
-std::string& WWWImagePath::get()
+const std::string& WWWImagePath::get()
 {
 	return m_path;
 }
