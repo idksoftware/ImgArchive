@@ -21,6 +21,7 @@ namespace simplearchive {
 		bool showFolders(const char* filename, const char* textOutType);
 		bool showMaster(const char* filename, const char* textOutType);
 		bool showDerivative(const char* filename, const char* textOutType);
+		bool showWorkspace(const char* filename, const char* textOutType);
 		bool showBackup(const char* filename, const char* textOutType);
 		bool showExiftool(const char* filename, const char* textOutType);
 		bool processSettings(const char* str);

@@ -187,6 +187,9 @@ namespace simplearchive {
 		if (arg.compare("derivative") == 0) {
 			return showDerivative(m_outputFile.c_str(), m_textOutputType.c_str());
 		}
+		if (arg.compare("workspace") == 0) {
+			return showWorkspace(m_outputFile.c_str(), m_textOutputType.c_str());
+		}
 		if (arg.compare("backup") == 0) {
 			return showBackup(m_outputFile.c_str(), m_textOutputType.c_str());
 		}
@@ -284,7 +287,7 @@ namespace simplearchive {
 	}
 
 	class FoldersTextOut : public TextOut {
-		std::string showImaArchiveHome(std::stringstream& str);
+		void showImaArchiveHome(std::stringstream& str);
 	public:
 		std::string writePlain();
 		std::string writeXML();
@@ -305,20 +308,24 @@ namespace simplearchive {
 	std::string FoldersTextOut::writePlain() {
 		AppConfig appConfig;
 		std::stringstream str;
-		str << "    Application paths" << '\n';
-		str << "        System path:               " << appConfig.getSystemPath() << '\n';
-		str << "        Log path:                  " << appConfig.getLogPath() << '\n';
-		str << "        Master path:               " << appConfig.getMasterPath() << '\n';
-		str << "        Derivetive path:           " << appConfig.getDerivativePath() << '\n';
-		str << "        Workspace path:            " << appConfig.getWorkspacePath() << '\n';
-		str << "        Tools path:                " << appConfig.getToolsPath() << '\n';
-		str << "        Hook path:                 " << appConfig.getHookPath() << '\n';
-		str << "        History path:              " << appConfig.getHistoryPath() << '\n';
-		str << "        Template path:             " << appConfig.getTemplatePath() << '\n';
-		str << "        Catalog path:              " << appConfig.getMasterCataloguePath() << '\n';
-		str << "        SQL Database path:         " << appConfig.getDatabasePath() << '\n';
-		str << "        Temp path:                 " << appConfig.getTempPath() << '\n';
+		str << std::endl;
+		str << "Folders" <<std::endl;
+		str << "=======" << std::endl;
+		showImaArchiveHome(str);
+		str << std::endl;
 
+		str << "Application paths" << '\n';
+		str << "  Configuration path:        " << appConfig.getConfigPath() << '\n';
+		str << "  System path:               " << appConfig.getSystemPath() << '\n';
+		str << "  Log path:                  " << appConfig.getLogPath() << '\n';
+		str << "  Tools path:                " << appConfig.getToolsPath() << '\n';
+		str << "  Hook path:                 " << appConfig.getHookPath() << '\n';
+		str << "  History path:              " << appConfig.getHistoryPath() << '\n';     
+		//str << "  Catalog path:              " << appConfig.getMasterCataloguePath() << '\n';
+		str << "  SQL Database path:         " << appConfig.getDatabasePath() << '\n';
+		str << "  Templates path:            " << appConfig.getDatabasePath() << '\n';
+		str << "  Duplicates path:           " << ImgArchiveHome::getImgArchiveHome() << "/dups" << '\n';
+		str << std::endl;
 		std::string s = str.str();
 		return s;
 	}
@@ -338,37 +345,38 @@ namespace simplearchive {
 		return std::string();
 	}
 
-	std::string FoldersTextOut::showImaArchiveHome(std::stringstream& str) {
+	void FoldersTextOut::showImaArchiveHome(std::stringstream& str) {
 		ImgArchiveHome& imgArchiveHome = ImgArchiveHome::getObject();
-		if (imgArchiveHome.isValid() == false) {
-			str << "IMGARCHIVE_HOME not found at loacation: " << ImgArchiveHome::getImgArchiveHome();
-			return false;
-		}
+		
 		HomePathType homePathType = imgArchiveHome.type();
-
+		str << "ImaArchive Home Location" << std::endl;
 		switch (homePathType) {
 		case HomePathType::LocalEnv:	// Local Environment set
-
-			printf("Found IMGARCHIVE_HOME as local profile: %s. Archive found at that loacation", ImgArchiveHome::getImgArchiveHome().c_str());
+			str << "  IMGARCHIVE_HOME using Local Environment at loacation: " << std::endl;
 			break;
 		case HomePathType::SystemEnv:	// System Environment set
 
-			printf("Found IMGARCHIVE_HOME as system profile: %s. Archive found at that loacation", ImgArchiveHome::getImgArchiveHome().c_str());
+			str << "  IMGARCHIVE_HOME using System Environment at loacation: " << std::endl;
 			break;
 		case HomePathType::UserOnly:	// user only archive
 
-			printf("Archive found at default user loacation: %s.", ImgArchiveHome::getImgArchiveHome().c_str());
+			str << "  Archive found at default user loacation: " << std::endl;
 			break;
 		case HomePathType::AllUsers:	// all users archive
 
-			printf("Archive found at default system loacation: %s.", ImgArchiveHome::getImgArchiveHome().c_str());
+			str << "  Archive found at default system loacation: " << std::endl;
 			break;
 		case HomePathType::Unknown:
 		default:
-			printf("Unknown error");
-			return false;
+			str << "Unknown error" << std::endl;
+			return;
+		}
+		str << "        " << ImgArchiveHome::getImgArchiveHome() << std::endl;
+		if (imgArchiveHome.isValid() == false) {
+			str << "  IMGARCHIVE_HOME not found at loacation: " << ImgArchiveHome::getImgArchiveHome();
 		}
 	}
+
 	class MasterTextOut : public TextOut {
 	public:
 		std::string writePlain();
@@ -390,12 +398,18 @@ namespace simplearchive {
 	std::string MasterTextOut::writePlain() {
 		AppConfig appConfig;
 		std::stringstream str;
-		str << "    Master Archive Backups\n";
+		str << std::endl;
+		str << "Master Archive\n";
+		str << "==============\n";
+		str << "  Master Archive Location" << std::endl;
+		str << "        " << appConfig.getMasterPath() << '\n';
+		str << std::endl;
+		str << "  Master Archive Backups\n";
 		str << "        Backup One Enabled:        " << ((appConfig.isMasterBackup1Enabled()) ? "True" : "False") << '\n';
 		str << "        Backup One path:           " << appConfig.getMasterBackup1() << '\n';
 		str << "        Backup Two Enabled:        " << ((appConfig.isMasterBackup2Enabled()) ? "True" : "False") << '\n';
 		str << "        Backup Two path:           " << appConfig.getMasterBackup2() << '\n';
-
+		str << std::endl;
 		std::string s = str.str();
 		return s;
 	}
@@ -419,15 +433,36 @@ namespace simplearchive {
 	{
 		AppConfig appConfig;
 		std::stringstream str;
-		str << "    Derivative Archive Backups\n";
+		str << std::endl;
+		str << "Derivative Archive\n";
+		str << "==============\n";
+		str << "  Derivative Archive Location" << std::endl;
+		str << "        " << appConfig.getDerivativePath() << '\n';
+		str << std::endl;
+		str << "  Derivative Archive Backups\n";
 		str << "        Backup One Enabled:        " << ((appConfig.isDerivativeBackup1Enabled()) ? "True" : "False") << '\n';
 		str << "        Backup One path:           " << appConfig.getDerivativeBackup1() << '\n';
 		str << "        Backup Two Enabled:        " << ((appConfig.isDerivativeBackup2Enabled()) ? "True" : "False") << '\n';
 		str << "        Backup Two path:           " << appConfig.getDerivativeBackup2() << '\n';
-
+		str << std::endl;
 		std::string s = str.str();
 		std::cout << s;
 		return true;
+	}
+
+	bool ShowCommand::showWorkspace(const char* filename, const char* textOutType)
+	{
+		AppConfig appConfig;
+		std::stringstream str;
+		str << std::endl;
+		str << "Workspace\n";
+		str << "=========\n";
+		str << "  Workspace Location" << std::endl;
+		str << "        " << appConfig.getWorkspacePath() << '\n';
+		str << std::endl;
+		std::string s = str.str();
+		std::cout << s;
+		return false;
 	}
 
 	bool ShowCommand::showBackup(const char* filename, const char* textOutType)

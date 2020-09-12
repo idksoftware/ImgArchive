@@ -86,6 +86,7 @@ enum class Option {
 	FOLDERS,
 	MASTER,
 	DERIVATIVE,
+	WORKSPACE,
 	BACKUP,
 	EXIFTOOL,
 	ALL,
@@ -794,6 +795,9 @@ bool SetSettings::parseSettingsOptions(const char* s)
 	case Option::DERIVATIVE:
 		m_value = DERIVATIVE_LABEL;
 		return true;
+	case Option::WORKSPACE:
+		m_value = WORKSPACE_LABEL;
+		return true;
 	case Option::BACKUP:
 		m_value = BACKUP_LABEL;
 		return true;
@@ -828,6 +832,9 @@ Option SetSettings::processSettingsOptions(std::string& optionString)
 	}
 	if (iequals(optionString, DERIVATIVE_LABEL)) {
 		return Option::DERIVATIVE;
+	}
+	if (iequals(optionString, WORKSPACE_LABEL)) {
+		return Option::WORKSPACE;
 	}
 	if (iequals(optionString, BACKUP_LABEL)) {
 		return Option::BACKUP;

@@ -47,6 +47,8 @@
 #define FOLDERS_LABEL			"folders"
 #define MASTER_LABEL			"master"
 #define DERIVATIVE_LABEL		"derivative"
+#define DERIVATIVE_LABEL		"derivative"
+#define WORKSPACE_LABEL			"workspace"
 #define BACKUP_LABEL			"backup"
 #define EXIFTOOL_LABEL			"exiftool"
 #define ALL_LABEL				"all"
