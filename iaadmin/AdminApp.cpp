@@ -422,6 +422,7 @@ bool AdminApp::CreateArchive(const char *archivePath, const char *workspacePath,
 
 
 bool AdminApp::initaliseConfig() {
+
 	AppOptions& appOptions = AppOptions::get();
 	if (appOptions.isConfiguratedOk() == false) {
 		// This is for the time the Init option is  in operation
@@ -433,101 +434,12 @@ bool AdminApp::initaliseConfig() {
 	
 	ImgArchiveHome& imgArchiveHome = ImgArchiveHome::getObject();
 	if (imgArchiveHome.isValid() == false) {
-		printf("Found IMGARCHIVE_HOME as local profile: %s but archive not found at loacation", ImgArchiveHome::getImgArchiveHome().c_str());
+		printf("IMGARCHIVE_HOME not found at loacation", ImgArchiveHome::getImgArchiveHome().c_str());
 		return false;
 	}
-	HomePathType homePathType = imgArchiveHome.type();
-
-	switch (homePathType) {
-	case HomePathType::LocalEnv:	// Local Environment set
-		
-		printf("Found IMGARCHIVE_HOME as local profile: %s. Archive found at that loacation", ImgArchiveHome::getImgArchiveHome().c_str());
-		break;
-	case HomePathType::SystemEnv:	// System Environment set
-		
-		printf("Found IMGARCHIVE_HOME as system profile: %s. Archive found at that loacation", ImgArchiveHome::getImgArchiveHome().c_str());
-		break;
-	case HomePathType::UserOnly:	// user only archive
-		
-		printf("Archive found at default user loacation: %s.", ImgArchiveHome::getImgArchiveHome().c_str());
-		break;
-	case HomePathType::AllUsers:	// all users archive
-		
-		printf("Archive found at default system loacation: %s.", ImgArchiveHome::getImgArchiveHome().c_str());
-		break;
-	case HomePathType::Unknown:
-	default:
-		printf("Unknown error");
-		return false;
-	}
+	
 	std::string homePath = ImgArchiveHome::getImgArchiveHome();
-	/*
-	bool res = HomePath::init();
-	if (res == false) {
-		printf("Cannot localate home path. IMGARCHIVE_HOME not set and imgarchive not found at default locations.");
-		return false;
-	}
-	HomePathType homePathType = HomePath::type();
-
-	switch (homePathType) {
-	case HomePathType::LocalEnv:	// Local Environment set
-		if (res == false) {
-			printf("Found IMGARCHIVE_HOME as system profile: %s but archive not found at loacation", HomePath::get().c_str());
-			return false;
-		}
-		//printf("Found IMGARCHIVE_HOME as system profile: %s. Archive found at that loacation", HomePath::get().c_str());
-		break;
-	case HomePathType::SystemEnv:	// System Environment set
-		if (res == false) {
-			printf("Found IMGARCHIVE_HOME as system profile: %s. Archive found at that loacation", HomePath::get().c_str());
-			return false;
-		}
-		break;
-	case HomePathType::UserOnly:	// user only archive
-		if (res == false) {
-			printf("Archive not found at default loacation");
-			return false;
-		}
-		//printf("Archive found at default user loacation: %s.", HomePath::get().c_str());
-		break;
-	case HomePathType::AllUsers:	// all users archive
-		if (res == false) {
-			printf("Archive not found at default loacation");
-			return false;
-		}
-		//printf("Archive found at default system loacation: %s.", HomePath::get().c_str());
-		break;
-	case HomePathType::Unknown:
-	default:
-		printf("Unknown error");
-		return false;
-	}
-	std::string homePath = HomePath::get();
-	if (HomePath::isFound()) {
-		
-		// Initalise without the config file i.e. set defaults.
-		if (config.init(homePath.c_str()) == false) {
-			printf("Cannot find home path: %s", homePath.c_str());
-			setError(12, "Cannot find home path? exiting?");
-			return false;
-		}
-	}
-	*/
-	/*
-	else {
-		if (config.init() == false) {
-			setError(12, "Cannot find home path? exiting?");
-			return false;
-		}
-	}
-
-	if (SAUtils::DirExists(homePath.c_str()) == false) {
-		setError(12, "ImgArchive Unable to start? Archive not found at default location and the environment variable IAHOME not set.\n"
-			"Use siaadmin -i to create an empty archive at the default location (see documentation).\n");
-		return false;
-
-	}
-	*/
+	
 	// try to set a systems temp folder 
 	std::string tempPath = SAUtils::GetPOSIXEnv("TEMP");
 	if (tempPath.empty() == true || tempPath.length() == 0) {

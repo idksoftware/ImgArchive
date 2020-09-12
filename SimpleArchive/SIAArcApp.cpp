@@ -155,31 +155,6 @@ bool SIAArcApp::initaliseConfig() {
 	if (imgArchiveHome.isValid() == false) {
 		return false;
 	}
-	HomePathType homePathType = imgArchiveHome.type();
-	std::string homePath = ImgArchiveHome::getImgArchiveHome();
-	switch (homePathType) {
-	case HomePathType::LocalEnv:	// Local Environment set
-		
-		printf("Found IMGARCHIVE_HOME as local profile: %s. Archive found at that loacation", homePath.c_str());
-		break;
-	case HomePathType::SystemEnv:	// System Environment set
-		
-		printf("Found IMGARCHIVE_HOME as system profile: %s. Archive found at that loacation", homePath.c_str());
-		break;
-	case HomePathType::UserOnly:	// user only archive
-		
-		printf("Archive found at default user loacation: %s.", homePath.c_str());
-		break;
-	case HomePathType::AllUsers:	// all users archive
-		
-		printf("Archive found at default system loacation: %s.", homePath.c_str());
-		break;
-	case HomePathType::Unknown:
-	default:
-		printf("Unknown error");
-		return false;
-	}
-	
 	// Initalise without the config file i.e. set defaults.
 	
 	// try to set a systems temp folder 
@@ -187,7 +162,7 @@ bool SIAArcApp::initaliseConfig() {
 	if (tempPath.empty() == true || tempPath.length() == 0) {
 		tempPath = SAUtils::GetPOSIXEnv("TMP");
 	}
-
+	std::string homePath = ImgArchiveHome::getImgArchiveHome();
 	AppConfig::setDefaultLocations();
 	std::string configfile = homePath + "/config/" + "config.dat";
 	std::string configPath = homePath + "/config";

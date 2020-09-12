@@ -5,6 +5,7 @@
 #include "SAUtils.h"
 #include "TextOut.h"
 #include "SAUtils.h"
+#include "HomePaths.h"
 #include "CSVArgs.h"
 #include <sstream>
 
@@ -283,6 +284,7 @@ namespace simplearchive {
 	}
 
 	class FoldersTextOut : public TextOut {
+		std::string showImaArchiveHome(std::stringstream& str);
 	public:
 		std::string writePlain();
 		std::string writeXML();
@@ -336,6 +338,37 @@ namespace simplearchive {
 		return std::string();
 	}
 
+	std::string FoldersTextOut::showImaArchiveHome(std::stringstream& str) {
+		ImgArchiveHome& imgArchiveHome = ImgArchiveHome::getObject();
+		if (imgArchiveHome.isValid() == false) {
+			str << "IMGARCHIVE_HOME not found at loacation: " << ImgArchiveHome::getImgArchiveHome();
+			return false;
+		}
+		HomePathType homePathType = imgArchiveHome.type();
+
+		switch (homePathType) {
+		case HomePathType::LocalEnv:	// Local Environment set
+
+			printf("Found IMGARCHIVE_HOME as local profile: %s. Archive found at that loacation", ImgArchiveHome::getImgArchiveHome().c_str());
+			break;
+		case HomePathType::SystemEnv:	// System Environment set
+
+			printf("Found IMGARCHIVE_HOME as system profile: %s. Archive found at that loacation", ImgArchiveHome::getImgArchiveHome().c_str());
+			break;
+		case HomePathType::UserOnly:	// user only archive
+
+			printf("Archive found at default user loacation: %s.", ImgArchiveHome::getImgArchiveHome().c_str());
+			break;
+		case HomePathType::AllUsers:	// all users archive
+
+			printf("Archive found at default system loacation: %s.", ImgArchiveHome::getImgArchiveHome().c_str());
+			break;
+		case HomePathType::Unknown:
+		default:
+			printf("Unknown error");
+			return false;
+		}
+	}
 	class MasterTextOut : public TextOut {
 	public:
 		std::string writePlain();
