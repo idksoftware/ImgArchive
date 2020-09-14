@@ -9,6 +9,7 @@ enum class HPSource {
 };
 
 enum class HomePathType {
+	Default,	// Default value
 	LocalEnv,	// Local Environment set
 	SystemEnv,	// System Environment set
 	UserOnly,	// user only archive

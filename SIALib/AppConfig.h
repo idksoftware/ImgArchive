@@ -54,6 +54,7 @@
 #define ALL_LABEL				"all"
 #define RAW_LABEL			    "raw"
 #define PICTURE_LABEL			"picture"
+#define WWW_LABEL			    "www"
 #define PLAIN_TEXT_LABEL		"plain"
 #define XML_LABEL				"xml"
 #define JSON_LABEL				"json"

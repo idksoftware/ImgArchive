@@ -262,8 +262,9 @@ bool HomePath::setPath(const char* p)
 bool MasterPath::init()
 {
 
-	std::string m_path = ImgArchiveHome::getImgArchiveHome();
+	m_path = ImgArchiveHome::getImgArchiveHome();
 	m_path += MASTER_PATH;
+	m_type = HomePathType::Default;
 	// Set Windows Defaults (they can be overridden later)
 	std::string allUsersHomeEnvironmentPath = SAUtils::GetEnv(IMGA_MASTER, true);
 	std::string myselfHomeEnvironmentPath = SAUtils::GetEnv(IMGA_MASTER, false);
@@ -351,7 +352,7 @@ std::string DerivativePath::m_path;
 
 bool DerivativePath::init()
 {
-	std::string m_path = ImgArchiveHome::getImgArchiveHome();
+	m_path = ImgArchiveHome::getImgArchiveHome();
 	m_path += DERIVATIVE_PATH;
 	// Set Windows Defaults (they can be overridden later)
 	std::string allUsersHomeEnvironmentPath = SAUtils::GetEnv(IMGA_DERIVATIVE, true);

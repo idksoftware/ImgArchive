@@ -92,6 +92,7 @@ enum class Option {
 	ALL,
 	RAW,
 	PICTURE,
+	WWW,
 	UNKNOWN
 };
 
@@ -798,6 +799,12 @@ bool SetSettings::parseSettingsOptions(const char* s)
 	case Option::WORKSPACE:
 		m_value = WORKSPACE_LABEL;
 		return true;
+	case Option::PICTURE:
+		m_value = PICTURE_LABEL;
+		return true;
+	case Option::WWW:
+		m_value = WWW_LABEL;
+		return true;
 	case Option::BACKUP:
 		m_value = BACKUP_LABEL;
 		return true;
@@ -835,6 +842,12 @@ Option SetSettings::processSettingsOptions(std::string& optionString)
 	}
 	if (iequals(optionString, WORKSPACE_LABEL)) {
 		return Option::WORKSPACE;
+	}
+	if (iequals(optionString, PICTURE_LABEL)) {
+		return Option::PICTURE;
+	}
+	if (iequals(optionString, WWW_LABEL)) {
+		return Option::WWW;
 	}
 	if (iequals(optionString, BACKUP_LABEL)) {
 		return Option::BACKUP;

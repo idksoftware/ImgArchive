@@ -434,7 +434,7 @@ bool AdminApp::initaliseConfig() {
 	
 	ImgArchiveHome& imgArchiveHome = ImgArchiveHome::getObject();
 	if (imgArchiveHome.isValid() == false) {
-		printf("IMGARCHIVE_HOME not found at loacation", ImgArchiveHome::getImgArchiveHome().c_str());
+		printf("IMGARCHIVE_HOME not found at loacation: %s.\n", ImgArchiveHome::getImgArchiveHome().c_str());
 		return false;
 	}
 	
@@ -546,6 +546,7 @@ bool AdminApp::initaliseHomePath() {
 bool AdminApp::initaliseArgs(int argc, char **argv) {
 	DefaultEnvironment defaultEnvironment;
 	defaultEnvironment.init();
+
 	//defaultEnvironment.print();
 	//AppOptions& appOptions = AppOptions::get();
 	

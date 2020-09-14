@@ -190,6 +190,12 @@ namespace simplearchive {
 		if (arg.compare("workspace") == 0) {
 			return showWorkspace(m_outputFile.c_str(), m_textOutputType.c_str());
 		}
+		if (arg.compare("picture") == 0) {
+			return showPicture(m_outputFile.c_str(), m_textOutputType.c_str());
+		}
+		if (arg.compare("www") == 0) {
+			return showWWW(m_outputFile.c_str(), m_textOutputType.c_str());
+		}
 		if (arg.compare("backup") == 0) {
 			return showBackup(m_outputFile.c_str(), m_textOutputType.c_str());
 		}
@@ -287,7 +293,7 @@ namespace simplearchive {
 	}
 
 	class FoldersTextOut : public TextOut {
-		void showImaArchiveHome(std::stringstream& str);
+		bool showImaArchiveHome(std::stringstream& str);
 	public:
 		std::string writePlain();
 		std::string writeXML();
@@ -311,7 +317,10 @@ namespace simplearchive {
 		str << std::endl;
 		str << "Folders" <<std::endl;
 		str << "=======" << std::endl;
-		showImaArchiveHome(str);
+		if (showImaArchiveHome(str) == false) {
+			std::string s = str.str();
+			return s;
+		}
 		str << std::endl;
 
 		str << "Application paths" << '\n';
@@ -321,7 +330,6 @@ namespace simplearchive {
 		str << "  Tools path:                " << appConfig.getToolsPath() << '\n';
 		str << "  Hook path:                 " << appConfig.getHookPath() << '\n';
 		str << "  History path:              " << appConfig.getHistoryPath() << '\n';     
-		//str << "  Catalog path:              " << appConfig.getMasterCataloguePath() << '\n';
 		str << "  SQL Database path:         " << appConfig.getDatabasePath() << '\n';
 		str << "  Templates path:            " << appConfig.getDatabasePath() << '\n';
 		str << "  Duplicates path:           " << ImgArchiveHome::getImgArchiveHome() << "/dups" << '\n';
@@ -345,9 +353,12 @@ namespace simplearchive {
 		return std::string();
 	}
 
-	void FoldersTextOut::showImaArchiveHome(std::stringstream& str) {
+	bool FoldersTextOut::showImaArchiveHome(std::stringstream& str) {
 		ImgArchiveHome& imgArchiveHome = ImgArchiveHome::getObject();
-		
+		if (imgArchiveHome.isFound() == false) {
+			str << "ImgArchive path not set?" << std::endl;
+			return false;
+		}
 		HomePathType homePathType = imgArchiveHome.type();
 		str << "ImaArchive Home Location" << std::endl;
 		switch (homePathType) {
@@ -355,29 +366,28 @@ namespace simplearchive {
 			str << "  IMGARCHIVE_HOME using Local Environment at loacation: " << std::endl;
 			break;
 		case HomePathType::SystemEnv:	// System Environment set
-
 			str << "  IMGARCHIVE_HOME using System Environment at loacation: " << std::endl;
 			break;
 		case HomePathType::UserOnly:	// user only archive
-
 			str << "  Archive found at default user loacation: " << std::endl;
 			break;
 		case HomePathType::AllUsers:	// all users archive
-
 			str << "  Archive found at default system loacation: " << std::endl;
 			break;
 		case HomePathType::Unknown:
 		default:
 			str << "Unknown error" << std::endl;
-			return;
+			return false;
 		}
 		str << "        " << ImgArchiveHome::getImgArchiveHome() << std::endl;
 		if (imgArchiveHome.isValid() == false) {
 			str << "  IMGARCHIVE_HOME not found at loacation: " << ImgArchiveHome::getImgArchiveHome();
 		}
+		return true;
 	}
 
 	class MasterTextOut : public TextOut {
+
 	public:
 		std::string writePlain();
 		std::string writeXML();
@@ -401,6 +411,18 @@ namespace simplearchive {
 		str << std::endl;
 		str << "Master Archive\n";
 		str << "==============\n";
+
+		MasterPath masterPath = MasterPath::getObject();
+		if (masterPath.isFound() == false) {
+			str << "Master Archive path empty" << std::endl;
+			std::string s = str.str();
+			return s;
+		}
+		if (masterPath.isValid() == false) {
+			str << "Master Archive path not found" << std::endl;
+			std::string s = str.str();
+			return s;
+		}
 		str << "  Master Archive Location" << std::endl;
 		str << "        " << appConfig.getMasterPath() << '\n';
 		str << std::endl;
@@ -429,8 +451,25 @@ namespace simplearchive {
 		return std::string();
 	}
 
+	class DerivativeTextOut : public TextOut {
+	public:
+		std::string writePlain();
+		std::string writeXML();
+		std::string writeJson();
+		std::string writeHtml();
+	};
+
 	bool ShowCommand::showDerivative(const char* filename, const char* textOutType)
 	{
+		DerivativeTextOut derivativeTextOut;
+		if (derivativeTextOut.parseTextOutType(textOutType) == false) {
+			return false;
+		}
+		derivativeTextOut.process();
+		return true;
+	}
+
+	std::string DerivativeTextOut::writePlain() {
 		AppConfig appConfig;
 		std::stringstream str;
 		str << std::endl;
@@ -446,12 +485,43 @@ namespace simplearchive {
 		str << "        Backup Two path:           " << appConfig.getDerivativeBackup2() << '\n';
 		str << std::endl;
 		std::string s = str.str();
-		std::cout << s;
-		return true;
+		return s;
 	}
+
+	std::string DerivativeTextOut::writeXML()
+	{
+		return std::string();
+	}
+
+	std::string DerivativeTextOut::writeJson()
+	{
+		return std::string();
+	}
+
+	std::string DerivativeTextOut::writeHtml()
+	{
+		return std::string();
+	}
+
+	class WorkspaceTextOut : public TextOut {
+	public:
+		std::string writePlain();
+		std::string writeXML();
+		std::string writeJson();
+		std::string writeHtml();
+	};
 
 	bool ShowCommand::showWorkspace(const char* filename, const char* textOutType)
 	{
+		WorkspaceTextOut workspaceTextOut;
+		if (workspaceTextOut.parseTextOutType(textOutType) == false) {
+			return false;
+		}
+		workspaceTextOut.process();
+		return true;
+	}
+
+	std::string WorkspaceTextOut::writePlain() {
 		AppConfig appConfig;
 		std::stringstream str;
 		str << std::endl;
@@ -461,9 +531,118 @@ namespace simplearchive {
 		str << "        " << appConfig.getWorkspacePath() << '\n';
 		str << std::endl;
 		std::string s = str.str();
-		std::cout << s;
-		return false;
+		return s;
 	}
+
+	std::string WorkspaceTextOut::writeXML()
+	{
+		return std::string();
+	}
+
+	std::string WorkspaceTextOut::writeJson()
+	{
+		return std::string();
+	}
+
+	std::string WorkspaceTextOut::writeHtml()
+	{
+		return std::string();
+	}
+
+	class PictureTextOut : public TextOut {
+	public:
+		std::string writePlain();
+		std::string writeXML();
+		std::string writeJson();
+		std::string writeHtml();
+	};
+
+
+	bool ShowCommand::showPicture(const char* filename, const char* textOutType)
+	{
+		PictureTextOut pictureTextOut;
+		if (pictureTextOut.parseTextOutType(textOutType) == false) {
+			return false;
+		}
+		pictureTextOut.process();
+		return true;
+	}
+
+	std::string PictureTextOut::writePlain() {
+		AppConfig appConfig;
+		std::stringstream str;
+		str << std::endl;
+		str << "Picture\n";
+		str << "=======\n";
+		str << "  Picture Location" << std::endl;
+		str << "        " << appConfig.getMasterCataloguePath() << '\n';
+		str << std::endl;
+		std::string s = str.str();
+		return s;
+	}
+
+	std::string PictureTextOut::writeXML()
+	{
+		return std::string();
+	}
+
+	std::string PictureTextOut::writeJson()
+	{
+		return std::string();
+	}
+
+	std::string PictureTextOut::writeHtml()
+	{
+		return std::string();
+	}
+
+	class WWWTextOut : public TextOut {
+	public:
+		std::string writePlain();
+		std::string writeXML();
+		std::string writeJson();
+		std::string writeHtml();
+	};
+
+
+	bool ShowCommand::showWWW(const char* filename, const char* textOutType)
+	{
+		WWWTextOut wwwTextOut;
+		if (wwwTextOut.parseTextOutType(textOutType) == false) {
+			return false;
+		}
+		wwwTextOut.process();
+		return true;
+	}
+
+	std::string WWWTextOut::writePlain() {
+		AppConfig appConfig;
+		std::stringstream str;
+		str << std::endl;
+		str << "WWW\n";
+		str << "===\n";
+		str << "  WWW Location" << std::endl;
+		str << "        " << appConfig.getMasterWWWCataloguePath() << '\n';
+		str << std::endl;
+		std::string s = str.str();
+		return s;
+	}
+
+	std::string WWWTextOut::writeXML()
+	{
+		return std::string();
+	}
+
+	std::string WWWTextOut::writeJson()
+	{
+		return std::string();
+	}
+
+	std::string WWWTextOut::writeHtml()
+	{
+		return std::string();
+	}
+
 
 	bool ShowCommand::showBackup(const char* filename, const char* textOutType)
 	{
