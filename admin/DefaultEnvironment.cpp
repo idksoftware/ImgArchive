@@ -43,90 +43,7 @@ namespace simplearchive {
 		AppConfigBase config;
 		m_configured = false;
 		
-#ifdef XXXXXXXXXXXXXXX
 
-		DefaultEnvironment::m_isInAdminMode = SAUtils::IsAdminMode();
-		HomePath& HomePathObj = HomePath::getObject();
-		HomePathObj.init();
-		bool isFound = HomePathObj.isFound();
-		if (!isFound) {
-			m_configured = false;
-			return true;
-		}
-#ifdef WIN32
-		bool found = false;
-		// Find if the IMGARCHIVE_HOME pathe is in the windows registery 
-
-		// Looking the HKEY_LOCAL_MACHINE first
-		if (GetEnv(m_homePath, true) == true) {
-			//printf("Found IMGARCHIVE_HOME in system variables: %s", homePath.c_str());
-			found = true;
-		}
-		// Looking the HKEY_CURRENT_USER
-		else if (GetEnv(m_homePath, false) == true) {
-			//printf("Found IMGARCHIVE_HOME in user variables: %s", homePath.c_str());
-			found = true;
-		}
-		else {
-			m_homePath = SAUtils::GetPOSIXEnv("ProgramData");
-			if (m_homePath.empty() == true || m_homePath.length() == 0) {
-				printf("ImgArchive Unable to start? Cannot read Program Data.");
-				return false;
-			}
-			else {
-				m_homePath += ALLUSERS_DEFAULT_CONFIG_PATH;
-				if (SAUtils::DirExists(m_homePath.c_str()) == true) {
-					//printf("Found IMGARCHIVE_HOME in user profile: %s", homePath.c_str());
-					found = true;
-				}
-			}
-			if (found == false) {
-				m_homePath = SAUtils::GetPOSIXEnv("USERPROFILE");
-				if (m_homePath.empty() == true || m_homePath.length() == 0) {
-					printf("ImgArchive Unable to start? Cannot read all users profile.");
-					
-					return false;
-				}
-				m_homePath += DEFAULT_DATA_CONFIG_PATH;
-				if (SAUtils::DirExists(m_homePath.c_str()) == true) {
-					//printf("Found IMGARCHIVE_HOME in all users profile: %s", homePath.c_str());
-					found = true;
-				}
-			}
-		}
-#else
-		// Under Linux look for the HKEY_LOCAL_MACHINE enviroment variable
-		m_homePath = SAUtils::GetPOSIXEnv("IMGARCHIVE_HOME");
-		if (m_homePath.empty() == true || homePath.length() == 0) {
-			printf("ImgArchive Unable to start? Cannot read user profile.");
-			setError(12, "ImgArchive Unable to start? Cannot read user profile.");
-			return false;
-		}
-		found = true;
-#endif
-		if (found) {
-			// Initalise without the config file i.e. set defaults.
-			//if (config.init(homePath.c_str()) == false) {
-				
-			//	return false;
-			//}
-		}
-		else {
-			//if (config.init() == false) {
-			//	//setError(12, "Cannot find home path? exiting?");
-			//	return false;
-			//}
-		}
-
-		if (SAUtils::DirExists(m_homePath.c_str()) == false) {
-			//setError(12, "ImgArchive Unable to start? Archive not found at default location and the environment variable IAHOME not set.\n"
-			//	"Use siaadmin -i to create an empty archive at the default location (see documentation).\n");
-			m_isHomePathSet = true;
-			m_configured = false;
-			return true;
-
-		}
-#endif
 		// try to set a systems temp folder 
 		std::string tempPath = SAUtils::GetPOSIXEnv("TEMP");
 		if (tempPath.empty() == true || tempPath.length() == 0) {
@@ -145,24 +62,10 @@ namespace simplearchive {
 	}
 
 	bool DefaultEnvironment::setAllUserDefaultLocations() {
-		
-		MasterPath::getObject().setAllUserDefaultHome();
-		DerivativePath::getObject().setAllUserDefaultHome();
-		WorkspacePath::getObject().setAllUserDefaultHome();
-		PicturePath::getObject().setAllUserDefaultHome();
-		WWWImagePath::getObject().setAllUserDefaultHome();
-
 		return locations(ImgArchiveHome::getImgArchiveHome().c_str());
 	}
 
 	bool DefaultEnvironment::setLocalDefaultLocations() {
-
-		
-		MasterPath::getObject().setLocalUserDefaultHome();
-		DerivativePath::getObject().setLocalUserDefaultHome();
-		WorkspacePath::getObject().setLocalUserDefaultHome();
-		PicturePath::getObject().setLocalUserDefaultHome();
-		WWWImagePath::getObject().setLocalUserDefaultHome();
 		return locations(ImgArchiveHome::getImgArchiveHome().c_str());
 	}
 
@@ -173,8 +76,6 @@ namespace simplearchive {
 		//m_historyPath = HomePath::get() + HISTORY_PATH;
 		return false;
 	}
-
-	
 
 	bool DefaultEnvironment::setDefaultLocations() {
 		if (DefaultEnvironment::isInAdminMode()) {

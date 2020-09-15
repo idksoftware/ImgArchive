@@ -424,13 +424,32 @@ namespace simplearchive {
 			return s;
 		}
 		str << "  Master Archive Location" << std::endl;
-		str << "        " << appConfig.getMasterPath() << '\n';
+		str << "        " << masterPath.get() << '\n';
 		str << std::endl;
 		str << "  Master Archive Backups\n";
-		str << "        Backup One Enabled:        " << ((appConfig.isMasterBackup1Enabled()) ? "True" : "False") << '\n';
-		str << "        Backup One path:           " << appConfig.getMasterBackup1() << '\n';
+			str << "        Backup One Enabled:        " << ((appConfig.isMasterBackup1Enabled()) ? "True" : "False") << '\n';
+		MasterBackupOnePath masterBackupOnePath = MasterBackupOnePath::getObject();
+		if (masterBackupOnePath.isFound() == false) {
+			str << "        Path empty" << std::endl;	
+		}
+		else if (masterBackupOnePath.isValid() == false) {
+			str << "        Path not Valid:            " << masterBackupOnePath.get() << std::endl;
+		}
+		else {
+			str << "        Backup One path:           " << masterBackupOnePath.get() << std::endl;
+		}
 		str << "        Backup Two Enabled:        " << ((appConfig.isMasterBackup2Enabled()) ? "True" : "False") << '\n';
-		str << "        Backup Two path:           " << appConfig.getMasterBackup2() << '\n';
+		MasterBackupTwoPath masterBackupTwoPath = MasterBackupTwoPath::getObject();
+		if (masterBackupTwoPath.isFound() == false) {
+			str << "        Path empty" << std::endl;
+		}
+		else if (masterBackupTwoPath.isValid() == false) {
+			str << "        Path not Valid:            " << masterBackupTwoPath.get() << std::endl;
+		}
+		else {
+			str << "        Backup Two path:           " << masterBackupTwoPath.get() << std::endl;
+		}
+		
 		str << std::endl;
 		std::string s = str.str();
 		return s;
@@ -475,14 +494,44 @@ namespace simplearchive {
 		str << std::endl;
 		str << "Derivative Archive\n";
 		str << "==============\n";
+		DerivativePath derivativePath = DerivativePath::getObject();
+		if (derivativePath.isFound() == false) {
+			str << "Derivative Path path empty" << std::endl;
+			std::string s = str.str();
+			return s;
+		}
+		if (derivativePath.isValid() == false) {
+			str << "Derivative Archive path not found" << std::endl;
+			std::string s = str.str();
+			return s;
+		}
+
 		str << "  Derivative Archive Location" << std::endl;
 		str << "        " << appConfig.getDerivativePath() << '\n';
 		str << std::endl;
 		str << "  Derivative Archive Backups\n";
 		str << "        Backup One Enabled:        " << ((appConfig.isDerivativeBackup1Enabled()) ? "True" : "False") << '\n';
-		str << "        Backup One path:           " << appConfig.getDerivativeBackup1() << '\n';
+		DerivativeBackupOnePath derivativeBackupOnePath = DerivativeBackupOnePath::getObject();
+		if (derivativeBackupOnePath.isFound() == false) {
+			str << "        Path empty" << std::endl;
+		}
+		else if (derivativeBackupOnePath.isValid() == false) {
+			str << "        Path not Valid:            " << derivativeBackupOnePath.get() << std::endl;
+		}
+		else {
+			str << "        Backup One path:           " << derivativeBackupOnePath.get() << std::endl;
+		}
 		str << "        Backup Two Enabled:        " << ((appConfig.isDerivativeBackup2Enabled()) ? "True" : "False") << '\n';
-		str << "        Backup Two path:           " << appConfig.getDerivativeBackup2() << '\n';
+		DerivativeBackupTwoPath derivativeBackupTwoPath = DerivativeBackupTwoPath::getObject();
+		if (derivativeBackupTwoPath.isFound() == false) {
+			str << "        Path empty" << std::endl;
+		}
+		else if (derivativeBackupOnePath.isValid() == false) {
+			str << "        Path not Valid:            " << derivativeBackupOnePath.get() << std::endl;
+		}
+		else {
+			str << "        Backup Two path:           " << derivativeBackupOnePath.get() << std::endl;
+		}
 		str << std::endl;
 		std::string s = str.str();
 		return s;

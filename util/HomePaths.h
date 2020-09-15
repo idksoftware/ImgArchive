@@ -54,6 +54,8 @@ protected:
 	static std::string m_myselfHomeDefaultPath;
 	static std::string m_homeDrive;
 	static std::string m_homePathEnv;
+
+	bool baseInit(std::string& path, const char* relativePath, const char* enviromentPath);
 	
 public:
 	HomePathsBase() = default;
@@ -75,9 +77,7 @@ public:
 	virtual bool init() = 0;
 	virtual HomePathID getID() const = 0;
 	virtual bool setPath(const char* p) = 0;
-	virtual bool setAllUserDefaultHome() = 0;
-	virtual bool setLocalUserDefaultHome() = 0;
-	virtual bool setEnvironmentPath() = 0;
+	
 	static bool loadEnv();
 };
 
@@ -132,34 +132,7 @@ public:
 
 };
 
-/*
-class HomePath : public HomePathsBase {
 
-	static std::string m_path;
-	
-public:
-
-	HomePath() = default;
-	virtual ~HomePath() {};
-
-	HomePathID getID() const override {
-		return HomePathID::HomePath;
-	};
-
-	bool init() override;
-	bool setPath(const char* p) override;
-	bool setAllUserDefaultHome() override;
-	bool setLocalUserDefaultHome() override;
-	bool setEnvironmentPath() override;
-
-	static std::string get();
-
-	static HomePath& getObject() {
-		static HomePath homePath;
-		return homePath;
-	}
-};
-*/
 
 class MasterPath : public HomePathsBase {
 
@@ -176,16 +149,60 @@ public:
 
 	bool init() override;
 	bool setPath(const char* p) override;
-	bool setAllUserDefaultHome() override;
-	bool setLocalUserDefaultHome() override;
-	bool setEnvironmentPath() override;
-
+	
 	static const std::string& get();
 	static MasterPath& getObject() {
 		static MasterPath masterPath;
 		return masterPath;
 	}
 };
+
+class MasterBackupOnePath : public HomePathsBase {
+
+	static std::string m_path;
+protected:
+
+public:
+	MasterBackupOnePath() = default;
+	virtual ~MasterBackupOnePath() {};
+
+	virtual HomePathID getID() const {
+		return HomePathID::MasterPath;
+	};
+
+	bool init() override;
+	bool setPath(const char* p) override;
+
+	static const std::string& get();
+	static MasterBackupOnePath& getObject() {
+		static MasterBackupOnePath masterBackupOnePath;
+		return masterBackupOnePath;
+	}
+};
+
+class MasterBackupTwoPath : public HomePathsBase {
+
+	static std::string m_path;
+protected:
+
+public:
+	MasterBackupTwoPath() = default;
+	virtual ~MasterBackupTwoPath() {};
+
+	virtual HomePathID getID() const {
+		return HomePathID::MasterPath;
+	};
+
+	bool init() override;
+	bool setPath(const char* p) override;
+
+	static const std::string& get();
+	static MasterBackupTwoPath& getObject() {
+		static MasterBackupTwoPath masterBackupTwoPath;
+		return masterBackupTwoPath;
+	}
+};
+
 
 
 class DerivativePath : public HomePathsBase {
@@ -205,14 +222,57 @@ public:
 	
 	bool init() override;
 	bool setPath(const char* p) override;
-	bool setAllUserDefaultHome() override;
-	bool setLocalUserDefaultHome() override;
-	bool setEnvironmentPath() override;
 
 	static const std::string& get();
 	static DerivativePath& getObject() {
 		static DerivativePath derivativePath;
 		return derivativePath;
+	}
+};
+
+class DerivativeBackupOnePath : public HomePathsBase {
+
+	static std::string m_path;
+protected:
+
+public:
+	DerivativeBackupOnePath() = default;
+	virtual ~DerivativeBackupOnePath() {};
+
+	virtual HomePathID getID() const {
+		return HomePathID::MasterPath;
+	};
+
+	bool init() override;
+	bool setPath(const char* p) override;
+
+	static const std::string& get();
+	static DerivativeBackupOnePath& getObject() {
+		static DerivativeBackupOnePath derivativeBackupOnePath;
+		return derivativeBackupOnePath;
+	}
+};
+
+class DerivativeBackupTwoPath : public HomePathsBase {
+
+	static std::string m_path;
+protected:
+
+public:
+	DerivativeBackupTwoPath() = default;
+	virtual ~DerivativeBackupTwoPath() {};
+
+	virtual HomePathID getID() const {
+		return HomePathID::MasterPath;
+	};
+
+	bool init() override;
+	bool setPath(const char* p) override;
+
+	static const std::string& get();
+	static DerivativeBackupTwoPath& getObject() {
+		static DerivativeBackupTwoPath derivativeBackupTwoPath;
+		return derivativeBackupTwoPath;
 	}
 };
 
@@ -233,9 +293,6 @@ public:
 
 	bool init() override;
 	bool setPath(const char* p) override;
-	bool setAllUserDefaultHome() override;
-	bool setLocalUserDefaultHome() override;
-	bool setEnvironmentPath() override;
 
 	static const std::string& get();
 
@@ -259,9 +316,6 @@ public:
 
 	bool init() override;
 	bool setPath(const char* p) override;
-	bool setAllUserDefaultHome() override;
-	bool setLocalUserDefaultHome() override;
-	bool setEnvironmentPath() override;
 
 	static const std::string& get();
 
@@ -285,10 +339,7 @@ public:
 
 	bool init();
 	bool setPath(const char* p);
-	bool setAllUserDefaultHome();
-	bool setLocalUserDefaultHome();
-	bool setEnvironmentPath() override;
-
+	
 	static const std::string& get();
 
 	static HomePathsBase& getObject() {
