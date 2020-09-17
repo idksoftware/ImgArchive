@@ -496,18 +496,18 @@ namespace simplearchive {
 		str << "==============\n";
 		DerivativePath derivativePath = DerivativePath::getObject();
 		if (derivativePath.isFound() == false) {
-			str << "Derivative Path path empty" << std::endl;
+			str << "Derivative path empty" << std::endl;
 			std::string s = str.str();
 			return s;
 		}
 		if (derivativePath.isValid() == false) {
-			str << "Derivative Archive path not found" << std::endl;
+			str << "Derivative path not found" << std::endl;
 			std::string s = str.str();
 			return s;
 		}
 
 		str << "  Derivative Archive Location" << std::endl;
-		str << "        " << appConfig.getDerivativePath() << '\n';
+		str << "        " << derivativePath.get() << '\n';
 		str << std::endl;
 		str << "  Derivative Archive Backups\n";
 		str << "        Backup One Enabled:        " << ((appConfig.isDerivativeBackup1Enabled()) ? "True" : "False") << '\n';
@@ -576,8 +576,25 @@ namespace simplearchive {
 		str << std::endl;
 		str << "Workspace\n";
 		str << "=========\n";
-		str << "  Workspace Location" << std::endl;
-		str << "        " << appConfig.getWorkspacePath() << '\n';
+		bool noPath = false;
+		WorkspacePath workspacePath = WorkspacePath::getObject();
+		if (workspacePath.isFound() == false) {
+			str << "  path empty" << std::endl;
+			noPath = true;
+		}
+		if (workspacePath.isValid() == false) {
+			str << "  path not found" << std::endl;
+			noPath = true;
+		}
+		if (noPath == false) {
+			str << "  Workspace Location" << std::endl;
+			str << "        " << workspacePath.get() << '\n';
+		}			
+		str << "      Auto view: " << ((workspacePath.autoViewOn()) ? "On" : "Off") << '\n';
+		str << "  Auto checkout: " << ((workspacePath.autoCheckout()) ? "On" : "Off") << '\n';
+		if ((workspacePath.autoViewOn() || workspacePath.autoCheckout()) && noPath) {
+			str << "Note: This is an Error condition as Workspace path location is not valid?" << '\n';
+		}
 		str << std::endl;
 		std::string s = str.str();
 		return s;
@@ -623,8 +640,24 @@ namespace simplearchive {
 		str << std::endl;
 		str << "Picture\n";
 		str << "=======\n";
-		str << "  Picture Location" << std::endl;
-		str << "        " << appConfig.getMasterCataloguePath() << '\n';
+		bool noPath = false;
+		PicturePath picturePath = PicturePath::getObject();
+		if (picturePath.isFound() == false) {
+			str << "  path empty" << std::endl;
+			noPath = true;
+		}
+		if (picturePath.isValid() == false) {
+			str << "  path not found" << std::endl;
+			noPath = true;
+		}
+		if (noPath == false) {
+			str << "  Picture Location" << std::endl;
+			str << "        " << picturePath.get() << '\n';
+		}
+		str << "  Auto view: " << ((picturePath.autoViewOn()) ? "On" : "Off") << '\n';
+		if (picturePath.autoViewOn() && noPath) {
+			str << "Note: This is an Error condition as Picture path location is not valid?" << '\n';
+		}
 		str << std::endl;
 		std::string s = str.str();
 		return s;
@@ -670,8 +703,24 @@ namespace simplearchive {
 		str << std::endl;
 		str << "WWW\n";
 		str << "===\n";
-		str << "  WWW Location" << std::endl;
-		str << "        " << appConfig.getMasterWWWCataloguePath() << '\n';
+		bool noPath = false;
+		WWWImagePath wwwImagePath = WWWImagePath::getObject();
+		if (wwwImagePath.isFound() == false) {
+			str << "  path empty" << std::endl;
+			noPath = true;
+		}
+		if (wwwImagePath.isValid() == false) {
+			str << "  path not found" << std::endl;
+			noPath = true;
+		}
+		if (noPath == false) {
+			str << "  WWW Location" << std::endl;
+			str << "        " << wwwImagePath.get() << '\n';
+		}
+		str << "  Auto view: " << ((wwwImagePath.autoViewOn()) ? "On" : "Off") << '\n';
+		if (wwwImagePath.autoViewOn() && noPath) {
+			str << "Note: This is an Error condition as WWW path location is not valid?" << '\n';
+		}
 		str << std::endl;
 		std::string s = str.str();
 		return s;

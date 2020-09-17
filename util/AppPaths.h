@@ -74,6 +74,9 @@
 #define MASTER_BACKUP2_PATH				"/MasterBackup2"
 #define DERIVATIVE_BACKUP1_PATH				"/DerivativeBackup1"
 #define DERIVATIVE_BACKUP2_PATH				"/DerivativeBackup2"
+constexpr auto DEFAULT_WORKSPACE_PATH = "/ImgArchive/Workspace";
+constexpr auto DEFAULT_PICTURE_PATH = "/ImgArchive/Pictures";
+constexpr auto DEFAULT_WWWIMAGE_PATH = "/ImgArchive/WWWPictures";
 //#define DEFAULT_MASTER_PATH				"/IDK-Software/IMGA/master"
 //#define DEFAULT_DERIVATIVE_PATH			"/IDK-Software/IMGA/derivative"
 //#define DEFAULT_TOOLS_PATH				"/IDK-Software/IMGA/tools"

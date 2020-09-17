@@ -55,8 +55,8 @@ protected:
 	static std::string m_homeDrive;
 	static std::string m_homePathEnv;
 
-	bool baseInit(std::string& path, const char* relativePath, const char* enviromentPath);
-	
+	bool baseSysInit(std::string& path, const char* relativePath, const char* enviromentPath);
+	bool baseUserInit(std::string& path, const char* relativePath, const char* enviromentPath);
 public:
 	HomePathsBase() = default;
 	virtual ~HomePathsBase() {};
@@ -279,7 +279,8 @@ public:
 class WorkspacePath : public HomePathsBase {
 
 	static std::string m_path;
-	
+	bool m_autoView{ true };
+	bool m_autoCheckout{ false };
 protected:
 	
 public:
@@ -293,7 +294,8 @@ public:
 
 	bool init() override;
 	bool setPath(const char* p) override;
-
+	bool autoViewOn();
+	bool autoCheckout();
 	static const std::string& get();
 
 	static WorkspacePath& getObject() {
@@ -305,7 +307,7 @@ public:
 class PicturePath : public HomePathsBase {
 
 	static std::string m_path;
-	
+	bool m_autoView{ true };
 public:
 	PicturePath() = default;
 	virtual ~PicturePath() {};
@@ -316,10 +318,11 @@ public:
 
 	bool init() override;
 	bool setPath(const char* p) override;
+	bool autoViewOn();
 
 	static const std::string& get();
 
-	static HomePathsBase& getObject() {
+	static PicturePath& getObject() {
 		static PicturePath picturePath;
 		return picturePath;
 	}
@@ -328,7 +331,7 @@ public:
 class WWWImagePath : public HomePathsBase {
 
 	static std::string m_path;
-	
+	bool m_autoView{ false };
 public:
 	WWWImagePath() = default;
 	virtual ~WWWImagePath() {};
@@ -339,11 +342,12 @@ public:
 
 	bool init();
 	bool setPath(const char* p);
-	
+	bool autoViewOn();
+
 	static const std::string& get();
 
-	static HomePathsBase& getObject() {
-		static PicturePath wwwImagePath;
+	static WWWImagePath& getObject() {
+		static WWWImagePath wwwImagePath;
 		return wwwImagePath;
 	}
 };
