@@ -395,20 +395,26 @@ namespace simplearchive {
 		}
 		setSystemFolders(TEMP_PATH_LABEL, AppConfig::m_tempPath, defauleValue);
 
+
 		defauleValue = homePath + SYSTEM_PATH;
 		setSystemFolders(SYSTEM_PATH_LABEL, AppConfig::m_systemPath, defauleValue);
 
 		defauleValue = homePath + LOG_PATH;
 		setSystemFolders(LOG_PATH_LABEL, AppConfig::m_logPath, defauleValue);
 
-		defauleValue = homePath + MASTER_PATH;
+		
+
+		defauleValue = MasterPath::get();
 		setSystemFolders(MASTER_PATH_LABEL, AppConfig::m_masterPath, defauleValue);
+		MasterPath masterPath = MasterPath::getObject();
+		masterPath.setPath(AppConfig::m_masterPath.c_str());
 
 		std::string noLightroom = "NoLightroom";
 		setSystemFolders(LIGHTROOM_PATH_LABEL, AppConfig::m_lightroomPath, noLightroom);
 		
-		defauleValue = homePath + DERIVATIVE_PATH;
 		setSystemFolders(DERIVATIVE_PATH_LABEL, AppConfig::m_derivativePath, defauleValue);
+		DerivativePath derivativePath = DerivativePath::getObject();
+		derivativePath.setPath(AppConfig::m_derivativePath.c_str());
 
 		defauleValue = homePath + TOOLS_PATH;
 		setSystemFolders(TOOLS_PATH_LABEL, AppConfig::m_toolsPath, defauleValue);
@@ -449,7 +455,6 @@ namespace simplearchive {
 		defauleValue = homePath + CONFIG_PATH;
 		setExternalExifTool(EXIF_MAP_PATH_LABEL, AppConfig::m_ExifMapPath, defauleValue);
 
-
 		std::string emptyString;
 		setExternalExifTool(EXIF_MAP_FILE_LABEL, AppConfig::m_ExifMapFile, emptyString);
 		std::string externalExifToolEnabledStr;
@@ -461,31 +466,44 @@ namespace simplearchive {
 		AppConfig::m_ExternalCommandLine = "None";
 		setExternalExifTool(EXIF_COMMANDLINE_LABEL, AppConfig::m_ExternalCommandLine, AppConfig::m_ExternalCommandLine);
 		setExternalExifTool(EXIF_COMMANDLINE_LABEL, AppConfig::m_ExifFileDelim, AppConfig::m_ExternalCommandLine);
-	// Master backup
-		std::string masterBackup1Enabled = "false";
-		setMaster(BACKUP_ONE_ENABLED_LABEL, masterBackup1Enabled, masterBackup1Enabled);
-		AppConfig::m_masterBackup1Enabled = (STRICMP(masterBackup1Enabled.c_str(), "true") == 0);
-		
-		std::string masterBackup2Enabled = "false";
-		setMaster(BACKUP_TWO_ENABLED_LABEL, masterBackup2Enabled, masterBackup2Enabled);
-		AppConfig::m_masterBackup2Enabled = (STRICMP(masterBackup2Enabled.c_str(), "true") == 0);
+	
+		// Master backup one	
+		std::string backupEnabled = (MasterBackupOnePath::enabled())?"true":"false";
+		setMaster(BACKUP_ONE_ENABLED_LABEL, backupEnabled, backupEnabled);
+		AppConfig::m_masterBackup1Enabled = (STRICMP(backupEnabled.c_str(), "true") == 0);
 
-		std::string masterBackupPath = homePath + BACKUPS_PATH + MASTER_BACKUP1_PATH;
-		setMaster(BACKUP_ONE_LABEL, AppConfig::m_masterBackup1, masterBackupPath);
-		masterBackupPath = homePath + BACKUPS_PATH + MASTER_BACKUP2_PATH;
-		setMaster(BACKUP_TWO_LABEL, AppConfig::m_masterBackup2, masterBackupPath);
+		MasterBackupOnePath masterBackupOnePathObj = MasterBackupOnePath::getObject();
+		masterBackupOnePathObj.enabled(AppConfig::m_masterBackup1Enabled);
+
+		std::string backupPath = MasterBackupOnePath::get();
+		setMaster(BACKUP_ONE_LABEL, AppConfig::m_masterBackup1, backupPath);
+		masterBackupOnePathObj.setPath(AppConfig::m_masterBackup1.c_str());
+
+		// Master backup two	
+		backupEnabled = (MasterBackupTwoPath::enabled()) ? "true" : "false";
+		setMaster(BACKUP_TWO_ENABLED_LABEL, backupEnabled, backupEnabled);
+		AppConfig::m_masterBackup2Enabled = (STRICMP(backupEnabled.c_str(), "true") == 0);
+
+		MasterBackupTwoPath masterBackupTwoPathObj = MasterBackupTwoPath::getObject();
+		masterBackupTwoPathObj.enabled(AppConfig::m_masterBackup2Enabled);
+
+		backupPath = MasterBackupTwoPath::get();
+		setMaster(BACKUP_TWO_LABEL, AppConfig::m_masterBackup2, backupPath);
+		masterBackupTwoPathObj.setPath(AppConfig::m_masterBackup2.c_str());
+
 
 	// Derivative bACKUP
-		std::string backup1Enabled = "false";
-		setDerivative(BACKUP_ONE_ENABLED_LABEL, backup1Enabled, backup1Enabled);
-		AppConfig::m_derivativeBackup1Enabled = (STRICMP(backup1Enabled.c_str(), "true") == 0);
+		backupEnabled = (MasterBackupTwoPath::enabled()) ? "true" : "false";
+		setDerivative(BACKUP_ONE_ENABLED_LABEL, backupEnabled, backupEnabled);
+		AppConfig::m_derivativeBackup1Enabled = (STRICMP(backupEnabled.c_str(), "true") == 0);
+
+		std::string derivativeBackupPath = homePath + BACKUPS_PATH + DERIVATIVE_BACKUP1_PATH;
+		setDerivative(BACKUP_ONE_LABEL, AppConfig::m_derivativeBackup1, derivativeBackupPath);
 
 		std::string backup2Enabled = "false";
 		setDerivative(BACKUP_ONE_ENABLED_LABEL, backup2Enabled, backup2Enabled);
 		AppConfig::m_derivativeBackup2Enabled = (STRICMP(backup2Enabled.c_str(), "true") == 0);
-
-		std::string derivativeBackupPath = homePath + BACKUPS_PATH + DERIVATIVE_BACKUP1_PATH;
-		setDerivative(BACKUP_ONE_LABEL, AppConfig::m_derivativeBackup1, derivativeBackupPath);
+		
 		derivativeBackupPath = homePath + BACKUPS_PATH + DERIVATIVE_BACKUP2_PATH;
 		setDerivative(BACKUP_TWO_LABEL, AppConfig::m_derivativeBackup2, derivativeBackupPath);
 

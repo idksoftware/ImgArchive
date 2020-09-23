@@ -191,6 +191,7 @@ public:
     * \retval ParserHelpRequested Help option detected.
     */
     ParserResults parse(int _argc, char ** _argv);
+    ParserResults parseJson(const char *str);
 
 	const std::string& getCurrentCommand() {
 		return current_command;

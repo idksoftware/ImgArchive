@@ -160,6 +160,7 @@ public:
 class MasterBackupOnePath : public HomePathsBase {
 
 	static std::string m_path;
+	static bool m_enabled;
 protected:
 
 public:
@@ -172,7 +173,9 @@ public:
 
 	bool init() override;
 	bool setPath(const char* p) override;
+	void enabled(bool b) { m_enabled = b; };
 
+	static bool enabled() { return m_enabled; };
 	static const std::string& get();
 	static MasterBackupOnePath& getObject() {
 		static MasterBackupOnePath masterBackupOnePath;
@@ -183,6 +186,7 @@ public:
 class MasterBackupTwoPath : public HomePathsBase {
 
 	static std::string m_path;
+	static bool m_enabled;
 protected:
 
 public:
@@ -195,7 +199,9 @@ public:
 
 	bool init() override;
 	bool setPath(const char* p) override;
+	void enabled(bool b) { m_enabled = b; };
 
+	static bool enabled() { return m_enabled; };
 	static const std::string& get();
 	static MasterBackupTwoPath& getObject() {
 		static MasterBackupTwoPath masterBackupTwoPath;
@@ -233,6 +239,7 @@ public:
 class DerivativeBackupOnePath : public HomePathsBase {
 
 	static std::string m_path;
+	static bool m_enabled;
 protected:
 
 public:
@@ -245,7 +252,9 @@ public:
 
 	bool init() override;
 	bool setPath(const char* p) override;
+	void enabled(bool b) { m_enabled = b; };
 
+	static bool enabled() { return m_enabled; };
 	static const std::string& get();
 	static DerivativeBackupOnePath& getObject() {
 		static DerivativeBackupOnePath derivativeBackupOnePath;
@@ -256,6 +265,7 @@ public:
 class DerivativeBackupTwoPath : public HomePathsBase {
 
 	static std::string m_path;
+	static bool m_enabled;
 protected:
 
 public:
@@ -268,7 +278,9 @@ public:
 
 	bool init() override;
 	bool setPath(const char* p) override;
+	void enabled(bool b) { m_enabled = b; };
 
+	static bool enabled() { return m_enabled; };
 	static const std::string& get();
 	static DerivativeBackupTwoPath& getObject() {
 		static DerivativeBackupTwoPath derivativeBackupTwoPath;
@@ -279,14 +291,13 @@ public:
 class WorkspacePath : public HomePathsBase {
 
 	static std::string m_path;
-	bool m_autoView{ true };
-	bool m_autoCheckout{ false };
+	static bool m_autoView;
+	static bool m_autoCheckout;
 protected:
 	
 public:
 	WorkspacePath() = default;
 	virtual ~WorkspacePath() {};
-
 	
 	HomePathID getID() const override {
 		return HomePathID::WorkspacePath;
@@ -294,8 +305,11 @@ public:
 
 	bool init() override;
 	bool setPath(const char* p) override;
-	bool autoViewOn();
-	bool autoCheckout();
+	void setAutoCheckout(bool b) { m_autoCheckout; };
+	void setAutoViewOn(bool b) { m_autoView; };
+
+	static bool autoCheckout();
+	static bool autoViewOn();
 	static const std::string& get();
 
 	static WorkspacePath& getObject() {
@@ -307,7 +321,7 @@ public:
 class PicturePath : public HomePathsBase {
 
 	static std::string m_path;
-	bool m_autoView{ true };
+	static bool m_autoView;
 public:
 	PicturePath() = default;
 	virtual ~PicturePath() {};
@@ -318,8 +332,9 @@ public:
 
 	bool init() override;
 	bool setPath(const char* p) override;
-	bool autoViewOn();
+	void setAutoViewOn(bool b) { m_autoView; };
 
+	static bool autoViewOn();
 	static const std::string& get();
 
 	static PicturePath& getObject() {
@@ -331,7 +346,7 @@ public:
 class WWWImagePath : public HomePathsBase {
 
 	static std::string m_path;
-	bool m_autoView{ false };
+	static bool m_autoView;
 public:
 	WWWImagePath() = default;
 	virtual ~WWWImagePath() {};
@@ -342,8 +357,9 @@ public:
 
 	bool init();
 	bool setPath(const char* p);
-	bool autoViewOn();
+	void setAutoViewOn(bool b) { m_autoView; };
 
+	static bool autoViewOn();
 	static const std::string& get();
 
 	static WWWImagePath& getObject() {

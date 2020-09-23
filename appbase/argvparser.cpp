@@ -394,6 +394,24 @@ ArgvParser::parse(int _argc, char ** _argv)
     return(NoParserError); // everthing went fine -> sucess
 }
 
+/*
+	{ "command":[
+		{"arg1": "value1"},
+		{"arg2": "value2"}
+		]
+	}
+
+	{"employees":[
+  { "firstName":"John", "lastName":"Doe" },
+  { "firstName":"Anna", "lastName":"Smith" },
+  { "firstName":"Peter", "lastName":"Jones" }
+]}
+*/
+ArgvParser::ParserResults ArgvParser::parseJson(const char* str)
+{
+	return ParserResults();
+}
+
 size_t ArgvParser::arguments() const
 {
     return(argument_container.size());

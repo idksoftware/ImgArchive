@@ -222,6 +222,7 @@ bool MasterBackupOnePath::init()
 }
 
 std::string MasterBackupOnePath::m_path;
+bool MasterBackupOnePath::m_enabled = false;
 
 const std::string& MasterBackupOnePath::get()
 {
@@ -244,6 +245,7 @@ bool MasterBackupTwoPath::init()
 }
 
 std::string MasterBackupTwoPath::m_path;
+bool MasterBackupTwoPath::m_enabled = false;
 
 const std::string& MasterBackupTwoPath::get()
 {
@@ -290,6 +292,7 @@ bool DerivativeBackupOnePath::init()
 }
 
 std::string DerivativeBackupOnePath::m_path;
+bool DerivativeBackupOnePath::m_enabled = false;
 
 const std::string& DerivativeBackupOnePath::get()
 {
@@ -312,6 +315,7 @@ bool DerivativeBackupTwoPath::init()
 }
 
 std::string DerivativeBackupTwoPath::m_path;
+bool DerivativeBackupTwoPath::m_enabled = false;
 
 const std::string& DerivativeBackupTwoPath::get()
 {
@@ -329,7 +333,8 @@ bool DerivativeBackupTwoPath::setPath(const char* p)
 */
 
 std::string WorkspacePath::m_path;
-
+bool WorkspacePath::m_autoView = true;
+bool WorkspacePath::m_autoCheckout = false;
 
 bool WorkspacePath::init()
 {
@@ -363,6 +368,7 @@ bool WorkspacePath::setPath(const char* p)
 */
 
 std::string PicturePath::m_path;
+bool PicturePath::m_autoView = false;
 
 bool PicturePath::init()
 {
@@ -390,6 +396,7 @@ bool PicturePath::autoViewOn()
 */
 
 std::string WWWImagePath::m_path;
+bool WWWImagePath::m_autoView = false;
 
 bool WWWImagePath::init()
 {

@@ -141,6 +141,7 @@
     <ClInclude Include="AppOptions.h" />
     <ClInclude Include="argvparser.h" />
     <ClInclude Include="EnvFunc.h" />
+    <ClInclude Include="JsonCommand.h" />
     <ClInclude Include="ParseOptions.h" />
     <ClInclude Include="SIAArgvParser.h" />
     <ClInclude Include="TextOut.h" />
@@ -151,6 +152,7 @@
     <ClCompile Include="AppOptions.cpp" />
     <ClCompile Include="argvparser.cpp" />
     <ClCompile Include="EnvFunc.cpp" />
+    <ClCompile Include="JsonCommand.cpp" />
     <ClCompile Include="ParseOptions.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">../util</AdditionalIncludeDirectories>
     </ClCompile>

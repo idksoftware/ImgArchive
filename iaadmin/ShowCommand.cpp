@@ -491,6 +491,7 @@ namespace simplearchive {
 	std::string DerivativeTextOut::writePlain() {
 		AppConfig appConfig;
 		std::stringstream str;
+		bool noPath = false;
 		str << std::endl;
 		str << "Derivative Archive\n";
 		str << "==============\n";
@@ -509,28 +510,52 @@ namespace simplearchive {
 		str << "  Derivative Archive Location" << std::endl;
 		str << "        " << derivativePath.get() << '\n';
 		str << std::endl;
+
+		/// Derivative Archive Backups
+		
 		str << "  Derivative Archive Backups\n";
+
+		/// Backup One
+		
 		str << "        Backup One Enabled:        " << ((appConfig.isDerivativeBackup1Enabled()) ? "True" : "False") << '\n';
 		DerivativeBackupOnePath derivativeBackupOnePath = DerivativeBackupOnePath::getObject();
 		if (derivativeBackupOnePath.isFound() == false) {
 			str << "        Path empty" << std::endl;
+			noPath = true;
 		}
 		else if (derivativeBackupOnePath.isValid() == false) {
 			str << "        Path not Valid:            " << derivativeBackupOnePath.get() << std::endl;
+			noPath = true;
 		}
 		else {
 			str << "        Backup One path:           " << derivativeBackupOnePath.get() << std::endl;
 		}
+		if (appConfig.isDerivativeBackup1Enabled() && noPath) {
+			str << "Note: This is an Error condition as Derivative backup 1 Path location is not valid?" << '\n';
+		}
+
 		str << "        Backup Two Enabled:        " << ((appConfig.isDerivativeBackup2Enabled()) ? "True" : "False") << '\n';
+		if (appConfig.isDerivativeBackup2Enabled() && noPath) {
+			str << "Note: This is an Error condition as Derivative backup 1 Path location is not valid?" << '\n';
+		}
+
+		/// Backup Two
+
+		noPath = false;
 		DerivativeBackupTwoPath derivativeBackupTwoPath = DerivativeBackupTwoPath::getObject();
 		if (derivativeBackupTwoPath.isFound() == false) {
 			str << "        Path empty" << std::endl;
+			noPath = true;
 		}
 		else if (derivativeBackupOnePath.isValid() == false) {
 			str << "        Path not Valid:            " << derivativeBackupOnePath.get() << std::endl;
+			noPath = true;
 		}
 		else {
 			str << "        Backup Two path:           " << derivativeBackupOnePath.get() << std::endl;
+		}
+		if (appConfig.isDerivativeBackup2Enabled() && noPath) {
+			str << "Note: This is an Error condition as Derivative backup 2 Path location is not valid?" << '\n';
 		}
 		str << std::endl;
 		std::string s = str.str();
