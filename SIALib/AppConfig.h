@@ -495,7 +495,7 @@ namespace simplearchive {
 		SharedConfig() noexcept {};
 
 		/// @brief Initalises the config object
-		bool init(const char *homePath = nullptr);
+		//bool init(const char *homePath = nullptr);
 		
 		void fileBasedValues(const char *homePath, const char* tmpPath);
 	};

@@ -136,6 +136,7 @@ namespace simplearchive {
 
 	*/
 	// This is only used in iaadmin
+#ifdef XXXXXXXXXXXXXXX
 	bool SharedConfig::init(const char *homePath) {
 		CLogger &logger = CLogger::getLogger();
 		
@@ -297,7 +298,7 @@ namespace simplearchive {
 		}
 		return true;
 	}
-
+#endif
 
 	void AppConfig::settup() {
 		getWorkspacePath();
@@ -368,6 +369,9 @@ namespace simplearchive {
 		setGeneral(LIGHTROOM_LABEL, lightroom, lightroom);
 		AppConfig::m_lightroom = (STRICMP(lightroom.c_str(), "true") == 0);
 
+		std::string noLightroom = "NoLightroom";
+		setSystemFolders(LIGHTROOM_PATH_LABEL, AppConfig::m_lightroomPath, noLightroom);
+
 		std::string serverMode = "false";
 		setGeneral(REMOTE_SERVER_MODE_LABEL, serverMode, serverMode);
 		AppConfig::m_serverMode = (STRICMP(serverMode.c_str(), "true") == 0);
@@ -409,9 +413,8 @@ namespace simplearchive {
 		MasterPath masterPath = MasterPath::getObject();
 		masterPath.setPath(AppConfig::m_masterPath.c_str());
 
-		std::string noLightroom = "NoLightroom";
-		setSystemFolders(LIGHTROOM_PATH_LABEL, AppConfig::m_lightroomPath, noLightroom);
 		
+		defauleValue = DerivativePath::get();
 		setSystemFolders(DERIVATIVE_PATH_LABEL, AppConfig::m_derivativePath, defauleValue);
 		DerivativePath derivativePath = DerivativePath::getObject();
 		derivativePath.setPath(AppConfig::m_derivativePath.c_str());
@@ -493,9 +496,16 @@ namespace simplearchive {
 
 
 	// Derivative bACKUP
-		backupEnabled = (MasterBackupTwoPath::enabled()) ? "true" : "false";
+		backupEnabled = (DerivativeBackupOnePath::enabled()) ? "true" : "false";
 		setDerivative(BACKUP_ONE_ENABLED_LABEL, backupEnabled, backupEnabled);
 		AppConfig::m_derivativeBackup1Enabled = (STRICMP(backupEnabled.c_str(), "true") == 0);
+
+		DerivativeBackupOnePath derivativeBackupOnePathObj = DerivativeBackupOnePath::getObject();
+		derivativeBackupOnePathObj.enabled(AppConfig::m_derivativeBackup1Enabled);
+
+		std::string backupPath = DerivativeBackupOnePath::get();
+		setMaster(BACKUP_ONE_LABEL, AppConfig::m_mash, backupPath);
+		masterBackupOnePathObj.setPath(AppConfig::m_masterBackup1.c_str());
 
 		std::string derivativeBackupPath = homePath + BACKUPS_PATH + DERIVATIVE_BACKUP1_PATH;
 		setDerivative(BACKUP_ONE_LABEL, AppConfig::m_derivativeBackup1, derivativeBackupPath);
