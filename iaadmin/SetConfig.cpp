@@ -59,7 +59,7 @@ enum class Option {
 	SOURCE_PATH,
 	SYSTEM_PATH,
 	MASTER_PATH,
-	MASTER_VIEW_PATH,
+	PICTURE_PATH,
 	DERIVATIVE_PATH,
 	SQL_DATABASE_PATH,
 	LOG_PATH,
@@ -379,8 +379,8 @@ bool SetConfig::parseFolderOptions(const char* ov)
 	case Option::MASTER_PATH:
 		m_option = MASTER_PATH_LABEL;
 		return true;
-	case Option::MASTER_VIEW_PATH:
-		m_option = CATALOG_PATH_LABEL;
+	case Option::PICTURE_PATH:
+		m_option = PICTURE_PATH_LABEL;
 		return true;
 	case Option::DERIVATIVE_PATH:
 		m_option = DERIVATIVE_PATH_LABEL;
@@ -660,8 +660,8 @@ Option SetConfig::processFolderOptions(std::string& optionString)
 	else if (iequals(optionString, MASTER_PATH_LABEL)) {
 		return Option::MASTER_PATH;
 	}
-	else if (iequals(optionString, CATALOG_PATH_LABEL)) {
-		return Option::MASTER_VIEW_PATH;
+	else if (iequals(optionString, PICTURE_PATH_LABEL)) {
+		return Option::PICTURE_PATH;
 	}
 	else if (iequals(optionString, DERIVATIVE_PATH_LABEL)) {
 		return Option::DERIVATIVE_PATH;

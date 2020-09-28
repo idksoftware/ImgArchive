@@ -331,7 +331,7 @@ namespace simplearchive {
 		str << "  Hook path:                 " << appConfig.getHookPath() << '\n';
 		str << "  History path:              " << appConfig.getHistoryPath() << '\n';     
 		str << "  SQL Database path:         " << appConfig.getDatabasePath() << '\n';
-		str << "  Templates path:            " << appConfig.getDatabasePath() << '\n';
+		str << "  Templates path:            " << appConfig.getTemplatePath() << '\n';
 		str << "  Duplicates path:           " << ImgArchiveHome::getImgArchiveHome() << "/dups" << '\n';
 		str << std::endl;
 		std::string s = str.str();
@@ -547,12 +547,12 @@ namespace simplearchive {
 			str << "        Path empty" << std::endl;
 			noPath = true;
 		}
-		else if (derivativeBackupOnePath.isValid() == false) {
-			str << "        Path not Valid:            " << derivativeBackupOnePath.get() << std::endl;
+		else if (derivativeBackupTwoPath.isValid() == false) {
+			str << "        Path not Valid:            " << derivativeBackupTwoPath.get() << std::endl;
 			noPath = true;
 		}
 		else {
-			str << "        Backup Two path:           " << derivativeBackupOnePath.get() << std::endl;
+			str << "        Backup Two path:           " << derivativeBackupTwoPath.get() << std::endl;
 		}
 		if (appConfig.isDerivativeBackup2Enabled() && noPath) {
 			str << "Note: This is an Error condition as Derivative backup 2 Path location is not valid?" << '\n';

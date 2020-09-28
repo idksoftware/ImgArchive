@@ -89,7 +89,7 @@
 #define EXIF_COMMANDLINE_LABEL			"ExifCommandLine"
 #define EXIF_FILE_DELIM_LABEL			"ExifFileDelim"
 #define TEMPLATE_PATH_LABEL				"TemplatePath"
-#define CATALOG_PATH_LABEL				"CatalogPath"
+#define PICTURE_PATH_LABEL				"PicturePath"
 #define WORKSPACE_PATH_LABEL			"WorkspacePath"
 #define DRY_RUN_LABEL					"DryRun"
 #define QUIET_LABEL						"Quiet"
@@ -180,9 +180,9 @@ namespace simplearchive {
 		static std::string m_workspacePath;
 		static std::string m_masterPath;
 		static std::string m_derivativePath;
+		static std::string m_picturePath;
+		static std::string m_wwwImagePath;
 		
-		static std::string m_masterWWWCataloguePath;
-		static std::string m_catalogPath;
 		static std::string m_lightroomPath;
 		static std::string m_sourcePath;
 
@@ -190,7 +190,7 @@ namespace simplearchive {
 		
 		static std::string m_hookPath;
 		static std::string m_toolsPath;
-		static std::string m_DatabasePath;
+		static std::string m_sqlDatabasePath;
 		static std::string m_backupDestinationPath;
 		
 		static long m_backupMediaSize;
@@ -268,8 +268,8 @@ namespace simplearchive {
 		/// @brief Gets home path. This is the root path all default paths are made.
 		const char *getHomePath();
 
-		const char *getMasterCataloguePath();
-		const char *getMasterWWWCataloguePath();
+		const char *getPicturePath();
+		const char *getWWWImagePath();
 		const char *getDatabasePath();
 		// This is for media backups
 		const char *getBackupDestinationPath();
@@ -478,7 +478,7 @@ namespace simplearchive {
 		
 		void setMasterPath(const char *path);
 		void setDerivativePath(const char *path);
-		void setMasterCataloguePath(const char *path);
+		void setPicturePath(const char *path);
 		void setBackup1(const char *path);
 		void setBackup2(const char *path);
 		void setSourcePath(const char *path);

@@ -43,7 +43,7 @@ namespace simplearchive {
 		defineCommandSyntax("init", "isadmin init [-q | --quiet] | [--user <all|self>]\n"
 			"| [--set-home-env <yes | no>] | [ --archive-path <path>]\n"
 			"| [ --workspace-path <path>] | [ --master-path <path>]\n"
-			"| [ --derivative-path <path>] | [ --catalogue-path <path>]\n"
+			"| [ --derivative-path <path>] | [ --picture-path <path>]\n"
 			"| [ --picture-path <path>] | [ --www-image-path <path>]");
 		
 		defineOption("config", "Configure ImgArchive's parameters", ArgvParser::MasterOption);
@@ -54,7 +54,7 @@ namespace simplearchive {
 			"| [--exiftool <Option=Value>]");
 				
 		defineOption("show", "Show how the system is configured.", ArgvParser::MasterOption);
-		defineCommandSyntax("show", "isadmin show [--setting=<Option>] | [--allowed=[raw|picture|all]]\n"
+		defineCommandSyntax("show", "isadmin show [--setting=<Option>]\n"
 			"SettingOption = <[general] | [logging] | [network]\n"
 			"| [folders] | [master] | | [derivative] | [backup] | [exiftool]");
 
@@ -413,8 +413,8 @@ namespace simplearchive {
 				appOptions.setDerivativePath(opt.c_str());
 			}
 
-			//if (foundOption("catalogue-path") == true) {
-			//	opt = optionValue("catalogue-path");
+			//if (foundOption("picture-path") == true) {
+			//	opt = optionValue("picture-path");
 			//	appOptions.setCataloguePath(opt.c_str());
 			//}
 

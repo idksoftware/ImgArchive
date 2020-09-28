@@ -96,7 +96,7 @@ namespace simplearchive {
 
 		defineOption("derivative-path", "location of the derivative repository folder.", ArgvParser::OptionRequiresValue);
 		//defineOptionAlternative("w", "workspace");
-		defineOption("catalogue-path", "location of the master catalogue folder.", ArgvParser::OptionRequiresValue);
+		defineOption("picture-path", "location of the picture folder.", ArgvParser::OptionRequiresValue);
 
 		defineOption("logging-level", "Temporarily changes the logging level for the scope of this command session.", ArgvParser::OptionRequiresValue);
 		//defineOptionAlternative("r", "logging-level");
@@ -197,8 +197,8 @@ namespace simplearchive {
 				appOptions.setDerivativePath(opt.c_str());
 			}
 
-			if (foundOption("catalogue-path") == true) {
-				opt = optionValue("catalogue-path");
+			if (foundOption("picture-path") == true) {
+				opt = optionValue("picture-path");
 				appOptions.setCataloguePath(opt.c_str());
 			}
 

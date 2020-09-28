@@ -97,7 +97,7 @@ namespace simplearchive {
 	std::string AppConfig::m_derivativePath;
 	std::string AppConfig::m_masterPath;
 	std::string AppConfig::m_sourcePath;
-	std::string AppConfig::m_catalogPath;
+	std::string AppConfig::m_picturePath;
 	std::string AppConfig::m_configPath;
 	std::string AppConfig::m_lightroomPath;
 	std::string AppConfig::m_tempPath;
@@ -106,6 +106,7 @@ namespace simplearchive {
 	std::string AppConfig::m_systemPath;
 	std::string AppConfig::m_indexPath;
 	std::string AppConfig::m_historyPath;	
+
 	std::string AppConfig::m_ExternalExifTool;
 	std::string AppConfig::m_ExternalCommandLine;
 	std::string AppConfig::m_ExifMapPath;
@@ -114,13 +115,13 @@ namespace simplearchive {
 	std::string AppConfig::m_templatePath;
 	std::string AppConfig::m_backupDestinationPath;
 	
-	std::string AppConfig::m_DatabasePath;
+	std::string AppConfig::m_sqlDatabasePath;
 	std::string AppConfig::m_masterBackup1;
 	std::string AppConfig::m_masterBackup2;
 	std::string AppConfig::m_derivativeBackup1;
 	std::string AppConfig::m_derivativeBackup2;
 
-	std::string AppConfig::m_masterWWWCataloguePath;
+	std::string AppConfig::m_wwwImagePath;
 	
 	
 
@@ -315,7 +316,7 @@ namespace simplearchive {
 		getExifMapPath();
 		getConfigPath();
 	    getHomePath();
-		getMasterCataloguePath();
+		getPicturePath();
 		getDatabasePath();
 		getBackupDestinationPath();
 		getBackupMediaSize();
@@ -376,12 +377,7 @@ namespace simplearchive {
 		setGeneral(REMOTE_SERVER_MODE_LABEL, serverMode, serverMode);
 		AppConfig::m_serverMode = (STRICMP(serverMode.c_str(), "true") == 0);
 		
-		std::string file_cat_on = "false";
-		setGeneral(SQL_LABEL, file_cat_on, file_cat_on);
-		AppConfig::m_file_cat_on = (STRICMP(file_cat_on.c_str(), "true") == 0);
-		std::string www_cat_on = "false";
-		setGeneral(SQL_LABEL, www_cat_on, www_cat_on);
-		AppConfig::m_www_cat_on = (STRICMP(www_cat_on.c_str(), "true") == 0);
+		
 	// System Folders
 		// Master Archive Path
 		//std::shared_ptr<ConfigBlock> folders = getSystemFolders();
@@ -406,19 +402,6 @@ namespace simplearchive {
 		defauleValue = homePath + LOG_PATH;
 		setSystemFolders(LOG_PATH_LABEL, AppConfig::m_logPath, defauleValue);
 
-		
-
-		defauleValue = MasterPath::get();
-		setSystemFolders(MASTER_PATH_LABEL, AppConfig::m_masterPath, defauleValue);
-		MasterPath masterPath = MasterPath::getObject();
-		masterPath.setPath(AppConfig::m_masterPath.c_str());
-
-		
-		defauleValue = DerivativePath::get();
-		setSystemFolders(DERIVATIVE_PATH_LABEL, AppConfig::m_derivativePath, defauleValue);
-		DerivativePath derivativePath = DerivativePath::getObject();
-		derivativePath.setPath(AppConfig::m_derivativePath.c_str());
-
 		defauleValue = homePath + TOOLS_PATH;
 		setSystemFolders(TOOLS_PATH_LABEL, AppConfig::m_toolsPath, defauleValue);
 
@@ -426,7 +409,7 @@ namespace simplearchive {
 		setSystemFolders(HOOK_SCRIPTS_PATH_LABEL, AppConfig::m_hookPath, defauleValue);
 
 		defauleValue = homePath + SQLITEDB_PATH;
-		setSystemFolders(SQL_DATABASE_PATH_LABEL, AppConfig::m_DatabasePath, defauleValue);
+		setSystemFolders(SQL_DATABASE_PATH_LABEL, AppConfig::m_sqlDatabasePath, defauleValue);
 
 		defauleValue = homePath + HISTORY_PATH;
 		setSystemFolders(HISTORY_PATH_LABEL, AppConfig::m_historyPath, defauleValue);
@@ -434,24 +417,43 @@ namespace simplearchive {
 		defauleValue = homePath + TEMPLATE_PATH;
 		setSystemFolders(TEMPLATE_PATH_LABEL, AppConfig::m_templatePath, defauleValue);
 
-		defauleValue = AppConfig::m_catalogPath;
-		setSystemFolders(CATALOG_PATH_LABEL, AppConfig::m_catalogPath, defauleValue);
-
-		// set the workspace if found in the config file
-		// this is defaultied so with not be emply
-		defauleValue = AppConfig::m_workspacePath;
-		setSystemFolders(WORKSPACE_PATH_LABEL, AppConfig::m_workspacePath, defauleValue);
-			// if not found read from IMGA_WORKSPACE environment variable
-		std::string temp = SAUtils::GetPOSIXEnv(IMGA_WORKSPACE);
-		if (temp.empty() == false) {
-			AppConfig::m_workspacePath = temp;
-		}
 		
+		defauleValue = MasterPath::get();
+		setSystemFolders(MASTER_PATH_LABEL, AppConfig::m_masterPath, defauleValue);
+		MasterPath masterPath = MasterPath::getObject();
+		masterPath.setPath(AppConfig::m_masterPath.c_str());
 
+		defauleValue = DerivativePath::get();
+		setSystemFolders(DERIVATIVE_PATH_LABEL, AppConfig::m_derivativePath, defauleValue);
+		DerivativePath derivativePath = DerivativePath::getObject();
+		derivativePath.setPath(AppConfig::m_derivativePath.c_str());
+
+		defauleValue = WorkspacePath::get();
+		setSystemFolders(WORKSPACE_PATH_LABEL, AppConfig::m_workspacePath, defauleValue);
+		WorkspacePath workspacePath = WorkspacePath::getObject();
+		workspacePath.setPath(AppConfig::m_workspacePath.c_str());
+
+		defauleValue = PicturePath::get();
+		setSystemFolders(PICTURE_PATH_LABEL, AppConfig::m_picturePath, defauleValue);
+		PicturePath picturePath = PicturePath::getObject();
+		picturePath.setPath(AppConfig::m_picturePath.c_str());
+
+		defauleValue = WWWImagePath::get();
+		setSystemFolders(WWW_CAT_LABEL, AppConfig::m_wwwImagePath, defauleValue);
+		WWWImagePath wwwImagePath = WWWImagePath::getObject();
+		wwwImagePath.setPath(AppConfig::m_wwwImagePath.c_str());
+
+		std::string file_cat_on = "false";
+		setGeneral(SQL_LABEL, file_cat_on, file_cat_on);
+		AppConfig::m_file_cat_on = (STRICMP(file_cat_on.c_str(), "true") == 0);
+		std::string www_cat_on = "false";
+		setGeneral(SQL_LABEL, www_cat_on, www_cat_on);
+		AppConfig::m_www_cat_on = (STRICMP(www_cat_on.c_str(), "true") == 0);
+		
 		//setSystemFolders("SystemPath", AppConfig::m_systemPath, AppConfig::m_systemPath + SYSTEM_PATH);
 		//AppConfig::m_indexPath = AppConfig::m_systemPath + "/index";
-		defauleValue = homePath + "/pi";
-		AppConfig::m_indexPath = defauleValue + "/index";
+		//defauleValue = homePath + "/pi";
+		//AppConfig::m_indexPath = defauleValue + "/index";
 		
 	// External Exif Tool
 
@@ -503,19 +505,20 @@ namespace simplearchive {
 		DerivativeBackupOnePath derivativeBackupOnePathObj = DerivativeBackupOnePath::getObject();
 		derivativeBackupOnePathObj.enabled(AppConfig::m_derivativeBackup1Enabled);
 
-		std::string backupPath = DerivativeBackupOnePath::get();
-		setMaster(BACKUP_ONE_LABEL, AppConfig::m_mash, backupPath);
-		masterBackupOnePathObj.setPath(AppConfig::m_masterBackup1.c_str());
+		backupPath = DerivativeBackupOnePath::get();
+		setDerivative(BACKUP_ONE_LABEL, AppConfig::m_derivativeBackup1, backupPath);
+		derivativeBackupOnePathObj.setPath(AppConfig::m_derivativeBackup1.c_str());
 
-		std::string derivativeBackupPath = homePath + BACKUPS_PATH + DERIVATIVE_BACKUP1_PATH;
-		setDerivative(BACKUP_ONE_LABEL, AppConfig::m_derivativeBackup1, derivativeBackupPath);
+		backupEnabled = (DerivativeBackupTwoPath::enabled()) ? "true" : "false";
+		setDerivative(BACKUP_TWO_ENABLED_LABEL, backupEnabled, backupEnabled);
+		AppConfig::m_derivativeBackup2Enabled = (STRICMP(backupEnabled.c_str(), "true") == 0);
 
-		std::string backup2Enabled = "false";
-		setDerivative(BACKUP_ONE_ENABLED_LABEL, backup2Enabled, backup2Enabled);
-		AppConfig::m_derivativeBackup2Enabled = (STRICMP(backup2Enabled.c_str(), "true") == 0);
-		
-		derivativeBackupPath = homePath + BACKUPS_PATH + DERIVATIVE_BACKUP2_PATH;
-		setDerivative(BACKUP_TWO_LABEL, AppConfig::m_derivativeBackup2, derivativeBackupPath);
+		DerivativeBackupTwoPath derivativeBackupTwoPathObj = DerivativeBackupTwoPath::getObject();
+		derivativeBackupTwoPathObj.enabled(AppConfig::m_derivativeBackup2Enabled);
+
+		backupPath = DerivativeBackupTwoPath::get();
+		setDerivative(BACKUP_TWO_LABEL, AppConfig::m_derivativeBackup2, backupPath);
+		derivativeBackupTwoPathObj.setPath(AppConfig::m_derivativeBackup2.c_str());
 
 	// Network
 		std::string eventsOn = "false";
@@ -568,8 +571,8 @@ namespace simplearchive {
 		logger.log(LOG_OK, CLogger::Level::INFO, "        Hook path:                 \"%s\"", AppConfig::m_hookPath.c_str());
 		logger.log(LOG_OK, CLogger::Level::INFO, "        History path:              \"%s\"", AppConfig::m_historyPath.c_str());
 		logger.log(LOG_OK, CLogger::Level::INFO, "        Template path:             \"%s\"", AppConfig::m_templatePath.c_str());
-		logger.log(LOG_OK, CLogger::Level::INFO, "        Catalog path:              \"%s\"", AppConfig::m_catalogPath.c_str());
-		logger.log(LOG_OK, CLogger::Level::INFO, "        SQL Database path:         \"%s\"", AppConfig::m_DatabasePath.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Picture path:              \"%s\"", AppConfig::m_picturePath.c_str());
+		logger.log(LOG_OK, CLogger::Level::INFO, "        SQL Database path:         \"%s\"", AppConfig::m_sqlDatabasePath.c_str());
 
 		logger.log(LOG_OK, CLogger::Level::INFO, "    Master Archive");
 		logger.log(LOG_OK, CLogger::Level::INFO, "        Backup One path:           \"%s\"", AppConfig::m_masterBackup1.c_str());
@@ -722,8 +725,8 @@ namespace simplearchive {
 		AppConfig::m_homePath = path;
 	}
 
-	void SharedConfig::setMasterCataloguePath(const char *path) {
-		AppConfig::m_catalogPath = path;
+	void SharedConfig::setPicturePath(const char *path) {
+		AppConfig::m_picturePath = path;
 	}
 
 	void SharedConfig::setLogLevel(const char *logLevel) {
@@ -794,12 +797,12 @@ namespace simplearchive {
 		return m_backupDestinationPath.c_str();
 	}
 
-	const char *AppConfig::getMasterCataloguePath() {
-		return m_catalogPath.c_str();
+	const char *AppConfig::getPicturePath() {
+		return m_picturePath.c_str();
 	}
 
-	const char *AppConfig::getMasterWWWCataloguePath() {
-		return m_masterWWWCataloguePath.c_str();
+	const char *AppConfig::getWWWImagePath() {
+		return m_wwwImagePath.c_str();
 	}
 
 	void AppConfig::setBackupDestinationPath(const char *path) {
@@ -841,7 +844,7 @@ namespace simplearchive {
 	}
 	
 	const char *AppConfig::getDatabasePath() {
-		return m_DatabasePath.c_str();
+		return m_sqlDatabasePath.c_str();
 	}
 
 	const char *AppConfig::getTempPath() {
@@ -1014,7 +1017,7 @@ namespace simplearchive {
 		str << "Config path:             " << getConfigPath() << '\n';
 		/// @brief Gets home path. This is the root path all default paths are made.
 		str << "Home path:               " << getHomePath() << '\n';
-		str << "Master view path:        " << getMasterCataloguePath() << '\n';
+		str << "Master view path:        " << getMasterPath() << '\n';
 		str << "Database path:           " << getDatabasePath() << '\n';
 		str << "Backup destination path: " << getBackupDestinationPath() << '\n';
 		str << "Backup media size:       " << getBackupMediaSize() << '\n';
@@ -1073,7 +1076,6 @@ namespace simplearchive {
 		str << "<ConfigPath>" << getConfigPath() << "</ConfigPath>" << '\n';
 		/// @brief Gets home path. This is the root path all default paths are made.
 		str << "<HomePath>" << getHomePath() << "</HomePath>" << '\n';
-		str << "<MasterCataloguePath>" << getMasterCataloguePath() << "</MasterCataloguePath>" << '\n';
 		str << "<DatabasePath>" << getDatabasePath() << "</DatabasePath>" << '\n';
 		str << "<BackupDestinationPath>" << getBackupDestinationPath() << "</BackupDestinationPath>" << '\n';
 		str << "<BackupMediaSize>" << getBackupMediaSize() << "</BackupMediaSize>" << '\n';
@@ -1099,8 +1101,8 @@ namespace simplearchive {
 		m_masterPath = MasterPath::get();
 		m_derivativePath = DerivativePath::get();
 		m_workspacePath = WorkspacePath::get();
-		m_catalogPath = PicturePath::get();
-		m_masterWWWCataloguePath = WWWImagePath::get();
+		m_picturePath = PicturePath::get();
+		m_wwwImagePath = WWWImagePath::get();
 
 		return locations(ImgArchiveHome::getImgArchiveHome().c_str());
 	}

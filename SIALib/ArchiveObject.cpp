@@ -782,13 +782,13 @@ namespace simplearchive {
 	//	masterView.setWWWEnabled(true);
 
 		if (wwwView.isWWWEnabled()) {
-			if (wwwView.settupWWW(config.getTempPath(), config.getTemplatePath(), config.getMasterWWWCataloguePath()) == false) {
+			if (wwwView.settupWWW(config.getTempPath(), config.getTemplatePath(), config.getWWWImagePath()) == false) {
 				logger.log(LOG_OK, CLogger::Level::FATAL, "Initalisation Failed creating master WWW view");
 				return false;
 			}
 
 
-			if (wwwView.settupSystemWWW(primaryIndexPath.getPathToRepository().c_str(), config.getTemplatePath(), config.getMasterWWWCataloguePath(), ArchivePath::getMainHistory().c_str(),
+			if (wwwView.settupSystemWWW(primaryIndexPath.getPathToRepository().c_str(), config.getTemplatePath(), config.getWWWImagePath(), ArchivePath::getMainHistory().c_str(),
 																		master.getJournalPath().c_str()) == false) {
 				logger.log(LOG_OK, CLogger::Level::FATAL, "Initalisation Failed creating master WWW view system");
 				return false;
@@ -796,14 +796,14 @@ namespace simplearchive {
 		}
 		if (masterView.isFileEnabled()) {
 			
-			if (SAUtils::DirExists(config.getMasterCataloguePath()) == false) {
-				if (SAUtils::mkDir(config.getMasterCataloguePath()) == false) {
-					logger.log(LOG_OK, CLogger::Level::FATAL, "Invalid master catalogue path");
+			if (SAUtils::DirExists(config.getPicturePath()) == false) {
+				if (SAUtils::mkDir(config.getPicturePath()) == false) {
+					logger.log(LOG_OK, CLogger::Level::FATAL, "Invalid picture path");
 					return false;
 				}
 			}
-			if (masterView.settupFile(config.getTempPath(), config.getMasterCataloguePath()) == false) {
-				logger.log(LOG_OK, CLogger::Level::FATAL, "Initalisation Failed creating master view");
+			if (masterView.settupFile(config.getTempPath(), config.getPicturePath()) == false) {
+				logger.log(LOG_OK, CLogger::Level::FATAL, "Initalisation Failed creating Picture Path");
 				return false;
 			}
 		}

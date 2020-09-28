@@ -47,7 +47,7 @@ namespace simplearchive {
 		logger.log(LOG_OK, CLogger::Level::INFO, "        Hook path:                \"%s\"", config.getHookPath());
 		logger.log(LOG_OK, CLogger::Level::INFO, "        History path:             \"%s\"", config.getHistoryPath());
 		logger.log(LOG_OK, CLogger::Level::INFO, "        Template path:            \"%s\"", config.getTemplatePath());
-		logger.log(LOG_OK, CLogger::Level::INFO, "        Catalog path:             \"%s\"", config.getMasterCataloguePath());
+		logger.log(LOG_OK, CLogger::Level::INFO, "        Picture path:             \"%s\"", config.getPicturePath());
 		logger.log(LOG_OK, CLogger::Level::INFO, "        SQL Database path:        \"%s\"", config.getDatabasePath());
 		logger.log(LOG_OK, CLogger::Level::INFO, "        Temp path:                \"%s\"", config.getTempPath());
 		logger.log(LOG_OK, CLogger::Level::INFO, "    Master Archive Backups");
@@ -299,7 +299,7 @@ namespace simplearchive {
 		push_back(folderItem8);
 		FolderItem folderItem9("Template path:     ", config.getTemplatePath());
 		push_back(folderItem9);
-		FolderItem folderItem10("Catalog path:      ", config.getMasterCataloguePath());
+		FolderItem folderItem10("Picture path:      ", config.getPicturePath());
 		push_back(folderItem10);
 		FolderItem folderItem11("SQL Database path: ", config.getDatabasePath());
 		push_back(folderItem11);
