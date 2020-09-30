@@ -188,7 +188,27 @@ bool HomePathsBase::baseUserInit(std::string& path, const char* relativePath, co
 	return true;
 }
 
+void HomePathsBase::baseEnableInit(bool &option, bool defaultOption, const char* enviromentOption)
+{
 
+	// Set Windows Defaults (they can be overridden later)
+	std::string allUsersHomeEnvironmentOption = SAUtils::GetEnv(enviromentOption, true);
+	std::string myselfHomeEnvironmentOption = SAUtils::GetEnv(enviromentOption, false);
+
+	option = defaultOption;
+	
+	// Looking the HKEY_LOCAL_MACHINE first
+	if (allUsersHomeEnvironmentOption.empty() == false) {
+		
+		BoolOption opt = SAUtils::isTrueFalse(allUsersHomeEnvironmentOption);
+		option = (BoolOption::True == opt);
+	}
+	else if (myselfHomeEnvironmentOption.empty() == false) {
+		
+		BoolOption opt = SAUtils::isTrueFalse(myselfHomeEnvironmentOption);
+		option = (BoolOption::True == opt);
+	}
+}
 
 /**
 	Master Path
@@ -218,6 +238,7 @@ bool MasterPath::setPath(const char* p)
 
 bool MasterBackupOnePath::init()
 {
+	baseEnableInit(MasterBackupOnePath::m_enabled, false, IMGA_MASTER_BACKUP1_ENABLE);
 	return baseSysInit(m_path, DEFAULT_MASTER_BACKUP1_PATH, IMGA_MASTER_BACKUP1);
 }
 
@@ -241,6 +262,7 @@ bool MasterBackupOnePath::setPath(const char* p)
 
 bool MasterBackupTwoPath::init()
 {
+	baseEnableInit(MasterBackupTwoPath::m_enabled, false, IMGA_MASTER_BACKUP2_ENABLE);
 	return baseSysInit(m_path, DEFAULT_MASTER_BACKUP2_PATH, IMGA_MASTER_BACKUP2);
 }
 
@@ -288,6 +310,7 @@ bool DerivativePath::setPath(const char* p)
 
 bool DerivativeBackupOnePath::init()
 {
+	baseEnableInit(DerivativeBackupOnePath::m_enabled, false, IMGA_DERIVATIVE_BACKUP1_ENABLE);
 	return baseSysInit(m_path, DEFAULT_DERIVATIVE_BACKUP1_PATH, IMGA_DERIVATIVE_BACKUP1);
 }
 
@@ -311,6 +334,7 @@ bool DerivativeBackupOnePath::setPath(const char* p)
 
 bool DerivativeBackupTwoPath::init()
 {
+	baseEnableInit(DerivativeBackupTwoPath::m_enabled, false, IMGA_DERIVATIVE_BACKUP2_ENABLE);
 	return baseSysInit(m_path, DEFAULT_DERIVATIVE_BACKUP2_PATH, IMGA_DERIVATIVE_BACKUP2);
 }
 
@@ -338,6 +362,8 @@ bool WorkspacePath::m_autoCheckout = false;
 
 bool WorkspacePath::init()
 {
+	baseEnableInit(WorkspacePath::m_autoView, false, IMGA_WORKSPACE_ENABLE);
+	baseEnableInit(WorkspacePath::m_autoCheckout, false, IMGA_WORKSPACE_CHKOUT);
 	return baseUserInit(m_path, DEFAULT_WORKSPACE_PATH, IMGA_WORKSPACE);
 }
 
@@ -372,6 +398,7 @@ bool PicturePath::m_autoView = false;
 
 bool PicturePath::init()
 {
+	baseEnableInit(PicturePath::m_autoView, true, IMGA_WORKSPACE_ENABLE);
 	return baseUserInit(m_path, DEFAULT_PICTURE_PATH, IMGA_PICTURE);
 }
 
@@ -400,6 +427,7 @@ bool WWWImagePath::m_autoView = false;
 
 bool WWWImagePath::init()
 {
+	baseEnableInit(WWWImagePath::m_autoView, true, IMGA_WWWIMAGE_ENABLE);
 	return baseSysInit(m_path, DEFAULT_WWWIMAGE_PATH, IMGA_WWWIMAGE);
 }
 

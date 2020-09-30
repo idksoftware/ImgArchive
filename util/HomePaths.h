@@ -57,6 +57,7 @@ protected:
 
 	bool baseSysInit(std::string& path, const char* relativePath, const char* enviromentPath);
 	bool baseUserInit(std::string& path, const char* relativePath, const char* enviromentPath);
+	void baseEnableInit(bool& option, bool defaultOption, const char* enviromentOption);
 public:
 	HomePathsBase() = default;
 	virtual ~HomePathsBase() {};
