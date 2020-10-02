@@ -95,7 +95,6 @@ constexpr auto DEFAULT_WWWIMAGE_PATH = "/ImgArchive/WWWPictures";
 #define CHKSTATUS_PATH					"/chkout"
 #define SQLITE3_DB						"IASqlite3.db"
 
-
 #define DEFAULT_HOME_PATH		   "/IDK-Software/ImgArchive"
 
 #define IMGARCHIVE_HOME						"IMGARCHIVE_HOME"
