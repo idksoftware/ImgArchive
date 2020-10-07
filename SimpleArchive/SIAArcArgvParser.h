@@ -17,11 +17,13 @@ namespace simplearchive {
 		}
 
 		bool initalise(int argc, char **argv) {
+			defineOptions();
 			return doInitalise(argc, argv);
 		}
 
 	protected:
 		virtual bool doInitalise(int argc, char **argv);
+		virtual void defineOptions();
 		std::string usageDescriptionHeader(unsigned int _width) const;
 
 		/** Returns a string with the usage descriptions for all options. The

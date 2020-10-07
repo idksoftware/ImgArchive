@@ -18,13 +18,8 @@
 using namespace CommandLineProcessing;
 namespace simplearchive {
 
+void  SIAArcArgvParser::defineOptions() {
 
-bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
-
-	SIAArcAppOptions &appOptions = SIAArcAppOptions::get();
-	
-	SIAARCConfig config;
-	
 	addErrorCode(0, "Success");
 	addErrorCode(1, "Warnings");
 	addErrorCode(2, "Errors");
@@ -38,7 +33,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineOption("import", "import new images to the archive.", ArgvParser::MasterOption);
 	defineCommandSyntax("import", "iaarc import [--source-path=<path>]\n\t"
 		"[--comment=<comment text>]\n\t[--lightroom=<On|Off>]");
-	
+
 	defineOption("checkout", "Checkout images from archive to workspace.", ArgvParser::MasterOption);
 	defineCommandSyntax("checkout", "iaarc checkout [--target-path=<path>]\n\t"
 		"[--comment=<comment text>]\n\t[--scope=<scope-address]\n\t[--force=<yes|No>]\n\t[--version=<vesion-num>");
@@ -66,7 +61,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineOption("export", "Export images from archive into a destination folder.", ArgvParser::MasterOption);
 	defineCommandSyntax("export", "iaarc export [--target-path=<path>]\n\t[--logging-level=<level>]"
 		"[--comment=<comment text>]\n\t[--scope=<scope-address]\n\t[--force=<yes|No>]\n\t[--version=<vesion-num>");
-	
+
 	defineOption("prop", "Manage image properties", ArgvParser::MasterOption);
 	defineCommandSyntax("prop", "iaarc prop [--s]\n\t[--logging-level=<level>]"
 		"[--scope=<scope-address]\n\t[--set=<property:value>]");
@@ -138,8 +133,8 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineOption("a", "archive", ArgvParser::NoOptionAttribute);
 	defineOptionAlternative("a", "archive");
 
-	
-	
+
+
 
 	defineOption("image", "Specifies a image address in the form \"<date>/<image name>", ArgvParser::OptionRequiresValue);
 	//defineOptionAlternative("i", "image");
@@ -162,7 +157,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineOption("fd", "From date", ArgvParser::OptionRequiresValue);
 	defineOptionAlternative("fd", "from-date");
 
-	
+
 
 	defineOption("r", "location of the archive root folder.", ArgvParser::NoOptionAttribute);
 	defineOptionAlternative("r", "root");
@@ -197,11 +192,11 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineCommandSyntax("list", "list=[checked-out] | [checked-in] | [deleted]\n");
 
 	defineCommandOption("import", "comment");
-	
+
 	defineCommandOption("import", "source-path");
 	defineCommandOption("import", "lightroom");
 
-	
+
 
 	defineCommandOption("checkin", "comment");
 	defineCommandOption("checkin", "scope");
@@ -267,10 +262,20 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	defineCommandOption("log", "scope");
 	defineCommandOption("log", "format-type");
 	defineCommandOption("log", "file");
+
+}
+
+bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
+
+	SIAArcAppOptions &appOptions = SIAArcAppOptions::get();
+	
+	SIAARCConfig config;
+	
 	
 //	defineCommandOption("mode", "remote-server");
 
-	
+	defineOptions();
+
 
 
 	ArgvParser::ParserResults res = parse(argc, argv);

@@ -121,6 +121,7 @@ namespace simplearchive {
 		if (writeDerivativeMetadata(fullPath, versionName, derivativeMetadata) == false) {
 			return false;
 		}
+		return true;
 	}
 
 	bool WriteMetadata::writeMasterMetadata(std::string& rootPath, std::string& imageName, MetadataObject& metadataObject) {

@@ -11,13 +11,9 @@ namespace simplearchive {
 	{
 	public:
 
-		AdminArgvParser()
-		{
-		}
+		AdminArgvParser() = default;
 
-		virtual ~AdminArgvParser()
-		{
-		}
+		virtual ~AdminArgvParser() = default;
 
 		bool initalise(int argc, char **argv) {
 			return doInitalise(argc, argv);
@@ -25,6 +21,7 @@ namespace simplearchive {
 
 	protected:
 		virtual bool doInitalise(int argc, char **argv);
+
 
 		std::string usageDescriptionHeader(unsigned int _width) const;
 		
