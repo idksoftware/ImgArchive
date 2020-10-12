@@ -10,7 +10,7 @@
 #include "SIAArgvParser.h"
 
 #define VERSION	"0.901"
-#define BUILD	"040115.34e7500"
+#define BUILD	"474c9bc..8945397"
 
 
 namespace CommandLineProcessing {
