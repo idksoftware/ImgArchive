@@ -191,12 +191,14 @@ void  SIAArcArgvParser::defineOptions() {
 	defineOption("list", "list checked out/in and delete images", ArgvParser::OptionRequiresValue); // =all =year{2015}
 	defineCommandSyntax("list", "list=[checked-out] | [checked-in] | [deleted]\n");
 
-	defineCommandOption("import", "comment");
+	defineCommandOption("about", "comment");
 
+	defineCommandOption("about", "source-path");
+	defineCommandOption("about", "lightroom");
+	
+	defineCommandOption("import", "comment");
 	defineCommandOption("import", "source-path");
 	defineCommandOption("import", "lightroom");
-
-
 
 	defineCommandOption("checkin", "comment");
 	defineCommandOption("checkin", "scope");
@@ -275,8 +277,6 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 //	defineCommandOption("mode", "remote-server");
 
 	defineOptions();
-
-
 
 	ArgvParser::ParserResults res = parse(argc, argv);
 

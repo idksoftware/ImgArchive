@@ -79,7 +79,7 @@ public:
 	virtual ~SIAArcApp();
 	/// @brief This is the main application run function. All application processing starts here.
 	
-	bool about(const char* outputType, const char* filename);
+	bool about(const char* name, const char* appName, const char* outputType, const char* filename);
 protected:
 	bool initaliseConfig();
 	bool initaliseArgs(int argc, char **argv);

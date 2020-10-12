@@ -9,7 +9,7 @@
 #include <string>
 #include "SIAArgvParser.h"
 
-#define VERSION	"1.00"
+#define VERSION	"0.901"
 #define BUILD	"040115.34e7500"
 
 
