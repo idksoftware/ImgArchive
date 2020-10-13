@@ -230,13 +230,9 @@ namespace simplearchive {
 		}
 
 		
-		SummaryFile::setPath(config.getHistoryPath());
-		SummaryFile &summaryFile = SummaryFile::getSummaryFile();
-		CIDKDate date;
-		date.Now();
-		summaryFile.log(SummaryFile::SF_BRIEF, SummaryFile::SF_COMMENT, "Summary start %s", date.Print().c_str());
-		logger.log(LOG_STARTING, CLogger::Level::SUMMARY, "Application starting at %s", date.Print().c_str());
-		logger.log(LOG_OK, CLogger::Level::INFO, "Home path is \"%s\"", config.getHomePath());
+		
+		//logger.log(LOG_STARTING, CLogger::Level::SUMMARY, "Application starting at %s", date.Print().c_str());
+		logger.log(LOG_OK, CLogger::Level::FINE, "Home path is \"%s\"", config.getHomePath());
 
 		if (ImageExtentions::setExtentionsFilePath(config.getConfigPath()) == false) {
 			logger.log(LOG_OK, CLogger::Level::INFO, "Unable to find image extensions file path: \"%s\"", config.getConfigPath());
@@ -386,6 +382,14 @@ namespace simplearchive {
 		return 0;
 	}
 
+	void SIALib::start() {
+		AppConfig& config = AppConfig::get();
+		SummaryFile::setPath(config.getHistoryPath());
+		SummaryFile& summaryFile = SummaryFile::getSummaryFile();
+		CIDKDate date;
+		date.Now();
+		summaryFile.log(SummaryFile::SF_BRIEF, SummaryFile::SF_COMMENT, "Summary start %s", date.Print().c_str());
+	}
 	
 	/*
 	int SIALib::complete() {

@@ -108,6 +108,7 @@ namespace simplearchive {
 		void enableEvents(const char *address, int port);
 		void enableServer(int port);
 		int initalise(const char* appName);
+		void start();
 		int complete();
 		//int complete();
 		int checkin();

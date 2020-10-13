@@ -314,6 +314,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	// about
 	//
 	if (command("about") == true) {
+		//appOptions.
 		if (foundOption("out") == true) {
 			OutputType outputType;
 			std::string outType = optionValue("out");

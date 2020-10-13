@@ -125,8 +125,8 @@ protected:
 	}
 };
 
-bool SIAArcApp::about(const char* name, const char* appName, const char* outputType, const char* filename) {
-	AboutCommand aboutCommand(name, appName, VERSION, BUILD);
+bool SIAArcApp::about(const char* outputType, const char* filename) {
+	AboutCommand aboutCommand("client", "iaarc", VERSION, BUILD);
 	aboutCommand.setOutputFile(filename);
 	aboutCommand.setTextOutputType(outputType);
 
@@ -418,7 +418,7 @@ bool SIAArcApp::doRun()
 	
 	case SIAArcAppOptions::CommandMode::CM_About:
 	{
-		return about("client", "iaarc", appOptions.getTextOutputType(), appOptions.getOutputFile());
+		return about(appOptions.getTextOutputType(), appOptions.getOutputFile());
 	}
 	case SIAArcAppOptions::CommandMode::CM_Unknown:
 		setError( CLogger::getLastCode(), CLogger::getLastMessage());
