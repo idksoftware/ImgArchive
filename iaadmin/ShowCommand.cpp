@@ -415,11 +415,13 @@ namespace simplearchive {
 		MasterPath masterPath = MasterPath::getObject();
 		if (masterPath.isFound() == false) {
 			str << "Master Archive path empty" << std::endl;
+			str << "Note: This is an Error condition as Master Archive path is mandatory?" << '\n';
 			std::string s = str.str();
 			return s;
 		}
 		if (masterPath.isValid() == false) {
 			str << "Master Archive path not found" << std::endl;
+			str << "Note: This is an Error condition as Master Archive path is mandatory?" << '\n';
 			std::string s = str.str();
 			return s;
 		}
@@ -498,11 +500,13 @@ namespace simplearchive {
 		DerivativePath derivativePath = DerivativePath::getObject();
 		if (derivativePath.isFound() == false) {
 			str << "Derivative path empty" << std::endl;
+			str << "Note: This is an Error condition as Derivative Archive path is mandatory?" << '\n';
 			std::string s = str.str();
 			return s;
 		}
 		if (derivativePath.isValid() == false) {
 			str << "Derivative path not found" << std::endl;
+			str << "Note: This is an Error condition as Derivative Archive path is mandatory?" << '\n';
 			std::string s = str.str();
 			return s;
 		}
