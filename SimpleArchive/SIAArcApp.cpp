@@ -32,6 +32,12 @@
 **
 ** #$$@@$$# */
 
+#include <signal.h>
+#include <stdlib.h>
+#include <stdio.h>
+#ifndef _WIN32
+#include <unistd.h>
+#endif
 #include <stdio.h>
 #include <iostream>
 #include "EnvFunc.h"
@@ -458,10 +464,17 @@ bool failed()
  *
  */
 
+void ctrlHandler(int s) {
+	printf("Caught signal %d\n", s);
+	//exit(1);
 
+}
 
 int main(int argc, char **argv)
 {
+
+	signal(SIGINT, ctrlHandler);
+
 	bool error = false;
 	simplearchive::SIAArcApp app;
 	if (app.initalise(argc, argv) == false) {
