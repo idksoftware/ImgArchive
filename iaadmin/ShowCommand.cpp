@@ -915,7 +915,31 @@ namespace simplearchive {
 
 	std::string WorkspaceTextOut::writeJson()
 	{
-		return std::string();
+		std::string value;
+		bool noPath = false;
+		std::stringstream str;
+		WorkspacePath workspacePath = WorkspacePath::getObject();
+		if (workspacePath.isFound() == false) {
+			value = "Empty";
+			noPath = true;
+		}
+		if (workspacePath.isValid() == false) {
+			value = "Not found";
+			noPath = true;
+		}
+		if (noPath == false) {
+			value = "Valid";
+		}
+		str << "{" << std::endl;
+		str << "\"Workspace\" : {" << std::endl;
+		str << writeJsonTag("Location", value);
+		str << writeJsonTag("Path", workspacePath.get());
+		str << writeJsonTag("AutoView", ((workspacePath.autoViewOn()) ? "On" : "Off"));
+		str << writeJsonTag("AutoCheckout", ((workspacePath.autoCheckout()) ? "On" : "Off"), true);
+		str << "}" << std::endl;
+		str << "}" << std::endl;
+		std::string s = str.str();
+		return s;
 	}
 
 	std::string WorkspaceTextOut::writeHtml()
@@ -999,7 +1023,30 @@ namespace simplearchive {
 
 	std::string PictureTextOut::writeJson()
 	{
-		return std::string();
+		std::string value;
+		bool noPath = false;
+		std::stringstream str;
+		PicturePath picturePath = PicturePath::getObject();
+		if (picturePath.isFound() == false) {
+			value = "Empty";
+			noPath = true;
+		}
+		if (picturePath.isValid() == false) {
+			value = "Not found";
+			noPath = true;
+		}
+		if (noPath == false) {
+			value = "Valid";
+		}
+		str << "{" << std::endl;
+		str << "\"Picture\" : {" << std::endl;
+		str << writeJsonTag("Location", value);
+		str << writeJsonTag("Path", picturePath.get());
+		str << writeJsonTag("AutoView", ((picturePath.autoViewOn()) ? "On" : "Off"), true);
+		str << "}" << std::endl;
+		str << "}" << std::endl;
+		std::string s = str.str();
+		return s;
 	}
 
 	std::string PictureTextOut::writeHtml()
@@ -1083,7 +1130,30 @@ namespace simplearchive {
 
 	std::string WWWTextOut::writeJson()
 	{
-		return std::string();
+		std::string value;
+		bool noPath = false;
+		std::stringstream str;
+		WWWImagePath wwwImagePath = WWWImagePath::getObject();
+		if (wwwImagePath.isFound() == false) {
+			value = "Empty";
+			noPath = true;
+		}
+		if (wwwImagePath.isValid() == false) {
+			value = "Not found";
+			noPath = true;
+		}
+		if (noPath == false) {
+			value = "Valid";
+		}
+		str << "{" << std::endl;
+		str << "\"WWWImagePath\" : {" << std::endl;
+		str << writeJsonTag("Location", value);
+		str << writeJsonTag("Path", wwwImagePath.get());
+		str << writeJsonTag("AutoView", ((wwwImagePath.autoViewOn()) ? "On" : "Off"), true);
+		str << "}" << std::endl;
+		str << "}" << std::endl;
+		std::string s = str.str();
+		return s;
 	}
 
 	std::string WWWTextOut::writeHtml()
