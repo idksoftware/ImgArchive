@@ -307,6 +307,9 @@ namespace simplearchive {
 		if (foldersTextOut.parseTextOutType(textOutType) == false) {
 			return false;
 		}
+		if (filename != nullptr && filename[0] != '\0') {
+			foldersTextOut.setFilename(filename);
+		}
 		foldersTextOut.process();
 		return true;
 	}
@@ -340,12 +343,42 @@ namespace simplearchive {
 
 	std::string FoldersTextOut::writeXML()
 	{
-		return std::string();
+		AppConfig appConfig;
+		std::stringstream str;
+		str << "<ApplicationPaths>" << std::endl;
+		str << writeXMLTag("ConfigurationPath", appConfig.getConfigPath());
+		str << writeXMLTag("SystemPath", appConfig.getSystemPath());
+		str << writeXMLTag("LogPath", appConfig.getLogPath());
+		str << writeXMLTag("ToolsPath", appConfig.getToolsPath());
+		str << writeXMLTag("HookPath", appConfig.getHookPath());
+		str << writeXMLTag("HistoryPath", appConfig.getHistoryPath());
+		str << writeXMLTag("SQLDatabasePath", appConfig.getDatabasePath());
+		str << writeXMLTag("TemplatesPath", appConfig.getTemplatePath());
+		//str << writeXMLTag("DuplicatesPath, ImgArchiveHome::getImgArchiveHome() + "/dups");
+		str << "</ApplicationPaths>" << std::endl;
+		std::string s = str.str();
+		return s;
 	}
 
 	std::string FoldersTextOut::writeJson()
 	{
-		return std::string();
+		AppConfig appConfig;
+		std::stringstream str;
+		str << "{" << std::endl;
+		str << "\"ApplicationPaths\" : {" << std::endl;
+		str << writeJsonTag("ConfigurationPath", appConfig.getConfigPath());
+		str << writeJsonTag("SystemPath", appConfig.getSystemPath());
+		str << writeJsonTag("LogPath", appConfig.getLogPath());
+		str << writeJsonTag("ToolsPath", appConfig.getToolsPath());
+		str << writeJsonTag("HookPath", appConfig.getHookPath());
+		str << writeJsonTag("HistoryPath", appConfig.getHistoryPath());
+		str << writeJsonTag("SQLDatabasePath", appConfig.getDatabasePath());
+		str << writeJsonTag("TemplatesPath", appConfig.getTemplatePath(), true);
+		//str << writeXMLTag("DuplicatesPath, ImgArchiveHome::getImgArchiveHome() + "/dups");
+		str << "}" << std::endl;
+		str << "}" << std::endl;
+		std::string s = str.str();
+		return s;
 	}
 
 	std::string FoldersTextOut::writeHtml()
@@ -459,12 +492,124 @@ namespace simplearchive {
 
 	std::string MasterTextOut::writeXML()
 	{
-		return std::string();
+		std::string value;
+		bool noPath = false;
+		std::stringstream str;
+		MasterPath masterPath = MasterPath::getObject();
+		if (masterPath.isFound() == false) {
+			value = "Empty";
+			noPath = true;
+		}
+		if (masterPath.isValid() == false) {
+			value = "Not found";
+			noPath = true;
+		}
+		if (noPath == false) {
+			value = "Valid";
+		}
+		str << "<MasterArchive>" << std::endl;
+		str << writeXMLTag("Location", value);
+		str << writeXMLTag("Path", masterPath.get());
+
+		str << "<BackupOne>" << std::endl;
+		MasterBackupOnePath masterBackupOnePath = MasterBackupOnePath::getObject();
+		str << writeXMLTag("Enabled", masterBackupOnePath.enabled() ? "True" : "False");
+		if (masterBackupOnePath.isFound() == false) {
+			value = "Empty";
+			noPath = true;
+		}
+		if (masterBackupOnePath.isValid() == false) {
+			value = "Not found";
+			noPath = true;
+		}
+		if (noPath == false) {
+			value = "Valid";
+		}
+		str << writeXMLTag("Location", value);
+		str << writeXMLTag("Path", masterBackupOnePath.get());
+		str << "</BackupOne>" << std::endl;
+		str << "<BackupTwo>" << std::endl;
+		MasterBackupTwoPath masterBackupTwoPath = MasterBackupTwoPath::getObject();
+		str << writeXMLTag("Enabled", masterBackupTwoPath.enabled() ? "True" : "False");
+		if (masterBackupTwoPath.isFound() == false) {
+			value = "Empty";
+			noPath = true;
+		}
+		if (masterBackupTwoPath.isValid() == false) {
+			value = "Not found";
+			noPath = true;
+		}
+		if (noPath == false) {
+			value = "Valid";
+		}
+		str << writeXMLTag("Location", value);
+		str << writeXMLTag("Path", masterBackupTwoPath.get());
+		str << "</BackupTwo>" << std::endl;
+		str << "</MasterArchive>" << std::endl;
+		std::string s = str.str();
+		return s;
 	}
 
 	std::string MasterTextOut::writeJson()
 	{
-		return std::string();
+		std::string value;
+		bool noPath = false;
+		std::stringstream str;
+		MasterPath masterPath = MasterPath::getObject();
+		if (masterPath.isFound() == false) {
+			value = "Empty";
+			noPath = true;
+		}
+		if (masterPath.isValid() == false) {
+			value = "Not found";
+			noPath = true;
+		}
+		if (noPath == false) {
+			value = "Valid";
+		}
+		str << "{" << std::endl;
+		str << "\"MasterArchive\" : {" << std::endl;
+		str << writeJsonTag("Location", value);
+		str << writeJsonTag("Path", masterPath.get());
+
+		str << "\"BackupOne\" : {" << std::endl;
+		MasterBackupOnePath masterBackupOnePath = MasterBackupOnePath::getObject();
+		str << writeJsonTag("Enabled", masterBackupOnePath.enabled() ? "True" : "False");
+		if (masterBackupOnePath.isFound() == false) {
+			value = "Empty";
+			noPath = true;
+		}
+		if (masterBackupOnePath.isValid() == false) {
+			value = "Not found";
+			noPath = true;
+		}
+		if (noPath == false) {
+			value = "Valid";
+		}
+		str << writeJsonTag("Location", value);
+		str << writeJsonTag("Path", masterBackupOnePath.get(), true);
+		str << "}," << std::endl;
+		str << "\"BackupTwo\" : {" << std::endl;
+		MasterBackupTwoPath masterBackupTwoPath = MasterBackupTwoPath::getObject();
+		str << writeJsonTag("Enabled", masterBackupTwoPath.enabled() ? "True" : "False");
+		if (masterBackupTwoPath.isFound() == false) {
+			value = "Empty";
+			noPath = true;
+		}
+		if (masterBackupTwoPath.isValid() == false) {
+			value = "Not found";
+			noPath = true;
+		}
+		if (noPath == false) {
+			value = "Valid";
+		}
+		str << writeJsonTag("Location", value);
+		str << writeJsonTag("Path", masterBackupTwoPath.get(), true);
+		str << "}" << std::endl;
+		str << "}" << std::endl;
+		str << "}" << std::endl;
+		std::string s = str.str();
+		return s;
 	}
 
 	std::string MasterTextOut::writeHtml()
@@ -519,8 +664,9 @@ namespace simplearchive {
 		
 		str << "  Derivative Archive Backups\n";
 
-		/// Backup One
 		
+		/// Backup One
+		noPath = false;
 		str << "        Backup One Enabled:        " << ((appConfig.isDerivativeBackup1Enabled()) ? "True" : "False") << '\n';
 		DerivativeBackupOnePath derivativeBackupOnePath = DerivativeBackupOnePath::getObject();
 		if (derivativeBackupOnePath.isFound() == false) {
@@ -544,7 +690,6 @@ namespace simplearchive {
 		}
 
 		/// Backup Two
-
 		noPath = false;
 		DerivativeBackupTwoPath derivativeBackupTwoPath = DerivativeBackupTwoPath::getObject();
 		if (derivativeBackupTwoPath.isFound() == false) {
@@ -568,12 +713,124 @@ namespace simplearchive {
 
 	std::string DerivativeTextOut::writeXML()
 	{
-		return std::string();
+		std::string value;
+		bool noPath = false;
+		std::stringstream str;
+		DerivativePath derivativePath = DerivativePath::getObject();
+		if (derivativePath.isFound() == false) {
+			value = "Empty";
+			noPath = true;
+		}
+		if (derivativePath.isValid() == false) {
+			value = "Not found";
+			noPath = true;
+		}
+		if (noPath == false) {
+			value = "Valid";
+		}
+		str << "<DerivativeArchive>" << std::endl;
+		str << writeXMLTag("Location", value);
+		str << writeXMLTag("Path", derivativePath.get());
+
+		str << "<BackupOne>" << std::endl;
+		DerivativeBackupOnePath derivativeBackupOnePath = DerivativeBackupOnePath::getObject();
+		str << writeXMLTag("Enabled", derivativeBackupOnePath.enabled() ? "True" : "False");
+		if (derivativeBackupOnePath.isFound() == false) {
+			value = "Empty";
+			noPath = true;
+		}
+		if (derivativeBackupOnePath.isValid() == false) {
+			value = "Not found";
+			noPath = true;
+		}
+		if (noPath == false) {
+			value = "Valid";
+		}
+		str << writeXMLTag("Location", value);
+		str << writeXMLTag("Path", derivativeBackupOnePath.get());
+		str << "</BackupOne>" << std::endl;
+		str << "<BackupTwo>" << std::endl;
+		DerivativeBackupTwoPath derivativeBackupTwoPath = DerivativeBackupTwoPath::getObject();
+		str << writeXMLTag("Enabled", derivativeBackupTwoPath.enabled() ? "True" : "False");
+		if (derivativeBackupTwoPath.isFound() == false) {
+			value = "Empty";
+			noPath = true;
+		}
+		if (derivativeBackupTwoPath.isValid() == false) {
+			value = "Not found";
+			noPath = true;
+		}
+		if (noPath == false) {
+			value = "Valid";
+		}
+		str << writeXMLTag("Location", value);
+		str << writeXMLTag("Path", derivativeBackupTwoPath.get());
+		str << "</BackupTwo>" << std::endl;
+		str << "</DerivativeArchive>" << std::endl;
+		std::string s = str.str();
+		return s;
 	}
 
 	std::string DerivativeTextOut::writeJson()
 	{
-		return std::string();
+		std::string value;
+		bool noPath = false;
+		std::stringstream str;
+		DerivativePath derivativePath = DerivativePath::getObject();
+		if (derivativePath.isFound() == false) {
+			value = "Empty";
+			noPath = true;
+		}
+		if (derivativePath.isValid() == false) {
+			value = "Not found";
+			noPath = true;
+		}
+		if (noPath == false) {
+			value = "Valid";
+		}
+		str << "{" << std::endl;
+		str << "\"DerivativeArchive\" : {" << std::endl;
+		str << writeJsonTag("Location", value);
+		str << writeJsonTag("Path", derivativePath.get());
+
+		str << "\"BackupOne\" : {" << std::endl;
+		DerivativeBackupOnePath derivativeBackupOnePath = DerivativeBackupOnePath::getObject();
+		str << writeJsonTag("Enabled", derivativeBackupOnePath.enabled() ? "True" : "False");
+		if (derivativeBackupOnePath.isFound() == false) {
+			value = "Empty";
+			noPath = true;
+		}
+		if (derivativeBackupOnePath.isValid() == false) {
+			value = "Not found";
+			noPath = true;
+		}
+		if (noPath == false) {
+			value = "Valid";
+		}
+		str << writeJsonTag("Location", value);
+		str << writeJsonTag("Path", derivativeBackupOnePath.get(), true);
+		str << "}," << std::endl;
+		str << "\"BackupTwo\" : {" << std::endl;
+		DerivativeBackupTwoPath derivativeBackupTwoPath = DerivativeBackupTwoPath::getObject();
+		str << writeJsonTag("Enabled", derivativeBackupTwoPath.enabled() ? "True" : "False");
+		if (derivativeBackupTwoPath.isFound() == false) {
+			value = "Empty";
+			noPath = true;
+		}
+		if (derivativeBackupTwoPath.isValid() == false) {
+			value = "Not found";
+			noPath = true;
+		}
+		if (noPath == false) {
+			value = "Valid";
+		}
+		str << writeJsonTag("Location", value);
+		str << writeJsonTag("Path", derivativeBackupTwoPath.get(), true);
+		str << "}" << std::endl;
+		str << "}" << std::endl;
+		str << "}" << std::endl;
+		std::string s = str.str();
+		return s;
 	}
 
 	std::string DerivativeTextOut::writeHtml()
@@ -631,7 +888,29 @@ namespace simplearchive {
 
 	std::string WorkspaceTextOut::writeXML()
 	{
-		return std::string();
+		std::string value;
+		bool noPath = false;
+		std::stringstream str;
+		WorkspacePath workspacePath = WorkspacePath::getObject();
+		if (workspacePath.isFound() == false) {
+			value = "Empty";
+			noPath = true;
+		}
+		if (workspacePath.isValid() == false) {
+			value = "Not found";
+			noPath = true;
+		}
+		if (noPath == false) {
+			value = "Valid";
+		}
+		str << "<Workspace>" << std::endl;
+		str << writeXMLTag("Location", value);
+		str << writeXMLTag("Path", workspacePath.get());
+		str << writeXMLTag("AutoView", ((workspacePath.autoViewOn()) ? "On" : "Off"));
+		str << writeXMLTag("AutoCheckout", ((workspacePath.autoCheckout()) ? "On" : "Off"));
+		str << "</Workspace>" << std::endl;
+		std::string s = str.str();
+		return s;
 	}
 
 	std::string WorkspaceTextOut::writeJson()
@@ -694,7 +973,28 @@ namespace simplearchive {
 
 	std::string PictureTextOut::writeXML()
 	{
-		return std::string();
+		std::string value;
+		bool noPath = false;
+		std::stringstream str;
+		PicturePath picturePath = PicturePath::getObject();
+		if (picturePath.isFound() == false) {
+			value = "Empty";
+			noPath = true;
+		}
+		if (picturePath.isValid() == false) {
+			value = "Not found";
+			noPath = true;
+		}
+		if (noPath == false) {
+			value = "Valid";
+		}
+		str << "<Picture>" << std::endl;
+		str << writeXMLTag("Location", value);
+		str << writeXMLTag("Path", picturePath.get());
+		str << writeXMLTag("AutoView", ((picturePath.autoViewOn()) ? "On" : "Off"));
+		str << "</Picture>" << std::endl;
+		std::string s = str.str();
+		return s;
 	}
 
 	std::string PictureTextOut::writeJson()
@@ -757,7 +1057,28 @@ namespace simplearchive {
 
 	std::string WWWTextOut::writeXML()
 	{
-		return std::string();
+		std::string value;
+		bool noPath = false;
+		std::stringstream str;
+		WWWImagePath wwwImagePath = WWWImagePath::getObject();
+		if (wwwImagePath.isFound() == false) {
+			value = "Empty";
+			noPath = true;
+		}
+		if (wwwImagePath.isValid() == false) {
+			value = "Not found";
+			noPath = true;
+		}
+		if (noPath == false) {
+			value = "Valid";
+		}
+		str << "<wwwImagePath>" << std::endl;
+		str << writeXMLTag("Location", value);
+		str << writeXMLTag("Path", wwwImagePath.get());
+		str << writeXMLTag("AutoView", ((wwwImagePath.autoViewOn()) ? "On" : "Off"));
+		str << "</wwwImagePath>" << std::endl;
+		std::string s = str.str();
+		return s;
 	}
 
 	std::string WWWTextOut::writeJson()

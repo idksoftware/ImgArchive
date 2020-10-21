@@ -6,6 +6,7 @@
 #include <sstream>
 #include <iostream>
 #include <fstream>
+#include <algorithm>
 
 #define PLAIN_TEXT_LABEL		"plain"
 #define XML_LABEL				"xml"
@@ -41,24 +42,31 @@ std::string TextOut::writeXMLTag(const char* tag, const char* v) {
 std::string TextOut::writeXMLTag(const char* tag, const std::string& value) {
 	std::ostringstream xml;
 	if (!value.empty()) {
-		xml << "<" << tag << ">" << value << "</" << tag << ">\n";
+		xml << "<" << tag << ">" << value << "</" << tag << ">" << std::endl;
 	}
 	else {
-		xml << "<" << tag << "/>\n";
+		xml << "<" << tag << "/>" << std::endl;
 	}
 	return xml.str();
 }
 
-std::string TextOut::writeJsonTag(const char* tag, const char* v) {
+std::string TextOut::writeJsonTag(const char* tag, const char* v, bool end) {
 	const std::string& value = v;
-	return writeJsonTag(tag, value);
+	return writeJsonTag(tag, value, end);
 }
 
 
-std::string TextOut::writeJsonTag(const char* tag, const std::string& value) {
+std::string TextOut::writeJsonTag(const char* tag, const std::string& value, bool end) {
 	std::ostringstream jason;
 	if (!value.empty()) {
-		jason << tag << ":\"" << value << "\"";
+		std::string tmp = value;
+		std::replace(tmp.begin(), tmp.end(), '\\', '/');
+		if (!end) {
+			jason << "\"" << tag << "\"" << ":\"" << tmp << "\"" << "," << std::endl;
+		}
+		else {
+			jason << "\"" << tag << "\"" << ":\"" << tmp << "\"" << std::endl;
+		}
 	}
 	
 	return jason.str();
@@ -126,6 +134,14 @@ void TextOut::process() {
 	}
 	std::ofstream file(m_filename.c_str());
 	if (file.is_open() == true) {
+		switch (m_textOutType) {
+		case TextOutType::xml:
+			file << "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" << std::endl;
+			break;
+		//case TextOutType::json:
+		//case TextOutType::html:
+		//	return writeHtml();
+		}
 		file << toString();
 	}
 	file.close();
