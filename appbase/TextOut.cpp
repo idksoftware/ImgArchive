@@ -132,17 +132,19 @@ void TextOut::process() {
 	if (m_filename.empty()) {
 		std::cout << toString();
 	}
-	std::ofstream file(m_filename.c_str());
-	if (file.is_open() == true) {
-		switch (m_textOutType) {
-		case TextOutType::xml:
-			file << "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" << std::endl;
-			break;
-		//case TextOutType::json:
-		//case TextOutType::html:
-		//	return writeHtml();
+	else {
+		std::ofstream file(m_filename.c_str());
+		if (file.is_open() == true) {
+			switch (m_textOutType) {
+			case TextOutType::xml:
+				file << "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" << std::endl;
+				break;
+				//case TextOutType::json:
+				//case TextOutType::html:
+				//	return writeHtml();
+			}
+			file << toString();
 		}
-		file << toString();
+		file.close();
 	}
-	file.close();
 }

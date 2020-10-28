@@ -5,9 +5,9 @@
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.config.gnu.lib.debug.1864863124" moduleId="org.eclipse.cdt.core.settings" name="Debug">
 				<externalSettings>
 					<externalSetting>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/sqlite3"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/sqlite3/Debug"/>
-						<entry flags="RESOLVED" kind="libraryFile" name="sqlite3" srcPrefixMapping="" srcRootPath=""/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/admin"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/admin/Debug"/>
+						<entry flags="RESOLVED" kind="libraryFile" name="admin" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 				<extensions>
@@ -23,7 +23,7 @@
 					<folderInfo id="cdt.managedbuild.config.gnu.lib.debug.1864863124." name="/" resourcePath="">
 						<toolChain id="cdt.managedbuild.toolchain.gnu.lib.debug.1893124222" name="Linux GCC" superClass="cdt.managedbuild.toolchain.gnu.lib.debug">
 							<targetPlatform id="cdt.managedbuild.target.gnu.platform.lib.debug.1040611434" name="Debug Platform" superClass="cdt.managedbuild.target.gnu.platform.lib.debug"/>
-							<builder buildPath="${workspace_loc:/sqlite3}/Debug" id="cdt.managedbuild.target.gnu.builder.lib.debug.743466954" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="Gnu Make Builder" superClass="cdt.managedbuild.target.gnu.builder.lib.debug"/>
+							<builder buildPath="${workspace_loc:/admin}/Debug" id="cdt.managedbuild.target.gnu.builder.lib.debug.743466954" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="Gnu Make Builder" superClass="cdt.managedbuild.target.gnu.builder.lib.debug"/>
 							<tool id="cdt.managedbuild.tool.gnu.archiver.lib.debug.1785038106" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.lib.debug"/>
 							<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.lib.debug.966399309" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.lib.debug">
 								<option id="gnu.cpp.compiler.lib.debug.option.optimization.level.742259311" name="Optimization Level" superClass="gnu.cpp.compiler.lib.debug.option.optimization.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
@@ -50,9 +50,9 @@
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.config.gnu.lib.release.2026048297" moduleId="org.eclipse.cdt.core.settings" name="Release">
 				<externalSettings>
 					<externalSetting>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/sqlite3"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/sqlite3/Release"/>
-						<entry flags="RESOLVED" kind="libraryFile" name="sqlite3" srcPrefixMapping="" srcRootPath=""/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/admin"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/admin/Release"/>
+						<entry flags="RESOLVED" kind="libraryFile" name="" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 				<extensions>
@@ -68,7 +68,7 @@
 					<folderInfo id="cdt.managedbuild.config.gnu.lib.release.2026048297." name="/" resourcePath="">
 						<toolChain id="cdt.managedbuild.toolchain.gnu.lib.release.96501489" name="Linux GCC" superClass="cdt.managedbuild.toolchain.gnu.lib.release">
 							<targetPlatform id="cdt.managedbuild.target.gnu.platform.lib.release.267042440" name="Debug Platform" superClass="cdt.managedbuild.target.gnu.platform.lib.release"/>
-							<builder buildPath="${workspace_loc:/sqlite3}/Release" id="cdt.managedbuild.target.gnu.builder.lib.release.1411809129" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="Gnu Make Builder" superClass="cdt.managedbuild.target.gnu.builder.lib.release"/>
+							<builder buildPath="${workspace_loc:/admin}/Release" id="cdt.managedbuild.target.gnu.builder.lib.release.1411809129" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="Gnu Make Builder" superClass="cdt.managedbuild.target.gnu.builder.lib.release"/>
 							<tool id="cdt.managedbuild.tool.gnu.archiver.lib.release.983665575" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.lib.release"/>
 							<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.lib.release.1335456409" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.lib.release">
 								<option id="gnu.cpp.compiler.lib.release.option.optimization.level.818528925" name="Optimization Level" superClass="gnu.cpp.compiler.lib.release.option.optimization.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.optimization.level.most" valueType="enumerated"/>
@@ -93,7 +93,7 @@
 		</cconfiguration>
 	</storageModule>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-		<project id="sqlite3.cdt.managedbuild.target.gnu.lib.110135201" name="Static Library" projectType="cdt.managedbuild.target.gnu.lib"/>
+		<project id="admin.cdt.managedbuild.target.gnu.lib.110135201" name="Static Library" projectType="cdt.managedbuild.target.gnu.lib"/>
 	</storageModule>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>

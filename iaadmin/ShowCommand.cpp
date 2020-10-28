@@ -72,7 +72,25 @@ namespace simplearchive {
 	};
 
 	std::string ShowAllowedTextOut ::writePlain() {
-		return std::string();
+		AppConfig appConfig;
+		std::stringstream str;
+
+		ImageExtentions& imageExtentions = ImageExtentions::get();
+		std::vector<std::shared_ptr<ExtentionItem>> list;
+		
+		str << " AllowedTypes" << std::endl;
+		str << " ============" << std::endl;
+		imageExtentions.getList(list, m_type);
+		for (auto ii = list.begin(); ii != list.end(); ++ii) {
+			std::shared_ptr<ExtentionItem> data = *ii;
+			str << " Ext:         " << data->getExt() << std::endl;
+			str << " ImageType:   " << data->getType().toString() << std::endl;
+			str << " Mime:        " << data->getMimeType() << std::endl;
+			str << " Description: " << data->getDesciption() << std::endl;
+			str << std::endl;
+		}
+		std::string s = str.str();
+		return s;
 	}
 	std::string ShowAllowedTextOut::writeXML() {
 		AppConfig appConfig;
@@ -81,18 +99,18 @@ namespace simplearchive {
 		ImageExtentions& imageExtentions = ImageExtentions::get();
 		std::vector<std::shared_ptr<ExtentionItem>> list;
 		str << XML_HEATER << '\n';
-		str << "<AllowedTypes>" << '\n';
+		str << "<AllowedTypes>" << std::endl;
 		imageExtentions.getList(list, m_type);
 		for (auto ii = list.begin(); ii != list.end(); ++ii) {
 			std::shared_ptr<ExtentionItem> data = *ii;
-			str << "\t" << "<Item>" << '\n';
+			str << "\t" << "<Type>" << std::endl;
 			str << "\t\t" << writeXMLTag("Ext", data->getExt());
 			str << "\t\t" << writeXMLTag("ImageType", data->getType().toString());
 			str << "\t\t" << writeXMLTag("Mime", data->getMimeType());
 			str << "\t\t" << writeXMLTag("Description", data->getDesciption());
-			str << "\t" << "</Item>" << '\n';
+			str << "\t" << "</Item>" << std::endl;
 		}
-		str << "</AllowedTypes>" << '\n';
+		str << "</AllowedTypes>" << std::endl;
 		std::string s = str.str();
 		return s;
 	}
@@ -102,20 +120,29 @@ namespace simplearchive {
 
 		ImageExtentions& imageExtentions = ImageExtentions::get();
 		std::vector<std::shared_ptr<ExtentionItem>> list;
-		str << "{" << '\n';
-		str << "\tAllowedTypes : [" << '\n';
+		str << "{" << std::endl;
+		str << "\t\"AllowedTypes\" : [" << std::endl;
 		imageExtentions.getList(list, m_type);
+		bool first = true;
 		for (auto ii = list.begin(); ii != list.end(); ++ii) {
+			if (first) {
+				first = false;
+			}
+			else {
+				str << "\t\t" << "}}," << std::endl;
+			}
 			std::shared_ptr<ExtentionItem> data = *ii;
-			str << "\t\t" << "Item : {" << '\n';
+			//str << "\t\t" << "\"" << data->getExt() << "\" : {" << std::endl;
+			str << "\t\t" << "{ \"Type\" : {" << std::endl;
 			str << "\t\t\t" << writeJsonTag("Ext", data->getExt());
 			str << "\t\t\t" << writeJsonTag("ImageType", data->getType().toString());
 			str << "\t\t\t" << writeJsonTag("Mime", data->getMimeType());
-			str << "\t\t\t" << writeJsonTag("Description", data->getDesciption());
-			str << "\t\t" << "}" << '\n';
+			str << "\t\t\t" << writeJsonTag("Description", data->getDesciption(), true);
+			
 		}
-		str << "\t]" << '\n';
-		str << "}" << '\n';
+		str << "\t\t" << "}}" << std::endl;
+		str << "\t]" << std::endl;
+		str << "}" << std::endl;
 		std::string s = str.str();
 		return s;
 	}
@@ -142,7 +169,7 @@ namespace simplearchive {
 		imageExtentions.getList(list, type);
 		for (auto ii = list.begin(); ii != list.end(); ++ii) {
 			std::shared_ptr<ExtentionItem> data = *ii;
-			str << data->toString() << '\n';
+			str << data->toString() << std::endl;
 		}
 
 		std::string s = str.str();
@@ -218,12 +245,12 @@ namespace simplearchive {
 		AppConfig appConfig;
 		std::stringstream str;
 
-		str << "    General" << '\n';
-		str << "        Log level:                 " << appConfig.getLogLevel() << '\n';
-		str << "        Console level:             " << appConfig.getConsoleLevel() << '\n';
-		str << "        SQL database:              " << ((appConfig.isSQL()) ? "True" : "False") << '\n';
-		str << "        Silent On:                 " << ((appConfig.isSilent()) ? "True" : "False") << '\n';
-		str << "        Quiet On:                  " << ((appConfig.isQuiet()) ? "True" : "False") << '\n';
+		str << "    General" << std::endl;
+		str << "        Log level:                 " << appConfig.getLogLevel() << std::endl;
+		str << "        Console level:             " << appConfig.getConsoleLevel() << std::endl;
+		str << "        SQL database:              " << ((appConfig.isSQL()) ? "True" : "False") << std::endl;
+		str << "        Silent On:                 " << ((appConfig.isSilent()) ? "True" : "False") << std::endl;
+		str << "        Quiet On:                  " << ((appConfig.isQuiet()) ? "True" : "False") << std::endl;
 
 		std::string s = str.str();
 		return s;
@@ -232,28 +259,28 @@ namespace simplearchive {
 		AppConfig appConfig;
 		std::stringstream str;
 
-		str << XML_HEATER << '\n';
-		str << "<GeneralSettings>" << '\n';
+		str << XML_HEATER << std::endl;
+		str << "<GeneralSettings>" << std::endl;
 		str << writeXMLTag("Loglevel", appConfig.getLogLevel());
 		str << writeXMLTag("Consolelevel", appConfig.getConsoleLevel());
 		str << writeXMLTag("SQLDatabase", appConfig.isSQL());
 		str << writeXMLTag("SilentOn", appConfig.isSilent());
 		str << writeXMLTag("QuietOn", appConfig.isQuiet());
-		str << "</GeneralSettings>" << '\n';
+		str << "</GeneralSettings>" << std::endl;
 		std::string s = str.str();
 		return s;
 	}
 	std::string GeneralTextOut::writeJson() {
 		AppConfig appConfig;
 		std::stringstream str;
-
-		str << "    General" << '\n';
-		str << "        Log level:                 " << appConfig.getLogLevel() << '\n';
-		str << "        Console level:             " << appConfig.getConsoleLevel() << '\n';
-		str << "        SQL database:              " << ((appConfig.isSQL()) ? "True" : "False") << '\n';
-		str << "        Silent On:                 " << ((appConfig.isSilent()) ? "True" : "False") << '\n';
-		str << "        Quiet On:                  " << ((appConfig.isQuiet()) ? "True" : "False") << '\n';
-
+		str << "{" << std::endl;
+		str << "\"General\" : {" << std::endl;
+		str << writeJsonTag("LogLevel", appConfig.getLogLevel());
+		str << writeJsonTag("ConsoleLevel", appConfig.getConsoleLevel());
+		str << writeJsonTag("SQLDatabase", ((appConfig.isSQL()) ? "True" : "False"));
+		str << writeJsonTag("SilentOn", ((appConfig.isSilent()) ? "True" : "False"));
+		str << writeJsonTag("QuietOn", ((appConfig.isQuiet()) ? "True" : "False"), true);
+		str << "}}" << std::endl;
 		std::string s = str.str();
 		return s;
 	}
@@ -261,12 +288,12 @@ namespace simplearchive {
 		AppConfig appConfig;
 		std::stringstream str;
 		/*
-		str << "    General" << '\n';
-		str << "        Log level:                 " << appConfig.getLogLevel();
-		str << "        Console level:             " << appConfig.getConsoleLevel();
-		str << "        SQL database:              " << appConfig.isSQL();
-		str << "        Silent On:                 " << appConfig.isSilent();
-		str << "        Quiet On:                  " << appConfig.isQuiet();
+		str << "General" << std::endl;
+		str << writeHtmlTag("Log level" << appConfig.getLogLevel();
+		str << writeHtmlTag("Console level" << appConfig.getConsoleLevel();
+		str << writeHtmlTag("SQL database" << appConfig.isSQL();
+		str << writeHtmlTag("Silent On" << appConfig.isSilent();
+		str << writeHtmlTag("Quiet On" << appConfig.isQuiet();
 		*/
 		std::string s = str.str();
 		return s;
@@ -326,16 +353,16 @@ namespace simplearchive {
 		}
 		str << std::endl;
 
-		str << "Application paths" << '\n';
-		str << "  Configuration path:        " << appConfig.getConfigPath() << '\n';
-		str << "  System path:               " << appConfig.getSystemPath() << '\n';
-		str << "  Log path:                  " << appConfig.getLogPath() << '\n';
-		str << "  Tools path:                " << appConfig.getToolsPath() << '\n';
-		str << "  Hook path:                 " << appConfig.getHookPath() << '\n';
-		str << "  History path:              " << appConfig.getHistoryPath() << '\n';     
-		str << "  SQL Database path:         " << appConfig.getDatabasePath() << '\n';
-		str << "  Templates path:            " << appConfig.getTemplatePath() << '\n';
-		str << "  Duplicates path:           " << ImgArchiveHome::getImgArchiveHome() << "/dups" << '\n';
+		str << "Application paths" << std::endl;
+		str << "  Configuration path:        " << appConfig.getConfigPath() << std::endl;
+		str << "  System path:               " << appConfig.getSystemPath() << std::endl;
+		str << "  Log path:                  " << appConfig.getLogPath() << std::endl;
+		str << "  Tools path:                " << appConfig.getToolsPath() << std::endl;
+		str << "  Hook path:                 " << appConfig.getHookPath() << std::endl;
+		str << "  History path:              " << appConfig.getHistoryPath() << std::endl;     
+		str << "  SQL Database path:         " << appConfig.getDatabasePath() << std::endl;
+		str << "  Templates path:            " << appConfig.getTemplatePath() << std::endl;
+		str << "  Duplicates path:           " << ImgArchiveHome::getImgArchiveHome() << "/dups" << std::endl;
 		str << std::endl;
 		std::string s = str.str();
 		return s;
@@ -448,21 +475,21 @@ namespace simplearchive {
 		MasterPath masterPath = MasterPath::getObject();
 		if (masterPath.isFound() == false) {
 			str << "Master Archive path empty" << std::endl;
-			str << "Note: This is an Error condition as Master Archive path is mandatory?" << '\n';
+			str << "Note: This is an Error condition as Master Archive path is mandatory?" << std::endl;
 			std::string s = str.str();
 			return s;
 		}
 		if (masterPath.isValid() == false) {
 			str << "Master Archive path not found" << std::endl;
-			str << "Note: This is an Error condition as Master Archive path is mandatory?" << '\n';
+			str << "Note: This is an Error condition as Master Archive path is mandatory?" << std::endl;
 			std::string s = str.str();
 			return s;
 		}
 		str << "  Master Archive Location" << std::endl;
-		str << "        " << masterPath.get() << '\n';
+		str << "        " << masterPath.get() << std::endl;
 		str << std::endl;
 		str << "  Master Archive Backups\n";
-			str << "        Backup One Enabled:        " << ((appConfig.isMasterBackup1Enabled()) ? "True" : "False") << '\n';
+			str << "        Backup One Enabled:        " << ((appConfig.isMasterBackup1Enabled()) ? "True" : "False") << std::endl;
 		MasterBackupOnePath masterBackupOnePath = MasterBackupOnePath::getObject();
 		if (masterBackupOnePath.isFound() == false) {
 			str << "        Path empty" << std::endl;	
@@ -473,7 +500,7 @@ namespace simplearchive {
 		else {
 			str << "        Backup One path:           " << masterBackupOnePath.get() << std::endl;
 		}
-		str << "        Backup Two Enabled:        " << ((appConfig.isMasterBackup2Enabled()) ? "True" : "False") << '\n';
+		str << "        Backup Two Enabled:        " << ((appConfig.isMasterBackup2Enabled()) ? "True" : "False") << std::endl;
 		MasterBackupTwoPath masterBackupTwoPath = MasterBackupTwoPath::getObject();
 		if (masterBackupTwoPath.isFound() == false) {
 			str << "        Path empty" << std::endl;
@@ -645,19 +672,19 @@ namespace simplearchive {
 		DerivativePath derivativePath = DerivativePath::getObject();
 		if (derivativePath.isFound() == false) {
 			str << "Derivative path empty" << std::endl;
-			str << "Note: This is an Error condition as Derivative Archive path is mandatory?" << '\n';
+			str << "Note: This is an Error condition as Derivative Archive path is mandatory?" << std::endl;
 			std::string s = str.str();
 			return s;
 		}
 		if (derivativePath.isValid() == false) {
 			str << "Derivative path not found" << std::endl;
-			str << "Note: This is an Error condition as Derivative Archive path is mandatory?" << '\n';
+			str << "Note: This is an Error condition as Derivative Archive path is mandatory?" << std::endl;
 			std::string s = str.str();
 			return s;
 		}
 
 		str << "  Derivative Archive Location" << std::endl;
-		str << "        " << derivativePath.get() << '\n';
+		str << "        " << derivativePath.get() << std::endl;
 		str << std::endl;
 
 		/// Derivative Archive Backups
@@ -667,7 +694,7 @@ namespace simplearchive {
 		
 		/// Backup One
 		noPath = false;
-		str << "        Backup One Enabled:        " << ((appConfig.isDerivativeBackup1Enabled()) ? "True" : "False") << '\n';
+		str << "        Backup One Enabled:        " << ((appConfig.isDerivativeBackup1Enabled()) ? "True" : "False") << std::endl;
 		DerivativeBackupOnePath derivativeBackupOnePath = DerivativeBackupOnePath::getObject();
 		if (derivativeBackupOnePath.isFound() == false) {
 			str << "        Path empty" << std::endl;
@@ -681,12 +708,12 @@ namespace simplearchive {
 			str << "        Backup One path:           " << derivativeBackupOnePath.get() << std::endl;
 		}
 		if (appConfig.isDerivativeBackup1Enabled() && noPath) {
-			str << "Note: This is an Error condition as Derivative backup 1 Path location is not valid?" << '\n';
+			str << "Note: This is an Error condition as Derivative backup 1 Path location is not valid?" << std::endl;
 		}
 
-		str << "        Backup Two Enabled:        " << ((appConfig.isDerivativeBackup2Enabled()) ? "True" : "False") << '\n';
+		str << "        Backup Two Enabled:        " << ((appConfig.isDerivativeBackup2Enabled()) ? "True" : "False") << std::endl;
 		if (appConfig.isDerivativeBackup2Enabled() && noPath) {
-			str << "Note: This is an Error condition as Derivative backup 1 Path location is not valid?" << '\n';
+			str << "Note: This is an Error condition as Derivative backup 1 Path location is not valid?" << std::endl;
 		}
 
 		/// Backup Two
@@ -704,7 +731,7 @@ namespace simplearchive {
 			str << "        Backup Two path:           " << derivativeBackupTwoPath.get() << std::endl;
 		}
 		if (appConfig.isDerivativeBackup2Enabled() && noPath) {
-			str << "Note: This is an Error condition as Derivative backup 2 Path location is not valid?" << '\n';
+			str << "Note: This is an Error condition as Derivative backup 2 Path location is not valid?" << std::endl;
 		}
 		str << std::endl;
 		std::string s = str.str();
@@ -874,12 +901,12 @@ namespace simplearchive {
 		}
 		if (noPath == false) {
 			str << "  Workspace Location" << std::endl;
-			str << "        " << workspacePath.get() << '\n';
+			str << "        " << workspacePath.get() << std::endl;
 		}			
-		str << "      Auto view: " << ((workspacePath.autoViewOn()) ? "On" : "Off") << '\n';
-		str << "  Auto checkout: " << ((workspacePath.autoCheckout()) ? "On" : "Off") << '\n';
+		str << "      Auto view: " << ((workspacePath.autoViewOn()) ? "On" : "Off") << std::endl;
+		str << "  Auto checkout: " << ((workspacePath.autoCheckout()) ? "On" : "Off") << std::endl;
 		if ((workspacePath.autoViewOn() || workspacePath.autoCheckout()) && noPath) {
-			str << "Note: This is an Error condition as Workspace path location is not valid?" << '\n';
+			str << "Note: This is an Error condition as Workspace path location is not valid?" << std::endl;
 		}
 		str << std::endl;
 		std::string s = str.str();
@@ -984,11 +1011,11 @@ namespace simplearchive {
 		}
 		if (noPath == false) {
 			str << "  Picture Location" << std::endl;
-			str << "        " << picturePath.get() << '\n';
+			str << "        " << picturePath.get() << std::endl;
 		}
-		str << "  Auto view: " << ((picturePath.autoViewOn()) ? "On" : "Off") << '\n';
+		str << "  Auto view: " << ((picturePath.autoViewOn()) ? "On" : "Off") << std::endl;
 		if (picturePath.autoViewOn() && noPath) {
-			str << "Note: This is an Error condition as Picture path location is not valid?" << '\n';
+			str << "Note: This is an Error condition as Picture path location is not valid?" << std::endl;
 		}
 		str << std::endl;
 		std::string s = str.str();
@@ -1091,11 +1118,11 @@ namespace simplearchive {
 		}
 		if (noPath == false) {
 			str << "  WWW Location" << std::endl;
-			str << "        " << wwwImagePath.get() << '\n';
+			str << "        " << wwwImagePath.get() << std::endl;
 		}
-		str << "  Auto view: " << ((wwwImagePath.autoViewOn()) ? "On" : "Off") << '\n';
+		str << "  Auto view: " << ((wwwImagePath.autoViewOn()) ? "On" : "Off") << std::endl;
 		if (wwwImagePath.autoViewOn() && noPath) {
-			str << "Note: This is an Error condition as WWW path location is not valid?" << '\n';
+			str << "Note: This is an Error condition as WWW path location is not valid?" << std::endl;
 		}
 		str << std::endl;
 		std::string s = str.str();
@@ -1171,12 +1198,12 @@ namespace simplearchive {
 	{
 		AppConfig appConfig;
 		std::stringstream str;
-		str << "    External Exif Tool" << '\n';
-		str << "        External Exif tool enabled:" << ((appConfig.isExternalExifToolEnabled()) ? "True" : "False") << '\n';
-		str << "        Exif map path:             " << appConfig.getExifMapPath() << '\n';
-		str << "        Exif map file:             " << appConfig.getExifMapFile() << '\n';
-		str << "        Exif Tool:                 " << appConfig.getExternalExifTool() << '\n';
-		str << "        Exif command line:         " << appConfig.getExternalCommandLine() << '\n';
+		str << "    External Exif Tool" << std::endl;
+		str << "        External Exif tool enabled:" << ((appConfig.isExternalExifToolEnabled()) ? "True" : "False") << std::endl;
+		str << "        Exif map path:             " << appConfig.getExifMapPath() << std::endl;
+		str << "        Exif map file:             " << appConfig.getExifMapFile() << std::endl;
+		str << "        Exif Tool:                 " << appConfig.getExternalExifTool() << std::endl;
+		str << "        Exif command line:         " << appConfig.getExternalCommandLine() << std::endl;
 
 		std::string s = str.str();
 		std::cout << s;
