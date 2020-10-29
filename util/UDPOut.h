@@ -5,8 +5,8 @@
 #include <Winsock2.h> // Windsock 2
 #include <stdio.h>
 #else
+#define SOCKET int
 #include <sys/socket.h>
-
 #include <string.h>
 #include <strings.h>
 #include <stdio.h>

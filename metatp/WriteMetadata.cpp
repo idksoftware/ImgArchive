@@ -66,8 +66,8 @@ namespace simplearchive {
 				return false;
 			}
 		}
-
-		if (WriteMetadata::writeMasterMetadata(fullPath, pathController.getImage(), metadataObject) == false) {
+		std::string temp = pathController.getImage();
+		if (WriteMetadata::writeMasterMetadata(fullPath, temp, metadataObject) == false) {
 			return false;
 		}
 		

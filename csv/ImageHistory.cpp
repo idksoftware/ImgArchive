@@ -167,8 +167,8 @@ namespace simplearchive {
 		imageHistoryRow.columnAt(DB_FILENAME) = indexController.getImageName();
 		imageHistoryRow.columnAt(DB_FILEPATH) = indexController.getYearday();
 #else
-		imageHistoryRow.columnAt(DB_FILENAME) = filepath.c_str();
-		imageHistoryRow.columnAt(DB_FILEPATH) = filepath.c_str();
+		imageHistoryRow.columnAt(DB_FILENAME) = indexController.getImageName().c_str();
+		imageHistoryRow.columnAt(DB_FILEPATH) = indexController.getYearday().c_str();
 #endif
 		imageHistoryRow.columnAt(DB_EVENT) = static_cast<int>(he.m_event);
 		imageHistoryRow.columnAt(DB_VERSION) = version;
@@ -188,7 +188,7 @@ namespace simplearchive {
 		std::string indexPath = m_indexRoot;
 		PathController indexPathController(indexPath.c_str());
 		indexPathController.splitShort(filepath);
-		indexPathController.makeImagePath(false);
+		indexPathController.makeImagePath(nullptr);
 		indexPath += '/';
 		indexPath += indexPathController.getYear();
 		if (SAUtils::DirExists(indexPath.c_str()) == false) {

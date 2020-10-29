@@ -53,7 +53,7 @@
 #include "argvparser.h"
 #include "HookCmd.h"
 #include "MakeMedia.h"
-#include "MirrorManager.h"
+//#include "MirrorManager.h"
 //#include "ViewManager.h"
 #include "AboutCommand.h"
 

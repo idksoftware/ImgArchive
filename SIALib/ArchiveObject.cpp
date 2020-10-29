@@ -344,7 +344,8 @@ namespace simplearchive {
 
 		std::string imageAddress = imagePath.getImageName();
 
-		if (WriteMetadata::writeMasterMetadata(getRepositoryPath().getMetadataPath(), imageAddress, metadataObject) == false) {
+		std::string path = getRepositoryPath().getMetadataPath();
+		if (WriteMetadata::writeMasterMetadata(path, imageAddress, metadataObject) == false) {
 			return false;
 		}
 

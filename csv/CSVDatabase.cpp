@@ -47,7 +47,7 @@
 #include "ResultsPresentation.h"
 #include "MasterMatadataResultsPresentation.h"
 #include "CSVIndexAction.h"
-#include "Clogger.h"
+#include "CLogger.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE

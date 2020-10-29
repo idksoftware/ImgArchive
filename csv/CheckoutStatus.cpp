@@ -14,7 +14,7 @@
 #include "AddressScope.h"
 #include "IndexVisitor.h"
 #include "ResultsList.h"
-#include "Clogger.h"
+#include "CLogger.h"
 #include <iomanip>
 
 

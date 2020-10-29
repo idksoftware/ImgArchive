@@ -63,7 +63,7 @@
 #include "ViewManager.h"
 #include "SummaryFile.h"
 #include "CIDKDate.h"
-#include "MirrorManager.h"
+//#include "MirrorManager.h"
 #include "Database.h"
 #include "CSVDatabase.h"
 #include "MakeMedia.h"
@@ -716,7 +716,7 @@ namespace simplearchive {
 	bool SIALib::mirror(const char *name) {
 		
 		AppConfig& config = AppConfig::get();
-
+/*
 		MirrorManager mirrorManager;
 		
 		mirrorManager.setPrimaryIndexPath(config.getIndexPath());
@@ -724,7 +724,7 @@ namespace simplearchive {
 		if (mirrorManager.process() == false) {
 			return false;
 		}
-
+*/
 		/*
 		
 		if (mirrorManager.verifyMirror() == false) {
