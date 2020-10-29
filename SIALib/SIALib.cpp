@@ -63,7 +63,7 @@
 #include "ViewManager.h"
 #include "SummaryFile.h"
 #include "CIDKDate.h"
-#include "MirrorManager.h"
+//#include "MirrorManager.h"
 #include "Database.h"
 #include "CSVDatabase.h"
 #include "MakeMedia.h"
