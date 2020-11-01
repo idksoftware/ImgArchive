@@ -34,7 +34,7 @@
 
 #include <stdio.h>
 #include <memory>
-#include "MetadataProperties.h"
+//#include "MetadataProperties.h"
 #include "ExternalExifMapper.h"
 #include "ExifObject.h"
 #include "ConfigReader.h"

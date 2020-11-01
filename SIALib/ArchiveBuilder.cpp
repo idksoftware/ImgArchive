@@ -679,7 +679,9 @@ namespace simplearchive {
 				//exifObject->debugPrint();
 				if (m_useExternalExifTool == true) {
 					logger.log(LOG_OK, CLogger::Level::INFO, "Using external EXIF tool on file \"%s\"", imageItem->getFilename().c_str());
-					exifObject = ImageFileReader::externalExifTool(imageItem->getRootPath(), imageItem->getFilename());
+					std::string filename = imageItem->getFilename();
+					std::string path = imageItem->getRootPath();
+					exifObject = ImageFileReader::externalExifTool(path, filename);
 					if (exifObject == nullptr) {
 						logger.log(LOG_OK, CLogger::Level::INFO, "External EXIF reader failed. No extra EXIF readings for image: \"%s\"", imageItem->getFilename().c_str());
 					}

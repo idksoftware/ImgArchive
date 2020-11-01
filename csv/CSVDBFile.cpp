@@ -141,10 +141,15 @@ class IdxFileItem {
 	int m_version;
 	ExifDate m_dateArchived;
 	int m_dbLink;
+	bool m_error{ true };
 public:
 	IdxFileItem(const char *text) {
 		CSVArgs csvArgs(':');
 		csvArgs.process(text);
+		if (csvArgs.size() < 9) {
+			return;
+		}
+		m_error = false;
 		std::string idxStr = csvArgs.at(0);
 
 		//m_idx = strtol(idxStr.c_str(), NULL, 16);
@@ -177,6 +182,7 @@ public:
 		m_version = version;
 		m_dateArchived = date;
 		m_dbLink = dbLink;
+		m_error = false;
 	}
 
 	std::unique_ptr<ImageInfo> getImageInfo() {
@@ -241,6 +247,8 @@ public:
 	int getDBLink() const {
 		return m_dbLink;
 	}
+
+	bool isError() { return m_error; };
 };
 
 class IdxFile {
@@ -683,9 +691,12 @@ bool IdxFile::read(const char *datafile) {
 	if (file.is_open() == false) {
 		return false;
 	}
-
+	bool res = true;
 	while (std::getline(file, text)) {
 		std::shared_ptr<IdxFileItem> item = std::make_shared<IdxFileItem>(text.c_str());
+		if (item->isError()) {
+			res = false;
+		}
 		int fullidx = item->getIdx();
 		int fileidx = (unsigned int)fullidx & 0xFF;
 
@@ -698,7 +709,7 @@ bool IdxFile::read(const char *datafile) {
 		}
 	}
 	file.close();
-	return true;
+	return res;
 }
 
 bool IdxFile::write(const char *datafile) {

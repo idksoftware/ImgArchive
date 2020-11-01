@@ -35,7 +35,7 @@ namespace simplearchive {
 		bool isCheckedInOut(const char *img, bool in);
 	public:
 		CheckoutStatus();
-		CheckoutStatus::CheckoutStatus(std::shared_ptr<CheckoutStatusAction> indexAction);
+		CheckoutStatus(std::shared_ptr<CheckoutStatusAction> indexAction);
 
 		~CheckoutStatus() = default;
 		

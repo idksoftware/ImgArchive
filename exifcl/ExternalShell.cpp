@@ -238,10 +238,10 @@ std::string GetLastErrorStdStr()
 }
 
 #else
-std::string ExecuteExternalFile(std::string &csExeNameAndArgs) {
-	std::string m_csOutput;
-	return m_csOutput;
-}
+//std::string ExecuteExternalFile(std::string &csExeNameAndArgs) {
+//	std::string m_csOutput;
+//	return m_csOutput;
+//}
 #endif
 
 

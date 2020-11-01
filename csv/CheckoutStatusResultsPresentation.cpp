@@ -112,7 +112,8 @@ namespace simplearchive {
 		if (!writeHuman.write()) {
 			return false;
 		};
-		if (write(writeHuman.getOutput()) == false) {
+		std::string temp = writeHuman.getOutput();
+		if (write(temp) == false) {
 			return false;
 		}
 		return true;
@@ -167,7 +168,8 @@ namespace simplearchive {
 		if (!checkoutWriteJSON.write()) {
 			return false;
 		};
-		if (write(checkoutWriteJSON.getOutput()) == false) {
+		std::string temp = checkoutWriteJSON.getOutput();
+		if (write(temp) == false) {
 			return false;
 		}
 		return true;
@@ -197,7 +199,8 @@ namespace simplearchive {
 		if (!checkoutWriteCSV.write()) {
 			return false;
 		}
-		if (write(checkoutWriteCSV.getOutput()) == false) {
+		std::string temp = checkoutWriteCSV.getOutput();
+		if (write(temp) == false) {
 			return false;
 		}
 		return true;
@@ -238,7 +241,8 @@ namespace simplearchive {
 		if (!checkoutWriteXML.write()) {
 			return false;
 		}
-		if (write(checkoutWriteXML.getOutput()) == false) {
+		std::string temp = checkoutWriteXML.getOutput();
+		if (write(temp) == false) {
 			return false;
 		}
 		return true;
@@ -281,7 +285,7 @@ namespace simplearchive {
 			<< "<div class=\"file_block\">\n"
 			<< "<table class=\"image_attr\">\n";
 		m_output << "<tr>\n";
-		int eventIdx = 0;
+		size_t eventIdx = 0;
 		int idx = 0;
 		for (std::vector<MTSchema>::iterator i = m_resultsList.getTableSchema().begin(); i != m_resultsList.getTableSchema().end(); i++) {
 			MTSchema& columnInfo = *i;
@@ -325,7 +329,8 @@ namespace simplearchive {
 		if (!checkoutWriteHtml.write()) {
 			return false;
 		}
-		if (write(checkoutWriteHtml.getOutput()) == false) {
+		std::string temp = checkoutWriteHtml.getOutput();
+		if (write(temp) == false) {
 			return false;
 		}
 		return true;

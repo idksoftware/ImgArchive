@@ -106,7 +106,8 @@ namespace simplearchive {
 		if (!imageHistoryWriteHuman.write()) {
 			return false;
 		};
-		if (write(imageHistoryWriteHuman.getOutput()) == false) {
+		std::string temp = imageHistoryWriteHuman.getOutput();
+		if (write(temp) == false) {
 			return false;
 		}
 		return true;
@@ -203,7 +204,8 @@ namespace simplearchive {
 		if (!systemHistoryWriteJson.write()) {
 			return false;
 		};
-		if (write(systemHistoryWriteJson.getOutput()) == false) {
+		std::string temp = systemHistoryWriteJson.getOutput();
+		if (write(temp) == false) {
 			return false;
 		}
 		return true;
@@ -304,7 +306,8 @@ namespace simplearchive {
 		if (!imageHistoryWriteHtml.write()) {
 			return false;
 		};
-		if (write(imageHistoryWriteHtml.getOutput()) == false) {
+		std::string temp = imageHistoryWriteHtml.getOutput();
+		if (write(temp) == false) {
 			return false;
 		}
 		return true;

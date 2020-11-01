@@ -78,7 +78,8 @@ namespace simplearchive {
 		if (!systemHistoryWriteHuman.write()) {
 			return false;
 		};
-		if (write(systemHistoryWriteHuman.getOutput()) == false) {
+		std::string temp = systemHistoryWriteHuman.getOutput();
+		if (write(temp) == false) {
 			return false;
 		}
 		return true;
@@ -132,7 +133,8 @@ namespace simplearchive {
 		if (!systemHistoryWriteJson.write()) {
 			return false;
 		};
-		if (write(systemHistoryWriteJson.getOutput()) == false) {
+		std::string temp = systemHistoryWriteJson.getOutput();
+		if (write(temp) == false) {
 			return false;
 		}
 		return true;
@@ -221,7 +223,8 @@ namespace simplearchive {
 		if (!systemHistoryWriteHtml.write()) {
 			return false;
 		}
-		if (write(systemHistoryWriteHtml.getOutput()) == false) {
+		std::string temp = systemHistoryWriteHtml.getOutput();
+		if (write(temp) == false) {
 			return false;
 		}
 		return true;
@@ -250,7 +253,8 @@ namespace simplearchive {
 		if (!systemHistorywriteCSV.write()) {
 			return false;
 		}
-		if (write(systemHistorywriteCSV.getOutput()) == false) {
+		std::string temp = systemHistorywriteCSV.getOutput();
+		if (write(temp) == false) {
 			return false;
 		}
 		return true;
@@ -301,7 +305,8 @@ namespace simplearchive {
 		if (!systemHistoryWriteXML.write()) {
 			return false;
 		}
-		if (write(systemHistoryWriteXML.getOutput()) == false) {
+		std::string temp = systemHistoryWriteXML.getOutput();
+		if (write(temp) == false) {
 			return false;
 		}
 		return true;

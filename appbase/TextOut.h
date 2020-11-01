@@ -17,14 +17,14 @@ protected:
 	std::string m_filename;
 	std::string writePlainTag(const char* tag, const std::string& value);
 	std::string writeXMLTag(const char* tag, const std::string& value);
-	std::string writeJsonTag(const char* tag, const std::string& value);
+	std::string writeJsonTag(const char* tag, const std::string& value, bool end = false);
 	std::string writeHtmlTag(const char* tag, const std::string& value);
 
 	std::string writeXMLTag(const char* tag, bool b);
 
 	std::string writePlainTag(const char* tag, const char* value);
 	std::string writeXMLTag(const char* tag, const char* value);
-	std::string writeJsonTag(const char* tag, const char* value);
+	std::string writeJsonTag(const char* tag, const char* value, bool end = false);
 	std::string writeHtmlTag(const char* tag, const char* value);
 	TextOutType m_textOutType;
 	std::string toString();
