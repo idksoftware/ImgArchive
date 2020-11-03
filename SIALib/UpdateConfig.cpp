@@ -1,4 +1,4 @@
-#include "UpdateConfig.h"
+
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -8,6 +8,7 @@
 //#include "EnvFunc.h"
 //#include "AppBase.h"
 #include "HomePaths.h"
+#include "UpdateConfig.h"
 
 namespace simplearchive {
 
@@ -49,8 +50,9 @@ namespace simplearchive {
 			//printf("Unknown error");
 			return false;
 		}
-		std::string homePath = ImgArchiveHome::getImgArchiveHome();
+		const std::string &s_homePath = ImgArchiveHome::getImgArchiveHome();
 		
+		std::string homePath = s_homePath;
 		m_configfile = homePath + "/config/" + "config.dat";
 		if (SAUtils::FileExists(m_configfile.c_str()) == false) {
 

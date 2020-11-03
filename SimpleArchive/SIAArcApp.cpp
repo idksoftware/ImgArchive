@@ -458,12 +458,6 @@ bool failed()
 
 } // simplearchive
 
-
-/**
- *C:\temp\2017\2017-08-12
- *
- */
-
 void ctrlHandler(int s) {
 	printf("Caught signal %d\n", s);
 	//exit(1);

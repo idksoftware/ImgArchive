@@ -687,8 +687,8 @@ bool SAUtils::IsAdminMode() {
 		CloseHandle(hToken);
 	}
 #else
-	if (getuid()) {
-		// You are not root!
+	if (geteuid()) { // The EFFECTIVE UID
+		// You are not root! or sudo
 			fRet = false;
 	}else {
 		//OK, you are root.

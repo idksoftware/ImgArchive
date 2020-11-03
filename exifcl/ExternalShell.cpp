@@ -38,6 +38,8 @@
 #include <string>
 #include <cstring>
 #include <sstream>
+#include <array>
+#include <cstdio>
 #ifndef _WIN32
 #include <unistd.h>
 #endif
@@ -238,10 +240,38 @@ std::string GetLastErrorStdStr()
 }
 
 #else
-//std::string ExecuteExternalFile(std::string &csExeNameAndArgs) {
-//	std::string m_csOutput;
-//	return m_csOutput;
-//}
+
+std::string GetLastErrorStdStr()
+{
+	return "Error";
+}
+
+int ExecuteExternalFile(std::string &csExeNameAndArgs) {
+
+	returnedExecString.clear();
+	auto pPipe = ::popen(csExeNameAndArgs.c_str(), "r");
+	if(pPipe == nullptr)
+	{
+		throw std::runtime_error("Cannot open pipe");
+	}
+
+	std::array<char, 256> buffer;
+
+	std::string result;
+
+	while(not std::feof(pPipe))
+	{
+		auto bytes = std::fread(buffer.data(), 1, buffer.size(), pPipe);
+		returnedExecString.append(buffer.data(), bytes);
+	}
+
+	auto rc = ::pclose(pPipe);
+
+
+
+	return rc;
+}
+
 #endif
 
 
