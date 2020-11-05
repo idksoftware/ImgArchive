@@ -26,6 +26,12 @@ namespace simplearchive {
 		static bool setLocalDefaultLocations();
 		static bool setDefaultLocations();
 
+		static bool setNewInstallAllUserDefaultLocations();
+		static bool setNewInstallLocalDefaultLocations();
+		static bool setNewInstallDefaultLocations();
+
+		
+	
 		static bool init();
 		static bool isConfigured() {
 			return m_configured;

@@ -377,12 +377,12 @@ namespace simplearchive {
 				if (SAUtils::IsAdminMode() == false) {
 					// Not in admin mode so install in myself mode
 					appOptions.setAllUsers(false);
-					DefaultEnvironment::setLocalDefaultLocations();
+					DefaultEnvironment::setNewInstallLocalDefaultLocations();
 				}
 				else {
 					// In admin mode so install in all users mode
 					appOptions.setAllUsers(true);
-					DefaultEnvironment::setAllUserDefaultLocations();
+					DefaultEnvironment::setNewInstallAllUserDefaultLocations();
 				}
 			}
 			BoolOption setHomeEnv = BoolOption::Invalid;

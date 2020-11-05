@@ -95,9 +95,11 @@ class ImgArchiveHome {
 	
 	bool setArchiveHome();
 	static void initalise();
+	static void initaliseNewInstall();
+	static bool m_newInstall;
 protected:
 
-	ImgArchiveHome() noexcept {
+	ImgArchiveHome(bool newInstall = false) noexcept {
 		setArchiveHome();
 		HomePathsBase::loadEnv();
 		if (m_valid == true) {
@@ -126,10 +128,10 @@ public:
 		return m_valid;
 	}
 
-	static const std::string& getImgArchiveHome();
+	static const std::string& getImgArchiveHome(bool newInstall = false);
 
 	static ImgArchiveHome& getObject() {
-		static ImgArchiveHome imgArchiveHome;
+		static ImgArchiveHome imgArchiveHome(m_newInstall);
 		return imgArchiveHome;
 	}
 

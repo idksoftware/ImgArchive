@@ -61,6 +61,16 @@ namespace simplearchive {
 		return true;
 	}
 
+	bool DefaultEnvironment::setNewInstallAllUserDefaultLocations() {
+		return locations(ImgArchiveHome::getImgArchiveHome().c_str());
+	}
+
+	bool DefaultEnvironment::setNewInstallLocalDefaultLocations() {
+		return locations(ImgArchiveHome::getImgArchiveHome().c_str());
+	}
+
+	
+
 	bool DefaultEnvironment::setAllUserDefaultLocations() {
 		return locations(ImgArchiveHome::getImgArchiveHome().c_str());
 	}
@@ -75,6 +85,16 @@ namespace simplearchive {
 		// Repository Archive Path
 		//m_historyPath = HomePath::get() + HISTORY_PATH;
 		return false;
+	}
+
+	bool DefaultEnvironment::setNewInstallDefaultLocations() {
+		if (DefaultEnvironment::isInAdminMode()) {
+			DefaultEnvironment::setNewInstallAllUserDefaultLocations();
+		}
+		else {
+			DefaultEnvironment::setNewInstallLocalDefaultLocations();
+		}
+		return true;
 	}
 
 	bool DefaultEnvironment::setDefaultLocations() {

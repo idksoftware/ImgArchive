@@ -4,6 +4,7 @@
 #include "SAUtils.h"
 #include "AppPaths.h"
 
+
 bool HomePathsBase::m_first = true;
 std::string HomePathsBase::m_allUsersHomeEnvironmentPath;
 std::string HomePathsBase::m_myselfHomeEnvironmentPath;
@@ -13,6 +14,8 @@ std::string HomePathsBase::m_homeDrive;
 std::string HomePathsBase::m_homePathEnv;
 
 std::vector<HomePathsBase*> ImgArchiveHome::m_list;
+
+bool ImgArchiveHome::m_newInstall = false;
 std::string ImgArchiveHome::m_imgArchiveHome;
 
 void ImgArchiveHome::initHomePaths() {
@@ -46,8 +49,18 @@ void ImgArchiveHome::initalise() {
 	}
 }
 
-const std::string& ImgArchiveHome::getImgArchiveHome() {
-	ImgArchiveHome::initalise();
+void ImgArchiveHome::initaliseNewInstall() {
+
+}
+
+const std::string& ImgArchiveHome::getImgArchiveHome(bool newInstall) {
+	m_newInstall = newInstall;
+	if (newInstall) {
+		initaliseNewInstall();
+	} else {
+		initalise();
+	}
+	
 	return m_imgArchiveHome;
 }
 
