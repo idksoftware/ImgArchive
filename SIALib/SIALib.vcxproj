@@ -185,6 +185,7 @@
     <ClInclude Include="RemoteServer.h" />
     <ClInclude Include="ImageFileNameManager.h" />
     <ClInclude Include="SQLiteDB.h" />
+    <ClInclude Include="UpdateConfig.h" />
     <ClInclude Include="VersionControl.h" />
     <ClInclude Include="VersionIndex.h" />
     <ClInclude Include="resource.h" />
@@ -231,6 +232,7 @@
     <ClCompile Include="RemoteServer.cpp" />
     <ClCompile Include="ImageFileNameManager.cpp" />
     <ClCompile Include="SQLiteDB.cpp" />
+    <ClCompile Include="UpdateConfig.cpp" />
     <ClCompile Include="VersionIndex.cpp" />
     <ClCompile Include="SACmdArgs.cpp" />
     <ClCompile Include="SIAApplicationState.cpp" />

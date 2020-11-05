@@ -364,7 +364,7 @@ namespace simplearchive {
 						return false;
 					}
 					appOptions.setAllUsers(true);
-					DefaultEnvironment::setLocalDefaultLocations();
+					DefaultEnvironment::setAllUserDefaultLocations();
 				}
 				else {
 					// Invalid option
@@ -373,7 +373,17 @@ namespace simplearchive {
 				}
 			}
 			else {
-				DefaultEnvironment::setDefaultLocations();
+				// users not set so deside which to install myself or all
+				if (SAUtils::IsAdminMode() == false) {
+					// Not in admin mode so install in myself mode
+					appOptions.setAllUsers(false);
+					DefaultEnvironment::setLocalDefaultLocations();
+				}
+				else {
+					// In admin mode so install in all users mode
+					appOptions.setAllUsers(true);
+					DefaultEnvironment::setAllUserDefaultLocations();
+				}
 			}
 			BoolOption setHomeEnv = BoolOption::Invalid;
 			if (foundOption("set-home-env") == true) {
@@ -393,7 +403,7 @@ namespace simplearchive {
 			AppOptions::m_repositoryPath = ImgArchiveHome::getImgArchiveHome();
 			AppOptions::m_catalogPath = PicturePath::get();
 
-			if (foundOption("archive-path") == true) {
+ 			if (foundOption("archive-path") == true) {
 				opt = optionValue("archive-path");
 				appOptions.setHomePath(opt.c_str());
 			}

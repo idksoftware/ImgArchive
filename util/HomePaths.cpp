@@ -38,7 +38,16 @@ void ImgArchiveHome::initHomePaths() {
 
 }
 
+static bool doInit = false;
+void ImgArchiveHome::initalise() {
+	if (!doInit) {
+		getObject();
+		doInit = true;
+	}
+}
+
 const std::string& ImgArchiveHome::getImgArchiveHome() {
+	ImgArchiveHome::initalise();
 	return m_imgArchiveHome;
 }
 

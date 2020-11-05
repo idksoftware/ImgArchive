@@ -23,14 +23,12 @@
     <ClCompile Include="DefaultEnvironment.cpp" />
     <ClCompile Include="SetImageExtentionFile.cpp" />
     <ClCompile Include="TestArchive.cpp" />
-    <ClCompile Include="UpdateConfig.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CreateArchive.h" />
     <ClInclude Include="DefaultEnvironment.h" />
     <ClInclude Include="SetImageExtentionFile.h" />
     <ClInclude Include="TestArchive.h" />
-    <ClInclude Include="UpdateConfig.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{6C4FEA9F-38C4-4387-B19E-2715288582A4}</ProjectGuid>

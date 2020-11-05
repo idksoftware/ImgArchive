@@ -153,6 +153,9 @@
     <ClInclude Include="ImageFileNameManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="UpdateConfig.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SIALib.cpp">
@@ -282,6 +285,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ImageFileNameManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UpdateConfig.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

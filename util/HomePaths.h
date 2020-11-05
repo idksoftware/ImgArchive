@@ -94,9 +94,9 @@ class ImgArchiveHome {
 	void initHomePaths();
 	
 	bool setArchiveHome();
-	bool setAllUserDefaultHome();
-	bool setLocalUserDefaultHome();
-public:
+	static void initalise();
+protected:
+
 	ImgArchiveHome() noexcept {
 		setArchiveHome();
 		HomePathsBase::loadEnv();
@@ -105,6 +105,9 @@ public:
 			init();
 		}
 	}
+
+public:
+	
 	~ImgArchiveHome() = default;
 
 	bool init();
