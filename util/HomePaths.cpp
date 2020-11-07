@@ -53,14 +53,8 @@ void ImgArchiveHome::initaliseNewInstall() {
 
 }
 
-const std::string& ImgArchiveHome::getImgArchiveHome(bool newInstall) {
-	m_newInstall = newInstall;
-	if (newInstall) {
-		initaliseNewInstall();
-	} else {
-		initalise();
-	}
-	
+const std::string& ImgArchiveHome::getImgArchiveHome() {
+	initalise();
 	return m_imgArchiveHome;
 }
 

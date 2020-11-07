@@ -346,7 +346,10 @@ namespace simplearchive {
 			// so the the configuration need not to be initalised.
 			appOptions.setCommandMode(AppOptions::CommandMode::CM_InitArchive);
 			appOptions.m_users = SAUtils::IsAdminMode();
-			
+			if (NewInstallDefaultLocations::init()) {
+				printf("A root folder for the instalation cannot be established\n\n");
+				return false;
+			}
 		
 			appOptions.m_configured = false;
 			std::string opt;
@@ -354,7 +357,7 @@ namespace simplearchive {
 				std::string users = optionValue("users");
 				if (users.compare("myself") == 0) {
 					appOptions.setAllUsers(false);
-					DefaultEnvironment::setLocalDefaultLocations();
+					NewInstallDefaultLocations::setLocalDefaultLocations();
 				}
 				else if (users.compare("all") == 0) {
 					if (SAUtils::IsAdminMode() == false) {
@@ -364,7 +367,7 @@ namespace simplearchive {
 						return false;
 					}
 					appOptions.setAllUsers(true);
-					DefaultEnvironment::setAllUserDefaultLocations();
+					NewInstallDefaultLocations::setAllUserDefaultLocations();
 				}
 				else {
 					// Invalid option
@@ -377,12 +380,12 @@ namespace simplearchive {
 				if (SAUtils::IsAdminMode() == false) {
 					// Not in admin mode so install in myself mode
 					appOptions.setAllUsers(false);
-					DefaultEnvironment::setNewInstallLocalDefaultLocations();
+					NewInstallDefaultLocations::setLocalDefaultLocations();
 				}
 				else {
 					// In admin mode so install in all users mode
 					appOptions.setAllUsers(true);
-					DefaultEnvironment::setNewInstallAllUserDefaultLocations();
+					NewInstallDefaultLocations::setAllUserDefaultLocations();
 				}
 			}
 			BoolOption setHomeEnv = BoolOption::Invalid;
