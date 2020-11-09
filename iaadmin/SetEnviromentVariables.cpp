@@ -20,8 +20,6 @@ enum class FolderOptions {
 };
 
 enum class EnabledOptions {
-
-	
 	UNKNOWN
 };
 
