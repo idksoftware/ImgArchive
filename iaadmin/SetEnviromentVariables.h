@@ -12,6 +12,8 @@ class SetEnviromentVariables : public ParseOptions {
 	EnabledOptions processDisableOptions(std::string& optionString);
 	std::string m_option;
 	std::string m_value;
+	Error m_error;
+	bool processArgs(const char* ov);
 public:
 	SetEnviromentVariables() = default;
 	virtual ~SetEnviromentVariables() = default;

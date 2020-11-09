@@ -9,6 +9,7 @@ enum class FolderOptions {
 	BACKUP_TWO,
 	SYSTEM_PATH,
 	MASTER_PATH,
+	MASTER_BACKPUP_1_PATH,
 	PICTURE_PATH,
 	DERIVATIVE_PATH,
 	HOME_PATH,
@@ -57,7 +58,19 @@ EnabledOptions SetEnviromentVariables::processDisableOptions(std::string& option
 
 bool SetEnviromentVariables::parseFolders(const char* optionString)
 {
-    return false;
+	if (!processArgs(optionString)) {
+		return false;
+	}
+	m_optionBlock = FOLDERS_BLOCK;
+	FolderOptions ret = processFolders(m_option);
+	switch (ret) {
+	case FolderOptions::HOOK_SCRIPTS_PATH: // Path to hook scripts
+		m_option = HOOK_SCRIPTS_PATH_LABEL;
+		return true;
+	default:
+		return false;
+	}
+	return true;
 }
 
 bool SetEnviromentVariables::parseEnableOptions(const char* optionString)
