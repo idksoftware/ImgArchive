@@ -153,6 +153,7 @@
     <ClInclude Include="AdminAppOptions.h" />
     <ClInclude Include="AdminArgvParser.h" />
     <ClInclude Include="SetConfig.h" />
+    <ClInclude Include="SetEnviromentVariables.h" />
     <ClInclude Include="ShowCommand.h" />
     <ClInclude Include="SyncCommand.h" />
   </ItemGroup>
@@ -161,6 +162,7 @@
     <ClCompile Include="AdminAppOptions.cpp" />
     <ClCompile Include="AdminArgvParser.cpp" />
     <ClCompile Include="SetConfig.cpp" />
+    <ClCompile Include="SetEnviromentVariables.cpp" />
     <ClCompile Include="ShowCommand.cpp" />
     <ClCompile Include="SyncCommand.cpp" />
   </ItemGroup>

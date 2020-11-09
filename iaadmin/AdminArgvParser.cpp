@@ -13,6 +13,7 @@
 #include "HomePaths.h"
 #include "SetImageExtentionFile.h"
 #include "SyncCommand.h"
+#include "SetEnviromentVariables.h"
 
 // beyond compare
 
@@ -356,6 +357,45 @@ namespace simplearchive {
 		
 		} else if (command("setenv") == true) {
 			appOptions.setCommandMode(AppOptions::CommandMode::CM_Setenv);
+			SetEnviromentVariables setEnviromentVariables;
+
+			if (foundOption("folders") == true) {
+				std::string opt = optionValue("folders");
+
+				if (setEnviromentVariables.parseFolders(opt.c_str()) == false) {
+					//printf("Invalid argument for sub-command: %s folders \"%s\" %s\n\n", getCurrentCommand().c_str(), opt.c_str(), setConfig.errorString());
+					printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+					return false;
+				}
+
+			}
+			else if (foundOption("enabled") == true) {
+				std::string opt = optionValue("enabled");
+
+				if (setEnviromentVariables.parseEnableOptions(opt.c_str()) == false) {
+					printf("Invalid argument for sub-command: %s enabled \"%s\"\n\n", getCurrentCommand().c_str(), opt.c_str());
+					printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+					return false;
+				}
+			}
+			else if (foundOption("disabled") == true) {
+				std::string opt = optionValue("disabled");
+
+				if (setEnviromentVariables.parseEnableOptions(opt.c_str()) == false) {
+					printf("Invalid argument for sub-command: %s disabled \"%s\"\n\n", getCurrentCommand().c_str(), opt.c_str());
+					printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+					return false;
+				}
+			} else {
+				printf("No argument for sub-command: %s\n", getCurrentCommand().c_str());
+				printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+				return false;
+			}
+			//appOptions.setConfigOption(parseEnableOptions.getOption().c_str());
+			//appOptions.setConfigValue(parseEnableOptions.getValue().c_str());
+			
+			cmdFound = true;
+
 		} else if (command("init") == true) {
 			// This command will initalise the configuration.
 			// so the the configuration need not to be initalised.

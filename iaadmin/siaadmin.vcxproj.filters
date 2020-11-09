@@ -33,6 +33,9 @@
     <ClInclude Include="SyncCommand.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SetEnviromentVariables.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AdminApp.cpp">
@@ -51,6 +54,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SyncCommand.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SetEnviromentVariables.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
