@@ -51,6 +51,7 @@ public:
 		CM_Backup,		//* Backup archive to exteral media
 		CM_Config,		//* Configure the system
 		CM_Allow,		//* Set which file extension are allow into the archive.
+		CM_Setenv,		//* Configure ImgArchive's environment variables.
 		CM_Unknown
 	};
 

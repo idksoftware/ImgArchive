@@ -49,9 +49,13 @@ namespace simplearchive {
 		defineOption("config", "Configure ImgArchive's parameters", ArgvParser::MasterOption);
 		defineCommandSyntax("config", "isadmin config [-q | --quiet] | [ --general <Option=Value>]\n"
 			"| [--logging <Option=Value>] | [--network <Option=Value>]\n"
-			"| [--folders <Option=Value>] | [--master <Option=Value>]\n"
+			"| [--folders <Option=pathe>] | [--master <Option=Value>]\n"
 			"| [--derivative <Option=Value>] | [--backup <Option=Value>]\n"
 			"| [--exiftool <Option=Value>]");
+
+		defineOption("setenv", "Configure ImgArchive's environment variables.", ArgvParser::MasterOption);
+		defineCommandSyntax("setenv", "isadmin setenv [-q | --quiet] | [ --folders <Option=path>]\n"
+			"| [--enable <Option>] | [--disable <Option>]");
 				
 		defineOption("show", "Show how the system is configured.", ArgvParser::MasterOption);
 		defineCommandSyntax("show", "isadmin show [--setting=<Option>]\n"
@@ -84,8 +88,8 @@ namespace simplearchive {
 		defineCommandSyntax("validate", "validate [-q | --quiet]\n"
 			"| [--scope=<archive>] | [--validate-backup=<option>]\n"
 			"| [--validate-main=<yes|no>]\n"
-			"| [--repair=<yesno>|\n");
-
+			"| [--repair=<yes|no>\n");
+		 
 		defineOption("scope", "Scope of validation. This defines which archives will be validated", ArgvParser::OptionRequiresValue);
 		defineCommandSyntax("scope", "--scope=<Value>\n"
 			"value=[master] | [derivative] | [workspace] | [all] | [main]");
@@ -187,6 +191,12 @@ namespace simplearchive {
 		defineOption("edit", "Edits the extension details.", ArgvParser::OptionRequiresValue);
 		defineOptionAlternative("edit", "e");
 		defineCommandSyntax("edit", "--edit=<ext,type,mine,description>");
+
+		defineOption("enable", "Edables an option.", ArgvParser::OptionRequiresValue);
+		defineCommandSyntax("enable", "--enable <option>");
+
+		defineOption("disable", "Disables an option.", ArgvParser::OptionRequiresValue);
+		defineCommandSyntax("disable", "--disable <option>");
 		
 		defineOption("media-size", "size of media in GBytes", ArgvParser::OptionRequiresValue);
 		//defineOptionAlternative("S", "media-size");
@@ -241,7 +251,9 @@ namespace simplearchive {
 		defineCommandOption("validate", "validate-main");
 		defineCommandOption("validate", "repair");
 		
-		
+		defineCommandOption("setenv", "folders");
+		defineCommandOption("setenv", "enable");
+		defineCommandOption("setenv", "disable");
 		//defineCommandOption("test", "settup");
 		
 		defineCommandOption("config", "general");
@@ -341,6 +353,9 @@ namespace simplearchive {
 			appOptions.setConfigValue(value.c_str());
 			appOptions.setCommandMode(AppOptions::CommandMode::CM_Allow);
 			cmdFound = true;
+		
+		} else if (command("setenv") == true) {
+			appOptions.setCommandMode(AppOptions::CommandMode::CM_Setenv);
 		} else if (command("init") == true) {
 			// This command will initalise the configuration.
 			// so the the configuration need not to be initalised.
