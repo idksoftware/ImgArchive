@@ -882,6 +882,8 @@ bool SetSettings::parseAllowedOptions(const char* s)
 	return true;
 }
 
+
+
 Option SetSettings::processAllowedOptions(std::string& optionString)
 {
 	if (iequals(RAW_LABEL, optionString)) {
@@ -896,3 +898,37 @@ Option SetSettings::processAllowedOptions(std::string& optionString)
 	return Option::UNKNOWN;
 }
 
+bool SetSettings::parseEnvOptions(const char* s)
+{
+	std::string optionString = s;
+
+	Option ret = processEnvOptions(optionString);
+	switch (ret) {
+	case Option::RAW:
+		m_value = FOLDERS_LABEL;
+		return true;
+	case Option::PICTURE:
+		m_value = ENABLED_LABEL;
+		return true;
+	case Option::ALL:
+		m_value = ALL_LABEL;
+		return true;
+	default:
+		return false;
+	}
+	return true;
+}
+
+Option SetSettings::processEnvOptions(std::string& optionString)
+{
+	if (iequals(FOLDERS_LABEL, optionString)) {
+		return Option::FOLDERS;
+	}
+	if (iequals(ENABLED_LABEL, optionString)) {
+		return Option::ENABLED;
+	}
+	if (iequals(ALL_LABEL, optionString)) {
+		return Option::ALL;
+	}
+	return Option::UNKNOWN;
+}

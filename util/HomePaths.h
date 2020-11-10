@@ -94,9 +94,7 @@ class ImgArchiveHome {
 	void initHomePaths();
 	
 	bool setArchiveHome();
-	static void initalise();
-	static void initaliseNewInstall();
-	static bool m_newInstall;
+	
 protected:
 
 	ImgArchiveHome() noexcept {
@@ -127,7 +125,7 @@ public:
 	bool isValid() noexcept {	// in file system
 		return m_valid;
 	}
-
+	
 	static const std::string& getImgArchiveHome();
 
 	static ImgArchiveHome& getObject() {

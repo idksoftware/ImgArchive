@@ -47,7 +47,6 @@
 #define FOLDERS_LABEL			"folders"
 #define MASTER_LABEL			"master"
 #define DERIVATIVE_LABEL		"derivative"
-#define DERIVATIVE_LABEL		"derivative"
 #define WORKSPACE_LABEL			"workspace"
 #define BACKUP_LABEL			"backup"
 #define EXIFTOOL_LABEL			"exiftool"
@@ -107,6 +106,13 @@
 #define EVENTS_ADDRESS_LABEL		"EventsAddress"
 #define BACKUP_ONE_LABEL			"BackupOne"
 #define BACKUP_TWO_LABEL			"BackupTwo"
+#define MASTER_BACKUP_ONE_LABEL			"MasterBackupOnePath"
+#define MASTER_BACKUP_TWO_LABEL			"MasterBackupTwoPath"
+#define DERIVATIVE_BACKUP_ONE_LABEL			"DerivativeBackupOnePath"
+#define DERIVATIVE_BACKUP_TWO_LABEL			"DerivativeBackupTwoPath"
+#define WORKSPACE_CHECKOUT_LABEL			"workspacecheckout"
+#define USER_LOCAL					"local"
+#define USER_ALL					"all"
 
 namespace simplearchive {
 

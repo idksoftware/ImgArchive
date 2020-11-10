@@ -29,6 +29,7 @@ namespace simplearchive {
 
 		bool processSettings(const char* str);
 		bool processAllowed(const char* str);
+		bool processEnv(const char* str);
 
 		bool showAllowed(SelectionType type);
 		bool showAllowedRaw();

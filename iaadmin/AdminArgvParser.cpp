@@ -224,10 +224,13 @@ namespace simplearchive {
 			"| [folders] | [master] | | [derivative] | [backup] | [exiftool]");
 
 		defineOption("allowed", "Shows which file type are allowed into the archive.", ArgvParser::OptionRequiresValue);
-		defineCommandSyntax("allowed", "--allowed=[ raw | picture | all ]");
+		defineCommandSyntax("allowed", "--allowed=<[ raw | picture | all ]>");
+
+		defineOption("env", "Shows the archives environment variable.", ArgvParser::OptionRequiresValue);
+		defineCommandSyntax("env", "--env=<[ folders | enabled | all ]>");
 
 		defineOption("out", "Output type: text, xml, json or html.", ArgvParser::OptionRequiresValue);
-		defineCommandSyntax("out", "out=[plain] | [xml] | [json] | [html]\n");
+		defineCommandSyntax("out", "out=<[plain] | [xml] | [json] | [html]>\n");
 		//defineOptionAlternative("u", "users");
 
 		defineOption("file", "output file name.", ArgvParser::OptionRequiresValue);
@@ -244,6 +247,7 @@ namespace simplearchive {
 
 		defineCommandOption("show", "setting");
 		defineCommandOption("show", "allowed");
+		defineCommandOption("show", "env");
 		defineCommandOption("show", "out");
 		defineCommandOption("show", "file");
 
@@ -356,9 +360,30 @@ namespace simplearchive {
 			cmdFound = true;
 		
 		} else if (command("setenv") == true) {
+
 			appOptions.setCommandMode(AppOptions::CommandMode::CM_Setenv);
 			SetEnviromentVariables setEnviromentVariables;
-
+			if (foundOption("users") == true) {
+				
+				std::string users = optionValue("users");
+				switch (setEnviromentVariables.userMode(users.c_str())) {
+				case UserMode::All:
+					if (SAUtils::IsAdminMode() == false) {
+						// Not in admin mode so cannot be initalised in admin mode so return with error
+						printf("Invalid operation? Not in admin mode so cannot be initalised in admin mode\n\n");
+						printf("%s", usageDescription(80).c_str());
+						return false;
+					}
+					break;
+				case UserMode::Invalid:
+					printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+					return false;
+				}
+			}
+			else {
+				setEnviromentVariables.userMode();
+			}
+			
 			if (foundOption("folders") == true) {
 				std::string opt = optionValue("folders");
 
@@ -367,24 +392,51 @@ namespace simplearchive {
 					printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 					return false;
 				}
-
-			}
-			else if (foundOption("enabled") == true) {
-				std::string opt = optionValue("enabled");
-
-				if (setEnviromentVariables.parseEnableOptions(opt.c_str()) == false) {
-					printf("Invalid argument for sub-command: %s enabled \"%s\"\n\n", getCurrentCommand().c_str(), opt.c_str());
+				if (setEnviromentVariables.setVariable() == false) {
+					printf("Unable to set enviroment variable\n");
 					printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 					return false;
 				}
+				printf("Set enviroment variable\n");
+				cmdFound = true;
+
 			}
-			else if (foundOption("disabled") == true) {
+			else if (foundOption("enable") == true) {
+				std::string opt = optionValue("enable");
+
+				if (setEnviromentVariables.parseEnableOptions(opt.c_str()) == false) {
+					printf("Invalid argument for sub-command: %s enable \"%s\"\n\n", getCurrentCommand().c_str(), opt.c_str());
+					printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+					return false;
+				}
+				else {
+					if (setEnviromentVariables.setVariable() == false) {
+						printf("Unable to set enviroment variable\n");
+						printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+						return false;
+					}
+					printf("Set enviroment variable\n");
+					cmdFound = true;
+					return true;
+				}
+			}
+			else if (foundOption("disable") == true) {
 				std::string opt = optionValue("disabled");
 
 				if (setEnviromentVariables.parseEnableOptions(opt.c_str()) == false) {
 					printf("Invalid argument for sub-command: %s disabled \"%s\"\n\n", getCurrentCommand().c_str(), opt.c_str());
 					printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 					return false;
+				}
+				else {
+					if (setEnviromentVariables.setVariable() == false) {
+						printf("Unable to set enviroment variable\n");
+						printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+						return false;
+					}
+					printf("Set enviroment variable\n");
+					cmdFound = true;
+					return true;
 				}
 			} else {
 				printf("No argument for sub-command: %s\n", getCurrentCommand().c_str());
@@ -410,7 +462,7 @@ namespace simplearchive {
 			std::string opt;
 			if (foundOption("users") == true) {
 				std::string users = optionValue("users");
-				if (users.compare("myself") == 0) {
+				if (users.compare("local") == 0) {
 					appOptions.setAllUsers(false);
 					NewInstallDefaultLocations::setLocalDefaultLocations();
 				}
@@ -549,6 +601,27 @@ namespace simplearchive {
 			} else if (foundOption("allowed") == true) {
 				if (setSettings.parseAllowedOptions(optionValue("allowed").c_str()) == true) {
 					subOption = "allowed";
+					argFound = true;
+				}
+				if (foundOption("out") == true) {
+					OutputType outputType;
+					std::string outType = optionValue("out");
+					if (outputType.parse(optionValue("out").c_str()) == false) {
+						printf("Option for argument \"out\" for sub-command: %s is invalid: %s\n\n", getCurrentCommand().c_str(), optionValue("out").c_str());
+						printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+						return false;
+					}
+					else {
+						appOptions.m_textOutputType = optionValue("out");
+					}
+				}
+				if (foundOption("file") == true) {
+					appOptions.m_outputFile = optionValue("file");
+				}
+			}
+			else if (foundOption("env") == true) {
+				if (setSettings.parseEnvOptions(optionValue("env").c_str()) == true) {
+					subOption = "env";
 					argFound = true;
 				}
 				if (foundOption("out") == true) {

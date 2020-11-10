@@ -42,6 +42,9 @@ namespace simplearchive {
 		if (arg.compare("allowed") == 0) {
 			return processAllowed(configValue);
 		}
+		if (arg.compare("env") == 0) {
+			return processAllowed(configValue);
+		}
 		return false;
 	}
 
@@ -52,6 +55,22 @@ namespace simplearchive {
 			return showAllowedRaw();
 		}
 		if (arg.compare("picture") == 0) {
+			return showAllowedPicture();
+		}
+		if (arg.compare("all") == 0) {
+			return showAllowedAll();
+		}
+		m_error = Error::ParseError;
+		return false;
+	}
+
+	bool ShowCommand::processEnv(const char* str) {
+		std::string arg = str;
+
+		if (arg.compare("folders") == 0) {
+			return showAllowedRaw();
+		}
+		if (arg.compare("enabled") == 0) {
 			return showAllowedPicture();
 		}
 		if (arg.compare("all") == 0) {

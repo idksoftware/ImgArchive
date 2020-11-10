@@ -42,8 +42,7 @@ namespace simplearchive {
 		//AppConfig &config = AppConfig::get();
 		AppConfigBase config;
 		m_configured = false;
-		
-
+		ImgArchiveHome::getObject();
 		// try to set a systems temp folder 
 		std::string tempPath = SAUtils::GetPOSIXEnv("TEMP");
 		if (tempPath.empty() == true || tempPath.length() == 0) {
@@ -106,7 +105,7 @@ namespace simplearchive {
 		std::string myselfHomeEnvironmentPath = SAUtils::GetEnv(IMGARCHIVE_HOME, false);
 		// All Users
 		std::string allusersHomeDefaultPath = SAUtils::GetPOSIXEnv("ProgramData");
-		allusersHomeDefaultPath += DEFAULT_ALLUSER_HOME_PATH;
+		
 		std::string myselfHomeDefaultPath = SAUtils::GetPOSIXEnv("LOCALAPPDATA");
 		myselfHomeDefaultPath += DEFAULT_LOCAL_HOME_PATH;
 		// Looking the HKEY_LOCAL_MACHINE first
@@ -135,6 +134,7 @@ namespace simplearchive {
 			if (SAUtils::IsAdminMode() == true) {
 				if (SAUtils::DirExists(allusersHomeDefaultPath.c_str()) == true) {
 					m_imgArchiveHome = allusersHomeDefaultPath;
+					m_imgArchiveHome += DEFAULT_ALLUSER_HOME_PATH;
 					m_type = HomePathType::AllUsers;
 					m_found = true;
 

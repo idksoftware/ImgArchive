@@ -83,11 +83,13 @@ public:
 class SetSettings : public ParseOptions {
 	Option processSettingsOptions(std::string& optionString);
 	Option processAllowedOptions(std::string& optionString);
+	Option processEnvOptions(std::string& optionString);
 public:
 	SetSettings() = default;
 	virtual ~SetSettings() = default;
 	bool parseSettingsOptions(const char* optionString);
 	bool parseAllowedOptions(const char* optionString);
+	bool parseEnvOptions(const char* optionString);
 };
 
 
