@@ -70,7 +70,7 @@ public:
 	bool edit(ExtentionItem& extentionItem);
 	bool insert(ExtentionItem &extentionItem);
 	std::shared_ptr<ExtentionItem> find(const char *ext);
-	bool getList(std::vector<std::shared_ptr<ExtentionItem>>& list, SelectionType selectionType);
+	bool getList(std::vector<std::shared_ptr<ExtentionItem>>& list, AllowSelectionType selectionType);
 };
 
 
@@ -103,23 +103,23 @@ bool CExtentionsFile::write(const char *datafile) {
 	return true;
 }
 
-bool CExtentionsFile::getList(std::vector<std::shared_ptr<ExtentionItem>> &list, SelectionType selectionType) {
+bool CExtentionsFile::getList(std::vector<std::shared_ptr<ExtentionItem>> &list, AllowSelectionType selectionType) {
 	
 	for (auto ii = m_extentionsContainer.begin(); ii != m_extentionsContainer.end(); ++ii) {
 		std::shared_ptr<ExtentionItem> data = ii->second;
 		ImageType type = data->getType();
 		switch (selectionType) {
-		case SelectionType::Picture:
+		case AllowSelectionType::Picture:
 			if (type.getType() == ImageType::Type::PICTURE_EXT) {
 				list.push_back(data);
 			}
 			break;
-		case SelectionType::Raw:
+		case AllowSelectionType::Raw:
 			if (type.getType() == ImageType::Type::RAW_EXT) {
 				list.push_back(data);
 			}
 			break;
-		case SelectionType::All:
+		case AllowSelectionType::All:
 			list.push_back(data);
 			break;
 		default:
@@ -215,7 +215,7 @@ ImageExtentions &ImageExtentions::get() {
 	return INSTANCE;
 }
 
-bool ImageExtentions::getList(std::vector<std::shared_ptr<ExtentionItem>> &list, SelectionType selectionType) {
+bool ImageExtentions::getList(std::vector<std::shared_ptr<ExtentionItem>> &list, AllowSelectionType selectionType) {
 	return m_extentionsFile->getList(list, selectionType);
 }
 

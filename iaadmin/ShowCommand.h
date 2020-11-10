@@ -4,6 +4,12 @@
 
 namespace simplearchive {
 
+	enum class EnvSelectionType {
+		Folders,
+		Enabled,
+		All
+	};
+
 	class ShowCommand
 	{
 	public:
@@ -31,10 +37,16 @@ namespace simplearchive {
 		bool processAllowed(const char* str);
 		bool processEnv(const char* str);
 
-		bool showAllowed(SelectionType type);
+		bool showAllowed(AllowSelectionType type);
 		bool showAllowedRaw();
 		bool showAllowedPicture();
 		bool showAllowedAll();
+
+		bool showEnv(EnvSelectionType type);
+		bool showEnvFolders();
+		bool showEnvEnabled();
+		bool showEnvAll();
+
 		Error m_error;
 		std::string m_outputFile;
 		std::string m_textOutputType;

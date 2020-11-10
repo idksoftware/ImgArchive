@@ -11,86 +11,24 @@
 
 namespace simplearchive {
 
-	ShowCommand::ShowCommand() : m_error(Error::Unknown) {}
 
-	void ShowCommand::setOutputFile(const char* s)
-	{
-		m_outputFile = s;
-	}
-
-	void ShowCommand::setTextOutputType(const char* s)
-	{
-		m_textOutputType = s;
-	}
-
-	bool ShowCommand::parseOptions(const char* str) {
-		std::string arg = str;
-		if (arg.compare("settup") == 0) {
-			return true;
-		}
-		m_error = Error::ParseError;
-		return false;
-	}
-
-	bool ShowCommand::process(const char* configOption, const char* configValue)
-	{
-		std::string arg = configOption;
-
-		if (arg.compare("setting") == 0) {
-			return processSettings(configValue);
-		}
-		if (arg.compare("allowed") == 0) {
-			return processAllowed(configValue);
-		}
-		if (arg.compare("env") == 0) {
-			return processAllowed(configValue);
-		}
-		return false;
-	}
-
-	bool ShowCommand::processAllowed(const char* str) {
-		std::string arg = str;
-
-		if (arg.compare("raw") == 0) {
-			return showAllowedRaw();
-		}
-		if (arg.compare("picture") == 0) {
-			return showAllowedPicture();
-		}
-		if (arg.compare("all") == 0) {
-			return showAllowedAll();
-		}
-		m_error = Error::ParseError;
-		return false;
-	}
-
-	bool ShowCommand::processEnv(const char* str) {
-		std::string arg = str;
-
-		if (arg.compare("folders") == 0) {
-			return showAllowedRaw();
-		}
-		if (arg.compare("enabled") == 0) {
-			return showAllowedPicture();
-		}
-		if (arg.compare("all") == 0) {
-			return showAllowedAll();
-		}
-		m_error = Error::ParseError;
-		return false;
-	}
-
+/****************************************************************
+* 
+*						ShowAllowedTextOut
+* 
+*****************************************************************/
+	
 	class ShowAllowedTextOut : public TextOut {
-		SelectionType m_type;
+		AllowSelectionType m_type;
 	public:
-		ShowAllowedTextOut(SelectionType type) : m_type(type) {};
+		ShowAllowedTextOut(AllowSelectionType type) : m_type(type) {};
 		std::string writePlain();
 		std::string writeXML();
 		std::string writeJson();
 		std::string writeHtml();
 	};
 
-	std::string ShowAllowedTextOut ::writePlain() {
+	std::string ShowAllowedTextOut::writePlain() {
 		AppConfig appConfig;
 		std::stringstream str;
 
@@ -169,88 +107,12 @@ namespace simplearchive {
 		return std::string();
 	}
 
-	bool ShowCommand::showAllowed(SelectionType type)
-	{
-		//m_outputFile;
-		
-		ShowAllowedTextOut showAllowedTextOut(type);
-		if (showAllowedTextOut.parseTextOutType(m_textOutputType.c_str()) == false) {
-			return false;
-		}
-		showAllowedTextOut.process();
-		return true;
-		/*
-		AppConfig appConfig;
-		std::stringstream str;
+/****************************************************************
+*
+*						GeneralTextOut
+*
+*****************************************************************/
 
-		ImageExtentions& imageExtentions = ImageExtentions::get();
-		std::vector<std::shared_ptr<ExtentionItem>> list;
-		imageExtentions.getList(list, type);
-		for (auto ii = list.begin(); ii != list.end(); ++ii) {
-			std::shared_ptr<ExtentionItem> data = *ii;
-			str << data->toString() << std::endl;
-		}
-
-		std::string s = str.str();
-		std::cout << s;
-		*/
-		return true;
-	}
-
-	bool ShowCommand::showAllowedRaw()
-	{
-		return showAllowed(SelectionType::Raw);
-	}
-
-	bool ShowCommand::showAllowedPicture()
-	{
-		return showAllowed(SelectionType::Picture);
-	}
-
-	bool ShowCommand::showAllowedAll()
-	{
-		return showAllowed(SelectionType::All);
-	}
-
-	bool ShowCommand::processSettings(const char* str) {
-		std::string arg = str;
-
-		if (arg.compare("general") == 0) {
-			return showGeneral(m_outputFile.c_str(), m_textOutputType.c_str());
-		}
-		if (arg.compare("logging") == 0) {
-			return showLogging(m_outputFile.c_str(), m_textOutputType.c_str());
-		}
-		if (arg.compare("network") == 0) {
-			return showNetwork(m_outputFile.c_str(), m_textOutputType.c_str());
-		}
-		if (arg.compare("folders") == 0) {
-			return showFolders(m_outputFile.c_str(), m_textOutputType.c_str());
-		}
-		if (arg.compare("master") == 0) {
-			return showMaster(m_outputFile.c_str(), m_textOutputType.c_str());
-		}
-		if (arg.compare("derivative") == 0) {
-			return showDerivative(m_outputFile.c_str(), m_textOutputType.c_str());
-		}
-		if (arg.compare("workspace") == 0) {
-			return showWorkspace(m_outputFile.c_str(), m_textOutputType.c_str());
-		}
-		if (arg.compare("picture") == 0) {
-			return showPicture(m_outputFile.c_str(), m_textOutputType.c_str());
-		}
-		if (arg.compare("www") == 0) {
-			return showWWW(m_outputFile.c_str(), m_textOutputType.c_str());
-		}
-		if (arg.compare("backup") == 0) {
-			return showBackup(m_outputFile.c_str(), m_textOutputType.c_str());
-		}
-		if (arg.compare("exiftool") == 0) {
-			return showExiftool(m_outputFile.c_str(), m_textOutputType.c_str());
-		}
-		m_error = Error::ParseError;
-		return false;
-	}
 
 	class GeneralTextOut : public TextOut {
 	public:
@@ -318,25 +180,13 @@ namespace simplearchive {
 		return s;
 	}
 
-	bool ShowCommand::showGeneral(const char* filename, const char* textOutType)
-	{
-		GeneralTextOut generalTextOut;
-		if (generalTextOut.parseTextOutType(textOutType) == false) {
-			return false;
-		}
-		generalTextOut.process();
-		return true;
-	}
+	
 
-	bool ShowCommand::showLogging(const char* filename, const char* textOutType)
-	{
-		return false;
-	}
-
-	bool ShowCommand::showNetwork(const char* filename, const char* textOutType)
-	{
-		return false;
-	}
+/****************************************************************
+*
+*						FoldersTextOut
+*
+*****************************************************************/
 
 	class FoldersTextOut : public TextOut {
 		bool showImaArchiveHome(std::stringstream& str);
@@ -464,6 +314,12 @@ namespace simplearchive {
 		}
 		return true;
 	}
+
+/****************************************************************
+*
+*						MasterTextOut
+*
+*****************************************************************/
 
 	class MasterTextOut : public TextOut {
 
@@ -662,6 +518,12 @@ namespace simplearchive {
 	{
 		return std::string();
 	}
+
+/****************************************************************
+*
+*						DerivativeTextOut
+*
+*****************************************************************/
 
 	class DerivativeTextOut : public TextOut {
 	public:
@@ -884,6 +746,12 @@ namespace simplearchive {
 		return std::string();
 	}
 
+/****************************************************************
+*
+*						WorkspaceTextOut
+*
+*****************************************************************/
+
 	class WorkspaceTextOut : public TextOut {
 	public:
 		std::string writePlain();
@@ -993,6 +861,13 @@ namespace simplearchive {
 		return std::string();
 	}
 
+
+/****************************************************************
+*
+*						PictureTextOut
+*
+*****************************************************************/
+
 	class PictureTextOut : public TextOut {
 	public:
 		std::string writePlain();
@@ -1100,6 +975,11 @@ namespace simplearchive {
 		return std::string();
 	}
 
+/****************************************************************
+*
+*						WWWTextOut
+*
+*****************************************************************/
 	class WWWTextOut : public TextOut {
 	public:
 		std::string writePlain();
@@ -1227,6 +1107,335 @@ namespace simplearchive {
 		std::string s = str.str();
 		std::cout << s;
 		return true;
+	}
+
+/****************************************************************
+*
+*						ShowEnvTextOut
+*
+*****************************************************************/
+
+	class ShowEnvTextOut : public TextOut {
+		EnvSelectionType m_type;
+	public:
+		ShowEnvTextOut(EnvSelectionType type) : m_type(type) {};
+		std::string writePlain();
+		std::string writeXML();
+		std::string writeJson();
+		std::string writeHtml();
+
+		std::string getEnv(const char* str, bool all = true) {
+			std::string s = SAUtils::GetEnv(str, all);
+			if (s.empty()) {
+				s = "{Not Set}";
+			}
+			return s;
+		}
+	};
+
+	std::string ShowEnvTextOut::writePlain()
+	{
+		std::stringstream str;
+		str << "Folder Path Enviroment" << std::endl;
+		str << "======================" << std::endl << std::endl;
+		str << " IMGARCHIVE_HOME" << std::endl;
+		str << "   All:  " << getEnv("IMGARCHIVE_HOME") << std::endl;
+		str << "   User: " << getEnv("IMGARCHIVE_HOME", false) << std::endl;
+		str << " IMGA_MASTER" << std::endl;
+		str << "   All:  " << getEnv("IMGA_MASTER") << std::endl;
+		str << "   User: " << getEnv("IMGA_MASTER", false) << std::endl;
+		str << " IMGA_MASTER_BACKUP1" << std::endl;
+		str << "   All:  " << getEnv("IMGA_MASTER_BACKUP1") << std::endl;
+		str << "   User: " << getEnv("IMGA_MASTER_BACKUP1", false) << std::endl;
+		str << " IMGA_MASTER_BACKUP2" << std::endl;
+		str << "   All:  " << getEnv("IMGA_MASTER_BACKUP2") << std::endl;
+		str << "   User: " << getEnv("IMGA_MASTER_BACKUP2", false) << std::endl;
+		str << " IMGA_DERIVATIVE" << std::endl;
+		str << "   All:  " << getEnv("IMGA_DERIVATIVE") << std::endl;
+		str << "   User: " << getEnv("IMGA_DERIVATIVE", false) << std::endl;
+		str << " IMGA_DERIVATIVE_BACKUP1" << std::endl;
+		str << "   All:  " << getEnv("IMGA_DERIVATIVE_BACKUP1") << std::endl;
+		str << "   User: " << getEnv("IMGA_DERIVATIVE_BACKUP1", false) << std::endl;
+		str << " IMGA_DERIVATIVE_BACKUP2" << std::endl;
+		str << "   All:  " << getEnv("IMGA_DERIVATIVE_BACKUP2") << std::endl;
+		str << "   User: " << getEnv("IMGA_DERIVATIVE_BACKUP2", false) << std::endl;
+		str << " IMGA_PICTURE" << std::endl;
+		str << "   All:  " << getEnv("IMGA_PICTURE") << std::endl;
+		str << "   User: " << getEnv("IMGA_PICTURE", false) << std::endl;
+		str << " IMGA_WWWIMAGE" << std::endl;
+		str << "   All:  " << getEnv("IMGA_WWWIMAGE") << std::endl;
+		str << "   User: " << getEnv("IMGA_WWWIMAGE", false) << std::endl;
+		str << " IMGA_WORKSPACE" << std::endl;
+		str << "   All:  " << getEnv("IMGA_WORKSPACE") << std::endl;
+		str << "   User: " << getEnv("IMGA_WORKSPACE", false) << std::endl;
+		str << std::endl;
+		str << "Enabled Resource Enviroment" << std::endl;
+		str << "===========================" << std::endl << std::endl;
+		str << " IMGA_MASTER_BACKUP1_ENABLE" << std::endl;
+		str << "   All:  " << getEnv("IMGA_MASTER_BACKUP1_ENABLE") << std::endl;
+		str << "   User: " << getEnv("IMGA_MASTER_BACKUP1_ENABLE", false) << std::endl;
+		str << " IMGA_MASTER_BACKUP2_ENABLE" << std::endl;
+		str << "   All:  " << getEnv("IMGA_MASTER_BACKUP2_ENABLE") << std::endl;
+		str << "   User: " << getEnv("IMGA_MASTER_BACKUP2_ENABLE", false) << std::endl;
+		str << " IMGA_DERIVATIVE_BACKUP1_ENABLE" << std::endl;
+		str << "   All:  " << getEnv("IMGA_DERIVATIVE_BACKUP1_ENABLE") << std::endl;
+		str << "   User: " << getEnv("IMGA_DERIVATIVE_BACKUP1_ENABLE", false) << std::endl;
+		str << " IMGA_DERIVATIVE_BACKUP2_ENABLE" << std::endl;
+		str << "   All:  " << getEnv("IMGA_DERIVATIVE_BACKUP2_ENABLE") << std::endl;
+		str << "   User: " << getEnv("IMGA_DERIVATIVE_BACKUP2_ENABLE", false) << std::endl;
+		str << " IMGA_WORKSPACE_ENABLE" << std::endl;
+		str << "   All:  " << getEnv("IMGA_WORKSPACE_ENABLE") << std::endl;
+		str << "   User: " << getEnv("IMGA_WORKSPACE_ENABLE", false) << std::endl;
+		str << " IMGA_WORKSPACE_CHKOUT" << std::endl;
+		str << "   All:  " << getEnv("IMGA_WORKSPACE_CHKOUT") << std::endl;
+		str << "   User: " << getEnv("IMGA_WORKSPACE_CHKOUT", false) << std::endl;
+		str << " IMGA_PICTURE_ENABLE" << std::endl;
+		str << "   All:  " << getEnv("IMGA_PICTURE_ENABLE") << std::endl;
+		str << "   User: " << getEnv("IMGA_PICTURE_ENABLE", false) << std::endl;
+		str << " IMGA_WWWIMAGE_ENABLE" << std::endl;
+		str << "   All:  " << getEnv("IMGA_WWWIMAGE_ENABLE") << std::endl;
+		str << "   User: " << getEnv("IMGA_WWWIMAGE_ENABLE", false) << std::endl;
+
+		std::string s = str.str();
+		return s;
+	}
+
+	std::string ShowEnvTextOut::writeXML()
+	{
+		/*
+		
+		IMGARCHIVE_HOME;
+		IMGA_MASTER;
+		IMGA_MASTER_BACKUP1;
+		IMGA_MASTER_BACKUP2;
+		IMGA_DERIVATIVE;
+		IMGA_DERIVATIVE_BACKUP1;
+		IMGA_DERIVATIVE_BACKUP2;
+		IMGA_PICTURE;
+		IMGA_WWWIMAGE;
+		IMGA_WORKSPACE;
+		*/
+
+		std::stringstream str;
+		str << "IMGARCHIVE_HOME" << SAUtils::GetEnv("IMGARCHIVE_HOME") << std::endl;
+		str << "IMGA_MASTER" << std::endl;
+		str << "IMGA_MASTER_BACKUP1" << std::endl;
+		str << "IMGA_MASTER_BACKUP2" << std::endl;
+		str << "IMGA_DERIVATIVE" << std::endl;
+		str << "IMGA_DERIVATIVE_BACKUP1" << std::endl;
+		str << "IMGA_DERIVATIVE_BACKUP2" << std::endl;
+		str << "IMGA_PICTURE" << std::endl;
+		str << "IMGA_WWWIMAGE" << std::endl;
+		str << "IMGA_WORKSPACE" << std::endl;
+		std::string s = str.str();
+		return s;
+	}
+
+	std::string ShowEnvTextOut::writeJson()
+	{
+		std::stringstream str;
+		str << "ShowEnvTextOut::writeJson()" << std::endl;
+		str << "}" << std::endl;
+		str << "}" << std::endl;
+		std::string s = str.str();
+		return s;
+	}
+
+	std::string ShowEnvTextOut::writeHtml()
+	{
+		std::stringstream str;
+		str << "ShowEnvTextOut::writeHtml()" << std::endl;
+		str << "}" << std::endl;
+		str << "}" << std::endl;
+		std::string s = str.str();
+		return s;
+	}
+
+
+
+/****************************************************************
+*
+*						ShowCommand
+*
+*****************************************************************/
+	ShowCommand::ShowCommand() : m_error(Error::Unknown) {}
+
+	bool ShowCommand::showGeneral(const char* filename, const char* textOutType)
+	{
+		GeneralTextOut generalTextOut;
+		if (generalTextOut.parseTextOutType(textOutType) == false) {
+			return false;
+		}
+		generalTextOut.process();
+		return true;
+	}
+
+	bool ShowCommand::showLogging(const char* filename, const char* textOutType)
+	{
+		return false;
+	}
+
+	bool ShowCommand::showNetwork(const char* filename, const char* textOutType)
+	{
+		return false;
+	}
+
+	void ShowCommand::setOutputFile(const char* s)
+	{
+		m_outputFile = s;
+	}
+
+	void ShowCommand::setTextOutputType(const char* s)
+	{
+		m_textOutputType = s;
+	}
+
+	bool ShowCommand::parseOptions(const char* str) {
+		std::string arg = str;
+		if (arg.compare("settup") == 0) {
+			return true;
+		}
+		m_error = Error::ParseError;
+		return false;
+	}
+
+	bool ShowCommand::process(const char* configOption, const char* configValue)
+	{
+		std::string arg = configOption;
+
+		if (arg.compare("setting") == 0) {
+			return processSettings(configValue);
+		}
+		if (arg.compare("allowed") == 0) {
+			return processAllowed(configValue);
+		}
+		if (arg.compare("env") == 0) {
+			return processEnv(configValue);
+		}
+		return false;
+	}
+
+	bool ShowCommand::processAllowed(const char* str) {
+		std::string arg = str;
+
+		if (arg.compare("raw") == 0) {
+			return showAllowedRaw();
+		}
+		if (arg.compare("picture") == 0) {
+			return showAllowedPicture();
+		}
+		if (arg.compare("all") == 0) {
+			return showAllowedAll();
+		}
+		m_error = Error::ParseError;
+		return false;
+	}
+
+	bool ShowCommand::processEnv(const char* str)
+	{
+		std::string arg = str;
+
+		if (arg.compare("folders") == 0) {
+			return showEnvFolders();
+		}
+		if (arg.compare("enabled") == 0) {
+			return showEnvEnabled();
+		}
+		if (arg.compare("all") == 0) {
+			return showEnvAll();
+		}
+		m_error = Error::ParseError;
+		return false;
+	}
+
+	bool ShowCommand::showAllowed(AllowSelectionType type)
+	{
+		ShowAllowedTextOut showAllowedTextOut(type);
+		if (showAllowedTextOut.parseTextOutType(m_textOutputType.c_str()) == false) {
+			return false;
+		}
+		showAllowedTextOut.process();
+		return true;
+	}
+
+	bool ShowCommand::showAllowedRaw()
+	{
+		return showAllowed(AllowSelectionType::Raw);
+	}
+
+	bool ShowCommand::showAllowedPicture()
+	{
+		return showAllowed(AllowSelectionType::Picture);
+	}
+
+	bool ShowCommand::showAllowedAll()
+	{
+		return showAllowed(AllowSelectionType::All);
+	}
+
+	bool ShowCommand::showEnv(EnvSelectionType type)
+	{
+		ShowEnvTextOut showEnvTextOut(type);
+		if (showEnvTextOut.parseTextOutType(m_textOutputType.c_str()) == false) {
+			return false;
+		}
+		showEnvTextOut.process();
+		return true;
+	}
+
+	bool ShowCommand::showEnvFolders()
+	{
+		return showEnv(EnvSelectionType::Folders);
+	}
+
+	bool ShowCommand::showEnvEnabled()
+	{
+		return showEnv(EnvSelectionType::Enabled);
+	}
+
+	bool ShowCommand::showEnvAll()
+	{
+		return showEnv(EnvSelectionType::All);
+	}
+
+	bool ShowCommand::processSettings(const char* str) {
+		std::string arg = str;
+
+		if (arg.compare("general") == 0) {
+			return showGeneral(m_outputFile.c_str(), m_textOutputType.c_str());
+		}
+		if (arg.compare("logging") == 0) {
+			return showLogging(m_outputFile.c_str(), m_textOutputType.c_str());
+		}
+		if (arg.compare("network") == 0) {
+			return showNetwork(m_outputFile.c_str(), m_textOutputType.c_str());
+		}
+		if (arg.compare("folders") == 0) {
+			return showFolders(m_outputFile.c_str(), m_textOutputType.c_str());
+		}
+		if (arg.compare("master") == 0) {
+			return showMaster(m_outputFile.c_str(), m_textOutputType.c_str());
+		}
+		if (arg.compare("derivative") == 0) {
+			return showDerivative(m_outputFile.c_str(), m_textOutputType.c_str());
+		}
+		if (arg.compare("workspace") == 0) {
+			return showWorkspace(m_outputFile.c_str(), m_textOutputType.c_str());
+		}
+		if (arg.compare("picture") == 0) {
+			return showPicture(m_outputFile.c_str(), m_textOutputType.c_str());
+		}
+		if (arg.compare("www") == 0) {
+			return showWWW(m_outputFile.c_str(), m_textOutputType.c_str());
+		}
+		if (arg.compare("backup") == 0) {
+			return showBackup(m_outputFile.c_str(), m_textOutputType.c_str());
+		}
+		if (arg.compare("exiftool") == 0) {
+			return showExiftool(m_outputFile.c_str(), m_textOutputType.c_str());
+		}
+		m_error = Error::ParseError;
+		return false;
 	}
 
 }; // namespace
