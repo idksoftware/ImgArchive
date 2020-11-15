@@ -453,7 +453,7 @@ namespace simplearchive {
 			// so the the configuration need not to be initalised.
 			appOptions.setCommandMode(AppOptions::CommandMode::CM_InitArchive);
 			appOptions.m_users = SAUtils::IsAdminMode();
-			if (NewInstallDefaultLocations::init()) {
+			if (NewInstallDefaultLocations::init() == false) {
 				printf("A root folder for the instalation cannot be established\n\n");
 				return false;
 			}
@@ -505,6 +505,7 @@ namespace simplearchive {
 				bool homeEnv = (setHomeEnv == BoolOption::True) ? true : false;
 				appOptions.setHomeEnv(homeEnv);
 			}
+#ifdef WIN32
 			AppOptions::m_homePath = ImgArchiveHome::getImgArchiveHome();
 			AppOptions::m_workspacePath = WorkspacePath::get();
 			AppOptions::m_masterPath = MasterPath::get();
@@ -512,6 +513,7 @@ namespace simplearchive {
 			AppOptions::m_derivativePath = DerivativePath::get();
 			AppOptions::m_repositoryPath = ImgArchiveHome::getImgArchiveHome();
 			AppOptions::m_catalogPath = PicturePath::get();
+#else
 
  			if (foundOption("archive-path") == true) {
 				opt = optionValue("archive-path");

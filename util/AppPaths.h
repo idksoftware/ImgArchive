@@ -116,6 +116,13 @@ constexpr auto IMGA_DERIVATIVE_BACKUP2			= "IMGA_DERIVATIVE_BACKUP2";
 constexpr auto IMGA_DERIVATIVE_BACKUP1_ENABLE	= "IMGA_DERIVATIVE_BACKUP1_ENABLE";
 constexpr auto IMGA_DERIVATIVE_BACKUP2_ENABLE	= "IMGA_DERIVATIVE_BACKUP2_ENABLE";
 
+constexpr auto BASE_LINUX_BIN_PATH = "/";
+constexpr auto LINUX_OPT		= "/opt";		// /opt Optional application software packages
+constexpr auto LINUX_ETC_OPT	= "/etc/opt";	// /etc/opt Configuration files for add-on packages that are stored in /opt
+constexpr auto LINUX_VAR		= "/var";		// /var Variable files: files whose content is expected to continually change during normal operation of the system, such as logs, spool files, and temporary e-mail files.
+constexpr auto LINUX_VAR_CACHE	= "/var/cache";	// /var/cache Application cache data. Such data are locally generated as a result of time-consuming I/O or calculation. The application must be able to regenerate or restore the data. The cached files can be deleted without loss of data.
+constexpr auto LINUX_VAR_OPT	= "/var/opt";	// /var/opt Variable data from add-on packages that are stored in /opt.
+
 constexpr auto DEFAULT_ALLUSER_HOME_PATH = "/IDK-Software/ImgArchive";
 constexpr auto DEFAULT_ALLUSER_WWWIMAGE_PATH = "/IDK-Software/ImgArchive/IAWWWPictures";
 constexpr auto DEFAULT_ALLUSER_PICTURE_PATH = "/ImgArchive/Pictures";

@@ -817,6 +817,12 @@ std::string SAUtils::GetEnv(const std::string& value, bool all) {
 	RegCloseKey(hKey);
 	return res;
 #else
+	char * var = getenv(value.c_str());
+	std::string retval;
+	if (var != NULL) {
+		retval = var;
+		return retval;
+	}
 	std::string res;
 	return res;
 #endif

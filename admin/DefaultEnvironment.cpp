@@ -101,13 +101,26 @@ namespace simplearchive {
 	bool NewInstallDefaultLocations::init() {
 
 		// Set Windows Defaults (they can be overridden later)
+#ifdef _WIN32
 		std::string allUsersHomeEnvironmentPath = SAUtils::GetEnv(IMGARCHIVE_HOME, true);
 		std::string myselfHomeEnvironmentPath = SAUtils::GetEnv(IMGARCHIVE_HOME, false);
+#else
+		std::string allUsersHomeEnvironmentPath = SAUtils::GetEnv(IMGARCHIVE_HOME);
+		std::string myselfHomeEnvironmentPath = SAUtils::GetEnv(IMGARCHIVE_HOME);
+#endif
+#ifdef _WIN32
 		// All Users
 		std::string allusersHomeDefaultPath = SAUtils::GetPOSIXEnv("ProgramData");
-		
+		// Local
 		std::string myselfHomeDefaultPath = SAUtils::GetPOSIXEnv("LOCALAPPDATA");
 		myselfHomeDefaultPath += DEFAULT_LOCAL_HOME_PATH;
+#else
+		// All Users
+		std::string allusersHomeDefaultPath = SAUtils::GetPOSIXEnv(LINUX_VAR_OPT);
+		// Local
+		std::string myselfHomeDefaultPath = SAUtils::GetPOSIXEnv("HOME");
+		//myselfHomeDefaultPath += DEFAULT_LOCAL_HOME_PATH;
+#endif
 		// Looking the HKEY_LOCAL_MACHINE first
 		if (allUsersHomeEnvironmentPath.empty() == false) {
 			if (SAUtils::IsAdminMode() == true) {

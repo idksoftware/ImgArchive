@@ -59,17 +59,49 @@ bool ImgArchiveHome::init() {
 	return res;
 }
 
+/*
+ * Linux
+ *
+ * All User
+ *
+ * /opt Optional application software packages
+ * /etc/opt Configuration files for add-on packages that are stored in /opt
+ * /var Variable files: files whose content is expected to continually change during normal operation of the system, such as logs, spool files, and temporary e-mail files.
+ * /var/cache Application cache data. Such data are locally generated as a result of time-consuming I/O or calculation. The application must be able to regenerate or restore the data. The cached files can be deleted without loss of data.
+ * /var/opt Variable data from add-on packages that are stored in /opt.
+ *
+ * Local user
+ *Archive folder – $HOME/.local/share/imgarchive
+
+Master folder – $HOME/.local/share/imgarchive/master
+
+Derivative folder – $HOME/.local/share/imgarchive/master
+
+Workspace folder – $HOME/imgarchive/workspace
+
+Picture folder – $HOME/imgarchive/workspace
+
+WWW image folder – $HOME/imgarchive/workspace
+ *
+ */
+
 bool ImgArchiveHome::setArchiveHome()
 {
 	// Set Windows Defaults (they can be overridden later)
 	std::string allUsersHomeEnvironmentPath = SAUtils::GetEnv(IMGARCHIVE_HOME, true);
 	std::string myselfHomeEnvironmentPath = SAUtils::GetEnv(IMGARCHIVE_HOME, false);
 	// All Users
+#ifdef WIN32
 	std::string allusersHomeDefaultPath = SAUtils::GetPOSIXEnv("ProgramData");
 	allusersHomeDefaultPath += DEFAULT_ALLUSER_HOME_PATH;
 	std::string myselfHomeDefaultPath = SAUtils::GetPOSIXEnv("LOCALAPPDATA");
 	myselfHomeDefaultPath += DEFAULT_LOCAL_HOME_PATH;
-
+#else
+	std::string allusersHomeDefaultPath = LINUX_VAR_OPT;
+	allusersHomeDefaultPath += DEFAULT_ALLUSER_HOME_PATH;
+	std::string myselfHomeDefaultPath = SAUtils::GetPOSIXEnv("HOME");
+	myselfHomeDefaultPath += DEFAULT_LOCAL_HOME_PATH;
+#endif
 	// Looking the HKEY_LOCAL_MACHINE first
 	if (allUsersHomeEnvironmentPath.empty() == false) {
 		m_type = HomePathType::SystemEnv;	// System Environment set
