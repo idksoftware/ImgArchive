@@ -505,15 +505,24 @@ namespace simplearchive {
 				bool homeEnv = (setHomeEnv == BoolOption::True) ? true : false;
 				appOptions.setHomeEnv(homeEnv);
 			}
+			NewInstallOptions& newInstallOptions =NewInstallDefaultLocations::getOptions();
 #ifdef WIN32
+			AppOptions::m_homePath = newInstallOptions.getHomePath();
+			AppOptions::m_workspacePath = newInstallOptions.getWorkspacePath();
+			AppOptions::m_masterPath = newInstallOptions.getMasterPath();
+			AppOptions::m_configPath = newInstallOptions.getHomePath();
+			AppOptions::m_derivativePath = newInstallOptions.getDerivativePath();
+			AppOptions::m_wwwImagePath = newInstallOptions.getWwwPath();
+			AppOptions::m_catalogPath = newInstallOptions.getPicturePath();
+#else
 			AppOptions::m_homePath = ImgArchiveHome::getImgArchiveHome();
 			AppOptions::m_workspacePath = WorkspacePath::get();
 			AppOptions::m_masterPath = MasterPath::get();
 			AppOptions::m_configPath = ImgArchiveHome::getImgArchiveHome();
 			AppOptions::m_derivativePath = DerivativePath::get();
-			AppOptions::m_repositoryPath = ImgArchiveHome::getImgArchiveHome();
+			AppOptions::m_wwwImagePath = ImgArchiveHome::getImgArchiveHome();
 			AppOptions::m_catalogPath = PicturePath::get();
-#else
+#endif
 
  			if (foundOption("archive-path") == true) {
 				opt = optionValue("archive-path");

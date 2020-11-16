@@ -99,7 +99,7 @@ namespace simplearchive {
 		static HomePathType m_type;
 		static bool m_found;
 
-		NewInstallOptions m_newInstallOptions;
+		static NewInstallOptions m_newInstallOptions;
 
 	public:
 
@@ -111,7 +111,7 @@ namespace simplearchive {
 		static bool setLocalDefaultLocations();
 		static bool setDefaultLocations();
 
-		NewInstallOptions& getOptions();
+		static NewInstallOptions& getOptions() { return m_newInstallOptions; };
 
 		void setDerivativePath(std::string mDerivativePath);
 		void setHomePath(std::string mHomePath);

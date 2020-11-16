@@ -157,19 +157,6 @@ const char *configdoc[] = {
 
 std::string configFileStr;
 
-const char *mirrordoc[] = {
-	"#name=mode. path, type",
-	"disk1=direct,c:/temp/siamirror,mirror"
-};
-
-
-const char *viewdoc[] = {
-	"# name ,mode, path, type",
-	"#default=dynamic,/backup/home/tmp1,link,readonly,include,/home/wzw7yn/imga/piclist.dat",
-	"#link=dynamic,/backup/home/test/link,link,readonly",
-	"#copy=dynamic,/backup/home/test/copy,copy,readonly"
-};
-
 const char *extdoc[] = {
 	"nef:Raw:nikon-raw:Nikon RAW",
 	"nrw:Raw:nikon-raw:Nikon RAW",
@@ -214,16 +201,6 @@ const char *extdoc[] = {
 	"tiff:Picture:tiff:tiff"
 };
 
-
-CreateArchive::CreateArchive() {
-	// TODO Auto-generated constructor stub
-
-}
-
-CreateArchive::~CreateArchive() {
-	// TODO Auto-generated destructor stub
-}
-
 bool CreateArchive::createHomeEnvVar(const char *root, bool users) {
 	if (SAUtils::DirExists(root) == false) {
 		return false;
@@ -236,6 +213,7 @@ bool CreateArchive::createHomeEnvVar(const char *root, bool users) {
 std::string CreateArchive::makeConfigFile(const char *root, const char *workspace, const char *master, const char *derivative, const char *catalogue) {
 	std::stringstream s;
 	s << "# The main ImgArchive configuration file #\n";
+	/*
 	s << "[General]\n";
 	s << "[Logging]\n";
 	s << "[Network]\n";
@@ -250,6 +228,7 @@ std::string CreateArchive::makeConfigFile(const char *root, const char *workspac
 	//s << "#BackupTwo = \"d:/Backup Test Two\" # BackupTwo = <path to root backup two folder>\n";
 	//s << "#BackupOneEnabled = true # BackupOneEnabled = <true | false>\n";
 	//s << "#BackupTwoEnabled = true # BackupOneEnabled = <true | false>\n";
+	*/
 	return s.str();
 }
 
@@ -494,13 +473,6 @@ bool CreateArchive::createConfigFiles(const char *root, const char *folder, cons
 	std::string configFile = makeConfigFile(root, workspace, master, derivative, catalogue);
 	
 	if (createFile(root, folder, "config.dat", configFile) == false) {
-		return false;
-	}
-
-	if (createFile(root, folder, "mirror.dat", (const char **)mirrordoc, (sizeof(mirrordoc)/sizeof(char *))) == false) {
-		return false;
-	}
-	if (createFile(root, folder, "view.dat", (const char **)viewdoc, (sizeof(viewdoc)/sizeof(char *))) == false) {
 		return false;
 	}
 	if (createFile(root, folder, "ext.dat", (const char **)extdoc, (sizeof(extdoc)/sizeof(char *))) == false) {

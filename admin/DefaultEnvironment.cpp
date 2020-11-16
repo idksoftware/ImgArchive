@@ -34,7 +34,7 @@ namespace simplearchive {
 	bool DefaultEnvironment::m_isInAdminMode = false;
 	bool DefaultEnvironment::m_isHomePathSet = false;
 	bool DefaultEnvironment::m_isHomePathValid = false;
-
+	NewInstallOptions NewInstallDefaultLocations::m_newInstallOptions;
 	
 
 	bool DefaultEnvironment::init()
@@ -113,7 +113,6 @@ namespace simplearchive {
 		std::string allusersHomeDefaultPath = SAUtils::GetPOSIXEnv("ProgramData");
 		// Local
 		std::string myselfHomeDefaultPath = SAUtils::GetPOSIXEnv("LOCALAPPDATA");
-		myselfHomeDefaultPath += DEFAULT_LOCAL_HOME_PATH;
 #else
 		// All Users
 		std::string allusersHomeDefaultPath = SAUtils::GetPOSIXEnv(LINUX_VAR_OPT);
@@ -223,6 +222,11 @@ std::string NewInstallOptions::getPicturePath() const {
 	return m_picturePath;
 }
 
+std::string NewInstallOptions::getWwwPath() const {
+	return m_wwwPath;
+}
+
+
 void NewInstallOptions::setPicturePath(std::string mPicturePath) {
 	m_picturePath = mPicturePath;
 }
@@ -263,5 +267,4 @@ void NewInstallDefaultLocations::setWwwPath(std::string mWwwPath) {
 	m_newInstallOptions.setWwwPath(mWwwPath);
 }
 
-}
-;
+};
