@@ -68,7 +68,29 @@ namespace simplearchive {
 	}
 
 	bool NewInstallDefaultLocations::setLocalDefaultLocations() {
-		ImgArchiveHome::getImgArchiveHome().c_str();
+
+		std::string imgArchiveHome = m_imgArchiveHome;
+		if (m_type == HomePathType::LocalEnv || m_type == HomePathType::SystemEnv) {
+			m_newInstallOptions.setHomePath(imgArchiveHome);
+		}
+		else {
+			imgArchiveHome += DEFAULT_LOCAL_HOME_PATH;
+			m_newInstallOptions.setHomePath(imgArchiveHome);
+			m_newInstallOptions.setDerivativePath(imgArchiveHome + DEFAULT_LOCAL_DERIVATIVE_PATH);
+			m_newInstallOptions.setMasterPath(imgArchiveHome + DEFAULT_LOCAL_MASTER_PATH);
+		}
+
+		
+		std::string homeEnv = SAUtils::GetPOSIXEnv("HOMEDRIVE");
+		std::string homePathEnv = SAUtils::GetPOSIXEnv("HOMEPATH");
+		homeEnv += homePathEnv;
+		//m_imgArchiveHome DEFAULT_LOCAL_HOME_PATH
+		
+		
+		m_newInstallOptions.setPicturePath(homeEnv + DEFAULT_LOCAL_PICTURE_PATH);
+		m_newInstallOptions.setWorkspacePath(homeEnv + DEFAULT_LOCAL_WORKSPACE_PATH);
+		m_newInstallOptions.setWwwPath(homeEnv + DEFAULT_LOCAL_WWWIMAGE_PATH);
+			
 		return true;
 	}
 
@@ -170,6 +192,21 @@ namespace simplearchive {
 					return false;
 				}
 			}
+		}
+		switch (m_type) {
+		case HomePathType::LocalEnv:	// Local Environment set
+			break;
+		case HomePathType::SystemEnv:	// System Environment set
+			break;
+		case HomePathType::UserOnly:	// user only archive
+			
+			break;
+		case HomePathType::AllUsers:	// all users archive
+			break;
+		case HomePathType::Default:	// Default value
+		case HomePathType::Unknown:
+		default:
+			return false;
 		}
 		return true;
 	}

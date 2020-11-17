@@ -78,7 +78,7 @@ private:
 		@param workspacePath	Workspace location.
 		@param MasterPath		Master archive location.
 	*/
-	bool CreateArchive(const char *archivePath, const char *workspacePath, const char *reposPath, const char *masterPath, const char *derivativePath, const char *cataloguePath, bool users);
+	bool CreateArchive(const char *archivePath, const char *workspacePath, const char *reposPath, const char *masterPath, const char *derivativePath, const char *cataloguePath, const char* wwwPath, bool users);
 	
 public:
 	/// Constructor

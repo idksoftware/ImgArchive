@@ -279,7 +279,8 @@ bool AdminApp::doRun()
 			//defaultEnvironment.init();
 
 			if (CreateArchive(appOptions.getHomePath(), appOptions.getWorkspacePath(), appOptions.getRepositoryPath(),
-							appOptions.getMasterPath(), appOptions.getDerivativePath(), appOptions.getCataloguePath(), appOptions.getUsers()) == false) {
+							appOptions.getMasterPath(), appOptions.getDerivativePath(), appOptions.getCataloguePath(),
+							appOptions.getWWWImagePath(), appOptions.getUsers()) == false) {
 				return false;
 			}
 			printf("\nCompleted Creating ImgArchive\n");
@@ -394,7 +395,7 @@ bool failed()
 	return(false);
 }
 
-bool AdminApp::CreateArchive(const char *archivePath, const char *workspacePath, const char *reposPath, const char *masterPath, const char *derivativePath, const char *cataloguePath, bool users) {
+bool AdminApp::CreateArchive(const char *archivePath, const char *workspacePath, const char *reposPath, const char *masterPath, const char *derivativePath, const char *cataloguePath, const char* wwwPath, bool users) {
 
 	if (users == true) {
 		if (CreateArchive::IsAdmin() == false) {
@@ -413,7 +414,7 @@ bool AdminApp::CreateArchive(const char *archivePath, const char *workspacePath,
 	std::cout << "Catalogue path             = \"" << cataloguePath << "\"\n";
 
 	//  const char* archivePath, const char* workspacePath, const char* reposPath, const char* masterPath, const char* derivativePath, const char* cataloguePath, bool users
-	if (CreateArchive::createArchive(archivePath, workspacePath, masterPath, derivativePath, cataloguePath, users) == false) {
+	if (CreateArchive::createArchive(archivePath, workspacePath, masterPath, derivativePath, cataloguePath, wwwPath, users) == false) {
 		return false;
 	}
 	

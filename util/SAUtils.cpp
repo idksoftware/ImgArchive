@@ -581,7 +581,7 @@ bool SAUtils::makePath(const char *to) {
 			node = fullPath.substr(start + 1, (end)-(start + 1));
 		}
 #ifdef _WIN32
-		curPath += "\\/";
+		curPath += "\\";
 #else
 		curPath += '/';
 #endif

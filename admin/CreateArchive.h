@@ -57,22 +57,22 @@ namespace simplearchive {
 
 		static bool createFile(const char *root, const char *folder, const char *filename, std::string &str);
 
-		static std::string  makeConfigFile(const char *root, const char *workspace, const char *master, const char *derivative, const char *catalogue);
-		static bool createAdminSystem(const char *archivePath, const char *workspace, const char *master, const char *derivative, const char *catalogue);
-		static bool createUserSystem(const char *archivePath, const char *workspace, const char *master, const char *derivative, const char *catalogue);
+		static std::string  makeConfigFile(const char *root, const char *workspace, const char *master, const char *derivative, const char *catalogue, const char *wwwImage);
+		static bool createAdminSystem(const char *archivePath, const char *workspace, const char *master, const char *derivative, const char *catalogue, const char* wwwImage);
+		static bool createUserSystem(const char *archivePath, const char *workspace, const char *master, const char *derivative, const char *catalogue, const char* wwwImage);
 		static std::string  m_archivePath;
 		static std::string  m_workspace;
 		static std::string  m_master;
 		static std::string  m_derivative;
 		static std::string  m_catalogue;
+		static std::string  m_wwwImage;
 	public:
-		CreateArchive();
-		virtual ~CreateArchive();
+		CreateArchive() = default;
+		virtual ~CreateArchive() = default;
 
-		static bool createArchive(const char* archivePath, const char* workspacePath, const char* masterPath, const char* derivativePath, const char* cataloguePath, bool users);
+		static bool createArchive(const char* archivePath, const char* workspacePath, const char* masterPath, const char* derivativePath, const char* cataloguePath, const char* wwwPath, bool users);
 
-
-		static bool createSystem(bool users, const char *archivePath, const char *workspace, const char *master, const char *derivative, const char *catalogue);
+		static bool createSystem(bool users, const char *archivePath, const char *workspace, const char *master, const char *derivative, const char *catalogue, const char* wwwImage);
 		/**
 		* @brief Creates the configuration folders.
 		*/
@@ -80,7 +80,7 @@ namespace simplearchive {
 		/**
 		* @brief Creates the default configuration files.
 		*/
-		static bool createConfigFiles(const char *root, const char *folder, const char *workspace, const char *master, const char *derivative, const char *catalogue);
+		static bool createConfigFiles(const char *root, const char *folder, const char *workspace, const char *master, const char *derivative, const char *catalogue, const char* wwwPathStr);
 		/**
 		* @brief Creates the default hook files.
 		*/

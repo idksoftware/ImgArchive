@@ -159,6 +159,7 @@ bool SIAArcApp::initaliseConfig() {
 
 	ImgArchiveHome& imgArchiveHome = ImgArchiveHome::getObject();
 	if (imgArchiveHome.isValid() == false) {
+		setError(13, "Error found setting ImgArchive home folder: %s.\n", imgArchiveHome.errorStr().c_str());
 		return false;
 	}
 	// Initalise without the config file i.e. set defaults.

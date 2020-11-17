@@ -51,12 +51,12 @@ static char THIS_FILE[] = __FILE__;
 bool IsElevated();
 namespace simplearchive {
 
-	bool CreateArchive::createArchive(const char* archivePath, const char* workspacePath, const char* masterPath, const char* derivativePath, const char* cataloguePath, bool users) {
+	bool CreateArchive::createArchive(const char* archivePath, const char* workspacePath, const char* masterPath, const char* derivativePath, const char* cataloguePath, const char* wwwPath, bool users) {
 
 		
 		std::string archivePathStr = archivePath;
 		std::string workspacePathStr = workspacePath;
-		//std::string reposPathStr = reposPath;
+		std::string wwwPathStr = wwwPath;
 		std::string masterPathStr = masterPath;
 		std::string derivativePathStr = derivativePath;
 		std::string cataloguePathStr = cataloguePath;
@@ -64,7 +64,7 @@ namespace simplearchive {
 		std::string masterPathOpt = masterPath;
 		std::string derivativePathOpt = derivativePath;
 
-		if (CreateArchive::createSystem(users, archivePathStr.c_str(), workspacePathStr.c_str(), masterPathStr.c_str(), derivativePathStr.c_str(), cataloguePathStr.c_str()) == false) {
+		if (CreateArchive::createSystem(users, archivePathStr.c_str(), workspacePathStr.c_str(), masterPathStr.c_str(), derivativePathStr.c_str(), cataloguePathStr.c_str(), wwwPathStr.c_str()) == false) {
 			return false;
 		}
 		if (CreateArchive::createHomeEnvVar(CreateArchive::getArchivePath().c_str(), users) == false) {
@@ -82,7 +82,7 @@ namespace simplearchive {
 			return false;
 		}
 
-		if (CreateArchive::createConfigFiles(CreateArchive::getArchivePath().c_str(), CONFIG_PATH, CreateArchive::getWorkspace().c_str(), CreateArchive::getMaster().c_str(), derivativePathStr.c_str(), cataloguePathStr.c_str()) == false) {
+		if (CreateArchive::createConfigFiles(CreateArchive::getArchivePath().c_str(), CONFIG_PATH, CreateArchive::getWorkspace().c_str(), CreateArchive::getMaster().c_str(), derivativePathStr.c_str(), cataloguePathStr.c_str(), wwwPathStr.c_str()) == false) {
 			std::cout << "Failed creating configuration files" << '\n';
 			return false;
 		}
@@ -149,6 +149,7 @@ std::string  CreateArchive::m_workspace;
 std::string  CreateArchive::m_master;
 std::string  CreateArchive::m_derivative;
 std::string  CreateArchive::m_catalogue;
+std::string  CreateArchive::m_wwwImage;
 
 // Config folder files
 const char *configdoc[] = {
@@ -210,7 +211,7 @@ bool CreateArchive::createHomeEnvVar(const char *root, bool users) {
 
 }
 
-std::string CreateArchive::makeConfigFile(const char *root, const char *workspace, const char *master, const char *derivative, const char *catalogue) {
+std::string CreateArchive::makeConfigFile(const char *root, const char *workspace, const char *master, const char *derivative, const char *catalogue, const char* wwwImage) {
 	std::stringstream s;
 	s << "# The main ImgArchive configuration file #\n";
 	/*
@@ -232,26 +233,26 @@ std::string CreateArchive::makeConfigFile(const char *root, const char *workspac
 	return s.str();
 }
 
-bool CreateArchive::createSystem(bool users, const char *archivePath, const char *workspace, const char *master, const char *derivative, const char *catalogue) {
+bool CreateArchive::createSystem(bool users, const char *archivePath, const char *workspace, const char *master, const char *derivative, const char *catalogue, const char* wwwPathStr) {
 	if (users == true) {
 		// Admin version
 		if (IsAdmin() == false) {
 			return false;
 		}
-		if (createAdminSystem(archivePath, workspace, master, derivative, catalogue) == false) {
+		if (createAdminSystem(archivePath, workspace, master, derivative, catalogue, wwwPathStr) == false) {
 			return false;
 		}
 	}
 	else {
 		// User version
-		if (createUserSystem(archivePath, workspace, master, derivative, catalogue) == false) {
+		if (createUserSystem(archivePath, workspace, master, derivative, catalogue, wwwPathStr) == false) {
 			return false;
 		}
 	}
 	return true;
 }
 
-bool CreateArchive::createAdminSystem(const char *archivePath, const char *workspace, const char *master, const char *derivative, const char *catalogue) {
+bool CreateArchive::createAdminSystem(const char *archivePath, const char *workspace, const char *master, const char *derivative, const char *catalogue, const char* wwwImage) {
 
 	
 	if (SAUtils::FileExists(archivePath) == true) {
@@ -329,7 +330,7 @@ bool CreateArchive::createAdminSystem(const char *archivePath, const char *works
 	return true;
 }
 
-bool CreateArchive::createUserSystem(const char* archivePath, const char* workspace, const char* master, const char* derivative, const char* catalogue) {
+bool CreateArchive::createUserSystem(const char* archivePath, const char* workspace, const char* master, const char* derivative, const char* catalogue, const char* wwwImage) {
 
 	if (SAUtils::FileExists(archivePath) == false) {
 		if (SAUtils::makePath(archivePath) == false) {
@@ -338,6 +339,12 @@ bool CreateArchive::createUserSystem(const char* archivePath, const char* worksp
 	}
 	m_archivePath = archivePath;
 
+	if (SAUtils::FileExists(wwwImage) == false) {
+		if (SAUtils::makePath(wwwImage) == false) {
+			return false;
+		}
+	}
+	m_wwwImage = wwwImage;
 
 	if (SAUtils::FileExists(catalogue) == false) {
 		if (SAUtils::makePath(catalogue) == false) {
@@ -468,9 +475,9 @@ bool CreateArchive::checkFolders(const char *root) {
 	return true;
 }
 
-bool CreateArchive::createConfigFiles(const char *root, const char *folder, const char *workspace, const char *master, const char *derivative, const char *catalogue) {
+bool CreateArchive::createConfigFiles(const char *root, const char *folder, const char *workspace, const char *master, const char *derivative, const char *catalogue, const char*wwwPathStr) {
 	//createFile(const char *root, const char *folder, const char *filename, std::string &str) {
-	std::string configFile = makeConfigFile(root, workspace, master, derivative, catalogue);
+	std::string configFile = makeConfigFile(root, workspace, master, derivative, catalogue, wwwPathStr);
 	
 	if (createFile(root, folder, "config.dat", configFile) == false) {
 		return false;

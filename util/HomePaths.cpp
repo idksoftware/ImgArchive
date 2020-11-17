@@ -149,6 +149,25 @@ bool ImgArchiveHome::setArchiveHome()
 	return true;
 }
 
+std::string ImgArchiveHome::errorStr()
+{
+	std::string errStr;
+	switch (m_error) {
+	case HPError::Ok:					// OK
+		return "Ok no error";
+	case HPError::initaliseError:
+		return "Initalise error";
+	case HPError::CannotLocatePath:	// Cannot locate path at default or HOME if set
+		return "Cannot locate path at default or HOME if set";
+	case HPError::NotFound:			// Path not at default and HOME not set 
+		return "Path not at default and IMGARCHIVE_HOME not set";
+	case HPError::Unknown:				// Unknown state
+	default:
+		break;
+	}
+	return "Unknown error";
+}
+
 bool HomePathsBase::loadEnv() {
 	
 	HomePathsBase::m_allUsersHomeEnvironmentPath = SAUtils::GetEnv(IMGARCHIVE_HOME, true);

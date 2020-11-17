@@ -130,12 +130,22 @@ constexpr auto DEFAULT_ALLUSER_WORKSPACE_PATH = "/ImgArchive/Workspace";
 constexpr auto DEFAULT_ALLUSER_MASTER_PATH = "/IDK-Software/ImgArchive/master";
 constexpr auto DEFAULT_ALLUSER_DERIVATIVE_PATH = "/IDK-Software/ImgArchive/derivative";
 
+#ifdef WIN32
+constexpr auto DEFAULT_LOCAL_HOME_PATH = "/ImgArchive";
+constexpr auto DEFAULT_LOCAL_WWWIMAGE_PATH = "/ImgArchive/WWWPictures";
+constexpr auto DEFAULT_LOCAL_PICTURE_PATH = "/ImgArchive/Pictures";
+constexpr auto DEFAULT_LOCAL_WORKSPACE_PATH = "/ImgArchive/Workspace";
+constexpr auto DEFAULT_LOCAL_MASTER_PATH = "/master";
+constexpr auto DEFAULT_LOCAL_DERIVATIVE_PATH = "/derivative";
+#else
 constexpr auto DEFAULT_LOCAL_HOME_PATH = "/.ImgArchive";
-constexpr auto DEFAULT_LOCAL_WWWIMAGE_PATH = "/.IAWWWPictures";
+constexpr auto DEFAULT_LOCAL_WWWIMAGE_PATH = "/ImgArchive/WWWPictures";
 constexpr auto DEFAULT_LOCAL_PICTURE_PATH = "/ImgArchive/Pictures";
 constexpr auto DEFAULT_LOCAL_WORKSPACE_PATH = "/ImgArchive/Workspace";
 constexpr auto DEFAULT_LOCAL_MASTER_PATH = "/.ImgArchive/master";
 constexpr auto DEFAULT_LOCAL_DERIVATIVE_PATH = "/.ImgArchive/derivative";
+#endif
+
 //constexpr autoEFAULT_WORKSPACE_PATH = "/IAWorkspace";
 //m_sourcePath = tempHomeDrive + tempHomePath + "/Pictures";
 //m_hookPath = m_homePath + "/hooks";

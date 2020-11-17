@@ -75,6 +75,8 @@ public:
 		return m_valid;
 	}
 	
+	std::string errorStr();
+
 	virtual bool init() = 0;
 	virtual HomePathID getID() const = 0;
 	virtual bool setPath(const char* p) = 0;
@@ -98,7 +100,9 @@ class ImgArchiveHome {
 protected:
 
 	ImgArchiveHome() noexcept {
-		setArchiveHome();
+		if (setArchiveHome() == false) {
+			return; // m_error set
+		}
 		HomePathsBase::loadEnv();
 		if (m_valid == true) {
 			initHomePaths();
@@ -115,6 +119,8 @@ public:
 	HPError error() noexcept {
 		return m_error;
 	}
+
+	std::string errorStr();
 
 	HomePathType type() noexcept {
 		return m_type;
