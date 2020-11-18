@@ -20,12 +20,14 @@ namespace CommandLineProcessing {
 
 	class AppBase
 	{
+		bool m_configured;
+
 	protected:
 		std::shared_ptr<SIAArgvParser> m_argvParser;
-		bool m_configured;
+		
 		std::string  m_configPath;
 		std::string  m_homePath;
-
+		void setConfigured() { m_configured = true; };
 		static int m_error;
 		static std::string m_errorstring;
 
@@ -42,8 +44,7 @@ namespace CommandLineProcessing {
 		
 		/// @brief This is the main application run function. All application processing starts here.
 		bool Run();
-		/// @brief Shows the configuration of the archive. All application processing starts here.
-		bool Show();
+		
 		
 		bool isConfiguratedOk() {
 			return m_configured;

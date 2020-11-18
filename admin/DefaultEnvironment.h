@@ -98,7 +98,6 @@ namespace simplearchive {
 		static std::string m_imgArchiveHome;
 		static HomePathType m_type;
 		static bool m_found;
-
 		static NewInstallOptions m_newInstallOptions;
 
 	public:
@@ -110,6 +109,7 @@ namespace simplearchive {
 		static bool setAllUserDefaultLocations();
 		static bool setLocalDefaultLocations();
 		static bool setDefaultLocations();
+		static bool isConfigured();
 
 		static NewInstallOptions& getOptions() { return m_newInstallOptions; };
 

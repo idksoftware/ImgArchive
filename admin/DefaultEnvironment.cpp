@@ -60,18 +60,35 @@ namespace simplearchive {
 		return true;
 	}
 
-	
-
 	bool NewInstallDefaultLocations::setAllUserDefaultLocations() {
 		ImgArchiveHome::getImgArchiveHome().c_str();
 		return true;
 	}
+
+	bool NewInstallDefaultLocations::isConfigured() {
+
+		std::string imgArchiveHome = m_imgArchiveHome;
+		if (m_type != HomePathType::LocalEnv && m_type != HomePathType::SystemEnv) {
+			imgArchiveHome += DEFAULT_LOCAL_HOME_PATH;
+		}
+
+		if (SAUtils::DirExists(imgArchiveHome.c_str())) {
+			std::string configFilePath = imgArchiveHome + "/config/" + "config.dat";
+			if (SAUtils::FileExists(configFilePath.c_str())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 
 	bool NewInstallDefaultLocations::setLocalDefaultLocations() {
 
 		std::string imgArchiveHome = m_imgArchiveHome;
 		if (m_type == HomePathType::LocalEnv || m_type == HomePathType::SystemEnv) {
 			m_newInstallOptions.setHomePath(imgArchiveHome);
+			m_newInstallOptions.setDerivativePath(imgArchiveHome + DEFAULT_LOCAL_DERIVATIVE_PATH);
+			m_newInstallOptions.setMasterPath(imgArchiveHome + DEFAULT_LOCAL_MASTER_PATH);
 		}
 		else {
 			imgArchiveHome += DEFAULT_LOCAL_HOME_PATH;

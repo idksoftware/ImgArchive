@@ -426,12 +426,11 @@ bool AdminApp::initaliseConfig() {
 
 	AppOptions& appOptions = AppOptions::get();
 	if (appOptions.isConfiguratedOk() == false) {
-		// This is for the time the Init option is  in operation
+		// This is for the time the Init option is in operation
 		return true;
 	}
 	//AppConfig &config = AppConfig::get();
 	AdminConfig config;
-	m_configured = false;
 	
 	ImgArchiveHome& imgArchiveHome = ImgArchiveHome::getObject();
 	if (imgArchiveHome.isValid() == false) {
@@ -458,7 +457,7 @@ bool AdminApp::initaliseConfig() {
 			return false;
 		}
 		config.fileBasedValues(homePath.c_str(), tempPath.c_str());
-		m_configured = true;
+		setConfigured();
 	}
 	AppConfig appConfig = AppConfig::get();
 	if (ImageExtentions::setExtentionsFilePath(appConfig.getConfigPath()) == false) {

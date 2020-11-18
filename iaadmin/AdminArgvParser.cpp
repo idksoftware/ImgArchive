@@ -41,8 +41,8 @@ namespace simplearchive {
 
 		// Subcommands
 		defineOption("init", "Create ImgArchive's working enviroment", ArgvParser::MasterOption);
-		defineCommandSyntax("init", "isadmin init [-q | --quiet] | [--user <all|self>]\n"
-			"| [--set-home-env <yes | no>] | [ --archive-path <path>]\n"
+		defineCommandSyntax("init", "isadmin init [-q | --quiet] | [--user <all|self>][--force]\n"
+			"| [--set-home <yes | no>] | [ --archive-path <path>]\n"
 			"| [ --workspace-path <path>] | [ --master-path <path>]\n"
 			"| [ --derivative-path <path>] | [ --picture-path <path>]\n"
 			"| [ --picture-path <path>] | [ --www-image-path <path>]");
@@ -122,7 +122,7 @@ namespace simplearchive {
 		defineOption("picture-path", "location of the picture folder.", ArgvParser::OptionRequiresValue);
 		defineOption("www-image-path", "location of the www image folder.", ArgvParser::OptionRequiresValue);
 		
-		defineOption("set-home-env", "Set the Home environment variable.", ArgvParser::OptionRequiresValue);
+		defineOption("set-home", "Set the Home environment variable.", ArgvParser::OptionRequiresValue);
 		defineOption("user", "Sets user to local or all users.", ArgvParser::OptionRequiresValue);
 		// Configure Command
 		defineOption("general", "General options that may be used generally in commands", ArgvParser::OptionRequiresValue);
@@ -242,7 +242,8 @@ namespace simplearchive {
 		defineCommandOption("init", "derivative-path");
 		defineCommandOption("init", "picture-path");
 		defineCommandOption("init", "www-image-path");
-		defineCommandOption("init", "set-home-env");
+		defineCommandOption("init", "set-home");
+		defineCommandOption("init", "force");
 		defineCommandOption("init", "user");
 
 		defineCommandOption("show", "setting");
@@ -451,6 +452,11 @@ namespace simplearchive {
 		} else if (command("init") == true) {
 			// This command will initalise the configuration.
 			// so the the configuration need not to be initalised.
+			bool isForced = false;
+
+			if (foundOption("force") == true) {
+				isForced = true;
+			}
 			appOptions.setCommandMode(AppOptions::CommandMode::CM_InitArchive);
 			appOptions.m_users = SAUtils::IsAdminMode();
 			if (NewInstallDefaultLocations::init() == false) {
@@ -458,6 +464,13 @@ namespace simplearchive {
 				return false;
 			}
 		
+			if (NewInstallDefaultLocations::isConfigured() == true) {
+				if (isForced == false) {
+					printf("\nInit failed? ImgArchive is configured. Use fource to override current configuration.\n\n");
+					return false;
+				}
+			}
+
 			appOptions.m_configured = false;
 			std::string opt;
 			if (foundOption("users") == true) {
@@ -496,8 +509,8 @@ namespace simplearchive {
 				}
 			}
 			BoolOption setHomeEnv = BoolOption::Invalid;
-			if (foundOption("set-home-env") == true) {
-				std::string value = optionValue("set-home-env");
+			if (foundOption("set-home") == true) {
+				std::string value = optionValue("set-home");
 				if ((setHomeEnv = SAUtils::isTrueFalse(value)) == BoolOption::Invalid) {
 					printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 					return false;
