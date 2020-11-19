@@ -127,8 +127,8 @@ constexpr auto DEFAULT_ALLUSER_HOME_PATH = "/IDK-Software/ImgArchive";
 constexpr auto DEFAULT_ALLUSER_WWWIMAGE_PATH = "/IDK-Software/ImgArchive/IAWWWPictures";
 constexpr auto DEFAULT_ALLUSER_PICTURE_PATH = "/ImgArchive/Pictures";
 constexpr auto DEFAULT_ALLUSER_WORKSPACE_PATH = "/ImgArchive/Workspace";
-constexpr auto DEFAULT_ALLUSER_MASTER_PATH = "/IDK-Software/ImgArchive/master";
-constexpr auto DEFAULT_ALLUSER_DERIVATIVE_PATH = "/IDK-Software/ImgArchive/derivative";
+constexpr auto DEFAULT_ALLUSER_MASTER_PATH = "/master";
+constexpr auto DEFAULT_ALLUSER_DERIVATIVE_PATH = "/derivative";
 
 #ifdef WIN32
 constexpr auto DEFAULT_LOCAL_HOME_PATH = "/ImgArchive";

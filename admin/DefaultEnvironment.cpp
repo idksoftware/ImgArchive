@@ -59,9 +59,40 @@ namespace simplearchive {
 		}
 		return true;
 	}
-
+	/*
+	constexpr auto DEFAULT_ALLUSER_HOME_PATH = "/IDK-Software/ImgArchive";
+constexpr auto DEFAULT_ALLUSER_WWWIMAGE_PATH = "/IDK-Software/ImgArchive/IAWWWPictures";
+constexpr auto DEFAULT_ALLUSER_PICTURE_PATH = "/ImgArchive/Pictures";
+constexpr auto DEFAULT_ALLUSER_WORKSPACE_PATH = "/ImgArchive/Workspace";
+constexpr auto DEFAULT_ALLUSER_MASTER_PATH = "/IDK-Software/ImgArchive/master";
+constexpr auto DEFAULT_ALLUSER_DERIVATIVE_PATH = "/IDK-Software/ImgArchive/derivative";
+	*/
 	bool NewInstallDefaultLocations::setAllUserDefaultLocations() {
-		ImgArchiveHome::getImgArchiveHome().c_str();
+
+		std::string imgArchiveHome = m_imgArchiveHome;
+		if (m_type == HomePathType::LocalEnv || m_type == HomePathType::SystemEnv) {
+			m_newInstallOptions.setHomePath(imgArchiveHome);
+			m_newInstallOptions.setDerivativePath(imgArchiveHome + DEFAULT_LOCAL_DERIVATIVE_PATH);
+			m_newInstallOptions.setMasterPath(imgArchiveHome + DEFAULT_ALLUSER_MASTER_PATH);
+		}
+		else {
+			imgArchiveHome += DEFAULT_ALLUSER_HOME_PATH;;
+			m_newInstallOptions.setHomePath(imgArchiveHome);
+			m_newInstallOptions.setDerivativePath(imgArchiveHome + DEFAULT_ALLUSER_DERIVATIVE_PATH);
+			m_newInstallOptions.setMasterPath(imgArchiveHome + DEFAULT_ALLUSER_MASTER_PATH);
+		}
+
+
+		std::string homeEnv = SAUtils::GetPOSIXEnv("HOMEDRIVE");
+		std::string homePathEnv = SAUtils::GetPOSIXEnv("HOMEPATH");
+		homeEnv += homePathEnv;
+		//m_imgArchiveHome DEFAULT_LOCAL_HOME_PATH
+
+
+		m_newInstallOptions.setPicturePath(homeEnv + DEFAULT_LOCAL_PICTURE_PATH);
+		m_newInstallOptions.setWorkspacePath(homeEnv + DEFAULT_LOCAL_WORKSPACE_PATH);
+		m_newInstallOptions.setWwwPath(homeEnv + DEFAULT_LOCAL_WWWIMAGE_PATH);
+
 		return true;
 	}
 
@@ -185,7 +216,6 @@ namespace simplearchive {
 			if (SAUtils::IsAdminMode() == true) {
 				if (SAUtils::DirExists(allusersHomeDefaultPath.c_str()) == true) {
 					m_imgArchiveHome = allusersHomeDefaultPath;
-					m_imgArchiveHome += DEFAULT_ALLUSER_HOME_PATH;
 					m_type = HomePathType::AllUsers;
 					m_found = true;
 

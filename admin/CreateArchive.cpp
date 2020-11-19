@@ -255,78 +255,48 @@ bool CreateArchive::createSystem(bool users, const char *archivePath, const char
 bool CreateArchive::createAdminSystem(const char *archivePath, const char *workspace, const char *master, const char *derivative, const char *catalogue, const char* wwwImage) {
 
 	
-	if (SAUtils::FileExists(archivePath) == true) {
-		std::string configPath = archivePath;
-		configPath += CONFIG_PATH;
-		if (SAUtils::FileExists(configPath.c_str()) == true) {
-			std::cout << "Config path folder found: \"" << m_archivePath << "\" so archive exists? exiting\n";
+	if (SAUtils::FileExists(archivePath) == false) {
+		if (SAUtils::makePath(archivePath) == false) {
 			return false;
 		}
 	}
-		
 	m_archivePath = archivePath;
-	std::cout << "home path folder found: " << archivePath << '\n';
-	
-	if (SAUtils::FileExists(workspace) == true) {
-		std::cout << "Config path folder found: \"" << workspace << "\" so archive exists? exiting\n";
-		return false;
-	}
 
-	if (SAUtils::FileExists(master) == true) {
-		std::cout << "Config path folder found: \"" << master << "\" so archive exists? exiting\n";
-		return false;
-	}
-
-	if (SAUtils::FileExists(derivative) == true) {
-		std::cout << "Config path folder found: \"" << derivative << "\" so archive exists? exiting\n";
-		return false;
-	}
-	if (SAUtils::FileExists(catalogue) == true) {
-		std::cout << "catalogue path folder found: \"" << derivative << "\" so archive exists? exiting\n";
-		return false;
-	}
-	if (catalogue == nullptr || *catalogue == '\0') {
-
-		std::string temp = SAUtils::GetPOSIXEnv("USERPROFILE");
-		std::string path = temp;
-		path += "/Pictures";
-		if (SAUtils::FileExists(path.c_str()) == false) {
+	if (SAUtils::FileExists(wwwImage) == false) {
+		if (SAUtils::makePath(wwwImage) == false) {
 			return false;
 		}
-		path += "/IAPictures";
-		if (SAUtils::FileExists(path.c_str()) == false) {
-			if (SAUtils::mkDir(path.c_str()) == false) {
-				return false;
-			}
-		}
-		m_catalogue = path;
 	}
-	else {
-		
+	m_wwwImage = wwwImage;
+
+	if (SAUtils::FileExists(catalogue) == false) {
 		if (SAUtils::makePath(catalogue) == false) {
 			return false;
 		}
-		m_catalogue = catalogue;
 	}
+	m_catalogue = catalogue;
 
-	if (SAUtils::makePath(workspace) == false) {
-		return false;
+
+	if (SAUtils::FileExists(workspace) == false) {
+		if (SAUtils::makePath(workspace) == false) {
+			return false;
+		}
 	}
 	m_workspace = workspace;
-	std::cout << "Created workspace path folder: " << m_workspace << '\n';
 
-	if (SAUtils::makePath(master) == false) {
-		return false;
+	if (SAUtils::FileExists(master) == false) {
+		if (SAUtils::makePath(master) == false) {
+			return false;
+		}
 	}
 	m_master = master;
-	std::cout << "Created master path folder: " << m_master << '\n';
-	
-	if (SAUtils::makePath(derivative) == false) {
-		return false;
+
+	if (SAUtils::FileExists(derivative) == false) {
+		if (SAUtils::makePath(derivative) == false) {
+			return false;
+		}
 	}
 	m_derivative = derivative;
-	std::cout << "Created derivative path folder: " << derivative << '\n';
-	
 	return true;
 }
 

@@ -342,14 +342,14 @@ public:
 	ImageSetReader() : m_imageSetContainer(std::make_shared<ImageSetContainer>()) {}
 	bool read(const char *setFilePath) {
 
-		char text[1024];
+		std::string text;
 
 		std::ifstream file(setFilePath);
 		if (file.is_open() == false) {
 			return false;
 		}
 
-		while (file.getline(text, 100)) {
+		for (std::getline(file, text); file.good(); std::getline(file, text))) {
 			if (text[0] == '\0') {
 				continue;
 			}

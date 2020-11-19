@@ -200,16 +200,15 @@ public:
 };
 
 bool GetImageFolderContainer::read(const char *datafile) {
-	char text[256];
+	std::string text;
 	std::ifstream file(datafile);
 	printf("Reading %s\n", datafile);
 	if (file.is_open() == false) {
 		return false;
 	}
 
-	while (file.getline(text, 100)) {
-		std::string s = text;
-		GetImageFolder fc(s);
+	for (std::getline(file, text); file.good(); std::getline(file, text)) {
+		GetImageFolder fc(text);
 		printf("%s\n", fc.toString().c_str());
 		push_back(fc);
 	}

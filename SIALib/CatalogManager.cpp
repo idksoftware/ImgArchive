@@ -198,16 +198,15 @@ public:
 };
 
 bool FolderCatalogContainer::read(const char *datafile) {
-	char text[256];
+	std::string text;
 	std::ifstream file(datafile);
 	printf("Reading %s\n", datafile);
 	if (file.is_open() == false) {
 		return false;
 	}
 
-	while (file.getline(text, 100)) {
-		std::string s = text;
-		FolderCatalog fc(s);
+	for (std::getline(file, text); file.good(); std::getline(file, text)) {
+		FolderCatalog fc(text);
 		printf("%s\n", fc.toString().c_str());
 		push_back(fc);
 	}
@@ -430,15 +429,14 @@ public:
 };
 
 bool ImageCatalogContainer::read(const char *datafile) {
-	char text[256];
+	std::string text;
 	std::ifstream file(datafile);
 	if (file.is_open() == false) {
 		return false;
 	}
 
-	while (file.getline(text, 100)) {
-		std::string s = text;
-		push_back(FolderCatalog(s));
+	for (std::getline(file, text); file.good(); std::getline(file, text)) {
+		push_back(FolderCatalog(text));
 	}
 	file.close();
 

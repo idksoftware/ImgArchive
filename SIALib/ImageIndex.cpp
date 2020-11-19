@@ -186,13 +186,13 @@ DupDataFile::~DupDataFile() {
 }
 
 bool DupDataFile::read(const char *datafile) {
-	char text[256];
+	std::string text;
 	std::ifstream file(datafile);
 	if (file.is_open() == false) {
 		return false;
 	}
 	m_filePath = datafile;
-	while (file.getline(text, 256)) {
+	for (std::getline(file, text); file.good(); std::getline(file, text)) {
 		m_dataContainer->push_back(text);
 	}
 	file.close();

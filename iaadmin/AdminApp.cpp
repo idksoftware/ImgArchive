@@ -408,10 +408,11 @@ bool AdminApp::CreateArchive(const char *archivePath, const char *workspacePath,
 
 	std::cout << "Managed directories\n";
 	std::cout << "Home Configuration path    = \"" << archivePath << "\"\n";
-	std::cout << "Workspace path             = \"" << workspacePath << "\"\n";
 	std::cout << "Master Repository path     = \"" << masterPath << "\"\n";
 	std::cout << "Derivative Repository path = \"" << derivativePath << "\"\n";
-	std::cout << "Catalogue path             = \"" << cataloguePath << "\"\n";
+	std::cout << "Workspace path             = \"" << workspacePath << "\"\n";
+	std::cout << "Picture path               = \"" << cataloguePath << "\"\n";
+	std::cout << "WWWW path                  = \"" << wwwPath << "\"\n";
 
 	//  const char* archivePath, const char* workspacePath, const char* reposPath, const char* masterPath, const char* derivativePath, const char* cataloguePath, bool users
 	if (CreateArchive::createArchive(archivePath, workspacePath, masterPath, derivativePath, cataloguePath, wwwPath, users) == false) {

@@ -40,14 +40,14 @@ bool CheckFileItem::uncheck(const char *filename) {
 }
 
 bool CheckFileItem::read() {
-	char text[261];
+	std::string text;
 	std::ifstream file(m_path.c_str());
 	if (file.is_open() == false) {
 		// empty?
 		return false;
 	}
 
-	while (file.getline(text, 261)) {
+	for (std::getline(file, text); file.good(); std::getline(file, text)) {
 		push_back(text);
 	}
 	file.close();

@@ -183,10 +183,7 @@ bool SIAArcApp::initaliseConfig() {
 			return false;
 		}
 		config.fileBasedValues(homePath.c_str(), tempPath.c_str());
-		m_configured = true;
-	}
-	else {
-		m_configured = false;
+		setConfigured();
 	}
 
 	return true;

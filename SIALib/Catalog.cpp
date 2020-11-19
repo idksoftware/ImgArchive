@@ -175,13 +175,13 @@ public:
 };
 
 bool CatalogContainer::read(const char *datafile) {
-	char text[256];
+	std::string text;
 	std::ifstream file(datafile);
 	if (file.is_open() == false) {
 		return false;
 	}
 
-	while (file.getline(text, 100)) {
+	for (std::getline(file, text); file.good(); std::getline(file, text)) {
 		std::string s = text;
 		push_back(CatalogFolder(s));
 	}

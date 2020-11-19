@@ -67,6 +67,7 @@
 #include <stdio.h>
 #include <sstream>
 #include <vector>
+#include <string>
 #include "LightroomImport.h"
 
 #define _CRTDBG_MAP_ALLOC
@@ -143,7 +144,7 @@ namespace simplearchive {
 	public:
 		std::unique_ptr<ImportList> Read(const char *filepath) {
 			std::unique_ptr<ImportList> importFile = std::make_unique<ImportList>();
-			char text[MAX_PATH];
+			std::string text;
 			std::ifstream file(filepath);
 			if (file.is_open() == false) {
 				// empty?
@@ -151,7 +152,7 @@ namespace simplearchive {
 				return emply;
 			}
 
-			while (file.getline(text, 100)) {
+			for (std::getline(file, text); file.good(); std::getline(file, text)) {
 				importFile->push_back(text);
 			}
 			file.close();
