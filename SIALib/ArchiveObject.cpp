@@ -160,6 +160,9 @@ namespace simplearchive {
 		PathController pathController(path.c_str());
 		pathController.splitPathAndFile(dbImage);
 
+		
+
+
 		if (pathController.makeRelativePath(dbImage) == false) {
 			logger.log(LOG_OK, CLogger::Level::FATAL, "Invalid path: \"%s\"?", dbImage);
 			ErrorCode::setErrorCode(IMGA_ERROR::IMAGE_NOT_FOUND);
@@ -172,12 +175,14 @@ namespace simplearchive {
 		from += pathController.getImageName();
 		pathController.setFullPath(from);
 
+		printf("RepositoryObject::validate Path: %s from: %s\n", path.c_str(), from.c_str());
+
 		if (pathController.isValid() == false) {
 			logger.log(LOG_OK, CLogger::Level::FATAL, "Invalid image path: \"%s\"?", from.c_str());
 			return false;
 		}
 		if (SAUtils::FileExists(from.c_str()) == false) {
-			logger.log(LOG_OK, CLogger::Level::FATAL, "Invalid image path: \"%s\"?", from.c_str());
+			logger.log(LOG_OK, CLogger::Level::FATAL, "File not found on image path: \"%s\"?", from.c_str());
 			return false;
 		}
 
@@ -298,13 +303,16 @@ namespace simplearchive {
 			from += pathController.getRelativePath();
 			from += "/images/";
 			from += pathController.getImageName();
+
+			printf("MasterRepositoryObject::validate Path: %s from: %s\n", path.c_str(), from.c_str());
+
 			pathController.setFullPath(from);
 			if (pathController.isValid() == false) {
 				logger.log(LOG_OK, CLogger::Level::FATAL, "Invalid image path: \"%s\"?", from.c_str());
 				return false;
 			}
 			if (SAUtils::FileExists(from.c_str()) == false) {
-				logger.log(LOG_OK, CLogger::Level::FATAL, "Invalid image path: \"%s\"?", from.c_str());
+				logger.log(LOG_OK, CLogger::Level::FATAL, "Master image not found: \"%s\"?", from.c_str());
 				return false;
 			}
 			FileInfo targetFileInfo(from);
@@ -322,7 +330,7 @@ namespace simplearchive {
 		else {
 			std::string source = sourceImage;
 			FileInfo targetFileInfo(source);
-			if (RepositoryObject::validate(dbImage, targetFileInfo.getSize(), targetFileInfo.getCrc(), targetFileInfo.getMd5().c_str()) == false) {
+			if (RepositoryObject::``validate(dbImage, targetFileInfo.getSize(), targetFileInfo.getCrc(), targetFileInfo.getMd5().c_str()) == false) {
 				return false;
 			}
 			if (isBackup1Enabled() == true) {

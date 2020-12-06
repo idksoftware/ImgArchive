@@ -9,14 +9,14 @@
 #define AppConfig "{commonappdata}\IDK-Software\ImgArchive\config"
 #define AppHooks "{commonappdata}\IDK-Software\ImgArchive\hooks"
 #define AppHome "{commonappdata}\IDK-Software\ImgArchive"
-#define ReleasePath "C:\development\SIA\ImgArchive\Release"
-#define ReleasePath64 "C:\development\SIA\ImgArchive\x64\Release"
+#define ReleasePath "C:\development\ImgArchive\ImgArchive\Release"
+#define ReleasePath64 "C:\development\ImgArchive\ImgArchive\x64\Release"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
 ; Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
-AppId={{82C69D0D-39D7-4B73-8079-0A119C825290}
+AppId={{165F0D2F-71F0-4E4C-87A0-6CA5E9B870CF}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 ; Changes Environment 
@@ -26,7 +26,7 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-DefaultDirName={pf}\IDK-Software\imgarchive
+DefaultDirName={commonpf}\IDK-Software\imgarchive
 DefaultGroupName={#MyAppName}
 LicenseFile={#ReleasePath}\licence.txt
 OutputDir=C:\development\imgarch_root\ImgArchive\Release

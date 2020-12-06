@@ -15,7 +15,7 @@ Quick install instructions
 To run the software you will need to open a new command
  prompt (cmd.exe).
 
-Note: For more information please goto http://imgawiki.org/tiki-index.php?page=Installation 
+Note: For more information please goto https://idk-solutions.atlassian.net/wiki/spaces/ImgaWiki/overview 
 
 To run the ImgArchive client tool
 ---------------------------------
