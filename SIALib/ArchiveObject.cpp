@@ -1,4 +1,3 @@
-
 #include "AppConfig.h"
 #include "AppPaths.h"
 #include "SACmdArgs.h"
@@ -80,7 +79,6 @@ static char THIS_FILE[] = __FILE__;
 #include "FileInfo.h"
 
 
-
 #undef FILECODE
 #define FILECODE ARCHIVEOBJECT_CPP
 #define LOG_COMPLETED_OK						ARCHIVEOBJECT_CPP
@@ -90,14 +88,15 @@ static char THIS_FILE[] = __FILE__;
 #define LOG_UNCHECKOUT_FUNCTION					(LOG_UNABLE_TO_CHECKIN_GENERAL + 1)
 #define LOG_UNABLE_TO_UNCHECKOUT_GENERAL		(LOG_UNCHECKOUT_FUNCTION + 1)
 
-namespace simplearchive {
-
-	bool PrimaryIndexObject::init(PrimaryIndexPath &primaryIndexPath) {
-
+namespace simplearchive
+{
+	bool PrimaryIndexObject::init(PrimaryIndexPath& primaryIndexPath)
+	{
 		VersionControl& versionControl = VersionControl::getInstance();
 		versionControl.setVersionPath(primaryIndexPath.getHistoryPath().c_str());
 		m_primaryIndexTable->setPath(primaryIndexPath.getIdxDbPath().c_str());
-		if (!m_imageIndex->init(primaryIndexPath.getImageIndexPath().c_str())) {
+		if (!m_imageIndex->init(primaryIndexPath.getImageIndexPath().c_str()))
+		{
 			return false;
 		}
 
@@ -106,32 +105,41 @@ namespace simplearchive {
 		return true;
 	}
 
-	bool PrimaryIndexObject::addMasterImage(const BasicMetadata &basicMetadata, ImagePath &imagePath, size_t masterSeqNumber, size_t primarySeqNumber) {
+	bool PrimaryIndexObject::addMasterImage(const BasicMetadata& basicMetadata, ImagePath& imagePath,
+	                                        size_t masterSeqNumber, size_t primarySeqNumber)
+	{
 		unsigned long seqNumber = m_primaryIndexTable->getNextIndex();
 
 		ExifDate date;
 
-		if (m_primaryIndexTable->insert(seqNumber, imagePath.getRelativePath().c_str(), imagePath.getImageName().c_str(), basicMetadata.getSize(), basicMetadata.getCrc(), basicMetadata.getMd5().c_str(),
-			basicMetadata.getUuid().c_str(), basicMetadata.getVersion(), date, masterSeqNumber) == false) {
+		if (m_primaryIndexTable->insert(seqNumber, imagePath.getRelativePath().c_str(),
+		                                imagePath.getImageName().c_str(), basicMetadata.getSize(),
+		                                basicMetadata.getCrc(), basicMetadata.getMd5().c_str(),
+		                                basicMetadata.getUuid().c_str(), basicMetadata.getVersion(), date,
+		                                masterSeqNumber) == false)
+		{
 			return false;
 		}
 		//m_imageIndex->updateVersion(basicMetadata.getCrc(), imagePath.getRelativePath().c_str());
 		//this->m_primaryIndexPath.get()->getImageIndexPath();
-		VersionControl::getInstance().createMasterVersion(basicMetadata, imagePath.getYyyymmddStr().c_str(), masterSeqNumber, primarySeqNumber);
+		VersionControl::getInstance().createMasterVersion(basicMetadata, imagePath.getYyyymmddStr().c_str(),
+		                                                  masterSeqNumber, primarySeqNumber);
 		m_imageIndex->updatePath(basicMetadata.getCrc(), imagePath.getRelativePath().c_str(), 0);
 		return true;
 	}
 
-	bool PrimaryIndexObject::addDerivativeImage(FileInfo& fileInfo, const char *comment, size_t primarySeqNumber, size_t derivativeSeqNumber, const Version& version) {
-
-
+	bool PrimaryIndexObject::addDerivativeImage(FileInfo& fileInfo, const char* comment, size_t primarySeqNumber,
+	                                            size_t derivativeSeqNumber, const Version& version)
+	{
 		PathController pathController(fileInfo.getPath().c_str());
-		if (pathController.split() == false) {
+		if (pathController.split() == false)
+		{
 			return false;
 		}
 		ExifDate addDate;
 		VersionControl& versionControl = VersionControl::getInstance();
-		if (versionControl.createDerivativeVersion(fileInfo, derivativeSeqNumber, primarySeqNumber) == false) {
+		if (versionControl.createDerivativeVersion(fileInfo, derivativeSeqNumber, primarySeqNumber) == false)
+		{
 			return false;
 		}
 
@@ -141,9 +149,11 @@ namespace simplearchive {
 		int versionInt = versionControl.getVersion();
 		//	This is the rolling CSV table that holds all images in the database 
 		// root path is IMGA/pi/index"
-		if (m_primaryIndexTable->insert(primarySeqNumber, pathController.getYearday().c_str(), fileInfo.getName().c_str(), fileInfo.getSize(),
-			fileInfo.getCrc(), fileInfo.getMd5().c_str(),
-			fileInfo.getUuid().c_str(), versionInt, addDate, derivativeSeqNumber) == false) {
+		if (m_primaryIndexTable->insert(primarySeqNumber, pathController.getYearday().c_str(),
+		                                fileInfo.getName().c_str(), fileInfo.getSize(),
+		                                fileInfo.getCrc(), fileInfo.getMd5().c_str(),
+		                                fileInfo.getUuid().c_str(), versionInt, addDate, derivativeSeqNumber) == false)
+		{
 			return false;
 		}
 
@@ -151,19 +161,18 @@ namespace simplearchive {
 		return true;
 	}
 
-	bool RepositoryObject::validate(const char *dbImage, size_t size, unsigned int crc, const char * md5)
+	bool RepositoryObject::validate(const char* dbImage, size_t size, unsigned int crc, const char* md5)
 	{
-		CLogger &logger = CLogger::getLogger();
+		CLogger& logger = CLogger::getLogger();
 
 		RepositoryPath repositoryPath = getRepositoryPath();
 		std::string path = repositoryPath.getRepositoryPath();
 		PathController pathController(path.c_str());
 		pathController.splitPathAndFile(dbImage);
 
-		
 
-
-		if (pathController.makeRelativePath(dbImage) == false) {
+		if (pathController.makeRelativePath(dbImage) == false)
+		{
 			logger.log(LOG_OK, CLogger::Level::FATAL, "Invalid path: \"%s\"?", dbImage);
 			ErrorCode::setErrorCode(IMGA_ERROR::IMAGE_NOT_FOUND);
 			return false;
@@ -177,124 +186,157 @@ namespace simplearchive {
 
 		printf("RepositoryObject::validate Path: %s from: %s\n", path.c_str(), from.c_str());
 
-		if (pathController.isValid() == false) {
+		if (pathController.isValid() == false)
+		{
 			logger.log(LOG_OK, CLogger::Level::FATAL, "Invalid image path: \"%s\"?", from.c_str());
 			return false;
 		}
-		if (SAUtils::FileExists(from.c_str()) == false) {
+		if (SAUtils::FileExists(from.c_str()) == false)
+		{
 			logger.log(LOG_OK, CLogger::Level::FATAL, "File not found on image path: \"%s\"?", from.c_str());
 			return false;
 		}
 
 		FileInfo fileInfo(from);
 
-		if (fileInfo.getSize() != size) {
+		if (fileInfo.getSize() != size)
+		{
 			return false;
 		}
-		if (fileInfo.getCrc() != crc) {
+		if (fileInfo.getCrc() != crc)
+		{
 			return false;
 		}
 		std::string thisMD5 = fileInfo.getMd5();
-		if (thisMD5.compare(md5) != 0) {
+		if (thisMD5.compare(md5) != 0)
+		{
 			return false;
 		}
 		return true;
 	}
-	
-	void RepositoryObject::init(RepositoryPath &repositoryPath) {
+
+	void RepositoryObject::init(RepositoryPath& repositoryPath)
+	{
 		*m_repositoryPath = repositoryPath;
 	}
 
-	bool MasterRepositoryObject::init(RepositoryPath &repositoryPath) {
-		
+	bool MasterRepositoryObject::init(RepositoryPath& repositoryPath)
+	{
 		RepositoryObject::init(repositoryPath);
-		CLogger &logger = CLogger::getLogger();
+		CLogger& logger = CLogger::getLogger();
 
 		m_masterIndexTable->setPath(repositoryPath.getCSVDatabasePath().c_str());
 
-		if (ArchivePath::isMasterBackup1Enabled() == true) {
-			logger.log(LOG_OK, CLogger::Level::SUMMARY, "Backup 1 enabled, using folder: \"%s\"", ArchivePath::getMasterBackup1Path().c_str());
-			if (SAUtils::DirExists(ArchivePath::getMasterBackup1Path().c_str()) == false) {
-				logger.log(LOG_OK, CLogger::Level::FATAL, "Backup 1 folder: \"%s\" not accessable?", ArchivePath::getMasterBackup1Path().c_str());
+		if (ArchivePath::isMasterBackup1Enabled() == true)
+		{
+			logger.log(LOG_OK, CLogger::Level::SUMMARY, "Backup 1 enabled, using folder: \"%s\"",
+			           ArchivePath::getMasterBackup1Path().c_str());
+			if (SAUtils::DirExists(ArchivePath::getMasterBackup1Path().c_str()) == false)
+			{
+				logger.log(LOG_OK, CLogger::Level::FATAL, "Backup 1 folder: \"%s\" not accessable?",
+				           ArchivePath::getMasterBackup1Path().c_str());
 				return false;
 			}
 			RepositoryPath& backupPath1 = ArchivePath::getMasterBackup1();
-			if (backupPath1.settup() == false) {
+			if (backupPath1.settup() == false)
+			{
 				return false;
 			}
 			m_backup[0].init(backupPath1);
 		}
-		else {
+		else
+		{
 			logger.log(LOG_OK, CLogger::Level::INFO, "Backup 1 not enabled");
 		}
-		if (ArchivePath::isMasterBackup2Enabled() == true) {
-			logger.log(LOG_OK, CLogger::Level::SUMMARY, "Backup 2 enabled, using folder: \"%s\"", ArchivePath::getMasterBackup2Path().c_str());
-			if (SAUtils::DirExists(ArchivePath::getMasterBackup2Path().c_str()) == false) {
-				logger.log(LOG_OK, CLogger::Level::FATAL, "Backup 2 folder: \"%s\" not accessable?", ArchivePath::getMasterBackup2Path().c_str());
+		if (ArchivePath::isMasterBackup2Enabled() == true)
+		{
+			logger.log(LOG_OK, CLogger::Level::SUMMARY, "Backup 2 enabled, using folder: \"%s\"",
+			           ArchivePath::getMasterBackup2Path().c_str());
+			if (SAUtils::DirExists(ArchivePath::getMasterBackup2Path().c_str()) == false)
+			{
+				logger.log(LOG_OK, CLogger::Level::FATAL, "Backup 2 folder: \"%s\" not accessable?",
+				           ArchivePath::getMasterBackup2Path().c_str());
 				return false;
 			}
 			RepositoryPath& backupPath2 = ArchivePath::getMasterBackup2();
-			if (backupPath2.settup() == false) {
+			if (backupPath2.settup() == false)
+			{
 				return false;
 			}
 			m_backup[1].init(backupPath2);
 		}
-		else {
+		else
+		{
 			logger.log(LOG_OK, CLogger::Level::INFO, "Backup 2 not enabled");
 		}
 		IntegrityManager& integrityManager = IntegrityManager::get();
-		integrityManager.setMasterBackupPaths(ArchivePath::getMasterBackup1Path().c_str(), ArchivePath::getMasterBackup2Path().c_str(),
-									ArchivePath::isMasterBackup1Enabled(), ArchivePath::isMasterBackup2Enabled());
+		integrityManager.setMasterBackupPaths(ArchivePath::getMasterBackup1Path().c_str(),
+		                                      ArchivePath::getMasterBackup2Path().c_str(),
+		                                      ArchivePath::isMasterBackup1Enabled(),
+		                                      ArchivePath::isMasterBackup2Enabled());
 		return true;
 	}
 
-	bool MasterRepositoryObject::settupRelative(std::string &yyyymmddStr) {
+	bool MasterRepositoryObject::settupRelative(std::string& yyyymmddStr)
+	{
 		RepositoryObject::settupRelative(yyyymmddStr);
-		
-		if (ArchivePath::isMasterBackup1Enabled() == true) {
-			if (m_backup[0].settupRelative(yyyymmddStr) == false) {
+
+		if (ArchivePath::isMasterBackup1Enabled() == true)
+		{
+			if (m_backup[0].settupRelative(yyyymmddStr) == false)
+			{
 				return false;
 			}
 		}
-		if (ArchivePath::isMasterBackup2Enabled() == true) {
-			if (m_backup[1].settupRelative(yyyymmddStr) == false) {
+		if (ArchivePath::isMasterBackup2Enabled() == true)
+		{
+			if (m_backup[1].settupRelative(yyyymmddStr) == false)
+			{
 				return false;
 			}
 		}
 		return true;
 	}
 
-	bool MasterRepositoryObject::copyFile(const std::string &pathToSourceRoot, const std::string  &yyyymmddStr, const std::string &fileName, const std::string &sequenceName) {
+	bool MasterRepositoryObject::copyFile(const std::string& pathToSourceRoot, const std::string& yyyymmddStr,
+	                                      const std::string& fileName, const std::string& sequenceName)
+	{
 		RepositoryObject::copyFile(pathToSourceRoot, fileName, sequenceName);
-		
-		if (isBackup1Enabled() == true) {
-			if (m_backup[0].copyFile(pathToSourceRoot, fileName, sequenceName) == false) {
+
+		if (isBackup1Enabled() == true)
+		{
+			if (m_backup[0].copyFile(pathToSourceRoot, fileName, sequenceName) == false)
+			{
 				return false;
 			}
 		}
-		if (isBackup2Enabled() == true) {
-			if (m_backup[1].copyFile(pathToSourceRoot, fileName, sequenceName) == false) {
+		if (isBackup2Enabled() == true)
+		{
+			if (m_backup[1].copyFile(pathToSourceRoot, fileName, sequenceName) == false)
+			{
 				return false;
 			}
 		}
-		
+
 		// this can only be done after the file copy
 		//integrityManager.addFile(m_yyyymmddStr.c_str(), file.c_str());
 		return true;
 	}
 
-	bool MasterRepositoryObject::validate(const char * dbImage, const char *sourceImage)
+	bool MasterRepositoryObject::validate(const char* dbImage, const char* sourceImage)
 	{
-		CLogger &logger = CLogger::getLogger();
-		
-		if (sourceImage == nullptr) {
+		CLogger& logger = CLogger::getLogger();
+
+		if (sourceImage == nullptr)
+		{
 			// test between backups and master.
 			RepositoryPath repositoryPath = getRepositoryPath();
 			std::string path = repositoryPath.getRepositoryPath();
 			PathController pathController(path.c_str());
 			pathController.splitPathAndFile(dbImage);
 
-			if (pathController.makeRelativePath(dbImage) == false) {
+			if (pathController.makeRelativePath(dbImage) == false)
+			{
 				logger.log(LOG_OK, CLogger::Level::FATAL, "Invalid path: \"%s\"?", dbImage);
 				ErrorCode::setErrorCode(IMGA_ERROR::IMAGE_NOT_FOUND);
 				return false;
@@ -307,53 +349,71 @@ namespace simplearchive {
 			printf("MasterRepositoryObject::validate Path: %s from: %s\n", path.c_str(), from.c_str());
 
 			pathController.setFullPath(from);
-			if (pathController.isValid() == false) {
+			if (pathController.isValid() == false)
+			{
 				logger.log(LOG_OK, CLogger::Level::FATAL, "Invalid image path: \"%s\"?", from.c_str());
 				return false;
 			}
-			if (SAUtils::FileExists(from.c_str()) == false) {
+			if (SAUtils::FileExists(from.c_str()) == false)
+			{
 				logger.log(LOG_OK, CLogger::Level::FATAL, "Master image not found: \"%s\"?", from.c_str());
 				return false;
 			}
 			FileInfo targetFileInfo(from);
-			if (isBackup1Enabled() == true) {
-				if (m_backup[0].validate(from.c_str(), targetFileInfo.getSize(), targetFileInfo.getCrc(), targetFileInfo.getMd5().c_str()) == false) {
+			if (isBackup1Enabled() == true)
+			{
+				if (m_backup[0].validate(from.c_str(), targetFileInfo.getSize(), targetFileInfo.getCrc(),
+				                         targetFileInfo.getMd5().c_str()) == false)
+				{
 					return false;
 				}
 			}
-			if (isBackup2Enabled() == true) {
-				if (m_backup[1].validate(from.c_str(), targetFileInfo.getSize(), targetFileInfo.getCrc(), targetFileInfo.getMd5().c_str()) == false) {
+			if (isBackup2Enabled() == true)
+			{
+				if (m_backup[1].validate(from.c_str(), targetFileInfo.getSize(), targetFileInfo.getCrc(),
+				                         targetFileInfo.getMd5().c_str()) == false)
+				{
 					return false;
 				}
 			}
 		}
-		else {
+		else
+		{
 			std::string source = sourceImage;
 			FileInfo targetFileInfo(source);
-			if (RepositoryObject::``validate(dbImage, targetFileInfo.getSize(), targetFileInfo.getCrc(), targetFileInfo.getMd5().c_str()) == false) {
+			if (RepositoryObject::validate(dbImage, targetFileInfo.getSize(), targetFileInfo.getCrc(),
+			                               targetFileInfo.getMd5().c_str()) == false)
+			{
 				return false;
 			}
-			if (isBackup1Enabled() == true) {
-				if (m_backup[0].validate(dbImage, targetFileInfo.getSize(), targetFileInfo.getCrc(), targetFileInfo.getMd5().c_str()) == false) {
+			if (isBackup1Enabled() == true)
+			{
+				if (m_backup[0].validate(dbImage, targetFileInfo.getSize(), targetFileInfo.getCrc(),
+				                         targetFileInfo.getMd5().c_str()) == false)
+				{
 					return false;
 				}
 			}
-			if (isBackup2Enabled() == true) {
-				if (m_backup[1].validate(dbImage, targetFileInfo.getSize(), targetFileInfo.getCrc(), targetFileInfo.getMd5().c_str()) == false) {
+			if (isBackup2Enabled() == true)
+			{
+				if (m_backup[1].validate(dbImage, targetFileInfo.getSize(), targetFileInfo.getCrc(),
+				                         targetFileInfo.getMd5().c_str()) == false)
+				{
 					return false;
 				}
 			}
 		}
-		
+
 		return true;
 	}
 
-	bool RepositoryObject::writeMetadata(ImagePath &imagePath, MetadataObject &metadataObject) {
-
+	bool RepositoryObject::writeMetadata(ImagePath& imagePath, MetadataObject& metadataObject)
+	{
 		std::string imageAddress = imagePath.getImageName();
 
 		std::string path = getRepositoryPath().getMetadataPath();
-		if (WriteMetadata::writeMasterMetadata(path, imageAddress, metadataObject) == false) {
+		if (WriteMetadata::writeMasterMetadata(path, imageAddress, metadataObject) == false)
+		{
 			return false;
 		}
 
@@ -377,67 +437,85 @@ namespace simplearchive {
 		return true;
 	}
 
-	bool RepositoryObject::settupRelative(std::string &yyyymmddStr) {
+	bool RepositoryObject::settupRelative(std::string& yyyymmddStr)
+	{
 		return getRepositoryPath().settupRelative(yyyymmddStr);
 	}
 
-	bool RepositoryObject::copyFile(const std::string &pathToSourceRoot, const std::string &fileName, const std::string &sequenceName) {
-		RepositoryPath &RepositoryPath = getRepositoryPath();
-		IntegrityManager &integrityManager = IntegrityManager::get();
+	bool RepositoryObject::copyFile(const std::string& pathToSourceRoot, const std::string& fileName,
+	                                const std::string& sequenceName)
+	{
+		RepositoryPath& RepositoryPath = getRepositoryPath();
+		IntegrityManager& integrityManager = IntegrityManager::get();
 		std::string from = pathToSourceRoot + "/" + fileName;
 		std::string to = RepositoryPath.getDataPath() + '/' + sequenceName;
 
-		if (SAUtils::copy(from.c_str(), to.c_str()) == false) {
+		if (SAUtils::copy(from.c_str(), to.c_str()) == false)
+		{
 			return false;
 		}
 
 		// this can only be done after the file copy
 		integrityManager.addDayFolder(RepositoryPath.getRepositoryPath().c_str(), RepositoryPath.getYYYYMMDD().c_str());
-		integrityManager.addFile(RepositoryPath.getRepositoryPath().c_str(), RepositoryPath.getYYYYMMDD().c_str(), sequenceName.c_str());
-		
+		integrityManager.addFile(RepositoryPath.getRepositoryPath().c_str(), RepositoryPath.getYYYYMMDD().c_str(),
+		                         sequenceName.c_str());
+
 		return true;
 	}
 
 
-	bool DerivativesObject::init(RepositoryPath &repositoryPath, const char *workspacePath) {
+	bool DerivativesObject::init(RepositoryPath& repositoryPath, const char* workspacePath)
+	{
 		CLogger& logger = CLogger::getLogger();
 
 		*m_repositoryPath = repositoryPath;
 		m_derivativeIndexTable->setPath(repositoryPath.getCSVDatabasePath().c_str());
 		m_workspacePath = workspacePath;
 
-		CSVDerivativeDatabase &derivativeRepository = CSVDerivativeDatabase::get();
+		CSVDerivativeDatabase& derivativeRepository = CSVDerivativeDatabase::get();
 		derivativeRepository.setDBPath(m_repositoryPath->getRepositoryPath().c_str());
 
-		if (ArchivePath::isDerivativeBackup1Enabled() == true) {
-			logger.log(LOG_OK, CLogger::Level::SUMMARY, "Backup 1 enabled, using folder: \"%s\"", ArchivePath::getMasterBackup1Path().c_str());
-			if (SAUtils::DirExists(ArchivePath::getDerivativeBackup1Path().c_str()) == false) {
-				logger.log(LOG_OK, CLogger::Level::FATAL, "Backup 1 folder: \"%s\" not accessable?", ArchivePath::getMasterBackup1Path().c_str());
+		if (ArchivePath::isDerivativeBackup1Enabled() == true)
+		{
+			logger.log(LOG_OK, CLogger::Level::SUMMARY, "Backup 1 enabled, using folder: \"%s\"",
+			           ArchivePath::getMasterBackup1Path().c_str());
+			if (SAUtils::DirExists(ArchivePath::getDerivativeBackup1Path().c_str()) == false)
+			{
+				logger.log(LOG_OK, CLogger::Level::FATAL, "Backup 1 folder: \"%s\" not accessable?",
+				           ArchivePath::getMasterBackup1Path().c_str());
 				return false;
 			}
 			RepositoryPath& backupPath1 = ArchivePath::getDerivativeBackup1();
-			if (backupPath1.settup() == false) {
+			if (backupPath1.settup() == false)
+			{
 				return false;
 			}
 			m_backup[0].init(backupPath1);
 		}
-		else {
+		else
+		{
 			logger.log(LOG_OK, CLogger::Level::INFO, "Backup 1 not enabled");
 		}
 
-		if (ArchivePath::isDerivativeBackup2Enabled() == true) {
-			logger.log(LOG_OK, CLogger::Level::SUMMARY, "Backup 2 enabled, using folder: \"%s\"", ArchivePath::getMasterBackup1Path().c_str());
-			if (SAUtils::DirExists(ArchivePath::getDerivativeBackup1Path().c_str()) == false) {
-				logger.log(LOG_OK, CLogger::Level::FATAL, "Backup 2 folder: \"%s\" not accessable?", ArchivePath::getMasterBackup1Path().c_str());
+		if (ArchivePath::isDerivativeBackup2Enabled() == true)
+		{
+			logger.log(LOG_OK, CLogger::Level::SUMMARY, "Backup 2 enabled, using folder: \"%s\"",
+			           ArchivePath::getMasterBackup1Path().c_str());
+			if (SAUtils::DirExists(ArchivePath::getDerivativeBackup1Path().c_str()) == false)
+			{
+				logger.log(LOG_OK, CLogger::Level::FATAL, "Backup 2 folder: \"%s\" not accessable?",
+				           ArchivePath::getMasterBackup1Path().c_str());
 				return false;
 			}
 			RepositoryPath& backupPath2 = ArchivePath::getDerivativeBackup2();
-			if (backupPath2.settup() == false) {
+			if (backupPath2.settup() == false)
+			{
 				return false;
 			}
 			m_backup[1].init(backupPath2);
 		}
-		else {
+		else
+		{
 			logger.log(LOG_OK, CLogger::Level::INFO, "Backup 2 not enabled");
 		}
 
@@ -448,43 +526,54 @@ namespace simplearchive {
 
 		IntegrityManager& integrityManager = IntegrityManager::get();
 		integrityManager.setDerivativeBackupPaths(ArchivePath::getDerivativeBackup1Path().c_str(),
-											ArchivePath::getDerivativeBackup2Path().c_str(),
-											ArchivePath::isDerivativeBackup1Enabled(),
-											ArchivePath::isDerivativeBackup2Enabled());
+		                                          ArchivePath::getDerivativeBackup2Path().c_str(),
+		                                          ArchivePath::isDerivativeBackup1Enabled(),
+		                                          ArchivePath::isDerivativeBackup2Enabled());
 		return true;
 	}
 
-	bool DerivativesObject::checkin(FileInfo &fileInfo, const char *comment) {
+	bool DerivativesObject::checkin(FileInfo& fileInfo, const char* comment)
+	{
 		return true;
 	}
-	bool DerivativesObject::isBackup1Enabled() {
+
+	bool DerivativesObject::isBackup1Enabled()
+	{
 		return m_backup[0].getRepositoryPath().isEnabled();
 	}
-	bool DerivativesObject::isBackup2Enabled() {
+
+	bool DerivativesObject::isBackup2Enabled()
+	{
 		return m_backup[1].getRepositoryPath().isEnabled();
 	}
-	
 
-	RepositoryObject & DerivativesObject::getBackup1Object()
+
+	RepositoryObject& DerivativesObject::getBackup1Object()
 	{
 		return m_backup[0];
 	}
 
-	RepositoryObject & DerivativesObject::getBackup2Object()
+	RepositoryObject& DerivativesObject::getBackup2Object()
 	{
 		return m_backup[1];
 	}
 
-	bool DerivativesObject::copyFile(const std::string &pathToSourceRoot, const std::string  &yyyymmddStr, const std::string &fileName, const std::string &sequenceName) {
+	bool DerivativesObject::copyFile(const std::string& pathToSourceRoot, const std::string& yyyymmddStr,
+	                                 const std::string& fileName, const std::string& sequenceName)
+	{
 		//m_repositoryObject->copyFile(pathToSourceRoot, fileName, sequenceName);
 
-		if (isBackup1Enabled() == true) {
-			if (m_backup[0].copyFile(pathToSourceRoot, fileName, sequenceName) == false) {
+		if (isBackup1Enabled() == true)
+		{
+			if (m_backup[0].copyFile(pathToSourceRoot, fileName, sequenceName) == false)
+			{
 				return false;
 			}
 		}
-		if (isBackup2Enabled() == true) {
-			if (m_backup[1].copyFile(pathToSourceRoot, fileName, sequenceName) == false) {
+		if (isBackup2Enabled() == true)
+		{
+			if (m_backup[1].copyFile(pathToSourceRoot, fileName, sequenceName) == false)
+			{
 				return false;
 			}
 		}
@@ -494,20 +583,23 @@ namespace simplearchive {
 		return true;
 	}
 
-	bool DerivativesObject::validate(const char * dbImage, const char * sourceImage)
+	bool DerivativesObject::validate(const char* dbImage, const char* sourceImage)
 	{
 		return false;
 	}
 
-	bool DerivativesObject::addimage(const char *sourceRelPath, FileInfo& fileInfo, const char *comment, int primarySeqNumber, int derivativeSeqNumber, int version, MetadataObject& metadataObject) {
-
-		CSVDerivativeDatabase &derivativeRepository = CSVDerivativeDatabase::get();
+	bool DerivativesObject::addimage(const char* sourceRelPath, FileInfo& fileInfo, const char* comment,
+	                                 int primarySeqNumber, int derivativeSeqNumber, int version,
+	                                 MetadataObject& metadataObject)
+	{
+		CSVDerivativeDatabase& derivativeRepository = CSVDerivativeDatabase::get();
 		m_derivativeMetadata = std::make_shared<DerivativeMetadataRow>();
 		PathController pathController(fileInfo.getPath().c_str());
 		pathController.split();
 
 		VersionControl& versionControl = VersionControl::getInstance();
-		versionControl.setCurrentVersion(m_repositoryPath->getRepositoryPath().c_str(), sourceRelPath, fileInfo.getName().c_str(), version);
+		versionControl.setCurrentVersion(m_repositoryPath->getRepositoryPath().c_str(), sourceRelPath,
+		                                 fileInfo.getName().c_str(), version);
 		m_repositoryPath->setImageName(versionControl.getCurrentVersion().getVersionName().c_str());
 
 		m_derivativeMetadata->columnAt(DB_SEQUENCEID) = primarySeqNumber;
@@ -515,7 +607,7 @@ namespace simplearchive {
 		m_derivativeMetadata->columnAt(DB_DATABASEID) = derivativeSeqNumber;
 		m_derivativeMetadata->columnAt(DB_FILENAME) = versionControl.getCurrentVersion().getVersionName().c_str();
 		m_derivativeMetadata->columnAt(DB_ORGINALNAME) = fileInfo.getName().c_str();
-		Version &versionObj = (Version &)versionControl.getCurrentVersion();
+		Version& versionObj = (Version&)versionControl.getCurrentVersion();
 		std::string shortRelPath = versionObj.getShortRelPath();
 		shortRelPath += '/';
 		shortRelPath += versionObj.makeEncodedVersion();
@@ -524,7 +616,7 @@ namespace simplearchive {
 		m_derivativeMetadata->columnAt(DB_CRC) = fileInfo.getCrc();
 		m_derivativeMetadata->columnAt(DB_MD5) = fileInfo.getMd5().c_str();
 		m_derivativeMetadata->columnAt(DB_UUID) = fileInfo.getUuid().c_str();
-		m_derivativeMetadata->columnAt(DB_FILESIZE) = (int)fileInfo.getSize();
+		m_derivativeMetadata->columnAt(DB_FILESIZE) = static_cast<int>(fileInfo.getSize());
 		m_derivativeMetadata->columnAt(DB_DATEMODIFIED) = fileInfo.getModTime();
 		m_derivativeMetadata->columnAt(DB_DATECREATE) = fileInfo.getCreateTime();
 		ExifDateTime addTime;
@@ -532,64 +624,75 @@ namespace simplearchive {
 		m_derivativeMetadata->columnAt(DB_DATEADDED) = addTime;
 		m_derivativeMetadata->columnAt(DB_VERSIONPATH) = addDate.toShortRelativePath().c_str();
 
-		CLogger &logger = CLogger::getLogger();
-		try {
+		CLogger& logger = CLogger::getLogger();
+		try
+		{
 			derivativeRepository.add(*m_derivativeMetadata);
 		}
-		catch (std::exception e) {
-
+		catch (std::exception e)
+		{
 			return false;
 		}
 
-		if (SQLiteDB::add(*m_derivativeMetadata) == false) {
+		if (SQLiteDB::add(*m_derivativeMetadata) == false)
+		{
 			return false;
 		}
-
 
 
 		DerivativeIndexTable& derivativeIndexTable = getDerivativeIndexTable();
-		if (derivativeIndexTable.insert(derivativeSeqNumber, pathController.getYearday().c_str(), fileInfo.getName().c_str(), fileInfo.getSize(), fileInfo.getCrc(), fileInfo.getMd5().c_str(),
-			fileInfo.getUuid().c_str(), version, addDate) == false) {
+		if (derivativeIndexTable.insert(derivativeSeqNumber, pathController.getYearday().c_str(),
+		                                fileInfo.getName().c_str(), fileInfo.getSize(), fileInfo.getCrc(),
+		                                fileInfo.getMd5().c_str(),
+		                                fileInfo.getUuid().c_str(), version, addDate) == false)
+		{
 			return false;
 		}
 
 
 		std::string ddmmyy = addDate.toShortRelativePath();
-		if (settupRelative(ddmmyy) == false) {
+		if (settupRelative(ddmmyy) == false)
+		{
 			return false;
 		}
 
-		if (versionControl.checkinCurrentVersion(m_repositoryPath->getDataPath().c_str(), fileInfo.getPath().c_str()) == false) {
+		if (versionControl.checkinCurrentVersion(m_repositoryPath->getDataPath().c_str(), fileInfo.getPath().c_str()) ==
+			false)
+		{
 			return false;
 		}
 
-		IntegrityManager &integrityManager = IntegrityManager::get();
+		IntegrityManager& integrityManager = IntegrityManager::get();
 		integrityManager.addDerivativeDayFolder(m_repositoryPath->getYYYYMMDD().c_str());
 		integrityManager.addDerivativeFile(m_repositoryPath->getYYYYMMDD().c_str(), versionObj.makeEncodedVersion());
 		return true;
 	}
 
 
-	bool getimage(const std::string &pathToTargetRoot, const char *filepath, const char *comment, int version) {
-
-		CSVDerivativeDatabase &derivativeRepository = CSVDerivativeDatabase::get();
+	bool getimage(const std::string& pathToTargetRoot, const char* filepath, const char* comment, int version)
+	{
+		CSVDerivativeDatabase& derivativeRepository = CSVDerivativeDatabase::get();
 		return true;
 	}
 
 
-
-	bool MasterRepositoryObject::isBackup1Enabled() {
+	bool MasterRepositoryObject::isBackup1Enabled()
+	{
 		return m_backup[0].getRepositoryPath().isEnabled();
 	}
-	bool MasterRepositoryObject::isBackup2Enabled() {
+
+	bool MasterRepositoryObject::isBackup2Enabled()
+	{
 		return m_backup[1].getRepositoryPath().isEnabled();
 	}
 
-	RepositoryObject& MasterRepositoryObject::getBackup1Object() {
+	RepositoryObject& MasterRepositoryObject::getBackup1Object()
+	{
 		return m_backup[0];
 	}
 
-	bool DerivativesObject::settupRelative(std::string &yyyymmddStr) {
+	bool DerivativesObject::settupRelative(std::string& yyyymmddStr)
+	{
 		return getRepositoryPath().settupRelative(yyyymmddStr);
 	}
 
@@ -620,42 +723,53 @@ namespace simplearchive {
 		m_masterView(std::make_unique<MasterCatalogue>()),
 		m_wwwView(std::make_unique<MasterWWWCatalogue>()),
 		m_PrimaryIndexObject(std::make_unique<PrimaryIndexObject>())
-	{}
+	{
+	}
 
-	ArchiveObject::~ArchiveObject() {}
+	ArchiveObject::~ArchiveObject()
+	{
+	}
 
-	bool ArchiveObject::isMasterEnabled() {
+	bool ArchiveObject::isMasterEnabled()
+	{
 		return m_master.getRepositoryPath().isEnabled();
 	}
 
-	bool ArchiveObject::isWorkspaceEnabled() {
+	bool ArchiveObject::isWorkspaceEnabled()
+	{
 		return (m_workspacePath.empty() == false);
 	}
 
-	MasterWWWCatalogue& ArchiveObject::getWWWCatalogue() {
+	MasterWWWCatalogue& ArchiveObject::getWWWCatalogue()
+	{
 		return *m_wwwView;
 	}
 
-	MasterCatalogue& ArchiveObject::getMasterCatalogue() {
+	MasterCatalogue& ArchiveObject::getMasterCatalogue()
+	{
 		return *m_masterView;
 	}
 
-	DerivativesObject& ArchiveObject::getDerivativesObject() {
+	DerivativesObject& ArchiveObject::getDerivativesObject()
+	{
 		return m_derivatives;
 	}
 
-	
 
-	RepositoryObject& MasterRepositoryObject::getBackup2Object() {
+	RepositoryObject& MasterRepositoryObject::getBackup2Object()
+	{
 		return m_backup[1];
 	}
 
-	MasterRepositoryObject& ArchiveObject::getMasterObject() {
+	MasterRepositoryObject& ArchiveObject::getMasterObject()
+	{
 		return m_master;
 	}
 
-	PrimaryIndexObject& ArchiveObject::getPrimaryIndexObject() {
-		if (m_PrimaryIndexObject == nullptr) {
+	PrimaryIndexObject& ArchiveObject::getPrimaryIndexObject()
+	{
+		if (m_PrimaryIndexObject == nullptr)
+		{
 			throw std::exception();
 		}
 		return *m_PrimaryIndexObject;
@@ -664,20 +778,22 @@ namespace simplearchive {
 	std::unique_ptr<ArchiveObject> ArchiveObject::m_this = nullptr;
 
 	//bool ArchiveObject::Initalise(const char *pathToWorkspace, const char *pathToMaster, const char *pathToHome, const char *pathToHistory) {
-	bool ArchiveObject::Initalise() {
+	bool ArchiveObject::Initalise()
+	{
+		AppConfig& config = AppConfig::get();
 
-		AppConfig &config = AppConfig::get();
-
-		CLogger &logger = CLogger::getLogger();
+		CLogger& logger = CLogger::getLogger();
 		m_workspacePath = ArchivePath::getPathToWorkspace();
 
 		//if (ArchivePath::isMasterEnabled() == true) {
 
 		RepositoryPath& master = ArchivePath::getMaster();
-		if (master.settup() == false) {
+		if (master.settup() == false)
+		{
 			return false;
 		}
-		if (SAUtils::DirExists(master.getRepositoryPath().c_str()) == false) {
+		if (SAUtils::DirExists(master.getRepositoryPath().c_str()) == false)
+		{
 			return false;
 		}
 		m_master.init(master);
@@ -688,10 +804,12 @@ namespace simplearchive {
 
 		RepositoryPath& derivative = ArchivePath::getDerivative();
 
-		if (derivative.settup() == false) {
+		if (derivative.settup() == false)
+		{
 			return false;
 		}
-		if (SAUtils::DirExists(derivative.getRepositoryPath().c_str()) == false) {
+		if (SAUtils::DirExists(derivative.getRepositoryPath().c_str()) == false)
+		{
 			return false;
 		}
 		/* NOT_USED
@@ -702,7 +820,8 @@ namespace simplearchive {
 
 		SQLiteDB::enableSQLiteDB(config.isSQL());
 
-		if (SQLiteDB::init(config.getDatabasePath(), true) == false) {
+		if (SQLiteDB::init(config.getDatabasePath(), true) == false)
+		{
 			return false;
 		}
 
@@ -749,23 +868,31 @@ namespace simplearchive {
 		std::string path = ArchivePath::getPathToHome() + PRIMARY_INDEX_PATH;
 		primaryIndexPath.setRepositoryPath(path);
 		primaryIndexPath.settup();
-		try {
-			if (!getPrimaryIndexObject().init(primaryIndexPath)) {
-				logger.log(LOG_OK, CLogger::Level::FATAL, "Failed to initalise the primary index", ArchivePath::getMasterBackup2Path().c_str());
+		try
+		{
+			if (!getPrimaryIndexObject().init(primaryIndexPath))
+			{
+				logger.log(LOG_OK, CLogger::Level::FATAL, "Failed to initalise the primary index",
+				           ArchivePath::getMasterBackup2Path().c_str());
 				return false;
 			}
-			if (SAUtils::DirExists(ArchivePath::getPathToWorkspace().c_str()) == false) {
-				logger.log(LOG_OK, CLogger::Level::FATAL, "Workspace folder: \"%s\" not accessable?", ArchivePath::getPathToWorkspace().c_str());
+			if (SAUtils::DirExists(ArchivePath::getPathToWorkspace().c_str()) == false)
+			{
+				logger.log(LOG_OK, CLogger::Level::FATAL, "Workspace folder: \"%s\" not accessable?",
+				           ArchivePath::getPathToWorkspace().c_str());
 				return false;
 			}
 
-			if (ImagePath::settupMainArchiveFolders(ArchivePath::getPathToWorkspace().c_str(), ArchivePath::getMasterPath().c_str(), 
-													ArchivePath::getDerivativePath().c_str(), path.c_str(), ArchivePath::getPathToHome().c_str()) == false) {
-
+			if (ImagePath::settupMainArchiveFolders(ArchivePath::getPathToWorkspace().c_str(),
+			                                        ArchivePath::getMasterPath().c_str(),
+			                                        ArchivePath::getDerivativePath().c_str(), path.c_str(),
+			                                        ArchivePath::getPathToHome().c_str()) == false)
+			{
 				return false;
 			}
 		}
-		catch (std::exception /*e */) {
+		catch (std::exception /*e */)
+		{
 			logger.log(LOG_OK, CLogger::Level::FATAL, "Initalisation Failed creating Primary Index");
 			return false;
 		}
@@ -774,44 +901,54 @@ namespace simplearchive {
 		CSVDatabase::setDBPath(csvpdbPath.c_str());
 		History& history = History::getHistory();
 		history.init();
-		History::setPaths(ArchivePath::getIndexHistory().c_str(), ArchivePath::getPathToWorkspace().c_str(), config.getHistoryPath());
+		History::setPaths(ArchivePath::getIndexHistory().c_str(), ArchivePath::getPathToWorkspace().c_str(),
+		                  config.getHistoryPath());
 		//SystemHistory::setPath(config.getHistoryPath());
 		//ImageHistory& imageHistory = ImageHistory::get();
 		//imageHistory.setPath(ArchivePath::getPathToWorkspace().c_str(), ArchivePath::getIndexHistory().c_str());
-		
+
 
 		//IndexVisitor::Init(ArchivePath::getMasterPath().c_str(), ArchivePath::getPathToWorkspace().c_str(), primaryIndexPath.getCheckoutStatusPath().c_str());
-		CheckoutStatus::Init(ArchivePath::getMasterPath().c_str(), ArchivePath::getPathToWorkspace().c_str(), primaryIndexPath.getCheckoutStatusPath().c_str());
-		VersionControl::setPaths(primaryIndexPath.getPathToRepository().c_str(), ArchivePath::getMasterPath().c_str(), ArchivePath::getDerivativePath().c_str(), ArchivePath::getPathToWorkspace().c_str());
+		CheckoutStatus::Init(ArchivePath::getMasterPath().c_str(), ArchivePath::getPathToWorkspace().c_str(),
+		                     primaryIndexPath.getCheckoutStatusPath().c_str());
+		VersionControl::setPaths(primaryIndexPath.getPathToRepository().c_str(), ArchivePath::getMasterPath().c_str(),
+		                         ArchivePath::getDerivativePath().c_str(), ArchivePath::getPathToWorkspace().c_str());
 		MasterCatalogue& masterView = getMasterCatalogue();
 		MasterWWWCatalogue& wwwView = getWWWCatalogue();
 
 		/* Testing */
 		masterView.setFileEnabled(true);
-	//	masterView.setWWWEnabled(true);
+		//	masterView.setWWWEnabled(true);
 
-		if (wwwView.isWWWEnabled()) {
-			if (wwwView.settupWWW(config.getTempPath(), config.getTemplatePath(), config.getWWWImagePath()) == false) {
+		if (wwwView.isWWWEnabled())
+		{
+			if (wwwView.settupWWW(config.getTempPath(), config.getTemplatePath(), config.getWWWImagePath()) == false)
+			{
 				logger.log(LOG_OK, CLogger::Level::FATAL, "Initalisation Failed creating master WWW view");
 				return false;
 			}
 
 
-			if (wwwView.settupSystemWWW(primaryIndexPath.getPathToRepository().c_str(), config.getTemplatePath(), config.getWWWImagePath(), ArchivePath::getMainHistory().c_str(),
-																		master.getJournalPath().c_str()) == false) {
+			if (wwwView.settupSystemWWW(primaryIndexPath.getPathToRepository().c_str(), config.getTemplatePath(),
+			                            config.getWWWImagePath(), ArchivePath::getMainHistory().c_str(),
+			                            master.getJournalPath().c_str()) == false)
+			{
 				logger.log(LOG_OK, CLogger::Level::FATAL, "Initalisation Failed creating master WWW view system");
 				return false;
 			}
 		}
-		if (masterView.isFileEnabled()) {
-			
-			if (SAUtils::DirExists(config.getPicturePath()) == false) {
-				if (SAUtils::mkDir(config.getPicturePath()) == false) {
+		if (masterView.isFileEnabled())
+		{
+			if (SAUtils::DirExists(config.getPicturePath()) == false)
+			{
+				if (SAUtils::mkDir(config.getPicturePath()) == false)
+				{
 					logger.log(LOG_OK, CLogger::Level::FATAL, "Invalid picture path");
 					return false;
 				}
 			}
-			if (masterView.settupFile(config.getTempPath(), config.getPicturePath()) == false) {
+			if (masterView.settupFile(config.getTempPath(), config.getPicturePath()) == false)
+			{
 				logger.log(LOG_OK, CLogger::Level::FATAL, "Initalisation Failed creating Picture Path");
 				return false;
 			}
@@ -820,27 +957,32 @@ namespace simplearchive {
 		return true;
 	}
 
-	bool ArchiveObject::OnCompletion() {
+	bool ArchiveObject::OnCompletion()
+	{
 		MasterWWWCatalogue& wwwView = getWWWCatalogue();
 
-		if (wwwView.processWWWPages() == false) {
+		if (wwwView.processWWWPages() == false)
+		{
 			return false;
 		}
 
 		return true;
 	}
 
-	bool ArchiveObject::writeDerivativeMetadata(std::string& rootPath, std::string& versionName, DerivativeMetadataRow& metadataObject, std::string& imageName) {
-
-		if (WriteMetadata::writeDerivativeMetadata(rootPath, versionName, metadataObject, imageName) == false) {
+	bool ArchiveObject::writeDerivativeMetadata(std::string& rootPath, std::string& versionName,
+	                                            DerivativeMetadataRow& metadataObject, std::string& imageName)
+	{
+		if (WriteMetadata::writeDerivativeMetadata(rootPath, versionName, metadataObject, imageName) == false)
+		{
 			return false;
 		}
 		return true;
 	}
 
-	bool ArchiveObject::CreateImage(const BasicMetadata &BasicMetadata, ImagePath &imagePath, MetadataObject &metadataObject) {
-
-		CLogger &logger = CLogger::getLogger();
+	bool ArchiveObject::CreateImage(const BasicMetadata& BasicMetadata, ImagePath& imagePath,
+	                                MetadataObject& metadataObject)
+	{
+		CLogger& logger = CLogger::getLogger();
 		PrimaryIndexTable& primaryIndexTable = getPrimaryIndexObject().getPrimaryIndexTable();
 		MasterRepositoryObject& masterObject = getMasterObject();
 		MasterIndexTable& masterIndexTable = masterObject.getMasterIndexTable();
@@ -857,17 +999,18 @@ namespace simplearchive {
 		BasicMetadata.columnAt(DB_FILEPATH) = imagePath.getYyyymmddStr().c_str();
 		metadataObject.columnAt(DB_FILEPATH) = imagePath.getYyyymmddStr().c_str();
 
-		
+
 		// This is adding the sequence file name
 		ImageFileNameManager& imageFileNameManager = ImageFileNameManager::get();
-		std::string encodedImage = imageFileNameManager.getFileName(imagePath.getYyyymmddStr().c_str(), primarySeqNumber, imagePath.getImageName().c_str());
+		std::string encodedImage = imageFileNameManager.getFileName(imagePath.getYyyymmddStr().c_str(),
+		                                                            primarySeqNumber, imagePath.getImageName().c_str());
 		imagePath.setEncodedImageName(encodedImage.c_str());
 
 		BasicMetadata.columnAt(DB_FILENAME) = encodedImage.c_str();
 		BasicMetadata.columnAt(DB_ORGINALNAME) = imagePath.getImageName().c_str();
 		imagePath.switchOrginalName(encodedImage.c_str());
 		metadataObject.columnAt(DB_FILENAME) = encodedImage.c_str();
-		
+
 
 		unsigned long n = BasicMetadata.getSize();
 		unsigned long crc = BasicMetadata.getCrc();
@@ -875,30 +1018,39 @@ namespace simplearchive {
 		date.now();
 
 		std::string yyyymmddStr = imagePath.getYyyymmddStr();
-		if (settupRelativeMaster(yyyymmddStr) == false) {
+		if (settupRelativeMaster(yyyymmddStr) == false)
+		{
 			return false;
 		}
 		// Write the metadata to the workspace
 		std::string name = imagePath.getImageName();
-		if (this->writeMetadata2Workspace(imagePath, name, metadataObject) == false) {
-			logger.log(LOG_OK, CLogger::Level::FATAL, "Fataled to write image \"%s\" workspace", imagePath.getImageName().c_str());
+		if (this->writeMetadata2Workspace(imagePath, name, metadataObject) == false)
+		{
+			logger.log(LOG_OK, CLogger::Level::FATAL, "Fataled to write image \"%s\" workspace",
+			           imagePath.getImageName().c_str());
 			return false;
 		}
 
 		// Write the metadata to the primary index
-		if (this->writeMetadata2PrimaryIndex(imagePath, name, metadataObject) == false) {
-			logger.log(LOG_OK, CLogger::Level::FATAL, "Fataled to write image \"%s\" primary index", imagePath.getImageName().c_str());
+		if (this->writeMetadata2PrimaryIndex(imagePath, name, metadataObject) == false)
+		{
+			logger.log(LOG_OK, CLogger::Level::FATAL, "Fataled to write image \"%s\" primary index",
+			           imagePath.getImageName().c_str());
 			return false;
 		}
 
 		// Write the metadata to the Master archive
-		if (this->writeMetadata2MasterDatabase(imagePath, name, metadataObject) == false) {
-			logger.log(LOG_OK, CLogger::Level::FATAL, "Fataled to write image \"%s\" master database", imagePath.getImageName().c_str());
+		if (this->writeMetadata2MasterDatabase(imagePath, name, metadataObject) == false)
+		{
+			logger.log(LOG_OK, CLogger::Level::FATAL, "Fataled to write image \"%s\" master database",
+			           imagePath.getImageName().c_str());
 			return false;
 		}
 
-		if (SQLiteDB::add(metadataObject) == false) {
-			logger.log(LOG_OK, CLogger::Level::FATAL, "Fataled to insert \"%s\" into SQL Database", imagePath.getImageName().c_str());
+		if (SQLiteDB::add(metadataObject) == false)
+		{
+			logger.log(LOG_OK, CLogger::Level::FATAL, "Fataled to insert \"%s\" into SQL Database",
+			           imagePath.getImageName().c_str());
 			return false;
 		}
 
@@ -912,45 +1064,59 @@ namespace simplearchive {
 		*/
 
 
-		if (masterIndexTable.insert(masterSeqNumber, imagePath.getRelativePath().c_str(), imagePath.getImageName().c_str(), n, crc, BasicMetadata.getMd5().c_str(),
-			BasicMetadata.getUuid().c_str(), 0, date) == false) {
+		if (masterIndexTable.insert(masterSeqNumber, imagePath.getRelativePath().c_str(),
+		                            imagePath.getImageName().c_str(), n, crc, BasicMetadata.getMd5().c_str(),
+		                            BasicMetadata.getUuid().c_str(), 0, date) == false)
+		{
 			return false;
 		}
 		std::string filepath = imagePath.getRelativePath() + '/' + imagePath.getImageName();
 		std::string shortFilePath = imagePath.getYyyymmddStr() + "/" + imagePath.getImageName();
 
 		// main
-		if (copyFile2Master(imagePath.getCurrentSourcePath(), imagePath.getYyyymmddStr(), imagePath.getOrginalName(), imagePath.getEncodedImageName()) == false) {
-			logger.log(LOG_OK, CLogger::Level::FATAL, "Fataled to copy image \"%s\" to Master Archive", imagePath.getImageName().c_str());
+		if (copyFile2Master(imagePath.getCurrentSourcePath(), imagePath.getYyyymmddStr(), imagePath.getOrginalName(),
+		                    imagePath.getEncodedImageName()) == false)
+		{
+			logger.log(LOG_OK, CLogger::Level::FATAL, "Fataled to copy image \"%s\" to Master Archive",
+			           imagePath.getImageName().c_str());
 			return false;
 		}
 
-		if (imagePath.copyFile2Workspace(imagePath.getCurrentSourcePath(), imagePath.getOrginalName(), imagePath.getImageName()) == false) {
-			logger.log(LOG_OK, CLogger::Level::FATAL, "Fataled to copy image \"%s\" to current Workspace", imagePath.getImageName().c_str());
+		if (imagePath.copyFile2Workspace(imagePath.getCurrentSourcePath(), imagePath.getOrginalName(),
+		                                 imagePath.getImageName()) == false)
+		{
+			logger.log(LOG_OK, CLogger::Level::FATAL, "Fataled to copy image \"%s\" to current Workspace",
+			           imagePath.getImageName().c_str());
 			return false;
 		}
 
-		CSVDatabase &csvDatabase = CSVDatabase::get();
-		try {
+		CSVDatabase& csvDatabase = CSVDatabase::get();
+		try
+		{
 			csvDatabase.add(metadataObject, shortFilePath.c_str());
 		}
 
-		catch (std::exception /*&e*/) {
-
-			logger.log(LOG_OK, CLogger::Level::FATAL, "Unable to read database: \"%s\" Error: %s", filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
+		catch (std::exception /*&e*/)
+		{
+			logger.log(LOG_OK, CLogger::Level::FATAL, "Unable to read database: \"%s\" Error: %s", filepath,
+			           ErrorCode::toString(ErrorCode::getErrorCode()));
 			return false;
 		}
 
 		PrimaryIndexObject& primaryIndexObject = getPrimaryIndexObject();
-		if (primaryIndexObject.addMasterImage(BasicMetadata, imagePath, masterSeqNumber, primarySeqNumber) == false) {
-			logger.log(LOG_OK, CLogger::Level::FATAL, "Unable to add master image: \"%s\" Error: %s", filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
+		if (primaryIndexObject.addMasterImage(BasicMetadata, imagePath, masterSeqNumber, primarySeqNumber) == false)
+		{
+			logger.log(LOG_OK, CLogger::Level::FATAL, "Unable to add master image: \"%s\" Error: %s", filepath,
+			           ErrorCode::toString(ErrorCode::getErrorCode()));
 			return false;
 		}
 
 		CheckoutStatus checkoutStatus;
-		const char *comment = "";
-		if (checkoutStatus.newImage(shortFilePath.c_str(), comment) == false) {
-			logger.log(LOG_OK, CLogger::Level::FATAL, "Unable to add to checkout file: \"%s\" Error: %s", filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
+		const char* comment = "";
+		if (checkoutStatus.newImage(shortFilePath.c_str(), comment) == false)
+		{
+			logger.log(LOG_OK, CLogger::Level::FATAL, "Unable to add to checkout file: \"%s\" Error: %s", filepath,
+			           ErrorCode::toString(ErrorCode::getErrorCode()));
 			return false;
 		}
 
@@ -958,27 +1124,34 @@ namespace simplearchive {
 		sourcePath += '/';
 		sourcePath += imagePath.getOrginalName();
 
-		if (m_masterView->addImage(sourcePath.c_str(), metadataObject, filepath.c_str()) == false) {
-			logger.log(LOG_OK, CLogger::Level::ERR, "Unable to preview file: \"%s\" Error: %s", filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
+		if (m_masterView->addImage(sourcePath.c_str(), metadataObject, filepath.c_str()) == false)
+		{
+			logger.log(LOG_OK, CLogger::Level::ERR, "Unable to preview file: \"%s\" Error: %s", filepath,
+			           ErrorCode::toString(ErrorCode::getErrorCode()));
 		}
-
 
 
 		return true;
 	}
 
-	bool ArchiveObject::settupRelativeDerivative(std::string &yyyymmddStr) {
-		if (ArchivePath::isDerivativeEnabled() == true) {
-			if (m_derivatives.settupRelative(yyyymmddStr) == false) {
+	bool ArchiveObject::settupRelativeDerivative(std::string& yyyymmddStr)
+	{
+		if (ArchivePath::isDerivativeEnabled() == true)
+		{
+			if (m_derivatives.settupRelative(yyyymmddStr) == false)
+			{
 				return false;
 			}
 		}
 		return true;
 	}
 
-	bool ArchiveObject::settupRelativeMaster(std::string &yyyymmddStr) {
-		if (ArchivePath::isMasterEnabled() == true) {
-			if (m_master.settupRelative(yyyymmddStr) == false) {
+	bool ArchiveObject::settupRelativeMaster(std::string& yyyymmddStr)
+	{
+		if (ArchivePath::isMasterEnabled() == true)
+		{
+			if (m_master.settupRelative(yyyymmddStr) == false)
+			{
 				return false;
 			}
 		}
@@ -996,23 +1169,31 @@ namespace simplearchive {
 		*/
 		return true;
 	}
-	bool ArchiveObject::writeMetadata2Workspace(ImagePath &imagePath, std::string &imageName, MetadataObject &metadataObject) {
 
-		if (ArchiveObject::isWorkspaceEnabled() == true) {
-
+	bool ArchiveObject::writeMetadata2Workspace(ImagePath& imagePath, std::string& imageName,
+	                                            MetadataObject& metadataObject)
+	{
+		if (isWorkspaceEnabled() == true)
+		{
 			std::string imageAddress = imagePath.getImageAddress();
-			if (WriteMetadata::writeMetadata2Workspace(m_workspacePath, imageAddress, metadataObject) == false) {
+			if (WriteMetadata::writeMetadata2Workspace(m_workspacePath, imageAddress, metadataObject) == false)
+			{
 				return false;
 			}
 		}
 		return true;
 	}
 
-	bool ArchiveObject::writeDerivativeMetadat2Workspace(ImagePath &imagePath, std::string &versionName, DerivativeMetadataRow& derivativeMetadata, std::string &imageName) {
-		if (ArchiveObject::isWorkspaceEnabled() == true) {
-
+	bool ArchiveObject::writeDerivativeMetadat2Workspace(ImagePath& imagePath, std::string& versionName,
+	                                                     DerivativeMetadataRow& derivativeMetadata,
+	                                                     std::string& imageName)
+	{
+		if (isWorkspaceEnabled() == true)
+		{
 			std::string imageAddress = imagePath.getImageAddress();
-			if (WriteMetadata::writeDerivativeMetadat2Workspace(m_workspacePath, imageAddress, versionName, derivativeMetadata) == false) {
+			if (WriteMetadata::writeDerivativeMetadat2Workspace(m_workspacePath, imageAddress, versionName,
+			                                                    derivativeMetadata) == false)
+			{
 				return false;
 			}
 			/*
@@ -1051,125 +1232,165 @@ namespace simplearchive {
 		return true;
 	}
 
-	bool ArchiveObject::writeMetadata2PrimaryIndex(ImagePath &imagePath, std::string &imageName, MetadataObject &metadataObject) {
+	bool ArchiveObject::writeMetadata2PrimaryIndex(ImagePath& imagePath, std::string& imageName,
+	                                               MetadataObject& metadataObject)
+	{
 		PrimaryIndexPath primaryIndexPath = getPrimaryIndexObject().getPrimaryIndexPath();
 		std::string primaryIndexObjectMetadataPath = primaryIndexPath.getMetadataPath();
 
-		if (SAUtils::DirExists(primaryIndexObjectMetadataPath.c_str()) == false) {
+		if (SAUtils::DirExists(primaryIndexObjectMetadataPath.c_str()) == false)
+		{
 			return false;
 		}
 		std::string toxml = primaryIndexObjectMetadataPath + '/';
 		std::string relpath = imagePath.getRelativePath();
 		toxml += imagePath.getYear(relpath);
-		if (SAUtils::DirExists(toxml.c_str()) == false) {
-			if (SAUtils::mkDir(toxml.c_str()) == false) {
+		if (SAUtils::DirExists(toxml.c_str()) == false)
+		{
+			if (SAUtils::mkDir(toxml.c_str()) == false)
+			{
 				return false;
 			}
 		}
 		toxml = primaryIndexObjectMetadataPath + '/';
 		toxml += imagePath.getRelativePath();
-		if (SAUtils::DirExists(toxml.c_str()) == false) {
-			if (SAUtils::mkDir(toxml.c_str()) == false) {
+		if (SAUtils::DirExists(toxml.c_str()) == false)
+		{
+			if (SAUtils::mkDir(toxml.c_str()) == false)
+			{
 				return false;
 			}
 		}
 
-		
-		if (WriteMetadata::writeMasterMetadata(toxml, imageName, metadataObject) == false) {
+
+		if (WriteMetadata::writeMasterMetadata(toxml, imageName, metadataObject) == false)
+		{
 			return false;
 		}
 		return true;
 	}
-	bool ArchiveObject::writeMetadata2MasterDatabase(ImagePath& imagePath, std::string& imageName, MetadataObject &metadataObject) {
-		if (ArchivePath::isMasterEnabled() == true) {
+
+	bool ArchiveObject::writeMetadata2MasterDatabase(ImagePath& imagePath, std::string& imageName,
+	                                                 MetadataObject& metadataObject)
+	{
+		if (ArchivePath::isMasterEnabled() == true)
+		{
 			std::string toxml = ImagePath::getPathToMaster();
 			std::string relpath = imagePath.getRelativePath();
 			toxml += '/';
 			toxml += imagePath.getYear(relpath);
-			if (SAUtils::DirExists(toxml.c_str()) == false) {
-				if (SAUtils::mkDir(toxml.c_str()) == false) {
+			if (SAUtils::DirExists(toxml.c_str()) == false)
+			{
+				if (SAUtils::mkDir(toxml.c_str()) == false)
+				{
 					return false;
 				}
 			}
 			toxml = ImagePath::getPathToMaster() + '/';
 			toxml += imagePath.getRelativePath();
-			if (SAUtils::DirExists(toxml.c_str()) == false) {
-				if (SAUtils::mkDir(toxml.c_str()) == false) {
+			if (SAUtils::DirExists(toxml.c_str()) == false)
+			{
+				if (SAUtils::mkDir(toxml.c_str()) == false)
+				{
 					return false;
 				}
 			}
 			toxml += "/metadata";
-			if (SAUtils::DirExists(toxml.c_str()) == false) {
-				if (SAUtils::mkDir(toxml.c_str()) == false) {
+			if (SAUtils::DirExists(toxml.c_str()) == false)
+			{
+				if (SAUtils::mkDir(toxml.c_str()) == false)
+				{
 					return false;
 				}
 			}
-			if (WriteMetadata::writeMasterMetadata(toxml, imageName, metadataObject) == false) {
+			if (WriteMetadata::writeMasterMetadata(toxml, imageName, metadataObject) == false)
+			{
 				return false;
 			}
 		}
-		if (ArchivePath::isMasterBackup1Enabled() == true) {
+		if (ArchivePath::isMasterBackup1Enabled() == true)
+		{
 			std::string path = m_master.getBackup1Object().getRepositoryPath().getRepositoryPath();
 			std::string toxml = path;
 			toxml += '/';
 			std::string relpath = imagePath.getRelativePath();
 			toxml += imagePath.getYear(relpath);
-			if (SAUtils::DirExists(toxml.c_str()) == false) {
-				if (SAUtils::mkDir(toxml.c_str()) == false) {
+			if (SAUtils::DirExists(toxml.c_str()) == false)
+			{
+				if (SAUtils::mkDir(toxml.c_str()) == false)
+				{
 					return false;
 				}
 			}
 			toxml = path + '/';
 			toxml += imagePath.getRelativePath();
-			if (SAUtils::DirExists(toxml.c_str()) == false) {
-				if (SAUtils::mkDir(toxml.c_str()) == false) {
+			if (SAUtils::DirExists(toxml.c_str()) == false)
+			{
+				if (SAUtils::mkDir(toxml.c_str()) == false)
+				{
 					return false;
 				}
 			}
 			toxml += "/metadata";
-			if (SAUtils::DirExists(toxml.c_str()) == false) {
-				if (SAUtils::mkDir(toxml.c_str()) == false) {
+			if (SAUtils::DirExists(toxml.c_str()) == false)
+			{
+				if (SAUtils::mkDir(toxml.c_str()) == false)
+				{
 					return false;
 				}
 			}
-			if (WriteMetadata::writeMasterMetadata(toxml, imageName, metadataObject) == false) {
+			if (WriteMetadata::writeMasterMetadata(toxml, imageName, metadataObject) == false)
+			{
 				return false;
 			}
 		}
-		if (ArchivePath::isMasterBackup2Enabled() == true) {
+		if (ArchivePath::isMasterBackup2Enabled() == true)
+		{
 			std::string path = m_master.getBackup2Object().getRepositoryPath().getRepositoryPath();
 			std::string toxml = path;
 			std::string relpath = imagePath.getRelativePath();
 			toxml += '/';
 			toxml += imagePath.getYear(relpath);
-			if (SAUtils::DirExists(toxml.c_str()) == false) {
-				if (SAUtils::mkDir(toxml.c_str()) == false) {
+			if (SAUtils::DirExists(toxml.c_str()) == false)
+			{
+				if (SAUtils::mkDir(toxml.c_str()) == false)
+				{
 					return false;
 				}
 			}
 			toxml = path + '/';
 			toxml += imagePath.getRelativePath();
-			if (SAUtils::DirExists(toxml.c_str()) == false) {
-				if (SAUtils::mkDir(toxml.c_str()) == false) {
+			if (SAUtils::DirExists(toxml.c_str()) == false)
+			{
+				if (SAUtils::mkDir(toxml.c_str()) == false)
+				{
 					return false;
 				}
 			}
 			toxml += "/metadata";
-			if (SAUtils::DirExists(toxml.c_str()) == false) {
-				if (SAUtils::mkDir(toxml.c_str()) == false) {
+			if (SAUtils::DirExists(toxml.c_str()) == false)
+			{
+				if (SAUtils::mkDir(toxml.c_str()) == false)
+				{
 					return false;
 				}
 			}
-			if (WriteMetadata::writeMasterMetadata(toxml, imageName, metadataObject) == false) {
+			if (WriteMetadata::writeMasterMetadata(toxml, imageName, metadataObject) == false)
+			{
 				return false;
 			}
 		}
 		return true;
 	}
-	bool ArchiveObject::writeMetadata2DerivativesDatabase(std::string &versionName, DerivativeMetadataRow& metadataObject, std::string &imageName) {
-		if (ArchivePath::isDerivativeEnabled() == true) {
+
+	bool ArchiveObject::writeMetadata2DerivativesDatabase(std::string& versionName,
+	                                                      DerivativeMetadataRow& metadataObject, std::string& imageName)
+	{
+		if (ArchivePath::isDerivativeEnabled() == true)
+		{
 			std::string path = m_derivatives.getRepositoryPath().getMetadataPath();
-			if (writeDerivativeMetadata(path, versionName, metadataObject, imageName) == false) {
+			if (writeDerivativeMetadata(path, versionName, metadataObject, imageName) == false)
+			{
 				return false;
 			}
 		}
@@ -1177,58 +1398,72 @@ namespace simplearchive {
 	}
 
 
-	bool ArchiveObject::copyFile2Master(const std::string  &pathToSourceRoot, const std::string  &yyyymmddStr, const std::string &fileName, const std::string &sequenceName) {
-		if (ArchivePath::isMasterEnabled() == true) {
-			if (m_master.copyFile(pathToSourceRoot, yyyymmddStr, fileName, sequenceName) == false) {
+	bool ArchiveObject::copyFile2Master(const std::string& pathToSourceRoot, const std::string& yyyymmddStr,
+	                                    const std::string& fileName, const std::string& sequenceName)
+	{
+		if (ArchivePath::isMasterEnabled() == true)
+		{
+			if (m_master.copyFile(pathToSourceRoot, yyyymmddStr, fileName, sequenceName) == false)
+			{
 				return false;
 			}
 		}
-		
+
 		return true;
 	}
-	
 
-	bool ArchiveObject::processHistory(ImagePath &imagePath, const char *comment) {
 
-		
+	bool ArchiveObject::processHistory(ImagePath& imagePath, const char* comment)
+	{
 		History& history = History::getHistory();
-		if (history.newImage(imagePath.getImageAddress().c_str(), comment) == false) {
+		if (history.newImage(imagePath.getImageAddress().c_str(), comment) == false)
+		{
 			return false;
 		}
 
-		if (SQLiteDB::newImage2History(imagePath.getImagePath().c_str(), comment) == false) {
+		if (SQLiteDB::newImage2History(imagePath.getImagePath().c_str(), comment) == false)
+		{
 			return false;
 		}
 		return true;
 	}
-	
-	bool ArchiveObject::showCheckedStatus(const char* addressScope, ResultsPresentation::FormatType formatType, const char* file) {
+
+	bool ArchiveObject::showCheckedStatus(const char* addressScope, ResultsPresentation::FormatType formatType,
+	                                      const char* file)
+	{
 		//PrimaryIndexObject& primaryIndexObject = getPrimaryIndexObject();
 		//VersionControl::getInstance().setCurrentVersion(addressScope);
 		//std::string versionPath = VersionControl::getInstance().getCurrentVersionPath();
 
 		CheckoutStatus checkoutStatus;
-		if (checkoutStatus.showCheckedOut(addressScope, formatType, file) == false) {
+		if (checkoutStatus.showCheckedOut(addressScope, formatType, file) == false)
+		{
 			return false;
 		}
 		return true;
 	}
 
-	bool ArchiveObject::showCheckedOut(const char * addressScope, ResultsPresentation::FormatType formatType, const char* file) {
+	bool ArchiveObject::showCheckedOut(const char* addressScope, ResultsPresentation::FormatType formatType,
+	                                   const char* file)
+	{
 		//PrimaryIndexObject& primaryIndexObject = getPrimaryIndexObject();
 		//VersionControl::getInstance().setCurrentVersion(addressScope);
 		//std::string versionPath = VersionControl::getInstance().getCurrentVersionPath();
 
 		CheckoutStatus checkoutStatus;
-		if (checkoutStatus.showCheckedOut(addressScope, formatType, file) == false) {
+		if (checkoutStatus.showCheckedOut(addressScope, formatType, file) == false)
+		{
 			return false;
 		}
 		return true;
 	}
 
-	bool ArchiveObject::showUncheckedOutChanges(const char *filepath, ResultsPresentation::FormatType formatType, const char* file) {
+	bool ArchiveObject::showUncheckedOutChanges(const char* filepath, ResultsPresentation::FormatType formatType,
+	                                            const char* file)
+	{
 		CheckoutStatus checkoutStatus;
-		if (checkoutStatus.showUncheckedOutChanges(filepath, formatType, file) == false) {
+		if (checkoutStatus.showUncheckedOutChanges(filepath, formatType, file) == false)
+		{
 			return false;
 		}
 		return true;
@@ -1261,63 +1496,80 @@ namespace simplearchive {
 	*/
 
 
-	class GetAction : public CheckoutStatusAction { //IndexAction {
+	class GetAction : public CheckoutStatusAction
+	{
+		//IndexAction {
 		/// On finding a directory, this function is run.
-		virtual bool onImage(const char* name);
-		ArchiveObject *m_ArchiveObject;
+		bool onImage(const char* name) override;
+		ArchiveObject* m_ArchiveObject;
 		std::string m_versions;
 	public:
 		/// Constructor
-		GetAction(ArchiveObject *archiveObject, const char *versions) {
+		GetAction(ArchiveObject* archiveObject, const char* versions)
+		{
 			m_versions = versions;
 			m_ArchiveObject = archiveObject;
 		};
 		/// Distructor
-		virtual ~GetAction() {};
-
+		virtual ~GetAction()
+		{
+		};
 	};
 
-	class CheckoutAction : public CheckoutStatusAction { //IndexAction {
+	class CheckoutAction : public CheckoutStatusAction
+	{
+		//IndexAction {
 		/// On finding a directory, this function is run.
-		virtual bool onImage(const char* name);
-		ArchiveObject *m_ArchiveObject;
+		bool onImage(const char* name) override;
+		ArchiveObject* m_ArchiveObject;
 	public:
 		/// Constructor
-		CheckoutAction(ArchiveObject *archiveObject) {		
+		CheckoutAction(ArchiveObject* archiveObject)
+		{
 			m_ArchiveObject = archiveObject;
 		};
 		/// Distructor
-		virtual ~CheckoutAction() {};
-
+		virtual ~CheckoutAction()
+		{
+		};
 	};
 
-	class CheckinAction : public CheckoutStatusAction { //IndexAction {
-		virtual bool onImage(const char *name);
-		ArchiveObject *m_ArchiveObject;
+	class CheckinAction : public CheckoutStatusAction
+	{
+		//IndexAction {
+		bool onImage(const char* name) override;
+		ArchiveObject* m_ArchiveObject;
 	public:
 		/// Constructor
-		CheckinAction(ArchiveObject *archiveObject) {
+		CheckinAction(ArchiveObject* archiveObject)
+		{
 			m_ArchiveObject = archiveObject;
 		};
 		/// Distructor
-		virtual ~CheckinAction() {};
-
+		virtual ~CheckinAction()
+		{
+		};
 	};
 
-	class UnCheckoutAction : public CheckoutStatusAction { //IndexAction {
-		virtual bool onImage(const char* name);
-		ArchiveObject *m_ArchiveObject;
+	class UnCheckoutAction : public CheckoutStatusAction
+	{
+		//IndexAction {
+		bool onImage(const char* name) override;
+		ArchiveObject* m_ArchiveObject;
 	public:
 		/// Constructor
-		UnCheckoutAction(ArchiveObject *archiveObject) {
+		UnCheckoutAction(ArchiveObject* archiveObject)
+		{
 			m_ArchiveObject = archiveObject;
 		};
 		/// Distructor
-		virtual ~UnCheckoutAction() {};
-
+		virtual ~UnCheckoutAction()
+		{
+		};
 	};
 
-	bool ArchiveObject::get(const char *scope, const char *versions, const char *comment, bool force) {
+	bool ArchiveObject::get(const char* scope, const char* versions, const char* comment, bool force)
+	{
 		/*
 		IndexVisitor IndexVisitor(std::make_shared<GetAction>(this, versions));
 		if (!IndexVisitor.setScope(scope)) {
@@ -1329,14 +1581,16 @@ namespace simplearchive {
 		CheckoutStatus checkoutStatus;
 		PrimaryIndexPath piPath = m_PrimaryIndexObject->getPrimaryIndexPath();
 		checkoutStatus.setPath(piPath.getCheckoutStatusPath().c_str());
-		if (checkoutStatus.select(scope) == false) {
+		if (checkoutStatus.select(scope) == false)
+		{
 			logger.log(LOG_OK, CLogger::Level::ERR, "Cannot process archive history");
 			return false;
 		}
 		return true;
 	}
 
-	bool ArchiveObject::checkout(const char *scope, const char *comment, bool force) {
+	bool ArchiveObject::checkout(const char* scope, const char* comment, bool force)
+	{
 		/*
 		IndexVisitor indexVisitor(std::make_shared<CheckoutAction>(this));
 		indexVisitor.setPath("C:\\ProgramData/IDK-Software/ImgArchive/pi/chkout");
@@ -1351,14 +1605,16 @@ namespace simplearchive {
 		CheckoutStatus checkoutStatus(std::make_shared<CheckoutAction>(this));
 		PrimaryIndexPath piPath = m_PrimaryIndexObject->getPrimaryIndexPath();
 		checkoutStatus.setPath(piPath.getCheckoutStatusPath().c_str());
-		if (checkoutStatus.select(scope) == false) {
+		if (checkoutStatus.select(scope) == false)
+		{
 			logger.log(LOG_OK, CLogger::Level::ERR, "Cannot process archive history");
 			return false;
 		}
 		return true;
 	}
 
-	bool ArchiveObject::checkin(const char *scope, const char *comment, bool force) {
+	bool ArchiveObject::checkin(const char* scope, const char* comment, bool force)
+	{
 		/*
 		IndexVisitor IndexVisitor(std::make_shared<CheckinAction>(this));
 		if (!IndexVisitor.setScope(scope)) {
@@ -1370,14 +1626,16 @@ namespace simplearchive {
 		CheckoutStatus checkoutStatus(std::make_shared<CheckinAction>(this));
 		PrimaryIndexPath piPath = m_PrimaryIndexObject->getPrimaryIndexPath();
 		checkoutStatus.setPath(piPath.getCheckoutStatusPath().c_str());
-		if (checkoutStatus.select(scope) == false) {
+		if (checkoutStatus.select(scope) == false)
+		{
 			logger.log(LOG_OK, CLogger::Level::ERR, "Cannot process archive history");
 			return false;
 		}
 		return true;
 	}
 
-	bool ArchiveObject::uncheckout(const char *scope, const char *comment, bool force) {
+	bool ArchiveObject::uncheckout(const char* scope, const char* comment, bool force)
+	{
 		/*
 		IndexVisitor IndexVisitor(std::make_shared<UnCheckoutAction>(this));
 		if (!IndexVisitor.setScope(scope)) {
@@ -1389,14 +1647,16 @@ namespace simplearchive {
 		CheckoutStatus checkoutStatus(std::make_shared<UnCheckoutAction>(this));
 		PrimaryIndexPath piPath = m_PrimaryIndexObject->getPrimaryIndexPath();
 		checkoutStatus.setPath(piPath.getCheckoutStatusPath().c_str());
-		if (checkoutStatus.select(scope) == false) {
+		if (checkoutStatus.select(scope) == false)
+		{
 			logger.log(LOG_OK, CLogger::Level::ERR, "Cannot process archive history");
 			return false;
 		}
 		return true;
 	}
 
-	bool ArchiveObject::deleteImages(const char* scope, const char* comment, bool force) {
+	bool ArchiveObject::deleteImages(const char* scope, const char* comment, bool force)
+	{
 		/*
 		CLogger& logger = CLogger::getLogger();
 		CheckoutStatus checkoutStatus(std::make_shared<UnCheckoutAction>(this));
@@ -1410,7 +1670,8 @@ namespace simplearchive {
 		return true;
 	}
 
-	bool ArchiveObject::undeleteImages(const char* scope, const char* comment) {
+	bool ArchiveObject::undeleteImages(const char* scope, const char* comment)
+	{
 		/*
 		CLogger& logger = CLogger::getLogger();
 		CheckoutStatus checkoutStatus(std::make_shared<UnCheckoutAction>(this));
@@ -1424,8 +1685,9 @@ namespace simplearchive {
 		return true;
 	}
 
-	bool GetAction::onImage(const char* name) {
-		CLogger &logger = CLogger::getLogger();
+	bool GetAction::onImage(const char* name)
+	{
+		CLogger& logger = CLogger::getLogger();
 		std::string path = name;
 		/*
 		std::string path = m_currentRow->columnAt(DB_FILEPATH).getString();
@@ -1435,144 +1697,196 @@ namespace simplearchive {
 
 		VersionControl& versionControl = VersionControl::getInstance();
 
-		if (versionControl.getVersions(path.c_str(), m_versions.c_str(), false) == false) {
+		if (versionControl.getVersions(path.c_str(), m_versions.c_str(), false) == false)
+		{
 			return false;
 		}
-		logger.status(LOG_COMPLETED_OK, ReporterEvent::Status::Completed, "Getting image was successfull \"%s\"", path.c_str());
+		logger.status(LOG_COMPLETED_OK, ReporterEvent::Status::Completed, "Getting image was successfull \"%s\"",
+		              path.c_str());
 		return true;
 	}
 
-	bool CheckoutAction::onImage(const char* name) {
-		CLogger &logger = CLogger::getLogger();
+	bool CheckoutAction::onImage(const char* name)
+	{
+		CLogger& logger = CLogger::getLogger();
 		std::string path = name;
 		/*
 		std::string path = m_currentRow->columnAt(DB_FILEPATH).getString();
 		path += '/';
 		path += m_currentRow->columnAt(DB_FILENAME).getString();
 		*/
-		if (m_ArchiveObject->checkoutFile(path.c_str(), "", false) == false) {
-			switch (ErrorCode::getErrorCode()) {
+		if (m_ArchiveObject->checkoutFile(path.c_str(), "", false) == false)
+		{
+			switch (ErrorCode::getErrorCode())
+			{
 			case IMGA_ERROR::INVALID_PATH:
 				//m_indexActionReporter->add(ReporterItem::Status::Error, "Failed to check out image \"%s\" %s", path.c_str(), ErrorCode::toString(ErrorCode::getErrorCode()));
-				logger.status(LOG_UNABLE_TO_CHECKOUT_GENERAL, ReporterEvent::Status::Warning, "Failed to check out image \"%s\" Reason: %s", path.c_str(), ErrorCode::toString(ErrorCode::getErrorCode()));
+				logger.status(LOG_UNABLE_TO_CHECKOUT_GENERAL, ReporterEvent::Status::Warning,
+				              "Failed to check out image \"%s\" Reason: %s", path.c_str(),
+				              ErrorCode::toString(ErrorCode::getErrorCode()));
 
 				break;
 			case IMGA_ERROR::ALREADY_CHECKED_OUT:
 				//m_indexActionReporter->add(ReporterItem::Status::Warning, "Failed to check out image \"%s\" %s", path.c_str(), ErrorCode::toString(ErrorCode::getErrorCode()));
-				logger.status(LOG_UNABLE_TO_CHECKOUT_GENERAL, ReporterEvent::Status::Warning, "Failed to check out image \"%s\" Reason: %s", path.c_str(), ErrorCode::toString(ErrorCode::getErrorCode()));
+				logger.status(LOG_UNABLE_TO_CHECKOUT_GENERAL, ReporterEvent::Status::Warning,
+				              "Failed to check out image \"%s\" Reason: %s", path.c_str(),
+				              ErrorCode::toString(ErrorCode::getErrorCode()));
 				return true;
 			case IMGA_ERROR::WILL_OVERWRITE_CHANGES:
-				logger.status(LOG_UNABLE_TO_CHECKOUT_GENERAL, ReporterEvent::Status::Warning, "Unable to checkout: \"%s\" Reason: %s", path.c_str(), ErrorCode::toString(ErrorCode::getErrorCode()));
+				logger.status(LOG_UNABLE_TO_CHECKOUT_GENERAL, ReporterEvent::Status::Warning,
+				              "Unable to checkout: \"%s\" Reason: %s", path.c_str(),
+				              ErrorCode::toString(ErrorCode::getErrorCode()));
 				return true;
 			case IMGA_ERROR::CHANGE_MAY_BE_LOST:
-				logger.status(LOG_UNABLE_TO_CHECKOUT_GENERAL, ReporterEvent::Status::Warning, "checked out but not copied\"%s\" Error: %s?", path.c_str(), ErrorCode::toString(ErrorCode::getErrorCode()));
+				logger.status(LOG_UNABLE_TO_CHECKOUT_GENERAL, ReporterEvent::Status::Warning,
+				              "checked out but not copied\"%s\" Error: %s?", path.c_str(),
+				              ErrorCode::toString(ErrorCode::getErrorCode()));
 				return true;
 			}
 			return false;
 		}
 		//m_indexActionReporter->add(ReporterItem::Status::Completed, "Image \"%s\"", path.c_str());
-		logger.status(LOG_COMPLETED_OK, ReporterEvent::Status::Completed, "Checking out image was successfull \"%s\"", path.c_str());
+		logger.status(LOG_COMPLETED_OK, ReporterEvent::Status::Completed, "Checking out image was successfull \"%s\"",
+		              path.c_str());
 		return true;
 	}
 
 
-	bool CheckinAction::onImage(const char* name) {
-		CLogger &logger = CLogger::getLogger();
+	bool CheckinAction::onImage(const char* name)
+	{
+		CLogger& logger = CLogger::getLogger();
 		std::string path = name;
 		/*
 		std::string path = m_currentRow->columnAt(DB_FILEPATH).getString();
 		path += '/';
 		path += m_currentRow->columnAt(DB_FILENAME).getString();
 		*/
-		
-		if (m_ArchiveObject->checkinFile(path.c_str(), "", false) == false) {
-			switch (ErrorCode::getErrorCode()) {
+
+		if (m_ArchiveObject->checkinFile(path.c_str(), "", false) == false)
+		{
+			switch (ErrorCode::getErrorCode())
+			{
 			case IMGA_ERROR::INVALID_PATH:
 				//m_indexActionReporter->add(ReporterItem::Status::Error, "Failed to check out image \"%s\" %s", path.c_str(), ErrorCode::toString(ErrorCode::getErrorCode()));
-				logger.status(LOG_UNABLE_TO_CHECKIN_GENERAL, ReporterEvent::Status::Warning, "Images \"%s\" not checked in? Reason: %s", path.c_str(), ErrorCode::toString(ErrorCode::getErrorCode()));
+				logger.status(LOG_UNABLE_TO_CHECKIN_GENERAL, ReporterEvent::Status::Warning,
+				              "Images \"%s\" not checked in? Reason: %s", path.c_str(),
+				              ErrorCode::toString(ErrorCode::getErrorCode()));
 
 				break;
 			case IMGA_ERROR::ALREADY_CHECKED_IN:
 				//m_indexActionReporter->add(ReporterItem::Status::Warning, "Failed to check out image \"%s\" %s", path.c_str(), ErrorCode::toString(ErrorCode::getErrorCode()));
-				logger.status(LOG_UNABLE_TO_CHECKIN_GENERAL, ReporterEvent::Status::Warning, "Images \"%s\" not checked in? Reason: %s", path.c_str(), ErrorCode::toString(ErrorCode::getErrorCode()));
+				logger.status(LOG_UNABLE_TO_CHECKIN_GENERAL, ReporterEvent::Status::Warning,
+				              "Images \"%s\" not checked in? Reason: %s", path.c_str(),
+				              ErrorCode::toString(ErrorCode::getErrorCode()));
 				return true;
 			case IMGA_ERROR::ALREADY_CHECKED_IN_NO_CHANGES:
-				logger.status(LOG_UNABLE_TO_CHECKIN_GENERAL, ReporterEvent::Status::Warning, "Images \"%s\"? not checked in? Reason: %s", path.c_str(), ErrorCode::toString(ErrorCode::getErrorCode()));
+				logger.status(LOG_UNABLE_TO_CHECKIN_GENERAL, ReporterEvent::Status::Warning,
+				              "Images \"%s\"? not checked in? Reason: %s", path.c_str(),
+				              ErrorCode::toString(ErrorCode::getErrorCode()));
 				return true;
 			case IMGA_ERROR::ALREADY_CHECKED_IN_CHANGES:
-				logger.status(LOG_UNABLE_TO_CHECKIN_GENERAL, ReporterEvent::Status::Warning, "Images \"%s\"? not checked in? Reason: %s", path.c_str(), ErrorCode::toString(ErrorCode::getErrorCode()));
+				logger.status(LOG_UNABLE_TO_CHECKIN_GENERAL, ReporterEvent::Status::Warning,
+				              "Images \"%s\"? not checked in? Reason: %s", path.c_str(),
+				              ErrorCode::toString(ErrorCode::getErrorCode()));
 				return true;
 			case IMGA_ERROR::NO_CHANGE_IN_IMAGE:
-				logger.status(LOG_UNABLE_TO_CHECKIN_GENERAL, ReporterEvent::Status::Warning, "File not copied \"%s\"? Error: %s", path.c_str(), ErrorCode::toString(ErrorCode::getErrorCode()));
+				logger.status(LOG_UNABLE_TO_CHECKIN_GENERAL, ReporterEvent::Status::Warning,
+				              "File not copied \"%s\"? Error: %s", path.c_str(),
+				              ErrorCode::toString(ErrorCode::getErrorCode()));
 				return true;
 			case IMGA_ERROR::DUPLICATE_IMAGE:
-				logger.status(LOG_UNABLE_TO_CHECKIN_GENERAL, ReporterEvent::Status::Warning, "Images \"%s\" not checked in? Reason: %s", path.c_str(), ErrorCode::toString(ErrorCode::getErrorCode()));
-				return true;	
+				logger.status(LOG_UNABLE_TO_CHECKIN_GENERAL, ReporterEvent::Status::Warning,
+				              "Images \"%s\" not checked in? Reason: %s", path.c_str(),
+				              ErrorCode::toString(ErrorCode::getErrorCode()));
+				return true;
 			}
-			logger.status(LOG_UNABLE_TO_CHECKOUT_GENERAL, ReporterEvent::Status::Warning, "Unable to checkout: \"%s\" Error: %s", path.c_str(), ErrorCode::toString(ErrorCode::getErrorCode()));
+			logger.status(LOG_UNABLE_TO_CHECKOUT_GENERAL, ReporterEvent::Status::Warning,
+			              "Unable to checkout: \"%s\" Error: %s", path.c_str(),
+			              ErrorCode::toString(ErrorCode::getErrorCode()));
 			return false;
 		}
 		//m_indexActionReporter->add(ReporterItem::Status::Completed, "Image \"%s\"", path.c_str());
-		logger.status(LOG_COMPLETED_OK, ReporterEvent::Status::Completed, "Checking in image was successfull \"%s\"", path.c_str());
+		logger.status(LOG_COMPLETED_OK, ReporterEvent::Status::Completed, "Checking in image was successfull \"%s\"",
+		              path.c_str());
 		return true;
 	}
 
-	bool UnCheckoutAction::onImage(const char* name) {
-		CLogger &logger = CLogger::getLogger();
+	bool UnCheckoutAction::onImage(const char* name)
+	{
+		CLogger& logger = CLogger::getLogger();
 		std::string path = name;
 		/*
 		std::string path = m_currentRow->columnAt(DB_FILEPATH).getString();
 		path += '/';
 		path += m_currentRow->columnAt(DB_FILENAME).getString();
 		*/
-		
-		if (m_ArchiveObject->uncheckoutFile(path.c_str(), "", false) == false) {
-			switch (ErrorCode::getErrorCode()) {
+
+		if (m_ArchiveObject->uncheckoutFile(path.c_str(), "", false) == false)
+		{
+			switch (ErrorCode::getErrorCode())
+			{
 			case IMGA_ERROR::INVALID_PATH:
 				//m_indexActionReporter->add(ReporterItem::Status::Error, "Failed to check out image \"%s\" %s", path.c_str(), ErrorCode::toString(ErrorCode::getErrorCode()));
-				logger.status(LOG_UNABLE_TO_CHECKIN_GENERAL, ReporterEvent::Status::Warning, "Images \"%s\" not checked in? Reason: %s", path.c_str(), ErrorCode::toString(ErrorCode::getErrorCode()));
+				logger.status(LOG_UNABLE_TO_CHECKIN_GENERAL, ReporterEvent::Status::Warning,
+				              "Images \"%s\" not checked in? Reason: %s", path.c_str(),
+				              ErrorCode::toString(ErrorCode::getErrorCode()));
 
 				break;
 			case IMGA_ERROR::ALREADY_CHECKED_IN:
 				//m_indexActionReporter->add(ReporterItem::Status::Warning, "Failed to check out image \"%s\" %s", path.c_str(), ErrorCode::toString(ErrorCode::getErrorCode()));
-				logger.status(LOG_UNABLE_TO_CHECKIN_GENERAL, ReporterEvent::Status::Warning, "Images \"%s\" not checked in? Reason: %s", path.c_str(), ErrorCode::toString(ErrorCode::getErrorCode()));
+				logger.status(LOG_UNABLE_TO_CHECKIN_GENERAL, ReporterEvent::Status::Warning,
+				              "Images \"%s\" not checked in? Reason: %s", path.c_str(),
+				              ErrorCode::toString(ErrorCode::getErrorCode()));
 				return true;
 			}
-			logger.status(LOG_UNABLE_TO_CHECKOUT_GENERAL, ReporterEvent::Status::Warning, "Unable to uncheckout: \"%s\" Error: %s", path.c_str(), ErrorCode::toString(ErrorCode::getErrorCode()));
+			logger.status(LOG_UNABLE_TO_CHECKOUT_GENERAL, ReporterEvent::Status::Warning,
+			              "Unable to uncheckout: \"%s\" Error: %s", path.c_str(),
+			              ErrorCode::toString(ErrorCode::getErrorCode()));
 			return false;
 		}
-		logger.status(LOG_COMPLETED_OK, ReporterEvent::Status::Completed, "Un-checking out image was successfull \"%s\"", path.c_str());
+		logger.status(LOG_COMPLETED_OK, ReporterEvent::Status::Completed,
+		              "Un-checking out image was successfull \"%s\"", path.c_str());
 		return true;
 	}
 
-	bool ArchiveObject::checkoutFile(const char *filepath, const char *comment, bool force) {
-		CLogger &logger = CLogger::getLogger();
+	bool ArchiveObject::checkoutFile(const char* filepath, const char* comment, bool force)
+	{
+		CLogger& logger = CLogger::getLogger();
 
 		VersionControl& versionControl = VersionControl::getInstance();
 		std::string commentWithWarning = comment;
 
-		if (versionControl.checkoutFile(filepath, comment, force) == false) {
-			if (ErrorCode::getErrorCode() == IMGA_ERROR::ALREADY_CHECKED_OUT && !force) {
+		if (versionControl.checkoutFile(filepath, comment, force) == false)
+		{
+			if (ErrorCode::getErrorCode() == IMGA_ERROR::ALREADY_CHECKED_OUT && !force)
+			{
 				commentWithWarning += ErrorCode::toString(ErrorCode::getErrorCode());
 			}
-			else if (ErrorCode::getErrorCode() == IMGA_ERROR::TARGET_NOT_FOUND) {
+			else if (ErrorCode::getErrorCode() == IMGA_ERROR::TARGET_NOT_FOUND)
+			{
 				commentWithWarning += ErrorCode::toString(ErrorCode::getErrorCode());
 			}
-			else if (ErrorCode::getErrorCode() == IMGA_ERROR::WILL_OVERWRITE_CHANGES) {
+			else if (ErrorCode::getErrorCode() == IMGA_ERROR::WILL_OVERWRITE_CHANGES)
+			{
 				commentWithWarning += ErrorCode::toString(ErrorCode::getErrorCode());
 			}
-			else {
-				logger.log(LOG_UNABLE_TO_CHECKOUT_GENERAL, CLogger::Level::INFO, "Unable to checkout: \"%s\" Error: %s", filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
+			else
+			{
+				logger.log(LOG_UNABLE_TO_CHECKOUT_GENERAL, CLogger::Level::INFO, "Unable to checkout: \"%s\" Error: %s",
+				           filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
 				commentWithWarning += ErrorCode::toString(ErrorCode::getErrorCode());
 			}
 
 			History& history = History::getHistory();
-			if (history.checkoutImage(filepath, versionControl.getVersion(), commentWithWarning.c_str()) == false) {
-				logger.log(LOG_UNABLE_TO_CHECKOUT_GENERAL, CLogger::Level::FATAL, "Unable to update checkout history for image: \"%s\" Error: %s", filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
+			if (history.checkoutImage(filepath, versionControl.getVersion(), commentWithWarning.c_str()) == false)
+			{
+				logger.log(LOG_UNABLE_TO_CHECKOUT_GENERAL, CLogger::Level::FATAL,
+				           "Unable to update checkout history for image: \"%s\" Error: %s", filepath,
+				           ErrorCode::toString(ErrorCode::getErrorCode()));
 			}
 			return false;
 		}
-		
+
 		/* To be done
 		// In the state that it can be checked out
 		CDCheckInOutManager &cd = CDCheckInOutManager::get();
@@ -1595,36 +1909,42 @@ namespace simplearchive {
 		*/
 		commentWithWarning += " Successful";
 
-		
 
 		History& history = History::getHistory();
-		if (history.checkoutImage(filepath, versionControl.getVersion(), commentWithWarning.c_str()) == false) {
-			logger.log(LOG_UNABLE_TO_CHECKOUT_GENERAL, CLogger::Level::FATAL, "Unable to update checkout history for image: \"%s\" Error: %s", filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
+		if (history.checkoutImage(filepath, versionControl.getVersion(), commentWithWarning.c_str()) == false)
+		{
+			logger.log(LOG_UNABLE_TO_CHECKOUT_GENERAL, CLogger::Level::FATAL,
+			           "Unable to update checkout history for image: \"%s\" Error: %s", filepath,
+			           ErrorCode::toString(ErrorCode::getErrorCode()));
 			return false;
 		}
 		return true;
 	}
 
-	bool ArchiveObject::checkinFile(const char *filepath, const char *comment, bool force) {
-		CLogger &logger = CLogger::getLogger();
+	bool ArchiveObject::checkinFile(const char* filepath, const char* comment, bool force)
+	{
+		CLogger& logger = CLogger::getLogger();
 		CDCheckInOutManager cd = CDCheckInOutManager::get();
 		CheckoutStatus checkoutStatus;
 		ImportJournal& importJournal = ImportJournalManager::GetJournal();
 		// Note Both the Primary and the Master sequence numbers must be known before saving
 
 
-
 		// Test the checkin status of the image
 		bool alreadyCheckedIn = false;
-		if (!force) {
-			if (checkoutStatus.isCheckedOut(filepath) == false) {
-				if (ErrorCode::getErrorCode() == IMGA_ERROR::ALREADY_CHECKED_IN || ErrorCode::getErrorCode() == IMGA_ERROR::NOT_BEEN_CHECKED_OUT) {
+		if (!force)
+		{
+			if (checkoutStatus.isCheckedOut(filepath) == false)
+			{
+				if (ErrorCode::getErrorCode() == IMGA_ERROR::ALREADY_CHECKED_IN || ErrorCode::getErrorCode() ==
+					IMGA_ERROR::NOT_BEEN_CHECKED_OUT)
+				{
 					// Needs chacking for changes beween the one in the workspace and the one checked in
 					// even if is already chected in, the user needs to if this is the case.
 					alreadyCheckedIn = true;
-
 				}
-				else {
+				else
+				{
 					return false;
 				}
 			}
@@ -1637,7 +1957,7 @@ namespace simplearchive {
 		ImagePath imagePath(filepath);
 		PrimaryIndexObject& primaryIndexObject = getPrimaryIndexObject();
 
-		
+
 		VersionControl& versionControl = VersionControl::getInstance();
 		versionControl.setCurrentVersion(filepath);
 		int version = versionControl.getVersion();
@@ -1646,12 +1966,12 @@ namespace simplearchive {
 		FileInfo fileInfo(ddmmyy);
 
 		std::string commentWithWarning = comment;
-		if (!force) {
-			if (checkoutStatus.isChanged(filepath, versionControl.getCRC(), versionControl.getMD5().c_str()) == false) {
-
-				
-
-				if (alreadyCheckedIn) {
+		if (!force)
+		{
+			if (checkoutStatus.isChanged(filepath, versionControl.getCRC(), versionControl.getMD5().c_str()) == false)
+			{
+				if (alreadyCheckedIn)
+				{
 					ErrorCode::setErrorCode(IMGA_ERROR::ALREADY_CHECKED_IN_NO_CHANGES);
 					commentWithWarning += " Warning: Already checked in";
 					History& history = History::getHistory();
@@ -1659,9 +1979,13 @@ namespace simplearchive {
 					return false; // Just return now as no changes found.
 				}
 				// not checked in but no changes so just change state to checked-in
-				logger.log(LOG_OK, CLogger::Level::INFO, "Already checked in and No changes have been made to image: \"%s\" Warning: %s", filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
-				if (checkoutStatus.checkinUpdate(filepath, comment) == false) {
-					logger.log(LOG_OK, CLogger::Level::FATAL, "Unable to checkin: \"%s\" Warning: %s", filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
+				logger.log(LOG_OK, CLogger::Level::INFO,
+				           "Already checked in and No changes have been made to image: \"%s\" Warning: %s", filepath,
+				           ErrorCode::toString(ErrorCode::getErrorCode()));
+				if (checkoutStatus.checkinUpdate(filepath, comment) == false)
+				{
+					logger.log(LOG_OK, CLogger::Level::FATAL, "Unable to checkin: \"%s\" Warning: %s", filepath,
+					           ErrorCode::toString(ErrorCode::getErrorCode()));
 					commentWithWarning += " Fatal: Unable to checkin";
 					History& history = History::getHistory();
 					history.checkinImage(filepath, version, commentWithWarning.c_str());
@@ -1672,19 +1996,22 @@ namespace simplearchive {
 				history.checkinImage(filepath, version, commentWithWarning.c_str());
 				return false;
 			}
-			else {
-				if (alreadyCheckedIn) {
-					ErrorCode::setErrorCode(IMGA_ERROR::ALREADY_CHECKED_IN_CHANGES);
-					logger.log(LOG_UNABLE_TO_CHECKOUT_GENERAL, CLogger::Level::WARNING, "Already checked in: \"%s\" Reason: %s", filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
-					commentWithWarning += " Warning: Already checked in";
-					History& history = History::getHistory();
-					history.checkinImage(filepath, version, commentWithWarning.c_str());
-					return false; // changes found.
-				}
+			if (alreadyCheckedIn)
+			{
+				ErrorCode::setErrorCode(IMGA_ERROR::ALREADY_CHECKED_IN_CHANGES);
+				logger.log(LOG_UNABLE_TO_CHECKOUT_GENERAL, CLogger::Level::WARNING,
+				           "Already checked in: \"%s\" Reason: %s", filepath,
+				           ErrorCode::toString(ErrorCode::getErrorCode()));
+				commentWithWarning += " Warning: Already checked in";
+				History& history = History::getHistory();
+				history.checkinImage(filepath, version, commentWithWarning.c_str());
+				return false; // changes found.
 			}
 
-			if (TestForDuplicate(fileInfo, importJournal, false) == false) {
-				if (ImportJournalManager::save() == false) {
+			if (TestForDuplicate(fileInfo, importJournal, false) == false)
+			{
+				if (ImportJournalManager::save() == false)
+				{
 					logger.log(LOG_OK, CLogger::Level::FATAL, "Unable to save Journal File");
 					return false;
 				}
@@ -1703,63 +2030,81 @@ namespace simplearchive {
 
 		// Get The old metadataObject
 		CSVDatabase csvDatabase = CSVDatabase::get();
-		SharedMTRow metadataRow = csvDatabase.get(pathController.getImageName().c_str(), pathController.getRelativePath().c_str());
-		if (metadataRow == nullptr) {
+		SharedMTRow metadataRow = csvDatabase.get(pathController.getImageName().c_str(),
+		                                          pathController.getRelativePath().c_str());
+		if (metadataRow == nullptr)
+		{
 			return false;
 		}
- 
+
 		version++;
-		
+
 
 		MetadataObject metadataObject(*metadataRow);
 
 		logger.log(LOG_OK, CLogger::Level::FINE, "Final metadata");
 		MTTableSchema& mos = (MTTableSchema&)metadataObject.getSchema();
-		for (std::vector<MTSchema>::iterator i = mos.begin(); i != mos.end(); i++) {
+		for (std::vector<MTSchema>::iterator i = mos.begin(); i != mos.end(); ++i)
+		{
 			MTSchema& columnInfo = *i;
 
-			logger.log(LOG_OK, CLogger::Level::FINE, "%-20s %s\n", columnInfo.getName().c_str(), metadataObject.columnAt(columnInfo.getName().c_str()).toString().c_str());
+			logger.log(LOG_OK, CLogger::Level::FINE, "%-20s %s\n", columnInfo.getName().c_str(),
+			           metadataObject.columnAt(columnInfo.getName().c_str()).toString().c_str());
 		}
 
-		
+
 		//primaryIndexObject.
 
-		derivativesObject.addimage(pathController.getYearday().c_str(), fileInfo, comment, primarySeqNumber, derivativeSeqNumber, version, metadataObject);
-		if (ImportJournalManager::save() == false) {
+		derivativesObject.addimage(pathController.getYearday().c_str(), fileInfo, comment, primarySeqNumber,
+		                           derivativeSeqNumber, version, metadataObject);
+		if (ImportJournalManager::save() == false)
+		{
 			logger.log(LOG_OK, CLogger::Level::FATAL, "Unable to save Journal File");
 			return false;
 		}
 		//FileInfo fileInfo(pathController.getFullPath());
 		metadataObject.update(fileInfo, derivativeSeqNumber, version);
 		std::string yyyymmddStr = derivativesObject.getRepositoryPath().getYYYYMMDD();
-		if (settupRelativeDerivative(yyyymmddStr) == false) {
+		if (settupRelativeDerivative(yyyymmddStr) == false)
+		{
 			return false;
 		}
 		DerivativeMetadataRow& derivativeMetadata = derivativesObject.getDerivativeMetadata();
 		std::string versionName = VersionControl::getInstance().getCurrentVersion().getVersionName();
-		
+
 		// Note the workspase needs the image name note the version image name
 		std::string name = pathController.getImageName();
-		if (this->writeMetadata2Workspace(imagePath, name, metadataObject) == false) {
-			logger.log(LOG_OK, CLogger::Level::FATAL, "Fataled to write image \"%s\" metadata to workspace", versionName.c_str());
+		if (this->writeMetadata2Workspace(imagePath, name, metadataObject) == false)
+		{
+			logger.log(LOG_OK, CLogger::Level::FATAL, "Fataled to write image \"%s\" metadata to workspace",
+			           versionName.c_str());
 			return false;
 		}
 		name = fileInfo.getName();
-		if (this->writeDerivativeMetadat2Workspace(imagePath, versionName, derivativeMetadata, name) == false) {
-			logger.log(LOG_OK, CLogger::Level::FATAL, "Fataled to write image \"%s\" metadata to workspace", versionName.c_str());
+		if (this->writeDerivativeMetadat2Workspace(imagePath, versionName, derivativeMetadata, name) == false)
+		{
+			logger.log(LOG_OK, CLogger::Level::FATAL, "Fataled to write image \"%s\" metadata to workspace",
+			           versionName.c_str());
 			return false;
 		}
-		if (this->writeMetadata2PrimaryIndex(imagePath, versionName, metadataObject) == false) {
-			logger.log(LOG_OK, CLogger::Level::FATAL, "Fataled to write image \"%s\" metadata to primary index", versionName.c_str());
+		if (this->writeMetadata2PrimaryIndex(imagePath, versionName, metadataObject) == false)
+		{
+			logger.log(LOG_OK, CLogger::Level::FATAL, "Fataled to write image \"%s\" metadata to primary index",
+			           versionName.c_str());
 			return false;
 		}
-		if (this->writeMetadata2DerivativesDatabase(versionName, derivativeMetadata, name) == false) {
-			logger.log(LOG_OK, CLogger::Level::FATAL, "Fataled to write image \"%s\" metadata Derivatives Database", versionName.c_str());
+		if (this->writeMetadata2DerivativesDatabase(versionName, derivativeMetadata, name) == false)
+		{
+			logger.log(LOG_OK, CLogger::Level::FATAL, "Fataled to write image \"%s\" metadata Derivatives Database",
+			           versionName.c_str());
 			return false;
 		}
 
-		if (primaryIndexObject.addDerivativeImage(fileInfo, "A command", primarySeqNumber, derivativeSeqNumber, VersionControl::getInstance().getCurrentVersion()) == false) {
-			if (ImportJournalManager::save() == false) {
+		if (primaryIndexObject.addDerivativeImage(fileInfo, "A command", primarySeqNumber, derivativeSeqNumber,
+		                                          VersionControl::getInstance().getCurrentVersion()) == false)
+		{
+			if (ImportJournalManager::save() == false)
+			{
 				logger.log(LOG_OK, CLogger::Level::FATAL, "Unable to save Journal File");
 				return false;
 			}
@@ -1768,8 +2113,10 @@ namespace simplearchive {
 
 		versionControl.checkin(filepath, comment, force);
 
-		if (checkoutStatus.checkinUpdate(filepath, comment) == false) {
-			logger.log(LOG_OK, CLogger::Level::FATAL, "Unable to checkin: \"%s\" Warning: %s", filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
+		if (checkoutStatus.checkinUpdate(filepath, comment) == false)
+		{
+			logger.log(LOG_OK, CLogger::Level::FATAL, "Unable to checkin: \"%s\" Warning: %s", filepath,
+			           ErrorCode::toString(ErrorCode::getErrorCode()));
 			return false;
 		}
 		/* to be added later
@@ -1795,81 +2142,123 @@ namespace simplearchive {
 		return true;
 	}
 
-	bool ArchiveObject::uncheckoutFile(const char *filepath, const char *comment, bool force) {
-		CLogger &logger = CLogger::getLogger();
+	bool ArchiveObject::uncheckoutFile(const char* filepath, const char* comment, bool force)
+	{
+		CLogger& logger = CLogger::getLogger();
 		VersionControl& versionControl = VersionControl::getInstance();
-		if (versionControl.uncheckoutFile(filepath, comment, force) == false) {
+		if (versionControl.uncheckoutFile(filepath, comment, force) == false)
+		{
 			return false;
 		}
 		History& history = History::getHistory();
-		if (history.uncheckoutImage(filepath, versionControl.getVersion(), comment) == false) {
-			logger.log(LOG_UNABLE_TO_CHECKOUT_GENERAL, CLogger::Level::FATAL, "Unable to update checkout history for image: \"%s\" Error: %s", filepath, ErrorCode::toString(ErrorCode::getErrorCode()));
+		if (history.uncheckoutImage(filepath, versionControl.getVersion(), comment) == false)
+		{
+			logger.log(LOG_UNABLE_TO_CHECKOUT_GENERAL, CLogger::Level::FATAL,
+			           "Unable to update checkout history for image: \"%s\" Error: %s", filepath,
+			           ErrorCode::toString(ErrorCode::getErrorCode()));
 			return false;
 		}
 		return true;
-		
 	}
 
 	bool ArchiveObject::updateMasterMetadata(const char* scope, const char* option, const char* value)
 	{
 		CLogger& logger = CLogger::getLogger();
 		CSVDatabase& masterDatabase = CSVDatabase::get();
-		if (masterDatabase.setMasterMetadata(scope, option, value) == false) {
+		if (masterDatabase.setMasterMetadata(scope, option, value) == false)
+		{
 			logger.log(LOG_OK, CLogger::Level::WARNING, "Unable to update metadata");
 			return false;
 		}
 		std::shared_ptr<ResultsList> results = masterDatabase.getResults();
-		for (auto i = results->begin(); i != results->end(); i++) {
+		for (auto i = results->begin(); i != results->end(); ++i)
+		{
 			SharedMTRow row = *i;
 			MetadataObject metadataObject(*row);
 			std::string filepath = metadataObject.getFilepathString();
 			std::string fileName = metadataObject.getFilenameString();
 			ImagePath imagePath(filepath);
-			if (writeMetadata2Workspace(imagePath, fileName, metadataObject) == false) {
+			if (writeMetadata2Workspace(imagePath, fileName, metadataObject) == false)
+			{
 				logger.log(LOG_OK, CLogger::Level::WARNING, "Unable to update workspace");
 			}
-			if (writeMetadata2PrimaryIndex(imagePath, fileName, metadataObject) == false) {
+			if (writeMetadata2PrimaryIndex(imagePath, fileName, metadataObject) == false)
+			{
 				logger.log(LOG_OK, CLogger::Level::WARNING, "Unable to update workspace");
 			}
-			if (writeMetadata2MasterDatabase(imagePath, fileName, metadataObject) == false) {
+			if (writeMetadata2MasterDatabase(imagePath, fileName, metadataObject) == false)
+			{
 				logger.log(LOG_OK, CLogger::Level::WARNING, "Unable to update master database");
 			}
 		}
-		
+
 		return true;
-		
 	}
 
 
-	bool ArchiveObject::TestForDuplicate(FileInfo& fileinfo, ImportJournal& importJournal, bool isForceChanges) {
+	bool ArchiveObject::TestForDuplicate(FileInfo& fileinfo, ImportJournal& importJournal, bool isForceChanges)
+	{
 		PrimaryIndexObject& primaryIndexObject = getPrimaryIndexObject();
 		ImageIndex& imageIndex = primaryIndexObject.getimageIndex();
-		CLogger &logger = CLogger::getLogger();
-		if (isForceChanges) {
-			if (imageIndex.IsDup(fileinfo.getCrc())) {
+		CLogger& logger = CLogger::getLogger();
+		if (isForceChanges)
+		{
+			if (imageIndex.IsDup(fileinfo.getCrc()))
+			{
 				//m_imageIndex->getData(BasicMetadata.getCrc());
 				logger.log(LOG_OK, CLogger::Level::INFO, "Dup %s", fileinfo.getName().c_str());
 				// reject image from import
-				ErrorCode::setErrorCode(IMGA_ERROR::DUPLICATE_IMAGE);				
+				ErrorCode::setErrorCode(IMGA_ERROR::DUPLICATE_IMAGE);
 				return false;
 			}
 		}
-		else {
+		else
+		{
 			// normal operation. dups are rejected
 			int pos = -1;
-			if (pos = imageIndex.IsDup(fileinfo.getCrc())) {
+			if (pos = imageIndex.IsDup(fileinfo.getCrc()))
+			{
 				//m_imageIndex->getData(imageId->getCrc());
-				logger.log(LOG_DUPLICATE, CLogger::Level::SUMMARY, "Image \"%s\" was found to be a duplicate. Rejecting from import", fileinfo.getName().c_str());
+				logger.log(LOG_DUPLICATE, CLogger::Level::SUMMARY,
+				           "Image \"%s\" was found to be a duplicate. Rejecting from import",
+				           fileinfo.getName().c_str());
 				// reject image from import
 				ImageId imageId = imageIndex.findDup(fileinfo.getCrc());
-				if (imageId.getName().empty()) {
+				if (imageId.getName().empty())
+				{
 					logger.log(LOG_OK, CLogger::Level::ERR, "Image indexing corrupt %s", fileinfo.getName().c_str());
 					ErrorCode::setErrorCode(IMGA_ERROR::IMAGE_INDEXING_CORRUPT);
 					throw std::exception();
 				}
-				else {
-					importJournal.update(fileinfo.getPath().c_str(), ImportJournal::Result::Duplicate, imageId.getLocation().c_str());
-					if (ImportJournalManager::save() == false) {
+				importJournal.update(fileinfo.getPath().c_str(), ImportJournal::Result::Duplicate,
+				                     imageId.getLocation().c_str());
+				if (ImportJournalManager::save() == false)
+				{
+					logger.log(LOG_OK, CLogger::Level::FATAL, "Unable to save Journal File");
+					ErrorCode::setErrorCode(IMGA_ERROR::UNABLE_TO_SAVE_JOUNAL);
+					return false;
+				}
+				return false;
+			}
+			// Add To the Image Indexing (used to find duplicates) ImageIndex::add(const char *name, unsigned long crc, const char *md5) {
+			//if (imageIndex.add(fileinfo) == false) {
+			if (imageIndex.IsDup(fileinfo.getCrc()) == true)
+			{
+				logger.log(LOG_DUPLICATE, CLogger::Level::WARNING,
+				           "Image \"%s\" was found to be a duplicate. Rejecting from import",
+				           fileinfo.getName().c_str());
+				// reject image from import
+				ImageId imageId = imageIndex.findDup(fileinfo.getCrc());
+				if (imageId.getName().empty())
+				{
+					logger.log(LOG_OK, CLogger::Level::ERR, "Image indexing corrupt %s", fileinfo.getName().c_str());
+				}
+				else
+				{
+					importJournal.update(fileinfo.getPath().c_str(), ImportJournal::Result::Duplicate,
+					                     imageId.getLocation().c_str());
+					if (ImportJournalManager::save() == false)
+					{
 						logger.log(LOG_OK, CLogger::Level::FATAL, "Unable to save Journal File");
 						ErrorCode::setErrorCode(IMGA_ERROR::UNABLE_TO_SAVE_JOUNAL);
 						return false;
@@ -1877,45 +2266,28 @@ namespace simplearchive {
 				}
 				return false;
 			}
-			else {
-				// Add To the Image Indexing (used to find duplicates) ImageIndex::add(const char *name, unsigned long crc, const char *md5) {
-				//if (imageIndex.add(fileinfo) == false) {
-				if (imageIndex.IsDup(fileinfo.getCrc()) == true) {
-					logger.log(LOG_DUPLICATE, CLogger::Level::WARNING, "Image \"%s\" was found to be a duplicate. Rejecting from import", fileinfo.getName().c_str());
-					// reject image from import
-					ImageId imageId = imageIndex.findDup(fileinfo.getCrc());
-					if (imageId.getName().empty()) {
-						logger.log(LOG_OK, CLogger::Level::ERR, "Image indexing corrupt %s", fileinfo.getName().c_str());
-					}
-					else {
-						importJournal.update(fileinfo.getPath().c_str(), ImportJournal::Result::Duplicate, imageId.getLocation().c_str());
-						if (ImportJournalManager::save() == false) {
-							logger.log(LOG_OK, CLogger::Level::FATAL, "Unable to save Journal File");
-							ErrorCode::setErrorCode(IMGA_ERROR::UNABLE_TO_SAVE_JOUNAL);
-							return false;
-						}
-					}
-					return false;
-				}
-				logger.log(LOG_OK, CLogger::Level::INFO, "Adding image to dups index %s", fileinfo.getName().c_str());
-			}
+			logger.log(LOG_OK, CLogger::Level::INFO, "Adding image to dups index %s", fileinfo.getName().c_str());
 		}
 		return true;
 	}
-	
-	bool ArchiveObject::systemHistory(const char* from, const char* to, ResultsPresentation::FormatType formatType, const char* filepath) {
-		CLogger &logger = CLogger::getLogger();
+
+	bool ArchiveObject::systemHistory(const char* from, const char* to, ResultsPresentation::FormatType formatType,
+	                                  const char* filepath)
+	{
+		CLogger& logger = CLogger::getLogger();
 		History& history = History::getHistory();
-		
+
 		//if (history.logSystemHistory(from, to, formatType, filepath) == false) {
 		//	logger.log(LOG_OK, CLogger::Level::FATAL, "Unable to process system history Error: %s", ErrorCode::toString(ErrorCode::getErrorCode()));
 		//	return false;
 		//}
-		
+
 		return true;
 	}
-	
-	bool ArchiveObject::imageHistory(const char* imagePath, const ResultsPresentation::FormatType& formatType, const char* outFile) {
+
+	bool ArchiveObject::imageHistory(const char* imagePath, const ResultsPresentation::FormatType& formatType,
+	                                 const char* outFile)
+	{
 		CLogger& logger = CLogger::getLogger();
 		History& history = History::getHistory();
 
@@ -1928,16 +2300,17 @@ namespace simplearchive {
 	}
 
 
-	bool ArchiveObject::exportImages(const char *dispPath) {
+	bool ArchiveObject::exportImages(const char* dispPath)
+	{
 		ExportImages exportImages(m_masterPath.c_str());
 		exportImages.process();
 		return true;
 	}
 
-	bool ArchiveObject::listContents(const char *addressScope) {
+	bool ArchiveObject::listContents(const char* addressScope)
+	{
 		ContentsLister contentsLister(m_masterPath.c_str());
 		contentsLister.List();
 		return true;
 	}
-
 } // simplearchive

@@ -37,8 +37,8 @@
 
 #ifdef WIN32
 #define _CRTDBG_MAP_ALLOC  
-#include <stdlib.h>  
-#include <crtdbg.h> 
+#include <stdlib.h>
+#include <crtdbg.h>
 #endif
 
 #include <string>
@@ -54,80 +54,88 @@
 
 #define DEBUG_PRINT printf
 
-enum class BoolOption {
+enum class BoolOption
+{
 	False = 0,
 	True = 1,
 	Invalid = -1
 };
 
-class SIAException : public std::exception {
+class SIAException : public std::exception
+{
 	std::string message;
 public:
-	explicit SIAException(const char *msg) : message(msg) {}
-	explicit SIAException(std::string msg) : message(msg) {}
-	virtual ~SIAException() throw() {};
-	virtual const char *what() throw();
+	explicit SIAException(const char* msg) : message(msg)
+	{
+	}
 
+	explicit SIAException(std::string msg) : message(msg)
+	{
+	}
+
+	virtual ~SIAException() throw()
+	{
+	};
+	virtual const char* what() throw();
 };
-
 
 
 using FileList = std::vector<std::string>;
 using FileList_Ptr = std::unique_ptr<FileList>;
 
 
-
-class SAUtils {
+class SAUtils
+{
 public:
 	SAUtils();
 	virtual ~SAUtils();
-	
-	static bool FileExists(const char *filename);
-	static bool DirExists(const char *path);
-	static bool IsFile(const char *path);
-	static time_t createTime(const char *path);
-	static time_t modTime(const char *path);
+
+	static bool FileExists(const char* filename);
+	static bool DirExists(const char* path);
+	static bool IsFile(const char* path);
+	static time_t createTime(const char* path);
+	static time_t modTime(const char* path);
 	//static std::vector<std::string *> *getFiles(const char *dirpath);
-	static FileList_Ptr getFiles_(const char *dirpath);
-	static std::string getExtention(const std::string &file);
-	static std::string getExtention(const char *file);
-	static std::string getFilePathNoExt(const std::string &file);
-	static std::string getFilePathNoExt(const char *file);
-	static std::string getFilenameNoExt(const std::string &file);
-	static std::string getFilenameNoExt(const char *file);
-	static std::string getFilename(const std::string &filepath);
-	static std::string getFolder(const std::string &filepath);
+	static FileList_Ptr getFiles_(const char* dirpath);
+	static std::string getExtention(const std::string& file);
+	static std::string getExtention(const char* file);
+	static std::string getFilePathNoExt(const std::string& file);
+	static std::string getFilePathNoExt(const char* file);
+	static std::string getFilenameNoExt(const std::string& file);
+	static std::string getFilenameNoExt(const char* file);
+	static std::string getFilename(const std::string& filepath);
+	static std::string getFolder(const std::string& filepath);
 	static std::string getCurrentDirectory();
-	static bool fileCompare(const char *file1, const char *file2);
-	static bool fileSize(const char *filePath, unsigned long *size);
-	static bool hasExt(const char *file);
-	static bool hasExt(const std::string &file);
+	static bool fileCompare(const char* file1, const char* file2);
+	static bool fileSize(const char* filePath, unsigned long* size);
+	static bool hasExt(const char* file);
+	static bool hasExt(const std::string& file);
 	static bool isEquals(const std::string& a, const std::string& b);
 	static BoolOption isTrueFalse(std::string& s);
-	static bool mkDir(const char *path);
+	static bool mkDir(const char* path);
 	static bool isNumber(const std::string& s);
-	static bool setHidden(const char *path);
-	static bool copy(const char *from, const char *to);
-	static bool rename(const char *from, const char *to);
-	static bool verify(const char *from, const char *to);
-	static bool delFile(const char *file);
-	static bool delDir(const char *file);
+	static bool setHidden(const char* path);
+	static bool copy(const char* from, const char* to);
+	static bool rename(const char* from, const char* to);
+	static bool verify(const char* from, const char* to);
+	static bool delFile(const char* file);
+	static bool delDir(const char* file);
 	static std::string to_string(int i);
-	static void chartohex2(char *buffer, unsigned char x);
-	static void chartohex3(char *buffer, unsigned short x);
-	static std::string sprintf(const char *fmt, ...);
-	static bool makePath(const char *from, const char *to);
-	static bool makePath(const char *to);
-	static bool makeLink(const char *file, const char *link);
-	static int getFileContents(const char *filename, std::string &contents);
-	static std::string getYear(const char *path);
-	static std::string getFullRelativePath(const char *path);
-	static void splitpath(const char *path, char *drive, char *dir, char *fname, char *ext);
-	static bool mksymlink(const char *sourcePath, const char *destPath);
-	static int stricmp(const char *a, const char *b);
-	static std::string GetEnv(const std::string &key, bool all = true);
-	static std::string GetPOSIXEnv(const std::string &key);
-	static bool SetEnv(const std::string &key, const std::string &value, bool all = true);
+	static void chartohex2(char* buffer, unsigned char x);
+	static void chartohex3(char* buffer, unsigned short x);
+	static std::string sprintf(const char* fmt, ...);
+	static bool makePath(const char* from, const char* to);
+	static bool makePath(const char* to);
+	static bool makeLink(const char* file, const char* link);
+	static int getFileContents(const char* filename, std::string& contents);
+	static std::string getYear(const char* path);
+	static std::string getFullRelativePath(const char* path);
+	static void splitpath(const char* path, char* drive, char* dir, char* fname, char* ext);
+	static bool mksymlink(const char* sourcePath, const char* destPath);
+	static int stricmp(const char* a, const char* b);
+	static std::string GetEnv(const std::string& key, bool all = true);
+	static std::string GetPOSIXEnv(const std::string& key);
+	static bool SetEnv(const std::string& key, const std::string& value, bool all = true);
 	static bool IsAdminMode();
 };
 

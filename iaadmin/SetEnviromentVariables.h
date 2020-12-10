@@ -6,19 +6,21 @@
 enum class FolderOptions;
 enum class EnabledOptions;
 
-enum class UserMode {
+enum class UserMode
+{
 	Local,
 	All,
 	Invalid
 };
 
 
-class SetEnviromentVariables : public ParseOptions {
+class SetEnviromentVariables : public ParseOptions
+{
 	FolderOptions processFolders(std::string& optionString);
 	std::string m_option;
 	std::string m_value;
-	Error m_error{ Error::Unknown };
-	UserMode m_userMode{ UserMode::Invalid };
+	Error m_error{Error::Unknown};
+	UserMode m_userMode{UserMode::Invalid};
 
 	bool processArgs(const char* ov);
 	bool parseEnableOptions(const char* optionString, const char* value);
@@ -34,5 +36,3 @@ public:
 	UserMode userMode(const char* ua);
 	UserMode userMode();
 };
-
-

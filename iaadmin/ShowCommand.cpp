@@ -9,36 +9,40 @@
 #include "CSVArgs.h"
 #include <sstream>
 
-namespace simplearchive {
+namespace simplearchive
+{
+	/****************************************************************
+	* 
+	*						ShowAllowedTextOut
+	* 
+	*****************************************************************/
 
-
-/****************************************************************
-* 
-*						ShowAllowedTextOut
-* 
-*****************************************************************/
-	
-	class ShowAllowedTextOut : public TextOut {
+	class ShowAllowedTextOut : public TextOut
+	{
 		AllowSelectionType m_type;
 	public:
-		ShowAllowedTextOut(AllowSelectionType type) : m_type(type) {};
-		std::string writePlain();
-		std::string writeXML();
-		std::string writeJson();
-		std::string writeHtml();
+		ShowAllowedTextOut(AllowSelectionType type) : m_type(type)
+		{
+		};
+		std::string writePlain() override;
+		std::string writeXML() override;
+		std::string writeJson() override;
+		std::string writeHtml() override;
 	};
 
-	std::string ShowAllowedTextOut::writePlain() {
+	std::string ShowAllowedTextOut::writePlain()
+	{
 		AppConfig appConfig;
 		std::stringstream str;
 
 		ImageExtentions& imageExtentions = ImageExtentions::get();
 		std::vector<std::shared_ptr<ExtentionItem>> list;
-		
+
 		str << " AllowedTypes" << std::endl;
 		str << " ============" << std::endl;
 		imageExtentions.getList(list, m_type);
-		for (auto ii = list.begin(); ii != list.end(); ++ii) {
+		for (auto ii = list.begin(); ii != list.end(); ++ii)
+		{
 			std::shared_ptr<ExtentionItem> data = *ii;
 			str << " Ext:         " << data->getExt() << std::endl;
 			str << " ImageType:   " << data->getType().toString() << std::endl;
@@ -49,7 +53,9 @@ namespace simplearchive {
 		std::string s = str.str();
 		return s;
 	}
-	std::string ShowAllowedTextOut::writeXML() {
+
+	std::string ShowAllowedTextOut::writeXML()
+	{
 		AppConfig appConfig;
 		std::stringstream str;
 
@@ -58,7 +64,8 @@ namespace simplearchive {
 		str << XML_HEATER << '\n';
 		str << "<AllowedTypes>" << std::endl;
 		imageExtentions.getList(list, m_type);
-		for (auto ii = list.begin(); ii != list.end(); ++ii) {
+		for (auto ii = list.begin(); ii != list.end(); ++ii)
+		{
 			std::shared_ptr<ExtentionItem> data = *ii;
 			str << "\t" << "<Type>" << std::endl;
 			str << "\t\t" << writeXMLTag("Ext", data->getExt());
@@ -71,7 +78,9 @@ namespace simplearchive {
 		std::string s = str.str();
 		return s;
 	}
-	std::string ShowAllowedTextOut::writeJson() {
+
+	std::string ShowAllowedTextOut::writeJson()
+	{
 		AppConfig appConfig;
 		std::stringstream str;
 
@@ -81,11 +90,14 @@ namespace simplearchive {
 		str << "\t\"AllowedTypes\" : [" << std::endl;
 		imageExtentions.getList(list, m_type);
 		bool first = true;
-		for (auto ii = list.begin(); ii != list.end(); ++ii) {
-			if (first) {
+		for (auto ii = list.begin(); ii != list.end(); ++ii)
+		{
+			if (first)
+			{
 				first = false;
 			}
-			else {
+			else
+			{
 				str << "\t\t" << "}}," << std::endl;
 			}
 			std::shared_ptr<ExtentionItem> data = *ii;
@@ -95,7 +107,6 @@ namespace simplearchive {
 			str << "\t\t\t" << writeJsonTag("ImageType", data->getType().toString());
 			str << "\t\t\t" << writeJsonTag("Mime", data->getMimeType());
 			str << "\t\t\t" << writeJsonTag("Description", data->getDesciption(), true);
-			
 		}
 		str << "\t\t" << "}}" << std::endl;
 		str << "\t]" << std::endl;
@@ -103,26 +114,30 @@ namespace simplearchive {
 		std::string s = str.str();
 		return s;
 	}
-	std::string ShowAllowedTextOut::writeHtml() {
+
+	std::string ShowAllowedTextOut::writeHtml()
+	{
 		return std::string();
 	}
 
-/****************************************************************
-*
-*						GeneralTextOut
-*
-*****************************************************************/
+	/****************************************************************
+	*
+	*						GeneralTextOut
+	*
+	*****************************************************************/
 
 
-	class GeneralTextOut : public TextOut {
+	class GeneralTextOut : public TextOut
+	{
 	public:
-		std::string writePlain();
-		std::string writeXML();
-		std::string writeJson();
-		std::string writeHtml();
+		std::string writePlain() override;
+		std::string writeXML() override;
+		std::string writeJson() override;
+		std::string writeHtml() override;
 	};
 
-	std::string GeneralTextOut::writePlain() {
+	std::string GeneralTextOut::writePlain()
+	{
 		AppConfig appConfig;
 		std::stringstream str;
 
@@ -136,7 +151,9 @@ namespace simplearchive {
 		std::string s = str.str();
 		return s;
 	}
-	std::string GeneralTextOut::writeXML() {
+
+	std::string GeneralTextOut::writeXML()
+	{
 		AppConfig appConfig;
 		std::stringstream str;
 
@@ -151,7 +168,9 @@ namespace simplearchive {
 		std::string s = str.str();
 		return s;
 	}
-	std::string GeneralTextOut::writeJson() {
+
+	std::string GeneralTextOut::writeJson()
+	{
 		AppConfig appConfig;
 		std::stringstream str;
 		str << "{" << std::endl;
@@ -165,7 +184,9 @@ namespace simplearchive {
 		std::string s = str.str();
 		return s;
 	}
-	std::string GeneralTextOut::writeHtml() {
+
+	std::string GeneralTextOut::writeHtml()
+	{
 		AppConfig appConfig;
 		std::stringstream str;
 		/*
@@ -180,43 +201,47 @@ namespace simplearchive {
 		return s;
 	}
 
-	
 
-/****************************************************************
-*
-*						FoldersTextOut
-*
-*****************************************************************/
+	/****************************************************************
+	*
+	*						FoldersTextOut
+	*
+	*****************************************************************/
 
-	class FoldersTextOut : public TextOut {
+	class FoldersTextOut : public TextOut
+	{
 		bool showImaArchiveHome(std::stringstream& str);
 	public:
-		std::string writePlain();
-		std::string writeXML();
-		std::string writeJson();
-		std::string writeHtml();
+		std::string writePlain() override;
+		std::string writeXML() override;
+		std::string writeJson() override;
+		std::string writeHtml() override;
 	};
 
 	bool ShowCommand::showFolders(const char* filename, const char* textOutType)
 	{
 		FoldersTextOut foldersTextOut;
-		if (foldersTextOut.parseTextOutType(textOutType) == false) {
+		if (foldersTextOut.parseTextOutType(textOutType) == false)
+		{
 			return false;
 		}
-		if (filename != nullptr && filename[0] != '\0') {
+		if (filename != nullptr && filename[0] != '\0')
+		{
 			foldersTextOut.setFilename(filename);
 		}
 		foldersTextOut.process();
 		return true;
 	}
 
-	std::string FoldersTextOut::writePlain() {
+	std::string FoldersTextOut::writePlain()
+	{
 		AppConfig appConfig;
 		std::stringstream str;
 		str << std::endl;
-		str << "Folders" <<std::endl;
+		str << "Folders" << std::endl;
 		str << "=======" << std::endl;
-		if (showImaArchiveHome(str) == false) {
+		if (showImaArchiveHome(str) == false)
+		{
 			std::string s = str.str();
 			return s;
 		}
@@ -228,7 +253,7 @@ namespace simplearchive {
 		str << "  Log path:                  " << appConfig.getLogPath() << std::endl;
 		str << "  Tools path:                " << appConfig.getToolsPath() << std::endl;
 		str << "  Hook path:                 " << appConfig.getHookPath() << std::endl;
-		str << "  History path:              " << appConfig.getHistoryPath() << std::endl;     
+		str << "  History path:              " << appConfig.getHistoryPath() << std::endl;
 		str << "  SQL Database path:         " << appConfig.getDatabasePath() << std::endl;
 		str << "  Templates path:            " << appConfig.getTemplatePath() << std::endl;
 		str << "  Duplicates path:           " << ImgArchiveHome::getImgArchiveHome() << "/dups" << std::endl;
@@ -282,25 +307,28 @@ namespace simplearchive {
 		return std::string();
 	}
 
-	bool FoldersTextOut::showImaArchiveHome(std::stringstream& str) {
+	bool FoldersTextOut::showImaArchiveHome(std::stringstream& str)
+	{
 		ImgArchiveHome& imgArchiveHome = ImgArchiveHome::getObject();
-		if (imgArchiveHome.isFound() == false) {
+		if (imgArchiveHome.isFound() == false)
+		{
 			str << "ImgArchive path not set?" << std::endl;
 			return false;
 		}
 		HomePathType homePathType = imgArchiveHome.type();
 		str << "ImaArchive Home Location" << std::endl;
-		switch (homePathType) {
-		case HomePathType::LocalEnv:	// Local Environment set
+		switch (homePathType)
+		{
+		case HomePathType::LocalEnv: // Local Environment set
 			str << "  IMGARCHIVE_HOME using Local Environment at loacation: " << std::endl;
 			break;
-		case HomePathType::SystemEnv:	// System Environment set
+		case HomePathType::SystemEnv: // System Environment set
 			str << "  IMGARCHIVE_HOME using System Environment at loacation: " << std::endl;
 			break;
-		case HomePathType::UserOnly:	// user only archive
+		case HomePathType::UserOnly: // user only archive
 			str << "  Archive found at default user loacation: " << std::endl;
 			break;
-		case HomePathType::AllUsers:	// all users archive
+		case HomePathType::AllUsers: // all users archive
 			str << "  Archive found at default system loacation: " << std::endl;
 			break;
 		case HomePathType::Unknown:
@@ -309,38 +337,41 @@ namespace simplearchive {
 			return false;
 		}
 		str << "        " << ImgArchiveHome::getImgArchiveHome() << std::endl;
-		if (imgArchiveHome.isValid() == false) {
+		if (imgArchiveHome.isValid() == false)
+		{
 			str << "  IMGARCHIVE_HOME not found at loacation: " << ImgArchiveHome::getImgArchiveHome();
 		}
 		return true;
 	}
 
-/****************************************************************
-*
-*						MasterTextOut
-*
-*****************************************************************/
+	/****************************************************************
+	*
+	*						MasterTextOut
+	*
+	*****************************************************************/
 
-	class MasterTextOut : public TextOut {
-
+	class MasterTextOut : public TextOut
+	{
 	public:
-		std::string writePlain();
-		std::string writeXML();
-		std::string writeJson();
-		std::string writeHtml();
+		std::string writePlain() override;
+		std::string writeXML() override;
+		std::string writeJson() override;
+		std::string writeHtml() override;
 	};
 
 	bool ShowCommand::showMaster(const char* filename, const char* textOutType)
 	{
 		MasterTextOut masterTextOut;
-		if (masterTextOut.parseTextOutType(textOutType) == false) {
+		if (masterTextOut.parseTextOutType(textOutType) == false)
+		{
 			return false;
 		}
 		masterTextOut.process();
 		return true;
 	}
 
-	std::string MasterTextOut::writePlain() {
+	std::string MasterTextOut::writePlain()
+	{
 		AppConfig appConfig;
 		std::stringstream str;
 		str << std::endl;
@@ -348,13 +379,15 @@ namespace simplearchive {
 		str << "==============\n";
 
 		MasterPath masterPath = MasterPath::getObject();
-		if (masterPath.isFound() == false) {
+		if (masterPath.isFound() == false)
+		{
 			str << "Master Archive path empty" << std::endl;
 			str << "Note: This is an Error condition as Master Archive path is mandatory?" << std::endl;
 			std::string s = str.str();
 			return s;
 		}
-		if (masterPath.isValid() == false) {
+		if (masterPath.isValid() == false)
+		{
 			str << "Master Archive path not found" << std::endl;
 			str << "Note: This is an Error condition as Master Archive path is mandatory?" << std::endl;
 			std::string s = str.str();
@@ -364,29 +397,37 @@ namespace simplearchive {
 		str << "        " << masterPath.get() << std::endl;
 		str << std::endl;
 		str << "  Master Archive Backups\n";
-			str << "        Backup One Enabled:        " << ((appConfig.isMasterBackup1Enabled()) ? "True" : "False") << std::endl;
+		str << "        Backup One Enabled:        " << ((appConfig.isMasterBackup1Enabled()) ? "True" : "False") <<
+			std::endl;
 		MasterBackupOnePath masterBackupOnePath = MasterBackupOnePath::getObject();
-		if (masterBackupOnePath.isFound() == false) {
-			str << "        Path empty" << std::endl;	
-		}
-		else if (masterBackupOnePath.isValid() == false) {
-			str << "        Path not Valid:            " << masterBackupOnePath.get() << std::endl;
-		}
-		else {
-			str << "        Backup One path:           " << masterBackupOnePath.get() << std::endl;
-		}
-		str << "        Backup Two Enabled:        " << ((appConfig.isMasterBackup2Enabled()) ? "True" : "False") << std::endl;
-		MasterBackupTwoPath masterBackupTwoPath = MasterBackupTwoPath::getObject();
-		if (masterBackupTwoPath.isFound() == false) {
+		if (masterBackupOnePath.isFound() == false)
+		{
 			str << "        Path empty" << std::endl;
 		}
-		else if (masterBackupTwoPath.isValid() == false) {
+		else if (masterBackupOnePath.isValid() == false)
+		{
+			str << "        Path not Valid:            " << masterBackupOnePath.get() << std::endl;
+		}
+		else
+		{
+			str << "        Backup One path:           " << masterBackupOnePath.get() << std::endl;
+		}
+		str << "        Backup Two Enabled:        " << ((appConfig.isMasterBackup2Enabled()) ? "True" : "False") <<
+			std::endl;
+		MasterBackupTwoPath masterBackupTwoPath = MasterBackupTwoPath::getObject();
+		if (masterBackupTwoPath.isFound() == false)
+		{
+			str << "        Path empty" << std::endl;
+		}
+		else if (masterBackupTwoPath.isValid() == false)
+		{
 			str << "        Path not Valid:            " << masterBackupTwoPath.get() << std::endl;
 		}
-		else {
+		else
+		{
 			str << "        Backup Two path:           " << masterBackupTwoPath.get() << std::endl;
 		}
-		
+
 		str << std::endl;
 		std::string s = str.str();
 		return s;
@@ -398,15 +439,18 @@ namespace simplearchive {
 		bool noPath = false;
 		std::stringstream str;
 		MasterPath masterPath = MasterPath::getObject();
-		if (masterPath.isFound() == false) {
+		if (masterPath.isFound() == false)
+		{
 			value = "Empty";
 			noPath = true;
 		}
-		if (masterPath.isValid() == false) {
+		if (masterPath.isValid() == false)
+		{
 			value = "Not found";
 			noPath = true;
 		}
-		if (noPath == false) {
+		if (noPath == false)
+		{
 			value = "Valid";
 		}
 		str << "<MasterArchive>" << std::endl;
@@ -416,15 +460,18 @@ namespace simplearchive {
 		str << "<BackupOne>" << std::endl;
 		MasterBackupOnePath masterBackupOnePath = MasterBackupOnePath::getObject();
 		str << writeXMLTag("Enabled", masterBackupOnePath.enabled() ? "True" : "False");
-		if (masterBackupOnePath.isFound() == false) {
+		if (masterBackupOnePath.isFound() == false)
+		{
 			value = "Empty";
 			noPath = true;
 		}
-		if (masterBackupOnePath.isValid() == false) {
+		if (masterBackupOnePath.isValid() == false)
+		{
 			value = "Not found";
 			noPath = true;
 		}
-		if (noPath == false) {
+		if (noPath == false)
+		{
 			value = "Valid";
 		}
 		str << writeXMLTag("Location", value);
@@ -433,15 +480,18 @@ namespace simplearchive {
 		str << "<BackupTwo>" << std::endl;
 		MasterBackupTwoPath masterBackupTwoPath = MasterBackupTwoPath::getObject();
 		str << writeXMLTag("Enabled", masterBackupTwoPath.enabled() ? "True" : "False");
-		if (masterBackupTwoPath.isFound() == false) {
+		if (masterBackupTwoPath.isFound() == false)
+		{
 			value = "Empty";
 			noPath = true;
 		}
-		if (masterBackupTwoPath.isValid() == false) {
+		if (masterBackupTwoPath.isValid() == false)
+		{
 			value = "Not found";
 			noPath = true;
 		}
-		if (noPath == false) {
+		if (noPath == false)
+		{
 			value = "Valid";
 		}
 		str << writeXMLTag("Location", value);
@@ -458,15 +508,18 @@ namespace simplearchive {
 		bool noPath = false;
 		std::stringstream str;
 		MasterPath masterPath = MasterPath::getObject();
-		if (masterPath.isFound() == false) {
+		if (masterPath.isFound() == false)
+		{
 			value = "Empty";
 			noPath = true;
 		}
-		if (masterPath.isValid() == false) {
+		if (masterPath.isValid() == false)
+		{
 			value = "Not found";
 			noPath = true;
 		}
-		if (noPath == false) {
+		if (noPath == false)
+		{
 			value = "Valid";
 		}
 		str << "{" << std::endl;
@@ -477,15 +530,18 @@ namespace simplearchive {
 		str << "\"BackupOne\" : {" << std::endl;
 		MasterBackupOnePath masterBackupOnePath = MasterBackupOnePath::getObject();
 		str << writeJsonTag("Enabled", masterBackupOnePath.enabled() ? "True" : "False");
-		if (masterBackupOnePath.isFound() == false) {
+		if (masterBackupOnePath.isFound() == false)
+		{
 			value = "Empty";
 			noPath = true;
 		}
-		if (masterBackupOnePath.isValid() == false) {
+		if (masterBackupOnePath.isValid() == false)
+		{
 			value = "Not found";
 			noPath = true;
 		}
-		if (noPath == false) {
+		if (noPath == false)
+		{
 			value = "Valid";
 		}
 		str << writeJsonTag("Location", value);
@@ -494,15 +550,18 @@ namespace simplearchive {
 		str << "\"BackupTwo\" : {" << std::endl;
 		MasterBackupTwoPath masterBackupTwoPath = MasterBackupTwoPath::getObject();
 		str << writeJsonTag("Enabled", masterBackupTwoPath.enabled() ? "True" : "False");
-		if (masterBackupTwoPath.isFound() == false) {
+		if (masterBackupTwoPath.isFound() == false)
+		{
 			value = "Empty";
 			noPath = true;
 		}
-		if (masterBackupTwoPath.isValid() == false) {
+		if (masterBackupTwoPath.isValid() == false)
+		{
 			value = "Not found";
 			noPath = true;
 		}
-		if (noPath == false) {
+		if (noPath == false)
+		{
 			value = "Valid";
 		}
 		str << writeJsonTag("Location", value);
@@ -519,31 +578,34 @@ namespace simplearchive {
 		return std::string();
 	}
 
-/****************************************************************
-*
-*						DerivativeTextOut
-*
-*****************************************************************/
+	/****************************************************************
+	*
+	*						DerivativeTextOut
+	*
+	*****************************************************************/
 
-	class DerivativeTextOut : public TextOut {
+	class DerivativeTextOut : public TextOut
+	{
 	public:
-		std::string writePlain();
-		std::string writeXML();
-		std::string writeJson();
-		std::string writeHtml();
+		std::string writePlain() override;
+		std::string writeXML() override;
+		std::string writeJson() override;
+		std::string writeHtml() override;
 	};
 
 	bool ShowCommand::showDerivative(const char* filename, const char* textOutType)
 	{
 		DerivativeTextOut derivativeTextOut;
-		if (derivativeTextOut.parseTextOutType(textOutType) == false) {
+		if (derivativeTextOut.parseTextOutType(textOutType) == false)
+		{
 			return false;
 		}
 		derivativeTextOut.process();
 		return true;
 	}
 
-	std::string DerivativeTextOut::writePlain() {
+	std::string DerivativeTextOut::writePlain()
+	{
 		AppConfig appConfig;
 		std::stringstream str;
 		bool noPath = false;
@@ -551,13 +613,15 @@ namespace simplearchive {
 		str << "Derivative Archive\n";
 		str << "==============\n";
 		DerivativePath derivativePath = DerivativePath::getObject();
-		if (derivativePath.isFound() == false) {
+		if (derivativePath.isFound() == false)
+		{
 			str << "Derivative path empty" << std::endl;
 			str << "Note: This is an Error condition as Derivative Archive path is mandatory?" << std::endl;
 			std::string s = str.str();
 			return s;
 		}
-		if (derivativePath.isValid() == false) {
+		if (derivativePath.isValid() == false)
+		{
 			str << "Derivative path not found" << std::endl;
 			str << "Note: This is an Error condition as Derivative Archive path is mandatory?" << std::endl;
 			std::string s = str.str();
@@ -569,49 +633,60 @@ namespace simplearchive {
 		str << std::endl;
 
 		/// Derivative Archive Backups
-		
+
 		str << "  Derivative Archive Backups\n";
 
-		
+
 		/// Backup One
 		noPath = false;
-		str << "        Backup One Enabled:        " << ((appConfig.isDerivativeBackup1Enabled()) ? "True" : "False") << std::endl;
+		str << "        Backup One Enabled:        " << ((appConfig.isDerivativeBackup1Enabled()) ? "True" : "False") <<
+			std::endl;
 		DerivativeBackupOnePath derivativeBackupOnePath = DerivativeBackupOnePath::getObject();
-		if (derivativeBackupOnePath.isFound() == false) {
+		if (derivativeBackupOnePath.isFound() == false)
+		{
 			str << "        Path empty" << std::endl;
 			noPath = true;
 		}
-		else if (derivativeBackupOnePath.isValid() == false) {
+		else if (derivativeBackupOnePath.isValid() == false)
+		{
 			str << "        Path not Valid:            " << derivativeBackupOnePath.get() << std::endl;
 			noPath = true;
 		}
-		else {
+		else
+		{
 			str << "        Backup One path:           " << derivativeBackupOnePath.get() << std::endl;
 		}
-		if (appConfig.isDerivativeBackup1Enabled() && noPath) {
+		if (appConfig.isDerivativeBackup1Enabled() && noPath)
+		{
 			str << "Note: This is an Error condition as Derivative backup 1 Path location is not valid?" << std::endl;
 		}
 
-		str << "        Backup Two Enabled:        " << ((appConfig.isDerivativeBackup2Enabled()) ? "True" : "False") << std::endl;
-		if (appConfig.isDerivativeBackup2Enabled() && noPath) {
+		str << "        Backup Two Enabled:        " << ((appConfig.isDerivativeBackup2Enabled()) ? "True" : "False") <<
+			std::endl;
+		if (appConfig.isDerivativeBackup2Enabled() && noPath)
+		{
 			str << "Note: This is an Error condition as Derivative backup 1 Path location is not valid?" << std::endl;
 		}
 
 		/// Backup Two
 		noPath = false;
 		DerivativeBackupTwoPath derivativeBackupTwoPath = DerivativeBackupTwoPath::getObject();
-		if (derivativeBackupTwoPath.isFound() == false) {
+		if (derivativeBackupTwoPath.isFound() == false)
+		{
 			str << "        Path empty" << std::endl;
 			noPath = true;
 		}
-		else if (derivativeBackupTwoPath.isValid() == false) {
+		else if (derivativeBackupTwoPath.isValid() == false)
+		{
 			str << "        Path not Valid:            " << derivativeBackupTwoPath.get() << std::endl;
 			noPath = true;
 		}
-		else {
+		else
+		{
 			str << "        Backup Two path:           " << derivativeBackupTwoPath.get() << std::endl;
 		}
-		if (appConfig.isDerivativeBackup2Enabled() && noPath) {
+		if (appConfig.isDerivativeBackup2Enabled() && noPath)
+		{
 			str << "Note: This is an Error condition as Derivative backup 2 Path location is not valid?" << std::endl;
 		}
 		str << std::endl;
@@ -625,15 +700,18 @@ namespace simplearchive {
 		bool noPath = false;
 		std::stringstream str;
 		DerivativePath derivativePath = DerivativePath::getObject();
-		if (derivativePath.isFound() == false) {
+		if (derivativePath.isFound() == false)
+		{
 			value = "Empty";
 			noPath = true;
 		}
-		if (derivativePath.isValid() == false) {
+		if (derivativePath.isValid() == false)
+		{
 			value = "Not found";
 			noPath = true;
 		}
-		if (noPath == false) {
+		if (noPath == false)
+		{
 			value = "Valid";
 		}
 		str << "<DerivativeArchive>" << std::endl;
@@ -643,15 +721,18 @@ namespace simplearchive {
 		str << "<BackupOne>" << std::endl;
 		DerivativeBackupOnePath derivativeBackupOnePath = DerivativeBackupOnePath::getObject();
 		str << writeXMLTag("Enabled", derivativeBackupOnePath.enabled() ? "True" : "False");
-		if (derivativeBackupOnePath.isFound() == false) {
+		if (derivativeBackupOnePath.isFound() == false)
+		{
 			value = "Empty";
 			noPath = true;
 		}
-		if (derivativeBackupOnePath.isValid() == false) {
+		if (derivativeBackupOnePath.isValid() == false)
+		{
 			value = "Not found";
 			noPath = true;
 		}
-		if (noPath == false) {
+		if (noPath == false)
+		{
 			value = "Valid";
 		}
 		str << writeXMLTag("Location", value);
@@ -660,15 +741,18 @@ namespace simplearchive {
 		str << "<BackupTwo>" << std::endl;
 		DerivativeBackupTwoPath derivativeBackupTwoPath = DerivativeBackupTwoPath::getObject();
 		str << writeXMLTag("Enabled", derivativeBackupTwoPath.enabled() ? "True" : "False");
-		if (derivativeBackupTwoPath.isFound() == false) {
+		if (derivativeBackupTwoPath.isFound() == false)
+		{
 			value = "Empty";
 			noPath = true;
 		}
-		if (derivativeBackupTwoPath.isValid() == false) {
+		if (derivativeBackupTwoPath.isValid() == false)
+		{
 			value = "Not found";
 			noPath = true;
 		}
-		if (noPath == false) {
+		if (noPath == false)
+		{
 			value = "Valid";
 		}
 		str << writeXMLTag("Location", value);
@@ -685,15 +769,18 @@ namespace simplearchive {
 		bool noPath = false;
 		std::stringstream str;
 		DerivativePath derivativePath = DerivativePath::getObject();
-		if (derivativePath.isFound() == false) {
+		if (derivativePath.isFound() == false)
+		{
 			value = "Empty";
 			noPath = true;
 		}
-		if (derivativePath.isValid() == false) {
+		if (derivativePath.isValid() == false)
+		{
 			value = "Not found";
 			noPath = true;
 		}
-		if (noPath == false) {
+		if (noPath == false)
+		{
 			value = "Valid";
 		}
 		str << "{" << std::endl;
@@ -704,15 +791,18 @@ namespace simplearchive {
 		str << "\"BackupOne\" : {" << std::endl;
 		DerivativeBackupOnePath derivativeBackupOnePath = DerivativeBackupOnePath::getObject();
 		str << writeJsonTag("Enabled", derivativeBackupOnePath.enabled() ? "True" : "False");
-		if (derivativeBackupOnePath.isFound() == false) {
+		if (derivativeBackupOnePath.isFound() == false)
+		{
 			value = "Empty";
 			noPath = true;
 		}
-		if (derivativeBackupOnePath.isValid() == false) {
+		if (derivativeBackupOnePath.isValid() == false)
+		{
 			value = "Not found";
 			noPath = true;
 		}
-		if (noPath == false) {
+		if (noPath == false)
+		{
 			value = "Valid";
 		}
 		str << writeJsonTag("Location", value);
@@ -721,15 +811,18 @@ namespace simplearchive {
 		str << "\"BackupTwo\" : {" << std::endl;
 		DerivativeBackupTwoPath derivativeBackupTwoPath = DerivativeBackupTwoPath::getObject();
 		str << writeJsonTag("Enabled", derivativeBackupTwoPath.enabled() ? "True" : "False");
-		if (derivativeBackupTwoPath.isFound() == false) {
+		if (derivativeBackupTwoPath.isFound() == false)
+		{
 			value = "Empty";
 			noPath = true;
 		}
-		if (derivativeBackupTwoPath.isValid() == false) {
+		if (derivativeBackupTwoPath.isValid() == false)
+		{
 			value = "Not found";
 			noPath = true;
 		}
-		if (noPath == false) {
+		if (noPath == false)
+		{
 			value = "Valid";
 		}
 		str << writeJsonTag("Location", value);
@@ -746,31 +839,34 @@ namespace simplearchive {
 		return std::string();
 	}
 
-/****************************************************************
-*
-*						WorkspaceTextOut
-*
-*****************************************************************/
+	/****************************************************************
+	*
+	*						WorkspaceTextOut
+	*
+	*****************************************************************/
 
-	class WorkspaceTextOut : public TextOut {
+	class WorkspaceTextOut : public TextOut
+	{
 	public:
-		std::string writePlain();
-		std::string writeXML();
-		std::string writeJson();
-		std::string writeHtml();
+		std::string writePlain() override;
+		std::string writeXML() override;
+		std::string writeJson() override;
+		std::string writeHtml() override;
 	};
 
 	bool ShowCommand::showWorkspace(const char* filename, const char* textOutType)
 	{
 		WorkspaceTextOut workspaceTextOut;
-		if (workspaceTextOut.parseTextOutType(textOutType) == false) {
+		if (workspaceTextOut.parseTextOutType(textOutType) == false)
+		{
 			return false;
 		}
 		workspaceTextOut.process();
 		return true;
 	}
 
-	std::string WorkspaceTextOut::writePlain() {
+	std::string WorkspaceTextOut::writePlain()
+	{
 		AppConfig appConfig;
 		std::stringstream str;
 		str << std::endl;
@@ -778,21 +874,25 @@ namespace simplearchive {
 		str << "=========\n";
 		bool noPath = false;
 		WorkspacePath workspacePath = WorkspacePath::getObject();
-		if (workspacePath.isFound() == false) {
+		if (workspacePath.isFound() == false)
+		{
 			str << "  path empty" << std::endl;
 			noPath = true;
 		}
-		if (workspacePath.isValid() == false) {
+		if (workspacePath.isValid() == false)
+		{
 			str << "  path not found" << std::endl;
 			noPath = true;
 		}
-		if (noPath == false) {
+		if (noPath == false)
+		{
 			str << "  Workspace Location" << std::endl;
 			str << "        " << workspacePath.get() << std::endl;
-		}			
+		}
 		str << "      Auto view: " << ((workspacePath.autoViewOn()) ? "On" : "Off") << std::endl;
 		str << "  Auto checkout: " << ((workspacePath.autoCheckout()) ? "On" : "Off") << std::endl;
-		if ((workspacePath.autoViewOn() || workspacePath.autoCheckout()) && noPath) {
+		if ((workspacePath.autoViewOn() || workspacePath.autoCheckout()) && noPath)
+		{
 			str << "Note: This is an Error condition as Workspace path location is not valid?" << std::endl;
 		}
 		str << std::endl;
@@ -806,15 +906,18 @@ namespace simplearchive {
 		bool noPath = false;
 		std::stringstream str;
 		WorkspacePath workspacePath = WorkspacePath::getObject();
-		if (workspacePath.isFound() == false) {
+		if (workspacePath.isFound() == false)
+		{
 			value = "Empty";
 			noPath = true;
 		}
-		if (workspacePath.isValid() == false) {
+		if (workspacePath.isValid() == false)
+		{
 			value = "Not found";
 			noPath = true;
 		}
-		if (noPath == false) {
+		if (noPath == false)
+		{
 			value = "Valid";
 		}
 		str << "<Workspace>" << std::endl;
@@ -833,15 +936,18 @@ namespace simplearchive {
 		bool noPath = false;
 		std::stringstream str;
 		WorkspacePath workspacePath = WorkspacePath::getObject();
-		if (workspacePath.isFound() == false) {
+		if (workspacePath.isFound() == false)
+		{
 			value = "Empty";
 			noPath = true;
 		}
-		if (workspacePath.isValid() == false) {
+		if (workspacePath.isValid() == false)
+		{
 			value = "Not found";
 			noPath = true;
 		}
-		if (noPath == false) {
+		if (noPath == false)
+		{
 			value = "Valid";
 		}
 		str << "{" << std::endl;
@@ -862,32 +968,35 @@ namespace simplearchive {
 	}
 
 
-/****************************************************************
-*
-*						PictureTextOut
-*
-*****************************************************************/
+	/****************************************************************
+	*
+	*						PictureTextOut
+	*
+	*****************************************************************/
 
-	class PictureTextOut : public TextOut {
+	class PictureTextOut : public TextOut
+	{
 	public:
-		std::string writePlain();
-		std::string writeXML();
-		std::string writeJson();
-		std::string writeHtml();
+		std::string writePlain() override;
+		std::string writeXML() override;
+		std::string writeJson() override;
+		std::string writeHtml() override;
 	};
 
 
 	bool ShowCommand::showPicture(const char* filename, const char* textOutType)
 	{
 		PictureTextOut pictureTextOut;
-		if (pictureTextOut.parseTextOutType(textOutType) == false) {
+		if (pictureTextOut.parseTextOutType(textOutType) == false)
+		{
 			return false;
 		}
 		pictureTextOut.process();
 		return true;
 	}
 
-	std::string PictureTextOut::writePlain() {
+	std::string PictureTextOut::writePlain()
+	{
 		AppConfig appConfig;
 		std::stringstream str;
 		str << std::endl;
@@ -895,20 +1004,24 @@ namespace simplearchive {
 		str << "=======\n";
 		bool noPath = false;
 		PicturePath picturePath = PicturePath::getObject();
-		if (picturePath.isFound() == false) {
+		if (picturePath.isFound() == false)
+		{
 			str << "  path empty" << std::endl;
 			noPath = true;
 		}
-		if (picturePath.isValid() == false) {
+		if (picturePath.isValid() == false)
+		{
 			str << "  path not found" << std::endl;
 			noPath = true;
 		}
-		if (noPath == false) {
+		if (noPath == false)
+		{
 			str << "  Picture Location" << std::endl;
 			str << "        " << picturePath.get() << std::endl;
 		}
 		str << "  Auto view: " << ((picturePath.autoViewOn()) ? "On" : "Off") << std::endl;
-		if (picturePath.autoViewOn() && noPath) {
+		if (picturePath.autoViewOn() && noPath)
+		{
 			str << "Note: This is an Error condition as Picture path location is not valid?" << std::endl;
 		}
 		str << std::endl;
@@ -922,15 +1035,18 @@ namespace simplearchive {
 		bool noPath = false;
 		std::stringstream str;
 		PicturePath picturePath = PicturePath::getObject();
-		if (picturePath.isFound() == false) {
+		if (picturePath.isFound() == false)
+		{
 			value = "Empty";
 			noPath = true;
 		}
-		if (picturePath.isValid() == false) {
+		if (picturePath.isValid() == false)
+		{
 			value = "Not found";
 			noPath = true;
 		}
-		if (noPath == false) {
+		if (noPath == false)
+		{
 			value = "Valid";
 		}
 		str << "<Picture>" << std::endl;
@@ -948,15 +1064,18 @@ namespace simplearchive {
 		bool noPath = false;
 		std::stringstream str;
 		PicturePath picturePath = PicturePath::getObject();
-		if (picturePath.isFound() == false) {
+		if (picturePath.isFound() == false)
+		{
 			value = "Empty";
 			noPath = true;
 		}
-		if (picturePath.isValid() == false) {
+		if (picturePath.isValid() == false)
+		{
 			value = "Not found";
 			noPath = true;
 		}
-		if (noPath == false) {
+		if (noPath == false)
+		{
 			value = "Valid";
 		}
 		str << "{" << std::endl;
@@ -975,31 +1094,34 @@ namespace simplearchive {
 		return std::string();
 	}
 
-/****************************************************************
-*
-*						WWWTextOut
-*
-*****************************************************************/
-	class WWWTextOut : public TextOut {
+	/****************************************************************
+	*
+	*						WWWTextOut
+	*
+	*****************************************************************/
+	class WWWTextOut : public TextOut
+	{
 	public:
-		std::string writePlain();
-		std::string writeXML();
-		std::string writeJson();
-		std::string writeHtml();
+		std::string writePlain() override;
+		std::string writeXML() override;
+		std::string writeJson() override;
+		std::string writeHtml() override;
 	};
 
 
 	bool ShowCommand::showWWW(const char* filename, const char* textOutType)
 	{
 		WWWTextOut wwwTextOut;
-		if (wwwTextOut.parseTextOutType(textOutType) == false) {
+		if (wwwTextOut.parseTextOutType(textOutType) == false)
+		{
 			return false;
 		}
 		wwwTextOut.process();
 		return true;
 	}
 
-	std::string WWWTextOut::writePlain() {
+	std::string WWWTextOut::writePlain()
+	{
 		AppConfig appConfig;
 		std::stringstream str;
 		str << std::endl;
@@ -1007,20 +1129,24 @@ namespace simplearchive {
 		str << "===\n";
 		bool noPath = false;
 		WWWImagePath wwwImagePath = WWWImagePath::getObject();
-		if (wwwImagePath.isFound() == false) {
+		if (wwwImagePath.isFound() == false)
+		{
 			str << "  path empty" << std::endl;
 			noPath = true;
 		}
-		if (wwwImagePath.isValid() == false) {
+		if (wwwImagePath.isValid() == false)
+		{
 			str << "  path not found" << std::endl;
 			noPath = true;
 		}
-		if (noPath == false) {
+		if (noPath == false)
+		{
 			str << "  WWW Location" << std::endl;
 			str << "        " << wwwImagePath.get() << std::endl;
 		}
 		str << "  Auto view: " << ((wwwImagePath.autoViewOn()) ? "On" : "Off") << std::endl;
-		if (wwwImagePath.autoViewOn() && noPath) {
+		if (wwwImagePath.autoViewOn() && noPath)
+		{
 			str << "Note: This is an Error condition as WWW path location is not valid?" << std::endl;
 		}
 		str << std::endl;
@@ -1034,15 +1160,18 @@ namespace simplearchive {
 		bool noPath = false;
 		std::stringstream str;
 		WWWImagePath wwwImagePath = WWWImagePath::getObject();
-		if (wwwImagePath.isFound() == false) {
+		if (wwwImagePath.isFound() == false)
+		{
 			value = "Empty";
 			noPath = true;
 		}
-		if (wwwImagePath.isValid() == false) {
+		if (wwwImagePath.isValid() == false)
+		{
 			value = "Not found";
 			noPath = true;
 		}
-		if (noPath == false) {
+		if (noPath == false)
+		{
 			value = "Valid";
 		}
 		str << "<wwwImagePath>" << std::endl;
@@ -1060,15 +1189,18 @@ namespace simplearchive {
 		bool noPath = false;
 		std::stringstream str;
 		WWWImagePath wwwImagePath = WWWImagePath::getObject();
-		if (wwwImagePath.isFound() == false) {
+		if (wwwImagePath.isFound() == false)
+		{
 			value = "Empty";
 			noPath = true;
 		}
-		if (wwwImagePath.isValid() == false) {
+		if (wwwImagePath.isValid() == false)
+		{
 			value = "Not found";
 			noPath = true;
 		}
-		if (noPath == false) {
+		if (noPath == false)
+		{
 			value = "Valid";
 		}
 		str << "{" << std::endl;
@@ -1098,7 +1230,8 @@ namespace simplearchive {
 		AppConfig appConfig;
 		std::stringstream str;
 		str << "    External Exif Tool" << std::endl;
-		str << "        External Exif tool enabled:" << ((appConfig.isExternalExifToolEnabled()) ? "True" : "False") << std::endl;
+		str << "        External Exif tool enabled:" << ((appConfig.isExternalExifToolEnabled()) ? "True" : "False") <<
+			std::endl;
 		str << "        Exif map path:             " << appConfig.getExifMapPath() << std::endl;
 		str << "        Exif map file:             " << appConfig.getExifMapFile() << std::endl;
 		str << "        Exif Tool:                 " << appConfig.getExternalExifTool() << std::endl;
@@ -1109,24 +1242,29 @@ namespace simplearchive {
 		return true;
 	}
 
-/****************************************************************
-*
-*						ShowEnvTextOut
-*
-*****************************************************************/
+	/****************************************************************
+	*
+	*						ShowEnvTextOut
+	*
+	*****************************************************************/
 
-	class ShowEnvTextOut : public TextOut {
+	class ShowEnvTextOut : public TextOut
+	{
 		EnvSelectionType m_type;
 	public:
-		ShowEnvTextOut(EnvSelectionType type) : m_type(type) {};
-		std::string writePlain();
-		std::string writeXML();
-		std::string writeJson();
-		std::string writeHtml();
+		ShowEnvTextOut(EnvSelectionType type) : m_type(type)
+		{
+		};
+		std::string writePlain() override;
+		std::string writeXML() override;
+		std::string writeJson() override;
+		std::string writeHtml() override;
 
-		std::string getEnv(const char* str, bool all = true) {
+		std::string getEnv(const char* str, bool all = true)
+		{
 			std::string s = SAUtils::GetEnv(str, all);
-			if (s.empty()) {
+			if (s.empty())
+			{
 				s = "{Not Set}";
 			}
 			return s;
@@ -1252,18 +1390,20 @@ namespace simplearchive {
 	}
 
 
-
-/****************************************************************
-*
-*						ShowCommand
-*
-*****************************************************************/
-	ShowCommand::ShowCommand() : m_error(Error::Unknown) {}
+	/****************************************************************
+	*
+	*						ShowCommand
+	*
+	*****************************************************************/
+	ShowCommand::ShowCommand() : m_error(Error::Unknown)
+	{
+	}
 
 	bool ShowCommand::showGeneral(const char* filename, const char* textOutType)
 	{
 		GeneralTextOut generalTextOut;
-		if (generalTextOut.parseTextOutType(textOutType) == false) {
+		if (generalTextOut.parseTextOutType(textOutType) == false)
+		{
 			return false;
 		}
 		generalTextOut.process();
@@ -1290,9 +1430,11 @@ namespace simplearchive {
 		m_textOutputType = s;
 	}
 
-	bool ShowCommand::parseOptions(const char* str) {
+	bool ShowCommand::parseOptions(const char* str)
+	{
 		std::string arg = str;
-		if (arg.compare("settup") == 0) {
+		if (arg.compare("settup") == 0)
+		{
 			return true;
 		}
 		m_error = Error::ParseError;
@@ -1303,28 +1445,35 @@ namespace simplearchive {
 	{
 		std::string arg = configOption;
 
-		if (arg.compare("setting") == 0) {
+		if (arg.compare("setting") == 0)
+		{
 			return processSettings(configValue);
 		}
-		if (arg.compare("allowed") == 0) {
+		if (arg.compare("allowed") == 0)
+		{
 			return processAllowed(configValue);
 		}
-		if (arg.compare("env") == 0) {
+		if (arg.compare("env") == 0)
+		{
 			return processEnv(configValue);
 		}
 		return false;
 	}
 
-	bool ShowCommand::processAllowed(const char* str) {
+	bool ShowCommand::processAllowed(const char* str)
+	{
 		std::string arg = str;
 
-		if (arg.compare("raw") == 0) {
+		if (arg.compare("raw") == 0)
+		{
 			return showAllowedRaw();
 		}
-		if (arg.compare("picture") == 0) {
+		if (arg.compare("picture") == 0)
+		{
 			return showAllowedPicture();
 		}
-		if (arg.compare("all") == 0) {
+		if (arg.compare("all") == 0)
+		{
 			return showAllowedAll();
 		}
 		m_error = Error::ParseError;
@@ -1335,13 +1484,16 @@ namespace simplearchive {
 	{
 		std::string arg = str;
 
-		if (arg.compare("folders") == 0) {
+		if (arg.compare("folders") == 0)
+		{
 			return showEnvFolders();
 		}
-		if (arg.compare("enabled") == 0) {
+		if (arg.compare("enabled") == 0)
+		{
 			return showEnvEnabled();
 		}
-		if (arg.compare("all") == 0) {
+		if (arg.compare("all") == 0)
+		{
 			return showEnvAll();
 		}
 		m_error = Error::ParseError;
@@ -1351,7 +1503,8 @@ namespace simplearchive {
 	bool ShowCommand::showAllowed(AllowSelectionType type)
 	{
 		ShowAllowedTextOut showAllowedTextOut(type);
-		if (showAllowedTextOut.parseTextOutType(m_textOutputType.c_str()) == false) {
+		if (showAllowedTextOut.parseTextOutType(m_textOutputType.c_str()) == false)
+		{
 			return false;
 		}
 		showAllowedTextOut.process();
@@ -1376,7 +1529,8 @@ namespace simplearchive {
 	bool ShowCommand::showEnv(EnvSelectionType type)
 	{
 		ShowEnvTextOut showEnvTextOut(type);
-		if (showEnvTextOut.parseTextOutType(m_textOutputType.c_str()) == false) {
+		if (showEnvTextOut.parseTextOutType(m_textOutputType.c_str()) == false)
+		{
 			return false;
 		}
 		showEnvTextOut.process();
@@ -1398,46 +1552,55 @@ namespace simplearchive {
 		return showEnv(EnvSelectionType::All);
 	}
 
-	bool ShowCommand::processSettings(const char* str) {
+	bool ShowCommand::processSettings(const char* str)
+	{
 		std::string arg = str;
 
-		if (arg.compare("general") == 0) {
+		if (arg.compare("general") == 0)
+		{
 			return showGeneral(m_outputFile.c_str(), m_textOutputType.c_str());
 		}
-		if (arg.compare("logging") == 0) {
+		if (arg.compare("logging") == 0)
+		{
 			return showLogging(m_outputFile.c_str(), m_textOutputType.c_str());
 		}
-		if (arg.compare("network") == 0) {
+		if (arg.compare("network") == 0)
+		{
 			return showNetwork(m_outputFile.c_str(), m_textOutputType.c_str());
 		}
-		if (arg.compare("folders") == 0) {
+		if (arg.compare("folders") == 0)
+		{
 			return showFolders(m_outputFile.c_str(), m_textOutputType.c_str());
 		}
-		if (arg.compare("master") == 0) {
+		if (arg.compare("master") == 0)
+		{
 			return showMaster(m_outputFile.c_str(), m_textOutputType.c_str());
 		}
-		if (arg.compare("derivative") == 0) {
+		if (arg.compare("derivative") == 0)
+		{
 			return showDerivative(m_outputFile.c_str(), m_textOutputType.c_str());
 		}
-		if (arg.compare("workspace") == 0) {
+		if (arg.compare("workspace") == 0)
+		{
 			return showWorkspace(m_outputFile.c_str(), m_textOutputType.c_str());
 		}
-		if (arg.compare("picture") == 0) {
+		if (arg.compare("picture") == 0)
+		{
 			return showPicture(m_outputFile.c_str(), m_textOutputType.c_str());
 		}
-		if (arg.compare("www") == 0) {
+		if (arg.compare("www") == 0)
+		{
 			return showWWW(m_outputFile.c_str(), m_textOutputType.c_str());
 		}
-		if (arg.compare("backup") == 0) {
+		if (arg.compare("backup") == 0)
+		{
 			return showBackup(m_outputFile.c_str(), m_textOutputType.c_str());
 		}
-		if (arg.compare("exiftool") == 0) {
+		if (arg.compare("exiftool") == 0)
+		{
 			return showExiftool(m_outputFile.c_str(), m_textOutputType.c_str());
 		}
 		m_error = Error::ParseError;
 		return false;
 	}
-
 }; // namespace
-	
-	
