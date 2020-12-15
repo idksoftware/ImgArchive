@@ -40,35 +40,35 @@ namespace simplearchive {
 			"\n");
 
 		// Subcommands
-		defineOption("init", "Create ImgArchive's working enviroment", ArgvParser::MasterOption);
+		defineOption("init", "Create ImgArchive's working enviroment", ArgvParser::OptionAttributes::MasterOption);
 		defineCommandSyntax("init", "isadmin init [-q | --quiet] | [--user <all|self>][--force]\n"
 			"| [--set-home <yes | no>] | [ --archive-path <path>]\n"
 			"| [ --workspace-path <path>] | [ --master-path <path>]\n"
 			"| [ --derivative-path <path>] | [ --picture-path <path>]\n"
 			"| [ --picture-path <path>] | [ --www-image-path <path>]");
 		
-		defineOption("config", "Configure ImgArchive's parameters", ArgvParser::MasterOption);
+		defineOption("config", "Configure ImgArchive's parameters", ArgvParser::OptionAttributes::MasterOption);
 		defineCommandSyntax("config", "isadmin config [-q | --quiet] | [ --general <Option=Value>]\n"
 			"| [--logging <Option=Value>] | [--network <Option=Value>]\n"
 			"| [--folders <Option=pathe>] | [--master <Option=Value>]\n"
 			"| [--derivative <Option=Value>] | [--backup <Option=Value>]\n"
 			"| [--exiftool <Option=Value>]");
 
-		defineOption("setenv", "Configure ImgArchive's environment variables.", ArgvParser::MasterOption);
+		defineOption("setenv", "Configure ImgArchive's environment variables.", ArgvParser::OptionAttributes::MasterOption);
 		defineCommandSyntax("setenv", "isadmin setenv [-q | --quiet] | [ --folders <Option=path>]\n"
 			"| [--enable <Option>] | [--disable <Option>]");
 				
-		defineOption("show", "Show how the system is configured.", ArgvParser::MasterOption);
+		defineOption("show", "Show how the system is configured.", ArgvParser::OptionAttributes::MasterOption);
 		defineCommandSyntax("show", "isadmin show [--setting=<Option>]\n"
 			"SettingOption = <[general] | [logging] | [network]\n"
 			"| [folders] | [master] | | [derivative] | [backup] | [exiftool]");
 
-		defineOption("archive", "These options control the backup activities.", ArgvParser::MasterOption);
+		defineOption("archive", "These options control the backup activities.", ArgvParser::OptionAttributes::MasterOption);
 		//defineOptionAlternative("archive", "a");
 		defineCommandSyntax("archive", "isadmin archive [--media-size=<number>] | [--media-path=<path>]\n"
 			"[--from-date=<date>] | [--to-date=date]");
 
-		defineOption("sync", "This command synchronises the primary archives with there associated backups.", ArgvParser::MasterOption);
+		defineOption("sync", "This command synchronises the primary archives with there associated backups.", ArgvParser::OptionAttributes::MasterOption);
 		//defineOptionAlternative("archive", "a");
 		defineCommandSyntax("sync", "isadmin sync --master-with=[backup1] | [backup2] | [Both]\n"
 												"--derivative-with=[backup1] | [backup2] | [Both]\n"
@@ -76,36 +76,36 @@ namespace simplearchive {
 												"--catalogue\n"
 												"--www\n");
 
-		defineOption("master-with", "Sync this archive with named backup or both", ArgvParser::OptionRequiresValue);
-		defineOption("derivative-with", "Sync this archive with named backup or both", ArgvParser::OptionRequiresValue);
+		defineOption("master-with", "Sync this archive with named backup or both", ArgvParser::OptionAttributes::OptionRequiresValue);
+		defineOption("derivative-with", "Sync this archive with named backup or both", ArgvParser::OptionAttributes::OptionRequiresValue);
 
-		defineOption("about", "prints the version information", ArgvParser::MasterOption);
+		defineOption("about", "prints the version information", ArgvParser::OptionAttributes::MasterOption);
 		defineCommandSyntax("about", "about [--out] [--file]\n");
 
-		defineOption("purge", "Purges deleted images from archive", ArgvParser::MasterOption);
+		defineOption("purge", "Purges deleted images from archive", ArgvParser::OptionAttributes::MasterOption);
 		defineCommandSyntax("purge", "purge\n");
 
-		defineOption("validate", "Validate commands", ArgvParser::MasterOption);
+		defineOption("validate", "Validate commands", ArgvParser::OptionAttributes::MasterOption);
 		defineCommandSyntax("validate", "validate [-q | --quiet]\n"
 			"| [--scope=<archive>] | [--validate-backup=<option>]\n"
 			"| [--validate-main=<yes|no>]\n"
 			"| [--repair=<yes|no>\n");
 		 
-		defineOption("scope", "Scope of validation. This defines which archives will be validated", ArgvParser::OptionRequiresValue);
+		defineOption("scope", "Scope of validation. This defines which archives will be validated", ArgvParser::OptionAttributes::OptionRequiresValue);
 		defineCommandSyntax("scope", "--scope=<Value>\n"
 			"value=[master] | [derivative] | [workspace] | [all] | [main]");
 		
-		defineOption("validate-backup", "validate backup. Note: both backups will be validate by default if avalible.", ArgvParser::OptionRequiresValue);
+		defineOption("validate-backup", "validate backup. Note: both backups will be validate by default if avalible.", ArgvParser::OptionAttributes::OptionRequiresValue);
 		defineCommandSyntax("validate-backup", "--validate-backup=<Value>\n"
 			"value=[1] | [2] | [both]");
 
-		defineOption("validate-main", "validate main archive. Note: The main archive (master/will be validate by default.", ArgvParser::OptionRequiresValue);
+		defineOption("validate-main", "validate main archive. Note: The main archive (master/will be validate by default.", ArgvParser::OptionAttributes::OptionRequiresValue);
 		defineCommandSyntax("validate-main", "--validate-main=<yes|no>\n");
 
-		defineOption("repair", "repairs the archive if damaged. Will not be repaired by default", ArgvParser::OptionRequiresValue);
+		defineOption("repair", "repairs the archive if damaged. Will not be repaired by default", ArgvParser::OptionAttributes::OptionRequiresValue);
 		defineCommandSyntax("repair", "--repair=<yes|no>");
 
-		defineOption("allow", "Controls which image file extensions are allowed into the archive.", ArgvParser::MasterOption);
+		defineOption("allow", "Controls which image file extensions are allowed into the archive.", ArgvParser::OptionAttributes::MasterOption);
 		defineCommandSyntax("allow", "isadmin allow [-q | --quiet]\n"
 			"| [--add = <ext, type, mine, description>] | [--delete = <ext>]\n"
 			"| [--edit = <ext, type, mine, description>]\n"
@@ -115,30 +115,30 @@ namespace simplearchive {
 			"description - A description of the image type.");
 		
 		// Init Command
-		defineOption("archive-path", "location of the archive root folder.", ArgvParser::OptionRequiresValue);
-		defineOption("workspace-path", "location of the workspace folder.", ArgvParser::OptionRequiresValue);
-		defineOption("master-path", "location of the master repository folder.", ArgvParser::OptionRequiresValue);
-		defineOption("derivative-path", "location of the derivative repository folder.", ArgvParser::OptionRequiresValue);
-		defineOption("picture-path", "location of the picture folder.", ArgvParser::OptionRequiresValue);
-		defineOption("www-image-path", "location of the www image folder.", ArgvParser::OptionRequiresValue);
+		defineOption("archive-path", "location of the archive root folder.", ArgvParser::OptionAttributes::OptionRequiresValue);
+		defineOption("workspace-path", "location of the workspace folder.", ArgvParser::OptionAttributes::OptionRequiresValue);
+		defineOption("master-path", "location of the master repository folder.", ArgvParser::OptionAttributes::OptionRequiresValue);
+		defineOption("derivative-path", "location of the derivative repository folder.", ArgvParser::OptionAttributes::OptionRequiresValue);
+		defineOption("picture-path", "location of the picture folder.", ArgvParser::OptionAttributes::OptionRequiresValue);
+		defineOption("www-image-path", "location of the www image folder.", ArgvParser::OptionAttributes::OptionRequiresValue);
 		
-		defineOption("set-home", "Set the Home environment variable.", ArgvParser::OptionRequiresValue);
-		defineOption("user", "Sets user to local or all users.", ArgvParser::OptionRequiresValue);
+		defineOption("set-home", "Set the Home environment variable.", ArgvParser::OptionAttributes::OptionRequiresValue);
+		defineOption("user", "Sets user to local or all users.", ArgvParser::OptionAttributes::OptionRequiresValue);
 		// Configure Command
-		defineOption("general", "General options that may be used generally in commands", ArgvParser::OptionRequiresValue);
+		defineOption("general", "General options that may be used generally in commands", ArgvParser::OptionAttributes::OptionRequiresValue);
 		defineOptionAlternative("general", "G");
 		defineCommandSyntax("general", "--general <Option=Value>\n"
 			"[Quiet=<On|Off>] | [Silent=<On|Off>] |\n"
 			"[FileCatalogue=<path>] | [WWWCatalogue=<path>] |\n"
 			"[Lightroom=<On|Off>]");
 
-		defineOption("logging", "Logging option that control the logging carried out by applications", ArgvParser::OptionRequiresValue);
+		defineOption("logging", "Logging option that control the logging carried out by applications", ArgvParser::OptionAttributes::OptionRequiresValue);
 		defineOptionAlternative("logging", "L");
 		defineCommandSyntax("logging", "--logging <Option=Value>\n"
 			"[LogLevel=<level>] | [ConsoleLevel=<level>]\n"
 			"[LogPath=<path>]");
 
-		defineOption("folders", "These control the folder paths that the system uses.", ArgvParser::OptionRequiresValue);
+		defineOption("folders", "These control the folder paths that the system uses.", ArgvParser::OptionAttributes::OptionRequiresValue);
 		defineOptionAlternative("folders", "F");
 		defineCommandSyntax("folders", "--folders <Option=Value>\n"
 			"[HookScripsPath=<path>] | [ToolsPath=<path>]\n"
@@ -148,92 +148,92 @@ namespace simplearchive {
 			"[LogPath=<path>] | [HistoryPath=<path>]\n"
 			"[LightroomPath=<path>]");
 
-		defineOption("exiftool", "Configure exit look intergration", ArgvParser::OptionRequiresValue);
+		defineOption("exiftool", "Configure exit look intergration", ArgvParser::OptionAttributes::OptionRequiresValue);
 		defineOptionAlternative("exiftool", "E");
 		defineCommandSyntax("exiftool", "--exiftool <Option=Value>\n"
 									"[ExifMapPath=<path>] | [ExifMapFile=<filename>]\n"
 									"[ExifFileDelim=<character>]\n"
 									"[ExifTool=<path/name>] | [ExifCommandLine=<argumentlist>]");
 
-		defineOption("master", "This section controls the master archive", ArgvParser::OptionRequiresValue);					
+		defineOption("master", "This section controls the master archive", ArgvParser::OptionAttributes::OptionRequiresValue);					
 		defineOptionAlternative("master", "M");
 		defineCommandSyntax("master", "--master <Option=Value>\n"
 			"[BackupOneEnabled=<Enabled|Disabled>] | [BackupTwoEnabled=<Enabled|Disabled>] |\n"
 			"[BackupOne=<path>] | [BackupTwo=<path>]");
 
-		defineOption("derivative", "This section controls the derivative archive.", ArgvParser::OptionRequiresValue);						
+		defineOption("derivative", "This section controls the derivative archive.", ArgvParser::OptionAttributes::OptionRequiresValue);						
 		defineOptionAlternative("derivative", "D");
 		defineCommandSyntax("derivative", "--derivative <Option=Value>\n"
 			"[BackupOneEnabled=<Enabled|Disabled>] | [BackupTwoEnabled=<Enabled|Disabled>] |\n"
 			"[BackupOne=<path>] | [BackupTwo=<path>]");
 
-		//defineOption("workspace", "Manages the workspace.", ArgvParser::MasterOption);
+		//defineOption("workspace", "Manages the workspace.", ArgvParser::OptionAttributes::MasterOption);
 		//defineCommandSyntax("workspace", "iaarc workspace [--sync]\n\t[--logging-level=<level>]"
 		//	"[--comment=<comment text>]\n\t[--scope=<scope-address]\n\t[--force=<yes|No>]");
 
-		defineOption("network", "Configure network parameters", ArgvParser::OptionRequiresValue);
+		defineOption("network", "Configure network parameters", ArgvParser::OptionAttributes::OptionRequiresValue);
 		defineOptionAlternative("network", "N");
 		defineCommandSyntax("network", "--network <Option=Value>\n"
 			"[EventsEnabled=<Enabled|Disabled>] | [CommandsEnabled=<Enabled|Disabled>] |\n"
 			"[EventsPort=<path>] | [EventsAddress=<path>] |\n"
 			"[CommandPort=<path>]");
 
-		defineOption("m", "Mirror commands", ArgvParser::NoOptionAttribute);
+		defineOption("m", "Mirror commands", ArgvParser::OptionAttributes::NoOptionAttribute);
 		defineOptionAlternative("m", "mirror");
 
-		defineOption("add", "Adds an extension type to file type filter. File of this type can now added to the archive.", ArgvParser::OptionRequiresValue);
+		defineOption("add", "Adds an extension type to file type filter. File of this type can now added to the archive.", ArgvParser::OptionAttributes::OptionRequiresValue);
 		defineOptionAlternative("add", "a");
 		defineCommandSyntax("add", "--add=<ext,type,mine,description>");
 
-		defineOption("delete", "Deletes an extension type from file type filter. File of this type will now be excluded from the archive.", ArgvParser::OptionRequiresValue);
+		defineOption("delete", "Deletes an extension type from file type filter. File of this type will now be excluded from the archive.", ArgvParser::OptionAttributes::OptionRequiresValue);
 		defineOptionAlternative("delete", "d");
 		defineCommandSyntax("delete", "--delete=<ext>");
 
-		defineOption("edit", "Edits the extension details.", ArgvParser::OptionRequiresValue);
+		defineOption("edit", "Edits the extension details.", ArgvParser::OptionAttributes::OptionRequiresValue);
 		defineOptionAlternative("edit", "e");
 		defineCommandSyntax("edit", "--edit=<ext,type,mine,description>");
 
-		defineOption("enable", "Edables an option.", ArgvParser::OptionRequiresValue);
+		defineOption("enable", "Edables an option.", ArgvParser::OptionAttributes::OptionRequiresValue);
 		defineCommandSyntax("enable", "--enable <option>");
 
-		defineOption("disable", "Disables an option.", ArgvParser::OptionRequiresValue);
+		defineOption("disable", "Disables an option.", ArgvParser::OptionAttributes::OptionRequiresValue);
 		defineCommandSyntax("disable", "--disable <option>");
 		
-		defineOption("media-size", "size of media in GBytes", ArgvParser::OptionRequiresValue);
+		defineOption("media-size", "size of media in GBytes", ArgvParser::OptionAttributes::OptionRequiresValue);
 		//defineOptionAlternative("S", "media-size");
 		defineCommandSyntax("media-size", "--media-size=<SizeInGBytes>\n");
 
-		defineOption("media-path", "Path where media is located", ArgvParser::OptionRequiresValue);
+		defineOption("media-path", "Path where media is located", ArgvParser::OptionAttributes::OptionRequiresValue);
 		defineCommandSyntax("media-path", "--media-path=<path>\n");
 
-		defineOption("from-date", "from date, Date from which to start the archiving. If none given will be from the bebining of the archive", ArgvParser::OptionRequiresValue);
+		defineOption("from-date", "from date, Date from which to start the archiving. If none given will be from the bebining of the archive", ArgvParser::OptionAttributes::OptionRequiresValue);
 		defineCommandSyntax("from-date", "--from-date=<<day>/<month>/<year>> example: --from-date=02/09/2011\n");
 
-		defineOption("to-date", "to date, Date to shop archiving. If none given will be to the end (lastest item).", ArgvParser::OptionRequiresValue);
+		defineOption("to-date", "to date, Date to shop archiving. If none given will be to the end (lastest item).", ArgvParser::OptionAttributes::OptionRequiresValue);
 		defineCommandSyntax("to-date", "--to-date=<<day>/<month>/<year>> example: --to-date=05/12/2019\n");
 
-		defineOption("force", "Forces over-write", ArgvParser::NoOptionAttribute);
-		defineOption("catalogue", "synchronize catalogue", ArgvParser::NoOptionAttribute);
-		defineOption("www", "synchronize www catalogue", ArgvParser::NoOptionAttribute);
-		defineOption("workspace", "synchronize workspace", ArgvParser::NoOptionAttribute);
+		defineOption("force", "Forces over-write", ArgvParser::OptionAttributes::NoOptionAttribute);
+		defineOption("catalogue", "synchronize catalogue", ArgvParser::OptionAttributes::NoOptionAttribute);
+		defineOption("www", "synchronize www catalogue", ArgvParser::OptionAttributes::NoOptionAttribute);
+		defineOption("workspace", "synchronize workspace", ArgvParser::OptionAttributes::NoOptionAttribute);
 		defineCommandSyntax("workspace", "synchronize workspace");
 
-		defineOption("s", "Show setting", ArgvParser::OptionRequiresValue);
+		defineOption("s", "Show setting", ArgvParser::OptionAttributes::OptionRequiresValue);
 		defineOptionAlternative("s", "setting");
 		defineCommandSyntax("setting", "--setting=<[general] | [logging] | [network]\n"
 			"| [folders] | [master] | | [derivative] | [backup] | [exiftool]");
 
-		defineOption("allowed", "Shows which file type are allowed into the archive.", ArgvParser::OptionRequiresValue);
+		defineOption("allowed", "Shows which file type are allowed into the archive.", ArgvParser::OptionAttributes::OptionRequiresValue);
 		defineCommandSyntax("allowed", "--allowed=<[ raw | picture | all ]>");
 
-		defineOption("env", "Shows the archives environment variable.", ArgvParser::OptionRequiresValue);
+		defineOption("env", "Shows the archives environment variable.", ArgvParser::OptionAttributes::OptionRequiresValue);
 		defineCommandSyntax("env", "--env=<[ folders | enabled | all ]>");
 
-		defineOption("out", "Output type: text, xml, json or html.", ArgvParser::OptionRequiresValue);
+		defineOption("out", "Output type: text, xml, json or html.", ArgvParser::OptionAttributes::OptionRequiresValue);
 		defineCommandSyntax("out", "out=<[plain] | [xml] | [json] | [html]>\n");
 		//defineOptionAlternative("u", "users");
 
-		defineOption("file", "output file name.", ArgvParser::OptionRequiresValue);
+		defineOption("file", "output file name.", ArgvParser::OptionAttributes::OptionRequiresValue);
 		defineCommandSyntax("file", "file=<filename>\n");
 		
 		defineCommandOption("init", "archive-path");
@@ -296,25 +296,25 @@ namespace simplearchive {
 
 		std::string errStr;
 		switch (res) {
-		case ArgvParser::NoParserError:
+		case ArgvParser::ParserResults::NoParserError:
 			break;
-		case ArgvParser::ParserUnknownOption:
-		case ArgvParser::ParserMissingValue:
-		case ArgvParser::ParserOptionAfterArgument:
-		case ArgvParser::ParserMalformedMultipleShortOption:
-		case ArgvParser::ParserRequiredOptionMissing:
-		case ArgvParser::ParserHelpRequested:
+		case ArgvParser::ParserResults::ParserUnknownOption:
+		case ArgvParser::ParserResults::ParserMissingValue:
+		case ArgvParser::ParserResults::ParserOptionAfterArgument:
+		case ArgvParser::ParserResults::ParserMalformedMultipleShortOption:
+		case ArgvParser::ParserResults::ParserRequiredOptionMissing:
+		case ArgvParser::ParserResults::ParserHelpRequested:
 			errStr = parseErrorDescription(res);
 			printf("%s", errStr.c_str());
 			printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 			return false;
-		case ArgvParser::GeneralHelpRequested:
+		case ArgvParser::ParserResults::GeneralHelpRequested:
 			printf("%s", usageDescription(80).c_str()); // this may need generalHelp(80);
 			return false;
-		case ArgvParser::TopicHelpRequested:
+		case ArgvParser::ParserResults::TopicHelpRequested:
 			printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 			return false;
-		case ArgvParser::ParserCommandNotFound:
+		case ArgvParser::ParserResults::ParserCommandNotFound:
 			printf("Invalid command: %s\n\n", getCurrentCommand().c_str());
 			printf("%s", usageDescription(80).c_str());
 			return false;
@@ -937,7 +937,7 @@ namespace simplearchive {
 			cmdFound = true;
 		}
 		
-		if (res != ArgvParser::NoParserError) {
+		if (res != ArgvParser::ParserResults::NoParserError) {
 			printf("%s\n", parseErrorDescription(res).c_str());
 			printf("%s\n", usageDescription().c_str());
 		}
@@ -1017,7 +1017,7 @@ namespace simplearchive {
 		for (auto it = option2attribute.begin(); it != option2attribute.end(); ++it)
 		{
 			std::string _os; // temp string for the option
-			if (option2attribute.find(it->first)->second != MasterOption) {
+			if (option2attribute.find(it->first)->second != OptionAttributes::MasterOption) {
 				continue;
 			}
 			std::string _longOpt;
@@ -1027,7 +1027,7 @@ namespace simplearchive {
 				alt != alternatives.end();
 				++alt)
 			{
-				if (option2attribute.find(it->first)->second == MasterOption) {
+				if (option2attribute.find(it->first)->second == OptionAttributes::MasterOption) {
 					//int option = option2attribute.find(it->first)->second;
 					_os.clear();
 					if (alt->length() > 1) {

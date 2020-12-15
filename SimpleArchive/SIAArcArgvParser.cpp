@@ -30,165 +30,165 @@ void  SIAArcArgvParser::defineOptions() {
 	setHelpOption();
 
 	// Subcommands
-	defineOption("import", "import new images to the archive.", ArgvParser::MasterOption);
+	defineOption("import", "import new images to the archive.", ArgvParser::OptionAttributes::MasterOption);
 	defineCommandSyntax("import", "iaarc import [--source-path=<path>]\n\t"
 		"[--comment=<comment text>]\n\t[--lightroom=<On|Off>]");
 
-	defineOption("checkout", "Checkout images from archive to workspace.", ArgvParser::MasterOption);
+	defineOption("checkout", "Checkout images from archive to workspace.", ArgvParser::OptionAttributes::MasterOption);
 	defineCommandSyntax("checkout", "iaarc checkout [--target-path=<path>]\n\t"
 		"[--comment=<comment text>]\n\t[--scope=<scope-address]\n\t[--force=<yes|No>]\n\t[--version=<vesion-num>");
 
-	defineOption("checkin", "Checkin images from workspace into the archive.", ArgvParser::MasterOption);
+	defineOption("checkin", "Checkin images from workspace into the archive.", ArgvParser::OptionAttributes::MasterOption);
 	defineCommandSyntax("checkin", "iaarc checkin [--target-path=<path>]\n\t[--logging-level=<level>]"
 		"[--comment=<comment text>]\n\t[--scope=<scope-address]\n\t[--force=<yes|No>]\n\t[--version=<vesion-num>");
 
-	defineOption("uncheckout", "Un-checkout images from workspace into the archive.", ArgvParser::MasterOption);
+	defineOption("uncheckout", "Un-checkout images from workspace into the archive.", ArgvParser::OptionAttributes::MasterOption);
 	defineCommandSyntax("uncheckout", "iaarc uncheckout [--logging-level=<level>]"
 		"[--comment=<comment text>]\n\t[--scope=<scope-address>]\n\t[--force=<yes|No>]\n\t[--version=<vesion-num>");
 
-	defineOption("get", "Get images from archive to workspace.", ArgvParser::MasterOption);
+	defineOption("get", "Get images from archive to workspace.", ArgvParser::OptionAttributes::MasterOption);
 	defineCommandSyntax("get", "iaarc get [--logging-level=<level>]"
 		"[--comment=<comment text>]\n\t[--scope=<scope-address>]\n\t[--force=<yes|No>]\n\t[--version=<vesion-num>");
 
-	defineOption("delete", "Delete images in the archive.", ArgvParser::MasterOption);
+	defineOption("delete", "Delete images in the archive.", ArgvParser::OptionAttributes::MasterOption);
 	defineCommandSyntax("delete", "iaarc delete [--logging-level=<level>]"
 		"[--comment=<comment text>]\n\t[--scope=<scope-address>]\n\t[--version=<vesion-num>");
 
-	defineOption("undelete", "Undelete images in the archive.", ArgvParser::MasterOption);
+	defineOption("undelete", "Undelete images in the archive.", ArgvParser::OptionAttributes::MasterOption);
 	defineCommandSyntax("undelete", "iaarc undelete [--logging-level=<level>]"
 		"[--comment=<comment text>]\n\t[--scope=<scope-address>]\n\t[--version=<vesion-num>");
 
-	defineOption("export", "Export images from archive into a destination folder.", ArgvParser::MasterOption);
+	defineOption("export", "Export images from archive into a destination folder.", ArgvParser::OptionAttributes::MasterOption);
 	defineCommandSyntax("export", "iaarc export [--target-path=<path>]\n\t[--logging-level=<level>]"
 		"[--comment=<comment text>]\n\t[--scope=<scope-address]\n\t[--force=<yes|No>]\n\t[--version=<vesion-num>");
 
-	defineOption("prop", "Manage image properties", ArgvParser::MasterOption);
+	defineOption("prop", "Manage image properties", ArgvParser::OptionAttributes::MasterOption);
 	defineCommandSyntax("prop", "iaarc prop [--s]\n\t[--logging-level=<level>]"
 		"[--scope=<scope-address]\n\t[--set=<property:value>]");
 
-	defineOption("metadata", "Show Metadata properties", ArgvParser::MasterOption);
+	defineOption("metadata", "Show Metadata properties", ArgvParser::OptionAttributes::MasterOption);
 	defineCommandSyntax("metadata", "iaarc metadata [--s]\n\t[--format-type=<type>]"
 		"[--comment=<comment text>]\n\t[--scope=<scope-address]\n\t[--master=<yes|No>]");
 
-	defineOption("template", "Manage metadata template", ArgvParser::MasterOption);
+	defineOption("template", "Manage metadata template", ArgvParser::OptionAttributes::MasterOption);
 	defineCommandSyntax("template", "iaarc template [--current=<yes|no>]\n\t[--logging-level=<level>]"
 		"[--current=<yes|no>]\n\t[--comment=<comment text>]\n\t[--scope=<scope-address]\n\t[--force=<yes|No>]");
 
-	defineOption("status", "show check in/out status", ArgvParser::MasterOption);
+	defineOption("status", "show check in/out status", ArgvParser::OptionAttributes::MasterOption);
 	defineCommandSyntax("status", "iaarc status [--list>]\n\t[--logging-level=<level>]"
 		"[--current=<yes|no>]\n\t[--comment=<comment text>]\n\t[--scope=<scope-address]\n\t[--force=<yes|No>]");
 
-	defineOption("history", "shows the check in/out status history for the archive.", ArgvParser::MasterOption);
+	defineOption("history", "shows the check in/out status history for the archive.", ArgvParser::OptionAttributes::MasterOption);
 	defineCommandSyntax("history", "iaarc status [--list>]\n\t[--logging-level=<level>]"
 		"[--current=<yes|no>]\n\t[--comment=<comment text>]\n\t[--scope=<scope-address]\n\t[--force=<yes|No>]");
 
-	defineOption("show", "Show details", ArgvParser::MasterOption);
+	defineOption("show", "Show details", ArgvParser::OptionAttributes::MasterOption);
 	defineCommandSyntax("show", "iaarc show [--history=<image-address>]\n\t");
 
-	defineOption("log", "Show logs", ArgvParser::MasterOption);
+	defineOption("log", "Show logs", ArgvParser::OptionAttributes::MasterOption);
 	defineCommandSyntax("log", "iaarc log [--image=<image-address]");
 
-	//defineOption("mode", "Sets the mode in which imgarchive will be operating", ArgvParser::MasterOption);
+	//defineOption("mode", "Sets the mode in which imgarchive will be operating", ArgvParser::OptionAttributes::MasterOption);
 
-	defineOption("about", "prints this version information", ArgvParser::MasterOption);
+	defineOption("about", "prints this version information", ArgvParser::OptionAttributes::MasterOption);
 	defineCommandSyntax("about", "about [--out]\n\t[--file]\n");
 
 	/*
-	defineOption("b", "Goes through the motions of running the subcommand but makes no\nactual changes ether disk or repository.", ArgvParser::NoOptionAttribute);
+	defineOption("b", "Goes through the motions of running the subcommand but makes no\nactual changes ether disk or repository.", ArgvParser::OptionAttributes::NoOptionAttribute);
 	defineOptionAlternative("b", "backup");
 	*/
-	defineOption("set", "Sets a metadata property:value", ArgvParser::OptionRequiresValue);
+	defineOption("set", "Sets a metadata property:value", ArgvParser::OptionAttributes::OptionRequiresValue);
 	//defineOptionAlternative("set", "set-prop");
 	defineCommandSyntax("set", "iaarc workspace [--sync]\n\t[--logging-level=<level>]");
 	//	"[--comment=<comment text>]\n\t[--scope=<scope-address]\n\t[--force=<yes|No>]");
 
 
-	defineOption("n", "name of the view.", ArgvParser::OptionRequiresValue);
+	defineOption("n", "name of the view.", ArgvParser::OptionAttributes::OptionRequiresValue);
 	defineOptionAlternative("n", "name");
 
-	defineOption("q", "quiet output is sent to the terminal.", ArgvParser::NoOptionAttribute);
+	defineOption("q", "quiet output is sent to the terminal.", ArgvParser::OptionAttributes::NoOptionAttribute);
 	defineOptionAlternative("q", "quiet");
 
-	defineOption("s", "no output is sent to the terminal.", ArgvParser::NoOptionAttribute);
+	defineOption("s", "no output is sent to the terminal.", ArgvParser::OptionAttributes::NoOptionAttribute);
 	defineOptionAlternative("s", "silent");
 
-	defineOption("e", "Generate progress events.", ArgvParser::NoOptionAttribute);
+	defineOption("e", "Generate progress events.", ArgvParser::OptionAttributes::NoOptionAttribute);
 	defineOptionAlternative("e", "events");
 
-	defineOption("p", "source of the images", ArgvParser::OptionRequiresValue);
+	defineOption("p", "source of the images", ArgvParser::OptionAttributes::OptionRequiresValue);
 	defineOptionAlternative("p", "source-path");
 
-	defineOption("L", "import from lightroom", ArgvParser::NoOptionAttribute);
+	defineOption("L", "import from lightroom", ArgvParser::OptionAttributes::NoOptionAttribute);
 	defineOptionAlternative("L", "lightroom");
 
-	defineOption("A", "address scope", ArgvParser::OptionRequiresValue);
+	defineOption("A", "address scope", ArgvParser::OptionAttributes::OptionRequiresValue);
 	defineOptionAlternative("A", "scope");
 
-	defineOption("R", "Remode server mode", ArgvParser::NoOptionAttribute);
+	defineOption("R", "Remode server mode", ArgvParser::OptionAttributes::NoOptionAttribute);
 	defineOptionAlternative("R", "remote-server");
 
-	defineOption("d", "destination of the images", ArgvParser::OptionRequiresValue);
+	defineOption("d", "destination of the images", ArgvParser::OptionAttributes::OptionRequiresValue);
 	defineOptionAlternative("d", "dist-path");
 
-	defineOption("a", "archive", ArgvParser::NoOptionAttribute);
+	defineOption("a", "archive", ArgvParser::OptionAttributes::NoOptionAttribute);
 	defineOptionAlternative("a", "archive");
 
 
 
 
-	defineOption("image", "Specifies a image address in the form \"<date>/<image name>", ArgvParser::OptionRequiresValue);
+	defineOption("image", "Specifies a image address in the form \"<date>/<image name>", ArgvParser::OptionAttributes::OptionRequiresValue);
 	//defineOptionAlternative("i", "image");
 
-	defineOption("F", "no output is sent to the terminal.", ArgvParser::NoOptionAttribute);
+	defineOption("F", "no output is sent to the terminal.", ArgvParser::OptionAttributes::NoOptionAttribute);
 	defineOptionAlternative("F", "force");
 
-	defineOption("C", "current template (master or derivative)", ArgvParser::OptionRequiresValue);
+	defineOption("C", "current template (master or derivative)", ArgvParser::OptionAttributes::OptionRequiresValue);
 	defineOptionAlternative("C", "current");
 
 
 
-	defineOption("v", "specifies a version.", ArgvParser::OptionRequiresValue);
+	defineOption("v", "specifies a version.", ArgvParser::OptionAttributes::OptionRequiresValue);
 	defineOptionAlternative("v", "version");
 
 
-	defineOption("td", "to date", ArgvParser::OptionRequiresValue);
+	defineOption("td", "to date", ArgvParser::OptionAttributes::OptionRequiresValue);
 	defineOptionAlternative("td", "to-date");
 
-	defineOption("fd", "From date", ArgvParser::OptionRequiresValue);
+	defineOption("fd", "From date", ArgvParser::OptionAttributes::OptionRequiresValue);
 	defineOptionAlternative("fd", "from-date");
 
 
 
-	defineOption("r", "location of the archive root folder.", ArgvParser::NoOptionAttribute);
+	defineOption("r", "location of the archive root folder.", ArgvParser::OptionAttributes::NoOptionAttribute);
 	defineOptionAlternative("r", "root");
 
-	defineOption("format-type", "text output format type. Can be \"Humam\", \"XML\" \"Json\" or \"cvs\" i.e format-type=XML.", ArgvParser::OptionRequiresValue);
+	defineOption("format-type", "text output format type. Can be \"Humam\", \"XML\" \"Json\" or \"cvs\" i.e format-type=XML.", ArgvParser::OptionAttributes::OptionRequiresValue);
 	//defineOptionAlternative("ft", "format-type");
 	defineCommandSyntax("format-type", "format-type=[Human] | [xml] | [json] | [html] | [csv]\n");
 
-	defineOption("l", "Temporarily changes the logging level for the scope of this command session.", ArgvParser::OptionRequiresValue);
+	defineOption("l", "Temporarily changes the logging level for the scope of this command session.", ArgvParser::OptionAttributes::OptionRequiresValue);
 	defineOptionAlternative("l", "logging-level");
 
-	defineOption("c", "Comment to be included in command", ArgvParser::OptionRequiresValue);
+	defineOption("c", "Comment to be included in command", ArgvParser::OptionAttributes::OptionRequiresValue);
 	defineOptionAlternative("c", "comment");
 
-	defineOption("U", "Show settup", ArgvParser::NoOptionAttribute);
+	defineOption("U", "Show settup", ArgvParser::OptionAttributes::NoOptionAttribute);
 	defineOptionAlternative("U", "settup");
 
-	defineOption("out", "Output type: text, xml, json or html.", ArgvParser::OptionRequiresValue);
+	defineOption("out", "Output type: text, xml, json or html.", ArgvParser::OptionAttributes::OptionRequiresValue);
 	defineCommandSyntax("out", "out=[plain] | [xml] | [json] | [html]\n");
 
-	defineOption("o", "property option.", ArgvParser::OptionRequiresValue);
+	defineOption("o", "property option.", ArgvParser::OptionAttributes::OptionRequiresValue);
 	defineOptionAlternative("o", "option");
 	defineCommandSyntax("option", "option <argument=value>\n");
 
-	defineOption("file", "output file name.", ArgvParser::OptionRequiresValue);
+	defineOption("file", "output file name.", ArgvParser::OptionAttributes::OptionRequiresValue);
 	defineCommandSyntax("file", "file=<filename>\n");
 
-	defineOption("force-date", "Overrides all dates found associated with the images in the selection", ArgvParser::OptionRequiresValue);
-	defineOption("default-date", "Uses this date if none found associated with an image", ArgvParser::OptionRequiresValue);
+	defineOption("force-date", "Overrides all dates found associated with the images in the selection", ArgvParser::OptionAttributes::OptionRequiresValue);
+	defineOption("default-date", "Uses this date if none found associated with an image", ArgvParser::OptionAttributes::OptionRequiresValue);
 
-	defineOption("list", "list checked out/in and delete images", ArgvParser::OptionRequiresValue); // =all =year{2015}
+	defineOption("list", "list checked out/in and delete images", ArgvParser::OptionAttributes::OptionRequiresValue); // =all =year{2015}
 	defineCommandSyntax("list", "list=[checked-out] | [checked-in] | [deleted]\n");
 
 	defineCommandOption("about", "comment");
@@ -282,25 +282,25 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 
 	std::string errStr;
 	switch (res) {
-	case ArgvParser::NoParserError:
+	case ArgvParser::ParserResults::NoParserError:
 		break;
-	case ArgvParser::ParserUnknownOption:
-	case ArgvParser::ParserMissingValue:
-	case ArgvParser::ParserOptionAfterArgument:
-	case ArgvParser::ParserMalformedMultipleShortOption:
-	case ArgvParser::ParserRequiredOptionMissing:
-	case ArgvParser::ParserHelpRequested:
+	case ArgvParser::ParserResults::ParserUnknownOption:
+	case ArgvParser::ParserResults::ParserMissingValue:
+	case ArgvParser::ParserResults::ParserOptionAfterArgument:
+	case ArgvParser::ParserResults::ParserMalformedMultipleShortOption:
+	case ArgvParser::ParserResults::ParserRequiredOptionMissing:
+	case ArgvParser::ParserResults::ParserHelpRequested:
 		errStr = parseErrorDescription(res);
 		printf("%s", errStr.c_str());
 		printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 		return false;
-	case ArgvParser::GeneralHelpRequested:
+	case ArgvParser::ParserResults::GeneralHelpRequested:
 		std::cout << generalHelp(80); // this is printf("%s", usageDescription(80).c_str()); in iaadmin
 		return false;
-	case ArgvParser::TopicHelpRequested:
+	case ArgvParser::ParserResults::TopicHelpRequested:
 		std::cout << topicUsageDescription(getCurrentCommandId(), 80);
 		return false;
-	case ArgvParser::ParserCommandNotFound:
+	case ArgvParser::ParserResults::ParserCommandNotFound:
 		printf("Invalid command: %s\n\n", getCurrentCommand().c_str());
 		printf("%s", usageDescription(80).c_str());
 		return false;
@@ -878,7 +878,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 		std::string opt = optionValue("media-size");
 	}
 
-	if (res != ArgvParser::NoParserError) {
+	if (res != ArgvParser::ParserResults::NoParserError) {
 		printf("%s\n", parseErrorDescription(res).c_str());
 		printf("%s\n", usageDescription().c_str());
 	}
@@ -960,7 +960,7 @@ std::string SIAArcArgvParser::generalHelp(unsigned int _width) const
 	for (auto it = option2attribute.begin(); it != option2attribute.end(); ++it)
 	{
 		std::string _os; // temp string for the option
-		if (option2attribute.find(it->first)->second != MasterOption) {
+		if (option2attribute.find(it->first)->second != OptionAttributes::MasterOption) {
 			continue;
 		}
 		std::string _longOpt;
@@ -970,8 +970,8 @@ std::string SIAArcArgvParser::generalHelp(unsigned int _width) const
 			alt != alternatives.end();
 			++alt)
 		{
-			if (option2attribute.find(it->first)->second == MasterOption) {
-				int option = option2attribute.find(it->first)->second;
+			if (option2attribute.find(it->first)->second == OptionAttributes::MasterOption) {
+				OptionAttributes option = option2attribute.find(it->first)->second;
 				_os.clear();
 				if (alt->length() > 1) {
 					_longOpt += *alt;

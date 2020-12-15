@@ -330,7 +330,7 @@ namespace simplearchive {
 		else {
 			std::string source = sourceImage;
 			FileInfo targetFileInfo(source);
-			if (RepositoryObject::``validate(dbImage, targetFileInfo.getSize(), targetFileInfo.getCrc(), targetFileInfo.getMd5().c_str()) == false) {
+			if (RepositoryObject::validate(dbImage, targetFileInfo.getSize(), targetFileInfo.getCrc(), targetFileInfo.getMd5().c_str()) == false) {
 				return false;
 			}
 			if (isBackup1Enabled() == true) {

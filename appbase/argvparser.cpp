@@ -22,92 +22,95 @@ using namespace std;
 using namespace CommandLineProcessing;
 
 ArgvParser::ArgvParser()
-        : max_key(1),
-		current_command_id(-1),
-        help_option(0) // must be smaller than max_key initially
+	: max_key(1),
+	  current_command_id(-1),
+	  help_option(0) // must be smaller than max_key initially
 
 {
-    // nothing
+	// nothing
 }
 
 ArgvParser::~ArgvParser()
 {
-    // nothing
+	// nothing
 }
 
 void ArgvParser::reset()
 {
-    max_key = 1;
-    option2key.clear();
-    option2attribute.clear();
-    option2descr.clear();
-    option2value.clear();
-    errorcode2descr.clear();
-    argument_container.clear();
-    intro_description.clear();
-    error_option.clear();
-    help_option = 0;
+	max_key = 1;
+	option2key.clear();
+	option2attribute.clear();
+	option2descr.clear();
+	option2value.clear();
+	errorcode2descr.clear();
+	argument_container.clear();
+	intro_description.clear();
+	error_option.clear();
+	help_option = 0;
 }
 
-int ArgvParser::optionKey( const string& _name ) const
+int ArgvParser::optionKey(const string& _name) const
 {
-    String2KeyMap::const_iterator it = option2key.find(_name);
+	const auto it = option2key.find(_name);
 
-    // if not found
-    if (it == option2key.end())
-        return(-1);
+	// if not found
+	if (it == option2key.end())
+		return (-1);
 
-    return(it->second);
+	return (it->second);
 }
 
-bool ArgvParser::isDefinedOption( const string& _name ) const
+bool ArgvParser::isDefinedOption(const string& _name) const
 {
-    return(option2key.find(_name) != option2key.end());
+	return (option2key.find(_name) != option2key.end());
 }
 
-bool ArgvParser::foundOption( const string & _name ) const
+bool ArgvParser::foundOption(const string& _name) const
 {
-    int key = optionKey(_name);
+	int key = optionKey(_name);
 
-    // not defined -> cannot by found
-    if (key == -1)
-        return(false);
+	// not defined -> cannot by found
+	if (key == -1)
+		return (false);
 
-    // return whether the key of the given option name is in the hash of the
-    // parsed options.
-    return(option2value.find(key) != option2value.end());
+	// return whether the key of the given option name is in the hash of the
+	// parsed options.
+	return (option2value.find(key) != option2value.end());
 }
 
 string ArgvParser::optionValue(const string& _option) const
 {
-    int key = optionKey(_option);
+	int key = optionKey(_option);
 
-    // not defined -> cannot by found
-    if (key == -1)
-    {
-        cerr << "ArgvParser::optionValue(): Requested value of an option the parser did not find or does not know." << endl;
-        return("");
-    }
-	if (option2value.find(key) == option2value.end()) {
-		cerr << "ArgvParser::optionValue(): Requested value of an option the parser did not find or does not know." << endl;
+	// not defined -> cannot by found
+	if (key == -1)
+	{
+		cerr << "ArgvParser::optionValue(): Requested value of an option the parser did not find or does not know." <<
+			endl;
+		return ("");
+	}
+	if (option2value.find(key) == option2value.end())
+	{
+		cerr << "ArgvParser::optionValue(): Requested value of an option the parser did not find or does not know." <<
+			endl;
 		return std::string();
 	}
-    return(option2value.find(key)->second);
+	return (option2value.find(key)->second);
 }
 
 ArgvParser::ParserResults
-ArgvParser::parse(int _argc, char ** _argv)
+ArgvParser::parse(int _argc, char** _argv)
 {
-	
-    bool finished_options = false; // flag whether an argument was found (options are passed)
+	bool finished_options = false; // flag whether an argument was found (options are passed)
 	unsigned int key = -1;
 	makeCommandline(_argc, _argv);
-    // loop over all command line arguments
-    int i = 2; // argument counter
-	
-	if (_argc < 2) {
+	// loop over all command line arguments
+	int i = 2; // argument counter
+
+	if (_argc < 2)
+	{
 		// No command found.
-		return(ParserHelpRequested);
+		return ParserResults::ParserHelpRequested;
 	}
 	// get the command option
 	string _command = _argv[1];
@@ -118,47 +121,57 @@ ArgvParser::parse(int _argc, char ** _argv)
 		//finished_options = true;
 		//argument_container.push_back(argument);
 		auto it = option2key.find(_command);
-		if (it == option2key.end()) {
-			return(ParserCommandNotFound);
+		if (it == option2key.end())
+		{
+			return (ParserResults::ParserCommandNotFound);
 		}
 		key = option2key.find(_command)->second;
 		// current command to the first argument
 		current_command_id = key;
-		if (key == help_option) {// if help is requested return error code
-			if (_argc < 3) {	// General help
-				return(GeneralHelpRequested);
+		if (key == help_option)
+		{
+			// if help is requested return error code
+			if (_argc < 3)
+			{
+				// General help
+				return (ParserResults::GeneralHelpRequested);
 			}
-			else if (_argc < 4) { // Help on a command
+			if (_argc < 4)
+			{
+				// Help on a command
 				_command = _argv[2];
-				if (isValidCommandString(_command) == false) {
-					return(GeneralHelpRequested);
+				if (isValidCommandString(_command) == false)
+				{
+					return (ParserResults::GeneralHelpRequested);
 				}
 				// current command is the second argument not the first
-				if (option2key.find(_command) == option2key.end()) {
-					return(GeneralHelpRequested);
+				if (option2key.find(_command) == option2key.end())
+				{
+					return (ParserResults::GeneralHelpRequested);
 				}
 				key = option2key.find(_command)->second;
 				current_command_id = key;
-				return(TopicHelpRequested);
+				return (ParserResults::TopicHelpRequested);
 			}
-			else {
-				return(ParserHelpRequested);
-			}
+			return (ParserResults::ParserHelpRequested);
 		}
-		if (option2attribute.find(key)->second != MasterOption) {
-			return(ParserHelpRequested);
+		if (option2attribute.find(key)->second != OptionAttributes::MasterOption)
+		{
+			return (ParserResults::ParserHelpRequested);
 		}
 	}
-	else {
-		return(ParserHelpRequested);
+	else
+	{
+		return (ParserResults::ParserHelpRequested);
 	}
-	
+
 	// This is used to test if the arguments are valid for this command
-	CommandSet::iterator ii = command_set.find(key);
+	auto ii = command_set.find(key);
 	bool commandListFound = false;
 	//ArgumentContainer *commandList = nullptr;
-	if (ii != command_set.end()) {
-		commandListFound = true;	
+	if (ii != command_set.end())
+	{
+		commandListFound = true;
 	}
 
 	unsigned int commandKey = key;
@@ -166,9 +179,9 @@ ArgvParser::parse(int _argc, char ** _argv)
 	while (i < _argc)
 	{
 		string argument = _argv[i];
-		
+
 		string option; // option name
-		string value;  // option value
+		string value; // option value
 
 		// if argument is an option
 		if (!isValidOptionString(argument))
@@ -183,7 +196,7 @@ ArgvParser::parse(int _argc, char ** _argv)
 			if (finished_options)
 			{
 				error_option = argument;
-				return(ParserOptionAfterArgument); // return error code
+				return (ParserResults::ParserOptionAfterArgument); // return error code
 			}
 
 			unsigned int key = 0;
@@ -191,7 +204,7 @@ ArgvParser::parse(int _argc, char ** _argv)
 			if (isValidLongOptionString(argument))
 			{
 				// handle long options
-				
+
 				// remove trailing '--'
 				argument = argument.substr(2);
 				// check for option value assignment 'option=value'
@@ -200,22 +213,22 @@ ArgvParser::parse(int _argc, char ** _argv)
 				if (!isDefinedOption(option)) // is this a known option
 				{
 					error_option = option; // store the option that caused the error
-					return(ParserUnknownOption); // return error code if not
+					return (ParserResults::ParserUnknownOption); // return error code if not
 				}
 
 				// get the key of this option - now that we know that it is defined
 				key = option2key.find(option)->second;
 				if (key == help_option) // if help is requested return error code
-					return(ParserHelpRequested);
+					return (ParserResults::ParserHelpRequested);
 
 				// do we need to extract a value
 				// AND a value is not already assigned from the previous step
-				if ((option2attribute.find(key)->second & OptionRequiresValue) && value.empty())
+				if ((option2attribute.find(key)->second == OptionAttributes::OptionRequiresValue) && value.empty())
 				{
 					if (i + 1 >= _argc) // are there arguments left?
 					{
 						error_option = option; // store the option that caused the error
-						return(ParserMissingValue); // the was no argument left although we need a value
+						return (ParserResults::ParserMissingValue); // the was no argument left although we need a value
 					}
 
 					string temp = _argv[i + 1]; // get the next element
@@ -224,7 +237,7 @@ ArgvParser::parse(int _argc, char ** _argv)
 					if (isValidOptionString(temp))
 					{
 						error_option = option; // store the option that caused the error
-						return(ParserMissingValue);  // missing option value
+						return (ParserResults::ParserMissingValue); // missing option value
 					}
 					value = temp; // assign value
 				}
@@ -233,7 +246,7 @@ ArgvParser::parse(int _argc, char ** _argv)
 			}
 			else // handle short options
 			{
-				argument = argument.substr(1);   // remove trailing '-'
+				argument = argument.substr(1); // remove trailing '-'
 
 				// check for option value assignment 'option=value'
 				if (splitOptionAndValue(argument, option, value))
@@ -242,28 +255,28 @@ ArgvParser::parse(int _argc, char ** _argv)
 					if (option.length() > 1)
 					{
 						error_option = option; // store the option that caused the error
-						return(ParserMalformedMultipleShortOption); // return error code if option has more than one character
+						return (ParserResults::ParserMalformedMultipleShortOption);
+						// return error code if option has more than one character
 					}
 
 					if (!isDefinedOption(option)) // is this a known option
 					{
 						error_option = option; // store the option that caused the error
-						return(ParserUnknownOption); // return error code if not
+						return (ParserResults::ParserUnknownOption); // return error code if not
 					}
 					key = option2key.find(option)->second; // get the key for the extracted option name
 
 					if (key == help_option) // if help is requested return error code
-						return(ParserHelpRequested);
+						return (ParserResults::ParserHelpRequested);
 
 					// if value is still empty for some reason: we have an error
-					if ((option2attribute.find(key)->second & OptionRequiresValue) && value.empty())
+					if ((option2attribute.find(key)->second == OptionAttributes::OptionRequiresValue) && value.empty())
 					{
 						error_option = option; // store the option that caused the error
-						return(ParserMissingValue);   // missing option value
+						return (ParserResults::ParserMissingValue); // missing option value
 					}
-					else
-						// add option-value map entry
-						option2value[key] = value;
+					// add option-value map entry
+					option2value[key] = value;
 				}
 				else // no '=' assignment: can be either multiple short options or
 					// something like '-s 4'
@@ -277,20 +290,21 @@ ArgvParser::parse(int _argc, char ** _argv)
 						if (!isDefinedOption(argument)) // is this a known option
 						{
 							error_option = argument; // store the option that caused the error
-							return(ParserUnknownOption); // return error code if not
+							return (ParserResults::ParserUnknownOption); // return error code if not
 						}
 						key = option2key.find(argument)->second; // get the key for the extracted option name
 
 						if (key == help_option) // if help is requested return error code
-							return(ParserHelpRequested);
+							return (ParserResults::ParserHelpRequested);
 
 						// check if option needs a value and next arg is not an option
-						if ((option2attribute.find(key)->second & OptionRequiresValue))
+						if ((option2attribute.find(key)->second == OptionAttributes::OptionRequiresValue))
 						{
 							if (i + 1 >= _argc) // are there arguments left?
 							{
 								error_option = argument; // store the option that caused the error
-								return(ParserMissingValue); // the was no argument left although we need a value
+								return (ParserResults::ParserMissingValue);
+								// the was no argument left although we need a value
 							}
 							string temp = _argv[i + 1]; // get the next element
 							++i; // increase counter now that we moved forward
@@ -298,11 +312,10 @@ ArgvParser::parse(int _argc, char ** _argv)
 							if (isValidOptionString(temp))
 							{
 								error_option = argument; // store the option that caused the error
-								return(ParserMissingValue);  // missing option value
+								return (ParserResults::ParserMissingValue); // missing option value
 							}
 							// add option-value map entry
 							option2value[key] = temp;
-
 						}
 						else // no value needed
 						{
@@ -319,12 +332,12 @@ ArgvParser::parse(int _argc, char ** _argv)
 							if (!isDefinedOption(option)) // is this a known option
 							{
 								error_option = option; // store the option that caused the error
-								return(ParserUnknownOption); // return error code if not
+								return (ParserResults::ParserUnknownOption); // return error code if not
 							}
 							key = option2key.find(option)->second; // get the key for the extracted option name
 
 							if (key == help_option) // if help is requested return error code
-								return(ParserHelpRequested);
+								return (ParserResults::ParserHelpRequested);
 
 							option2value[key] = value;
 
@@ -334,64 +347,66 @@ ArgvParser::parse(int _argc, char ** _argv)
 				}
 			}
 		}
-		if (option.length() == 0) {
+		if (option.length() == 0)
+		{
 			// Is a file
 			defaultArgumentsContainer.push_back(argument);
 		}
-		else {
-
-			if (matchOption(commandKey, option.c_str()) == false) {
-				return(ParserHelpRequested);
+		else
+		{
+			if (matchOption(commandKey, option.c_str()) == false)
+			{
+				return (ParserResults::ParserHelpRequested);
 			}
-			if (commandListFound) {
-				for ( auto opt = ii->second.begin(); opt != ii->second.end(); opt++) {
-					std::string s = *opt;
+			//if (commandListFound)
+			//{
+			//	for (auto s : ii->second)
+			//	{
 					//printf("%s", s.c_str());
-				}
-
-			}
+			//	}
+			//}
 		}
-        ++i;
-    }
+		++i;
+	}
 
-    
-    for( auto it = option2attribute.begin(); it != option2attribute.end(); it++ )
-    {
-		if (it->second == MasterOption)
+
+	for (auto it = option2attribute.begin(); it != option2attribute.end(); ++it)
+	{
+		if (it->second == OptionAttributes::MasterOption)
 		{
 			continue;
 		}
-        // if the current option is required look if we got it
-        if (it->second & OptionRequired)
-        {
-            // is the object missing
-            if (option2value.find(it->first) == option2value.end())
-            {
-                // get the list of alternative names for this option
-                list<string> alternatives = getAllOptionAlternatives(it->first);
+		// if the current option is required look if we got it
+		if (it->second == OptionAttributes::OptionRequired)
+		{
+			// is the object missing
+			if (option2value.find(it->first) == option2value.end())
+			{
+				// get the list of alternative names for this option
+				list<string> alternatives = getAllOptionAlternatives(it->first);
 
-                unsigned int count = 0;
-                for( list<string>::const_iterator alt = alternatives.begin();
-                        alt != alternatives.end();
-                        ++alt )
-                {
-                    ++count;
-                    // additional '-' for long options
-                    if (alt->length() > 1)
-                        error_option += "-";
+				unsigned int count = 0;
+				for (list<string>::const_iterator alt = alternatives.begin();
+				     alt != alternatives.end();
+				     ++alt)
+				{
+					++count;
+					// additional '-' for long options
+					if (alt->length() > 1)
+						error_option += "-";
 
-                    error_option += "-" + *alt;
+					error_option += "-" + *alt;
 
-                    // alternatives to come?
-                    if (count < alternatives.size())
-                        error_option += ", "; // add separator
-                }
-                return(ParserRequiredOptionMissing);
-            }
-        }
-    }
+					// alternatives to come?
+					if (count < alternatives.size())
+						error_option += ", "; // add separator
+				}
+				return (ParserResults::ParserRequiredOptionMissing);
+			}
+		}
+	}
 
-    return(NoParserError); // everthing went fine -> sucess
+	return (ParserResults::NoParserError); // everthing went fine -> sucess
 }
 
 /*
@@ -414,23 +429,22 @@ ArgvParser::ParserResults ArgvParser::parseJson(const char* str)
 
 size_t ArgvParser::arguments() const
 {
-    return(argument_container.size());
+	return (argument_container.size());
 }
 
 string ArgvParser::argument(unsigned int _id) const
 {
-    if (_id >= arguments())
-    {
-        cerr << "ArgvParser::argument(): Request for non-existing argument." << endl;
-        return ("");
-    }
-    else
-        return(argument_container[_id]);
+	if (_id >= arguments())
+	{
+		cerr << "ArgvParser::argument(): Request for non-existing argument." << endl;
+		return ("");
+	}
+	return (argument_container[_id]);
 }
 
 const vector<string>& ArgvParser::allArguments() const
 {
-    return(argument_container);
+	return (argument_container);
 }
 
 std::string ArgvParser::topicUsageDescription(unsigned int topic, unsigned int _width) const
@@ -441,11 +455,13 @@ std::string ArgvParser::topicUsageDescription(unsigned int topic, unsigned int _
 	usage += "\nNAME: "; // the usage description text
 
 	std::string _os; // temp string for the option
-	if (option2attribute.find(topic) == option2attribute.end()) {
+	if (option2attribute.find(topic) == option2attribute.end())
+	{
 		usage = "error";
 		return usage;
 	}
-	if (option2attribute.find(topic)->second != MasterOption) {
+	if (option2attribute.find(topic)->second != OptionAttributes::MasterOption)
+	{
 		usage = "error";
 		return usage;
 	}
@@ -457,29 +473,31 @@ std::string ArgvParser::topicUsageDescription(unsigned int topic, unsigned int _
 
 	std::list<std::string> alternatives = getAllOptionAlternatives(topic);
 	for (auto alt = alternatives.begin();
-		alt != alternatives.end();
-		++alt)
+	     alt != alternatives.end();
+	     ++alt)
 	{
-		if (option2attribute.find(topic)->second == MasterOption) {
+		if (option2attribute.find(topic)->second == OptionAttributes::MasterOption)
+		{
 			//int option = option2attribute.find(topic)->second;
 			_os.clear();
-			if (alt->length() > 1) {
+			if (alt->length() > 1)
+			{
 				_longOpt += *alt;
 			}
-			else {
+			else
+			{
 				_shortOpt += *alt;
 			}
-
-
 		}
-
 	}
 
-	if (!_longOpt.empty()) {
+	if (!_longOpt.empty())
+	{
 		_os += ' ';
 		_os += _longOpt;
 	}
-	if (!_shortOpt.empty()) {
+	if (!_shortOpt.empty())
+	{
 		_os += " (";
 		_os += _shortOpt;
 		_os += ')';
@@ -489,94 +507,108 @@ std::string ArgvParser::topicUsageDescription(unsigned int topic, unsigned int _
 	usage += formatString(_os, _width) + "\n";
 
 
-	if (!_longOpt.empty()) {
+	if (!_longOpt.empty())
+	{
 		usage += "\nSYNTAX:\n";
 		std::string syntax = getSyntax(_longOpt);
 		usage += formatString(syntax, _width, 4, 0, 4);
 		usage += '\n';
 	}
-	else {
+	else
+	{
 		usage += formatString("(no description)", _width, 4) + "\n\n";
 	}
 	_os.clear();
 	_longOpt.clear();
 	_shortOpt.clear();
-	if (option2descr.find(topic) != option2descr.end()) {
+	if (option2descr.find(topic) != option2descr.end())
+	{
 		usage += "\nDescription:\n";
 		usage += formatString(option2descr.find(topic)->second, _width, 4) + "\n\n";
 	}
-	else {
+	else
+	{
 		usage += formatString("(no description)", _width, 4) + "\n\n";
 	}
 
-	
+
 	auto it = command_set.find(topic);
-	if (it == command_set.end()) {
+	if (it == command_set.end())
+	{
 		usage += "Note: No options for this command\n\n";
 	}
-	else {
+	else
+	{
 		usage += "OPTIONS: \n\n";
 		ArgumentContainer ac = it->second;
 
-		for (auto opt = ac.begin(); opt != ac.end(); opt++) {
+		for (auto opt = ac.begin(); opt != ac.end(); ++opt)
+		{
 			//printf("%s\n", opt->c_str());
-			if (option2key.find(opt->c_str()) != option2key.end()) {
+			if (option2key.find(opt->c_str()) != option2key.end())
+			{
 				unsigned int key = option2key.find(opt->c_str())->second;
 				std::list<std::string> alternatives = getAllOptionAlternatives(key);
 				for (auto alt = alternatives.begin();
-					alt != alternatives.end();
-					++alt)
+				     alt != alternatives.end();
+				     ++alt)
 				{
 					//int option = option2attribute.find(key)->second;
 					_os.clear();
-					if (alt->length() > 1) {
-
+					if (alt->length() > 1)
+					{
 						_longOpt += *alt;
 					}
-					else {
+					else
+					{
 						_shortOpt += *alt;
 					}
 				}
 
-				if (!_longOpt.empty()) {
+				if (!_longOpt.empty())
+				{
 					_os += "\t--";
 					_os += _longOpt;
 				}
-				if (!_shortOpt.empty()) {
+				if (!_shortOpt.empty())
+				{
 					_os += " (-";
 					_os += _shortOpt;
 					_os += ')';
 				}
 				_os += " : ";
 				usage += formatString(_os, _width) + "\n";
-				if (option2descr.find(key) != option2descr.end()) {
+				if (option2descr.find(key) != option2descr.end())
+				{
 					std::string desc = "\t";
 					desc += option2descr.find(key)->second;
 					usage += formatString(desc, _width, 4) + "\n";
 				}
-				else {
+				else
+				{
 					usage += formatString("\t(no description)", _width, 4) + "\n\n";
 				}
-				if (!_longOpt.empty()) {
-
+				if (!_longOpt.empty())
+				{
 					std::string syntax = getSyntax(_longOpt);
-					if (!syntax.empty()) {
+					if (!syntax.empty())
+					{
 						usage += formatString("\tSyntax:", _width, 4) + "\n";
 						usage += formatString(syntax, _width, 4, 0, 4);
 						usage += "\n\n";
 					}
-					else {
+					else
+					{
 						usage += "\n\n";
 					}
 				}
 				_os.clear();
 				_longOpt.clear();
 				_shortOpt.clear();
-
 			}
 		}
 	}
-	return(usage);
+	return (usage);
 }
 
 std::string ArgvParser::usageDescription(unsigned int _width) const
@@ -606,35 +638,39 @@ std::string ArgvParser::usageDescription(unsigned int _width) const
 	for (auto it = option2attribute.begin(); it != option2attribute.end(); ++it)
 	{
 		std::string _os; // temp string for the option
-		if (option2attribute.find(it->first)->second != MasterOption) {
+		if (option2attribute.find(it->first)->second != OptionAttributes::MasterOption)
+		{
 			continue;
 		}
 		std::string _longOpt;
 		std::string _shortOpt;
 		std::list<std::string> alternatives = getAllOptionAlternatives(it->first);
 		for (auto alt = alternatives.begin();
-			alt != alternatives.end();
-			++alt)
+		     alt != alternatives.end();
+		     ++alt)
 		{
-			if (option2attribute.find(it->first)->second == MasterOption) {
+			if (option2attribute.find(it->first)->second == OptionAttributes::MasterOption)
+			{
 				//int option = option2attribute.find(it->first)->second;
 				_os.clear();
-				if (alt->length() > 1) {
+				if (alt->length() > 1)
+				{
 					_longOpt += *alt;
 				}
-				else {
+				else
+				{
 					_shortOpt += *alt;
 				}
-
-
 			}
 		}
 
-		if (!_longOpt.empty()) {
+		if (!_longOpt.empty())
+		{
 			_os += ' ';
 			_os += _longOpt;
 		}
-		if (!_shortOpt.empty()) {
+		if (!_shortOpt.empty())
+		{
 			_os += " (";
 			_os += _shortOpt;
 			_os += ')';
@@ -649,20 +685,19 @@ std::string ArgvParser::usageDescription(unsigned int _width) const
 			usage += formatString(option2descr.find(it->first)->second, _width) + "\n";
 		else
 			usage += formatString("(no description)", _width, 4) + "\n";
-
 	}
 
 
 	if (!errorcode2descr.size()) // if have no errorcodes
-		return(usage);
+		return (usage);
 
 	usage += "\n";
 	usage += formatString("Return codes:\n", _width) + "\n";
 
 	//   map<int, string>::const_iterator eit;
 	for (auto alt = errorcode2descr.begin();
-		alt != errorcode2descr.end();
-		++alt)
+	     alt != errorcode2descr.end();
+	     ++alt)
 	{
 		std::ostringstream code;
 		code << alt->first;
@@ -674,155 +709,165 @@ std::string ArgvParser::usageDescription(unsigned int _width) const
 	usage += "Image Archive is a tool for image archiving and version control system.\n";
 	usage += "For additional information, see \"http://www.idk-software.com/\"";
 	usage += '\n';
-	return(usage);
+	return (usage);
 }
 
 
-void ArgvParser::makeCommandline(int _argc, char ** _argv)
+void ArgvParser::makeCommandline(int _argc, char** _argv)
 {
 	commandLine = _argv[0];
-	for (int i = 1; i < _argc; i++) {
+	for (int i = 1; i < _argc; i++)
+	{
 		commandLine += ' ';
 		commandLine += _argv[i];
 	}
 }
 
 
-bool ArgvParser::matchOption(unsigned int topic, const char *option) const
+bool ArgvParser::matchOption(unsigned int topic, const char* option) const
 {
 	string _longOpt;
 	string _shortOpt;
 
 	auto topicObj = command_set.find(topic);
-	if (topicObj == command_set.end()) {
+	if (topicObj == command_set.end())
+	{
 		return false;
 	}
 	ArgumentContainer ac = topicObj->second;
 
-	for (vector<string>::const_iterator opt = ac.begin(); opt != ac.end(); opt++) {
+	for (vector<string>::const_iterator opt = ac.begin(); opt != ac.end(); ++opt)
+	{
 		//printf("%s\n", opt->c_str());
-		if (option2key.find(opt->c_str()) == option2key.end()) {
+		if (option2key.find(opt->c_str()) == option2key.end())
+		{
 			continue;
 		}
 		unsigned int key = option2key.find(opt->c_str())->second;
 		list<string> alternatives = getAllOptionAlternatives(key);
 		for (list<string>::const_iterator alt = alternatives.begin();
-			alt != alternatives.end();
-			++alt)
+		     alt != alternatives.end();
+		     ++alt)
 		{
 			//int option = option2attribute.find(key)->second;
-			
-			if (alt->length() > 1) {
 
+			if (alt->length() > 1)
+			{
 				_longOpt = *alt;
 			}
-			else {
+			else
+			{
 				_shortOpt = *alt;
 			}
 		}
 
-		if (!_longOpt.empty()) {
-			if (_longOpt.compare(option) == 0) {
+		if (!_longOpt.empty())
+		{
+			if (_longOpt.compare(option) == 0)
+			{
 				return true;
 			}
 		}
-		if (!_shortOpt.empty()) {
-			if (_shortOpt.compare(option) == 0) {
+		if (!_shortOpt.empty())
+		{
+			if (_shortOpt.compare(option) == 0)
+			{
 				return true;
 			}
 		}
 		_longOpt.clear();
 		_shortOpt.clear();
-
-		
 	}
 	return false;
 }
 
-const string& ArgvParser::errorOption( ) const
+const string& ArgvParser::errorOption() const
 {
-    return(error_option);
+	return (error_option);
 }
 
-std::string ArgvParser::parseErrorDescription( ParserResults _error_code ) const
+std::string ArgvParser::parseErrorDescription(ParserResults _error_code) const
 {
-    string descr;
+	string descr;
 
-    switch (_error_code)
-    {
-    case ArgvParser::NoParserError:
-        // no error -> nothing to do
-        break;
-    case ArgvParser::ParserUnknownOption:
-        descr = "Unknown option: '" + errorOption() + "'";
-        break;
-    case ArgvParser::ParserMissingValue:
-        descr = "Missing required value for option: '" + errorOption()+ "'";
-        break;
-    case ArgvParser::ParserOptionAfterArgument:
-        descr = "Misplaced option '" + errorOption() + "' detected. All option have to be BEFORE the first argument";
-        break;
-    case ArgvParser::ParserMalformedMultipleShortOption:
-        descr = "Malformed short-options: '" + errorOption() + "'";
-        break;
-    case ArgvParser::ParserRequiredOptionMissing:
-        descr = "Required option missing: '" + errorOption() + "'";
-        break;
-    case ArgvParser::ParserHelpRequested: // help
-        descr = usageDescription();
-        break;
+	switch (_error_code)
+	{
+	case ParserResults::NoParserError:
+		// no error -> nothing to do
+		break;
+	case ParserResults::ParserUnknownOption:
+		descr = "Unknown option: '" + errorOption() + "'";
+		break;
+	case ParserResults::ParserMissingValue:
+		descr = "Missing required value for option: '" + errorOption() + "'";
+		break;
+	case ParserResults::ParserOptionAfterArgument:
+		descr = "Misplaced option '" + errorOption() + "' detected. All option have to be BEFORE the first argument";
+		break;
+	case ParserResults::ParserMalformedMultipleShortOption:
+		descr = "Malformed short-options: '" + errorOption() + "'";
+		break;
+	case ParserResults::ParserRequiredOptionMissing:
+		descr = "Required option missing: '" + errorOption() + "'";
+		break;
+	case ParserResults::ParserHelpRequested: // help
+		descr = usageDescription();
+		break;
 
-    default:
-        cerr << "ArgvParser::documentParserErrors(): Unknown error code" << endl;
-    }
+	default:
+		cerr << "ArgvParser::ParserResults::documentParserErrors(): Unknown error code" << endl;
+	}
 
-    return(descr);
+	return (descr);
 }
 
-bool ArgvParser::defineOption( const string & _name,
-                               const string& _descr,
-                               OptionAttributes _attrs)
+bool ArgvParser::defineOption(const string& _name,
+                              const string& _descr,
+                              OptionAttributes _attrs)
 {
-    // do nothing if there already is an option of this name
-    if (isDefinedOption(_name))
-    {
-        cerr << "ArgvParser::defineOption(): The option label: \"" << _name << "\" equals an already defined option." << endl;
-        return(false);
-    }
+	// do nothing if there already is an option of this name
+	if (isDefinedOption(_name))
+	{
+		cerr << "ArgvParser::defineOption(): The option label: \"" << _name << "\" equals an already defined option." <<
+			endl;
+		return (false);
+	}
 
-    // no digits as short options allowed
-    if (_name.length() == 1 && isDigit(_name[0]))
-    {
-        cerr << "ArgvParser::defineOption(): Digits as short option labels are not allowd." << endl;
-        return(false);
-    }
+	// no digits as short options allowed
+	if (_name.length() == 1 && isDigit(_name[0]))
+	{
+		cerr << "ArgvParser::defineOption(): Digits as short option labels are not allowd." << endl;
+		return (false);
+	}
 
-    option2key[_name] = max_key;     // give the option a unique key
+	option2key[_name] = max_key; // give the option a unique key
 
-    // store the option attributes
-    option2attribute[max_key] = _attrs;
+	// store the option attributes
+	option2attribute[max_key] = _attrs;
 
-    // store the option description if there is one
-    if (_descr.length())
-        option2descr[max_key] = _descr;
+	// store the option description if there is one
+	if (_descr.length())
+		option2descr[max_key] = _descr;
 
-    // inc the key counter
-    ++max_key;
+	// inc the key counter
+	++max_key;
 
-    return(true);
+	return (true);
 }
 
-bool ArgvParser::defineCommandOption(const string & _command,
-	const string& _attrs)
+bool ArgvParser::defineCommandOption(const string& _command,
+                                     const string& _attrs)
 {
 	unsigned int key = -1;
 	key = option2key.find(_command)->second; // get the key for the extracted option name
-	if (option2attribute.find(key)->second != MasterOption) {
+	if (option2attribute.find(key)->second != OptionAttributes::MasterOption)
+	{
 		return false;
 	}
-	
+
 	CommandSet::iterator ii = command_set.find(key);
-	if (ii == command_set.end()) {
+	if (ii == command_set.end())
+	{
 		ArgumentContainer ac;
 		ac.push_back(_attrs);
 		command_set[key] = ac;
@@ -833,49 +878,52 @@ bool ArgvParser::defineCommandOption(const string & _command,
 		}
 		*/
 	}
-	else {
+	else
+	{
 		ii->second.push_back(_attrs);
-		
 	}
-	
+
 	return false;
 }
 
-bool ArgvParser::defineOptionAlternative( const string & _original,
-        const string & _alternative )
+bool ArgvParser::defineOptionAlternative(const string& _original,
+                                         const string& _alternative)
 {
-    // do nothing if there already is no option of this name
-    if (!isDefinedOption(_original))
-    {
-        cerr << "ArgvParser::defineOptionAlternative(): Original option label: \"" << _original << "\" is not a defined option." << endl;
-        return(false);
-    }
+	// do nothing if there already is no option of this name
+	if (!isDefinedOption(_original))
+	{
+		cerr << "ArgvParser::defineOptionAlternative(): Original option label: \"" << _original <<
+			"\" is not a defined option." << endl;
+		return (false);
+	}
 
-    // AND no digits as short options allowed
-    if (_alternative.length() == 1 && isDigit(_alternative[0]))
-    {
-        cerr << "ArgvParser::defineOptionAlternative(): Digits as short option labels are not allowd." << endl;
-        return(false);
-    }
+	// AND no digits as short options allowed
+	if (_alternative.length() == 1 && isDigit(_alternative[0]))
+	{
+		cerr << "ArgvParser::defineOptionAlternative(): Digits as short option labels are not allowd." << endl;
+		return (false);
+	}
 
-    // AND do nothing if there already is an option with the alternativ name
-    if (isDefinedOption(_alternative))
-    {
-        cerr << "ArgvParser::defineOptionAlternative(): The alternative option label equals an already defined option." << endl;
-        return(false);
-    }
+	// AND do nothing if there already is an option with the alternativ name
+	if (isDefinedOption(_alternative))
+	{
+		cerr << "ArgvParser::defineOptionAlternative(): The alternative option label equals an already defined option."
+			<< endl;
+		return (false);
+	}
 
-    option2key[_alternative] = optionKey(_original);
+	option2key[_alternative] = optionKey(_original);
 
-    return(true);
+	return (true);
 }
 
-bool ArgvParser::defineCommandSyntax(const std::string& _command, const std::string& syntax) {
+bool ArgvParser::defineCommandSyntax(const std::string& _command, const std::string& syntax)
+{
 	// do nothing if there already is no option of this name
 	if (!isDefinedOption(_command))
 	{
 		cerr << "ArgvParser::defineCommandSyntax(): Command not found." << endl;
-		return(false);
+		return (false);
 	}
 	int key = option2key.find(_command)->second;
 	command2syntax[key] = syntax;
@@ -883,38 +931,36 @@ bool ArgvParser::defineCommandSyntax(const std::string& _command, const std::str
 }
 
 
-
-
-
 bool ArgvParser::setHelpOption(const string& _shortname,
                                const string& _longname,
                                const string& _descr)
 {
-    // do nothing if any name is already in use
-    if (isDefinedOption(_shortname) || isDefinedOption(_longname))
-    {
-        cerr << "ArgvParser::setHelpOption(): Short or long help option label equals an already defined option." << endl;
-        return(false);
-    }
+	// do nothing if any name is already in use
+	if (isDefinedOption(_shortname) || isDefinedOption(_longname))
+	{
+		cerr << "ArgvParser::setHelpOption(): Short or long help option label equals an already defined option." <<
+			endl;
+		return (false);
+	}
 
-    // define the help option's short name and the alternative
-    // longname
-    defineOption(_shortname, _descr, NoOptionAttribute);
-    defineOptionAlternative(_shortname, _longname);
+	// define the help option's short name and the alternative
+	// longname
+	defineOption(_shortname, _descr, OptionAttributes::NoOptionAttribute);
+	defineOptionAlternative(_shortname, _longname);
 
-    help_option = max_key-1; // store the key in a special member
+	help_option = max_key - 1; // store the key in a special member
 
-    return(true);
+	return (true);
 }
 
 void ArgvParser::addErrorCode(int _code, const string& _descr)
 {
-    errorcode2descr[_code] = _descr;
+	errorcode2descr[_code] = _descr;
 }
 
 void ArgvParser::setIntroductoryDescription(const string& _descr)
 {
-    intro_description = _descr;
+	intro_description = _descr;
 }
 
 void ArgvParser::setHeader(const std::string& _option)
@@ -922,29 +968,31 @@ void ArgvParser::setHeader(const std::string& _option)
 	command_header = _option;
 }
 
-list<string> ArgvParser::getAllOptionAlternatives( unsigned int _key ) const
+list<string> ArgvParser::getAllOptionAlternatives(unsigned int _key) const
 {
-    // keys go here
-    list<string> keys;
-    // for all container elements
-    for( map<string, unsigned int>::const_iterator it = option2key.begin();
-            it != option2key.end();
-            ++it )
-    {
-        if (it->second == _key)
-            keys.push_back(it->first);
-    }
-    return(keys);
+	// keys go here
+	list<string> keys;
+	// for all container elements
+	for (map<string, unsigned int>::const_iterator it = option2key.begin();
+	     it != option2key.end();
+	     ++it)
+	{
+		if (it->second == _key)
+			keys.push_back(it->first);
+	}
+	return (keys);
 }
 
-std::string CommandLineProcessing::ArgvParser::getSyntax(const std::string& _command) const
+std::string ArgvParser::getSyntax(const std::string& _command) const
 {
-	if (option2key.find(_command) == option2key.end()) {
+	if (option2key.find(_command) == option2key.end())
+	{
 		// application error
 		return std::string();
 	}
 	int key = option2key.find(_command)->second;
-	if (command2syntax.find(key) == command2syntax.end()) {
+	if (command2syntax.find(key) == command2syntax.end())
+	{
 		std::string ret;
 		return ret;
 	}
@@ -953,44 +1001,46 @@ std::string CommandLineProcessing::ArgvParser::getSyntax(const std::string& _com
 
 bool CommandLineProcessing::isDigit(const char& _char)
 {
-    if (_char == '0' || _char == '1' || _char == '2' || _char == '3'
-            || _char == '4' || _char == '5' || _char == '6' || _char == '7'
-            || _char == '8' || _char == '9')
-        return(true);
-    else
-        return(false);
+	if (_char == '0' || _char == '1' || _char == '2' || _char == '3'
+		|| _char == '4' || _char == '5' || _char == '6' || _char == '7'
+		|| _char == '8' || _char == '9')
+		return (true);
+	return (false);
 }
 
 bool CommandLineProcessing::isValidOptionString(const string& _string)
 {
-    // minimal short option length is 2
-    if (_string.length() < 2)
-        return(false);
+	// minimal short option length is 2
+	if (_string.length() < 2)
+		return (false);
 
-    // is it an option (check for '-' as first character)
-    if (_string.compare(0, 1, "-"))
-        return(false);
+	// is it an option (check for '-' as first character)
+	if (_string.compare(0, 1, "-"))
+		return (false);
 
-    // not an option if just '--'
-    if (_string.length() == 2 && _string == "--")
-        return(false);
+	// not an option if just '--'
+	if (_string.length() == 2 && _string == "--")
+		return (false);
 
-    // it might still be a negative number
-    // (but not if there is no digit afterwards)
-    if (isDigit(_string[1]))
-        return(false);
+	// it might still be a negative number
+	// (but not if there is no digit afterwards)
+	if (isDigit(_string[1]))
+		return (false);
 
-    // let's consider this an option
-    return(true);
+	// let's consider this an option
+	return (true);
 }
 
-bool CommandLineProcessing::isValidCommandString(const string& _string) {
+bool CommandLineProcessing::isValidCommandString(const string& _string)
+{
 	//unsigned int key = 0;
 	// is it an option (check for '--')
-	if (!_string.compare(0, 2, "--")) {
+	if (!_string.compare(0, 2, "--"))
+	{
 		return false;
 	}
-	else if (!_string.compare(0, 1, "-")) {
+	if (!_string.compare(0, 1, "-"))
+	{
 		return false;
 	}
 	return true;
@@ -998,201 +1048,200 @@ bool CommandLineProcessing::isValidCommandString(const string& _string) {
 
 bool CommandLineProcessing::isValidLongOptionString(const string& _string)
 {
-    if (_string.length() < 4) // must be at least '--??'
-        return(false);
+	if (_string.length() < 4) // must be at least '--??'
+		return (false);
 
-    // is it an option (check for '--')
-    if (_string.compare(0, 2, "--"))
-        return(false);
-    else
-        return(true);
+	// is it an option (check for '--')
+	if (_string.compare(0, 2, "--"))
+		return (false);
+	return (true);
 }
 
 bool CommandLineProcessing::splitOptionAndValue(const string& _string,
-        string& _option, string& _value)
+                                                string& _option, string& _value)
 {
-    // string token container
-    std::vector<string> tokens;
+	// string token container
+	std::vector<string> tokens;
 
-    // split string by '=' delimiter
-    splitString(tokens, _string, "=");
+	// split string by '=' delimiter
+	splitString(tokens, _string, "=");
 
-    // check for option value assignment 'option=value'
-    if (tokens.size() < 2)
-    {
-        _option = _string; // the option is the whole string
-        return(false);
-    }
+	// check for option value assignment 'option=value'
+	if (tokens.size() < 2)
+	{
+		_option = _string; // the option is the whole string
+		return (false);
+	}
 
-    // separate option and value
-    _option = tokens[0];
+	// separate option and value
+	_option = tokens[0];
 
-    // concat all remaining tokens to the value string
-    for (unsigned int i=1; i<tokens.size(); ++i)
-    {
-        _value.append(tokens[i]);
-    }
+	// concat all remaining tokens to the value string
+	for (unsigned int i = 1; i < tokens.size(); ++i)
+	{
+		_value.append(tokens[i]);
+	}
 
-    return(true);
+	return (true);
 }
 
-string CommandLineProcessing::trimmedString( const std::string & _str )
+string CommandLineProcessing::trimmedString(const std::string& _str)
 {
-    // no string no work
-    if(_str.length() == 0)
-        return _str;
+	// no string no work
+	if (_str.length() == 0)
+		return _str;
 
-    string::size_type start_pos = _str.find_first_not_of(" \a\b\f\n\r\t\v");
-    string::size_type end_pos = _str.find_last_not_of(" \a\b\f\n\r\t\v");
+	string::size_type start_pos = _str.find_first_not_of(" \a\b\f\n\r\t\v");
+	string::size_type end_pos = _str.find_last_not_of(" \a\b\f\n\r\t\v");
 
-    // check whether there was any non-whitespace
-    if (start_pos == string::npos)
-        return("");
+	// check whether there was any non-whitespace
+	if (start_pos == string::npos)
+		return ("");
 
-    return string(_str, start_pos, end_pos - start_pos + 1);
+	return string(_str, start_pos, end_pos - start_pos + 1);
 }
 
-bool CommandLineProcessing::expandRangeStringToUInt( const std::string & _string,
-        std::vector< unsigned int > & _expanded )
+bool CommandLineProcessing::expandRangeStringToUInt(const std::string& _string,
+                                                    std::vector<unsigned int>& _expanded)
 {
-    list<string> tokens;
-    // split string by delimiter
-    splitString(tokens, _string, ",");
+	list<string> tokens;
+	// split string by delimiter
+	splitString(tokens, _string, ",");
 
-    // loop over all entries
-    for(list<string>::const_iterator it = tokens.begin(); it != tokens.end(); it++)
-    {
-        const string& entry = *it; // convenience reference
+	// loop over all entries
+	for (list<string>::const_iterator it = tokens.begin(); it != tokens.end(); ++it)
+	{
+		const string& entry = *it; // convenience reference
 
 #ifdef ARGVPARSER_FINE
 
         cout << "TOKEN: " << entry << endl;
 #endif
 
-        // if range was given
-        if (entry.find("-") != string::npos)
-        {
-            // split into upper and lower border
-            list<string> range_borders;
-            splitString(range_borders, entry, "-");
+		// if range was given
+		if (entry.find("-") != string::npos)
+		{
+			// split into upper and lower border
+			list<string> range_borders;
+			splitString(range_borders, entry, "-");
 
-            // fail if insane range spec
-            if (range_borders.size() != 2)
-                return(false);
+			// fail if insane range spec
+			if (range_borders.size() != 2)
+				return (false);
 
-            int first = atoi(range_borders.begin()->c_str());
-            int second = atoi((++range_borders.begin())->c_str());
+			int first = atoi(range_borders.begin()->c_str());
+			int second = atoi((++range_borders.begin())->c_str());
 
-            // write id in increasing order
-            if (first <= second)
+			// write id in increasing order
+			if (first <= second)
 
-            {
-                for (int j=first; j<=second; ++j)
-                {
-                    _expanded.push_back(j);
-                }
-            }
-            else // write id in decreasing order
-            {
-                for (int k=first; k>=second; k--)
-                {
-                    _expanded.push_back(k);
-                }
-            }
-        }
-        else // single number was given
-            _expanded.push_back(atoi(entry.c_str())); // store id
-    }
+			{
+				for (int j = first; j <= second; ++j)
+				{
+					_expanded.push_back(j);
+				}
+			}
+			else // write id in decreasing order
+			{
+				for (int k = first; k >= second; k--)
+				{
+					_expanded.push_back(k);
+				}
+			}
+		}
+		else // single number was given
+			_expanded.push_back(atoi(entry.c_str())); // store id
+	}
 
-    return(true);
+	return (true);
 }
 
 std::string CommandLineProcessing::formatString(const std::string& _string,
-        unsigned int _width,
-        unsigned int _indent,
-		unsigned int _padend,
-		unsigned int _padplusone)
+                                                unsigned int _width,
+                                                unsigned int _indent,
+                                                unsigned int _padend,
+                                                unsigned int _padplusone)
 {
-    // if insane parameters do nothing
-    if (_indent >= _width)
-        return(_string);
+	// if insane parameters do nothing
+	if (_indent >= _width)
+		return (_string);
 
-    // list of lines of the formated string
-    list<string> lines;
+	// list of lines of the formated string
+	list<string> lines;
 
-    // current position in the string
+	// current position in the string
 	size_t pos = 0;
 
-    // till the end of the string
-    while (pos < _string.length())
-    {
-        // get the next line of the string
-        string line = _string.substr(pos, _width - _indent );
+	// till the end of the string
+	while (pos < _string.length())
+	{
+		// get the next line of the string
+		string line = _string.substr(pos, _width - _indent);
 
 
-        // check for newlines in the line and break line at first occurence (if any)
-        string::size_type first_newline = line.find_first_of("\n");
-        if (first_newline != string::npos)
-        {
-            line = line.substr(0, first_newline);
-        }
+		// check for newlines in the line and break line at first occurence (if any)
+		string::size_type first_newline = line.find_first_of("\n");
+		if (first_newline != string::npos)
+		{
+			line = line.substr(0, first_newline);
+		}
 
-        // we need to check for possible breaks within words only if the extracted
-        // line spans the whole allowed width
-        bool check_truncation = true;
-        if (line.length() < _width - _indent)
-            check_truncation = false;
+		// we need to check for possible breaks within words only if the extracted
+		// line spans the whole allowed width
+		bool check_truncation = true;
+		if (line.length() < _width - _indent)
+			check_truncation = false;
 
-        // remove unecessary whitespace at front and back
-        line = trimmedString(line);
-
-
-
-        // only perform truncation if there was enough data for a full line
-        if (!check_truncation)
-            pos += line.length() + 1;
-        else
-        {
-            // look for the last whitespace character
-            string::size_type last_white_space = line.find_last_of(" \a\b\f\n\r\t\v");
-
-            if (last_white_space != string::npos) // whitespace found!
-            {
-                // truncated the line at the last whitespace
-                line = string(line, 0, last_white_space);
-                pos += last_white_space + 1;
-            }
-            else // no whitespace found
-                // rude break! we can leave the line in its current state
-                pos += _width - _indent;
-        }
-
-        if (!line.empty())
-        {
+		// remove unecessary whitespace at front and back
+		line = trimmedString(line);
 
 
-            if (_indent)
-                line.insert(0, _indent, ' ');
+		// only perform truncation if there was enough data for a full line
+		if (!check_truncation)
+			pos += line.length() + 1;
+		else
+		{
+			// look for the last whitespace character
+			string::size_type last_white_space = line.find_last_of(" \a\b\f\n\r\t\v");
+
+			if (last_white_space != string::npos) // whitespace found!
+			{
+				// truncated the line at the last whitespace
+				line = string(line, 0, last_white_space);
+				pos += last_white_space + 1;
+			}
+			else // no whitespace found
+				// rude break! we can leave the line in its current state
+				pos += _width - _indent;
+		}
+
+		if (!line.empty())
+		{
+			if (_indent)
+				line.insert(0, _indent, ' ');
 
 
+			lines.push_back(line);
+		}
+	}
 
-            lines.push_back(line);
-        }
-    }
-
-    // concat the formated string
-    string formated;
-    bool first = true;
-    // for all lines
+	// concat the formated string
+	string formated;
+	bool first = true;
+	// for all lines
 	auto it0 = lines.begin();
-	for (; it0 != lines.end(); ++it0) {
+	for (; it0 != lines.end(); ++it0)
+	{
 		// add _indentplusone
-		if (!first) {
-			if (_padplusone) {
+		if (!first)
+		{
+			if (_padplusone)
+			{
 				it0->insert(0, _padplusone, ' ');
 			}
 		}
-		else {
+		else
+		{
 			first = false;
 		}
 	}
@@ -1201,65 +1250,69 @@ std::string CommandLineProcessing::formatString(const std::string& _string,
 	for (; it != lines.end(); ++it)
 	{
 		// prefix with newline if not first
-		if (!first) {
+		if (!first)
+		{
 			formated += "\n";
 		}
-		else {
+		else
+		{
 			first = false;
 		}
-        formated += *it;
-    }
-	
-	if (_padend != 0) {
-		if (it->length() < _padend) {
+		formated += *it;
+	}
+
+	if (_padend != 0)
+	{
+		if (it->length() < _padend)
+		{
 			size_t psize = _padend - it->length();
-			for (size_t i = 0;i < psize; i++) {
+			for (size_t i = 0; i < psize; i++)
+			{
 				formated += ' ';
 			}
 		}
-
 	}
 
-    return(formated);
+	return (formated);
 }
 
 std::string CommandLineProcessing::formatLine(const std::string& _string,
-	unsigned int _width,
-	unsigned int _indent,
-	unsigned int _padend)
+                                              unsigned int _width,
+                                              unsigned int _indent,
+                                              unsigned int _padend)
 {
 	// if insane parameters do nothing
 	if (_indent >= _width)
-		return(_string);
+		return (_string);
 
-	
 
 	// current position in the string
 	//unsigned int pos = 0;
 
 	// till the end of the string
-	
+
 	std::string line = _string;
 
 	// remove unecessary whitespace at front and back
 	line = trimmedString(line);
-	
+
 	if (!line.empty())
 	{
 		if (_indent)
 			line.insert(0, _indent, ' ');
 	}
-	
-	if (_padend != 0) {
-		if (line.length() < _padend) {
+
+	if (_padend != 0)
+	{
+		if (line.length() < _padend)
+		{
 			size_t psize = _padend - line.length();
-			for (size_t i = 0; i < psize; i++) {
+			for (size_t i = 0; i < psize; i++)
+			{
 				line += ' ';
 			}
 		}
-
 	}
 
 	return line;
 }
-

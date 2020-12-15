@@ -96,7 +96,7 @@ public:
 		MasterOption = 0x03
     };
     /** Return values of the parser. */
-    enum
+    enum class ParserError
     {
         NoParserError = 00,
         ParserUnknownOption = 1,

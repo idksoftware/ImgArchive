@@ -91,8 +91,7 @@ string ArgvParser::optionValue(const string& _option) const
     return(option2value.find(key)->second);
 }
 
-ArgvParser::ParserResults
-ArgvParser::parse(int _argc, char ** _argv)
+ArgvParser::ParserError ArgvParser::parse(int _argc, char** _argv) -> ArgvParser::ParserResults
 {
     bool finished_options = false; // flag whether an argument was found (options are passed)
 	unsigned int key = -1;
@@ -101,7 +100,7 @@ ArgvParser::parse(int _argc, char ** _argv)
 	
 	if (_argc < 2) {
 		// No command found.
-		return(ParserHelpRequested);
+		return(ParserError::ParserHelpRequested);
 	}
 	// get the command option
 	string _command = _argv[1];

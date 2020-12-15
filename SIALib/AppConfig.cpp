@@ -87,8 +87,8 @@ namespace simplearchive {
 	bool AppConfig::m_eventsOn = false; // UDP events
 	bool AppConfig::m_serverOn = false;
 
-	int AppConfig::m_tcpPortNum = 11000;
-	int AppConfig::m_udpPortNum = 11001;
+	int AppConfig::m_tcpPortNum = 1626;
+	int AppConfig::m_udpPortNum = 560;
 	std::string AppConfig::m_udpAddress = "127.0.0.1";
 
 	std::string AppConfig::m_hookPath;
@@ -521,13 +521,24 @@ namespace simplearchive {
 		derivativeBackupTwoPathObj.setPath(AppConfig::m_derivativeBackup2.c_str());
 
 	// Network
-		std::string eventsOn = "false";
+		std::string eventsOn = AppConfig::m_eventsOn ? "true" : "false";
 		setNetwork(EVENTS_ENABLED_LABEL, eventsOn, eventsOn);
 		AppConfig::m_eventsOn = (STRICMP(eventsOn.c_str(), "true") == 0);
+		
+		std::string eventsPort = std::to_string(AppConfig::m_udpPortNum);
+		setNetwork(EVENTS_PORT_LABEL, eventsPort, eventsPort);
+		AppConfig::m_udpPortNum = std::stoi(eventsPort);
 
-		std::string m_udpPortNum = "1234";
-		setNetwork(COMMANDS_PORT_LABEL, m_udpPortNum, m_udpPortNum);
+		std::string  udpAddress = AppConfig::m_udpAddress;
+		setNetwork(EVENTS_ADDRESS_LABEL, AppConfig::m_udpAddress, udpAddress);
 
+		std::string commandsOn = AppConfig::m_serverOn ? "true" : "false";
+		setNetwork(EVENTS_ENABLED_LABEL, commandsOn, commandsOn);
+		AppConfig::m_eventsOn = (STRICMP(commandsOn.c_str(), "true") == 0);
+		
+		std::string tcpPortNum = std::to_string(AppConfig::m_tcpPortNum);
+		setNetwork(COMMANDS_PORT_LABEL, tcpPortNum, tcpPortNum);
+		AppConfig::m_tcpPortNum = std::stoi(tcpPortNum);
 
 
 		

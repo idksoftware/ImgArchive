@@ -75,20 +75,14 @@ namespace CommandLineProcessing
 class ArgvParser
 {
 public:
-    typedef int OptionAttributes;
-    typedef int ParserResults;
-    typedef std::map<std::string, unsigned int> String2KeyMap;
-    typedef std::map<unsigned int, OptionAttributes> Key2AttributeMap;
-    typedef std::map<unsigned int, std::string> Key2StringMap;
-    typedef std::vector<std::string> ArgumentContainer;
-	typedef std::map<unsigned int, ArgumentContainer> CommandSet;
-	typedef std::vector<std::string> DefaultArgumentsContainer;
+    
+   
 	
     ArgvParser();
     ~ArgvParser();
 
     /** Attributes for options. */
-    enum
+    enum class OptionAttributes
     {
         NoOptionAttribute = 0x00,
         OptionRequiresValue = 0x01,
@@ -96,7 +90,7 @@ public:
 		MasterOption = 0x03
     };
     /** Return values of the parser. */
-	enum
+	enum class ParserResults
     {
         NoParserError = 00,
         ParserUnknownOption = 1,
@@ -110,6 +104,15 @@ public:
 		ParserCommandNotFound = 256
 
     };
+
+    //typedef int OptionAttributes;
+    //typedef int ParserResults;
+    typedef std::map<std::string, unsigned int> String2KeyMap;
+    typedef std::map<unsigned int, OptionAttributes> Key2AttributeMap;
+    typedef std::map<unsigned int, std::string> Key2StringMap;
+    typedef std::vector<std::string> ArgumentContainer;
+    typedef std::map<unsigned int, ArgumentContainer> CommandSet;
+    typedef std::vector<std::string> DefaultArgumentsContainer;
 	
     /** Defines an option with optional attributes (required, ...) and an
     * additional (also optional) description. The description becomes part of the
@@ -121,7 +124,7 @@ public:
     */
     bool defineOption(const std::string& _name,
                       const std::string& _description = std::string(),
-                      OptionAttributes _attributes = NoOptionAttribute);
+                      OptionAttributes _attributes = ArgvParser::OptionAttributes::NoOptionAttribute);
     /** Define an alternative name for an option that was previously defined by
     * defineOption().
     * \return Returns FALSE if there already is an option with the alternative
