@@ -16,9 +16,9 @@ public:
 	IAParseOptions() = default;
 	virtual ~IAParseOptions() = default;
 	bool parseArchiveOptions(const char* optionString);
-	bool isMaster() { return m_isMaster; };
+	bool isMaster() const { return m_isMaster; }
 	bool parseCurrentOptions(const char* optionString);
-	bool isCurrent() { return m_isCurrent; };
+	bool isCurrent() const { return m_isCurrent; }
 };
 
 

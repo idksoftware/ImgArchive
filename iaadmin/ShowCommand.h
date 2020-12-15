@@ -2,9 +2,10 @@
 #include "ImageExtentions.h"
 #include "TextOut.h"
 
-namespace simplearchive {
-
-	enum class EnvSelectionType {
+namespace simplearchive
+{
+	enum class EnvSelectionType
+	{
 		Folders,
 		Enabled,
 		All
@@ -13,14 +14,16 @@ namespace simplearchive {
 	class ShowCommand
 	{
 	public:
-		enum class Error {
+		enum class Error
+		{
 			Ok,
 			ParseError,
 			CommandError,
 			Unknown
 		};
+
 	private:
-		
+
 		bool showGeneral(const char* filename, const char* textOutType);
 		bool showLogging(const char* filename, const char* textOutType);
 		bool showNetwork(const char* filename, const char* textOutType);
@@ -57,8 +60,7 @@ namespace simplearchive {
 		void setTextOutputType(const char* s);
 		bool parseOptions(const char* optionString);
 		bool process(const char* configOption, const char* configValue);
-		
+
 		Error getError() { return m_error; };
 	};
-
 } // simplearchive
