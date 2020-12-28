@@ -95,7 +95,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "iacat", "iacat\iacat.vcxpro
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "admin", "admin\admin.vcxproj", "{6C4FEA9F-38C4-4387-B19E-2715288582A4}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "iaarc", "iaarc\SimpleArchive.vcxproj", "{E6B44F35-CDAB-4487-9CD4-3DC02BBB488E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "iaarc", "iaarc\iaarc.vcxproj", "{E6B44F35-CDAB-4487-9CD4-3DC02BBB488E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
