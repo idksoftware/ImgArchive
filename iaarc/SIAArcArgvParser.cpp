@@ -88,7 +88,7 @@ void  SIAArcArgvParser::defineOptions() {
 	defineOption("log", "Show logs", ArgvParser::OptionAttributes::MasterOption);
 	defineCommandSyntax("log", "iaarc log [--image=<image-address]");
 
-	//defineOption("mode", "Sets the mode in which imgarchive will be operating", ArgvParser::OptionAttributes::MasterOption);
+	defineOption("mode", "Sets the mode in which imgarchive will be operating", ArgvParser::OptionAttributes::MasterOption);
 
 	defineOption("about", "prints this version information", ArgvParser::OptionAttributes::MasterOption);
 	defineCommandSyntax("about", "about [--out]\n\t[--file]\n");
@@ -264,6 +264,8 @@ void  SIAArcArgvParser::defineOptions() {
 	defineCommandOption("log", "scope");
 	defineCommandOption("log", "format-type");
 	defineCommandOption("log", "file");
+
+	//defineCommandOption("mode", "");
 
 }
 
