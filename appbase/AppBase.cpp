@@ -1,7 +1,7 @@
 #include "stdio.h"
 #include <iostream>
 #include "AppBase.h"
-
+#include "ReturnCode.h"
 
 namespace CommandLineProcessing {
 	
@@ -12,13 +12,18 @@ namespace CommandLineProcessing {
 	}
 
 	bool AppBase::initalise(int argc, char **argv) {
-		if (initaliseArgs(argc, argv) == false) {
-			return false;
-		}
 		if (initaliseConfig() == false) {
 			return false;
 		}
-		
+		if (initaliseArgs(argc, argv) == false) {
+			std::string  retStr = ReturnCodeObject::getReturnString();
+			
+			if (!retStr.empty()) {
+				m_returnString = retStr;
+				m_returnCode = ReturnCodeObject::getReturnCode();
+			}
+			return false;
+		}
 		return true;
 	};
 
@@ -33,7 +38,7 @@ namespace CommandLineProcessing {
 		return ret;
 	}
 
-	int AppBase::RunApp(int argc, char **argv) {
+	ExitCode AppBase::RunApp(int argc, char **argv) {
 		bool error = false;
 		if (initalise(argc, argv) == false) {
 
@@ -47,15 +52,15 @@ namespace CommandLineProcessing {
 		if (error) {
 			int code = CommandLineProcessing::AppBase::getError();
 			std::cout << CommandLineProcessing::AppBase::getFullErrorString();
-			return code;
+			
 		}
 		else {
-			return 0;
+			std::cout << "0000:Success";
 		}
+		return m_exitCode;
 	}
-
-
-	int AppBase::m_error;
-	std::string AppBase::m_errorstring;
-
+	ReturnCode AppBase::m_returnCode;
+	std::string AppBase::m_appName;
+	std::string AppBase::m_returnString;
+	ExitCode AppBase::m_exitCode;
 }

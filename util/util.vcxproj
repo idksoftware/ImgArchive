@@ -157,6 +157,7 @@
     <ClCompile Include="HomePaths.cpp" />
     <ClCompile Include="ImageEncode.cpp" />
     <ClCompile Include="ImageEncodeBase32.cpp" />
+    <ClCompile Include="Quiet.cpp" />
     <ClCompile Include="SequenceNumber.cpp" />
     <ClCompile Include="tinyxml2.cpp" />
     <ClCompile Include="Version.cpp" />
@@ -199,6 +200,7 @@
     <ClInclude Include="HomePaths.h" />
     <ClInclude Include="ImageEncode.h" />
     <ClInclude Include="ImageEncodeBase32.h" />
+    <ClInclude Include="Quiet.h" />
     <ClInclude Include="SequenceNumber.h" />
     <ClInclude Include="tinyxml2.h" />
     <ClInclude Include="Version.h" />

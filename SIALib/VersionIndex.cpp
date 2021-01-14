@@ -20,7 +20,7 @@ VersionIndex::~VersionIndex()
 {
 }
 
-bool VersionIndex::createMasterVersion(const BasicMetadata &bm, const char *path, int masterSeqNumber, int primarySeqNumber) {
+bool VersionIndex::createMasterVersion(const BasicMetadata &bm, const char *path, size_t masterSeqNumber, size_t primarySeqNumber) {
 	bm.columnAt(DB_FILEPATH).toString() = path;
 	int crc = bm.columnAt(DB_CRC).getInt();
 	std::string filename = bm.columnAt(DB_FILENAME).toString();
@@ -56,8 +56,8 @@ bool VersionIndex::createMasterVersion(const BasicMetadata &bm, const char *path
 		row = versionTable->makeRow();
 		row->join(bm);
 	}
-	row->columnAt(DB_DATABASEID) = masterSeqNumber;
-	row->columnAt(DB_SEQUENCEID) = primarySeqNumber;
+	row->columnAt(DB_DATABASEID) = (int)masterSeqNumber;
+	row->columnAt(DB_SEQUENCEID) = (int)primarySeqNumber;
 	std::string shortPath = path;
 	shortPath += '/';
 	shortPath += filename;

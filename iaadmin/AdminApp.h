@@ -82,7 +82,7 @@ private:
 	
 public:
 	/// Constructor
-	AdminApp();
+	AdminApp(const char* appName);
 	/// Destructor
 	virtual ~AdminApp();
 	

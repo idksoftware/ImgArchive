@@ -23,8 +23,13 @@ namespace simplearchive {
 		ImageExtentions& imageExtentions = ImageExtentions::get();
 		bool ret = imageExtentions.insert(extentionItem);
 		if (ret) {
-			return imageExtentions.write();
+			ret = imageExtentions.write();
+			if (!ret) {
+				m_error = Error::WriteFailed;
+				return false;
+			}
 		}
+		m_error = Error::OperationFailed;
 		return ret;
 	}
 
@@ -33,8 +38,13 @@ namespace simplearchive {
 		ImageExtentions& imageExtentions = ImageExtentions::get();
 		bool ret = imageExtentions.update(extentionItem);
 		if (ret) {
-			return imageExtentions.write();
+			ret = imageExtentions.write();
+			if (!ret) {
+				m_error = Error::WriteFailed;
+				return false;
+			}
 		}
+		m_error = Error::OperationFailed;
 		return ret;
 	}
 
@@ -43,8 +53,13 @@ namespace simplearchive {
 		ImageExtentions& imageExtentions = ImageExtentions::get();
 		bool ret = imageExtentions.remove(ext);
 		if (ret) {
-			return imageExtentions.write();
+			ret = imageExtentions.write();
+			if (!ret) {
+				m_error = Error::WriteFailed;
+				return false;
+			}
 		}
+		m_error = Error::OperationFailed;
 		return ret;
 	}
 

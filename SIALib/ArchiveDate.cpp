@@ -142,19 +142,19 @@ namespace simplearchive {
 		BasicMetadata *picId = nullptr;
 		BasicMetadata *rawId = nullptr;
 		if (ic.hasPictureFile()) {
-			//logger.log(LOG_OK, CLogger::Level::FINE, "Image \"%s\" has picture file: ", ic.getName());
+			logger.log(LOG_OK, CLogger::Level::FINE, "Image \"%s\" has picture file: ", ic.getName());
 			picId = (BasicMetadata *)&(ic.getPictureId());
 			const ExifDateTime& createTime = picId->getCreateTime();
 			m_fileDate = std::make_shared<ExifDate>(createTime);
-			//logger.log(LOG_OK, CLogger::Level::TRACE, "Image \"%s\" will be archived under the date: %s", ic.getName(), createTime.toString().c_str());
+			logger.log(LOG_OK, CLogger::Level::TRACE, "Image \"%s\" will be archived under the date: %s", ic.getName(), createTime.toString().c_str());
 			m_usingDate = USING_FILE_PIC_DATE;
 		}
 		else if (ic.hasRawFile()) {
-			//logger.log(LOG_OK, CLogger::Level::FINE, "Image \"%s\" has RAW file: ", ic.getName());
+			logger.log(LOG_OK, CLogger::Level::FINE, "Image \"%s\" has RAW file: ", ic.getName());
 			rawId = (BasicMetadata *)&(ic.getRawId());
 			const ExifDateTime& createTime = rawId->getCreateTime();
 			m_fileDate = std::make_shared<ExifDate>(createTime);
-			//logger.log(LOG_OK, CLogger::Level::TRACE, "Image \"%s\" will be archived under the date: %s", ic.getName(), createTime.toString().c_str());
+			logger.log(LOG_OK, CLogger::Level::TRACE, "Image \"%s\" will be archived under the date: %s", ic.getName(), createTime.toString().c_str());
 			m_usingDate = USING_FILE_RAW_DATE;
 		}
 	
@@ -164,7 +164,7 @@ namespace simplearchive {
 					const ExifDateTime captureDate = rawMetadata->getCaptureDate();
 					m_exifDate.reset(new ExifDate(captureDate));
 					if (m_exifDate->isOk() == true) {
-						//logger.log(LOG_OK, CLogger::Level::SUMMARY, "Image \"%s\" will be archived under the date: %s", ic.getName(), m_exifDate->toString().c_str());
+						logger.log(LOG_OK, CLogger::Level::SUMMARY, "Image \"%s\" will be archived under the date: %s", ic.getName(), m_exifDate->toString().c_str());
 						m_usingDate = USING_CAPTURE_RAW_DATE;
 						return true;	// Found date
 					}
@@ -173,7 +173,7 @@ namespace simplearchive {
 				m_usingDate = UNKNOWN;
 			}
 			catch (MTTypeException e) {
-				//logger.log(LOG_OK, CLogger::Level::TRACE, "No picture digitized date?", ic.getName());
+				logger.log(LOG_OK, CLogger::Level::TRACE, "No picture digitized date?", ic.getName());
 				m_usingDate = UNKNOWN;
 			}
 			
@@ -183,14 +183,14 @@ namespace simplearchive {
 				const ExifDateTime& captureDate = rawId->getDateTimeDigitized();
 				m_exifDate = std::make_shared<ExifDate>(captureDate);
 				if (m_exifDate->isOk() == true) {
-					//logger.log(LOG_OK, CLogger::Level::SUMMARY, "Image \"%s\" will be archived under the date: %s", ic.getName(), m_exifDate->toString().c_str());
+					logger.log(LOG_OK, CLogger::Level::SUMMARY, "Image \"%s\" will be archived under the date: %s", ic.getName(), m_exifDate->toString().c_str());
 					m_usingDate = USING_CAPTURE_RAW_DATE;
 					return true;
 				}
 				m_usingDate = UNKNOWN;
 			}
 			catch (MTTypeException e) {
-				//logger.log(LOG_OK, CLogger::Level::TRACE, "No raw digitized date?", ic.getName());
+				logger.log(LOG_OK, CLogger::Level::TRACE, "No raw digitized date?", ic.getName());
 				m_usingDate = UNKNOWN;
 			}
 		}
@@ -200,7 +200,7 @@ namespace simplearchive {
 					const ExifDateTime captureDate = picMetadata->getCaptureDate();
 					m_exifDate = std::make_shared<ExifDate>(captureDate);
 					if (m_exifDate->isOk() == true) {
-						//logger.log(LOG_OK, CLogger::Level::SUMMARY, "Image \"%s\" will be archived under the date: %s", ic.getName(), m_exifDate->toString().c_str());
+						logger.log(LOG_OK, CLogger::Level::SUMMARY, "Image \"%s\" will be archived under the date: %s", ic.getName(), m_exifDate->toString().c_str());
 						m_usingDate = USING_CAPTURE_PIC_DATE;
 						return true;
 					}
@@ -208,7 +208,7 @@ namespace simplearchive {
 				m_usingDate = UNKNOWN;
 			}
 			catch (MTTypeException e) {
-				//logger.log(LOG_OK, CLogger::Level::TRACE, "No picture capture date?", ic.getName());
+				logger.log(LOG_OK, CLogger::Level::TRACE, "No picture capture date?", ic.getName());
 				m_usingDate = UNKNOWN;
 			}
 		}
@@ -220,7 +220,7 @@ namespace simplearchive {
 					const ExifDateTime& captureDate = picId->getDateTimeDigitized();
 					m_exifDate = std::make_shared<ExifDate>(captureDate);
 					if (m_exifDate->isOk() == true) {
-						//logger.log(LOG_OK, CLogger::Level::SUMMARY, "Image \"%s\" will be archived under the date: %s", ic.getName(), m_exifDate->toString().c_str());
+						logger.log(LOG_OK, CLogger::Level::SUMMARY, "Image \"%s\" will be archived under the date: %s", ic.getName(), m_exifDate->toString().c_str());
 						m_usingDate = USING_CAPTURE_PIC_DATE;
 						return true;
 					}
@@ -228,7 +228,7 @@ namespace simplearchive {
 				m_usingDate = UNKNOWN;
 			}
 			catch (MTTypeException e) {
-				//logger.log(LOG_OK, CLogger::Level::TRACE, "Image \"%s\" No picture digitized date?", ic.getName());
+				logger.log(LOG_OK, CLogger::Level::TRACE, "Image \"%s\" No picture digitized date?", ic.getName());
 				m_usingDate = UNKNOWN;
 			}
 		}

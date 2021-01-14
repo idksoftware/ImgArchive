@@ -1,5 +1,6 @@
 
 #include <sstream>
+#include "Quiet.h"
 #include "AdminArgvParser.h"
 #include "ConfigReader.h"
 #include "AdminAppOptions.h"
@@ -305,8 +306,8 @@ namespace simplearchive {
 		case ArgvParser::ParserResults::ParserRequiredOptionMissing:
 		case ArgvParser::ParserResults::ParserHelpRequested:
 			errStr = parseErrorDescription(res);
-			printf("%s", errStr.c_str());
-			printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+			ReturnCodeObject::setReturnString(parseErrorNumber(res), "%s", errStr.c_str());
+			Quiet::printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 			return false;
 		case ArgvParser::ParserResults::GeneralHelpRequested:
 			printf("%s", usageDescription(80).c_str()); // this may need generalHelp(80);
@@ -315,16 +316,21 @@ namespace simplearchive {
 			printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 			return false;
 		case ArgvParser::ParserResults::ParserCommandNotFound:
-			printf("Invalid command: %s\n\n", getCurrentCommand().c_str());
-			printf("%s", usageDescription(80).c_str());
+			ReturnCodeObject::setReturnString(ParserCommandNotFound, "Invalid command: %s", getCurrentCommand().c_str());
+			Quiet::printf("%s", usageDescription(80).c_str());
 			return false;
 		default:
+			ReturnCodeObject::setReturnString(UnKnownError, "Invalid parser operation: %s");
 			return false;
 		}
 
 		//testHelpOptionDetection();
 		bool cmdFound = false;
 		AdminConfig config;
+
+//
+// Allow
+//
 		if (command("allow") == true) {
 			std::string opt;
 			std::string value;
@@ -332,16 +338,16 @@ namespace simplearchive {
 				opt = "add";
 				value = optionValue("add");
 				if (!SetImageExtentionFile::validateOptions(value.c_str())) {
-					printf("Invalid argument for sub-command: %s \"%s=%s\"\n\n", getCurrentCommand().c_str(), opt.c_str(), value.c_str());
-					printf("%s", usageDescription(80).c_str());
+					ReturnCodeObject::setReturnString(InvalidArgument, "Invalid argument for sub-command: %s \"%s=%s\"", getCurrentCommand().c_str(), opt.c_str(), value.c_str());
+					Quiet::printf("%s", usageDescription(80).c_str());
 					return false;
 				}
 			} else if (foundOption("edit") == true) {
 				opt = "edit";
 				value = optionValue("edit");
 				if (!SetImageExtentionFile::validateOptions(value.c_str())) {
-					printf("Invalid argument for sub-command: %s \"%s=%s\"\n\n", getCurrentCommand().c_str(), opt.c_str(), value.c_str());
-					printf("%s", usageDescription(80).c_str());
+					ReturnCodeObject::setReturnString(InvalidArgument, "Invalid argument for sub-command: %s \"%s=%s\"", getCurrentCommand().c_str(), opt.c_str(), value.c_str());
+					Quiet::printf("%s", usageDescription(80).c_str());
 					return false;
 				}
 			}
@@ -350,8 +356,8 @@ namespace simplearchive {
 				value = optionValue("delete");
 			}
 			else {
-				printf("Invalid argument for sub-command: %s \"%s\"\n\n", getCurrentCommand().c_str(), opt.c_str());
-				printf("%s", usageDescription(80).c_str());
+				ReturnCodeObject::setReturnString(InvalidArgument, "Invalid argument for sub-command: %s \"%s\"", getCurrentCommand().c_str(), opt.c_str());
+				Quiet::printf("%s", usageDescription(80).c_str());
 				return false;
 			}
 
@@ -371,13 +377,14 @@ namespace simplearchive {
 				case UserMode::All:
 					if (SAUtils::IsAdminMode() == false) {
 						// Not in admin mode so cannot be initalised in admin mode so return with error
-						printf("Invalid operation? Not in admin mode so cannot be initalised in admin mode\n\n");
-						printf("%s", usageDescription(80).c_str());
+						ReturnCodeObject::setReturnString("Invalid operation? Not in admin mode so cannot be initalised in admin mode");
+						Quiet::printf("%s", usageDescription(80).c_str());
 						return false;
 					}
 					break;
 				case UserMode::Invalid:
-					printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+					ReturnCodeObject::setReturnString("User mode Invalid? Not a user mode");
+					Quiet::printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 					return false;
 				}
 			}
@@ -389,16 +396,17 @@ namespace simplearchive {
 				std::string opt = optionValue("folders");
 
 				if (setEnviromentVariables.parseFolders(opt.c_str()) == false) {
-					//printf("Invalid argument for sub-command: %s folders \"%s\" %s\n\n", getCurrentCommand().c_str(), opt.c_str(), setConfig.errorString());
-					printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+					//ReturnCodeObject::setReturnString("Invalid argument for sub-command: %s folders \"%s\" %s\n\n", getCurrentCommand().c_str(), opt.c_str(), setConfig.errorString());
+					ReturnCodeObject::setReturnString("Invalid argument for sub-command: %s folders \"%s\"", getCurrentCommand().c_str(), opt.c_str());
+					Quiet::printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 					return false;
 				}
 				if (setEnviromentVariables.setVariable() == false) {
-					printf("Unable to set enviroment variable\n");
-					printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+					ReturnCodeObject::setReturnString("Unable to set enviroment variable\n");
+					Quiet::printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 					return false;
 				}
-				printf("Set enviroment variable\n");
+				Quiet::printf("Set enviroment variable\n");
 				cmdFound = true;
 
 			}
@@ -406,17 +414,17 @@ namespace simplearchive {
 				std::string opt = optionValue("enable");
 
 				if (setEnviromentVariables.parseEnableOptions(opt.c_str()) == false) {
-					printf("Invalid argument for sub-command: %s enable \"%s\"\n\n", getCurrentCommand().c_str(), opt.c_str());
-					printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+					ReturnCodeObject::setReturnString("Invalid argument for sub-command: %s enable \"%s\"\n\n", getCurrentCommand().c_str(), opt.c_str());
+					Quiet::printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 					return false;
 				}
 				else {
 					if (setEnviromentVariables.setVariable() == false) {
-						printf("Unable to set enviroment variable\n");
-						printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+						ReturnCodeObject::setReturnString("Unable to set enviroment variable\n");
+						Quiet::printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 						return false;
 					}
-					printf("Set enviroment variable\n");
+					Quiet::printf("Set enviroment variable\n");
 					cmdFound = true;
 					return true;
 				}
@@ -425,23 +433,23 @@ namespace simplearchive {
 				std::string opt = optionValue("disabled");
 
 				if (setEnviromentVariables.parseEnableOptions(opt.c_str()) == false) {
-					printf("Invalid argument for sub-command: %s disabled \"%s\"\n\n", getCurrentCommand().c_str(), opt.c_str());
-					printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+					ReturnCodeObject::setReturnString(InvalidArgument, "Invalid argument for sub-command: %s disabled \"%s\"\n\n", getCurrentCommand().c_str(), opt.c_str());
+					Quiet::printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 					return false;
 				}
 				else {
 					if (setEnviromentVariables.setVariable() == false) {
-						printf("Unable to set enviroment variable\n");
-						printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+						ReturnCodeObject::setReturnString("Unable to set enviroment variable\n");
+						Quiet::printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 						return false;
 					}
-					printf("Set enviroment variable\n");
+					Quiet::printf("Set enviroment variable\n");
 					cmdFound = true;
 					return true;
 				}
 			} else {
-				printf("No argument for sub-command: %s\n", getCurrentCommand().c_str());
-				printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+				ReturnCodeObject::setReturnString("No argument for sub-command: %s\n", getCurrentCommand().c_str());
+				Quiet::printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 				return false;
 			}
 			//appOptions.setConfigOption(parseEnableOptions.getOption().c_str());
@@ -449,6 +457,9 @@ namespace simplearchive {
 			
 			cmdFound = true;
 
+//
+// Init
+//
 		} else if (command("init") == true) {
 			// This command will initalise the configuration.
 			// so the the configuration need not to be initalised.
@@ -460,13 +471,13 @@ namespace simplearchive {
 			appOptions.setCommandMode(AppOptions::CommandMode::CM_InitArchive);
 			appOptions.m_users = SAUtils::IsAdminMode();
 			if (NewInstallDefaultLocations::init() == false) {
-				printf("A root folder for the instalation cannot be established\n\n");
+				ReturnCodeObject::setReturnString("A root folder for the instalation cannot be established.");
 				return false;
 			}
 		
 			if (NewInstallDefaultLocations::isConfigured() == true) {
 				if (isForced == false) {
-					printf("\nInit failed? ImgArchive is configured. Use fource to override current configuration.\n\n");
+					ReturnCodeObject::setReturnString("\nInit failed? ImgArchive is configured. Use fource to override current configuration.");
 					return false;
 				}
 			}
@@ -482,8 +493,8 @@ namespace simplearchive {
 				else if (users.compare("all") == 0) {
 					if (SAUtils::IsAdminMode() == false) {
 						// Not in admin mode so cannot be initalised in admin mode so return with error
-						printf("Invalid operation? Not in admin mode so cannot be initalised in admin mode\n\n");
-						printf("%s", usageDescription(80).c_str());
+						ReturnCodeObject::setReturnString("Invalid operation? Not in admin mode so cannot be initalised in admin mode.");
+						Quiet::printf("%s", usageDescription(80).c_str());
 						return false;
 					}
 					appOptions.setAllUsers(true);
@@ -491,7 +502,7 @@ namespace simplearchive {
 				}
 				else {
 					// Invalid option
-					printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+					ReturnCodeObject::setReturnString("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 					return false;
 				}
 			}
@@ -512,7 +523,7 @@ namespace simplearchive {
 			if (foundOption("set-home") == true) {
 				std::string value = optionValue("set-home");
 				if ((setHomeEnv = SAUtils::isTrueFalse(value)) == BoolOption::Invalid) {
-					printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+					Quiet::printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 					return false;
 				}
 				bool homeEnv = (setHomeEnv == BoolOption::True) ? true : false;
@@ -570,8 +581,8 @@ namespace simplearchive {
 				OutputType outputType;
 				std::string outType = optionValue("out");
 				if (outputType.parse(optionValue("out").c_str()) == false) {
-					printf("Option for argument \"out\" for sub-command: %s is invalid: %s\n\n", getCurrentCommand().c_str(), optionValue("out").c_str());
-					printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+					Quiet::printf("Option for argument \"out\" for sub-command: %s is invalid: %s\n\n", getCurrentCommand().c_str(), optionValue("out").c_str());
+					Quiet::printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 					return false;
 				}
 				else {
@@ -602,8 +613,8 @@ namespace simplearchive {
 					OutputType outputType;
 					std::string outType = optionValue("out");
 					if (outputType.parse(optionValue("out").c_str()) == false) {
-						printf("Option for argument \"out\" for sub-command: %s is invalid: %s\n\n", getCurrentCommand().c_str(), optionValue("out").c_str());
-						printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+						ReturnCodeObject::setReturnString(InvalidArgument, "Option for argument \"out\" for sub-command: %s is invalid: %s\n\n", getCurrentCommand().c_str(), optionValue("out").c_str());
+						Quiet::printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 						return false;
 					}
 					else {
@@ -622,8 +633,8 @@ namespace simplearchive {
 					OutputType outputType;
 					std::string outType = optionValue("out");
 					if (outputType.parse(optionValue("out").c_str()) == false) {
-						printf("Option for argument \"out\" for sub-command: %s is invalid: %s\n\n", getCurrentCommand().c_str(), optionValue("out").c_str());
-						printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+						ReturnCodeObject::setReturnString(InvalidArgument, "Option for argument \"out\" for sub-command: %s is invalid: %s\n\n", getCurrentCommand().c_str(), optionValue("out").c_str());
+						Quiet::printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 						return false;
 					}
 					else {
@@ -643,8 +654,8 @@ namespace simplearchive {
 					OutputType outputType;
 					std::string outType = optionValue("out");
 					if (outputType.parse(optionValue("out").c_str()) == false) {
-						printf("Option for argument \"out\" for sub-command: %s is invalid: %s\n\n", getCurrentCommand().c_str(), optionValue("out").c_str());
-						printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+						ReturnCodeObject::setReturnString(InvalidArgument, "Option for argument \"out\" for sub-command: %s is invalid: %s\n\n", getCurrentCommand().c_str(), optionValue("out").c_str());
+						Quiet::printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 						return false;
 					}
 					else {
@@ -658,8 +669,8 @@ namespace simplearchive {
 			
 			
 			if (argFound == false) {
-				printf("No argument for sub-command: %s\n\n", getCurrentCommand().c_str());
-				printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+				ReturnCodeObject::setReturnString(NoArgumentForSubCommand, "No argument for sub-command: %s\n\n", getCurrentCommand().c_str());
+				Quiet::printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 				return false;
 			}
 			
@@ -671,7 +682,7 @@ namespace simplearchive {
 			
 		}
 		else if (command("purge") == true) {
-			printf("Purge command\n");
+			Quiet::printf("Purge command\n");
 			appOptions.setCommandMode(AppOptions::CommandMode::CM_Purge);
 			cmdFound = true;
 		}
@@ -691,7 +702,7 @@ namespace simplearchive {
 			if (foundOption("scope") == true) {
 
 				std::string opt = optionValue("scope");
-//					printf(opt.c_str()); printf("\n");
+//					Quiet::printf(opt.c_str()); Quiet::printf("\n");
 				if (opt.compare("master") == 0) {
 					appOptions.m_verifyOperation = AppOptions::VerifyOperation::Master;
 				}
@@ -708,8 +719,8 @@ namespace simplearchive {
 					appOptions.m_verifyOperation = AppOptions::VerifyOperation::Main;
 				}
 				else {
-					printf("Invalid argument for sub-command: %s \"%s\"\n\n", getCurrentCommand().c_str(), opt.c_str());
-					printf("%s", usageDescription(80).c_str());
+					ReturnCodeObject::setReturnString(NoArgumentForSubCommand, "Invalid argument for sub-command: %s \"%s\"", getCurrentCommand().c_str(), opt.c_str());
+					Quiet::printf("%s", usageDescription(80).c_str());
 					return false;
 				}
 			}
@@ -731,8 +742,8 @@ namespace simplearchive {
 					appOptions.m_verifyBackups = AppOptions::VerifyBackups::Both;
 				}
 				else {
-					printf("Invalid argument for sub-command: %s \"%s\"\n\n", getCurrentCommand().c_str(), opt.c_str());
-					printf("%s", usageDescription(80).c_str());
+					ReturnCodeObject::setReturnString(NoArgumentForSubCommand, "Invalid argument for sub-command: %s \"%s\"", getCurrentCommand().c_str(), opt.c_str());
+					Quiet::printf("%s", usageDescription(80).c_str());
 					return false;
 				}
 			}
@@ -744,13 +755,16 @@ namespace simplearchive {
 		}
 		
 		else if (command("config") == true) {
+			if (foundOption("quiet") == true) {
+				Quiet::setOn();
+			}
 			SetConfig setConfig;
 			if (foundOption("general") == true) {
 				std::string opt = optionValue("general");
 					
 				if (setConfig.parseGeneralOptions(opt.c_str()) == false) {
-					printf("Invalid argument for sub-command: %s general \"%s\"\n\n", getCurrentCommand().c_str(), opt.c_str());
-					printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+					ReturnCodeObject::setReturnString(NoArgumentForSubCommand, "Invalid argument for sub-command: %s general \"%s\"", getCurrentCommand().c_str(), opt.c_str());
+					Quiet::printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 					return false;
 				}
 					
@@ -758,8 +772,8 @@ namespace simplearchive {
 				std::string opt = optionValue("logging");
 
 				if (setConfig.parseLoggingOptions(opt.c_str()) == false) {
-					printf("Invalid argument for sub-command: %s logging \"%s\"\n\n", getCurrentCommand().c_str(), opt.c_str());
-					printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+					ReturnCodeObject::setReturnString(NoArgumentForSubCommand, "Invalid argument for sub-command: %s logging \"%s\"", getCurrentCommand().c_str(), opt.c_str());
+					Quiet::printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 					return false;
 				}
 
@@ -767,8 +781,8 @@ namespace simplearchive {
 				std::string opt = optionValue("folders");
 					
 				if (setConfig.parseFolderOptions(opt.c_str()) == false) {
-					printf("Invalid argument for sub-command: %s folders \"%s\" %s\n\n", getCurrentCommand().c_str(), opt.c_str(), setConfig.errorString());
-					printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+					ReturnCodeObject::setReturnString(NoArgumentForSubCommand, "Invalid argument for sub-command: %s folders \"%s\" %s", getCurrentCommand().c_str(), opt.c_str(), setConfig.errorString());
+					Quiet::printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 					return false;
 				}
 					
@@ -776,16 +790,16 @@ namespace simplearchive {
 				std::string opt = optionValue("exiftool");
 				
 				if (setConfig.parseExifToolOptions(opt.c_str()) == false) {
-					printf("Invalid argument for sub-command: %s exiftool \"%s\"\n\n", getCurrentCommand().c_str(), opt.c_str());
-					printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+					ReturnCodeObject::setReturnString(NoArgumentForSubCommand, "Invalid argument for sub-command: %s exiftool \"%s", getCurrentCommand().c_str(), opt.c_str());
+					Quiet::printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 					return false;
 				}
 			} else if (foundOption("master") == true) {
 				std::string opt = optionValue("master");
 				
 				if (setConfig.parseMasterOptions(opt.c_str()) == false) {
-					printf("Invalid argument for sub-command: %s master \"%s\" %s\n\n", getCurrentCommand().c_str(), opt.c_str(), setConfig.errorString());
-					printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+					ReturnCodeObject::setReturnString(NoArgumentForSubCommand, "Invalid argument for sub-command: %s master \"%s\" %s", getCurrentCommand().c_str(), opt.c_str(), setConfig.errorString());
+					Quiet::printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 					return false;
 				}
 					
@@ -793,8 +807,8 @@ namespace simplearchive {
 				std::string opt = optionValue("derivative");
 
 				if (setConfig.parseDerivativeOptions(opt.c_str()) == false) {
-					printf("Invalid argument for sub-command: %s derivative \"%s\"\n\n", getCurrentCommand().c_str(), opt.c_str());
-					printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+					ReturnCodeObject::setReturnString(NoArgumentForSubCommand, "Invalid argument for sub-command: %s derivative \"%s", getCurrentCommand().c_str(), opt.c_str());
+					Quiet::printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 					return false;
 				}
 
@@ -802,8 +816,8 @@ namespace simplearchive {
 				std::string opt = optionValue("backup");
 
 				if (setConfig.parseBackupOptions(opt.c_str()) == false) {
-					printf("Invalid argument for sub-command: %s derivative \"%s\"\n\n", getCurrentCommand().c_str(), opt.c_str());
-					printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+					ReturnCodeObject::setReturnString(NoArgumentForSubCommand, "Invalid argument for sub-command: %s derivative \"%s\"\n\n", getCurrentCommand().c_str(), opt.c_str());
+					Quiet::printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 					return false;
 				}
 
@@ -811,14 +825,14 @@ namespace simplearchive {
 				std::string opt = optionValue("network");
 					
 				if (setConfig.parseNetworkOptions(opt.c_str()) == false) {
-					printf("Invalid argument for sub-command: %s network \"%s\"\n\n", getCurrentCommand().c_str(), opt.c_str());
-					printf("%s", usageDescription(80).c_str());
+					ReturnCodeObject::setReturnString(NoArgumentForSubCommand, "Invalid argument for sub-command: %s network \"%s\"\n\n", getCurrentCommand().c_str(), opt.c_str());
+					Quiet::printf("%s", usageDescription(80).c_str());
 					return false;
 				}
 					
 			} else {
-				printf("No argument for sub-command: %s\n", getCurrentCommand().c_str());
-				printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+				ReturnCodeObject::setReturnString(NoArgumentForSubCommand, "No argument for sub-command: %s", getCurrentCommand().c_str());
+				Quiet::printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 				return false;
 			}
 			appOptions.setConfigOptionBlock(setConfig.getOptionBlock().c_str());
@@ -877,16 +891,16 @@ namespace simplearchive {
 
 			}
 			else {
-				printf("Invalid argument for sub-command: %s folders \"%s\" %s\n\n", getCurrentCommand().c_str(), appOptions.getConfigOption(), opt.c_str());
-				printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+				ReturnCodeObject::setReturnString(NoArgumentForSubCommand, "Invalid argument for sub-command: %s folders \"%s\" %s\n\n", getCurrentCommand().c_str(), appOptions.getConfigOption(), opt.c_str());
+				Quiet::printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 				return false;
 			}
 			if (ok) {
 				appOptions.setConfigValue(opt.c_str());
 			}
 			else {
-				printf("Invalid argument for sub-command: %s folders \"%s\"\n\n", getCurrentCommand().c_str(), opt.c_str());
-				printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
+				ReturnCodeObject::setReturnString(NoArgumentForSubCommand, "Invalid argument for sub-command: %s folders \"%s\"\n\n", getCurrentCommand().c_str(), opt.c_str());
+				Quiet::printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 				return false;
 			}
 			appOptions.setCommandMode(AppOptions::CommandMode::CM_Sync);
@@ -905,28 +919,28 @@ namespace simplearchive {
 			if (foundOption("media-path") == true) {
 
 				appOptions.m_mediaPath = optionValue("media-path");
-//					printf(opt.c_str()); printf("\n");
+//					Quiet::printf(opt.c_str()); Quiet::printf("\n");
 				//config.setBackupDestinationPath(opt.c_str());
 				//appOptions.m_toDate;
 			}
 			if (foundOption("media-size") == true) {
 
 				appOptions.m_mediaSize = optionValue("media-size");
-//					printf(opt.c_str()); printf("\n");
+//					Quiet::printf(opt.c_str()); Quiet::printf("\n");
 				//config.setBackupMediaSize(opt.c_str());
 
 			}
 			if (foundOption("from-date") == true) {
 
 				appOptions.m_fromDate = optionValue("from-date");
-//					printf(opt.c_str()); printf("\n");
+//					Quiet::printf(opt.c_str()); Quiet::printf("\n");
 				//config.setFromDate(opt.c_str());
 
 			}
 			if (foundOption("to-date") == true) {
 
 				appOptions.m_toDate = optionValue("to-date");
-//					printf(opt.c_str()); printf("\n");
+//					Quiet::printf(opt.c_str()); Quiet::printf("\n");
 				//config.setToDate(opt.c_str());
 
 			}
@@ -938,12 +952,12 @@ namespace simplearchive {
 		}
 		
 		if (res != ArgvParser::ParserResults::NoParserError) {
-			printf("%s\n", parseErrorDescription(res).c_str());
-			printf("%s\n", usageDescription().c_str());
+			ReturnCodeObject::setReturnString("%s\n", parseErrorDescription(res).c_str());
+			Quiet::printf("%s\n", usageDescription().c_str());
 		}
 		if (cmdFound == false) {
-			printf("Main command required?\n\n");
-			printf("%s\n", usageDescription().c_str());
+			ReturnCodeObject::setReturnString(SubCommandRequired, "Sub-command required?\n\n");
+			Quiet::printf("%s\n", usageDescription().c_str());
 			return false;
 		}
 		return true;
@@ -963,7 +977,7 @@ namespace simplearchive {
 		usage += formatString(tmp, _width);
 		usage += '\n';
 		usage += '\n';
-
+		
 		return usage;
 	}
 
@@ -1063,7 +1077,7 @@ namespace simplearchive {
 		}
 		usage += "\n";
 		/*
-		//printf("%s\n", usage.c_str());
+		//Quiet::printf("%s\n", usage.c_str());
 		// loop over all option attribute entries (which equals looping over all
 		// different options (not option names)
 		for (Key2AttributeMap::const_iterator it = option2attribute.begin();
@@ -1136,5 +1150,8 @@ namespace simplearchive {
 		usage += '\n';
 		return(usage);
 	}
+
+	
+
 
 } /* namespace simplearchive */

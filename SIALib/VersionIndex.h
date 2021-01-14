@@ -28,7 +28,7 @@ public:
 	static void setVersionPath(const char *s) {
 		m_versionPath = s;
 	}
-	bool createMasterVersion(const BasicMetadata &bm, const char *path, int masterSeqNumber, int primarySeqNumber);
+	bool createMasterVersion(const BasicMetadata &bm, const char *path, size_t  masterSeqNumber, size_t  primarySeqNumber);
 	bool createDerivativeVersion(const VersionMetadataObject& vmo, const char *path, int derivativeSeqNumber, int primarySeqNumber, const char *masterFileName);
 	std::string getCurrentVersion(const char *path);
 	SharedMTRow getCurrentRow();

@@ -54,11 +54,25 @@ namespace simplearchive
 
 	class ExtentionItem
 	{
+	public:
+		enum class ExtError {
+			NoError,
+			UnknownImageType,
+			ExtEmpty,
+			MimeTypeEmpty,
+			Unknown
+		};
+
+	private:
 		std::string m_ext;
 		ImageType m_type;
 		std::string m_mimeType;
 		std::string m_desciption;
+		ExtError m_error;
 	public:
+
+		
+
 		ExtentionItem() noexcept
 		{
 			m_ext = "";
@@ -99,18 +113,37 @@ namespace simplearchive
 		{
 			if (m_type.getType() == ImageType::Type::UNKNOWN_EXT)
 			{
+				m_error = ExtError::UnknownImageType;
 				return false;
 			}
 			if (m_ext.empty())
 			{
+				m_error = ExtError::ExtEmpty;
 				return false;
 			}
 			if (m_mimeType.empty())
 			{
+				m_error = ExtError::MimeTypeEmpty;
 				return false;
 			}
 			return true;
 		}
+
+		std::string getErrorString() {
+			switch (m_error) {
+			case ExtError::NoError:
+				return "No error";
+			case ExtError::UnknownImageType:
+				return "No error";
+			case ExtError::ExtEmpty:
+				return "Extention not found";
+			case ExtError::MimeTypeEmpty:
+				return "Mime Type not found";
+			default:
+				break;
+			}
+			return "Unknown error";
+		};
 
 		void setDesciption(const std::string& desciption)
 		{
@@ -148,6 +181,10 @@ namespace simplearchive
 		}
 
 		std::string toString();
+
+		ExtError getExtError() {
+			return m_error;
+		};
 	};
 
 	typedef std::unique_ptr<ExtentionItem> ExtentionItem_Ptr;

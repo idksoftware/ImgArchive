@@ -77,6 +77,7 @@ using namespace std;
 #include "SetImageExtentionFile.h"
 #include "AboutCommand.h"
 
+constexpr ReturnCode Allow_Command = 4020;
 
 #define DB "c:/temp/test3.db"
 /*
@@ -86,7 +87,7 @@ Java HotSpot(TM) 64-Bit Server VM (build 24.51-b03, mixed mode)
 */
 namespace simplearchive
 {
-	AdminApp::AdminApp() : AppBase(std::make_shared<AdminArgvParser>())
+	AdminApp::AdminApp(const char *appName) : AppBase(appName, std::make_shared<AdminArgvParser>())
 	{
 	};
 
@@ -99,26 +100,62 @@ namespace simplearchive
 			ExtentionItem extentionItem(arg, ',');
 			if (!extentionItem.isValid())
 			{
+				setError(Allow_Command+1, "Failed to add extention type: \"s\" - %s", arg, extentionItem.getErrorString().c_str());
 				return false;
 			}
-			setImageExtentionFile.add(extentionItem);
+			if (setImageExtentionFile.add(extentionItem) == false) {
+				if (setImageExtentionFile.getError() == SetImageExtentionFile::Error::OperationFailed) {
+					setError(Allow_Command + 2, "Operation to add extention type failed, possibly extention already included");
+				}
+				else if (setImageExtentionFile.getError() == SetImageExtentionFile::Error::WriteFailed) {
+					setError(Allow_Command + 3, "Operation to add extention type failed writing, possibly need admin permission");
+				}
+				else {
+					setError(Allow_Command + 4, "Operation to add extention type failed, unknown reason");
+				}
+				return false;
+			}
 		}
 		else if (cmdStr.compare("edit") == 0)
 		{
 			ExtentionItem extentionItem(arg, ',');
 			if (!extentionItem.isValid())
 			{
+				setError(Allow_Command + 5, "Failed to edit extention type: \"s\" - %s", arg, extentionItem.getErrorString().c_str());
 				return false;
 			}
-			setImageExtentionFile.update(extentionItem);
+			
+			if (setImageExtentionFile.update(extentionItem) == false) {
+				if (setImageExtentionFile.getError() == SetImageExtentionFile::Error::OperationFailed) {
+					setError(Allow_Command + 6, "Operation to update extention type failed, possibly extention does not exist");
+				}
+				else if (setImageExtentionFile.getError() == SetImageExtentionFile::Error::WriteFailed) {
+					setError(Allow_Command + 7, "Operation to update extention type failed writing, possibly need admin permission");
+				}
+				else {
+					setError(Allow_Command + 8, "Operation to update extention type failed, unknown reason");
+				}
+				return false;
+			}
 		}
 		else if (cmdStr.compare("delete") == 0)
 		{
-			setImageExtentionFile.remove(arg);
+			if (setImageExtentionFile.remove(arg) == false) {
+				if (setImageExtentionFile.getError() == SetImageExtentionFile::Error::OperationFailed) {
+					setError(Allow_Command + 9, "Operation to delete extention type failed, possibly extention does not exist");
+				}
+				else if (setImageExtentionFile.getError() == SetImageExtentionFile::Error::WriteFailed) {
+					setError(Allow_Command + 10, "Operation to delete extention type failed writing, possibly need admin permission");
+				}
+				else {
+					setError(Allow_Command + 11, "Operation to delete extention type failed, unknown reason");
+				}
+				return false;
+			}
 		}
 		else
 		{
-			printf("Invalid argument for sub-command: allow --%s\n\n", cmdStr.c_str());
+			setError(Allow_Command + 12, "Invalid argument for sub-command: allow --%s", cmdStr.c_str());
 
 			return false;
 		}
@@ -193,6 +230,7 @@ namespace simplearchive
 
 		if (aboutCommand.process() == false)
 		{
+			setError(4, "About Command failed? Parsing error\n");
 			return false;
 		}
 		return true;
@@ -213,27 +251,33 @@ namespace simplearchive
 			switch (appOptions.getCommandMode())
 			{
 			case AppOptions::CommandMode::CM_Allow:
-				{
-					bool ret = Allow(appOptions.getConfigOption(), appOptions.getConfigValue());
-					if (ret == false)
-					{
-						printf("Command \"Configue\" failed? May need to be in admin mode\n");
-					}
-					return ret;
+			{
+				bool ret = Allow(appOptions.getConfigOption(), appOptions.getConfigValue());
+				if (ret == false) {
+					setExitCode(ExitCode::Fatal);
 				}
+				return ret;
+			}
 			case AppOptions::CommandMode::CM_Config:
 				{
 					bool ret = Configure(appOptions.getConfigOptionBlock(), appOptions.getConfigOption(),
 					                     appOptions.getConfigValue());
 					if (ret == false)
 					{
-						printf("Command \"Configue\" failed? May need to be in admin mode\n");
+						setExitCode(ExitCode::Fatal);
+						setError(4, "Command \"Config\" failed? May need to be in admin mode\n");
 					}
+					setError(4, "Command \"Config\" failed? May need to be in admin mode\n");
 					return ret;
 				}
 			case AppOptions::CommandMode::CM_Show:
-				return Show(appOptions.getConfigOption(), appOptions.getConfigValue(), appOptions.getTextOutputType(),
-				            appOptions.getOutputFile());
+				{	bool ret = Show(appOptions.getConfigOption(), appOptions.getConfigValue(), appOptions.getTextOutputType(),
+																						appOptions.getOutputFile());
+					if (ret == false) {
+						setExitCode(ExitCode::Fatal);
+					}
+					return ret;
+				}
 			case AppOptions::CommandMode::CM_Test:
 				{
 					TestArchive testArchive;
@@ -486,7 +530,7 @@ namespace simplearchive
 		ImgArchiveHome& imgArchiveHome = ImgArchiveHome::getObject();
 		if (imgArchiveHome.isValid() == false)
 		{
-			printf("IMGARCHIVE_HOME not found at loacation: %s.\n", ImgArchiveHome::getImgArchiveHome().c_str());
+			ReturnCodeObject::setReturnString(4004, "IMGARCHIVE_HOME not found at loacation: %s.\n", ImgArchiveHome::getImgArchiveHome().c_str());
 			return false;
 		}
 
@@ -508,7 +552,7 @@ namespace simplearchive
 			configReader.setNoLogging();
 			if (configReader.read(configfile.c_str(), config) == false)
 			{
-				setError(13, "Error found at line %d in the configuration file.\n",
+				ReturnCodeObject::setReturnString(4004, "Error found at line %d in the configuration file.",
 				         configReader.getCurrentLineNumber());
 				return false;
 			}
@@ -518,7 +562,7 @@ namespace simplearchive
 		AppConfig appConfig = AppConfig::get();
 		if (ImageExtentions::setExtentionsFilePath(appConfig.getConfigPath()) == false)
 		{
-			//logger.log(LOG_OK, CLogger::Level::INFO, "Unable to find image extensions file path: \"%s\"", config.getConfigPath());
+			ReturnCodeObject::setReturnString(4004, "Unable to find image extensions file path: \"%s\"", appConfig.getConfigPath());
 			return false;
 		}
 		return true;
@@ -618,6 +662,7 @@ namespace simplearchive
 
 		if (m_argvParser->doInitalise(argc, argv) == false)
 		{
+			setExitCode(ExitCode::Fatal);
 			return false;
 		}
 		return true;
@@ -630,6 +675,7 @@ namespace simplearchive
 
 int main(int argc, char** argv)
 {
-	simplearchive::AdminApp app;
-	return app.RunApp(argc, argv);
+	simplearchive::AdminApp app("ImagArchive Admain");
+	ExitCode exitCode = app.RunApp(argc, argv);
+	return (static_cast<int>(exitCode));
 }
