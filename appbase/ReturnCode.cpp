@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <stdarg.h>  // For va_start, etc.
+#include <string.h>
 
 std::string ReturnCodeObject::m_errorstring;
 ReturnCode ReturnCodeObject::m_returnCode = 0;

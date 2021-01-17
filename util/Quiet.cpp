@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <string>
+#include <cstring>
 #include <stdarg.h>  // For va_start, etc.
 #include <iostream>
 

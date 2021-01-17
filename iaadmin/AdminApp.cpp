@@ -675,7 +675,7 @@ namespace simplearchive
 
 int main(int argc, char** argv)
 {
-	simplearchive::AdminApp app("ImagArchive Admain");
+	simplearchive::AdminApp app("ImgArchive Admin");
 	ExitCode exitCode = app.RunApp(argc, argv);
 	return (static_cast<int>(exitCode));
 }

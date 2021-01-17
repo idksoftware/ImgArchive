@@ -495,7 +495,7 @@ bool CIPServer::ConnectToPB(int iPort)
 #ifdef _WIN32
 	int namelen;
 #else
-	unsigned int namelen;
+	socklen_t namelen;
 #endif
 //	u_short dynamic_port;
 //	u_long actual_protocol;
@@ -576,7 +576,7 @@ bool CIPServer::ConnectToPB(int iPort)
 		{
 			ok = false;
 		}
-		//else may be useed in the future
+		//else may be used in the future
 		//{
 		//	dynamic_port = sockaddr_in.sin_port;
 		//}
@@ -612,7 +612,7 @@ bool CIPServer::Run(bool Listening)
 #ifdef _WIN32
     int client_addr_len;
 #else
-    unsigned int client_addr_len;
+    socklen_t client_addr_len;
 #endif
 	int connect_socket = -1;
     struct sockaddr_in client_addr;

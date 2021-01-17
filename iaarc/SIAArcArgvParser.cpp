@@ -1,5 +1,6 @@
 #include <sstream>
 #include <iostream>
+#include "Quiet.h"
 //#include <filesystem>
 #include "SIAArcArgvParser.h"
 #include "ConfigReader.h"
@@ -321,7 +322,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 			OutputType outputType;
 			std::string outType = optionValue("out");
 			if (outputType.parse(optionValue("out").c_str()) == false) {
-				printf("Option for argument \"out\" for sub-command: %s is invalid: %s\n\n", getCurrentCommand().c_str(), optionValue("out").c_str());
+				ReturnCodeObject::setReturnString("Option for argument \"out\" for sub-command: %s is invalid: %s\n\n", getCurrentCommand().c_str(), optionValue("out").c_str());
 				printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
 				return false;
 			}

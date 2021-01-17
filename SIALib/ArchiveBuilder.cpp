@@ -75,7 +75,7 @@
 #ifdef _WIN32
 #include <crtdbg.h>
 #else
-#include <linux/limits.h>
+//#include <linux/limits.h>
 #define MAX_PATH PATH_MAX
 #endif
 #ifdef _DEBUG

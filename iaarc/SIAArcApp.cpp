@@ -110,7 +110,7 @@ namespace simplearchive {
 	using namespace CommandLineProcessing;
 
 	
-	SIAArcApp::SIAArcApp() : AppBase(std::make_shared<SIAArcArgvParser>()) {};
+	SIAArcApp::SIAArcApp(const char* appName) : AppBase(appName, std::make_shared<SIAArcArgvParser>()) {};
 
 
 class CheckoutSummary : public SummaryReporter {
@@ -468,7 +468,7 @@ int main(int argc, char **argv)
 	signal(SIGINT, ctrlHandler);
 
 	bool error = false;
-	simplearchive::SIAArcApp app;
+	simplearchive::SIAArcApp app("ImgArchive iaarc");
 	if (app.initalise(argc, argv) == false) {
 
 		error = true;

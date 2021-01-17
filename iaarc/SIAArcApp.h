@@ -74,7 +74,7 @@ private:
 
 public:
 	/// Constructor
-	SIAArcApp();
+	SIAArcApp(const char* appName);
 	/// Destructor
 	virtual ~SIAArcApp();
 	/// @brief This is the main application run function. All application processing starts here.
