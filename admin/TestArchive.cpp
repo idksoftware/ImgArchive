@@ -82,7 +82,7 @@ namespace simplearchive {
 		m_logLevel = "INFO";
 		m_dry_run = false;
 		*/
-		AdminConfig config;
+		AdminConfiguration config;
 
 		/*
 		const std::string key = "IMGARCHIVE_HOME";

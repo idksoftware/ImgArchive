@@ -196,11 +196,11 @@ public:
     ParserResults parse(int _argc, char ** _argv);
     ParserResults parseJson(const char *str);
 
-	const std::string& getCurrentCommand() {
+	const std::string& getCurrentCommand() const {
 		return current_command;
 	}
 
-	unsigned int getCurrentCommandId() {
+	const unsigned int getCurrentCommandId() const {
 		return current_command_id;
 	}
 

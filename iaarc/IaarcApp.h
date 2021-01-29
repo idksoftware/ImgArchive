@@ -68,15 +68,15 @@ namespace simplearchive {
 /**
 * @brief This is the main application class. This class is the first object main() will execute.
 */
-class SIAArcApp : public AppBase {
+class IaarcApp : public AppBase {
 private:
 	std::string m_HomePath;
 
 public:
 	/// Constructor
-	SIAArcApp(const char* appName);
+	IaarcApp(const char* appName);
 	/// Destructor
-	virtual ~SIAArcApp();
+	virtual ~IaarcApp();
 	/// @brief This is the main application run function. All application processing starts here.
 	
 	bool about(const char* outputType, const char* filename);

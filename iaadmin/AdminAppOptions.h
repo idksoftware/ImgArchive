@@ -32,8 +32,8 @@
 **
 ** #$$@@$$# */
 
-#ifndef ADMINAPPOPTIONS_H_
-#define ADMINAPPOPTIONS_H_
+#pragma once
+
 #include <string>
 
 namespace simplearchive {
@@ -114,6 +114,17 @@ private:
 	/**
 		@brief Set to true if no archive configuration found. 
 	*/
+	friend class AdminAbout;
+	friend class AdminAllow;
+	friend class AdminSetenv;
+	friend class AdminInit;
+	friend class AdminShow;
+	friend class AdminPurge;
+	friend class AdminValidate;
+	friend class AdminConfig;
+	friend class AdminSync;
+	friend class AdminArchive;
+
 	friend class AdminArgvParser;
 
 	bool m_configured;
@@ -200,4 +211,4 @@ public:
 };
 
 } /* namespace simplearchive */
-#endif /* ADMINAPPOPTIONS_H_ */
+

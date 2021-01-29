@@ -70,6 +70,7 @@ bool CLogger::m_isSilent = false;
 bool CLogger::m_isOpen = false;
 int CLogger::m_lastCode;
 std::string CLogger::m_lastMessage;
+std::string CLogger::m_currentMessage;
 std::string CLogger::m_appName;
 std::unique_ptr<LogBuffer> CLogger::m_startUpBuffer;
 
@@ -258,6 +259,7 @@ void CLogger::status(int code, ReporterEvent::Status level, const char *format, 
 		exit(-1);
 	}
 }
+
 
 
 void CLogger::log(int code, Level level, const char* format, ...) {
@@ -580,6 +582,38 @@ void SummaryReporter::toConsole()
 	std::cout << m_summary;
 	std::cout << '\n';
 	std::cout << m_result;
+}
+
+CLog::CLog(int code) : m_code(code), m_level(CLogger::Level::ERR) {};
+CLog::CLog() : m_code(0), m_level(CLogger::Level::ERR) {};
+
+
+CLog& CLog::operator<< (const int i) {
+
+	if (m_currentMessage.length() == 0) {
+		m_currentMessage = std::to_string(i);
+	}
+	else {
+		m_currentMessage += std::to_string(i);
+	}
+	return *this;
+}
+
+CLog& CLog::operator<< (const std::string& s) {
+	if (m_currentMessage.length() == 0) {
+		m_currentMessage = s;
+	}
+	else {
+		m_currentMessage += s;
+	}
+	return *this;
+}
+
+CLog& CLog::operator<< (CLogger::Level level) {
+	m_level = level;
+	CLogger& logger = CLogger::getLogger();
+	logger.log(m_code, m_level, m_currentMessage);
+	return *this;
 }
 
 } /* namespace simplearchive */

@@ -104,6 +104,7 @@ public:
 };
 
 
+
 typedef std::vector<std::string> LogBuffer;
 
 class CLogger {
@@ -123,6 +124,7 @@ public:
 
 	void log(int code, Level level, const std::string &message);
 	void log(int code, Level level, const char *format, ...);
+
 	void status(int cod, ReporterEvent::Status level, const char *format, ...);
 	CLogger& operator << (const std::string& message);
 	static CLogger &getLogger();
@@ -221,6 +223,7 @@ private:
 	static int m_cursize;
 	static int m_lastCode;
 	static std::string m_lastMessage;
+	static std::string m_currentMessage;
 	static std::string m_appName;
 	static std::unique_ptr<LogBuffer> m_startUpBuffer;
 	static bool setLevel(CLogger::Level &level, const std::string &s);
@@ -228,6 +231,21 @@ private:
 	static const char *toString(CLogger::Level level);
 	static CLogger::Level messageLevel(std::string message);
 };
+
+class CLog {
+	std::string m_currentMessage;
+	int m_code;
+	CLogger::Level m_level;
+public:
+	CLog(int code);
+	CLog();
+
+	CLog& operator<< (const int i);
+	CLog& operator<< (const std::string& s);
+
+	CLog& operator<< (CLogger::Level level);
+};
+
 
 } /* namespace simplearchive */
 

@@ -2,9 +2,9 @@
 #include <iostream>
 #include "Quiet.h"
 //#include <filesystem>
-#include "SIAArcArgvParser.h"
+#include "IaarcArgvParser.h"
 #include "ConfigReader.h"
-#include "SIAArcAppOptions.h"
+#include "IaarcAppOptions.h"
 #include "AppConfig.h"
 #include "pathcontroller.h"
 #include "SAUtils.h"
@@ -19,7 +19,7 @@
 using namespace CommandLineProcessing;
 namespace simplearchive {
 
-void  SIAArcArgvParser::defineOptions() {
+void  IaarcArgvParser::defineOptions() {
 
 	addErrorCode(0, "Success");
 	addErrorCode(1, "Warnings");
@@ -270,9 +270,9 @@ void  SIAArcArgvParser::defineOptions() {
 
 }
 
-bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
+bool IaarcArgvParser::doInitalise(int argc, char **argv) {
 
-	SIAArcAppOptions &appOptions = SIAArcAppOptions::get();
+	IaarcAppOptions&appOptions = IaarcAppOptions::get();
 	
 	SIAARCConfig config;
 	
@@ -281,33 +281,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 
 	defineOptions();
 
-	ArgvParser::ParserResults res = parse(argc, argv);
-
-	std::string errStr;
-	switch (res) {
-	case ArgvParser::ParserResults::NoParserError:
-		break;
-	case ArgvParser::ParserResults::ParserUnknownOption:
-	case ArgvParser::ParserResults::ParserMissingValue:
-	case ArgvParser::ParserResults::ParserOptionAfterArgument:
-	case ArgvParser::ParserResults::ParserMalformedMultipleShortOption:
-	case ArgvParser::ParserResults::ParserRequiredOptionMissing:
-	case ArgvParser::ParserResults::ParserHelpRequested:
-		errStr = parseErrorDescription(res);
-		printf("%s", errStr.c_str());
-		printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
-		return false;
-	case ArgvParser::ParserResults::GeneralHelpRequested:
-		std::cout << generalHelp(80); // this is printf("%s", usageDescription(80).c_str()); in iaadmin
-		return false;
-	case ArgvParser::ParserResults::TopicHelpRequested:
-		std::cout << topicUsageDescription(getCurrentCommandId(), 80);
-		return false;
-	case ArgvParser::ParserResults::ParserCommandNotFound:
-		printf("Invalid command: %s\n\n", getCurrentCommand().c_str());
-		printf("%s", usageDescription(80).c_str());
-		return false;
-	default:
+	if (handleParseResult(argc, argv) == false) {
 		return false;
 	}
 
@@ -333,7 +307,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 		if (foundOption("file") == true) {
 			appOptions.m_outputFile = optionValue("file");
 		}
-		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_About);
+		appOptions.setCommandMode(IaarcAppOptions::CommandMode::CM_About);
 		cmdFound = true;
 	}
 	//
@@ -392,7 +366,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 			appOptions.m_useDate = true;
 		}
 
-		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Import);
+		appOptions.setCommandMode(IaarcAppOptions::CommandMode::CM_Import);
 
 		Environment::setEnvironment();
 		cmdFound = true;
@@ -423,7 +397,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 			appOptions.m_force = true;
 		}
 
-		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Checkout);
+		appOptions.setCommandMode(IaarcAppOptions::CommandMode::CM_Checkout);
 		cmdFound = true;
 	}
 	//
@@ -448,7 +422,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 			appOptions.setDefaultArguments(*i);
 		}
 
-		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Checkin);
+		appOptions.setCommandMode(IaarcAppOptions::CommandMode::CM_Checkin);
 		cmdFound = true;
 	}
 	//
@@ -472,7 +446,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 		}
 
 
-		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_UnCheckout);
+		appOptions.setCommandMode(IaarcAppOptions::CommandMode::CM_UnCheckout);
 		cmdFound = true;
 	}
 	//
@@ -496,7 +470,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	}
 
 
-	appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Get);
+	appOptions.setCommandMode(IaarcAppOptions::CommandMode::CM_Get);
 	cmdFound = true;
 	}
 	//
@@ -525,7 +499,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 			appOptions.m_force = true;
 		}
 
-		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Delete);
+		appOptions.setCommandMode(IaarcAppOptions::CommandMode::CM_Delete);
 		cmdFound = true;
 	}
 	//
@@ -554,7 +528,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 			appOptions.m_force = true;
 		}
 
-		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Undelete);
+		appOptions.setCommandMode(IaarcAppOptions::CommandMode::CM_Undelete);
 		cmdFound = true;
 	}
 	//
@@ -562,7 +536,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	//
 	else if (command("show") == true) {
 		
-		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Show);
+		appOptions.setCommandMode(IaarcAppOptions::CommandMode::CM_Show);
 		cmdFound = true;
 	}
 	//
@@ -600,7 +574,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 			//printf("option string %s\n", opt.c_str());
 			appOptions.m_option = opt;
 		}
-		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Template);
+		appOptions.setCommandMode(IaarcAppOptions::CommandMode::CM_Template);
 		cmdFound = true;
 	}
 	//
@@ -622,7 +596,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 			appOptions.m_value = parseProperties.getValue();
 		}
 		
-		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Prop);
+		appOptions.setCommandMode(IaarcAppOptions::CommandMode::CM_Prop);
 		cmdFound = true;
 	}
 	//
@@ -647,7 +621,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 			appOptions.m_version = opt.c_str();
 		}
 
-			appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Export);
+			appOptions.setCommandMode(IaarcAppOptions::CommandMode::CM_Export);
 			cmdFound = true;
 		}
 #ifdef NOT_USED
@@ -722,7 +696,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 				return false;
 			}
 		}
-		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_History);
+		appOptions.setCommandMode(IaarcAppOptions::CommandMode::CM_History);
 		cmdFound = true;
 	}
 	//
@@ -759,7 +733,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 			// must be system history
 		}
 
-		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Log);
+		appOptions.setCommandMode(IaarcAppOptions::CommandMode::CM_Log);
 		cmdFound = true;
 	}
 	//
@@ -798,7 +772,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 				return false;
 			}
 		}
-		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Status);
+		appOptions.setCommandMode(IaarcAppOptions::CommandMode::CM_Status);
 		cmdFound = true;
 	}
 	//
@@ -823,7 +797,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 			}
 			appOptions.m_option = opt.c_str();
 		}
-		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Metadata);
+		appOptions.setCommandMode(IaarcAppOptions::CommandMode::CM_Metadata);
 		cmdFound = true;
 	}
 	//else if (command("version") == true) {
@@ -837,11 +811,11 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 		if (foundOption("remote-server") == true) {
 			config.setServerModeON();
 		}
-		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Mode);
+		appOptions.setCommandMode(IaarcAppOptions::CommandMode::CM_Mode);
 		cmdFound = true;
 	}
 	else {
-		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_Unknown);
+		appOptions.setCommandMode(IaarcAppOptions::CommandMode::CM_Unknown);
 		cmdFound = true;
 	}
 	// global options:
@@ -881,10 +855,6 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 		std::string opt = optionValue("media-size");
 	}
 
-	if (res != ArgvParser::ParserResults::NoParserError) {
-		printf("%s\n", parseErrorDescription(res).c_str());
-		printf("%s\n", usageDescription().c_str());
-	}
 	if (cmdFound == false) {
 		printf("Main command required?\n\n");
 		printf("%s\n", usageDescription().c_str());
@@ -893,7 +863,7 @@ bool SIAArcArgvParser::doInitalise(int argc, char **argv) {
 	return true;
 }
 
-std::string SIAArcArgvParser::usageDescriptionHeader(unsigned int _width) const
+std::string IaarcArgvParser::usageDescriptionHeader(unsigned int _width) const
 {
 	std::string usage;
 	/*
@@ -913,7 +883,7 @@ std::string SIAArcArgvParser::usageDescriptionHeader(unsigned int _width) const
 	return usage;
 }
 
-std::string SIAArcArgvParser::commandUsage(unsigned int width) const
+std::string IaarcArgvParser::commandUsage(unsigned int width) const
 {
 	std::string usage; // the usage description text
 	usage = formatString("usage: iaarc[--version][--help] <command>[<args>]\n", width);
@@ -924,7 +894,7 @@ std::string SIAArcArgvParser::commandUsage(unsigned int width) const
 
 
 
-std::string SIAArcArgvParser::generalHelp(unsigned int _width) const
+std::string IaarcArgvParser::generalHelp(unsigned int _width) const
 {
 	std::string usage; // the usage description text
 	usage = commandUsage(_width);

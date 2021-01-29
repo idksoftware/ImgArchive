@@ -41,7 +41,7 @@
 #include <stdio.h>
 #include <iostream>
 #include "EnvFunc.h"
-#include "SIAArcApp.h"
+#include "IaarcApp.h"
 #include "SAUtils.h"
 #include "CLogger.h"
 #include "CDate.h"
@@ -73,8 +73,8 @@ using namespace std;
 #include <string>
 #include <vector>
 #include "AppOptions.h"
-#include "SIAArcAppOptions.h"
-#include "SIAArcArgvParser.h"
+#include "IaarcAppOptions.h"
+#include "IaarcArgvParser.h"
 #include "Threads.h"
 #include "HookCmd.h"
 #include "ImagePath.h"
@@ -107,11 +107,9 @@ static char THIS_FILE[] = __FILE__;
 
 namespace simplearchive {
 
-	using namespace CommandLineProcessing;
+using namespace CommandLineProcessing;
 
-	
-	SIAArcApp::SIAArcApp(const char* appName) : AppBase(appName, std::make_shared<SIAArcArgvParser>()) {};
-
+IaarcApp::IaarcApp(const char* appName) : AppBase(appName, std::make_shared<IaarcArgvParser>()) {};
 
 class CheckoutSummary : public SummaryReporter {
 protected:
@@ -131,7 +129,7 @@ protected:
 	}
 };
 
-bool SIAArcApp::about(const char* outputType, const char* filename) {
+bool IaarcApp::about(const char* outputType, const char* filename) {
 	AboutCommand aboutCommand("client", "iaarc", VERSION, BUILD);
 	aboutCommand.setOutputFile(filename);
 	aboutCommand.setTextOutputType(outputType);
@@ -143,7 +141,7 @@ bool SIAArcApp::about(const char* outputType, const char* filename) {
 	return true;
 }
 
-bool SIAArcApp::initaliseArgs(int argc, char **argv) {
+bool IaarcApp::initaliseArgs(int argc, char **argv) {
 	
 	if (m_argvParser->doInitalise(argc, argv) == false) {
 		return false;
@@ -152,7 +150,7 @@ bool SIAArcApp::initaliseArgs(int argc, char **argv) {
 	return true;
 }
 
-bool SIAArcApp::initaliseConfig() {
+bool IaarcApp::initaliseConfig() {
 
 
 	SIAARCConfig config;
@@ -190,9 +188,9 @@ bool SIAArcApp::initaliseConfig() {
 }
 
 
-bool SIAArcApp::doRun()
+bool IaarcApp::doRun()
 {
-	SIAArcAppOptions &appOptions = SIAArcAppOptions::get();
+	IaarcAppOptions &appOptions = IaarcAppOptions::get();
 	AppConfig &config = AppConfig::get();
 	
 	SIALib siaLib;
@@ -226,7 +224,7 @@ bool SIAArcApp::doRun()
 	switch (appOptions.getCommandMode()) {
 
 		// run sub-comand
-	case SIAArcAppOptions::CommandMode::CM_Import:
+	case IaarcAppOptions::CommandMode::CM_Import:
 
 		if (appOptions.isDataForced() == true) {
 			siaLib.setForceDate();
@@ -253,20 +251,20 @@ bool SIAArcApp::doRun()
 		}
 		
 		break;
-	case SIAArcAppOptions::CommandMode::CM_Export:
+	case IaarcAppOptions::CommandMode::CM_Export:
 		if (siaLib.exportImage(appOptions.getDistinationPath()) == false) {
 			setError(CLogger::getLastCode(), CLogger::getLastMessage());
 			return false;
 		}
 		break;
-	case SIAArcAppOptions::CommandMode::CM_Show:
+	case IaarcAppOptions::CommandMode::CM_Show:
 		if (siaLib.show() == false) {
 			setError(CLogger::getLastCode(), CLogger::getLastMessage());
 			return false;
 		}
 		break;
 		
-	case SIAArcAppOptions::CommandMode::CM_Checkout:
+	case IaarcAppOptions::CommandMode::CM_Checkout:
 	{
 		if (siaLib.checkout(appOptions.getImageAddress(), appOptions.getComment(), appOptions.isForced()) == false) {
 			setError(CLogger::getLastCode(), CLogger::getLastMessage());
@@ -278,37 +276,37 @@ bool SIAArcApp::doRun()
 		summaryReporter.toConsole();
 	}
 		break;
-	case SIAArcAppOptions::CommandMode::CM_Checkin:
+	case IaarcAppOptions::CommandMode::CM_Checkin:
 		if (siaLib.checkin(appOptions.getImageAddress(), appOptions.getComment(), appOptions.isForced()) == false) {
 			setError(CLogger::getLastCode(), CLogger::getLastMessage());
 			return false;
 		}
 		break;
-	case SIAArcAppOptions::CommandMode::CM_UnCheckout:
+	case IaarcAppOptions::CommandMode::CM_UnCheckout:
 		if (siaLib.uncheckout(appOptions.getImageAddress(), appOptions.getComment(), appOptions.isForced()) == false) {
 			setError(CLogger::getLastCode(), CLogger::getLastMessage());
 			return false;
 		}
 		break;
-	case SIAArcAppOptions::CommandMode::CM_Get:
+	case IaarcAppOptions::CommandMode::CM_Get:
 		if (siaLib.getImages(appOptions.getImageAddress(), appOptions.getComment(), appOptions.isForced()) == false) {
 			setError(CLogger::getLastCode(), CLogger::getLastMessage());
 			return false;
 		}
 		break;
-	case SIAArcAppOptions::CommandMode::CM_Delete:
+	case IaarcAppOptions::CommandMode::CM_Delete:
 		if (siaLib.deleteImages(appOptions.getImageAddress(), appOptions.getComment(), appOptions.isForced()) == false) {
 			setError(CLogger::getLastCode(), CLogger::getLastMessage());
 			return false;
 		}
 		break;
-	case SIAArcAppOptions::CommandMode::CM_Undelete:
+	case IaarcAppOptions::CommandMode::CM_Undelete:
 		if (siaLib.undeleteImages(appOptions.getImageAddress(), appOptions.getComment()) == false) {
 			setError(CLogger::getLastCode(), CLogger::getLastMessage());
 			return false;
 		}
 		break;
-	case SIAArcAppOptions::CommandMode::CM_History:
+	case IaarcAppOptions::CommandMode::CM_History:
 	{
 		if (siaLib.history(appOptions.getImageAddress(), appOptions.getFormatType(), appOptions.getFilePath()) == false) {
 			setError(CLogger::getLastCode(), CLogger::getLastMessage());
@@ -316,32 +314,32 @@ bool SIAArcApp::doRun()
 		}
 		break;
 	}
-	case SIAArcAppOptions::CommandMode::CM_Status:
+	case IaarcAppOptions::CommandMode::CM_Status:
 	{
 		//if (siaLib.status(appOptions.getImageAddress()) == false) {
 		//	setError(CLogger::getLastCode(), CLogger::getLastMessage());
 		//	return false;
 		//}
 		switch (appOptions.getShowCommandOption()) {
-		case SIAArcAppOptions::ShowCommandOption::SC_ShowCheckedOut:
+		case IaarcAppOptions::ShowCommandOption::SC_ShowCheckedOut:
 			if (siaLib.showCheckedOut(appOptions.getImageAddress(), appOptions.getFormatType(), appOptions.getFilePath()) == false) {
 				setError(CLogger::getLastCode(), CLogger::getLastMessage());
 				return false;
 			}
 
-		case SIAArcAppOptions::ShowCommandOption::SC_ShowUncheckedOutChanges:
+		case IaarcAppOptions::ShowCommandOption::SC_ShowUncheckedOutChanges:
 			if (siaLib.showUncheckedOutChanges(appOptions.getImageAddress(), appOptions.getFormatType(), appOptions.getFilePath()) == false) {
 				setError(CLogger::getLastCode(), CLogger::getLastMessage());
 				return false;
 			}
 			return true;
-		case SIAArcAppOptions::ShowCommandOption::SC_Unknown:
+		case IaarcAppOptions::ShowCommandOption::SC_Unknown:
 			return false;
 		}
 
 		break;
 	}
-	case SIAArcAppOptions::CommandMode::CM_Metadata:
+	case IaarcAppOptions::CommandMode::CM_Metadata:
 	{
 		std::string formatType = appOptions.getOption();
 		if (formatType.empty()) {
@@ -363,7 +361,7 @@ bool SIAArcApp::doRun()
 		break;
 	}
 #endif
-	case SIAArcAppOptions::CommandMode::CM_Workspace:
+	case IaarcAppOptions::CommandMode::CM_Workspace:
 	{
 		if (siaLib.workspace(appOptions.isSync())) {
 			setError(CLogger::getLastCode(), CLogger::getLastMessage());
@@ -371,7 +369,7 @@ bool SIAArcApp::doRun()
 		}
 		break;
 	}
-	case SIAArcAppOptions::CommandMode::CM_Template:
+	case IaarcAppOptions::CommandMode::CM_Template:
 	{
 		std::string option = appOptions.getOption();
 		if (!option.empty()) {
@@ -387,7 +385,7 @@ bool SIAArcApp::doRun()
 		}
 		break;
 	}
-	case SIAArcAppOptions::CommandMode::CM_Prop:
+	case IaarcAppOptions::CommandMode::CM_Prop:
 	{
 		siaLib.setProperty(appOptions.getImageAddress(), appOptions.getOption(), appOptions.getValue());
 		/*
@@ -399,7 +397,7 @@ bool SIAArcApp::doRun()
 		break;
 	}
 
-	case SIAArcAppOptions::CommandMode::CM_Log:
+	case IaarcAppOptions::CommandMode::CM_Log:
 	{
 		if (siaLib.log(appOptions.getImageAddress(), appOptions.getFromDate(), appOptions.getToDate(), appOptions.getFormatType(), appOptions.getFilePath()) == false) {
 			setError(CLogger::getLastCode(), CLogger::getLastMessage());
@@ -408,7 +406,7 @@ bool SIAArcApp::doRun()
 		break;
 	}
 
-	case SIAArcAppOptions::CommandMode::CM_Mode:
+	case IaarcAppOptions::CommandMode::CM_Mode:
 	{
 
 		if (siaLib.remoteServer() == false) {
@@ -417,14 +415,14 @@ bool SIAArcApp::doRun()
 		}
 		break;
 	}
-	case SIAArcAppOptions::CommandMode::CM_Uncheckin:
+	case IaarcAppOptions::CommandMode::CM_Uncheckin:
 		break;
 	
-	case SIAArcAppOptions::CommandMode::CM_About:
+	case IaarcAppOptions::CommandMode::CM_About:
 	{
 		return about(appOptions.getTextOutputType(), appOptions.getOutputFile());
 	}
-	case SIAArcAppOptions::CommandMode::CM_Unknown:
+	case IaarcAppOptions::CommandMode::CM_Unknown:
 		setError( CLogger::getLastCode(), CLogger::getLastMessage());
 		break;
 	default:
@@ -436,7 +434,7 @@ bool SIAArcApp::doRun()
 	return true;
 }
 
-SIAArcApp::~SIAArcApp() {
+IaarcApp::~IaarcApp() {
 	CLogger::Close();
 }
 
@@ -468,7 +466,7 @@ int main(int argc, char **argv)
 	signal(SIGINT, ctrlHandler);
 
 	bool error = false;
-	simplearchive::SIAArcApp app("ImgArchive iaarc");
+	simplearchive::IaarcApp app("ImgArchive iaarc");
 	if (app.initalise(argc, argv) == false) {
 
 		error = true;

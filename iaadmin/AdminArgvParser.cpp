@@ -16,16 +16,27 @@
 #include "SyncCommand.h"
 #include "SetEnviromentVariables.h"
 
+#include "AdminAbout.h"
+#include "AdminAllow.h"
+#include "AdminSetenv.h"
+#include "AdminInit.h"
+#include "AdminShow.h"
+#include "AdminPurge.h"
+#include "AdminValidate.h"
+#include "AdminConfig.h"
+#include "AdminSync.h"
+#include "AdminArchive.h"
+
 // beyond compare
 
 using namespace CommandLineProcessing;
 namespace simplearchive {
 
-	bool AdminArgvParser::doInitalise(int argc, char **argv) {
+	void AdminArgvParser::defineOptions() {
 
-		AppOptions &appOptions = AppOptions::get();
-		
-		
+		AppOptions& appOptions = AppOptions::get();
+
+
 		addErrorCode(0, "Success");
 		addErrorCode(1, "Warnings");
 		addErrorCode(2, "Errors");
@@ -47,7 +58,7 @@ namespace simplearchive {
 			"| [ --workspace-path <path>] | [ --master-path <path>]\n"
 			"| [ --derivative-path <path>] | [ --picture-path <path>]\n"
 			"| [ --picture-path <path>] | [ --www-image-path <path>]");
-		
+
 		defineOption("config", "Configure ImgArchive's parameters", ArgvParser::OptionAttributes::MasterOption);
 		defineCommandSyntax("config", "isadmin config [-q | --quiet] | [ --general <Option=Value>]\n"
 			"| [--logging <Option=Value>] | [--network <Option=Value>]\n"
@@ -58,7 +69,7 @@ namespace simplearchive {
 		defineOption("setenv", "Configure ImgArchive's environment variables.", ArgvParser::OptionAttributes::MasterOption);
 		defineCommandSyntax("setenv", "isadmin setenv [-q | --quiet] | [ --folders <Option=path>]\n"
 			"| [--enable <Option>] | [--disable <Option>]");
-				
+
 		defineOption("show", "Show how the system is configured.", ArgvParser::OptionAttributes::MasterOption);
 		defineCommandSyntax("show", "isadmin show [--setting=<Option>]\n"
 			"SettingOption = <[general] | [logging] | [network]\n"
@@ -72,10 +83,10 @@ namespace simplearchive {
 		defineOption("sync", "This command synchronises the primary archives with there associated backups.", ArgvParser::OptionAttributes::MasterOption);
 		//defineOptionAlternative("archive", "a");
 		defineCommandSyntax("sync", "isadmin sync --master-with=[backup1] | [backup2] | [Both]\n"
-												"--derivative-with=[backup1] | [backup2] | [Both]\n"
-												"--workspace --force\n"
-												"--catalogue\n"
-												"--www\n");
+			"--derivative-with=[backup1] | [backup2] | [Both]\n"
+			"--workspace --force\n"
+			"--catalogue\n"
+			"--www\n");
 
 		defineOption("master-with", "Sync this archive with named backup or both", ArgvParser::OptionAttributes::OptionRequiresValue);
 		defineOption("derivative-with", "Sync this archive with named backup or both", ArgvParser::OptionAttributes::OptionRequiresValue);
@@ -91,11 +102,11 @@ namespace simplearchive {
 			"| [--scope=<archive>] | [--validate-backup=<option>]\n"
 			"| [--validate-main=<yes|no>]\n"
 			"| [--repair=<yes|no>\n");
-		 
+
 		defineOption("scope", "Scope of validation. This defines which archives will be validated", ArgvParser::OptionAttributes::OptionRequiresValue);
 		defineCommandSyntax("scope", "--scope=<Value>\n"
 			"value=[master] | [derivative] | [workspace] | [all] | [main]");
-		
+
 		defineOption("validate-backup", "validate backup. Note: both backups will be validate by default if avalible.", ArgvParser::OptionAttributes::OptionRequiresValue);
 		defineCommandSyntax("validate-backup", "--validate-backup=<Value>\n"
 			"value=[1] | [2] | [both]");
@@ -114,7 +125,7 @@ namespace simplearchive {
 			"type        - The type of image i.e.a picture or raw.\n"
 			"mine        - The mine type.\n"
 			"description - A description of the image type.");
-		
+
 		// Init Command
 		defineOption("archive-path", "location of the archive root folder.", ArgvParser::OptionAttributes::OptionRequiresValue);
 		defineOption("workspace-path", "location of the workspace folder.", ArgvParser::OptionAttributes::OptionRequiresValue);
@@ -122,7 +133,7 @@ namespace simplearchive {
 		defineOption("derivative-path", "location of the derivative repository folder.", ArgvParser::OptionAttributes::OptionRequiresValue);
 		defineOption("picture-path", "location of the picture folder.", ArgvParser::OptionAttributes::OptionRequiresValue);
 		defineOption("www-image-path", "location of the www image folder.", ArgvParser::OptionAttributes::OptionRequiresValue);
-		
+
 		defineOption("set-home", "Set the Home environment variable.", ArgvParser::OptionAttributes::OptionRequiresValue);
 		defineOption("user", "Sets user to local or all users.", ArgvParser::OptionAttributes::OptionRequiresValue);
 		// Configure Command
@@ -152,17 +163,17 @@ namespace simplearchive {
 		defineOption("exiftool", "Configure exit look intergration", ArgvParser::OptionAttributes::OptionRequiresValue);
 		defineOptionAlternative("exiftool", "E");
 		defineCommandSyntax("exiftool", "--exiftool <Option=Value>\n"
-									"[ExifMapPath=<path>] | [ExifMapFile=<filename>]\n"
-									"[ExifFileDelim=<character>]\n"
-									"[ExifTool=<path/name>] | [ExifCommandLine=<argumentlist>]");
+			"[ExifMapPath=<path>] | [ExifMapFile=<filename>]\n"
+			"[ExifFileDelim=<character>]\n"
+			"[ExifTool=<path/name>] | [ExifCommandLine=<argumentlist>]");
 
-		defineOption("master", "This section controls the master archive", ArgvParser::OptionAttributes::OptionRequiresValue);					
+		defineOption("master", "This section controls the master archive", ArgvParser::OptionAttributes::OptionRequiresValue);
 		defineOptionAlternative("master", "M");
 		defineCommandSyntax("master", "--master <Option=Value>\n"
 			"[BackupOneEnabled=<Enabled|Disabled>] | [BackupTwoEnabled=<Enabled|Disabled>] |\n"
 			"[BackupOne=<path>] | [BackupTwo=<path>]");
 
-		defineOption("derivative", "This section controls the derivative archive.", ArgvParser::OptionAttributes::OptionRequiresValue);						
+		defineOption("derivative", "This section controls the derivative archive.", ArgvParser::OptionAttributes::OptionRequiresValue);
 		defineOptionAlternative("derivative", "D");
 		defineCommandSyntax("derivative", "--derivative <Option=Value>\n"
 			"[BackupOneEnabled=<Enabled|Disabled>] | [BackupTwoEnabled=<Enabled|Disabled>] |\n"
@@ -199,7 +210,7 @@ namespace simplearchive {
 
 		defineOption("disable", "Disables an option.", ArgvParser::OptionAttributes::OptionRequiresValue);
 		defineCommandSyntax("disable", "--disable <option>");
-		
+
 		defineOption("media-size", "size of media in GBytes", ArgvParser::OptionAttributes::OptionRequiresValue);
 		//defineOptionAlternative("S", "media-size");
 		defineCommandSyntax("media-size", "--media-size=<SizeInGBytes>\n");
@@ -236,7 +247,7 @@ namespace simplearchive {
 
 		defineOption("file", "output file name.", ArgvParser::OptionAttributes::OptionRequiresValue);
 		defineCommandSyntax("file", "file=<filename>\n");
-		
+
 		defineCommandOption("init", "archive-path");
 		defineCommandOption("init", "workspace-path");
 		defineCommandOption("init", "master-path");
@@ -257,12 +268,12 @@ namespace simplearchive {
 		defineCommandOption("validate", "validate-backup");
 		defineCommandOption("validate", "validate-main");
 		defineCommandOption("validate", "repair");
-		
+
 		defineCommandOption("setenv", "folders");
 		defineCommandOption("setenv", "enable");
 		defineCommandOption("setenv", "disable");
 		//defineCommandOption("test", "settup");
-		
+
 		defineCommandOption("config", "general");
 		defineCommandOption("config", "logging");
 		defineCommandOption("config", "folders");
@@ -293,44 +304,49 @@ namespace simplearchive {
 
 		//defineCommandOption("workspace", "sync");
 
-		ArgvParser::ParserResults res = parse(argc, argv);
+	}
 
-		std::string errStr;
-		switch (res) {
-		case ArgvParser::ParserResults::NoParserError:
-			break;
-		case ArgvParser::ParserResults::ParserUnknownOption:
-		case ArgvParser::ParserResults::ParserMissingValue:
-		case ArgvParser::ParserResults::ParserOptionAfterArgument:
-		case ArgvParser::ParserResults::ParserMalformedMultipleShortOption:
-		case ArgvParser::ParserResults::ParserRequiredOptionMissing:
-		case ArgvParser::ParserResults::ParserHelpRequested:
-			errStr = parseErrorDescription(res);
-			ReturnCodeObject::setReturnString(parseErrorNumber(res), "%s", errStr.c_str());
-			Quiet::printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
-			return false;
-		case ArgvParser::ParserResults::GeneralHelpRequested:
-			printf("%s", usageDescription(80).c_str()); // this may need generalHelp(80);
-			return false;
-		case ArgvParser::ParserResults::TopicHelpRequested:
-			printf("%s", topicUsageDescription(getCurrentCommandId(), 80).c_str());
-			return false;
-		case ArgvParser::ParserResults::ParserCommandNotFound:
-			ReturnCodeObject::setReturnString(ParserCommandNotFound, "Invalid command: %s", getCurrentCommand().c_str());
-			Quiet::printf("%s", usageDescription(80).c_str());
-			return false;
-		default:
-			ReturnCodeObject::setReturnString(UnKnownError, "Invalid parser operation: %s");
+	
+	bool AdminArgvParser::doInitalise(int argc, char** argv) {
+
+
+		if (handleParseResult(argc, argv) == false) {
 			return false;
 		}
 
-		//testHelpOptionDetection();
+		std::shared_ptr<AdminAbout> about = std::make_shared<AdminAbout>(*this);
+		std::shared_ptr<AdminAllow> allow = std::make_shared<AdminAllow>(*this);
+		std::shared_ptr<AdminSetenv> setenv = std::make_shared<AdminSetenv>(*this);
+		std::shared_ptr<AdminInit> init = std::make_shared<AdminInit>(*this);
+		std::shared_ptr<AdminShow> show = std::make_shared<AdminShow>(*this);
+		std::shared_ptr<AdminPurge> purge = std::make_shared<AdminPurge>(*this);
+		std::shared_ptr<AdminValidate> validate = std::make_shared<AdminValidate>(*this);
+		std::shared_ptr<AdminConfig> configuration = std::make_shared<AdminConfig>(*this);
+		std::shared_ptr<AdminSync> sync = std::make_shared<AdminSync>(*this);
+		std::shared_ptr<AdminArchive> backup = std::make_shared<AdminArchive>(*this);
+
+		addSubCommand(about);
+		addSubCommand(allow);
+		addSubCommand(setenv);
+		addSubCommand(init);
+		addSubCommand(show);
+		addSubCommand(purge);
+		addSubCommand(validate);
+		addSubCommand(configuration);
+		addSubCommand(sync);
+		addSubCommand(backup);
+
+		return doCommand();
+	}
+/*
+		AppOptions& appOptions = AppOptions::get();
 		bool cmdFound = false;
-		AdminConfig config;
+		AdminConfiguration config;
 
 //
 // Allow
 //
+
 		if (command("allow") == true) {
 			std::string opt;
 			std::string value;
@@ -366,8 +382,7 @@ namespace simplearchive {
 			appOptions.setCommandMode(AppOptions::CommandMode::CM_Allow);
 			cmdFound = true;
 		
-		} else if (command("setenv") == true) {
-
+		} else if (command("setenv") == true) {		
 			appOptions.setCommandMode(AppOptions::CommandMode::CM_Setenv);
 			SetEnviromentVariables setEnviromentVariables;
 			if (foundOption("users") == true) {
@@ -599,9 +614,9 @@ namespace simplearchive {
 			bool argFound = false;
 			std::string subOption;
 			appOptions.setCommandMode(AppOptions::CommandMode::CM_Show);
-			/*
-			 general logging network folders master derivative backup exiftool
-			*/
+			
+			// general logging network folders master derivative backup exiftool
+			
 			SetSettings setSettings;
 			if (foundOption("setting") == true) {
 				std::string opt = optionValue("setting");
@@ -690,14 +705,6 @@ namespace simplearchive {
 		else if (command("validate") == true) {
 			appOptions.setCommandMode(AppOptions::CommandMode::CM_Validate);
 			cmdFound = true;
-
-			/*
-			"value=[master] | [derivative] | [workspace] | [all] | [main]");
-
-		defineOption("validate-backup", "validate backup. Note: both backups will be validate by default if avalible.", ArgvParser::OptionRequiresValue);
-		defineCommandSyntax("validate-backup", "--validate-backup=<Value>\n"
-			"value=[1] | [2] | [both]");
-			*/
 
 			if (foundOption("scope") == true) {
 
@@ -951,10 +958,7 @@ namespace simplearchive {
 			cmdFound = true;
 		}
 		
-		if (res != ArgvParser::ParserResults::NoParserError) {
-			ReturnCodeObject::setReturnString("%s\n", parseErrorDescription(res).c_str());
-			Quiet::printf("%s\n", usageDescription().c_str());
-		}
+		
 		if (cmdFound == false) {
 			ReturnCodeObject::setReturnString(SubCommandRequired, "Sub-command required?\n\n");
 			Quiet::printf("%s\n", usageDescription().c_str());
@@ -962,6 +966,7 @@ namespace simplearchive {
 		}
 		return true;
 	}
+	*/
 
 	std::string AdminArgvParser::usageDescriptionHeader(unsigned int _width) const
 	{

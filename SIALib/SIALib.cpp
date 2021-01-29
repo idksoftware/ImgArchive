@@ -194,7 +194,6 @@ namespace simplearchive {
 
 		CLogger &logger = CLogger::getLogger();
 
-		
 #ifdef _WIN32
 		WSADATA wsa;
 		if (m_winsockRequired) {
@@ -230,8 +229,7 @@ namespace simplearchive {
 			}
 		}
 
-		
-		
+
 		//logger.log(LOG_STARTING, CLogger::Level::SUMMARY, "Application starting at %s", date.Print().c_str());
 		logger.log(LOG_OK, CLogger::Level::FINE, "Home path is \"%s\"", config.getHomePath());
 
@@ -502,6 +500,7 @@ namespace simplearchive {
 			logger.log(LOG_OK, CLogger::Level::ERR, "Cannot process system history");
 			return false;
 		}
+		CLog(LOG_OK) << "Successfully processed system history" << CLogger::Level::INFO;
 		return true;
 	}
 

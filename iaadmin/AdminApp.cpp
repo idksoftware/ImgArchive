@@ -525,7 +525,7 @@ namespace simplearchive
 			return true;
 		}
 		//AppConfig &config = AppConfig::get();
-		AdminConfig config;
+		AdminConfiguration config;
 
 		ImgArchiveHome& imgArchiveHome = ImgArchiveHome::getObject();
 		if (imgArchiveHome.isValid() == false)
@@ -660,7 +660,7 @@ namespace simplearchive
 		//defaultEnvironment.print();
 		//AppOptions& appOptions = AppOptions::get();
 
-		if (m_argvParser->doInitalise(argc, argv) == false)
+		if (m_argvParser->initalise(argc, argv) == false)
 		{
 			setExitCode(ExitCode::Fatal);
 			return false;

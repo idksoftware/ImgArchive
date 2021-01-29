@@ -520,10 +520,10 @@ namespace simplearchive {
 		}
 	};
 
-	class AdminConfig : public SharedConfig {
+	class AdminConfiguration : public SharedConfig {
 
 	public:
-		AdminConfig() = default;
+		AdminConfiguration() = default;
 		
 	};
 

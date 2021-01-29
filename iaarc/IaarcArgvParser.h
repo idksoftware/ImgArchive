@@ -5,14 +5,28 @@ using namespace CommandLineProcessing;
 
 namespace simplearchive {
 
-	class SIAArcArgvParser : public SIAArgvParser
+	class IaarcArgvParser;
+
+	class IaarcSubCommand : public SubCommand {
+		IaarcArgvParser& m_argvParser;
+	protected:
+		const IaarcArgvParser& getParser() { return m_argvParser; };
+	public:
+		IaarcSubCommand(const char* name, IaarcArgvParser& argvParser)
+			: SubCommand(name),
+			m_argvParser(argvParser) {};
+	};
+
+
+
+	class IaarcArgvParser : public SIAArgvParser
 	{
 		bool m_error;
 	public:
 
-		SIAArcArgvParser() : m_error(false) {};
+		IaarcArgvParser() : m_error(false) {};
 
-		virtual ~SIAArcArgvParser()
+		virtual ~IaarcArgvParser()
 		{
 		}
 

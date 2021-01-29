@@ -149,18 +149,38 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AdminAbout.h" />
+    <ClInclude Include="AdminAllow.h" />
     <ClInclude Include="AdminApp.h" />
     <ClInclude Include="AdminAppOptions.h" />
+    <ClInclude Include="AdminArchive.h" />
     <ClInclude Include="AdminArgvParser.h" />
+    <ClInclude Include="AdminConfig.h" />
+    <ClInclude Include="AdminInit.h" />
+    <ClInclude Include="AdminPurge.h" />
+    <ClInclude Include="AdminSetenv.h" />
+    <ClInclude Include="AdminShow.h" />
+    <ClInclude Include="AdminSync.h" />
+    <ClInclude Include="AdminValidate.h" />
     <ClInclude Include="SetConfig.h" />
     <ClInclude Include="SetEnviromentVariables.h" />
     <ClInclude Include="ShowCommand.h" />
     <ClInclude Include="SyncCommand.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AdminAbout.cpp" />
+    <ClCompile Include="AdminAllow.cpp" />
     <ClCompile Include="AdminApp.cpp" />
     <ClCompile Include="AdminAppOptions.cpp" />
+    <ClCompile Include="AdminArchive.cpp" />
     <ClCompile Include="AdminArgvParser.cpp" />
+    <ClCompile Include="AdminConfig.cpp" />
+    <ClCompile Include="AdminInit.cpp" />
+    <ClCompile Include="AdminPurge.cpp" />
+    <ClCompile Include="AdminSetenv.cpp" />
+    <ClCompile Include="AdminShow.cpp" />
+    <ClCompile Include="AdminSync.cpp" />
+    <ClCompile Include="AdminValidate.cpp" />
     <ClCompile Include="SetConfig.cpp" />
     <ClCompile Include="SetEnviromentVariables.cpp" />
     <ClCompile Include="ShowCommand.cpp" />

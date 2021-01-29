@@ -168,7 +168,7 @@ public:
 };
 
 
-class SIAArcAppOptions : public CommandLineProcessing::AppOptions{
+class IaarcAppOptions : public CommandLineProcessing::AppOptions{
 public:
 	enum class CommandMode {
 		CM_Import,      //< Import(add) one or more images into the archve.
@@ -207,9 +207,9 @@ public:
 	};
 
 private:
-	friend class SIAArcArgvParser;
+	friend class IaarcArgvParser;
 	friend class StatusOptions;
-	static SIAArcAppOptions *m_this;
+	static IaarcAppOptions *m_this;
 	static bool m_list;
 	static bool m_usingFile;
 	static bool m_peekOnly;
@@ -249,26 +249,26 @@ private:
 	static DefaultArgumentsContainer defaultArgumentsContainer;
 
 	bool m_error;
-	void setCommandMode(const SIAArcAppOptions::CommandMode mode);
+	void setCommandMode(const IaarcAppOptions::CommandMode mode);
 	bool setCommandMode(const char *modeString);
 	void setName(const char *name);
 
 	std::unique_ptr<CommandLineProcessing::ArgvParser> m_argvParser;
-	SIAArcAppOptions();
+	IaarcAppOptions();
 	
 public:
 	
-	static SIAArcAppOptions &get() {
-		static SIAArcAppOptions INSTANCE;
+	static IaarcAppOptions&get() {
+		static IaarcAppOptions INSTANCE;
 		return INSTANCE;
 	}
 
-	virtual ~SIAArcAppOptions();
+	virtual ~IaarcAppOptions();
 
     //* Initalise the command processing normally from the function main() arguments
 	//bool initalise(int argc, char **argv);
     //* Get the current sub command as an enum.
-	SIAArcAppOptions::CommandMode getCommandMode();
+	IaarcAppOptions::CommandMode getCommandMode();
 	const char *getName();
     //* Get the current sub command
 	const char *getCommand();
