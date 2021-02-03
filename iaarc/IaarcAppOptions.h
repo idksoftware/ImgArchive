@@ -208,6 +208,24 @@ public:
 
 private:
 	friend class IaarcArgvParser;
+	friend class IaarcImport;
+	friend class IaarcAbout;
+	friend class IaarcCheckout;
+	friend class IaarcCheckin;
+	friend class IaarcUncheckout;
+	friend class IaarcGet;
+	friend class IaarcDelete;
+	friend class IaarcUndelete;
+	friend class IaarcShow;
+	friend class IaarcTemplate;
+	friend class IaarcProp;
+	friend class IaarcExport;
+	friend class IaarcHistory;
+	friend class IaarcLog;
+	friend class IaarcStatus;
+	friend class IaarcMetadata;
+	friend class IaarcMode;
+
 	friend class StatusOptions;
 	static IaarcAppOptions *m_this;
 	static bool m_list;
@@ -258,7 +276,7 @@ private:
 	
 public:
 	
-	static IaarcAppOptions&get() {
+	static IaarcAppOptions& get() {
 		static IaarcAppOptions INSTANCE;
 		return INSTANCE;
 	}

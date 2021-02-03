@@ -14,6 +14,23 @@
 #include "EnvFunc.h"
 #include "IAParseOptions.h"
 #include "ParseProperties.h"
+#include "IaarcAbout.h"
+#include "IaarcImport.h"
+#include "IaarcCheckout.h"
+#include "IaarcCheckin.h"
+#include "IaarcUncheckout.h"
+#include "IaarcGet.h"
+#include "IaarcDelete.h"
+#include "IaarcUndelete.h";
+#include "IaarcShow.h"
+#include "IaarcTemplate.h"
+#include "IaarcProp.h"
+#include "IaarcExport.h"
+#include "IaarcHistory.h"
+#include "IaarcLog.h"
+#include "IaarcStatus.h"
+#include "IaarcMetadata.h"
+#include "IaarcMode.h"
 
 // beyond compare
 using namespace CommandLineProcessing;
@@ -133,8 +150,6 @@ void  IaarcArgvParser::defineOptions() {
 
 	defineOption("a", "archive", ArgvParser::OptionAttributes::NoOptionAttribute);
 	defineOptionAlternative("a", "archive");
-
-
 
 
 	defineOption("image", "Specifies a image address in the form \"<date>/<image name>", ArgvParser::OptionAttributes::OptionRequiresValue);
@@ -270,9 +285,12 @@ void  IaarcArgvParser::defineOptions() {
 
 }
 
+
+
 bool IaarcArgvParser::doInitalise(int argc, char **argv) {
 
-	IaarcAppOptions&appOptions = IaarcAppOptions::get();
+	IaarcAppOptions& appOptions = IaarcAppOptions::get();
+
 	
 	SIAARCConfig config;
 	
@@ -284,7 +302,47 @@ bool IaarcArgvParser::doInitalise(int argc, char **argv) {
 	if (handleParseResult(argc, argv) == false) {
 		return false;
 	}
+	
+	std::shared_ptr <IaarcAbout>		aboutCmd		= std::make_shared<IaarcAbout>(*this);
+	std::shared_ptr <IaarcImport>		importCmd		= std::make_shared<IaarcImport>(*this);
+	std::shared_ptr <IaarcCheckout>		checkoutCmd		= std::make_shared<IaarcCheckout>(*this);
+	std::shared_ptr <IaarcCheckin>		checkinCmd		= std::make_shared<IaarcCheckin>(*this);
+	std::shared_ptr <IaarcUncheckout>	uncheckoutCmd	= std::make_shared<IaarcUncheckout>(*this);
+	std::shared_ptr <IaarcGet>			getCmd			= std::make_shared<IaarcGet>(*this);
+	std::shared_ptr <IaarcDelete>		deleteCmd		= std::make_shared<IaarcDelete>(*this);
+	std::shared_ptr <IaarcUndelete>		undeleteCmd		= std::make_shared<IaarcUndelete>(*this);
+	std::shared_ptr <IaarcShow>			showCmd			= std::make_shared<IaarcShow>(*this);
+	std::shared_ptr <IaarcTemplate>		templateCmd		= std::make_shared<IaarcTemplate>(*this);
+	std::shared_ptr <IaarcProp>			propCmd			= std::make_shared<IaarcProp>(*this);
+	std::shared_ptr <IaarcExport>		exportCmd		= std::make_shared<IaarcExport>(*this);
+	std::shared_ptr <IaarcHistory>		historyCmd		= std::make_shared<IaarcHistory>(*this);
+	std::shared_ptr <IaarcLog>			logCmd			= std::make_shared<IaarcLog>(*this);
+	std::shared_ptr <IaarcStatus>		statusCmd		= std::make_shared<IaarcStatus>(*this);
+	std::shared_ptr <IaarcMetadata>		metadataCmd		= std::make_shared<IaarcMetadata>(*this);
+	std::shared_ptr <IaarcMode>			modeCmd			= std::make_shared<IaarcMode>(*this);
 
+	addSubCommand(aboutCmd);
+	addSubCommand(importCmd);
+	addSubCommand(checkoutCmd);
+	addSubCommand(checkinCmd);
+	addSubCommand(uncheckoutCmd);
+	addSubCommand(getCmd);
+	addSubCommand(deleteCmd);
+	addSubCommand(undeleteCmd);
+	addSubCommand(showCmd);
+	addSubCommand(templateCmd);
+	addSubCommand(propCmd);
+	addSubCommand(exportCmd);
+	addSubCommand(historyCmd);
+	addSubCommand(logCmd);
+	addSubCommand(statusCmd);
+	addSubCommand(metadataCmd);
+	addSubCommand(modeCmd); 
+
+	return doCommand();
+}
+
+/*
 	//testHelpOptionDetection();
 	bool cmdFound = false;
 	//
@@ -629,7 +687,6 @@ bool IaarcArgvParser::doInitalise(int argc, char **argv) {
 		appOptions.setCommandMode(SIAArcAppOptions::CommandMode::CM_View);
 
 		
-		/*
 		if (foundOption("dist-path") == true) {
 
 		std::string opt = optionValue("dist-path");
@@ -651,7 +708,7 @@ bool IaarcArgvParser::doInitalise(int argc, char **argv) {
 		config.setFromDate(opt.c_str());
 
 		}
-		*/
+		
 		if (foundOption("name") == true) {
 			std::string opt = optionValue("name");
 			appOptions.setName(opt.c_str());
@@ -862,15 +919,16 @@ bool IaarcArgvParser::doInitalise(int argc, char **argv) {
 	}
 	return true;
 }
+*/
 
 std::string IaarcArgvParser::usageDescriptionHeader(unsigned int _width) const
 {
 	std::string usage;
-	/*
-	usage += "usage: imgarc subcommand [options] [args]\n\n";
-	usage += "ImgArchive command line client, version 1.0.0.1\n";
-	usage += "Type 'iaarc help <subcommand>' for help on a specific subcommand.\n\n";
-	*/
+	
+	//usage += "usage: imgarc subcommand [options] [args]\n\n";
+	//usage += "ImgArchive command line client, version 1.0.0.1\n";
+	//usage += "Type 'iaarc help <subcommand>' for help on a specific subcommand.\n\n";
+	
 	// setIntroductoryDescription("iaarc - Image archive client provides the means to operate ImgArchive from the command line");
 	std::string tmp = "iaarc - Image archive client provides the means to operate ImgArchive from the command line";
 	usage += '\n';

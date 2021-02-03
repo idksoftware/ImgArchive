@@ -169,9 +169,26 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="IaarcAbout.h" />
     <ClInclude Include="IaarcApp.h" />
     <ClInclude Include="IaarcAppOptions.h" />
     <ClInclude Include="IaarcArgvParser.h" />
+    <ClInclude Include="IaarcCheckin.h" />
+    <ClInclude Include="IaarcCheckout.h" />
+    <ClInclude Include="IaarcDelete.h" />
+    <ClInclude Include="IaarcExport.h" />
+    <ClInclude Include="IaarcGet.h" />
+    <ClInclude Include="IaarcHistory.h" />
+    <ClInclude Include="IaarcImport.h" />
+    <ClInclude Include="IaarcLog.h" />
+    <ClInclude Include="IaarcMetadata.h" />
+    <ClInclude Include="IaarcMode.h" />
+    <ClInclude Include="IaarcProp.h" />
+    <ClInclude Include="IaarcShow.h" />
+    <ClInclude Include="IaarcStatus.h" />
+    <ClInclude Include="IaarcTemplate.h" />
+    <ClInclude Include="IaarcUncheckout.h" />
+    <ClInclude Include="IaarcUndelete.h" />
     <ClInclude Include="IAParseOptions.h" />
     <ClInclude Include="ParseProperties.h" />
     <ClInclude Include="resource.h" />
@@ -179,9 +196,26 @@
     <ClInclude Include="UpdateTemplateManager.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="IaarcAbout.cpp" />
     <ClCompile Include="IaarcApp.cpp" />
     <ClCompile Include="IaarcAppOptions.cpp" />
     <ClCompile Include="IaarcArgvParser.cpp" />
+    <ClCompile Include="IaarcCheckin.cpp" />
+    <ClCompile Include="IaarcCheckout.cpp" />
+    <ClCompile Include="IaarcDelete.cpp" />
+    <ClCompile Include="IaarcExport.cpp" />
+    <ClCompile Include="IaarcGet.cpp" />
+    <ClCompile Include="IaarcHistory.cpp" />
+    <ClCompile Include="IaarcImport.cpp" />
+    <ClCompile Include="IaarcLog.cpp" />
+    <ClCompile Include="IaarcMetadata.cpp" />
+    <ClCompile Include="IaarcMode.cpp" />
+    <ClCompile Include="IaarcProp.cpp" />
+    <ClCompile Include="IaarcShow.cpp" />
+    <ClCompile Include="IaarcStatus.cpp" />
+    <ClCompile Include="IaarcTemplate.cpp" />
+    <ClCompile Include="IaarcUncheckout.cpp" />
+    <ClCompile Include="IaarcUndelete.cpp" />
     <ClCompile Include="IAParseOptions.cpp" />
     <ClCompile Include="ParseProperties.cpp" />
     <ClCompile Include="UpdateTemplateFile.cpp" />

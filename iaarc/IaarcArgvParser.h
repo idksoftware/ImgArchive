@@ -18,7 +18,6 @@ namespace simplearchive {
 	};
 
 
-
 	class IaarcArgvParser : public SIAArgvParser
 	{
 		bool m_error;

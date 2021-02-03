@@ -110,8 +110,6 @@ static inline void trim(std::string &s) {
 	rtrim(s);
 }
 
-
-
 CLogger::Level CLogger::messageLevel(std::string message) {
 	size_t spos = message.find("[");
 	size_t epos = message.find("]", spos + 1);
