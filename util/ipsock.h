@@ -245,7 +245,7 @@ class CChildConnection : public CIPComms
 	/// .
         bool  operator == (CChildConnection CChildConnection_in);
 	/// .
-        bool Send(char *data, long size);
+        bool Send(char *data, size_t size);
 
 
 };

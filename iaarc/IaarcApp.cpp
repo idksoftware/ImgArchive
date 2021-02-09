@@ -32,35 +32,24 @@
 **
 ** #$$@@$$# */
 
-#include <signal.h>
-#include <stdlib.h>
-#include <stdio.h>
+#include <csignal>
+#include <cstdlib>
+#include <cstdio>
 #ifndef _WIN32
 #include <unistd.h>
 #endif
 #include <stdio.h>
 #include <iostream>
-#include "EnvFunc.h"
+
 #include "IaarcApp.h"
 #include "SAUtils.h"
 #include "CLogger.h"
-#include "CDate.h"
 #include "AppConfig.h"
-#include "CLogger.h"
-#include "ImageExtentions.h"
 #include "TargetsList.h"
 #include "CIDKDate.h"
-#include "argvparser.h"
-#include "HookCmd.h"
-#include "MakeMedia.h"
-//#include "MirrorManager.h"
-//#include "ViewManager.h"
 #include "AboutCommand.h"
-
 #include "SummaryFile.h"
-#include "IntegrityManager.h"
 #include "SIALib.h"
-
 #include "UDPOut.h"
 
 #ifdef _WIN32
@@ -82,10 +71,6 @@ using namespace std;
 #include "UpdateTemplateManager.h"
 //#include "DefaultEnvironment.h"
 
-
-#define MAJORVERSION 0
-#define MINORVERSION 9
-#define REVISION     91
 
 
 

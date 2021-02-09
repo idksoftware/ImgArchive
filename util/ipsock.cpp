@@ -445,9 +445,9 @@ public:
 	}
 };
 
-bool CChildConnection::Send(char *data, long size)
+bool CChildConnection::Send(char *data, size_t size)
 {
-	if (send(m_ConnectSocket, data, size, 0) == SOCKET_ERROR)
+	if (send(m_ConnectSocket, data, (int)size, 0) == SOCKET_ERROR)
 	{
 #ifdef _WIN32
 		m_LastError = WSAGetLastError();

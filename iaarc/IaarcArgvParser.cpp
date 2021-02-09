@@ -21,7 +21,7 @@
 #include "IaarcUncheckout.h"
 #include "IaarcGet.h"
 #include "IaarcDelete.h"
-#include "IaarcUndelete.h";
+#include "IaarcUndelete.h"
 #include "IaarcShow.h"
 #include "IaarcTemplate.h"
 #include "IaarcProp.h"

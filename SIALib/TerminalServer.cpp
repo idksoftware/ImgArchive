@@ -147,7 +147,7 @@ std::string CTerminalServer::Handler(CIPPacket &pkt) {
 	memcpy(tmp, pkt.GetData(), pkt.GetSize());
 	tmp[pkt.GetSize()] = '\0';
 	m_buffer += tmp;
-	int cmdLen = 0;
+	size_t cmdLen = 0;
 	if ((cmdLen = m_buffer.find_last_not_of('\r')) == std::string::npos) {
 		if (m_buffer.length() >= 50) {
 			m_buffer.clear();
