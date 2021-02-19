@@ -44,7 +44,7 @@ const char *Base64::tobase64(long dec) {
 	}
 	std::reverse(list.begin(), list.end());
 	for (auto i = list.begin(); i != list.end(); i++) {
-		char c = *i;
+		const char c = *i;
 		m_str += c;
 	}
 	return m_str.c_str();
@@ -111,7 +111,7 @@ const char* Base64url::tobase64(long dec) {
 	}
 	std::reverse(list.begin(), list.end());
 	for (auto i = list.begin(); i != list.end(); i++) {
-		char c = *i;
+		const char c = *i;
 		m_str += c;
 	}
 	return m_str.c_str();

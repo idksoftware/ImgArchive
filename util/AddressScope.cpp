@@ -345,7 +345,7 @@ public:
 	VersionScopeItem(const char* pattern, int maxVersion);
 	VersionScopeItem(std::string& pattern, int maxVersion);
 	~VersionScopeItem();
-	const bool isInScope(int version);
+	bool isInScope(int version);
 };
 
 class VersionTokenList : public std::vector<VersionScopeItem>
@@ -365,10 +365,11 @@ bool VersionScopeItem::init(std::string& pattern, int version)
 	{
 		return true;
 	}
-	if ((num = SAUtils::isNumber(m_pattern)) == -1)
+	if (!SAUtils::isNumber(m_pattern))
 	{
 		return false;
 	}
+	num = std::stoi(m_pattern);
 	if (version != num)
 	{
 		return false;
@@ -393,7 +394,7 @@ VersionScopeItem::~VersionScopeItem()
 }
 
 
-const bool VersionScopeItem::isInScope(int version)
+bool VersionScopeItem::isInScope(int version)
 {
 	if (m_pattern[0] == '[')
 	{

@@ -75,8 +75,8 @@ public:
 	Base64() {};
 	virtual ~Base64() {};
 	const char *tobase64(long dec);
-	int toDecimal(std::string encoded);
-	const char *getBase64() {
+	static int toDecimal(std::string encoded);
+	const char *getBase64() const {
 		return m_str.c_str();
 	}
 };

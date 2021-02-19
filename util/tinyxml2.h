@@ -81,7 +81,7 @@ distribution.
 
 #if defined(TINYXML2_DEBUG)
 #   if defined(_MSC_VER)
-#       // "(void)0," is for suppressing C4127 warning in "assert(false)", "assert(true)" and the like
+       // "(void)0," is for suppressing C4127 warning in "assert(false)", "assert(true)" and the like
 #       define TIXMLASSERT( x )           if ( !((void)0,(x))) { __debugbreak(); }
 #   elif defined (ANDROID_NDK)
 #       include <android/log.h>

@@ -48,7 +48,7 @@ namespace simplearchive {
 	}
 
 	
-	bool IndexTable::insert(int idx, const char *imagePath, const char *name, unsigned long size, unsigned long crc,
+	bool IndexTable::insert(int idx, const char *imagePath, const char *name, size_t size, size_t crc,
 		const char *md5, const char *uuid, int version, ExifDate &date, int dbidx)
 	{
 		if (CSVDBFile::insert(idx, imagePath, name, size, crc, md5, uuid, version, date, dbidx) == false) {

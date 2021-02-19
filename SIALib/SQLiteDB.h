@@ -108,7 +108,7 @@ namespace simplearchive {
 		IndexRow &m_row;
 	public:
 		IndexTable(IndexRow &row) : m_row(row) {};
-		bool insert(int idx, const char *imagePath, const char *name, unsigned long size, unsigned long crc,
+		bool insert(int idx, const char *imagePath, const char *name, size_t size, size_t crc,
 			const char *md5, const char *uuid, int version, ExifDate &date, int dbidx = -1);
 	};
 
